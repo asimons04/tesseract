@@ -157,7 +157,7 @@
         url = {post.post_view.post.url}
         id = {post.post_view.post.id}
         nsfw = {post.post_view.post.nsfw}
-        nsfwBlur = {userSettings.nsfwBlur}
+        nsfwBlur = {$userSettings.nsfwBlur}
         link = {false}
         fullResolution = {true}
     />

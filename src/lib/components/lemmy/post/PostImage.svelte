@@ -48,7 +48,7 @@
                 srcset="{url}?format=webp"
                 media="(max-width: 1024px)"
             />
-            <!-- svelte-ignore a11y-missing-attribute -->
+
             <img
                 src="{src}"
                 loading="lazy"

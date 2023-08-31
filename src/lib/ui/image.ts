@@ -27,15 +27,15 @@ export const isYouTube = (url: string | undefined) => {
 export const postType = (post: object | undefined) => {
     if (!post) return false
     
-    if (isImage(post.post.url)) {
+    if (post.post.url && isImage(post.post.url)) {
         return "image"
     }
 
-    if (isVideo(post.post.url)) {
+    if (post.post.url && isVideo(post.post.url)) {
         return "video"
     }
 
-    if (isYouTube(post.post.url)) {
+    if (post.post.url && isYouTube(post.post.url)) {
         return "youtube"
     }
     
