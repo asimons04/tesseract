@@ -44,14 +44,14 @@
     }
 
     
-    // Invidious
+    // Invidious -- Merge with above and remove
     if (url.startsWith('https://vid.puffyan.us')) {
         embedURL = "https://vid.puffyan.us/embed";
         videoID = new URL(url).searchParams.get('v');
         embedURL += `/${videoID}`
     }
 
-    // Spotify
+    // Spotify -- Consider moving to dedicated component to better size the iframe
     // e.g. https://open.spotify.com/embed/track/2RUs0cO0KpvuZJ0J4hqFFC
     if (url.startsWith('https://open.spotify.com/embed')) {
         embedURL = url;

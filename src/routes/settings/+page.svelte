@@ -143,7 +143,14 @@
   
     <SectionTitle class="mt-4">Embedded Videos</SectionTitle>
     <Setting>
-        <span slot="description">Enables inline playing of embedded content. Also allows you to select which YouTube frontend to pull the embedded YT videos through.</span>
+        <span slot="description">
+            Enables inline playing of embedded content. Also allows you to select which YouTube frontend to pull 
+            the embedded YT videos through.  Note that Piped seems to be the slowest and doesn't work well
+            for embeds.  That is a work-in-progress.  
+
+            Invidious will also randomly select an instance from an internal list as to load-balance across
+            multiple instances.
+        </span>
         <div class="flex flex-wrap flex-row gap-4 w-full">
             <div class="max-w-full">
                 <span class="block my-1 font-bold">Enable Inline Player</span>
@@ -173,7 +180,7 @@
     <span
       class="flex gap-0 px-3 py-2 bg-slate-100 dark:bg-zinc-800 rounded-md w-max"
     >
-      Xylight
+      FlyingLemmy123
       <span class="opacity-50">@example.com</span>
     </span>
     <div class="flex flex-row flex-wrap items-center gap-4">
