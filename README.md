@@ -18,7 +18,7 @@ _ | _
 ## Roadmap / To Do List
 ### Infrastructure
 1. ~~Add missing route/logic for email verification tokens~~ Done!
-1. Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.
+1. ~Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.~
 1. Move Invidious instances from YouTube component to a system component
 1. Same as above but for Piped
 
