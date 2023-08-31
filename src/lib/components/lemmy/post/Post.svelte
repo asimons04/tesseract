@@ -125,8 +125,8 @@
         >
             <Markdown
                 inline
-                source={post.post.body.length > 720
-                    ? `${post.post.body.slice(0, 720)}...`
+                source={post.post.body.length > 350
+                    ? `${post.post.body.slice(0, 350)}...`
                     : post.post.body
                 }
             />
