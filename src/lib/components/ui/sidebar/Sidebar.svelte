@@ -8,6 +8,7 @@
         Home,
         Icon,
         InformationCircle,
+        Identification,
         UserGroup
     } from 'svelte-hero-icons'
     import Button from '../../input/Button.svelte'
@@ -117,6 +118,16 @@
         >
             <Icon mini src={ArrowLeftOnRectangle} size="18" />
             <span class:hidden={!$userSettings.expandSidebar}>Log in</span>
+        </Button>
+
+        <Button
+            class="hover:bg-slate-200 {$userSettings.expandSidebar ? '' : '!p-1.5'}"
+            href="/signup"
+            color="tertiary"
+            alignment="left"
+        >
+            <Icon mini src={Identification} size="18" title="Sign Up"/>
+            <span class:hidden={!$userSettings.expandSidebar}>Sign Up</span>
         </Button>
     {/if}
 </nav>
