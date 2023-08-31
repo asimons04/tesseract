@@ -10,14 +10,14 @@ The purpose is to make better use of the available space, leave less dead zones,
 These screenshots show some of the enhancements made to the upstream project. 
 _ | _ 
 ---|---
-![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-1.png) | ![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-3.png)
-![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-4.png) | ![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-5.png)
-![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-2.png) | 
+![YouTube videos playing inline](./screenshots/Tesseract-Screenshot-1.png) YouTube videos playing inline | ![Beehaw c/Music as it was meant to be](./screenshots/Tesseract-Screenshot-3.png) Beehaw c/Music as it was meant to be
+![Post view with comments and sidebars](./screenshots/Tesseract-Screenshot-4.png) Community sidebar added to post view.| ![Feed view with cards](./screenshots/Tesseract-Screenshot-5.png) Post cards are much more Reddit-like
+![Spotify Playlist Embed](./screenshots/Tesseract-Screenshot-2.png) Spotify playlist embedded| ![Desktop PWA](./screenshots/Tesseract-Screenshot-6.png) Running as a desktop PWA
 
 
 ## Roadmap / To Do List
 ### Infrastructure
-1. [ ] Add missing route/logic for email verification tokens~~ Done!
+1. [X] Add missing route/logic for email verification tokens 
 1. [X] Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.
     - Down to 337 MB!
 1. [ ] Move Invidious instances from YouTube component to a system component
@@ -40,8 +40,9 @@ _ | _
 
 ### Media Rendering
 1. [ ] Create dedicated Svelte component for Spotify embeds
+    -  The sizing and CSS for the YouTube iframe was designed for embedded content that is responsive and fills the viewport. Spotify's embed's unfortunately don't and they look ugly as hell. I believe they'll shrink but not expand beyond a certain point, so I think a dedicated component will solve that.
 1. [ ] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
-1. 
+1. [ ] Add support embedding Vevo videos
 
 ## Self-hosting
 Tesseract is designed to be self hosted.  There are currently no public instances available, but that may change in the future.
