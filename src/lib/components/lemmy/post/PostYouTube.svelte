@@ -8,9 +8,15 @@
     let embedURL:   string = ""
     let extraParams:string = ""
     let invidiousInstances = [
-        //'yewtu.be',
-        'vid.puffyan.us'
-
+        'yewtu.be',
+        'vid.puffyan.us',
+        'invidious.lunar.icu',
+        'invidious.privacydev.net',
+        'invidious.slipfox.xyz',
+        'inv.tux.pizza',
+        'invidious.io.lol',
+        'inv.makerlab.tech',
+        'inv.zzls.xyz'
     ]
     
     // Parse URLs to pick out video IDs to create embed URLs

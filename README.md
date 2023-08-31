@@ -1,19 +1,47 @@
-# Photon
+# Tesseract
 
-Jump to:
+Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and content.
 
-- [Self-hosting](#self-hosting)
-- [Public Instances](#public-instances)
+The purpose is to make better use of the available space, leave less dead zones, and allow inline playback of media URLs (YouTube, Spotify, etc).  
 
-An alternative web client for Lemmy with the UI of Xylo
+
 
 ## Screenshots
+These screenshots show some of the enhancements made to the upstream project. 
+_ | _ 
+---|---
+![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-1.png) | ![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-3.png)
+![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-4.png) | ![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-5.png)
+![Screenshot from 2023-08-31 16-20-07](./screenshots/Tesseract-Screenshot-2.png) | 
 
-![Screenshot from 2023-08-03 13-23-07](https://github.com/Xyphyn/photon/assets/80978739/16469b73-42f3-4fe3-9e60-5757a750d61e)
+
+## Roadmap / To Do List
+### Infrastructure
+1. ~~Add missing route/logic for email verification tokens~~ Done!
+1. Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.
+1. Move Invidious instances from YouTube component to a system component
+1. Same as above but for Piped
+
+
+### UI
+1. Add tabbed interface to Settings to de-clutter
+1. Combine some settings into same section (e.g display names and show instances)
+1. Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
+1. Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
+1. Completely remove the random placeholders 
+1. Make open/close sidebar button sticky (and possibly move it into the bar itself)
+1. Choose a vote button style and commit; remove unused option and its supporting code
+1. Add option to open links in new tab/window
+
+
+### Media Rendering
+1. Create dedicated Svelte component for Spotify embeds
+1. Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
+1. 
 
 ## Self-hosting
+Tesseract is designed to be self hosted.  There are currently no public instances available, but that may change in the future.
 
-Put Photon on your own domain for easier onboarding.
 
 ### Running from image
 
