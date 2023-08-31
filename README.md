@@ -33,6 +33,9 @@ _ | _
 1. Choose a vote button style and commit; remove unused option and its supporting code
 1. Add option to open links in new tab/window
 
+### Modlog
+1. Enhance filtering beyond just community
+1. Collapse sidebar automatically when viewing in table view
 
 ### Media Rendering
 1. Create dedicated Svelte component for Spotify embeds
@@ -44,32 +47,10 @@ Tesseract is designed to be self hosted.  There are currently no public instance
 
 
 ### Running from image
-
-```sh
-# Use the env var PUBLIC_INSTANCE_URL to set the default instance URL.
-docker run -p 8080:3000 -e PUBLIC_INSTANCE_URL=example.com ghcr.io/xyphyn/photon:latest
-```
-
-### Running from repo
-
-**More unstable but latest features**
-
-Clone the repo:
-
-```sh
-git clone https://github.com/Xyphyn/photon && cd photon
-```
-
-and run the docker container:
-
-```sh
-docker build -t photon .
-
-# Use the env var PUBLIC_INSTANCE_URL to set the default instance URL.
-docker run -p 8080:3000 -it photon:latest
-```
-
-There you go, you now have an instance of Photon running.
+No Docker images exist yet. Build from source and then run.  Example here uses `docker run` but it would make more sense in production to move that to a docker-compose file.
+1. Clone the repo from a release branch
+2. docker build -t photon:latest ./
+3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com photon:latest`
 
 ### Configuring default settings
 
@@ -99,11 +80,11 @@ The following environment variables can be set to override the default settings:
 | PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
 | PUBLIC_NEW_VOTE_BUTTONS         | `bool`              | false                                  |
 | PUBLIC_RANDOM_PLACEHOLDERS      | `bool`              | true                                   |
+| PUBLIC_ENABLE_EMBEDS            | `bool`              | true                                   |
 
-The values for `SortType`, `ListingType`, and `CommentSortType` are defined by the lemmy-js-client library.
+The values for `SortType`, `ListingType`, and `CommentSortType` are defined by the lemmy-js-client library.  All of the values are case-sensitive and must match as they are defined in the type definitions of the [lemmy-js-client](https://github.com/LemmyNet/lemmy-js-client)
 
 #### Listing Type
-
 https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/ListingType.ts
 
 - All
@@ -112,9 +93,6 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/ListingType.ts
 - Moderator View (not implemented in Photon)
 
 #### Sort Type
-
-(case sensitive)
-
 https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/SortType.ts
 
 - Active
@@ -136,27 +114,16 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/SortType.ts
 - TopYear (Not implemented in Photon)
 
 #### Comment Sort Type
-
 https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/CommentSortType.ts
-values:
-
 - Hot
 - Top
 - New
 - Old (not implemented in Photon)
 - Controversial (not implemented in Photon)
 
-## Public Instances
 
-Want your instance added here? Make a GitHub issue or make a PR! (this is for general purpose Photon instances.)
-
-| Instance                                | Location     | Contact                                       |
-| --------------------------------------- | ------------ | --------------------------------------------- |
-| [phtn.app](https://phtn.app)            | 🇺🇸 US West   | [photon@phtn.app](photon@phtn.app)            |
-| [ph.openxng.com](https://ph.opnxng.com) | 🇸🇬 Singapore | [about.openxng.com](https://about.opnxng.com) |
 
 ## Donate
-
-You can donate at [Buy me a Coffee](https://buymeacoffee.com/xylight)
+Donate to Xylight, not me.  It's their baby, and I'm just building on top of it. You can donate at [Buy me a Coffee](https://buymeacoffee.com/xylight)
 
 <a href="https://www.buymeacoffee.com/xylight"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=xylight&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" /></a>
