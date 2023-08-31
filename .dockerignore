@@ -10,3 +10,7 @@ docker-compose.yml
 public
 .svelte-kit
 build
+screenshots
+tests
+shell.nix
+vercel.json
