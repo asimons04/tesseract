@@ -52,6 +52,7 @@ interface Settings {
   debugInfo: boolean
   systemUI: boolean
   showEmbeds: boolean
+  youtubeFrontend: 'YouTube' | 'Invidious' | 'Piped'
 }
 
 export const defaultSettings: Settings = {
@@ -92,6 +93,7 @@ export const defaultSettings: Settings = {
   debugInfo: false,
   systemUI: true,
   showEmbeds: toBool(env.PUBLIC_SHOW_EMBEDS) ?? true,
+  youtubeFrontend: env.PUBLIC_YOUTUBE_FRONTEND ?? 'YouTube'
 }
 
 export const userSettings = writable(defaultSettings)

@@ -140,12 +140,31 @@
     <span slot="description">Alternate vote design</span>
   </Setting>
 
-  <Setting>
-    <Checkbox bind:checked={$userSettings.showEmbeds} slot="title">
-      Enable Embedded Content
-    </Checkbox>
-    <span slot="description">Enables embedded content from Youtube, Spotify, Invidious, etc</span>
-  </Setting>
+  
+    <SectionTitle class="mt-4">Embedded Videos</SectionTitle>
+    <Setting>
+        <span slot="description">Enables inline playing of embedded content. Also allows you to select which YouTube frontend to pull the embedded YT videos through.</span>
+        <div class="flex flex-wrap flex-row gap-4 w-full">
+            <div class="max-w-full">
+                <span class="block my-1 font-bold">Enable Inline Player</span>
+                <Checkbox bind:checked={$userSettings.showEmbeds} slot="title">
+                    Enable embedded content
+                </Checkbox>
+            </div>
+
+            <div class="max-w-full">
+                <span class="block my-1 font-bold">Youtube Frontend</span>
+                <MultiSelect
+                    options={['YouTube', 'Piped', 'Invidious']}
+                    bind:selected={$userSettings.youtubeFrontend}
+                />
+            </div>
+        </div>
+    </Setting>
+
+
+
+
 
   <SectionTitle class="mt-4">Instances</SectionTitle>
   <Setting>

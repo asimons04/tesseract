@@ -5,22 +5,41 @@
     export let url: string
 
     let videoID:    string | null | undefined
-    let embedURL:   string
+    let embedURL:   string = ""
     let extraParams:string = ""
+    let invidiousInstances = [
+        'yewtu.be',
+        'vid.puffyan.us'
+
+    ]
     
     // Parse URLs to pick out video IDs to create embed URLs
     // YouTube
     if (
         url.startsWith('https://youtu.be') || 
         url.startsWith('https://www.youtube.com') || 
-        url.startsWith('https://youtube.com')
+        url.startsWith('https://youtube.com') ||
+        url.startsWith('https://yewtu.be')
     ) {
         videoID = new URL(url).pathname.replace('/','')
-        embedURL = "https://www.youtube-nocookie.com/embed";
-        
         if (videoID == "watch") {
             videoID = new URL(url).searchParams.get('v');
         }
+        
+        if ($userSettings.youtubeFrontend == "YouTube") {
+            embedURL = "https://www.youtube-nocookie.com/embed";
+        }
+        
+        if ($userSettings.youtubeFrontend == "Piped") {
+            embedURL = "https://piped.video/embed";
+        }
+
+        if ($userSettings.youtubeFrontend == "Invidious") {
+            let random: number = Math.floor(Math.random() * invidiousInstances.length);
+            let invidiousInstance = invidiousInstances[random];
+            embedURL = `https://${invidiousInstance}/embed`;
+        }
+      
         embedURL += `/${videoID}`
     }
 

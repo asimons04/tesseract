@@ -18,7 +18,8 @@ export const isYouTube = (url: string | undefined) => {
         url.includes('youtube.com') || 
         url.includes('youtu.be') ||
         url.includes('vid.puffyan.us') ||
-        url.includes('open.spotify.com')
+        url.includes('open.spotify.com') ||
+        url.includes('yewtu.be')
     )
 }
 
