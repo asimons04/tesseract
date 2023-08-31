@@ -87,6 +87,6 @@
   }
 
   .markdown :global(p) {
-    @apply leading-[1.5] max-w-3xl;
+    @apply leading-6 mb-2 max-w-full;
   }
 </style>

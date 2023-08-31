@@ -61,17 +61,6 @@
             <span class="opacity-30 text-xl">/</span>
             <div class="text-sm font-bold inline-flex flex-col">
               <span>{$site.site_view.site.name}</span>
-              <span
-                class="font-normal text-xs flex items-center gap-1 text-slate-600 dark:text-zinc-400"
-              >
-                Powered by <Link
-                  href="https://github.com/Xyphyn/photon"
-                  highlight={false}
-                  class="font-bold flex items-center gap-0.5 hover:underline text-black dark:text-white"
-                >
-                  <Logo width={12} /> Photon
-                </Link>
-              </span>
             </div>
           </div>
         {:else}
