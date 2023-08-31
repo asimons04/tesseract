@@ -14,8 +14,8 @@ export default defineConfig({
         navigateFallback: '/',
       },
       manifest: {
-        name: 'Dilithium for Lemmy',
-        short_name: 'Dilithium',
+        name: 'Tesseract for Lemmy',
+        short_name: 'Tesseract',
         description: 'A Lemmy client designed with rich media in mind.',
         theme_color: '#000000',
         display: 'standalone',

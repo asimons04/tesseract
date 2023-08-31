@@ -24,7 +24,7 @@
 </script>
 
 <svelte:head>
-  <title>Photon</title>
+  <title>Tesseract</title>
 </svelte:head>
 
 <Modal bind:open={sidebar}>

@@ -1,6 +1,6 @@
 {
-  "short_name": "Photon",
-  "name": "Photon for Lemmy",
+  "short_name": "Tesseract",
+  "name": "Tesseract for Lemmy",
   "start_url": "/",
   "icons": [
     {
@@ -20,5 +20,5 @@
   "display": "standalone",
   "scope": "/",
   "theme_color": "#000000",
-  "description": "A sleek client for Lemmy."
+  "description": "A Lemmy client designed with rich media in mind."
 }
