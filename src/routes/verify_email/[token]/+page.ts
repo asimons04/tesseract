@@ -1,7 +1,6 @@
 import { getClient, getInstance } from '$lib/lemmy.js'
 
 export async function load({ params, fetch }) {
-    //const site = await getClient(params.instance, fetch).getSite()
     const instance = getInstance();
     const token:String = params.token;
     const result = {

@@ -1,17 +1,8 @@
 <script lang="ts">
-    import Button from '$lib/components/input/Button.svelte'
-    import { page } from '$app/stores'
     import { goto } from '$app/navigation'
-    import { getClient, getInstance } from '$lib/lemmy.js'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
     export let data;
     
-    
-    console.log(data);
-    
-
     if (!data) {
         toast({
             content: "Something went wrong with the API call",
@@ -31,8 +22,8 @@
         toast({
                 content: `${data.message}`,
                 type: 'error',
-            });
-            goto('/');
+        });
+        goto('/');
     }
     
 </script>

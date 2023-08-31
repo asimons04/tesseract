@@ -14,9 +14,9 @@ export default defineConfig({
         navigateFallback: '/',
       },
       manifest: {
-        name: 'Photon for Lemmy',
-        short_name: 'Photon',
-        description: 'A lemmy client with a sleek design',
+        name: 'Dilithium for Lemmy',
+        short_name: 'Dilithium',
+        description: 'A Lemmy client designed with rich media in mind.',
         theme_color: '#000000',
         display: 'standalone',
         icons: [
