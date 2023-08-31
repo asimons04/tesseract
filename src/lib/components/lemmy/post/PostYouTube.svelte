@@ -8,7 +8,7 @@
     let embedURL:   string = ""
     let extraParams:string = ""
     let invidiousInstances = [
-        'yewtu.be',
+        //'yewtu.be',
         'vid.puffyan.us'
 
     ]
