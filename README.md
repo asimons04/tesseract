@@ -17,29 +17,30 @@ _ | _
 
 ## Roadmap / To Do List
 ### Infrastructure
-1. ~~Add missing route/logic for email verification tokens~~ Done!
-1. ~Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.~
-1. Move Invidious instances from YouTube component to a system component
-1. Same as above but for Piped
+1. [ ] Add missing route/logic for email verification tokens~~ Done!
+1. [X] Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.
+    - Down to 337 MB!
+1. [ ] Move Invidious instances from YouTube component to a system component
+1. [ ] Same as above but for Piped
 
 
 ### UI
-1. Add tabbed interface to Settings to de-clutter
-1. Combine some settings into same section (e.g display names and show instances)
-1. Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
-1. Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
-1. Completely remove the random placeholders 
-1. Make open/close sidebar button sticky (and possibly move it into the bar itself)
-1. Choose a vote button style and commit; remove unused option and its supporting code
-1. Add option to open links in new tab/window
+1. [ ] Add tabbed interface to Settings to de-clutter
+1. [ ] Combine some settings into same section (e.g display names and show instances)
+1. [ ] Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
+1. [ ] Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
+1. [ ] Completely remove the random placeholders 
+1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
+1. [ ] Choose a vote button style and commit; remove unused option and its supporting code
+1. [ ] Add option to open links in new tab/window
 
 ### Modlog
-1. Enhance filtering beyond just community
-1. Collapse sidebar automatically when viewing in table view
+1. [ ] Enhance filtering beyond just community
+1. [ ] Collapse sidebar automatically when viewing in table view
 
 ### Media Rendering
-1. Create dedicated Svelte component for Spotify embeds
-1. Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
+1. [ ] Create dedicated Svelte component for Spotify embeds
+1. [ ] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
 1. 
 
 ## Self-hosting
