@@ -30,13 +30,17 @@
     import Link from '$lib/components/input/Link.svelte'
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
     import { userSettings } from '$lib/settings.js'
+    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
 
     export let data
-    //setSessionStorage('lastSeenCommunity', { id: community.id, name: `${community.name}@${new URL(community.actor\_id).hostname}` })
+    
     
     let post = data.post
     let pType:string = postType(post.post_view)
-
+    
+    let community = data.post.community_view.community;
+    setSessionStorage('lastSeenCommunity', { id: community.id, name: `${community.name}@${new URL(community.actor_id).hostname}` })
+    
     onMount(async () => {
         if (!post.post_view.read && $profile?.jwt) {
             getClient().markPostAsRead({

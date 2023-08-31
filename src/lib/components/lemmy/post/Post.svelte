@@ -52,15 +52,14 @@
         {#if $userSettings.showCompactPosts && (post.post.thumbnail_url || isImage(post.post.url))}
         <div class="flex-none w-24 h-24">
             <a href="/post/{getInstance()}/{post.post.id}">
+                <!--- Evaluate if these are redundant/pointless --->
                 {#if post.post.thumbnail_url}
-                    <!-- svelte-ignore a11y-missing-attribute -->
                     <img
                         src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
                         loading="lazy"
                         class="object-cover bg-slate-100 rounded-md h-24 w-24 border border-slate-200 dark:border-zinc-700"
                     />
                 {:else}
-                    <!-- svelte-ignore a11y-missing-attribute -->
                     <img
                         src="{post.post.url}?thumbnail=256&format=webp"
                         loading="lazy"
@@ -74,7 +73,6 @@
   
     {#if !$userSettings.showCompactPosts}
         <!--- Link-style post without thumbnail URL--->
-        <!--{#if post.post.url && !post.post.thumbnail_url && ! isYouTube(post.post.url)}-->
         {#if postType(post) == "link"}
         <a
             href={post.post.url}
@@ -93,7 +91,7 @@
             id = {post.post.id}
             nsfw = {post.post.nsfw}
             nsfwBlur = {userSettings.nsfwBlur}
-            link = true
+            link = {true}
         />
         {/if}
         
@@ -127,8 +125,8 @@
         >
             <Markdown
                 inline
-                source={post.post.body.length > 350
-                    ? `${post.post.body.slice(0, 350)}...`
+                source={post.post.body.length > 720
+                    ? `${post.post.body.slice(0, 720)}...`
                     : post.post.body
                 }
             />
