@@ -13,10 +13,14 @@ tesseract              010c0f9a8fdc   33 seconds ago   337MB
 ghcr.io/xyphyn/photon  bf93f0193414   24 hours ago     1.35GB
 ```
 
-- Removed `/cors/{instance]` path on upload image handler since it is not needed when operating at same domain as Lemmy BE
+- Removed `/cors/{instance]` path on upload image handler since it is not needed when operating at same domain as Lemmy BE. This probably broke non-instance specific usage, so probably need to define that via server setting.
 
 - Added additional Invidious instances to select as YouTube frontends.
   - To do: Move those to a settings dropdown and allow user to select one instead of choosing them at random.
 
+- Added initial support for user-defined "open in new tab" behavior. Default setting has been established, env var support for setting default, and user settings panel added.  `Link` component now has additional attributes:  `title` for setting tooltips and `target` for determing `_self` (default) or `_blank`.
+  - To do:  Update instances of `Link` where appropriate to adhere to the user's preference.
+
+- Redesigned the layout of the Settings page. Removed UI toggles for features I'm planning to remove (specifically, "random placeholders" 
 
 
