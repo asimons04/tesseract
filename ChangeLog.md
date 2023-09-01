@@ -51,4 +51,6 @@ ghcr.io/xyphyn/photon  bf93f0193414   24 hours ago     1.35GB
 
 - Redesigned the layout of the Settings page. Removed UI toggles for features I'm planning to remove.
 
+- Added community sidebar to post view.
+
 
