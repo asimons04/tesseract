@@ -97,9 +97,8 @@
                 <span slot="title">Post and User Display Options</span>
                 <span slot="description">Toggle various options for how posts, comments, and usernames are displayed.</span>
                 
-                <div class="flex flex-wrap flex-row gap-2 w-full">
-                    
-                    <div class="w-1/3">
+                <div class="flex flex-wrap gap-4 flex-row w-full">
+                    <div class="max-w-full">
                         <Setting>
                             <span slot="title">Post Display Options</span>
                             <span slot="description">
@@ -113,6 +112,7 @@
                             <Checkbox bind:checked={$userSettings.revertColors}>        Invert Vote Colors (orange upvote, blue downvote)</Checkbox>
                             <Checkbox bind:checked={$userSettings.nsfwBlur}>            Blur NSFW Images</Checkbox>
                             <Checkbox bind:checked={$userSettings.newVote}>             Use New Vote Design</Checkbox>
+                            <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
 
                             <hr class="mt-4"/>
                             <p>
@@ -124,7 +124,7 @@
                     </div>
                     
                     
-                    <div class="w-1/3">
+                    <div class="max-w-full">
                         <Setting>
                             <span slot="title">User/Community Display Options</span>
                             <span slot="description">
@@ -135,11 +135,24 @@
                             <Checkbox bind:checked={$userSettings.showInstances.user}>Show user's instances</Checkbox>
                             <Checkbox bind:checked={$userSettings.showInstances.comments}>Show user's instances in the comments.</Checkbox>
                             <Checkbox bind:checked={$userSettings.showInstances.community}>Show the instance communities belong to.</Checkbox>
-                            
+                        </Setting>
+
+                        <Setting>
+                            <span slot="title">Misc Options</span>
+                            <span slot="description">
+                                Miscellaneous options 
+                            </span>
+
+                            <span class="block my-1 font-bold">UI Font</span>
+                            <MultiSelect
+                                options={[true, false]}
+                                optionNames={['System UI', 'Browser Font']}
+                                bind:selected={$userSettings.systemUI}
+                            />
                         </Setting>
                     </div>
 
-                    <div class="w-1/3">
+                    <div class="max-w-full">
                         <Setting>
                             <span slot="title">Embedded Content</span>
                             <span slot="description">
@@ -156,6 +169,9 @@
                             />
                         </Setting>
                     </div>
+                    
+                    
+                    
 
                         
                     
@@ -176,57 +192,48 @@
         <span slot="title">Removal reply preset</span>
         <span slot="description">
             <p>The preset to use for "Reply reason" in a submission removal.</p>
-            <ul class="leading-6">
-                <li>Syntax:</li>
-                <li>
-                    <code>{'{{reason}}'}</code>: The provided reason
-                </li>
+            
+            <div class="flex flex-row gap-4 w-full mt-5">
+                <div class="max-w-[33%]">
+                    <ul class="leading-6">
+                        <li class="font-bold">Syntax:</li>
+                        <li>
+                            <code>{'{{reason}}'}</code>: The provided reason
+                        </li>
 
-                <li>
-                    <code>{'{{post}}'}</code>: The title of the post
-                </li>
+                        <li>
+                            <code>{'{{post}}'}</code>: The title of the post
+                        </li>
 
-                <li>
-                    <code>{'{{community}}'}</code>: The community the submission was removed in.
-                </li>
+                        <li>
+                            <code>{'{{community}}'}</code>: The community the submission was removed in.
+                        </li>
 
-                <li>
-                    <code>{'{{username}}'}</code>: The username of the creator of the submission.
-                </li>
-            </ul>
+                        <li>
+                            <code>{'{{username}}'}</code>: The username of the creator of the submission.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="max-w-[66%]">
+                    <MarkdownEditor
+                        bind:value={$userSettings.moderation.removalReasonPreset}
+                        images={false}
+                        previewButton
+                        beforePreview={(input) =>
+                            removalTemplate(input, {
+                                postTitle: '<Example post>',
+                                communityLink: '[!community@example.com]()',
+                                reason: '<Being a meanie>',
+                                username: '@Bob',
+                            })
+                        }
+                    />
+                </div>
+            </div>
         </span>
         
-        <MarkdownEditor
-            bind:value={$userSettings.moderation.removalReasonPreset}
-            images={false}
-            previewButton
-            beforePreview={(input) =>
-                removalTemplate(input, {
-                    postTitle: '<Example post>',
-                    communityLink: '[!community@example.com]()',
-                    reason: '<Being a meanie>',
-                    username: '@Bob',
-                })
-            }
-        />
+        
     </Setting>
-
-  <SectionTitle class="mt-4">Other</SectionTitle>
-  <Setting>
-    <span slot="title">Font</span>
-    <span slot="description">What font Photon should use.</span>
-    <MultiSelect
-      options={[true, false]}
-      optionNames={['System UI', 'Browser Font']}
-      bind:selected={$userSettings.systemUI}
-    />
-  </Setting>
-  <Setting>
-    <Checkbox bind:checked={$userSettings.debugInfo} slot="title">
-      Debug Info
-    </Checkbox>
-    <span slot="description">
-      Show an option to show debug information. (in posts and such)
-    </span>
-  </Setting>
+ 
 </div>
