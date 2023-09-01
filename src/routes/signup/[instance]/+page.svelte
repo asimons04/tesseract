@@ -112,13 +112,11 @@
       label="Email"
       required={data.site_view.local_site.require_email_verification}
       type="email"
-      placeholder="nigerianprince@notascam.com"
     />
     <TextInput
       bind:value={username}
       label="Username"
       required
-      placeholder="BobTheDestroyer"
     />
     <TextInput
       bind:value={password}
@@ -147,7 +145,6 @@
       <TextArea
         label="Application"
         required
-        placeholder="i like this instance's icon "
         bind:value={application}
       />
     {/if}
@@ -183,7 +180,6 @@
           <TextInput
             required
             bind:value={verifyCaptcha}
-            placeholder="i guess i'm a robot"
           />
         </div>
       </div>
