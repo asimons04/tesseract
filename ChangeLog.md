@@ -20,6 +20,7 @@
 
 - Adding "Moderating" and "Subscribed" headings to community lists in sidebar.  Made them collapsible.
 
+- Decreased maximum width of sidebar from 25% to 20%
 
 
 
