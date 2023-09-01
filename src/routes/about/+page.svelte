@@ -36,6 +36,7 @@
         <li>Inline media players for Youtube and Spotify (more coming eventually)</li>
         <li>More focus on images in feed and post view.</li>
         <li>A more "new" Reddit-like look and feel</li>
+        <li>For a full list, please see the <Link href="https://github.com/asimons04/Tesseract/blob/main/ChangeLog.md" newtab={true} title="ChangeLog.md" highlight>change log</Link>.</li>
     </ul>
 
     <h2 class="text-2xl font-bold leading-8">Roadmap</h2>
