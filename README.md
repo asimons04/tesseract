@@ -44,8 +44,8 @@ Tesseract is designed to be self hosted.  There are currently no public instance
 ### Running from image
 No Docker images exist yet. Build from source and then run.  Example here uses `docker run` but it would make more sense in production to move that to a docker-compose file.
 1. Clone the repo from a release branch
-2. docker build -t photon:latest ./
-3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com photon:latest`
+2. docker build -t tesseract:latest ./
+3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com tesseract:latest`
 
 ### Configuring default settings
 
@@ -102,19 +102,19 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/SortType.ts
 - NewComments
 - TopHour
 - TopSixHour
-- TopTwelveHour (Not implemented in Photon)
-- TopThreeMonths (Not implemented in Photon)
-- TopSixMonths (Not implemented in Photon)
-- TopNineMonths (Not implemented in Photon)
-- TopYear (Not implemented in Photon)
+- TopTwelveHour (Not implemented in Tesseract)
+- TopThreeMonths (Not implemented in Tesseract)
+- TopSixMonths (Not implemented in Tesseract)
+- TopNineMonths (Not implemented in Tesseract)
+- TopYear (Not implemented in Tesseract)
 
 #### Comment Sort Type
 https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/CommentSortType.ts
 - Hot
 - Top
 - New
-- Old (not implemented in Photon)
-- Controversial (not implemented in Photon)
+- Old (not implemented in Tesseract)
+- Controversial (not implemented in Tesseract)
 
 ## Screenshots
 These screenshots show some of the enhancements made to the upstream project. 
