@@ -106,6 +106,7 @@
       <Icon src={BugAnt} mini size="16" slot="icon" />
     </Button>
   {/if}
+  
   {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
     <ModerationMenu bind:item={post} community={post.community} />
   {/if}

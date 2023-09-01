@@ -18,6 +18,8 @@
 
 - Removed max-w-full from comment container in components/lemmy/comment/Comment.svelte to keep community sidebar from overflowing sometimes.
 
+- Adding "Moderating" and "Subscribed" headings to community lists in sidebar.  Made them collapsible.
+
 
 
 

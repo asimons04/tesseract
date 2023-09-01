@@ -3,12 +3,15 @@
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
         ChevronDoubleLeft,
+        ChevronDoubleDown,
         Cog6Tooth,
         GlobeAlt,
         Home,
         Icon,
         InformationCircle,
         Identification,
+        Minus,
+        Plus,
         UserGroup
     } from 'svelte-hero-icons'
     import Button from '../../input/Button.svelte'
@@ -19,6 +22,13 @@
     import ProfileButton from '$lib/components/ui/sidebar/ProfileButton.svelte'
     import { flip } from 'svelte/animate'
     import { expoOut } from 'svelte/easing'
+
+    export let expanded = {
+        moderating: true,
+        subscribed: true
+    };
+    
+
 </script>
 
 <nav
@@ -64,13 +74,19 @@
         <span class:hidden={!$userSettings.expandSidebar}>Settings</span>
     </SidebarButton>
 
+    <!---Communities--->
+    <SidebarButton href="/communities" expanded={$userSettings.expandSidebar}>
+        <Icon src={GlobeAlt} mini size="18" title="Communities" />
+        <span class:hidden={!$userSettings.expandSidebar}>Communities</span>
+    </SidebarButton>
+
     <!---About--->
     <SidebarButton href="/about" expanded={$userSettings.expandSidebar}>
         <Icon src={InformationCircle} mini size="18" title="About"/>
         <span class:hidden={!$userSettings.expandSidebar}>About</span>
     </SidebarButton>
 
-
+    <!--- Account Selector --->
     {#if $profileData.profiles.length >= 1}
         <hr class="border-slate-300 dark:border-zinc-800 my-1" />
         {#each $profileData.profiles as prof, index (prof.id)}
@@ -83,32 +99,79 @@
             <span class:hidden={!$userSettings.expandSidebar}>Accounts</span>
         </SidebarButton>
     {/if}
+        
 
 
-    <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+    
+    
     {#if $profile?.user}
+        <!--- Moderating --->
         {#if $profile?.user.moderates.length > 0}
+            
+            <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.expandSidebar && !expanded.moderating} />
+            <h1 class="flex flex-row text-base font-bold justify-between" class:hidden={!$userSettings.expandSidebar} >
+                <span>Moderating ({$profile?.user.moderates.length})</span>
+                <Button
+                    on:click={() =>
+                        (expanded.moderating = !expanded.moderating)
+                    }
+                    class="!p-2 hover:bg-slate-200"
+                    aria-label="Collapse sidebar"
+                    title="Collapse my communities"
+                >
+                    <Icon
+                        src={ChevronDoubleDown}
+                        mini
+                        size="16"
+                        class="transition-transform {expanded.moderating
+                            ? 'rotate-180'
+                            : ''}"
+                        title="Toggle My Communities"
+                    />
+                </Button>
+            </h1>   
+
             <CommunityList
                 expanded={$userSettings.expandSidebar}
                 items={$profile.user.moderates.map((i) => i.community)}
+                hidden={!expanded.moderating}
             />
-            <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+           
         {/if}
-
+        
+        <!--- Subscribed Community List --->
+        <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.expandSidebar && !expanded.subscribed}/>
+        <h1 class="flex flex-row text-base font-bold justify-between" class:hidden={!$userSettings.expandSidebar} >
+                
+            <span>Subscribed ({$profile?.user.follows.length})</span>
+        
+            <Button
+                on:click={() =>
+                    (expanded.subscribed = !expanded.subscribed)
+                }
+                class="!p-2 hover:bg-slate-200"
+                aria-label="Collapse sidebar"
+                title="Collapse my communities"
+            >
+                <Icon
+                    src={ChevronDoubleDown}
+                    mini
+                    size="16"
+                    class="transition-transform {expanded.subscribed
+                        ? 'rotate-180'
+                        : ''}"
+                    title="Toggle My Communities"
+                />
+            </Button>
+        </h1>
+        
         <CommunityList
             expanded={$userSettings.expandSidebar}
             items={$profile.user.follows.map((i) => i.community)}
+            hidden={!expanded.subscribed}
         />
 
-        <Button
-            class="hover:bg-slate-200 {$userSettings.expandSidebar ? '' : '!p-1.5'}"
-            href="/communities"
-            color="tertiary"
-            alignment="left"
-        >
-            <Icon mini src={GlobeAlt} size="18" />
-            <span class:hidden={!$userSettings.expandSidebar}>Communities</span>
-        </Button>
+        
     {:else}
         <Button
             class="hover:bg-slate-200 {$userSettings.expandSidebar ? '' : '!p-1.5'}"

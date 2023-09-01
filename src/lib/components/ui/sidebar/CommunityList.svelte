@@ -4,17 +4,20 @@
   import type { Community } from 'lemmy-js-client'
   import { flip } from 'svelte/animate'
   import { expoOut } from 'svelte/easing'
-  import { slide } from 'svelte/transition'
+  import { slide, fade } from 'svelte/transition'
 
   export let items: Community[]
   export let expanded: boolean
+  export let hidden: boolean
 </script>
 
 {#each items.sort( (a, b) => a.title.localeCompare(b.title) ) as follow (follow.id)}
   <div
     class="inline-flex w-full"
-    animate:flip={{ duration: 500, easing: expoOut }}
+    class:hidden={hidden}
+    animate:fade={{ duration: 250, easing: expoOut }}
   >
+  
     <Button
       class="hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
       color="tertiary"

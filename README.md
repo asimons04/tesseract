@@ -14,20 +14,22 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Move Invidious instances from YouTube component to a system setting
 1. [ ] Same as above but for Piped
 1. [ ] Move is[Image|Video|YouTube] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
+1. [ ] Consider a complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
 
 ### UI
 1. [X] Add tabbed interface to Settings to de-clutter
     - Tabling this for now. Reorganized the settings page to make it more compact and removed some options I've defaulted off and plan to remove.
 1. [X] Combine some settings into same section (e.g display names and show instances)
-1. [ ] Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
-1. [ ] Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
+1. [X] Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
+1. [X] Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
 1. [X] Completely remove the random placeholders 
 1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
 1. [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 1. [ ] Add option to open links in new tab/window
     - WIP:  Added preliminary support by adding additional attributes to the `Link` component. Added target and title attributes. Added settings option and defaults to enable instances of `Link` to take the user's preferred same/new tab setting into account.
 1. [ ] Add option to hide deleted comments and logic to implement that
+1. [ ] Community Discovery:  Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
 
 ### Modlog
 1. [ ] Enhance filtering beyond just community
