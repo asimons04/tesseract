@@ -8,6 +8,7 @@
 - Considering rebranding again from Tesseract to Tachyon to reflect the project's *Photon*ic legacy.
 
 - Added action buttons above posts to return to the feed and reload the comments
+  - To do:  Check `history.length` to conditionally hide the "back to feed" button if less than 2. No need to have that button if post was opened in new tab (either explicitly or when "open posts in new tab" feature is finalized.
 
 - Added tooltip support to buttons. Added tooltips to post action buttons.
 
@@ -15,7 +16,9 @@
 
 - Increased modal size to 4xl
 
-- Decreased comment width slightly in components/lemmy/comment/Comment.svelte
+- Removed max-w-full from comment container in components/lemmy/comment/Comment.svelte to keep community sidebar from overflowing sometimes.
+
+
 
 
 
@@ -43,6 +46,6 @@ ghcr.io/xyphyn/photon  bf93f0193414   24 hours ago     1.35GB
 - Added initial support for user-defined "open in new tab" behavior. Default setting has been established, env var support for setting default, and user settings panel added.  `Link` component now has additional attributes:  `title` for setting tooltips and `target` for determing `_self` (default) or `_blank`.
   - To do:  Update instances of `Link` where appropriate to adhere to the user's preference.
 
-- Redesigned the layout of the Settings page. Removed UI toggles for features I'm planning to remove (specifically, "random placeholders" 
+- Redesigned the layout of the Settings page. Removed UI toggles for features I'm planning to remove.
 
 

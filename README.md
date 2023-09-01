@@ -27,6 +27,7 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 1. [ ] Add option to open links in new tab/window
     - WIP:  Added preliminary support by adding additional attributes to the `Link` component. Added target and title attributes. Added settings option and defaults to enable instances of `Link` to take the user's preferred same/new tab setting into account.
+1. [ ] Add option to hide deleted comments and logic to implement that
 
 ### Modlog
 1. [ ] Enhance filtering beyond just community
