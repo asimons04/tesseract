@@ -51,7 +51,6 @@ interface Settings {
     posts: boolean,
   },
   newVote: boolean
-  randomPlaceholders: boolean
   modlogCardView: boolean | undefined
   debugInfo: boolean
   systemUI: boolean
@@ -96,7 +95,6 @@ export const defaultSettings: Settings = {
     posts: toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB) ?? false,
   },
   newVote: toBool(env.PUBLIC_NEW_VOTE_BUTTONS) ?? false,
-  randomPlaceholders: toBool(env.PUBLIC_RANDOM_PLACEHOLDERS) ?? true,
   modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW) ?? undefined,
   debugInfo: false,
   systemUI: true,

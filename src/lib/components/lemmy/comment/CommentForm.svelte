@@ -10,7 +10,6 @@
   import { profile } from '$lib/auth.js'
   import { toast } from '$lib/components/ui/toasts/toasts.js'
   import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-  import { placeholders } from '$lib/util.js'
 
   export let postId: number
   export let parentId: number | undefined = undefined
@@ -71,7 +70,7 @@
       rows={7}
       placeholder={locked
         ? 'This post is locked.'
-        : placeholders.get('comment')}
+        : ''}
       bind:value
       disabled={locked || loading}
       on:confirm={submit}

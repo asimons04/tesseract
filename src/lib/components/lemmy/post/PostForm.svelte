@@ -11,7 +11,6 @@
   import { Check, Icon, Photo } from 'svelte-hero-icons'
   import { profile } from '$lib/auth.js'
   import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-  import { placeholders } from '$lib/util.js'
   import Checkbox from '$lib/components/input/Checkbox.svelte'
   import { getSessionStorage, setSessionStorage } from '$lib/session.js'
   import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -208,13 +207,11 @@
     required
     label="Title"
     bind:value={data.title}
-    placeholder={placeholders.get('post')}
   />
   <div class="flex gap-2 w-full items-end">
     <TextInput
       label="URL"
       bind:value={data.url}
-      placeholder={placeholders.get('url')}
       class="w-full"
     />
     <Button
@@ -229,7 +226,6 @@
     rows={8}
     label="Body"
     bind:value={data.body}
-    placeholder={placeholders.get('post')}
     previewButton
   />
   <Checkbox bind:checked={data.nsfw}>NSFW</Checkbox>

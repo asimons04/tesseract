@@ -180,7 +180,7 @@
             <p>The preset to use for "Reply reason" in a submission removal.</p>
             
             <div class="flex flex-row gap-4 w-full mt-5">
-                <div class="max-w-[33%]">
+                <div class="w-[33%]">
                     <ul class="leading-6">
                         <li class="font-bold">Syntax:</li>
                         <li>
@@ -201,7 +201,7 @@
                     </ul>
                 </div>
 
-                <div class="max-w-[66%]">
+                <div class="w-[66%]">
                     <MarkdownEditor
                         bind:value={$userSettings.moderation.removalReasonPreset}
                         images={false}

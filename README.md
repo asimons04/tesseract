@@ -21,7 +21,7 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [X] Combine some settings into same section (e.g display names and show instances)
 1. [ ] Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
 1. [ ] Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
-1. [ ] Completely remove the random placeholders 
+1. [X] Completely remove the random placeholders 
 1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
 1. [ ] Choose a vote button style and commit; remove unused option and its supporting code
 1. [ ] Add option to open links in new tab/window
