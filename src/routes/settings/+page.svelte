@@ -79,15 +79,6 @@
                             bind:selected={$userSettings.defaultSort.comments}
                         />
                     </div>
-
-                    <div class="max-w-full"> 
-                        <span class="block my-1 font-bold">Post style</span>
-                        <MultiSelect
-                            options={[false, true]}
-                            optionNames={['Cards', 'Compact']}
-                            bind:selected={$userSettings.showCompactPosts}
-                        />
-                    </div>
                 </div>
             </Setting>
             
@@ -104,8 +95,7 @@
                             <span slot="description">
                                 Controls various elements of the post feed.
                             </span>
-                            
-                            
+
                             <Checkbox bind:checked={$userSettings.hidePosts.deleted}>   Hide Deleted Posts</Checkbox>
                             <Checkbox bind:checked={$userSettings.hidePosts.removed}>   Hide Removed Posts</Checkbox>
                             <Checkbox bind:checked={$userSettings.markReadPosts}>       Fade Title of Read Posts</Checkbox>
@@ -113,7 +103,14 @@
                             <Checkbox bind:checked={$userSettings.nsfwBlur}>            Blur NSFW Images</Checkbox>
                             <Checkbox bind:checked={$userSettings.newVote}>             Use New Vote Design</Checkbox>
                             <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
-
+                            
+                            <span class="block my-1 font-bold mt-4">Post Style</span>
+                            <MultiSelect
+                                options={[false, true]}
+                                optionNames={['Cards', 'Compact']}
+                                bind:selected={$userSettings.showCompactPosts}
+                            />
+                            
                             <hr class="mt-4"/>
                             <p>
                                 Looking to hide read posts? That was moved to your
@@ -135,13 +132,12 @@
                             <Checkbox bind:checked={$userSettings.showInstances.user}>Show user's instances</Checkbox>
                             <Checkbox bind:checked={$userSettings.showInstances.comments}>Show user's instances in the comments.</Checkbox>
                             <Checkbox bind:checked={$userSettings.showInstances.community}>Show the instance communities belong to.</Checkbox>
-                        </Setting>
 
-                        <Setting>
-                            <span slot="title">Misc Options</span>
-                            <span slot="description">
-                                Miscellaneous options 
-                            </span>
+
+                            <h1 class="font-bold">Misc Settings</h1>
+                            <p></p>
+                            <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open post links in a new tab.</Checkbox>
+                            <Checkbox bind:checked={$userSettings.openInNewTab.posts}>Open posts in a new tab.</Checkbox>
 
                             <span class="block my-1 font-bold">UI Font</span>
                             <MultiSelect
@@ -151,8 +147,10 @@
                             />
                         </Setting>
                     </div>
+                </div>
 
-                    <div class="max-w-full">
+                <div class="flex flex-wrap gap-4 flex-row w-full">
+                    <div class="w-full">
                         <Setting>
                             <span slot="title">Embedded Content</span>
                             <span slot="description">
@@ -169,21 +167,9 @@
                             />
                         </Setting>
                     </div>
-                    
-                    
-                    
-
-                        
-                    
-
                 </div>
             </Setting>
-            
-        
         </div>
-    
-    
-    
     </Setting>
 
     

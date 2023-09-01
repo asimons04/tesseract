@@ -1,11 +1,22 @@
 <script lang="ts">
+  import { userSettings } from '$lib/settings'
+
   export let href: string
   export let highlight: boolean = false
   export let nowrap: boolean = false
+  export let newtab: boolean = false
+  export let title: string = ""
 
 </script>
 
-<a {href} class="{highlight ? 'text-blue-500' : ''} hover:underline max-w-full">
+<a {href} 
+    class="{highlight ? 'text-blue-500' : ''} hover:underline max-w-full"
+    target="{newtab
+        ? '_blank'
+        : '_self'
+    }"
+    title = "{title}"
+>
   <slot name="icon" />
   <slot>
     <span

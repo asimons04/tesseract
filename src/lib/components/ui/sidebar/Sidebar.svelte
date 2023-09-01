@@ -53,7 +53,7 @@
     </SidebarButton>
 
     <!---Popular --->
-    <SidebarButton href="/?sort=TopDay" expanded={$userSettings.expandSidebar}>
+    <SidebarButton href="/?sort=Active" expanded={$userSettings.expandSidebar}>
         <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
         <span class:hidden={!$userSettings.expandSidebar}>Popular</span>
     </SidebarButton>

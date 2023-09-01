@@ -1,6 +1,7 @@
 <script>
   import Link from '$lib/components/input/Link.svelte'
   import Logo from '$lib/components/ui/Logo.svelte'
+    import Application from '../admin/applications/Application.svelte';
 </script>
 
 <title>Tesseract | About</title>
@@ -44,7 +45,10 @@
 
     <ul class="list-disc pl-4 my-3">
         <li>Adding a search field to the top navbar for quick searching.</li>
-        <li></li>
+        <li>
+            For the rest, see the <Link href="https://github.com/asimons04/Tesseract/blob/main/README.md" newtab={true} title="README.md" highlight>README.md</Link>
+            on the GitHub page.
+        </li>
     </ul>
 
     <h2 class="text-2xl font-bold leading-8">Support/Contributions</h2>
@@ -56,7 +60,7 @@
     
     <ul class="list-disc pl-4 my-3">
         <li>
-            <a href="https://buymeacoffee.com/xylight" target="_blank" title="Donate to Xylight">Donate to Xylight</a>
+            <Link href="https://buymeacoffee.com/xylight" newtab={true} title="Donate to Xylight" highlight>Donate to Xylight</Link>
         </li>
     </ul>
 </div>

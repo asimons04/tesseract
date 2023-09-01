@@ -6,15 +6,6 @@ The purpose is to make better use of the available space, leave less dead zones,
 
 
 
-## Screenshots
-These screenshots show some of the enhancements made to the upstream project. 
-_ | _ 
----|---
-![YouTube videos playing inline](./screenshots/Tesseract-Screenshot-1.png) YouTube videos playing inline | ![Beehaw c/Music as it was meant to be](./screenshots/Tesseract-Screenshot-3.png) Beehaw c/Music as it was meant to be
-![Post view with comments and sidebars](./screenshots/Tesseract-Screenshot-4.png) Community sidebar added to post view.| ![Feed view with cards](./screenshots/Tesseract-Screenshot-5.png) Post cards are much more Reddit-like
-![Spotify Playlist Embed](./screenshots/Tesseract-Screenshot-2.png) Spotify playlist embedded| ![Desktop PWA](./screenshots/Tesseract-Screenshot-6.png) Running as a desktop PWA
-
-
 ## Roadmap / To Do List
 ### Infrastructure
 1. [X] Add missing route/logic for email verification tokens 
@@ -25,14 +16,15 @@ _ | _
 
 
 ### UI
-1. [ ] Add tabbed interface to Settings to de-clutter
-1. [ ] Combine some settings into same section (e.g display names and show instances)
+1. [X] Add tabbed interface to Settings to de-clutter
+    - Tabling this for now. Reorganized the settings page to make it more compact and removed some options I've defaulted off and plan to remove.
+1. [X] Combine some settings into same section (e.g display names and show instances)
 1. [ ] Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
 1. [ ] Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
 1. [ ] Completely remove the random placeholders 
 1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
 1. [ ] Choose a vote button style and commit; remove unused option and its supporting code
-1. [ ] Add option to open links in new tab/window
+1. [/] Add option to open links in new tab/window
 
 ### Modlog
 1. [ ] Enhance filtering beyond just community
@@ -123,7 +115,13 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/CommentSortType.
 - Old (not implemented in Photon)
 - Controversial (not implemented in Photon)
 
-
+## Screenshots
+These screenshots show some of the enhancements made to the upstream project. 
+_ | _ 
+---|---
+![YouTube videos playing inline](./screenshots/Tesseract-Screenshot-1.png) YouTube videos playing inline | ![Beehaw c/Music as it was meant to be](./screenshots/Tesseract-Screenshot-3.png) Beehaw c/Music as it was meant to be
+![Post view with comments and sidebars](./screenshots/Tesseract-Screenshot-4.png) Community sidebar added to post view.| ![Feed view with cards](./screenshots/Tesseract-Screenshot-5.png) Post cards are much more Reddit-like
+![Spotify Playlist Embed](./screenshots/Tesseract-Screenshot-2.png) Spotify playlist embedded| ![Desktop PWA](./screenshots/Tesseract-Screenshot-6.png) Running as a desktop PWA
 
 ## Donate
 Donate to Xylight, not me.  It's their baby, and I'm just building on top of it. You can donate at [Buy me a Coffee](https://buymeacoffee.com/xylight)

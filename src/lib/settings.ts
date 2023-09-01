@@ -45,7 +45,11 @@ interface Settings {
   nsfwBlur: boolean
   moderation: {
     removalReasonPreset: string
-  }
+  },
+  openInNewTab: {
+    postLinks: boolean,
+    posts: boolean,
+  },
   newVote: boolean
   randomPlaceholders: boolean
   modlogCardView: boolean | undefined
@@ -86,6 +90,10 @@ export const defaultSettings: Settings = {
   nsfwBlur: toBool(env.PUBLIC_NSFW_BLUR) ?? true,
   moderation: {
     removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
+  },
+  openInNewTab: {
+    postLinks: toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB) ?? false,
+    posts: toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB) ?? false,
   },
   newVote: toBool(env.PUBLIC_NEW_VOTE_BUTTONS) ?? false,
   randomPlaceholders: toBool(env.PUBLIC_RANDOM_PLACEHOLDERS) ?? true,
