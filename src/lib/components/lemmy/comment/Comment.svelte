@@ -155,10 +155,9 @@
         {/if}
       </Button>
     </summary>
-    <div
-      class="flex flex-col whitespace-pre-wrap
-      max-w-full gap-1"
-    >
+
+    <!---<div class="flex flex-col whitespace-pre-wrap max-w-full gap-1">--->
+    <div class="flex flex-col whitespace-pre-wrap gap-1">
       <div class="max-w-full mt-0.5 break-words text-sm">
         <Markdown source={node.comment_view.comment.content} />
       </div>

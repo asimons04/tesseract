@@ -11,6 +11,14 @@
 
 - Added tooltip support to buttons. Added tooltips to post action buttons.
 
+- Removed click binding on modal background blur div. I've accidentally clicked out of an edit SOO many times because of that. Modals must now be explicitly closed via the 'X' in the corner or via button action.
+
+- Increased modal size to 4xl
+
+- Decreased comment width slightly in components/lemmy/comment/Comment.svelte
+
+
+
 
 
 ### 2023-08-31 (1.1.5)
