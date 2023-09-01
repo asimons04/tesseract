@@ -83,6 +83,7 @@
     size="sm"
     href="/post/{getInstance()}/{post.post.id}"
     class="!text-inherit h-8 px-3"
+    title="Comments"
   >
     <Icon
       slot="icon"
@@ -101,7 +102,7 @@
         <DebugObject object={post} bind:open={debug} />
       {/await}
     {/if}
-    <Button on:click={() => (debug = true)} size="square-md">
+    <Button on:click={() => (debug = true)} size="square-md" title="Debug Info">
       <Icon src={BugAnt} mini size="16" slot="icon" />
     </Button>
   {/if}
@@ -119,6 +120,7 @@
       on:click={toggleOpen}
       class="hover:text-inherit"
       size="square-md"
+      title="Post actions"
     >
       <Icon slot="icon" src={EllipsisHorizontal} width={16} mini />
     </Button>

@@ -68,6 +68,7 @@
   export let rounded: ButtonRoundness = 'md'
   export let alignment: ButtonAlignment = 'center'
   export let icon: IconSource | undefined = undefined
+  export let title: string = ''
 
   export let loaderWidth: number | undefined = undefined
 
@@ -136,6 +137,7 @@
         : ''
       : ''}"
     type={submit ? 'submit' : 'button'}
+    title={title}
   >
     <div
       class="flex flex-row items-center gap-1.5 {buttonAlignment[alignment]}"

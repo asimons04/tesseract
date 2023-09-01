@@ -138,7 +138,7 @@
             
             <!--- Menu bar above post content --->
             <div class="flex flex-row gap-2 w-full mb-2">
-                <Button class="font-normal"
+                <Button class="font-normal" title="Go back to feed"
                     on:click={() => {
                         history.back();
                     }}
@@ -293,7 +293,7 @@
                     on:select={reloadComments}
                 />
 
-                <Button class="font-normal"
+                <Button class="font-normal" title="Reload comments"
                     on:click={() => {
                         reloadComments();
                     }}

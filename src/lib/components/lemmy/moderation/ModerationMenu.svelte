@@ -93,6 +93,7 @@
     class="hover:text-green-500 dark:text-zinc-400 text-slate-500"
     on:click={toggleOpen}
     slot="button"
+    title="Moderation Menu"
     size="square-md"
     loading={acting}
     {...$$restProps}
