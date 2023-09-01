@@ -7,6 +7,8 @@
 
 - Considering rebranding again from Tesseract to Tachyon to reflect the project's *Photon*ic legacy.
 
+- Added action buttons above posts to return to the feed and reload the comments
+
 
 
 ### 2023-08-31 (1.1.5)
