@@ -137,7 +137,7 @@
         <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
             
             <!--- Menu bar above post content --->
-            <div class="flex flex-row gap-4 w-full">
+            <div class="flex flex-row gap-2 w-full mb-2">
                 <Button class="font-normal"
                     on:click={() => {
                         history.back();
@@ -145,15 +145,6 @@
                 >
                     <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
                     <span class="hidden md:inline">Return to Feed</span>
-                </Button>
-
-                <Button class="font-normal"
-                    on:click={() => {
-                        reloadComments();
-                    }}
-                >
-                    <Icon src={ArrowPath} mini size="16" slot="icon" />
-                    <span class="hidden md:inline">Reload Comments</span>
                 </Button>
             </div>
             
@@ -189,9 +180,6 @@
             />
   
             <h1 class="font-bold text-lg">{post.post_view.post.name}</h1>
-
-
-
             {#if pType == "image"}
             <PostImage
                 name = {post.post_view.post.name}
@@ -298,11 +286,22 @@
                 </span>
             </div>
 
-            <MultiSelect
-                options={['Hot', 'Top', 'New']}
-                bind:selected={commentSort}
-                on:select={reloadComments}
-            />
+            <div class="flex flex-row justify-between">
+                <MultiSelect
+                    options={['Hot', 'Top', 'New']}
+                    bind:selected={commentSort}
+                    on:select={reloadComments}
+                />
+
+                <Button class="font-normal"
+                    on:click={() => {
+                        reloadComments();
+                    }}
+                >
+                    <Icon src={ArrowPath} mini size="16" slot="icon" />
+                    <span class="hidden md:inline">Reload Comments</span>
+                </Button>
+            </div>
 
             {#if data.singleThread}
                 <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap gap-4">
