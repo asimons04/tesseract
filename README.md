@@ -11,8 +11,9 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [X] Add missing route/logic for email verification tokens 
 1. [X] Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.
     - Down to 337 MB!
-1. [ ] Move Invidious instances from YouTube component to a system component
+1. [ ] Move Invidious instances from YouTube component to a system setting
 1. [ ] Same as above but for Piped
+1. [ ] Move is[Image|Video|YouTube] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
 
 
 ### UI
@@ -23,7 +24,7 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
 1. [X] Completely remove the random placeholders 
 1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
-1. [ ] Choose a vote button style and commit; remove unused option and its supporting code
+1. [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 1. [ ] Add option to open links in new tab/window
     - WIP:  Added preliminary support by adding additional attributes to the `Link` component. Added target and title attributes. Added settings option and defaults to enable instances of `Link` to take the user's preferred same/new tab setting into account.
 
@@ -49,11 +50,12 @@ No Docker images exist yet. Build from source and then run.  Example here uses `
 
 ### Configuring default settings
 
-The following environment variables can be set to override the default settings:
+The following environment variables can be set to override the default settings.  Note that all environment variables must be prefixed with `PUBLIC_` to be picked up by SvelteKit.
+
 
 | Variable                        | Values              | Default Value                          |
 | ------------------------------- | ------------------- | -------------------------------------- |
-| PUBLIC_INSTANCE_URL             | URL                 | `lemmy.ml`                             |
+| PUBLIC_INSTANCE_URL             | URL                 | `beehaw.org`                           |
 | PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
 | PUBLIC_SSR_ENABLED              | `bool`              | `false`                                |
 | PUBLIC_THEME                    | system\|dark\|light | system                                 |
@@ -74,8 +76,8 @@ The following environment variables can be set to override the default settings:
 | PUBLIC_DISPLAY_NAMES            | `bool`              | true                                   |
 | PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
 | PUBLIC_NEW_VOTE_BUTTONS         | `bool`              | false                                  |
-| PUBLIC_RANDOM_PLACEHOLDERS      | `bool`              | true                                   |
 | PUBLIC_ENABLE_EMBEDS            | `bool`              | true                                   |
+| PUBLIC_YOUTUBE_FRONTEND         | YouTube\|Piped\|Invidious | YouTube                            |
 
 The values for `SortType`, `ListingType`, and `CommentSortType` are defined by the lemmy-js-client library.  All of the values are case-sensitive and must match as they are defined in the type definitions of the [lemmy-js-client](https://github.com/LemmyNet/lemmy-js-client)
 

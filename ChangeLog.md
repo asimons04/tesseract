@@ -1,4 +1,14 @@
 ## Changelog
+
+### 2023-09-01 (1.1.14)
+- Bumped version to correspond with completed patches so far.
+
+- Removed code for the random placeholders in input fields and associated settings
+
+- Considering rebranding again from Tesseract to Tachyon to reflect the project's *Photon*ic legacy.
+
+
+
 ### 2023-08-31 (1.1.5)
 - Began initial fork work
 
