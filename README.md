@@ -24,7 +24,8 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Completely remove the random placeholders 
 1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
 1. [ ] Choose a vote button style and commit; remove unused option and its supporting code
-1. [/] Add option to open links in new tab/window
+1. [ ] Add option to open links in new tab/window
+    - WIP:  Added preliminary support by adding additional attributes to the `Link` component. Added target and title attributes. Added settings option and defaults to enable instances of `Link` to take the user's preferred same/new tab setting into account.
 
 ### Modlog
 1. [ ] Enhance filtering beyond just community
