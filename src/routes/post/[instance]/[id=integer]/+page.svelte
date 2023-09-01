@@ -142,6 +142,7 @@
                     on:click={() => {
                         history.back();
                     }}
+                    hidden={history.length<2}
                 >
                     <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
                     <span class="hidden md:inline">Return to Feed</span>

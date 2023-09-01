@@ -8,7 +8,7 @@
 - Considering rebranding again from Tesseract to Tachyon to reflect the project's *Photon*ic legacy.
 
 - Added action buttons above posts to return to the feed and reload the comments
-  - To do:  Check `history.length` to conditionally hide the "back to feed" button if less than 2. No need to have that button if post was opened in new tab (either explicitly or when "open posts in new tab" feature is finalized.
+  - ~~To do:  Check `history.length` to conditionally hide the "back to feed" button if less than 2. No need to have that button if post was opened in new tab (either explicitly or when "open posts in new tab" feature is finalized.~~
 
 - Added tooltip support to buttons. Added tooltips to post action buttons.
 

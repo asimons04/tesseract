@@ -69,7 +69,7 @@
   export let alignment: ButtonAlignment = 'center'
   export let icon: IconSource | undefined = undefined
   export let title: string = ''
-
+  export let hidden:boolean = false
   export let loaderWidth: number | undefined = undefined
 
   // const dispatch = createEventDispatcher()
@@ -81,6 +81,7 @@
     {href}
     on:click
     {...$$restProps}
+    class:hidden={hidden}
     class="
       {buttonColor[color]}
       {buttonSize[size]}
@@ -138,6 +139,7 @@
       : ''}"
     type={submit ? 'submit' : 'button'}
     title={title}
+    class:hidden={hidden}
   >
     <div
       class="flex flex-row items-center gap-1.5 {buttonAlignment[alignment]}"
