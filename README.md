@@ -45,8 +45,40 @@ The purpose is to make better use of the available space, leave less dead zones,
 Tesseract is designed to be self hosted.  There are currently no public instances available, but that may change in the future.
 
 
-### Running from image
-No Docker images exist yet. Build from source and then run.  Example here uses `docker run` but it would make more sense in production to move that to a docker-compose file.
+### Notes
+Right now, Tesseract only works as-is at the apex Lemmy domain (in place of Lemmy-UI).  I'm working through some funkyness with the CORS interactions and am going to need to clean up some of the way that path is handled before I re-enable it.  
+
+While you can run Tesseract under any subdomain you want and connect to any instance you want, image uploads will only work against the configured one _and_ if it's at the APEX domain.
+
+### Workaround for Running Under a Subdomain
+If you want to run Tesseract at a subdomain and have working image uploads to your instance, you'll need to add an extra location block in your reverse proxy so that the `/pictrs` path hits the Lemmy backend.
+
+```
+location ^~ /pictrs {
+    # Set this to the largest file size you want to allow users to be able to upload
+    client_max_body_size  150k;
+
+    proxy_http_version 1.1;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    proxy_pass "http://lemmy-be";
+}
+```
+The `client_max_body_size` shown in the Nginx config above is abnormally small.  This is what I use to limit uploads to my instance so that pretty much all but the smallest images will be rejected.  Since I still want users to be able to set avatar images, I can't disable the path completely.  
+
+You will want to adjust this value in the example to suit your needs.
+
+
+### Deploying the Image
+Replace `example.com` in the line below with the base URL of your instance.  
+
+Additional environment variables for configuring Tesseract can be found further down in the README.
+
+`docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com ghcr.io/asimons04/tesseract:latest`
+
+### Building from the Repo
 1. Clone the repo from a release branch
 2. docker build -t tesseract:latest ./
 3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com tesseract:latest`
