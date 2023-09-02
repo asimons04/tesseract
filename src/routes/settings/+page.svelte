@@ -136,7 +136,7 @@
 
                             <h1 class="font-bold">Misc Settings</h1>
                             <p></p>
-                            <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open post links in a new tab.</Checkbox>
+                            <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
                             <!---<Checkbox bind:checked={$userSettings.openInNewTab.posts}>Open posts in a new tab.</Checkbox>--->
 
                             <span class="block my-1 font-bold">UI Font</span>
@@ -156,13 +156,13 @@
                             <span slot="description">
                                 Enable or disable inline media content such as YouTube and Spotify. You can also choose which YouTube frontend
                                 is used if that kind of thing is important to you.  Note that some Invidious instances may rate limit you necessitating
-                                updating the instance on occasion.
+                                updating the instance on occasion.  
                             </span>
                             
                             <Checkbox bind:checked={$userSettings.embeddedMedia.enable}>Enable embedded content</Checkbox>
                             
                             <span class="block my-1 font-bold">YouTube Frontend</span>
-                            <div class="flex flex-row">
+                            <div class="flex flex-row flex-wrap">
                                 <MultiSelect
                                     options={['YouTube', 'Invidious']}
                                     bind:selected={$userSettings.embeddedMedia.YTFrontend}

@@ -30,6 +30,7 @@
 >
     <div class="ml-auto mr-auto max-w-3xl">
         <picture class="rounded-md overflow-hidden max-h-[min(50vh,500px)] w-full max-w-full">
+            <!---
             <source
                 srcset="{url}?thumbnail=256&format=webp"
                 media="(max-width: 256px)"
@@ -38,7 +39,7 @@
                 srcset="{url}?thumbnail=512&format=webp"
                 media="(max-width: 512px)"
             />
-
+            --->
             <source
                 srcset="{url}?thumbnail=768&format=webp"
                 media="(max-width: 768px)"

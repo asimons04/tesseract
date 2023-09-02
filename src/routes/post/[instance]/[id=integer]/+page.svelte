@@ -207,19 +207,25 @@
 
             {#if pType == "link"}
             <a
-            href={post.post_view.post.url}
-            class="max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-sky-400 hover:underline text-xs"
-            style="word-break: break-word;"
+                href={post.post_view.post.url}
+                target="{$userSettings.openInNewTab.postLinks
+                    ? '_blank'
+                    : '_self'
+                }"
+                class="max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-sky-400 hover:underline text-xs"
+                style="word-break: break-word;"
+                title={post.post_view.post.name}
             >
-            {post.post_view.post.url}
+                {post.post_view.post.url}
             </a>
             {/if}
 
-            {#if pType == "thumbLink"}
+            {#if pType == "thumbLink" || pType == "spotify"}
             <PostLink
                 thumbnail_url={post.post_view.post.thumbnail_url}
                 url={post.post_view.post.url}
                 nsfw={post.post_view.post.nsfw}
+                title={post.post_view.post.name}
             />
             {/if}
     

@@ -76,7 +76,12 @@
         {#if postType(post) == "link"}
         <a
             href={post.post.url}
+            target="{$userSettings.openInNewTab.postLinks
+                ? '_blank'
+                : '_self'
+            }"
             class="max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-sky-400 hover:underline text-xs"
+            title={post.post.name}
         >
             {post.post.url}
         </a>
@@ -110,11 +115,12 @@
         {/if}
 
         <!--- Link-style post that is not Youtube --->
-        {#if postType(post) == "thumbLink"}
+        {#if postType(post) == "thumbLink" || postType(post) == "spotify"}
         <PostLink
             url={post.post.url}
             thumbnail_url="{post.post.thumbnail_url}?format=webp&thumbnail=768"
             nsfw={post.post.nsfw}
+            title={post.post.name}
         />
         {/if}
         

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { md, mdInline, photonify } from '$lib/components/markdown/markdown'
-
+  import { userSettings } from '$lib/settings.js'
   export let source: string = ''
   export let inline: boolean = false
 
@@ -10,6 +10,7 @@
     links.forEach((l) => {
       const photonified = photonify(l.href)
       if (photonified) l.href = photonified
+      if ($userSettings.openInNewTab.postLinks) l.target = '_blank'
     })
   }
 
