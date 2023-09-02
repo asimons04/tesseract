@@ -111,7 +111,7 @@ export const defaultSettings: Settings = {
     embeddedMedia: {
         enable:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA)        ?? true,
         YTFrontend: env.PUBLIC_YOUTUBE_FRONTEND                     ?? 'YouTube',
-        customInvidious:                                            '',
+        customInvidious:                                            'yewtu.be',
     },
 }
 
@@ -141,6 +141,7 @@ export const YTFrontends = {
         'invidious.private.coffee',
         'iv.nboeck.de',
         'yt.oelrichsgarcia.de',
+        'yt.artemislena.eu'
     ],
 
     piped: [
