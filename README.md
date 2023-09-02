@@ -42,7 +42,7 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Add support embedding Vevo videos
 
 ## Self-hosting
-Tesseract is designed to be self hosted.  There are currently no public instances available, but that may change in the future.
+Tesseract is designed to be self hosted, but there is a pubic instance available at https://tesseract.dubvee.org
 
 
 ### Notes

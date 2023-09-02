@@ -66,7 +66,7 @@ export async function uploadImage(
   formData.append('images[]', image)
 
   const response = await fetch(
-    `${window.location.origin}/pictrs/image?${new URLSearchParams({
+    `${window.location.origin}/cors/${getInstance()}/pictrs/image?${new URLSearchParams({
       auth: get(profile)!.jwt!,
     })}`,
     {
