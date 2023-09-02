@@ -41,35 +41,13 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
 1. [ ] Add support embedding Vevo videos
 
+
+## Public Hosted Demo Instance
+An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
+
+
 ## Self-hosting
-Tesseract is designed to be self hosted.  There are currently no public instances available, but that may change in the future.
-
-
-### Notes
-Right now, Tesseract only works as-is at the apex Lemmy domain (in place of Lemmy-UI).  I'm working through some funkyness with the CORS interactions and am going to need to clean up some of the way that path is handled before I re-enable it.  
-
-While you can run Tesseract under any subdomain you want and connect to any instance you want, image uploads will only work against the configured one _and_ if it's at the APEX domain.
-
-### Workaround for Running Under a Subdomain
-If you want to run Tesseract at a subdomain and have working image uploads to your instance, you'll need to add an extra location block in your reverse proxy so that the `/pictrs` path hits the Lemmy backend.
-
-```
-location ^~ /pictrs {
-    # Set this to the largest file size you want to allow users to be able to upload
-    client_max_body_size  150k;
-
-    proxy_http_version 1.1;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
-    proxy_pass "http://lemmy-be";
-}
-```
-The `client_max_body_size` shown in the Nginx config above is abnormally small.  This is what I use to limit uploads to my instance so that pretty much all but the smallest images will be rejected.  Since I still want users to be able to set avatar images, I can't disable the path completely.  
-
-You will want to adjust this value in the example to suit your needs.
-
+Tesseract is designed to be self hosted.  You can even run it from localhost if you want and connect to any Lemmy instance out there.
 
 ### Deploying the Image
 Replace `example.com` in the line below with the base URL of your instance.  
