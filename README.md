@@ -98,7 +98,7 @@ server {
 
 
   location / {
-    proxy_pass http://127.0.01:8081;
+    proxy_pass http://127.0.0.1:8081;
   }
 
   # This path needs to exist so CORS headers can be relaxed for image uploads to be able to
