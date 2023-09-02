@@ -2,9 +2,16 @@
 
 Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and content.
 
-The purpose is to make better use of the available space, leave less dead zones, and allow inline playback of media URLs (YouTube, Spotify, etc).  
+The UI changes are to make better use of the available space, leave less dead zones, and allow a richer, more immersive experience.
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
+
+## Known Issues
+You'll see a setting to open posts or links in new tabs.  Those are decorative at this point and haven't been implemented in most places yet.  They default to off, so if you do change those, don't expect anything to happen yet.
+
+Spotify embeds are ugly, but it's Spotify's fault for not making their embed player properly scale with the viewport. There's a "to do" item and plan to address that.
+
+
 
 ## Roadmap / To Do List
 ### Infrastructure
