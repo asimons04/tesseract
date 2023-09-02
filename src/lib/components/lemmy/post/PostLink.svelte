@@ -1,5 +1,6 @@
 <script lang="ts">
   import Link from '$lib/components/input/Link.svelte'
+  import { userSettings } from '$lib/settings.js'
   import { Icon, Link as LinkIcon } from 'svelte-hero-icons'
 
   export let url: string
@@ -7,32 +8,29 @@
   export let nsfw: boolean = false
   let loaded = false;
 </script>
-<style>
-    max-w-xxl {
-        max-width: 46rem;
-    }
-</style>
-
-<Link href={url} highlight nowrap />
 
 
-<a
-    href="{url}"
-    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full"
-    data-sveltekit-preload-data="off"
+<Link href={url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
+
+
+<Link
+    href={url}
+    newtab={$userSettings.openInNewTab.postLinks}
 >
-    <div class="ml-auto mr-auto mt-1 mb-1 max-w-4xl">
-        <img
-            src="{thumbnail_url}"
-            loading="lazy"
-            class="max-w-full ml-auto mr-auto object-cover rounded-md  z-30 opacity-0 transition-opacity duration-300"
-            
-            class:opacity-100={loaded}
-            on:load={() => (loaded = true)}
-            class:blur-3xl={nsfw}
-        />
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
+        <div class="ml-auto mr-auto mt-1 mb-1 max-w-4xl">
+            <img
+                src="{thumbnail_url}"
+                loading="lazy"
+                class="max-w-full ml-auto mr-auto object-cover rounded-md  z-30 opacity-0 transition-opacity duration-300"
+                
+                class:opacity-100={loaded}
+                on:load={() => (loaded = true)}
+                class:blur-3xl={nsfw}
+            />
+        </div>
     </div>
 
     
-</a>
+</Link>
 

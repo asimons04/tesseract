@@ -1,6 +1,6 @@
 <script lang="ts">
     import Switch from '$lib/components/input/Switch.svelte'
-    import { defaultSettings, userSettings } from '$lib/settings'
+    import { defaultSettings, userSettings, YTFrontends } from '$lib/settings'
     import Setting from './Setting.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
@@ -137,7 +137,7 @@
                             <h1 class="font-bold">Misc Settings</h1>
                             <p></p>
                             <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open post links in a new tab.</Checkbox>
-                            <Checkbox bind:checked={$userSettings.openInNewTab.posts}>Open posts in a new tab.</Checkbox>
+                            <!---<Checkbox bind:checked={$userSettings.openInNewTab.posts}>Open posts in a new tab.</Checkbox>--->
 
                             <span class="block my-1 font-bold">UI Font</span>
                             <MultiSelect
@@ -155,16 +155,26 @@
                             <span slot="title">Embedded Content</span>
                             <span slot="description">
                                 Enable or disable inline media content such as YouTube and Spotify. You can also choose which YouTube frontend
-                                is used if that kind of thing is important to you.    
+                                is used if that kind of thing is important to you.   
                             </span>
                             
-                            <Checkbox bind:checked={$userSettings.showEmbeds}>Enable embedded content</Checkbox>
+                            <Checkbox bind:checked={$userSettings.embeddedMedia.enable}>Enable embedded content</Checkbox>
                             
-                            <span class="block my-1 font-bold">Youtube Frontend</span>
-                            <MultiSelect
-                                options={['YouTube', 'Piped', 'Invidious']}
-                                bind:selected={$userSettings.youtubeFrontend}
-                            />
+                            <span class="block my-1 font-bold">YouTube Frontend</span>
+                            <div class="flex flex-row">
+                                <MultiSelect
+                                    options={['YouTube', 'Invidious']}
+                                    bind:selected={$userSettings.embeddedMedia.YTFrontend}
+                                />
+
+                                <span class:hidden={!($userSettings.embeddedMedia.YTFrontend == 'Invidious')} >
+                                    <MultiSelect
+                                        options={YTFrontends.invidious}
+                                        items=0
+                                        bind:selected={$userSettings.embeddedMedia.customInvidious}
+                                    />
+                                </span>
+                            </div>
                         </Setting>
                     </div>
                 </div>

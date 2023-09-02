@@ -1,7 +1,7 @@
 <script lang="ts">
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import Comments from '$lib/components/lemmy/comment/Comments.svelte'
-    import { isImage, isVideo, isYouTube, postType } from '$lib/ui/image.js'
+    import { isImage, postType } from '$lib/ui/image.js'
     import { getClient, getInstance } from '$lib/lemmy.js'
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
@@ -201,7 +201,7 @@
             
             {#if pType == "youtube"}
             <PostYouTube
-                url = {post.post_view.post.url}
+                post = {post.post_view}
             />
             {/if}
 

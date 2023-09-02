@@ -1,3 +1,5 @@
+import { YTFrontends } from '$lib/settings.js'
+
 export const isImage = (url: string | undefined) => {
   if (!url) return false
 
@@ -12,19 +14,59 @@ export const isVideo = (inputUrl: string | undefined) => {
   return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
 }
 
-export const isYouTube = (url: string | undefined) => {
-    if (!url) return false
+
+// Check if URL is an embeddable Youtube from YT, Invidious, or Piped
+export const isInvidious = (url: string) => {
+    for (let i=0; i<YTFrontends.invidious.length; i++) {
+        if (url.startsWith(`https://${YTFrontends.invidious[i]}`)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+export const isYouTube = (url:string) => {
     return (
-        url.includes('youtube.com') || 
-        url.includes('youtu.be') ||
-        url.includes('vid.puffyan.us') ||
-        url.includes('open.spotify.com') ||
-        url.includes('yewtu.be')
+        url.startsWith('https://youtu.be') || 
+        url.startsWith('https://www.youtube.com') || 
+        url.startsWith('https://youtube.com')
     )
 }
 
+export const isPiped = (url: string) => {
+    for (let i=0; i<YTFrontends.piped.length; i++) {
+        if (url.startsWith(`https://${YTFrontends.piped[i]}`)) {
+            return true;
+        }
+    }
+    return false;
+
+}
+
+
+export const isEmbeddableVideo = (url: string | undefined) => {
+    if (!url) return false
+    return (
+        isInvidious(url) ||
+        isYouTube(url) ||
+        isPiped(url)
+    )
+}
+
+
+// Check if URL is for Spotify content
+export const isSpotify = (url: string | undefined) => {
+    if (!url) return false;
+    
+    if (url.startsWith('https://open.spotify.com')) {
+        return true;
+    }
+
+}
+
+
 // Returns a string representing the detected post type
-// image | video | youtube | link | thumbLink | text
+// image | video | embed_video | link | thumbLink | text
 export const postType = (post: object | undefined) => {
     if (!post) return false
     
@@ -36,10 +78,15 @@ export const postType = (post: object | undefined) => {
         return "video"
     }
 
-    if (post.post.url && isYouTube(post.post.url)) {
+    if (post.post.url && isEmbeddableVideo(post.post.url)) {
         return "youtube"
     }
     
+    if (post.post.url && isSpotify(post.post.url)) {
+        return "spotify"
+    }
+
+
     if (
         post.post.url && !post.post.thumbnail_url) {
         return "link"

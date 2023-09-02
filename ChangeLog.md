@@ -10,6 +10,19 @@
 
 - Cleaned up my rats nest of a build environment.
 
+- Completely reimplemented the embedded video handling.  Has a list of Piped and Invidious instances used to detect YouTube-style links to determine if a post should render as an embedded video.  Supports all of the public [Invidious](https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest) and [Piped](https://github.com/TeamPiped/Piped/wiki/Instances ) instances as sources.
+  - Removed Piped support for embedded players.  Many don't work with iframes or are too slow. 
+  - You can select your preferred YouTube frontend in the settings.  Default is YouTube.  Setting to Invidious will allow you to select an instance from the dropdown menu to use.
+      - To do:  Allow user-defined Invidious URL
+
+- Introduced a slight regression with Spotify embeds.  As part of the YouTube overhaul, Spotify embeds are broken. Those will be re-implemented into their own Svelte component, and preliminary work has begun in a separate branch.  
+
+- If "Enable embedded content" is disabled, YouTube, etc posts will show the thumbnail instead of rendering as a bare link post.  Looks much better.
+
+- Updated Post Link component to honor the user setting for "Open post links in new tab".  Some post styles still don't take that setting into account yet, but I had to update PostLink component, so added that support while I was in there.
+
+- Hid setting to "Open posts in a new tab" since the functionality is not yet implemented beyond storing the state of the setting.
+
 
 ### 2023-09-01 (1.1.14)
 - Bumped version to correspond with completed patches so far.

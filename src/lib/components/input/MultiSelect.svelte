@@ -1,14 +1,15 @@
 <script lang="ts">
-  import { ChevronDown, Icon } from 'svelte-hero-icons'
+    import { ChevronDown, Icon } from 'svelte-hero-icons'
 
-  import Button from '$lib/components/input/Button.svelte'
-  import { createEventDispatcher } from 'svelte'
-  type T = $$Generic
-  export let options: T[]
-  export let disabled: boolean[] = []
-  export let optionNames: string[] = []
-  export let selected: T
-  export let headless: boolean = false
+    import Button from '$lib/components/input/Button.svelte'
+    import { createEventDispatcher } from 'svelte'
+    type T = $$Generic
+    export let options: T[]
+    export let disabled: boolean[] = []
+    export let optionNames: string[] = []
+    export let selected: T
+    export let headless: boolean = false
+    export let items: number = 4
 
   const dispatcher = createEventDispatcher<{ select: T }>()
 
@@ -44,7 +45,7 @@
 </script>
 
 <div class={containerClass}>
-  {#each options.slice(0, 4) as option, index}
+  {#each options.slice(0, items) as option, index}
     <button
       class={buttonClass(selected == option)}
       on:click|preventDefault={() => (selected = option)}
@@ -59,11 +60,11 @@
       {/if}
     </button>
   {/each}
-  {#if options.length > 4}
+  {#if options.length > items}
     <select
       bind:value={selected}
       class="bg-inherit text-sm mr-2 p-1.5 rounded-md cursor-pointer {options
-        .slice(4)
+        .slice(items)
         .includes(selected)
         ? 'bg-slate-900 text-slate-50 dark:bg-zinc-100 dark:text-black w-max'
         : 'w-4'}"
@@ -71,8 +72,8 @@
       <Button color="tertiary">
         <Icon src={ChevronDown} size="16" mini />
       </Button>
-      {#each options.slice(4) as option, index}
-        <option value={option}>{optionNames[index + 4] || option}</option>
+      {#each options.slice(items) as option, index}
+        <option value={option}>{optionNames[index + items] || option}</option>
       {/each}
     </select>
   {/if}

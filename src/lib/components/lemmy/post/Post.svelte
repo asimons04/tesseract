@@ -105,7 +105,7 @@
         <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
         {#if postType(post) == "youtube"}
         <PostYouTube
-            url = {post.post.url}
+            post = {post}
         />
         {/if}
 
