@@ -1,5 +1,16 @@
 ## Changelog
 
+## 2023-09-02 (1.1.21)
+
+- Bumped version
+
+- Re-enabled the /cors/ image upload handler.  Turns out there was simply an undocumented reverse proxy config that needed to be in place for the `/cors/` path.  Updated Readme documentation with a sample Nginx config.
+
+- Stood up an open, public instance at https://tesseract.dubvee.org so people can see it live.
+
+- Cleaned up my rats nest of a build environment.
+
+
 ### 2023-09-01 (1.1.14)
 - Bumped version to correspond with completed patches so far.
 

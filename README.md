@@ -30,6 +30,7 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
     - WIP:  Added preliminary support by adding additional attributes to the `Link` component. Added target and title attributes. Added settings option and defaults to enable instances of `Link` to take the user's preferred same/new tab setting into account.
 1. [ ] Add option to hide deleted comments and logic to implement that
 1. [ ] Community Discovery:  Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
+1. [ ] Add inline search/filter for subscribed communities.
 
 ### Modlog
 1. [ ] Enhance filtering beyond just community
