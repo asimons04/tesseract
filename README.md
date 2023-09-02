@@ -37,13 +37,7 @@ Piped support for emebds was removed in this release - it was just too slow and 
 1. [X] Completely remove the random placeholders 
 1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
 1. [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
-1. [/] Add option to open links in new tab/window
-    - WIP:  Added preliminary support by adding additional attributes to the `Link` component. Added target and title attributes. Added settings option and defaults to enable instances of `Link` to take the user's preferred same/new tab setting into account.
-    - Further WIP.  Regular "link" posts now open in new tabs if the option is enabled. 
-      - Still need to do:
-        - Links in comments
-        - Links in post body
-        - Links without thumbnails?
+1. [X] Add option to open links in new tab/window
 1. [ ] Add option to hide deleted comments and logic to implement that
 1. [ ] Community Discovery:  Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
 1. [ ] Add inline search/filter for subscribed communities.
@@ -58,6 +52,7 @@ Piped support for emebds was removed in this release - it was just too slow and 
     - WIP in new branch
 1. [X] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
 1. [ ] Add support embedding Vevo videos
+1. [ ] Add more granular embed options. e.g. Only show thumbnail in feed but show embed when opening the post.
 
 
 ## Public Hosted Demo Instance
