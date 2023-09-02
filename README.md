@@ -41,24 +41,14 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
 1. [ ] Add support embedding Vevo videos
 
-<<<<<<< HEAD
-=======
-## Self-hosting
-Tesseract is designed to be self hosted, but there is a pubic instance available at https://tesseract.dubvee.org
-
-
-### Notes
-Right now, Tesseract only works as-is at the apex Lemmy domain (in place of Lemmy-UI).  I'm working through some funkyness with the CORS interactions and am going to need to clean up some of the way that path is handled before I re-enable it.  
-
-While you can run Tesseract under any subdomain you want and connect to any instance you want, image uploads will only work against the configured one _and_ if it's at the APEX domain.
->>>>>>> enableCORSPath
 
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
 
 
-## Self-hosting
+## Self-Hosting
 Tesseract is designed to be self hosted.  You can even run it from localhost if you want and connect to any Lemmy instance out there.
+
 
 ### Deploying the Image
 Replace `example.com` in the line below with the base URL of your instance.  
@@ -67,13 +57,68 @@ Additional environment variables for configuring Tesseract can be found further 
 
 `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com ghcr.io/asimons04/tesseract:latest`
 
-### Building from the Repo
+### Building Rrom the Repo
 1. Clone the repo from a release branch
 2. docker build -t tesseract:latest ./
 3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com tesseract:latest`
 
-### Configuring default settings
 
+### Reverse Proxy Configuration
+**Running Tesseract Alongside Lemmy-UI**
+
+Use this example config to get you started if you want to run Tesseract alongside Lemmy-UI (e.g. under a subdomain).
+
+```
+server {
+  listen 80;
+  server_name tesseract.dubvee.org;
+  location / {
+    return 301 https://$host$uri?$args;
+  }
+}
+
+server {
+  listen 443            ssl http2;
+  server_name           tesseract.example.com;
+  ssl_certificate       /etc/letsencrypt/live/tesseract.example.com/fullchain.pem;
+  ssl_certificate_key   /etc/letsencrypt/live/tesseract.example.com/privkey.pem;
+  ssl_dhparam           /etc/nginx/tls/dhparams.pem;
+
+  ssl_protocols         TLSv1.2 TLSv1.3;
+  ssl_session_cache     shared:SSL:10m;
+  ssl_session_timeout   15m;
+
+
+  location / {
+    proxy_pass http://10.10.10.1:8081;
+  }
+
+  # This path needs to exist so CORS headers can be relaxed for image uploads to be able to function; Tesseract will proxy the requests through that to the actual backend.
+  location /cors/ {
+
+    # At a minimum, it is required to pass the Host header since that will need to be further passed when 
+    proxy_http_version                      1.1;
+    proxy_set_header  Host                  $host;
+
+    # These are the response headers that will be returned on the preflight checks; required to allow multiple, arbitrary instances to be used with Tesseract without having to have too permissive a CORS policy for all routes.
+    
+    add_header      Access-Control-Allow-Credentials        'true';
+    add_header      Access-Control-Allow-Origin             '*';
+    add_header      Access-Control-Allow-Methods            'GET,OPTIONS,PATCH,DELETE,POST,PUT';
+    add_header      Access-Control-Allow-Headers            'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version';
+    proxy_pass      http://10.10.10.1:8081;
+
+  }
+
+}
+```
+**Running Tesseract Alongside Lemmy-UI**
+
+To do:  I currently have this running on my instance but need to de-tangle the Nginx config into a proper example.
+
+
+
+### Configuring default settings
 The following environment variables can be set to override the default settings.  Note that all environment variables must be prefixed with `PUBLIC_` to be picked up by SvelteKit.
 
 
