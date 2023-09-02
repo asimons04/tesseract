@@ -14,8 +14,8 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: process.env.ADAPTER == 'node' ? node() : auto(),
 		//csrf: {
-        //    checkOrigin: false,
-        //},
+        //          checkOrigin: false,
+        //	},
         // csp: {
 		// 	directives: {
 		// 		'script-src': ['self'],

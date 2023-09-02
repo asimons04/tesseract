@@ -41,6 +41,17 @@ The purpose is to make better use of the available space, leave less dead zones,
 1. [ ] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
 1. [ ] Add support embedding Vevo videos
 
+<<<<<<< HEAD
+=======
+## Self-hosting
+Tesseract is designed to be self hosted, but there is a pubic instance available at https://tesseract.dubvee.org
+
+
+### Notes
+Right now, Tesseract only works as-is at the apex Lemmy domain (in place of Lemmy-UI).  I'm working through some funkyness with the CORS interactions and am going to need to clean up some of the way that path is handled before I re-enable it.  
+
+While you can run Tesseract under any subdomain you want and connect to any instance you want, image uploads will only work against the configured one _and_ if it's at the APEX domain.
+>>>>>>> enableCORSPath
 
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
