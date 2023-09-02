@@ -4,7 +4,7 @@ Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and
 
 The purpose is to make better use of the available space, leave less dead zones, and allow inline playback of media URLs (YouTube, Spotify, etc).  
 
-
+The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Roadmap / To Do List
 ### Infrastructure
