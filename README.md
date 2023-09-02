@@ -7,11 +7,20 @@ The UI changes are to make better use of the available space, leave less dead zo
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Known Issues
+### Useless Setting
 You'll see a setting to open posts or links in new tabs.  Those are decorative at this point and haven't been implemented in most places yet.  They default to off, so if you do change those, don't expect anything to happen yet.
 
+### Spotify
 Spotify embeds are ugly, but it's Spotify's fault for not making their embed player properly scale with the viewport. There's a "to do" item and plan to address that.
 
+### Alternate YouTube Frontends
+TL;DR:  I don't recommend changing the YouTube frontend at this time; use YouTube.
 
+Setting the YouTube frontend to Invidious is horribly inefficient in the current implementation.  It will randomly select an Invidious endpoint for _each_ post it renders. This means its has to download the player asssets for each post and loses any benefits of caching.  Also, some of them intermittently have availability issues.
+
+The plan is to provide a safe list of Invidious instances and allow the user to select one of their choosing or provide a single alternate Instance to use.  
+
+The option for Piped is only set to used `piped.video` and is horrendously slow.  I'm planning to do the same and allow users to select an instance from a predefined list of Piped instances in their settings.
 
 ## Roadmap / To Do List
 ### Infrastructure
