@@ -74,12 +74,12 @@ Additional environment variables for configuring Tesseract can be found further 
 ### Reverse Proxy Configuration
 **Running Tesseract Alongside Lemmy-UI**
 
-Use this example config to get you started if you want to run Tesseract alongside Lemmy-UI (e.g. under a subdomain).
+Use this example config to get you started if you want to run Tesseract alongside Lemmy-UI (e.g. under a subdomain).  Adjust the `server_name`, SSL cert paths, and `proxy_pass` upstreams with values applicable to your deployment.
 
 ```
 server {
   listen 80;
-  server_name tesseract.dubvee.org;
+  server_name tesseract.example.com;
   location / {
     return 301 https://$host$uri?$args;
   }
@@ -98,31 +98,37 @@ server {
 
 
   location / {
-    proxy_pass http://10.10.10.1:8081;
+    proxy_pass http://127.0.01:8081;
   }
 
-  # This path needs to exist so CORS headers can be relaxed for image uploads to be able to function; Tesseract will proxy the requests through that to the actual backend.
+  # This path needs to exist so CORS headers can be relaxed for image uploads to be able to
+  # function; Tesseract will proxy the requests through that to the actual backend.
+  
   location /cors/ {
 
-    # At a minimum, it is required to pass the Host header since that will need to be further passed when 
+    # At a minimum, it is required to pass the Host header since that will need to be further 
+    # passed to the lemmy backend
+
     proxy_http_version                      1.1;
     proxy_set_header  Host                  $host;
 
-    # These are the response headers that will be returned on the preflight checks; required to allow multiple, arbitrary instances to be used with Tesseract without having to have too permissive a CORS policy for all routes.
+    # These are the response headers that will be returned on the preflight checks; required to 
+    # allow multiple, arbitrary instances to be used with Tesseract without having to have too 
+    # permissive a CORS policy for all routes.
     
     add_header      Access-Control-Allow-Credentials        'true';
     add_header      Access-Control-Allow-Origin             '*';
     add_header      Access-Control-Allow-Methods            'GET,OPTIONS,PATCH,DELETE,POST,PUT';
     add_header      Access-Control-Allow-Headers            'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version';
-    proxy_pass      http://10.10.10.1:8081;
+    proxy_pass      http://127.0.0.1:8081;
 
   }
 
 }
 ```
-**Running Tesseract Alongside Lemmy-UI**
+**Running Tesseract In Place Of Lemmy-UI**
 
-To do:  I currently have this running on my instance but need to de-tangle the Nginx config into a proper example.
+To do:  I currently have this running on my instance but need to de-tangle the Nginx config into a proper example.  It's not much different than above, and with the addition of the /cors/ path shown above, you can just point the `proxy_pass` for lemmy-ui to Tesseract.
 
 
 
