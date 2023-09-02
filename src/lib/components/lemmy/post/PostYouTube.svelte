@@ -3,7 +3,6 @@
     import { userSettings } from '$lib/settings.js'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
 
-    export let url: string
     export let post: object
 
     let videoID:    string | null | undefined

@@ -26,6 +26,7 @@
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
+    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
 
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import type { CommentSortType } from 'lemmy-js-client'
@@ -205,6 +206,12 @@
             />
             {/if}
 
+            {#if pType == "spotify"}
+            <PostSpotify
+                post = {post.post_view}
+            />
+            {/if}
+
             {#if pType == "link"}
             <a
                 href={post.post_view.post.url}
@@ -220,7 +227,7 @@
             </a>
             {/if}
 
-            {#if pType == "thumbLink" || pType == "spotify"}
+            {#if pType == "thumbLink"}
             <PostLink
                 thumbnail_url={post.post_view.post.thumbnail_url}
                 url={post.post_view.post.url}

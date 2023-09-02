@@ -5,10 +5,13 @@
     import { getInstance } from '$lib/lemmy.js'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import { userSettings } from '$lib/settings.js'
+    
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
+    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
+
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
@@ -18,6 +21,8 @@
     export let post: PostView
     export let actions: boolean = true
     export let hideCommunity = false
+    let pType:string = postType(post)
+
 </script>
 
 <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
@@ -73,7 +78,7 @@
   
     {#if !$userSettings.showCompactPosts}
         <!--- Link-style post without thumbnail URL--->
-        {#if postType(post) == "link"}
+        {#if pType == "link"}
         <a
             href={post.post.url}
             target="{$userSettings.openInNewTab.postLinks
@@ -88,7 +93,7 @@
         {/if}
 
         <!--- Direct Image Post --->
-        {#if postType(post) == "image"}
+        {#if pType == "image"}
         <PostImage
             instance = {getInstance()}
             name = {post.post.name}
@@ -101,21 +106,27 @@
         {/if}
         
         <!--- Direct Video Post --->
-        {#if postType(post) == "video"}
+        {#if pType == "video"}
         <PostVideo
             url = {post.post.url}
         />
         {/if}
 
         <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
-        {#if postType(post) == "youtube"}
+        {#if pType == "youtube"}
         <PostYouTube
             post = {post}
         />
         {/if}
 
+        {#if pType == "spotify"}
+        <PostSpotify
+            post = {post}
+        />
+        {/if}
+
         <!--- Link-style post that is not Youtube --->
-        {#if postType(post) == "thumbLink" || postType(post) == "spotify"}
+        {#if pType == "thumbLink" }
         <PostLink
             url={post.post.url}
             thumbnail_url="{post.post.thumbnail_url}?format=webp&thumbnail=768"
