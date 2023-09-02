@@ -10,12 +10,6 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 ### Useless Setting is Slightly Less Useless now
 The "Open post links in new tab" is only partially implemented.  This is a work in progress and is being integrated as I update certain components.
 
-### Spotify
-I completely re-wrote the embed content components for YouTube (etc) videos.  Rather than shoe-horning in Spotify alongside that, I'm building a dedicated Spotify component in another branch.  That said, Spotify embeds no longer work in the latest release and will only render the thumbnail for now.
-
-### Alternate YouTube Frontends
-Piped support for emebds was removed in this release - it was just too slow and the instances too finnicky with embeds.
-
 ## Roadmap / To Do List
 ### Infrastructure
 1. [X] Add missing route/logic for email verification tokens 
