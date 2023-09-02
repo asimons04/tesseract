@@ -155,7 +155,8 @@
                             <span slot="title">Embedded Content</span>
                             <span slot="description">
                                 Enable or disable inline media content such as YouTube and Spotify. You can also choose which YouTube frontend
-                                is used if that kind of thing is important to you.   
+                                is used if that kind of thing is important to you.  Note that some Invidious instances may rate limit you necessitating
+                                updating the instance on occasion.
                             </span>
                             
                             <Checkbox bind:checked={$userSettings.embeddedMedia.enable}>Enable embedded content</Checkbox>
