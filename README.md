@@ -7,30 +7,25 @@ The UI changes are to make better use of the available space, leave less dead zo
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Known Issues
-### Useless Setting
-You'll see a setting to open posts or links in new tabs.  Those are decorative at this point and haven't been implemented in most places yet.  They default to off, so if you do change those, don't expect anything to happen yet.
+### Useless Setting is Slightly Less Useless now
+The "Open post links in new tab" is only partially implemented.  This is a work in progress and is being integrated as I update certain components.
 
 ### Spotify
-Spotify embeds are ugly, but it's Spotify's fault for not making their embed player properly scale with the viewport. There's a "to do" item and plan to address that.
+I completely re-wrote the embed content components for YouTube (etc) videos.  Rather than shoe-horning in Spotify alongside that, I'm building a dedicated Spotify component in another branch.  That said, Spotify embeds no longer work in the latest release and will only render the thumbnail for now.
 
 ### Alternate YouTube Frontends
-TL;DR:  I don't recommend changing the YouTube frontend at this time; use YouTube.
-
-Setting the YouTube frontend to Invidious is horribly inefficient in the current implementation.  It will randomly select an Invidious endpoint for _each_ post it renders. This means its has to download the player asssets for each post and loses any benefits of caching.  Also, some of them intermittently have availability issues.
-
-The plan is to provide a safe list of Invidious instances and allow the user to select one of their choosing or provide a single alternate Instance to use.  
-
-The option for Piped is only set to used `piped.video` and is horrendously slow.  I'm planning to do the same and allow users to select an instance from a predefined list of Piped instances in their settings.
+Piped support for emebds was removed in this release - it was just too slow and the instances too finnicky with embeds.
 
 ## Roadmap / To Do List
 ### Infrastructure
 1. [X] Add missing route/logic for email verification tokens 
 1. [X] Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.
     - Down to 337 MB!
-1. [ ] Move Invidious instances from YouTube component to a system setting
-1. [ ] Same as above but for Piped
+1. [X] Move Invidious instances from YouTube component to a system setting
+1. [X] Same as above but for Piped
 1. [ ] Move is[Image|Video|YouTube] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
-1. [ ] Consider a complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
+    - WIP.  Refactored all of those functions, but they're still in the `images.ts` library.
+1. [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
 
 ### UI
@@ -42,8 +37,13 @@ The option for Piped is only set to used `piped.video` and is horrendously slow.
 1. [X] Completely remove the random placeholders 
 1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
 1. [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
-1. [ ] Add option to open links in new tab/window
+1. [/] Add option to open links in new tab/window
     - WIP:  Added preliminary support by adding additional attributes to the `Link` component. Added target and title attributes. Added settings option and defaults to enable instances of `Link` to take the user's preferred same/new tab setting into account.
+    - Further WIP.  Regular "link" posts now open in new tabs if the option is enabled. 
+      - Still need to do:
+        - Links in comments
+        - Links in post body
+        - Links without thumbnails?
 1. [ ] Add option to hide deleted comments and logic to implement that
 1. [ ] Community Discovery:  Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
 1. [ ] Add inline search/filter for subscribed communities.
@@ -53,9 +53,10 @@ The option for Piped is only set to used `piped.video` and is horrendously slow.
 1. [ ] Collapse sidebar automatically when viewing in table view
 
 ### Media Rendering
-1. [ ] Create dedicated Svelte component for Spotify embeds
+1. [/] Create dedicated Svelte component for Spotify embeds
     -  The sizing and CSS for the YouTube iframe was designed for embedded content that is responsive and fills the viewport. Spotify's embed's unfortunately don't and they look ugly as hell. I believe they'll shrink but not expand beyond a certain point, so I think a dedicated component will solve that.
-1. [ ] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
+    - WIP in new branch
+1. [X] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
 1. [ ] Add support embedding Vevo videos
 
 
