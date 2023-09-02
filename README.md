@@ -65,7 +65,7 @@ Additional environment variables for configuring Tesseract can be found further 
 
 `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com ghcr.io/asimons04/tesseract:latest`
 
-### Building Rrom the Repo
+### Building From the Repo
 1. Clone the repo from a release branch
 2. docker build -t tesseract:latest ./
 3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com tesseract:latest`
