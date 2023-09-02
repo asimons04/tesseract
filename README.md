@@ -47,9 +47,7 @@ Piped support for emebds was removed in this release - it was just too slow and 
 1. [ ] Collapse sidebar automatically when viewing in table view
 
 ### Media Rendering
-1. [/] Create dedicated Svelte component for Spotify embeds
-    -  The sizing and CSS for the YouTube iframe was designed for embedded content that is responsive and fills the viewport. Spotify's embed's unfortunately don't and they look ugly as hell. I believe they'll shrink but not expand beyond a certain point, so I think a dedicated component will solve that.
-    - WIP in new branch
+1. [X] Create dedicated Svelte component for Spotify embeds
 1. [X] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
 1. [ ] Add support embedding Vevo videos
 1. [ ] Add more granular embed options. e.g. Only show thumbnail in feed but show embed when opening the post.

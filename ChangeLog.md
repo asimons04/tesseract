@@ -2,7 +2,7 @@
 
 ## 2023-09-02 (1.1.21)
 
-- Bumped version
+- Bumped version to 1.1.3
 
 - Re-enabled the /cors/ image upload handler.  Turns out there was simply an undocumented reverse proxy config that needed to be in place for the `/cors/` path.  Updated Readme documentation with a sample Nginx config.
 
@@ -15,13 +15,15 @@
   - You can select your preferred YouTube frontend in the settings.  Default is YouTube.  Setting to Invidious will allow you to select an instance from the dropdown menu to use.
       - To do:  Allow user-defined Invidious URL
 
-- Introduced a slight regression with Spotify embeds.  As part of the YouTube overhaul, Spotify embeds are broken. Those will be re-implemented into their own Svelte component, and preliminary work has begun in a separate branch.  
+- Added dedicated component for Spotify so the player is appropriately sized and scaled. 
 
 - If "Enable embedded content" is disabled, YouTube, etc posts will show the thumbnail instead of rendering as a bare link post.  Looks much better.
 
 - Links should now open in new tab if you have the preference set. Any I missed can be considered a bug that should be reported.
 
 - Hid setting to "Open posts in a new tab" since the functionality is not yet implemented beyond storing the state of the setting.  Considering whether or not this is something to just scrap.
+
+- Bumped version again to 1.1.4 after today's updates so far
 
 
 ### 2023-09-01 (1.1.14)
