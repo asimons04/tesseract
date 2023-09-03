@@ -27,6 +27,7 @@
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
     import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
+    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
 
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import type { CommentSortType } from 'lemmy-js-client'
@@ -208,6 +209,12 @@
 
             {#if pType == "spotify"}
             <PostSpotify
+                post = {post.post_view}
+            />
+            {/if}
+
+            {#if pType == "soundcloud"}
+            <PostSoundCloud
                 post = {post.post_view}
             />
             {/if}

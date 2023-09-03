@@ -1,5 +1,9 @@
 ## Changelog
 
+## 2023-09-03 (1.1.5)
+
+- Added support for Soundcloud track embeds
+
 ## 2023-09-02 (1.1.21)
 
 - Bumped version to 1.1.3

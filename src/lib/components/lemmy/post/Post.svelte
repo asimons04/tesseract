@@ -11,7 +11,8 @@
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
     import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
-
+    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
+    
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
@@ -119,8 +120,16 @@
         />
         {/if}
 
+        <!--- Spotify Embed --->
         {#if pType == "spotify"}
         <PostSpotify
+            post = {post}
+        />
+        {/if}
+
+        <!--- Soundcloud Embed --->
+        {#if pType == "soundcloud"}
+        <PostSoundCloud
             post = {post}
         />
         {/if}

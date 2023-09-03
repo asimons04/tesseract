@@ -2,13 +2,17 @@
 
 Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and content.
 
-The UI changes are to make better use of the available space, leave less dead zones, and allow a richer, more immersive experience.
-
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
-## Known Issues
-### Useless Setting is Slightly Less Useless now
-The "Open post links in new tab" is only partially implemented.  This is a work in progress and is being integrated as I update certain components.
+## Supported Media
+- YouTube and all known Invidious and Piped links are detected as "Youtube-like" embeddable videos.  These will embed using the user's preferred YouTube frontend which can be configured in settings. Currently, YouTube and Invidious are supported frontends, and the Invidious instance used can be chosen from your settings.
+
+- Soundcloud track links will be detected and a player embedded. Playlists don't seem to be supported on Soundcloud's end, so unfortunately, only track links can be embedded.
+
+- Spotify tracks, albums will embed a player right in the feed or post.
+
+
+
 
 ## Roadmap / To Do List
 ### Infrastructure
@@ -17,7 +21,7 @@ The "Open post links in new tab" is only partially implemented.  This is a work 
     - Down to 337 MB!
 1. [X] Move Invidious instances from YouTube component to a system setting
 1. [X] Same as above but for Piped
-1. [ ] Move is[Image|Video|YouTube] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
+1. [/] Move is[Image|Video|YouTube|Spotify|SoundCloud] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
     - WIP.  Refactored all of those functions, but they're still in the `images.ts` library.
 1. [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
@@ -43,7 +47,7 @@ The "Open post links in new tab" is only partially implemented.  This is a work 
 ### Media Rendering
 1. [X] Create dedicated Svelte component for Spotify embeds
 1. [X] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
-1. [ ] Add support embedding Vevo videos
+1. [X] Add support embedding SoundCloud links
 1. [ ] Add more granular embed options. e.g. Only show thumbnail in feed but show embed when opening the post.
 
 

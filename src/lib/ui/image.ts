@@ -64,6 +64,14 @@ export const isSpotify = (url: string | undefined) => {
 
 }
 
+// Check if URL is for a Soundcloud asset
+export const isSoundCloud = (url:string) => {
+    return (
+        url.startsWith('https://m.soundcloud.com') || 
+        url.startsWith('https://soundcloud.com') 
+    )
+}
+
 
 // Returns a string representing the detected post type
 // image | video | embed_video | link | thumbLink | text
@@ -84,6 +92,10 @@ export const postType = (post: object | undefined) => {
     
     if (post.post.url && isSpotify(post.post.url)) {
         return "spotify"
+    }
+    
+    if (post.post.url && isSoundCloud(post.post.url)) {
+        return "soundcloud"
     }
 
 
