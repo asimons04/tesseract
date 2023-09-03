@@ -5,11 +5,14 @@ Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Supported Media
-- YouTube and all known Invidious and Piped links are detected as "Youtube-like" embeddable videos.  These will embed using the user's preferred YouTube frontend which can be configured in settings. Currently, YouTube and Invidious are supported frontends, and the Invidious instance used can be chosen from your settings.
+- YouTube and all known 
+[Invidious](https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest) and 
+[Piped](https://github.com/TeamPiped/Piped/wiki/Instances) 
+links are detected as "Youtube-like" embeddable videos.  These will embed using the user's preferred YouTube frontend which can be configured in settings. Currently, YouTube and Invidious are supported frontends, and the Invidious instance used can be chosen from your settings.
 
 - Soundcloud track links will be detected and a player embedded. Playlists don't seem to be supported on Soundcloud's end, so unfortunately, only track links can be embedded.
 
-- Spotify tracks, albums will embed a player right in the feed or post.
+- Spotify tracks, albums, and playlists will embed a player right in the feed or post.
 
 
 
