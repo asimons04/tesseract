@@ -5,6 +5,8 @@ Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Supported Media
+- Direct video links (e.g .webm, mp4, etc) will embed a player in the feed/post.
+
 - YouTube and all known 
 [Invidious](https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest) and 
 [Piped](https://github.com/TeamPiped/Piped/wiki/Instances) 
