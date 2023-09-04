@@ -1,6 +1,7 @@
 ## Changelog
 
-## 2023-09-04 (1.1.7)
+## 2023-09-04 
+### 1.1.7
 Enabling embedded media is more granular now.  This is particularly helpful when running on mobile where you may not want to embed every YouTube video in the feed but still want to view it without leaving the app.  
 
 I added a migration step to update the old, all-or-nothing boolean toggle to the more granular version. To keep the change from being shocking, the migration will enable both feed and post embeds to match the old behavior if media embeds were enabled already.
@@ -25,6 +26,12 @@ You can now select whether media should be enabled in feeds or posts separately.
   - Clicking into the post will show a thumbnail image
 
 This is the only change in this release.    
+
+### 1.1.71
+- Added another wrapper div around embedded iframes to give uniform margins. Looks a lot cleaner, especially on mobile (top/bottom were consistent, but left/right sometimes went to zero).
+
+
+
 
 ## 2023-09-03 (1.1.5)
 
