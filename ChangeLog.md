@@ -1,4 +1,6 @@
 ## Changelog
+All major/minor changes between releases will be documented here.  
+
 
 ## 2023-09-04 
 ### 1.1.7
@@ -33,13 +35,15 @@ This is the only change in this release.
 
 
 
-## 2023-09-03 (1.1.5)
+## 2023-09-03
+### 1.1.5
 
 - Added support for Soundcloud track embeds
 
-## 2023-09-02 (1.1.21)
+- Bumped version signficantly consider the amount of code that has been reworked since the last release. 
 
-- Bumped version to 1.1.3
+## 2023-09-02 
+### 1.1.21
 
 - Re-enabled the /cors/ image upload handler.  Turns out there was simply an undocumented reverse proxy config that needed to be in place for the `/cors/` path.  Updated Readme documentation with a sample Nginx config.
 
@@ -63,15 +67,13 @@ This is the only change in this release.
 - Bumped version again to 1.1.4 after today's updates so far
 
 
-### 2023-09-01 (1.1.14)
-- Bumped version to correspond with completed patches so far.
-
+### 2023-09-01 
+### 1.1.14
 - Removed code for the random placeholders in input fields and associated settings
 
 - Considering rebranding again from Tesseract to Tachyon to reflect the project's *Photon*ic legacy.
 
 - Added action buttons above posts to return to the feed and reload the comments
-  - ~~To do:  Check `history.length` to conditionally hide the "back to feed" button if less than 2. No need to have that button if post was opened in new tab (either explicitly or when "open posts in new tab" feature is finalized.~~
 
 - Added tooltip support to buttons. Added tooltips to post action buttons.
 
@@ -90,7 +92,8 @@ This is the only change in this release.
 
 
 
-### 2023-08-31 (1.1.5)
+### 2023-08-31 
+### 1.1.5
 - Began initial fork work
 
 - Rebranded with new name and logo. Keeping base version of upstream project and incrementing it separately.
