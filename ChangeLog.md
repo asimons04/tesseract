@@ -1,5 +1,26 @@
 ## Changelog
 
+## 2023-09-04 (1.1.7)
+Embedded media is much more granular now!  This is particularly helpful when running on mobile where you may not want to embed every YouTube video in the feed but still want to view it without leaving the app.  
+
+You will need to adjust your settings since the backend options changed. I added a migration step to update the old, all-or-nothing boolean toggle to the more granular version. To keep the change from being shocking, the migration will enable both feed and post embeds to match the old behavior. In settings, you can change that to reflect your preferences.  If you currently have embedded media disabled, you will not notice any changes.
+
+### Changes to Media Embeds
+You can now select whether media should be enabled in feeds or posts separately.
+
+**If disabled in the feed and disabled in posts:**
+  - Thumbnail will be shown in both locations and the link will go to the external content (optionally in a new tab if you have that preference set).
+  - This is the same behavior as unchecking "Enable embedded content" in the previous release.
+
+**If disabled in the feed and enabled in posts (new default behavior):**
+  - Thumbnail will be shown and will link to the post; media will be embedded in the post.  
+
+**If enabled in feed and disabled in posts:**
+  - Media will embed in the feed. The link will take you to the external content (optional in a new tab if you have that preference set)
+  - Clicking into the post will show a thumbnail image
+
+This is the only change in this release.    
+
 ## 2023-09-03 (1.1.5)
 
 - Added support for Soundcloud track embeds

@@ -48,12 +48,11 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 [ ] Add inline search/filter for subscribed communities.
 
+[ ] Add user preference to determine post image sizing: `small|normal|large`
+
 ### Modlog
 [ ] Enhance filtering beyond just community
 [ ] Collapse sidebar automatically when viewing in table view
-
-### Media Rendering
-[ ] Add more granular embed options. e.g. Only show thumbnail in feed but show embed when opening the post.
 
 
 ## Public Hosted Demo Instance

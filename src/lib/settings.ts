@@ -187,12 +187,22 @@ export const YTFrontends = {
 
 
 if (typeof window != 'undefined') {
-  let oldUserSettings = JSON.parse(
-    localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
-  )
 
-  userSettings.set({ ...defaultSettings, ...oldUserSettings })
+    let oldUserSettings = JSON.parse(
+        localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
+    )
+    
+    // Migrate legacy setting
+    if (oldUserSettings.embeddedMedia.enable) {
+        oldUserSettings.embeddedMedia.enableFeed = true;
+        oldUserSettings.embeddedMedia.enablePost = true;
+        delete oldUserSettings.embeddedMedia.enable;
+    }
+
+    userSettings.set({ ...defaultSettings, ...oldUserSettings })
 }
+
+
 
 userSettings.subscribe((settings) => {
   if (typeof window != 'undefined') {
