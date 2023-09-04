@@ -32,7 +32,7 @@ I created a public Matrix support space you can join.  General discussion, flesh
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
-- [/] Move `is[Image|Video|YouTube|Spotify|SoundCloud]` and `postType` helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
+- [ ] Move `is[Image|Video|YouTube|Spotify|SoundCloud]` and `postType` helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
   - WIP: Refactored all of those functions, but they're still in the `images.ts` library.
 - [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 - [ ] Consider integrating Fediseer support into admin tools 
