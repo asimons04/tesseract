@@ -1,9 +1,13 @@
 ## Changelog
 
 ## 2023-09-04 (1.1.7)
-Embedded media is much more granular now!  This is particularly helpful when running on mobile where you may not want to embed every YouTube video in the feed but still want to view it without leaving the app.  
+Enabling embedded media is more granular now.  This is particularly helpful when running on mobile where you may not want to embed every YouTube video in the feed but still want to view it without leaving the app.  
 
-You will need to adjust your settings since the backend options changed. I added a migration step to update the old, all-or-nothing boolean toggle to the more granular version. To keep the change from being shocking, the migration will enable both feed and post embeds to match the old behavior. In settings, you can change that to reflect your preferences.  If you currently have embedded media disabled, you will not notice any changes.
+I added a migration step to update the old, all-or-nothing boolean toggle to the more granular version. To keep the change from being shocking, the migration will enable both feed and post embeds to match the old behavior if media embeds were enabled already.
+
+If you currently have embedded media disabled, you will not notice any changes.
+
+The default behavior has also changed:  By default, media embeds are disabled in the feed and enabled in posts. You can change this in the settings.
 
 ### Changes to Media Embeds
 You can now select whether media should be enabled in feeds or posts separately.
@@ -16,6 +20,7 @@ You can now select whether media should be enabled in feeds or posts separately.
   - Thumbnail will be shown and will link to the post; media will be embedded in the post.  
 
 **If enabled in feed and disabled in posts:**
+  - Note that this is a weird choice, but I gotchu fam.
   - Media will embed in the feed. The link will take you to the external content (optional in a new tab if you have that preference set)
   - Clicking into the post will show a thumbnail image
 
