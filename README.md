@@ -35,6 +35,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 - [/] Move `is[Image|Video|YouTube|Spotify|SoundCloud]` and `postType` helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
   - WIP: Refactored all of those functions, but they're still in the `images.ts` library.
 - [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
+- [ ] Consider integrating Fediseer support into admin tools 
 
 ### Community Discovery
 - [ ] Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
@@ -43,7 +44,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 
 ### UI
-- [ ] Make open/close sidebar button sticky
+- [ ] Add ability to manage instance allow/block lists from admin panel
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 - [ ] Add option to hide deleted comments and logic to implement that
 - [ ] Add inline search/filter for subscribed communities.
