@@ -23,7 +23,8 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
     - On mobile browsers, Spotify will only allow track previews regardless of login state.
 
 
-
+## Support
+I created a public Matrix support space you can join.  General discussion, flesh out ideas, or ask for support.  [Tesseract Support](https://matrix.to/#/#tesseract-support:ptznetwork.org)
 
 
 
