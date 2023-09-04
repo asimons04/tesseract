@@ -36,16 +36,16 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
   - WIP: Refactored all of those functions, but they're still in the `images.ts` library.
 - [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
+### Community Discovery
+- [ ] Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
+- [ ] Periodically pull the JSON DB for browse.feddit.de and use that to integrate a feidverse-wide community browser.
+
+
 
 ### UI
 - [ ] Make open/close sidebar button sticky
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 - [ ] Add option to hide deleted comments and logic to implement that
-
-### Community Discovery
-- [ ] Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
-- Periodically pull the JSON DB for browse.feddit.de and use that to integrate a feidverse-wide community browser.
-
 - [ ] Add inline search/filter for subscribed communities.
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
 - [ ] Add user setting to allow hiding posts from accounts newer than a defined period.
