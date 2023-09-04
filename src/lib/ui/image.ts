@@ -1,5 +1,8 @@
 import { YTFrontends } from '$lib/settings.js'
 
+
+type displayType = 'post'|'feed'
+
 export const isImage = (url: string | undefined) => {
   if (!url) return false
 
@@ -74,8 +77,9 @@ export const isSoundCloud = (url:string) => {
 
 
 // Returns a string representing the detected post type
-// image | video | embed_video | link | thumbLink | text
-export const postType = (post: object | undefined) => {
+// image | video | youtube | spotify | soundcloud | link | thumbLink | text
+export const postType = (post: object | undefined, displayType: displayType ) => {
+    
     if (!post) return false
     
     if (post.post.url && isImage(post.post.url)) {

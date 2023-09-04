@@ -117,6 +117,7 @@
         {#if pType == "youtube"}
         <PostYouTube
             post = {post}
+            displayType="feed"
         />
         {/if}
 
@@ -124,6 +125,7 @@
         {#if pType == "spotify"}
         <PostSpotify
             post = {post}
+            displayType="feed"
         />
         {/if}
 
@@ -131,6 +133,7 @@
         {#if pType == "soundcloud"}
         <PostSoundCloud
             post = {post}
+            displayType="feed"
         />
         {/if}
 

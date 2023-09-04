@@ -204,18 +204,21 @@
             {#if pType == "youtube"}
             <PostYouTube
                 post = {post.post_view}
+                displayType="post"
             />
             {/if}
 
             {#if pType == "spotify"}
             <PostSpotify
                 post = {post.post_view}
+                displayType="post"
             />
             {/if}
 
             {#if pType == "soundcloud"}
             <PostSoundCloud
                 post = {post.post_view}
+                displayType="post"
             />
             {/if}
 

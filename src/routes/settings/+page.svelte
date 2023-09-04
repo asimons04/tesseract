@@ -159,7 +159,8 @@
                                 updating the instance on occasion.  
                             </span>
                             
-                            <Checkbox bind:checked={$userSettings.embeddedMedia.enable}>Enable embedded content</Checkbox>
+                            <Checkbox bind:checked={$userSettings.embeddedMedia.enableFeed}>Enable embedded content in feed</Checkbox>
+                            <Checkbox bind:checked={$userSettings.embeddedMedia.enablePost}>Enable embedded content in posts</Checkbox>
                             
                             <span class="block my-1 font-bold">YouTube Frontend</span>
                             <div class="flex flex-row flex-wrap">
