@@ -67,7 +67,7 @@ This is the only change in this release.
 - Bumped version again to 1.1.4 after today's updates so far
 
 
-### 2023-09-01 
+## 2023-09-01 
 ### 1.1.14
 - Removed code for the random placeholders in input fields and associated settings
 
@@ -92,7 +92,7 @@ This is the only change in this release.
 
 
 
-### 2023-08-31 
+## 2023-08-31 
 ### 1.1.5
 - Began initial fork work
 
