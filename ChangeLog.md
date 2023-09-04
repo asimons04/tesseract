@@ -40,7 +40,7 @@ This is the only change in this release.
 
 - Added support for Soundcloud track embeds
 
-- Bumped version signficantly consider the amount of code that has been reworked since the last release. 
+- Bumped version signficantly considering the amount of code that has been reworked since the last release. 
 
 ## 2023-09-02 
 ### 1.1.21
