@@ -28,7 +28,7 @@ I created a public Matrix support space you can join.  General discussion, flesh
 
 
 
-## Roadmap / To Do List
+## Roadmap / To Do List / Ideas to Toss Around
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
@@ -41,22 +41,30 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 - [ ] Make open/close sidebar button sticky
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 - [ ] Add option to hide deleted comments and logic to implement that
-- [ ] Enhance Community Discovery:  Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
+
+### Community Discovery
+- [ ] Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
+- Periodically pull the JSON DB for browse.feddit.de and use that to integrate a feidverse-wide community browser.
 
 - [ ] Add inline search/filter for subscribed communities.
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
+- [ ] Add user setting to allow hiding posts from accounts newer than a defined period.
+  - Preset intervals:  3d, 5d, 7d
 
 ### Modlog
 - [ ] Enhance filtering beyond just community
 - [ ] Collapse sidebar automatically when viewing in table view
 
+### Media Handling
+- [ ] Direct videos don't have thumbnail attributes, but ones hosted via pict-rs can add ?format=webp to the URL.  Add this and enable direct videos to not be embedded if that option is set.
+- [ ] Detect Youtube/Piped/Invidious links in post bodies and comments.  Optinally render those inline depending on user setting
 
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
 
 
 ## Self-Hosting
-Tesseract is designed to be self hosted.  You can even run it from localhost if you want and connect to any Lemmy instance out there.
+Tesseract is designed to be self hosted.  You can even run it from localhost if you want and connect to any Lemmy instance out there. (Note that image uploads can't work from localhost due to the CORS handler, but everything else will)
 
 
 ### Deploying the Image
