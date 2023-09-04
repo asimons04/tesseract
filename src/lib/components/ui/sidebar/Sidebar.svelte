@@ -27,7 +27,6 @@
         moderating: true,
         subscribed: true
     };
-    
 
 </script>
 
@@ -115,7 +114,7 @@
         {#if $profile?.user.moderates.length > 0}
             
             <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.expandSidebar && !expanded.moderating} />
-            <h1 class="flex flex-row text-base font-bold justify-between" class:hidden={!$userSettings.expandSidebar} >
+            <h1 class="flex flex-row font-bold justify-between" class:hidden={!$userSettings.expandSidebar} >
                 <span>Moderating ({$profile?.user.moderates.length})</span>
                 <Button
                     on:click={() =>

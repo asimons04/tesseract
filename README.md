@@ -31,8 +31,8 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
-[/] Move is[Image|Video|YouTube|Spotify|SoundCloud] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
-  - WIP.  Refactored all of those functions, but they're still in the `images.ts` library.
+[/] Move `is[Image|Video|YouTube|Spotify|SoundCloud]` and `postType` helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
+  - WIP: Refactored all of those functions, but they're still in the `images.ts` library.
 
 [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
