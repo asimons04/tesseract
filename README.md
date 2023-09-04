@@ -4,7 +4,7 @@ Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
-## Screenshots
+## Screen Shots
 (Slightly outdated) Screenshots are available at the [bottom of the page](#Screenshots).
 
 
@@ -53,6 +53,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Modlog
 [ ] Enhance filtering beyond just community
+
 [ ] Collapse sidebar automatically when viewing in table view
 
 
