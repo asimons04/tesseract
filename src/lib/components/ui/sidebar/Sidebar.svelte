@@ -38,12 +38,21 @@
     ? 'max-w-[20%] resize-x min-w-[12rem]'
     : 'w-max max-w-max min-w-max'}"
 >
+    
     <Button
+        alignment="left"
         on:click={() =>
             ($userSettings.expandSidebar = !$userSettings.expandSidebar)
         }
         class="w-max !p-2 hover:bg-slate-200"
-        aria-label="Collapse sidebar"
+        aria-label={$userSettings.expandSidebar
+            ? 'Collapse sidebar'
+            : 'Expand sidebar'
+        }
+        title={$userSettings.expandSidebar
+            ? 'Collapse sidebar'
+            : 'Expand sidebar'
+        }
     >
         <Icon
             src={ChevronDoubleLeft}
@@ -52,10 +61,10 @@
             class="transition-transform {$userSettings.expandSidebar
                 ? ''
                 : 'rotate-180'}"
-            title="Toggle Sidebar"
         />
     </Button>
     
+
     <!---Frontpage--->
     <SidebarButton href="/" expanded={$userSettings.expandSidebar}>
         <Icon src={Home} mini size="18" title="Home" />
@@ -99,11 +108,8 @@
             <span class:hidden={!$userSettings.expandSidebar}>Accounts</span>
         </SidebarButton>
     {/if}
-        
-
-
     
-    
+
     {#if $profile?.user}
         <!--- Moderating --->
         {#if $profile?.user.moderates.length > 0}
@@ -116,8 +122,14 @@
                         (expanded.moderating = !expanded.moderating)
                     }
                     class="!p-2 hover:bg-slate-200"
-                    aria-label="Collapse sidebar"
-                    title="Collapse my communities"
+                    aria-label={expanded.moderating
+                        ? 'Collapse my communities'
+                        : 'Expand my Communities'
+                    }
+                    title={expanded.moderating
+                        ? 'Collapse my communities'
+                        : 'Expand my Communities'
+                    }
                 >
                     <Icon
                         src={ChevronDoubleDown}
@@ -126,7 +138,6 @@
                         class="transition-transform {expanded.moderating
                             ? 'rotate-180'
                             : ''}"
-                        title="Toggle My Communities"
                     />
                 </Button>
             </h1>   
@@ -136,7 +147,7 @@
                 items={$profile.user.moderates.map((i) => i.community)}
                 hidden={!expanded.moderating}
             />
-           
+        
         {/if}
         
         <!--- Subscribed Community List --->
@@ -150,8 +161,14 @@
                     (expanded.subscribed = !expanded.subscribed)
                 }
                 class="!p-2 hover:bg-slate-200"
-                aria-label="Collapse sidebar"
-                title="Collapse my communities"
+                aria-label={expanded.subscribed
+                    ? 'Collapse my subscriptions'
+                    : 'Expand my subscriptions'
+                }
+                title={expanded.subscribed
+                    ? 'Collapse my subscriptions'
+                    : 'Expand my subscriptions'
+                }
             >
                 <Icon
                     src={ChevronDoubleDown}
@@ -160,7 +177,6 @@
                     class="transition-transform {expanded.subscribed
                         ? 'rotate-180'
                         : ''}"
-                    title="Toggle My Communities"
                 />
             </Button>
         </h1>

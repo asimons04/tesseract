@@ -4,6 +4,10 @@ Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
+## Screenshots
+(Slightly outdated) Screenshots are available at the [bottom of the page](#Screenshots).
+
+
 ## Supported Media
 - Direct video links (e.g .webm, mp4, etc) will embed a player in the feed/post.
 
@@ -15,45 +19,41 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 - Soundcloud track links will be detected and a player embedded. Playlists don't seem to be supported on Soundcloud's end, so unfortunately, only track links can be embedded.
 
 - Spotify tracks, albums, and playlists will embed a player right in the feed or post.
+  - (Optional) To enable full track playback rather than previews, you will need to either allow 3rd party cookies for the Tesseract domain or whitelist cookies for `open.spotify.com`. This is to allow the Spotify iframe to detect your login.
+    - On mobile browsers, Spotify will only allow track previews regardless of login state.
+
+
 
 
 
 
 ## Roadmap / To Do List
+Completed "to do"s have been moved to the [change log](./ChangeLog.md).
+
 ### Infrastructure
-1. [X] Add missing route/logic for email verification tokens 
-1. [X] Audit the Dockerfile to reduce resultant image size.  1.35 GB is ridiculous.
-    - Down to 337 MB!
-1. [X] Move Invidious instances from YouTube component to a system setting
-1. [X] Same as above but for Piped
-1. [/] Move is[Image|Video|YouTube|Spotify|SoundCloud] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
-    - WIP.  Refactored all of those functions, but they're still in the `images.ts` library.
-1. [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
+[/] Move is[Image|Video|YouTube|Spotify|SoundCloud] and postType helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
+  - WIP.  Refactored all of those functions, but they're still in the `images.ts` library.
+
+[ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
 
 ### UI
-1. [X] Add tabbed interface to Settings to de-clutter
-    - Tabling this for now. Reorganized the settings page to make it more compact and removed some options I've defaulted off and plan to remove.
-1. [X] Combine some settings into same section (e.g display names and show instances)
-1. [X] Add headings to sidebar sections ("Currently Moderating", "My Subscriptions", etc)
-1. [X] Make "Communities I'm Moderating" and "Subscribed Communities" lists collapsible in sidebar
-1. [X] Completely remove the random placeholders 
-1. [ ] Make open/close sidebar button sticky (and possibly move it into the bar itself)
-1. [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
-1. [X] Add option to open links in new tab/window
-1. [ ] Add option to hide deleted comments and logic to implement that
-1. [ ] Community Discovery:  Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
-1. [ ] Add inline search/filter for subscribed communities.
+[ ] Make open/close sidebar button sticky
+
+[ ] Choose a vote button style and commit to it; remove unused option and its supporting code
+
+[ ] Add option to hide deleted comments and logic to implement that
+
+[ ] Enhance Community Discovery:  Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
+
+[ ] Add inline search/filter for subscribed communities.
 
 ### Modlog
-1. [ ] Enhance filtering beyond just community
-1. [ ] Collapse sidebar automatically when viewing in table view
+[ ] Enhance filtering beyond just community
+[ ] Collapse sidebar automatically when viewing in table view
 
 ### Media Rendering
-1. [X] Create dedicated Svelte component for Spotify embeds
-1. [X] Allow user selection of which Invidious instance to use (instead of randomly selecting one which has proven problematic (sometimes they're down, increased page load as each domain has to cache its own player, etc).
-1. [X] Add support embedding SoundCloud links
-1. [ ] Add more granular embed options. e.g. Only show thumbnail in feed but show embed when opening the post.
+[ ] Add more granular embed options. e.g. Only show thumbnail in feed but show embed when opening the post.
 
 
 ## Public Hosted Demo Instance
