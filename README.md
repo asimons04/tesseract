@@ -51,6 +51,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 ### UI
 - [ ] Add ability to manage instance allow/block lists from admin panel
   - Completed in branch.  Needs a bit further testing and consoldate some things, but the functionality is present and working.
+  - Also in that brach:  Fixed broken config setting for `enable_nsfw`
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 - [ ] Add option to hide deleted comments and logic to implement that
 - [ ] Add inline search/filter for subscribed communities.
