@@ -16,8 +16,7 @@
     import type { PageData } from './$types.js'
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
 
-    export let data: PageData
-    console.log(data);
+    export let data: PageData;
     
     const formData: Omit<EditSite, 'auth'> | undefined = data.site
         ? {
@@ -35,7 +34,7 @@
         }
         : undefined
     
-    console.log(formData);
+    
 
     async function save() {
         if (!$profile?.jwt) {

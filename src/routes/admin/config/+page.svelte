@@ -8,11 +8,11 @@
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { getClient } from '$lib/lemmy.js'
-    import type { EditSite } from 'lemmy-js-client'
+    import type { EditSite, GetFederatedInstances } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
 
-    export let data: PageData
+    export let data: PageData;
     
     const formData: Omit<EditSite, 'auth'> | undefined = data.site
         ? {
@@ -22,11 +22,22 @@
         : undefined
 
     async function save() {
-        if (!$profile?.jwt) return
+        if (!$profile?.jwt){
+            toast({
+                content: "Not authorized",
+                type: 'error',
+            })   
+            return
+        }
         
         saving = true
         console.log(formData);
         const { jwt } = $profile
+        
+        const strToArray = (str:string) => {
+            if (str == "") { return [] };
+            return str.split(',');
+        }
 
         try {
             await getClient().editSite({
