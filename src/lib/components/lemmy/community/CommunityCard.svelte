@@ -74,24 +74,25 @@
 </script>
 
 <StickyCard>
-  <div class="flex flex-row gap-3 items-center">
-    <div class="flex-shrink-0">
-      <Avatar
-        width={48}
-        url={community_view.community.icon}
-        alt={community_view.community.name}
-      />
+    <div class="flex flex-row gap-3 items-center">
+        <div class="flex-shrink-0">
+        <Avatar
+            width={48}
+            url={community_view.community.icon}
+            alt={community_view.community.name}
+        />
+        </div>
+        <div class="flex flex-col gap-0">
+            <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
+                <h1 class="font-bold text-xl">{community_view.community.title}</h1>
+                <span class="dark:text-zinc-400 text-slate-600 text-sm">
+                    !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
+                </span>
+            </a>
+        </div>
     </div>
-    <div class="flex flex-col gap-0">
-      <h1 class="font-bold text-xl">{community_view.community.title}</h1>
-      <span class="dark:text-zinc-400 text-slate-600 text-sm">
-        !{community_view.community.name}@{new URL(
-          community_view.community.actor_id
-        ).hostname}
-      </span>
-    </div>
-  </div>
-  <span class="flex flex-row items-center gap-1 text-sm">
+  
+    <span class="flex flex-row items-center gap-1 text-sm">
     <Icon src={Calendar} width={16} height={16} mini />
     <RelativeDate date={new Date(community_view.community.published + 'Z')} />
   </span>
