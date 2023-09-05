@@ -24,7 +24,7 @@
   const click = createEventDispatcher()
 </script>
 
-<li>
+<div>
   {#if link}
     <a
       {href}
@@ -52,4 +52,4 @@
       <slot />
     </button>
   {/if}
-</li>
+</div>

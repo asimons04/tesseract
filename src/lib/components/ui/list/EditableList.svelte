@@ -6,6 +6,7 @@
   const dispatcher = createEventDispatcher<{ action: any }>()
 
   function action(detail: any) {
+    console.log(detail);
     dispatcher('action', detail)
   }
 </script>
