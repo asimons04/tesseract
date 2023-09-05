@@ -26,6 +26,8 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 ## Support
 I created a public Matrix support space you can join.  General discussion, flesh out ideas, or ask for support.  [Tesseract Support](https://matrix.to/#/#tesseract-support:ptznetwork.org)
 
+There is also a Lemmy community where you can get the latest announcements and post questions related to Tesseract.  Find us at https://dubvee.org/c/tesseract
+
 
 
 ## Roadmap / To Do List / Ideas to Toss Around
