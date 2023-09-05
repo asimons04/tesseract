@@ -1,3 +1,4 @@
+/*
 import { profile } from '$lib/auth.js'
 import { get } from 'svelte/store'
 import { getClient, site as siteStore } from '$lib/lemmy.js'
@@ -19,3 +20,4 @@ export async function load({ fetch }) {
     site: site,
   }
 }
+*/

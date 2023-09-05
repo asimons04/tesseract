@@ -56,7 +56,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
 - [ ] Add user setting to allow hiding posts from accounts newer than a defined period.
   - Preset intervals:  3d, 5d, 7d
-
+- [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
 ### Modlog
 - [ ] Enhance filtering beyond just community
 - [ ] Collapse sidebar automatically when viewing in table view
