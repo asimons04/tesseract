@@ -19,6 +19,10 @@ Fixed broken checkbox toggle for "Enable NSFW" option. It was missing the `bind`
 
 That's all for 1.1.8.
 
+### 1.1.81
+Added link back to the community main page from the community sidebar. 
+
+
 ## 2023-09-04 
 ### 1.1.7
 Enabling embedded media is more granular now.  This is particularly helpful when running on mobile where you may not want to embed every YouTube video in the feed but still want to view it without leaving the app.  
