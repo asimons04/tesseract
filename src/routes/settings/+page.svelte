@@ -88,8 +88,9 @@
                 <span slot="title">Post and User Display Options</span>
                 <span slot="description">Toggle various options for how posts, comments, and usernames are displayed.</span>
                 
-                <div class="flex flex-wrap gap-4 flex-row w-full">
-                    <div class="max-w-full">
+                <div class="flexrow">
+                    
+                    <div class="flexcol flexcol-33">
                         <Setting>
                             <span slot="title">Post Display Options</span>
                             <span slot="description">
@@ -110,18 +111,11 @@
                                 optionNames={['Cards', 'Compact']}
                                 bind:selected={$userSettings.showCompactPosts}
                             />
-                            
-                            <hr class="mt-4"/>
-                            <p>
-                                Looking to hide read posts? That was moved to your
-                                <Link href="/profile/settings" highlight>profile settings</Link>.
-                            </p>
-                            
                         </Setting>
                     </div>
                     
                     
-                    <div class="max-w-full">
+                    <div class="flexcol flexcol-33">
                         <Setting>
                             <span slot="title">User/Community Display Options</span>
                             <span slot="description">
@@ -133,9 +127,9 @@
                             <Checkbox bind:checked={$userSettings.showInstances.comments}>Show user's instances in the comments.</Checkbox>
                             <Checkbox bind:checked={$userSettings.showInstances.community}>Show the instance communities belong to.</Checkbox>
 
+                            <hr class="mt-4"/>
 
                             <h1 class="font-bold">Misc Settings</h1>
-                            <p></p>
                             <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
                             <!---<Checkbox bind:checked={$userSettings.openInNewTab.posts}>Open posts in a new tab.</Checkbox>--->
 
@@ -147,10 +141,8 @@
                             />
                         </Setting>
                     </div>
-                </div>
 
-                <div class="flex flex-wrap gap-4 flex-row w-full">
-                    <div class="w-full">
+                    <div class="flexcol flexcol-33">
                         <Setting>
                             <span slot="title">Embedded Content</span>
                             <span slot="description">
@@ -180,6 +172,7 @@
                         </Setting>
                     </div>
                 </div>
+
             </Setting>
         </div>
     </Setting>

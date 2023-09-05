@@ -33,12 +33,6 @@
         saving = true
         
         const { jwt } = $profile
-        
-        const strToArray = (str:string) => {
-            if (str == "") { return [] };
-            return str.split(',');
-        }
-
         try {
             await getClient().editSite({
                 auth: jwt,

@@ -91,3 +91,85 @@ pre {
 .dark ::-webkit-scrollbar-thumb {
   @apply bg-zinc-800;
 }
+
+
+.flexrow {
+    max-width: 100%; 
+    page-break-inside: avoid; 
+    display: flex; 
+    flex-direction: row; 
+}
+
+.flexcol {
+    width: -moz-fit-content; 
+    width: -webkit-fit-content; 
+    width: fit-content;
+    width: 100%;
+    height: -moz-fit-content; 
+    height: -webkit-fit-content; 
+    height: fit-content; 
+    overflow: none; 
+    padding-right: 15px;
+}
+
+
+
+.flexcol-10 {
+    min-width:10%;
+}
+
+.flexcol-15 {
+    min-width: 15;
+}
+
+.flexcol-25 {
+    min-width:25%;
+}
+.flexcol-33 {
+    min-width:33.3%;
+}
+
+.flexcol-40 {
+    min-width:40%;
+}
+
+.flexcol-45 {
+    min-width:45%;
+}
+
+.flexcol-50 {
+    min-width:50%;
+}
+
+
+.flexcol-60 {
+    min-width:60%;
+}
+
+.flexcol-66 {
+    min-width:66.6%;
+}
+
+.flexcol-75 {
+    min-width:75%;
+}
+
+.flexcol-80 {
+    min-width:80%;
+}
+
+
+.flexcol-85 {
+    min-width:85%;
+}
+
+.flexcol-90 {
+    min-width:90%;
+}
+
+@media screen and (max-width:67em) {
+    .flexrow { 
+        flex-direction: column; 
+        align-items: left;
+    }
+}

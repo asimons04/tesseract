@@ -83,10 +83,6 @@
   <title>Administration | Instance Management</title>
 </svelte:head>
 
-
-
-
-
 <form class="flex flex-col gap-4" on:submit|preventDefault={save}>
     <h1 class="font-bold text-2xl">Instance Management</h1>
     <p class="text-sm mb-1">
