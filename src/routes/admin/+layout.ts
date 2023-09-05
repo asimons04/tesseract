@@ -1,19 +1,12 @@
-import { profile } from '$lib/auth.js'
-import { get } from 'svelte/store'
 import { getClient, site as siteStore } from '$lib/lemmy.js'
+import type { GetSite, GetFederatedInstances } from 'lemmy-js-client'
 
 export async function load({ fetch }) {
-  if (!get(profile)) return
-  let { jwt } = get(profile)!
-  let site = get(siteStore)
+    const site:GetSite = await getClient(undefined, fetch).getSite({})
 
-  if (!site) {
-    const res = await getClient(undefined, fetch).getSite({
-      auth: jwt,
-    })
-
-    site = res
-  }
+    const federated_instances: GetFederatedInstances = await getClient(undefined, fetch).getFederatedInstances({});
+    
+    site.federated_instances = federated_instances.federated_instances;
 
   return {
     site: site,
