@@ -2,6 +2,23 @@
 All major/minor changes between releases will be documented here.  
 
 
+## 2023-09-05
+### 1.1.8
+
+**Instance Management**
+
+You can now manage blocked/allowed instances from the admin panel.  Note that this is preliminary support.
+
+Currently, it's the old Lemmy style with just a comma-separated list of domains.  This is preferable in many cases when managing the block list OOB and quick mass updates are needed.  
+
+Plan is to provide two interfaces for managing those:  the string style as-is (and was used in older versions of Lemmy-ui) and the newer style that can be managed individually.
+
+**Admin Panel**
+
+Fixed broken checkbox toggle for "Enable NSFW" option. It was missing the `bind`.
+
+That's all for 1.1.8.
+
 ## 2023-09-04 
 ### 1.1.7
 Enabling embedded media is more granular now.  This is particularly helpful when running on mobile where you may not want to embed every YouTube video in the feed but still want to view it without leaving the app.  

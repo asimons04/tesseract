@@ -49,10 +49,6 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 
 ### UI
-- [ ] Add ability to manage instance allow/block lists from admin panel
-  - Completed in branch.  Needs a bit further testing and consoldate some things, but the functionality is present and working.
-  - Also in that brach:  Fixed broken config setting for `enable_nsfw`
-  - To do: Make two ways of editing block/allow lists: individually like Lemmy-UI and via CSV line (like 0.17.3). Bind them together so one edits the other.
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
 - [ ] Add option to hide deleted comments and logic to implement that
 - [ ] Add inline search/filter for subscribed communities.
