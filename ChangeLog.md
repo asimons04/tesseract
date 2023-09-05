@@ -20,7 +20,9 @@ Fixed broken checkbox toggle for "Enable NSFW" option. It was missing the `bind`
 That's all for 1.1.8.
 
 ### 1.1.81
-Added link back to the community main page from the community sidebar. 
+- Added link back to the community main page from the community sidebar. 
+- Improved UI for managing instances. 
+
 
 
 ## 2023-09-04 
