@@ -3,6 +3,14 @@ All major/minor changes between releases will be documented here.
 
 
 ## 2023-09-05
+
+### 1.2.0
+No new features but updated to Svelte 4.2.0 and SvelteKit 1.24.0 which required some refactoring in quite a few places.
+
+### 1.1.81
+- Added link back to the community main page from the community sidebar. 
+- Improved UI for managing instances. 
+
 ### 1.1.8
 
 **Instance Management**
@@ -19,9 +27,7 @@ Fixed broken checkbox toggle for "Enable NSFW" option. It was missing the `bind`
 
 That's all for 1.1.8.
 
-### 1.1.81
-- Added link back to the community main page from the community sidebar. 
-- Improved UI for managing instances. 
+
 
 
 
