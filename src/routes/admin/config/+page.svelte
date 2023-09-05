@@ -31,7 +31,7 @@
         }
         
         saving = true
-        console.log(formData);
+        
         const { jwt } = $profile
         
         const strToArray = (str:string) => {
