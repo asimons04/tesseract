@@ -10,11 +10,11 @@
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+   
     
     import type { EditSite, Instance } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
-    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
+
 
     export let data: PageData;
     
@@ -24,13 +24,13 @@
                 (i:Instance) => {
                     return i.domain;
                 }
-            ).sort().toString(),
-            
+            ).sort().toString().replace(/,/g,',\n'),
+
             allowed_instances: data.site.federated_instances.allowed.map(
                 (i:Instance) => {
                     return i.domain;
                 }
-            ).sort().toString(),
+            ).sort().toString().replace(/,/g,',\n'),
 
         }
         : undefined
@@ -50,8 +50,8 @@
         const { jwt } = $profile
         
         const strToArray = (str:string) => {
-            if (str == "") { return [] };
-            return str.split(',');
+            if (str.trim() == "") { return [] };
+            return str.replace(/\n/g, '').split(',');
         }
             
 
@@ -88,11 +88,38 @@
 
 
 <form class="flex flex-col gap-4" on:submit|preventDefault={save}>
-    <h1 class="font-bold text-2xl">Site configuration</h1>
+    <h1 class="font-bold text-2xl">Instance Management</h1>
+    <p class="text-sm mb-1">
+        Manage which instances yours federates with.  Please note that these lists are mutually exclusive.  Sites on the "Blocked Instances" list will be prohibited from 
+        interacting with your local instance.  Conversely, sites in the "Allowed Instances" list will be the ONLY instances yours communicates with, and the block list
+        will be ignored.
+    </p>
+
+    <p class="text-sm mb-1">
+        Lists are comma-separated and can have a newline between entries. For now, the commas are required between hostnames, but the newlines are optional.
+    </p>
+
+
     {#if formData}
-        <TextInput bind:value={formData.blocked_instances} label="Blocked Instances" />
-        <TextInput bind:value={formData.allowed_instances} label="Allowed Instances" />
-        
+        <div class="flex flex-row flex-wrap w-max-full">
+            <div class="w-1/2">
+                <TextArea 
+                    bind:value={formData.blocked_instances} 
+                    label="Blocked Instances" 
+                    rows=15
+                    spellcheck="false"
+                />
+            </div>
+                
+            <div class="w-1/2">
+                <TextArea 
+                    bind:value={formData.allowed_instances} 
+                    label="Allowed Instances" 
+                    rows=15
+                    spellcheck="false"
+                />
+            </div>
+        </div>
         
     {/if}
 
