@@ -75,6 +75,7 @@
 
   let debugging = false
   let debugProfile: Profile | undefined = undefined
+  export let toggleOpen: Function; 
 </script>
 
 <svelte:head>
@@ -137,7 +138,7 @@
       on:action={(id) => {
         deleteProfile(id.detail)
       }}
-      let:action
+      export let:action
     >
       {#each $profileData.profiles as profile, index (profile.id)}
         <div
@@ -174,7 +175,7 @@
             </div>
           </div>
           <div class="ml-auto" />
-          <Menu let:toggleOpen alignment="bottom-right">
+          <Menu bind:toggleOpen alignment="bottom-right">
             <Button on:click={toggleOpen} size="square-md" slot="button">
               <Icon src={EllipsisHorizontal} mini size="16" slot="icon" />
             </Button>

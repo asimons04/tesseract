@@ -17,9 +17,10 @@
   import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
 
   export let item: PostView | CommentView
+  export let toggleOpen: Function; 
 </script>
 
-<Menu let:toggleOpen alignment="bottom-center" class="top-0 h-[26px] w-[26px] ">
+<Menu bind:toggleOpen alignment="bottom-center" class="top-0 h-[26px] w-[26px] ">
   <Button
     class="w-[26px] h-[26px] hover:!text-green-500 dark:text-zinc-400 text-slate-600"
     size="square-md"

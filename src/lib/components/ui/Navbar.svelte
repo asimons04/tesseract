@@ -37,6 +37,7 @@
   } from 'svelte-hero-icons'
 
   let scrollY = 0
+  export let toggleOpen: Function; 
 </script>
 
 <svelte:window bind:scrollY />
@@ -125,7 +126,7 @@
       <Icon mini src={GlobeAlt} size="16" slot="icon" />
       <span class="hidden md:inline">Explore</span>
     </Button>
-    <Menu let:toggleOpen alignment="bottom-right">
+    <Menu bind:toggleOpen alignment="bottom-right">
       <Button
         color="primary"
         slot="button"
@@ -164,7 +165,7 @@
     </Menu>
   </div>
   <Menu
-    let:toggleOpen
+    bind:toggleOpen
     alignment="bottom-right"
     itemsClass="h-8 md:h-8"
     containerClass="!max-h-[28rem]"

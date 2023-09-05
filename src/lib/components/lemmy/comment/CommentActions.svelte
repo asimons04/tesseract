@@ -38,6 +38,7 @@
   export let replying: boolean = false
 
   const dispatcher = createEventDispatcher<{ edit: CommentView }>()
+  export let toggleOpen: Function; 
 </script>
 
 <div class="flex flex-row gap-2 items-center mt-1 h-7 relative">
@@ -58,7 +59,7 @@
   {#if $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
     <CommentModerationMenu bind:item={comment} />
   {/if}
-  <Menu let:toggleOpen class="top-0 leading-3" alignment="bottom-center">
+  <Menu bind:toggleOpen class="top-0 leading-3" alignment="bottom-center">
     <Button
       slot="button"
       on:click={toggleOpen}

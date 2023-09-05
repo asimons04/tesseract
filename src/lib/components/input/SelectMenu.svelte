@@ -17,12 +17,13 @@
   let open = false
 
   const dispatcher = createEventDispatcher<{ select: T }>()
+  export let toggleOpen: Function; 
 </script>
 
 {#if label}
   <div class="block font-bold text-sm w-max">{label}</div>
 {/if}
-<Menu let:toggleOpen {alignment}>
+<Menu bind:toggleOpen {alignment}>
   <div slot="button" class="w-max relative">
     <Button on:click={toggleOpen} color="secondary">
       <slot>

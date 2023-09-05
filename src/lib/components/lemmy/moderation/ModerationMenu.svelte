@@ -86,9 +86,10 @@
 
     pinning = false
   }
+  export let toggleOpen: Function; 
 </script>
 
-<Menu let:toggleOpen alignment="bottom-right">
+<Menu bind:toggleOpen alignment="bottom-right">
   <Button
     class="hover:text-green-500 dark:text-zinc-400 text-slate-500"
     on:click={toggleOpen}

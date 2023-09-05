@@ -38,7 +38,7 @@
   import Placeholder from '$lib/components/ui/Placeholder.svelte'
 
   export let data
-
+  export let toggleOpen: Function; 
   let blocking = false
 
   async function blockUser(block: number) {
@@ -242,7 +242,7 @@
           </Button>
         </div>
         {#if isAdmin($profile?.user)}
-          <Menu let:toggleOpen class="ml-auto" alignment="bottom-right">
+          <Menu bind:toggleOpen class="ml-auto" alignment="bottom-right">
             <Button size="square-md" on:click={toggleOpen} slot="button">
               <ShieldIcon width={16} filled />
             </Button>

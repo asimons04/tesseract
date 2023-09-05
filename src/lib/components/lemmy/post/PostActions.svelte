@@ -39,7 +39,8 @@
   import { userSettings } from '$lib/settings.js'
 
   export let post: PostView
-
+  export let toggleOpen: Function; 
+  
   const dispatcher = createEventDispatcher<{ edit: PostView }>()
 
   let editing = false
@@ -113,7 +114,7 @@
   <Menu
     alignment="bottom-right"
     containerClass="overflow-auto max-h-[400px]"
-    let:toggleOpen
+    bind:toggleOpen
   >
     <Button
       slot="button"
