@@ -12,7 +12,7 @@
     import TextInput from '$lib/components/input/TextInput.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     
-    import type { EditSite, GetFederatedInstances } from 'lemmy-js-client'
+    import type { EditSite, Instance } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
 
@@ -21,12 +21,13 @@
     const formData: Omit<EditSite, 'auth'> | undefined = data.site
         ? {
             blocked_instances: data.site.federated_instances.blocked.map(
-                (i:GetFederatedInstances) => {
+                (i:Instance) => {
                     return i.domain;
                 }
             ).sort().toString(),
+            
             allowed_instances: data.site.federated_instances.allowed.map(
-                (i:GetFederatedInstances) => {
+                (i:Instance) => {
                     return i.domain;
                 }
             ).sort().toString(),
