@@ -1,4 +1,4 @@
-## Changelog
+# Changelog
 All major/minor changes between releases will be documented here.  
 
 
