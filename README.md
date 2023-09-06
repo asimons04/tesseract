@@ -52,12 +52,16 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### UI
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
+  - Old vote style is the winner
+  - Add user option to select left/right side for vote buttons
 - [ ] Add option to hide deleted comments and logic to implement that
 - [ ] Add inline search/filter for subscribed communities.
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
 - [ ] Add user setting to allow hiding posts from accounts newer than a defined period.
   - Preset intervals:  3d, 5d, 7d
 - [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
+- [ ] Dedupe the allowed/blocked instances list before calling API
+
 ### Modlog
 - [ ] Enhance filtering beyond just community
 - [ ] Collapse sidebar automatically when viewing in table view

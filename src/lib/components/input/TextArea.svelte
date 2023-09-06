@@ -9,7 +9,7 @@
   export let rows: number = 3
   export let required: boolean = false
   export let item: any = undefined
-  export let spellcheck:string = 'false';
+  export let spellcheck:string = 'true';
 
   let clazz = ''
   export { clazz as class }

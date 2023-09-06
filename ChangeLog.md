@@ -1,9 +1,13 @@
 ## Changelog
 All major/minor changes between releases will be documented here.  
 
+## 2023-09-06
+### 1.2.1
+- Fixed bug introduced in 1.1.81 which disabled spellcheck by default for text areas. Should have been default `true` and only disabled where desired (e.g. allowed/blocked instances lists)
+
+
 
 ## 2023-09-05
-
 ### 1.2.0
 No new features but updated to Svelte 4.2.0 and SvelteKit 1.24.0 which required some refactoring in quite a few places.
 
