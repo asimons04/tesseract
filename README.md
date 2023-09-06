@@ -14,7 +14,7 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
   - [UI](#UI)
   - [Modlog](#Modlog)
   - [Media Handling](#Media-Handling)
-- [Demo Server: Try Tesseract](#Public-Hosted-Demo-Server)
+- [Demo Server: Try Tesseract](#Public-Hosted-Demo-Instance)
 - [Self-Hosting Tesseract](#Self-Hosting)
   - [Deploying from Docker Image](#Deploying-The-Image)
   - [Building from the Repo](#Building-From-The-Repo)
