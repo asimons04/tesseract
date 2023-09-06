@@ -4,6 +4,26 @@ Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
+## Table of Contents
+- [Screenshots](#Screenshots)
+- [Supported Media](#Supported_Media)
+- [Get Support](#Support)
+- [Roadmap](#Roadmap)
+  - [Infrastructure](#Infrastructure)
+  - [Community Discovery](#Community_Discovery)
+  - [UI](#UI)
+  - [Modlog](#Modlog)
+  - [Media Handling](#Media_Handling)
+- [Demo Server: Try Tesseract](#Public_Hosted_Demo_Server)
+- [Self-Hosting Tesseract](#Self-Hosting)
+  - [Deploying from Docker Image](#Deploying_The_Image)
+  - [Building from the Repo](#Building_From_The_Repo)
+  - [Reverse Proxy Configuration](#Reverse_Proxy_Configuration)
+  - [Configuring Default Settings](#Configuring_Default_Settings)
+- [Donate](#Donate)
+
+
+
 ## Screen Shots
 (Slightly outdated) Screenshots are available at the [bottom of the page](#Screenshots).
 
@@ -22,6 +42,8 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
   - (Optional) To enable full track playback rather than previews, you will need to either allow 3rd party cookies for the Tesseract domain or whitelist cookies for `open.spotify.com`. This is to allow the Spotify iframe to detect your login.
     - On mobile browsers, Spotify will only allow track previews regardless of login state.
 
+- TikTok is NOT currently supported, and I have no plans to unless there's demand for it.
+
 
 ## Support
 I created a public Matrix support space you can join.  General discussion, flesh out ideas, or ask for support.  [Tesseract Support](https://matrix.to/#/#tesseract-support:ptznetwork.org)
@@ -30,7 +52,7 @@ There is also a Lemmy community where you can get the latest announcements and p
 
 
 
-## Roadmap / To Do List / Ideas to Toss Around
+## Roadmap 
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
@@ -53,14 +75,20 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 ### UI
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
   - Old vote style is the winner
-  - Add user option to select left/right side for vote buttons
-- [ ] Add option to hide deleted comments and logic to implement that
+- [ ] Add user option to select left/right side for vote buttons
+- [ ] Add option for  mods/admins to hide deleted comments and logic to implement that
 - [ ] Add inline search/filter for subscribed communities.
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
 - [ ] Add user setting to allow hiding posts from accounts newer than a defined period.
-  - Preset intervals:  3d, 5d, 7d
+  - Preset intervals:  1d, 3d, 5d
+  - Need to be careful with the implementation of this.  Mods/Admins should _never_ have this option enabled and be prevented from doing so as they need to be able to see and remove any content that violates laws or community/instance rules.
+  - Is this even a useful feature? Spam accounts could simply sit dormant for a few days before posting anything. 
+  - Legit new users may be temporarily silenced.
 - [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
 - [ ] Dedupe the allowed/blocked instances list before calling API
+- [ ] Fix white on grey `<option>` values in theme selection menu.
+- [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
+
 
 ### Modlog
 - [ ] Enhance filtering beyond just community
@@ -68,7 +96,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Media Handling
 - [ ] Direct videos don't have thumbnail attributes, but ones hosted via pict-rs can add ?format=webp to the URL.  Add this and enable direct videos to not be embedded if that option is set.
-- [ ] Detect Youtube/Piped/Invidious links in post bodies and comments.  Optinally render those inline depending on user setting
+- [ ] Detect Youtube/Piped/Invidious links in post bodies and comments.  Optionally render those inline depending on user setting
 
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
