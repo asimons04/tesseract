@@ -1,8 +1,8 @@
 ## Changelog
 All major/minor changes between releases will be documented here.  
 
-## 2023-09-06
-### 1.2.1
+
+## 1.2.1
 - Fixed bug introduced in 1.1.81 which disabled spellcheck by default for text areas. Should have been default `true` and only disabled where desired (e.g. allowed/blocked instances lists)
 
 - Managing instances is now easier than ever:
@@ -12,25 +12,25 @@ All major/minor changes between releases will be documented here.
   - I think the current implementation is probably the best compromise between the current Lemmy-UI itemized list and the old Lemmy-UI text field as it allows both mass edits as well as easy ability to find/remove individual entries.  It also sorts them alphabetically which is incredibly convenient.  
   - Stripped out empty entries (e.g. if you have an extra newline in the instance list) so those don't get sent to the API).
   - Fixed bug where not all schemes and slashes were being removed.
+  - Increased text area and preview pane sizes.
+    - To do:  Modify components so a desired size can be programmatically set (e.g. different sizes for posts vs comments)
 
 
-## 2023-09-05
-### 1.2.0
+## 1.2.0
 No new features but updated to Svelte 4.2.0 and SvelteKit 1.24.0 which required some refactoring in quite a few places.
 
-### 1.1.81
+## 1.1.81
 - Added link back to the community main page from the community sidebar. 
-- Improved UI for managing instances. 
+- Improved UI for managing instances. Is now a text area with one domain per line.  
 
-### 1.1.8
+## 1.1.8
 
 **Instance Management**
 
-You can now manage blocked/allowed instances from the admin panel.  Note that this is preliminary support.
+You can now manage blocked/allowed instances from the admin panel.  
 
 Currently, it's the old Lemmy style with just a comma-separated list of domains.  This is preferable in many cases when managing the block list OOB and quick mass updates are needed.  
 
-Plan is to provide two interfaces for managing those:  the string style as-is (and was used in older versions of Lemmy-ui) and the newer style that can be managed individually.
 
 **Admin Panel**
 
@@ -40,10 +40,11 @@ That's all for 1.1.8.
 
 
 
+## 1.1.71
+- Added another wrapper div around embedded iframes to give uniform margins. Looks a lot cleaner, especially on mobile (top/bottom were consistent, but left/right sometimes went to zero).
 
 
-## 2023-09-04 
-### 1.1.7
+## 1.1.7
 Enabling embedded media is more granular now.  This is particularly helpful when running on mobile where you may not want to embed every YouTube video in the feed but still want to view it without leaving the app.  
 
 I added a migration step to update the old, all-or-nothing boolean toggle to the more granular version. To keep the change from being shocking, the migration will enable both feed and post embeds to match the old behavior if media embeds were enabled already.
@@ -63,27 +64,24 @@ You can now select whether media should be enabled in feeds or posts separately.
   - Thumbnail will be shown and will link to the post; media will be embedded in the post.  
 
 **If enabled in feed and disabled in posts:**
-  - Note that this is a weird choice, but I gotchu fam.
+
+That's a weird choice, but I gotchu fam.
+
   - Media will embed in the feed. The link will take you to the external content (optional in a new tab if you have that preference set)
   - Clicking into the post will show a thumbnail image
 
 This is the only change in this release.    
 
-### 1.1.71
-- Added another wrapper div around embedded iframes to give uniform margins. Looks a lot cleaner, especially on mobile (top/bottom were consistent, but left/right sometimes went to zero).
 
 
-
-
-## 2023-09-03
-### 1.1.5
+## 1.1.5
 
 - Added support for Soundcloud track embeds
 
 - Bumped version signficantly considering the amount of code that has been reworked since the last release. 
 
-## 2023-09-02 
-### 1.1.21
+
+## 1.1.21
 
 - Re-enabled the /cors/ image upload handler.  Turns out there was simply an undocumented reverse proxy config that needed to be in place for the `/cors/` path.  Updated Readme documentation with a sample Nginx config.
 
@@ -107,8 +105,7 @@ This is the only change in this release.
 - Bumped version again to 1.1.4 after today's updates so far
 
 
-## 2023-09-01 
-### 1.1.14
+## 1.1.14
 - Removed code for the random placeholders in input fields and associated settings
 
 - Considering rebranding again from Tesseract to Tachyon to reflect the project's *Photon*ic legacy.
@@ -128,12 +125,7 @@ This is the only change in this release.
 - Decreased maximum width of sidebar from 25% to 20%
 
 
-
-
-
-
-## 2023-08-31 
-### 1.1.5
+## 1.1.5
 - Began initial fork work
 
 - Rebranded with new name and logo. Keeping base version of upstream project and incrementing it separately.
