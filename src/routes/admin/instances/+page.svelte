@@ -54,10 +54,13 @@
             if (str.trim() == "") { return [] };
             
             // Convert non-empty string into array, convert newlines into commas, remove scheme and slashes
-            let arr:Array<String> =  str.replace(/\n/g, ',')
-                .replace(/https:/g, '')
-                .replace(/http:/g, '')
-                .replace(/\//g,'')    
+            let arr:Array<String> =  
+                str.replace(/\n/g, ',') // Convert newlines into commas
+                .replace(/https:/g, '') // Remove https
+                .replace(/http:/g, '')  // Remove http
+                .replace(/\//g,'')      // Remove all /'s
+                .replace(/"/g, '')      // Remove quotation marks
+                .replace(/'/g, '')      // Remove single quotes
                 .split(',');
             
             // Deduplicate and sort the array of instances
@@ -75,7 +78,9 @@
 
             }
             
-            return trimmedArr.sort();
+            trimmedArr.sort();
+            
+            return trimmedArr;
         }
             
 
