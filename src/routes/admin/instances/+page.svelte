@@ -50,8 +50,15 @@
         const { jwt } = $profile
         
         const strToArray = (str:string) => {
+            // Reject empty strings
             if (str.trim() == "") { return [] };
-            return str.replace(/\n/g, '').split(',');
+            
+            // Convert non-empty string into array
+            let arr:Array<String> =  str.replace(/\n/g, '').split(',');
+            
+            // Deduplicate and sort the array of instances
+            let uniqArr:Array<String> = [...new Set(arr)].sort();
+            return uniqArr;
         }
             
 
