@@ -10,7 +10,8 @@ All major/minor changes between releases will be documented here.
   - You can add one per line (no comma necessary) and/or drop in a comma-delimited list of domains; it will handle both.
   - You can drop in the base URL with the scheme and slashes, and it will filter those out automatically.
   - I think the current implementation is probably the best compromise between the current Lemmy-UI itemized list and the old Lemmy-UI text field as it allows both mass edits as well as easy ability to find/remove individual entries.  It also sorts them alphabetically which is incredibly convenient.  
-  - To Do:  Strip out empty array elements and trim non-empty ones. The API doesn't care, and it doesn't cause any issues, but it's still a bug.
+  - Stripped out empty entries (e.g. if you have an extra newline in the instance list) so those don't get sent to the API).
+  - Fixed bug where not all schemes and slashes were being removed.
 
 
 ## 2023-09-05
