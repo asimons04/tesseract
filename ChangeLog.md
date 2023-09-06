@@ -1,6 +1,24 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.2
+No user-facing changes in this release. Updated project dependencies to latest versions.
+ - @sveltejs/kit from 1.24.0 to 1.24.1
+ - @sveltejs/adapter-auto from 2.0.0 to 2.1.0
+ - @types/markdown-it" from 12.2.3 to 13.0.1
+ - autoprefixer from 10.4.14 to 10.4.15
+ - postcss from  8.4.24 to 8.4.29
+ - svelte-check from 3.0.1 to 3.5.1
+ - tailwindcss from 3.3.2 to 3.3.3
+ - tslib from 2.4.1 to 2.6.2
+ - typescript from 5.0.0 to 5.2.2
+ - vite from 4.3.0 to 4.4.9
+ - vitest from 0.33.0 to 0.34.3
+ - @dicebear/core from 6.0.4 to 7.0.1
+ - @dicebear/initials from 6.0.4 to 7.0.1
+ - lemmy-js-client from 0.18.0-rc.2 to 0.18.3-rc.3
+   - Current is 0.19.0-rc.8 but it fails spectacularly (which I expected). Assuming that's because it's written against the upcoming 0.19.0 backend which has incompatible API changes. Will have to keep an eye on this and start testing against 0.19.0 RC as soon as it's available.
+ 
 
 ## 1.2.1
 - Fixed bug introduced in 1.1.81 which disabled spellcheck by default for text areas. Should have been default `true` and only disabled where desired (e.g. allowed/blocked instances lists)
