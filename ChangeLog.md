@@ -5,12 +5,12 @@ All major/minor changes between releases will be documented here.
 ### 1.2.1
 - Fixed bug introduced in 1.1.81 which disabled spellcheck by default for text areas. Should have been default `true` and only disabled where desired (e.g. allowed/blocked instances lists)
 
-- Added dedupe logic on submission of blocked/allowed instances. Will remove duplicates to prevent API error and make it easier to import new items to the lists.
-
-- Managing instances is now easier. 
+- Managing instances is now easier than ever:
+  - Added dedupe logic on submission of blocked/allowed instances. Will remove duplicates to prevent API error and make it easier to import new items to the lists.
   - You can add one per line (no comma necessary) and/or drop in a comma-delimited list of domains; it will handle both.
   - You can drop in the base URL with the scheme and slashes, and it will filter those out automatically.
   - I think the current implementation is probably the best compromise between the current Lemmy-UI itemized list and the old Lemmy-UI text field as it allows both mass edits as well as easy ability to find/remove individual entries.  It also sorts them alphabetically which is incredibly convenient.  
+  - To Do:  Strip out empty array elements and trim non-empty ones. The API doesn't care, and it doesn't cause any issues, but it's still a bug.
 
 
 ## 2023-09-05
