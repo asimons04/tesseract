@@ -94,6 +94,8 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 - [ ] Collapse sidebar automatically when viewing in table view
 
 ### Media Handling
+- [ ] Add option to "quick play" from thumbnail in feed. If embedded media disabled in feed, thumbnails will have click action replace thumbnail with lazy-loading iframe. This _should_ prevent a bunch of iframes from loading until you click the static thumbnail to reveal it while keeping quick/convenient access to media posts without leaving the feed.
+
 - [ ] Direct videos don't have thumbnail attributes, but ones hosted via pict-rs can add ?format=webp to the URL.  Add this and enable direct videos to not be embedded if that option is set.
 - [ ] Detect Youtube/Piped/Invidious links in post bodies and comments.  Optionally render those inline depending on user setting
 
