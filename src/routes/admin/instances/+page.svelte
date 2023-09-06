@@ -55,14 +55,27 @@
             
             // Convert non-empty string into array, convert newlines into commas, remove scheme and slashes
             let arr:Array<String> =  str.replace(/\n/g, ',')
-                .replace('https://', '')
-                .replace('http://', '')
-                .replace('/','')    
+                .replace(/https:/g, '')
+                .replace(/http:/g, '')
+                .replace(/\//g,'')    
                 .split(',');
             
             // Deduplicate and sort the array of instances
             let uniqArr:Array<String> = [...new Set(arr)].sort();
-            return uniqArr;
+            
+            // Remove empty string elements and trim whitespace from each domain entry
+            let trimmedArr:Array<String> = [];
+            for (let i=0; i< uniqArr.length; i++) {
+                
+                let item:String = uniqArr[i].trim();
+                
+                if (item.length > 0) {
+                    trimmedArr.push(item);
+                }
+
+            }
+            
+            return trimmedArr.sort();
         }
             
 
