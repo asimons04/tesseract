@@ -18,7 +18,7 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 - [Self-Hosting Tesseract](#Self-Hosting)
   - [Deploying from Docker Image](#Deploying_The_Image)
   - [Building from the Repo](#Building_From_The_Repo)
-  - [Reverse Proxy Configuration](#Reverse_Proxy_Configuration)
+  - [Reverse Proxy Configuration](#Reverse Proxy Configuration)
   - [Configuring Default Settings](#Configuring_Default_Settings)
 - [Donate](#Donate)
 
