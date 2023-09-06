@@ -6,20 +6,20 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Table of Contents
 - [Screenshots](#Screenshots)
-- [Supported Media](#Supported_Media)
+- [Supported Media](#Supported-Media)
 - [Get Support](#Support)
 - [Roadmap](#Roadmap)
   - [Infrastructure](#Infrastructure)
-  - [Community Discovery](#Community_Discovery)
+  - [Community Discovery](#Community-Discovery)
   - [UI](#UI)
   - [Modlog](#Modlog)
-  - [Media Handling](#Media_Handling)
-- [Demo Server: Try Tesseract](#Public_Hosted_Demo_Server)
+  - [Media Handling](#Media-Handling)
+- [Demo Server: Try Tesseract](#Public-Hosted-Demo-Server)
 - [Self-Hosting Tesseract](#Self-Hosting)
-  - [Deploying from Docker Image](#Deploying_The_Image)
-  - [Building from the Repo](#Building_From_The_Repo)
-  - [Reverse Proxy Configuration](#Reverse Proxy Configuration)
-  - [Configuring Default Settings](#Configuring_Default_Settings)
+  - [Deploying from Docker Image](#Deploying-The-Image)
+  - [Building from the Repo](#Building-From-The-Repo)
+  - [Reverse Proxy Configuration](#Reverse-Proxy-Configuration)
+  - [Configuring Default Settings](#Configuring-Default-Settings)
 - [Donate](#Donate)
 
 
