@@ -24,13 +24,13 @@
                 (i:Instance) => {
                     return i.domain;
                 }
-            ).sort().toString().replace(/,/g,',\n'),
+            ).sort().toString().replace(/,/g,'\n'),
 
             allowed_instances: data.site.federated_instances.allowed.map(
                 (i:Instance) => {
                     return i.domain;
                 }
-            ).sort().toString().replace(/,/g,',\n'),
+            ).sort().toString().replace(/,/g,'\n'),
 
         }
         : undefined
@@ -53,8 +53,12 @@
             // Reject empty strings
             if (str.trim() == "") { return [] };
             
-            // Convert non-empty string into array
-            let arr:Array<String> =  str.replace(/\n/g, '').split(',');
+            // Convert non-empty string into array, convert newlines into commas, remove scheme and slashes
+            let arr:Array<String> =  str.replace(/\n/g, ',')
+                .replace('https://', '')
+                .replace('http://', '')
+                .replace('/','')    
+                .split(',');
             
             // Deduplicate and sort the array of instances
             let uniqArr:Array<String> = [...new Set(arr)].sort();
@@ -99,7 +103,7 @@
     </p>
 
     <p class="text-sm mb-1">
-        Lists are comma-separated and can have a newline between entries. For now, the commas are required between hostnames, but the newlines are optional.
+        Domains can be added one per line and/or you can drop in a comma-delimited list.
     </p>
 
 
