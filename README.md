@@ -85,7 +85,6 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
   - Is this even a useful feature? Spam accounts could simply sit dormant for a few days before posting anything. 
   - Legit new users may be temporarily silenced.
 - [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
-- [ ] Dedupe the allowed/blocked instances list before calling API
 - [ ] Fix white on grey `<option>` values in theme selection menu.
 - [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
 

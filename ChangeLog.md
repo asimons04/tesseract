@@ -5,6 +5,8 @@ All major/minor changes between releases will be documented here.
 ### 1.2.1
 - Fixed bug introduced in 1.1.81 which disabled spellcheck by default for text areas. Should have been default `true` and only disabled where desired (e.g. allowed/blocked instances lists)
 
+- Added dedupe logic on submission of blocked/allowed instances. Will remove duplicates to prevent API error and make it easier to import new items to the lists.
+
 
 
 ## 2023-09-05
