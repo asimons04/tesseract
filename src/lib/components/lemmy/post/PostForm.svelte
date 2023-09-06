@@ -223,7 +223,7 @@
     </Button>
   </div>
   <MarkdownEditor
-    rows={8}
+    rows={10}
     label="Body"
     bind:value={data.body}
     previewButton
