@@ -27,16 +27,11 @@ No new features but updated to Svelte 4.2.0 and SvelteKit 1.24.0 which required 
 
 ## 1.1.8
 
-**Instance Management**
+### Instance Management
+- You can now manage blocked/allowed instances from the admin panel.  
 
-You can now manage blocked/allowed instances from the admin panel.  
-
-Currently, it's the old Lemmy style with just a comma-separated list of domains.  This is preferable in many cases when managing the block list OOB and quick mass updates are needed.  
-
-
-**Admin Panel**
-
-Fixed broken checkbox toggle for "Enable NSFW" option. It was missing the `bind`.
+### Admin Panel
+- Fixed broken checkbox toggle for "Enable NSFW" option. It was missing the `bind`.
 
 That's all for 1.1.8.
 
