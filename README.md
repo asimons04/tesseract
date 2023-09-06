@@ -29,7 +29,9 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 
 
 ## Supported Media
-- Direct video links (e.g .webm, mp4, etc) will embed a player in the feed/post.
+For Youtube (and Invidious/Piped), Spotify, and Soundcloud, you don't need to use any special embed links; just the regular URL from your browser.  Tesseract will take care of generating the embed URLs based on your preferences.
+
+- Direct video links (e.g .webm, mp4, etc) will embed a player in the feed/post. Right now, these are not toggleable as most do not have thumbnails and the bare links are ugly AF; they're treated basically like fancy image posts.  However, they only downoad enough to show the first few frames, which is acceptable from a performance/bandwidth perspective.
 
 - YouTube and all known 
 [Invidious](https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest) and 
@@ -40,9 +42,9 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 
 - Spotify tracks, albums, and playlists will embed a player right in the feed or post.
   - (Optional) To enable full track playback rather than previews, you will need to either allow 3rd party cookies for the Tesseract domain or whitelist cookies for `open.spotify.com`. This is to allow the Spotify iframe to detect your login.
-    - On mobile browsers, Spotify will only allow track previews regardless of login state.
+    - On mobile browsers, Spotify will only allow track previews regardless of login state so don't bother allowing 3rd party cookies.
 
-- TikTok is NOT currently supported, and I have no plans to unless there's demand for it.
+- TikTok is not currently supported. I don't have TikTok, and no one has asked for it, so I'm content not supporting that unless there's demand and someone is able to provide me some sample links (TT does have an embed API, so at least limited support possible).
 
 
 ## Support
