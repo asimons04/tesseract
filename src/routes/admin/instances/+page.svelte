@@ -126,8 +126,8 @@
 
 
     {#if formData}
-        <div class="flex flex-row flex-wrap w-max-full">
-            <div class="w-1/2">
+        <div class="flexrow">
+            <div class="flexcol mt-4">
                 <TextArea 
                     bind:value={formData.blocked_instances} 
                     label="Blocked Instances" 
@@ -136,7 +136,7 @@
                 />
             </div>
                 
-            <div class="w-1/2">
+            <div class="flexcol mt-4">
                 <TextArea 
                     bind:value={formData.allowed_instances} 
                     label="Allowed Instances" 
