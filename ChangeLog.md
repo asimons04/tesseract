@@ -1,6 +1,19 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.3
+### Modlog Tweaks
+- In table view: Combined "Content" and "Link" columns to reduce table width.
+- In card view: Added background div to cards for some contrast and put `<hr>` below the community info.
+- In both: Updated `<Link` elements to use the user's "open in new tab" preference.
+
+### Feed Tweaks
+- Post body preview now renders the markup instead of the inline code.
+
+### Settings
+- Added toggle to set preference for showing the modlog in card view
+
+
 ## 1.2.2
 No user-facing changes in this release. Updated project dependencies to latest versions.
  - @sveltejs/kit from 1.24.0 to 1.24.1

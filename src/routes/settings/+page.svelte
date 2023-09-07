@@ -131,7 +131,7 @@
 
                             <h1 class="font-bold">Misc Settings</h1>
                             <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
-                            <!---<Checkbox bind:checked={$userSettings.openInNewTab.posts}>Open posts in a new tab.</Checkbox>--->
+                            <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
 
                             <span class="block my-1 font-bold">UI Font</span>
                             <MultiSelect

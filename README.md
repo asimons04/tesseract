@@ -93,7 +93,6 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Modlog
 - [ ] Enhance filtering beyond just community
-- [ ] Collapse sidebar automatically when viewing in table view
 
 ### Media Handling
 - [ ] Add option to "quick play" from thumbnail in feed. If embedded media disabled in feed, thumbnails will have click action replace thumbnail with lazy-loading iframe. This _should_ prevent a bunch of iframes from loading until you click the static thumbnail to reveal it while keeping quick/convenient access to media posts without leaving the feed.
