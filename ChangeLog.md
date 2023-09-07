@@ -13,6 +13,13 @@ All major/minor changes between releases will be documented here.
 ### Settings
 - Added toggle to set preference for showing the modlog in card view
 
+### Admin Panel
+ - Changed layout to make editing sidebar and legal info easier.
+
+### Markdown Editor
+  - Bound markdown preview container divs to TextArea rows*24 to keep them the same size (unless resized :sigh:)
+  - 
+
 
 ## 1.2.2
 No user-facing changes in this release. Updated project dependencies to latest versions.
