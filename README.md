@@ -74,21 +74,38 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 
 
+### Moderation
+- [ ] Add "Purge person" option to admin menu
+- [ ] Add option for  mods/admins to hide deleted comments and logic to implement that
+
 ### UI
+
+#### General 
+- [ ] Fix white on grey `<option>` values in theme selection menu.
+- [ ] Move post action buttons to top (in line with community and OP info)
+
+#### Vote Buttons
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
   - Old vote style is the winner
 - [ ] Add user option to select left/right side for vote buttons
-- [ ] Add option for  mods/admins to hide deleted comments and logic to implement that
+
+#### Sidebar
 - [ ] Add inline search/filter for subscribed communities.
+- [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
+
+#### Settings
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
 - [ ] Add user setting to allow hiding posts from accounts newer than a defined period.
   - Preset intervals:  1d, 3d, 5d
   - Need to be careful with the implementation of this.  Mods/Admins should _never_ have this option enabled and be prevented from doing so as they need to be able to see and remove any content that violates laws or community/instance rules.
   - Is this even a useful feature? Spam accounts could simply sit dormant for a few days before posting anything. 
   - Legit new users may be temporarily silenced.
+
+#### Admin Panel
 - [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
-- [ ] Fix white on grey `<option>` values in theme selection menu.
-- [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
+
+
+
 
 
 ### Modlog

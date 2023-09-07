@@ -24,7 +24,7 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.2.2
-No user-facing changes in this release. Updated project dependencies to latest versions.
+No user-facing changes in this release. Updated project dependencies to use latest versions explicitly. 
  - @sveltejs/kit from 1.24.0 to 1.24.1
  - @sveltejs/adapter-auto from 2.0.0 to 2.1.0
  - @types/markdown-it" from 12.2.3 to 13.0.1
@@ -45,7 +45,7 @@ No user-facing changes in this release. Updated project dependencies to latest v
 ## 1.2.1
 - Fixed bug introduced in 1.1.81 which disabled spellcheck by default for text areas. Should have been default `true` and only disabled where desired (e.g. allowed/blocked instances lists)
 
-### Managing instances is now easier than ever
+### Managing instances is now easier than ever (even in Lemmy-UI)
 I think the current implementation is probably the best compromise between the current Lemmy-UI itemized list and the old Lemmy-UI text field as it allows both mass edits as well as easy ability to find/remove individual entries.  It also sorts them alphabetically which is incredibly convenient.  
 
   - Added dedupe logic on submission of blocked/allowed instances. Will remove duplicates to prevent API error and make it easier to import new items to the lists.
