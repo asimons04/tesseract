@@ -11,6 +11,7 @@
         InformationCircle,
         Identification,
         Minus,
+        Newspaper,
         Plus,
         UserGroup
     } from 'svelte-hero-icons'
@@ -87,6 +88,13 @@
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
         <span class:hidden={!$userSettings.expandSidebar}>Communities</span>
     </SidebarButton>
+
+    <SidebarButton href="/modlog" expanded={$userSettings.expandSidebar}>
+        <Icon src={Newspaper} size="16" mini />
+        <span class:hidden={!$userSettings.expandSidebar}>Modlog</span>
+        
+    </SidebarButton>
+
 
     <!---About--->
     <SidebarButton href="/about" expanded={$userSettings.expandSidebar}>

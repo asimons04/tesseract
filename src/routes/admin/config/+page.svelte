@@ -67,7 +67,7 @@
         <TextInput bind:value={formData.description} label="Description" />
         
         <div class="flexrow">
-            <div class="flexcol">
+            <div class="flexcol mt-4">
                 <MarkdownEditor
                     previewButton
                     bind:value={formData.sidebar}
@@ -76,7 +76,7 @@
                 />
             </div>
 
-            <div class="flexcol">
+            <div class="flexcol mt-4">
                 <MarkdownEditor
                     previewButton
                     bind:value={formData.legal_information}

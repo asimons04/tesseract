@@ -18,7 +18,9 @@ All major/minor changes between releases will be documented here.
 
 ### Markdown Editor
   - Bound markdown preview container divs to TextArea rows*24 to keep them the same size (unless resized :sigh:)
-  - 
+
+### Layout
+  - Moved Modlog button out of the site card and into the sidebar and nav bar
 
 
 ## 1.2.2
