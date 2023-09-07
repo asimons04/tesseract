@@ -1,12 +1,15 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 ## 1.2.4
+### Media Handling
+- Updated YouTube component to recognize and embed YouTube Shorts links :sigh:
+
 ### Admin Panel
 - Added option to enable/disable captcha and set the difficulty level
 - Rearranged layout
 - Moved "Save" button to upper-right corner rather than bottom
 - Options not applicable to the "registration mode" selection will be hidden.
-- Updated YouTube component to recognize and embed YouTube Shorts links :sigh:
+
   
 
 
