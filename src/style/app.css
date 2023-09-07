@@ -129,6 +129,12 @@ pre {
 .flexcol-25 {
     min-width:25%;
 }
+
+.flexcol-30 {
+    min-width:30%;
+}
+
+
 .flexcol-33 {
     min-width:33.3%;
 }

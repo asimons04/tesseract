@@ -94,16 +94,10 @@
                         <Checkbox bind:checked={formData.community_creation_admin_only} defaultValue={true}>
                             Only admins can create communities
                         </Checkbox>
-                    
-                        <Checkbox bind:checked={formData.require_email_verification} defaultValue={true}>
-                            Require email verification
+
+                        <Checkbox bind:checked={formData.hide_modlog_mod_names} defaultValue={true}>
+                            Hide modlog mod names
                         </Checkbox>
-                
-                        <Checkbox bind:checked={formData.application_email_admins} defaultValue={true}>
-                            Email admins on receiving new applications
-                        </Checkbox>
-                    
-                        
                     </div>
 
                     <div class="flexcol">
@@ -115,10 +109,6 @@
                             Private instance
                         </Checkbox>
                     
-                        <Checkbox bind:checked={formData.hide_modlog_mod_names} defaultValue={true}>
-                            Hide modlog mod names
-                        </Checkbox>
-                
                         <Checkbox bind:checked={formData.federation_enabled} defaultValue={true}>
                             Federation enabled
                         </Checkbox>
@@ -130,54 +120,79 @@
         <p class="mt-2 font-bold">Registration Options</p>
         <hr class="border-zinc-400"/>
         
+        
+
         <div class="flexrow">
-            <div class="flexcol flexcol-10 mt-2">
-                <!--- Captcha State and Difficulty--->
-                <SelectMenu
-                    label="Captcha"
-                    alignment="top-left"
-                    options={['off', 'easy', 'medium', 'hard']}
-                    optionNames={['Off', 'Easy', 'Medium', 'Hard']}
+            <div class="flexcol flexcol-30 mt-2">
+
+                <div class="flexrow">
+                    <div class="flexcol mt-2">
+                        <!--- Registration Mode--->
+                        <SelectMenu
+                            label="Registration Mode"
+                            alignment="top-left"
+                            options={['Closed', 'RequireApplication', 'Open']}
+                            optionNames={['Closed', 'Require Application', 'Open Registration']}
+                            selected={formData.registration_mode ?? 'Open'}
+                            on:select={(e) => {
+                                // @ts-ignore
+                                formData.registration_mode = e.detail
+                            }}
+                        />
+                    </div>
+
+                    <div class="flexcol mt-2">
+                        <!--- Captcha State and Difficulty--->
+                        {#if formData.registration_mode != 'Closed'}
+                            <SelectMenu
+                                label="Captcha"
+                                alignment="top-left"
+                                options={['off', 'easy', 'medium', 'hard']}
+                                optionNames={['Off', 'Easy', 'Medium', 'Hard']}
+                                
+                                selectedFunc={() => {
+                                    if (formData.captcha_enabled && formData.captcha_difficulty) { return formData.captcha_difficulty.toLowerCase(); }
+                                    if (formData.captcha_enabled && !formData.captcha_difficulty) { return 'easy'; }
+                                    if (!formData.captcha_enabled) { return 'off'; }
+                                }}
+                                
+                                on:select={(e) => {
+                                    // @ts-ignore
+                                    if (e.detail == 'off') { formData.captcha_enabled = false; }
+                                    else {
+                                        formData.captcha_enabled = true;
+                                        formData.captcha_difficulty = e.detail
+                                    }
+                                }}
+                            />
+                        {/if}
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    {#if formData.registration_mode != 'Closed'}
+                        <p class="font-bold">Email</p>
+                        <hr class="mb-1 border-zinc-400"/>
+                        <Checkbox bind:checked={formData.require_email_verification} defaultValue={true}>
+                            Require email verification
+                        </Checkbox>
+                    {/if}
                     
-                    selectedFunc={() => {
-                        if (formData.captcha_enabled && formData.captcha_difficulty) { return formData.captcha_difficulty.toLowerCase(); }
-                        if (formData.captcha_enabled && !formData.captcha_difficulty) { return 'easy'; }
-                        if (!formData.captcha_enabled) { return 'off'; }
-                    }}
-                    
-                    on:select={(e) => {
-                        // @ts-ignore
-                        if (e.detail == 'off') { formData.captcha_enabled = false; }
-                        else {
-                            formData.captcha_enabled = true;
-                            formData.captcha_difficulty = e.detail
-                        }
-                    }}
-                />
+                    {#if formData.registration_mode == 'RequireApplication'}
+                        <Checkbox bind:checked={formData.application_email_admins} defaultValue={true}>
+                            Email admins on receiving new applications
+                        </Checkbox>
+                    {/if}
+                </div>
             </div>
             
-            <div class="flexcol flexcol-20 mt-2">
-                <!--- Registration Mode--->
-                <SelectMenu
-                    label="Registration Mode"
-                    alignment="top-left"
-                    options={['Closed', 'RequireApplication', 'Open']}
-                    optionNames={['Closed', 'Require Application', 'Open Registration']}
-                    selected={formData.registration_mode ?? 'Open'}
-                    on:select={(e) => {
-                        // @ts-ignore
-                        formData.registration_mode = e.detail
-                    }}
-                />
-            </div>
-
             <div class="flexcol flexcol-70 mt-2">
                 {#if formData.registration_mode == 'RequireApplication'}
-                <MarkdownEditor
-                    previewButton
-                    label="Application Question"
-                    bind:value={formData.application_question}
-                />
+                    <MarkdownEditor
+                        previewButton
+                        label="Application Question"
+                        bind:value={formData.application_question}
+                    />
                 {/if}
             </div>
         </div>
