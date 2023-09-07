@@ -1,5 +1,12 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.4
+### Admin Panel
+- Added option to enable/disable captcha and set the difficulty level
+- Rearranged layout
+- Moved "Save" button to upper-right corner rather than bottom
+
+
 
 ## 1.2.3
 ### Modlog Tweaks
