@@ -126,31 +126,32 @@
 
 
     {#if formData}
-        <div class="flexrow">
-            <div class="flexcol mt-4">
-                <TextArea 
-                    bind:value={formData.blocked_instances} 
-                    label="Blocked Instances" 
-                    rows=15
-                    spellcheck="false"
-                />
-            </div>
-                
-            <div class="flexcol mt-4">
-                <TextArea 
-                    bind:value={formData.allowed_instances} 
-                    label="Allowed Instances" 
-                    rows=15
-                    spellcheck="false"
-                />
-            </div>
+    <div class="flexrow">
+        <div class="flexcol mt-4">
+            <TextArea 
+                bind:value={formData.blocked_instances} 
+                label="Blocked Instances" 
+                rows=15
+                spellcheck="false"
+            />
         </div>
+            
+        <div class="flexcol mt-4">
+            <TextArea 
+                bind:value={formData.allowed_instances} 
+                label="Allowed Instances" 
+                rows=15
+                spellcheck="false"
+            />
+        </div>
+    </div>
         
-    {/if}
+    
 
     <Button color="primary" size="lg" loading={saving} disabled={saving} submit>
         Save
     </Button>
+    {/if}
 </form>
 
 

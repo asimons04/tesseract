@@ -65,25 +65,33 @@
     {#if formData}
         <TextInput bind:value={formData.name} label="Name" />
         <TextInput bind:value={formData.description} label="Description" />
-        <MarkdownEditor
-            previewButton
-            bind:value={formData.sidebar}
-            label="Sidebar"
-        />
-    
-        <MarkdownEditor
-            previewButton
-            bind:value={formData.legal_information}
-            label="Legal"
-        />
-    
-        <Checkbox bind:checked={formData.enable_downvotes} defaultValue={true}>
-            Enable downvotes
-        </Checkbox>
+        
+        <div class="flexrow">
+            <div class="flexcol">
+                <MarkdownEditor
+                    previewButton
+                    bind:value={formData.sidebar}
+                    label="Sidebar"
+                    rows={15}
+                />
+            </div>
 
-        <Checkbox bind:checked={formData.enable_nsfw} defaultValue={true}>
-            Enable NSFW
-        </Checkbox>
+            <div class="flexcol">
+                <MarkdownEditor
+                    previewButton
+                    bind:value={formData.legal_information}
+                    label="Legal"
+                    rows={15}
+                />
+            </div>
+        </div>
+    
+        <TextInput
+            bind:value={formData.slur_filter_regex}
+            label="Slur filter regex"
+            placeholder="(word1|word2)"
+        />
+        
     
         <SelectMenu
             label="Registration mode"
@@ -104,6 +112,14 @@
             bind:value={formData.application_question}
         />
         {/if}
+        
+        <Checkbox bind:checked={formData.enable_downvotes} defaultValue={true}>
+            Enable downvotes
+        </Checkbox>
+
+        <Checkbox bind:checked={formData.enable_nsfw} defaultValue={true}>
+            Enable NSFW
+        </Checkbox>
 
         <Checkbox bind:checked={formData.community_creation_admin_only} defaultValue={true}>
             Only admins can create communities
@@ -128,16 +144,14 @@
         <Checkbox bind:checked={formData.hide_modlog_mod_names} defaultValue={true}>
             Hide modlog mod names
         </Checkbox>
-    
-        <TextInput
-            bind:value={formData.slur_filter_regex}
-            label="Slur filter regex"
-            placeholder="(word1|word2)"
-        />
-        
+
         <Checkbox bind:checked={formData.federation_enabled} defaultValue={true}>
             Federation enabled
         </Checkbox>
+    
+        
+        
+        
     {/if}
 
     <Button color="primary" size="lg" loading={saving} disabled={saving} submit>
