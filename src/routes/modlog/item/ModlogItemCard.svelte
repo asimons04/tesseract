@@ -13,49 +13,55 @@
 </script>
 
 <Card elevation={0} class="p-5 flex flex-col gap-2 text-sm">
-  <div class="flex flex-row justify-between flex-wrap gap-2">
-    {#if item.community}
-      <CommunityLink community={item.community} avatar showInstance />
+    <div class="flex flex-row justify-between flex-wrap gap-2">
+        {#if item.community}
+            <CommunityLink community={item.community} avatar showInstance />
+        {/if}
+        <SectionTitle class="font-normal">
+            <RelativeDate date={new Date(item.timestamp)} />
+        </SectionTitle>
+    </div>
+    
+    <hr class="mt-1 border-zinc-800"/>
+    
+    {#if item.actionName}
+        <SectionTitle class="mt-2">Action</SectionTitle>
+        <span class="text-base">
+            <ModlogAction action={item.actionName} />
+        </span>
     {/if}
-    <SectionTitle class="font-normal">
-      <RelativeDate date={new Date(item.timestamp)} />
-    </SectionTitle>
-  </div>
-  {#if item.actionName}
-    <SectionTitle class="mt-2">Action</SectionTitle>
-    <span class="text-base">
-      <ModlogAction action={item.actionName} />
-    </span>
-  {/if}
-  {#if item.moderator}
-    <SectionTitle class="mt-2">Moderator</SectionTitle>
-    <span
-      class="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium"
-    >
-      <UserLink showInstance={true} avatar user={item.moderator} />
-      {#if !item.moderator.admin}
-        <ShieldIcon filled width={16} />
-      {/if}
-    </span>
-  {/if}
-  {#if item.moderatee}
-    <SectionTitle class="mt-2">User</SectionTitle>
-    <UserLink showInstance={true} avatar user={item.moderatee} />
-  {/if}
-  {#if item.link || item.content}
-    <SectionTitle class="mt-2">Item</SectionTitle>
-    {#if item.link && item.content}
-      <Link href={item.link} highlight>
-        {item.content}
-      </Link>
-    {:else if item.content}
-      <p>{item.content}</p>
-    {:else if item.link}
-      <Link href={item.link} highlight />
+  
+    {#if item.moderator}
+        <SectionTitle class="mt-2">Moderator</SectionTitle>
+        <span class="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
+            <UserLink showInstance={true} avatar user={item.moderator} />
+            {#if !item.moderator.admin}
+                <ShieldIcon filled width={16} />
+            {/if}
+        </span>
     {/if}
-  {/if}
-  {#if item.reason}
-    <SectionTitle class="mt-2">Reason</SectionTitle>
-    <p>{item.reason}</p>
-  {/if}
+  
+    {#if item.moderatee}
+        <SectionTitle class="mt-2">User</SectionTitle>
+        <UserLink showInstance={true} avatar user={item.moderatee} />
+    {/if}
+
+    {#if item.link || item.content}
+        <SectionTitle class="mt-2">Item</SectionTitle>
+
+        {#if item.link && item.content}
+            <Link href={item.link} highlight>
+                {item.content}
+            </Link>
+        {:else if item.content}
+            <p>{item.content}</p>
+        {:else if item.link}
+            <Link href={item.link} highlight />
+        {/if}
+    {/if}
+  
+    {#if item.reason}
+        <SectionTitle class="mt-2">Reason</SectionTitle>
+        <p>{item.reason}</p>
+    {/if}
 </Card>
