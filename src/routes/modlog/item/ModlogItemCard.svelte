@@ -8,6 +8,7 @@
   import RelativeDate from '$lib/components/util/RelativeDate.svelte'
   import type { ModLog } from '../+page.js'
   import ModlogAction from '../ModlogAction.svelte'
+  import { userSettings } from '$lib/settings.js'
 
   export let item: ModLog
 </script>
@@ -50,13 +51,13 @@
         <SectionTitle class="mt-2">Item</SectionTitle>
 
         {#if item.link && item.content}
-            <Link href={item.link} highlight>
+            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.postLinks}>
                 {item.content}
             </Link>
         {:else if item.content}
             <p>{item.content}</p>
         {:else if item.link}
-            <Link href={item.link} highlight />
+            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.postLinks}/>
         {/if}
     {/if}
   
