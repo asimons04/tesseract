@@ -6,6 +6,7 @@ All major/minor changes between releases will be documented here.
 - Rearranged layout
 - Moved "Save" button to upper-right corner rather than bottom
 - Options not applicable to the "registration mode" selection will be hidden.
+- Updated YouTube component to recognize and embed YouTube Shorts links :sigh:
   
 
 
