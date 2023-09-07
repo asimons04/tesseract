@@ -122,6 +122,10 @@ pre {
     min-width: 15;
 }
 
+.flexcol-20 {
+    min-width: 20;
+}
+
 .flexcol-25 {
     min-width:25%;
 }
@@ -148,6 +152,10 @@ pre {
 
 .flexcol-66 {
     min-width:66.6%;
+}
+
+.flexcol-70 {
+    min-width:70%;
 }
 
 .flexcol-75 {

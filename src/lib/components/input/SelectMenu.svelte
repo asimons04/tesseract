@@ -12,8 +12,13 @@
     export let selected: T
     export let label: string | undefined = undefined
     export let alignment: Alignment = 'bottom-left'
+    export let selectedFunc: Function;
 
     let open = false
+
+    if (!selected) {
+        selected = selectedFunc();
+    }
 
     const dispatcher = createEventDispatcher<{ select: T }>()
 </script>

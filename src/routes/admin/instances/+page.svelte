@@ -113,7 +113,14 @@
 </svelte:head>
 
 <form class="flex flex-col gap-4" on:submit|preventDefault={save}>
-    <h1 class="font-bold text-2xl">Instance Management</h1>
+    {#if formData}
+    <h1 class="flex flex-row justify-between">
+        <span class="font-bold text-2xl">Instance Management</span>
+        <Button color="primary" loading={saving} disabled={saving} submit>
+            Save
+        </Button>
+    </h1>
+    
     <p class="text-sm mb-1">
         Manage which instances yours federates with.  Please note that these lists are mutually exclusive.  Sites on the "Blocked Instances" list will be prohibited from 
         interacting with your local instance.  Conversely, sites in the "Allowed Instances" list will be the ONLY instances yours communicates with, and the block list
@@ -125,7 +132,10 @@
     </p>
 
 
-    {#if formData}
+    
+
+
+    
     <div class="flexrow">
         <div class="flexcol mt-4">
             <TextArea 
@@ -148,9 +158,7 @@
         
     
 
-    <Button color="primary" size="lg" loading={saving} disabled={saving} submit>
-        Save
-    </Button>
+    
     {/if}
 </form>
 
