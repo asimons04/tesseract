@@ -54,7 +54,8 @@
         <Link highlight href={item.link} newtab={$userSettings.openInNewTab.postLinks}>
             <p>{item.content}</p>
         </Link>
-        {:else}
+        
+        {:else if item.content}
         <p>{item.content}</p>
         {/if}
     </td>
