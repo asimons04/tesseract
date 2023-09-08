@@ -1,15 +1,14 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings.js'
     import { getInstance } from '$lib/lemmy.js'
+    import type { postDisplayType } from './helpers.js'
 
     import Link from '$lib/components/input/Link.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-
-    type displayType = 'post'|'feed'
     
     export let post: object
-    export let displayType: displayType
+    export let displayType: postDisplayType
 
     let videoID:    string | null | undefined
     let embedURL:   string = ""
@@ -52,7 +51,7 @@
 
     function showAsEmbed() {
         if (!embedURL) { return false;}
-        if (displayType == 'feed' && $userSettings.embeddedMedia.enableFeed) { return true;}
+        if (displayType == 'feed' && $userSettings.embeddedMedia.enableFeed && (!post.post.nsfw || !$userSettings.nsfwBlur)) { return true;}
         if (displayType == 'post' && $userSettings.embeddedMedia.enablePost) { return true;}
         
         return false;
@@ -114,8 +113,7 @@
         url = {post.post.thumbnail_url}
         id = {post.post.id}
         nsfw = {post.post.nsfw}
-        nsfwBlur = {userSettings.nsfwBlur}
-        link = {true}
+        displayType={displayType}
     />
     
     <!---Create PostLink to external link if user does not have embeds enaled for posts--->

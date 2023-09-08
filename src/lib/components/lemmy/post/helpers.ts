@@ -5,3 +5,7 @@ export const isMutable = (post: PostView, me: PersonView) =>
 
 export const isCommentMutable = (comment: CommentView, me: PersonView) =>
   me.person.id == comment.creator.id
+
+
+export type postDisplayType = 'post' | 'feed'
+

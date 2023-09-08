@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { postDisplayType } from './helpers.js'
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import Comments from '$lib/components/lemmy/comment/Comments.svelte'
     import { isImage, postType } from '$lib/ui/image.js'
@@ -46,6 +47,7 @@
     
     let post = data.post
     let pType:string = postType(post.post_view)
+    let pDisplayType:postDisplayType = "post"
     
     let community = data.post.community_view.community;
     setSessionStorage('lastSeenCommunity', { id: community.id, name: `${community.name}@${new URL(community.actor_id).hostname}` })
@@ -190,7 +192,7 @@
                 id = {post.post_view.post.id}
                 nsfw = {post.post_view.post.nsfw}
                 nsfwBlur = {$userSettings.nsfwBlur}
-                link = {false}
+                displayType="post"
                 fullResolution = {true}
             />
             {/if}
@@ -204,21 +206,21 @@
             {#if pType == "youtube"}
             <PostYouTube
                 post = {post.post_view}
-                displayType="post"
+                displayType={pDisplayType}
             />
             {/if}
 
             {#if pType == "spotify"}
             <PostSpotify
                 post = {post.post_view}
-                displayType="post"
+                displayType={pDisplayType}
             />
             {/if}
 
             {#if pType == "soundcloud"}
             <PostSoundCloud
                 post = {post.post_view}
-                displayType="post"
+                displayType={pDisplayType}
             />
             {/if}
 

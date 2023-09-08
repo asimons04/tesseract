@@ -1,7 +1,11 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import { isImage, isVideo, isYouTube, postType } from '$lib/ui/image.js'
+    import type { postDisplayType } from './helpers.js'
+    import { isImage, postType } from '$lib/ui/image.js'
+    
     import Card from '$lib/components/ui/Card.svelte'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    
     import { getInstance } from '$lib/lemmy.js'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import { userSettings } from '$lib/settings.js'
@@ -14,7 +18,7 @@
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
     
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
@@ -22,7 +26,9 @@
     export let post: PostView
     export let actions: boolean = true
     export let hideCommunity = false
+    
     let pType:string = postType(post)
+    let pDisplayType:postDisplayType = "feed"
 
 </script>
 
@@ -101,8 +107,8 @@
             url = {post.post.url}
             id = {post.post.id}
             nsfw = {post.post.nsfw}
-            nsfwBlur = {userSettings.nsfwBlur}
-            link = {true}
+            nsfwBlur = {$userSettings.nsfwBlur}
+            displayType={pDisplayType}
         />
         {/if}
         
@@ -117,7 +123,7 @@
         {#if pType == "youtube"}
         <PostYouTube
             post = {post}
-            displayType="feed"
+            displayType={pDisplayType}
         />
         {/if}
 
@@ -125,7 +131,7 @@
         {#if pType == "spotify"}
         <PostSpotify
             post = {post}
-            displayType="feed"
+            displayType={pDisplayType}
         />
         {/if}
 
@@ -133,7 +139,7 @@
         {#if pType == "soundcloud"}
         <PostSoundCloud
             post = {post}
-            displayType="feed"
+            displayType={pDisplayType}
         />
         {/if}
 

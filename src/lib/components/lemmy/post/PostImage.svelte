@@ -1,12 +1,14 @@
 <script lang="ts">
+    import { userSettings } from '$lib/settings.js'
+    import type { postDisplayType } from './helpers.js'
+
     export let instance: string
     export let name: string
     export let url: string|boolean
     export let id: string
     export let nsfw: boolean
-    export let nsfwBlur: boolean
-    export let link: boolean
-    export let fullResolution: boolean
+    export let fullResolution: boolean  // Whether to show the image in full res or append thumbnail=XXX to the image URL
+    export let displayType: postDisplayType
 
     let loaded:boolean = false
     
@@ -21,7 +23,7 @@
 
 
 
-{#if link}
+{#if displayType == 'feed'}
 <a
     href="/post/{instance}/{id}"
     class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full"
@@ -46,15 +48,16 @@
                 loading="lazy"
                 class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
                 class:opacity-100={loaded}
-                class:blur-3xl={nsfw && nsfwBlur}
+                class:blur-3xl={(nsfw && $userSettings.nsfwBlur)}
                 on:load={() => (loaded = true)}
             />
         </picture>
     </div>
 </a>
 
-{:else}
+{/if}
 
+{#if displayType =='post'}
 <div
     class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full"
     data-sveltekit-preload-data="off"
@@ -74,11 +77,12 @@
             <!-- svelte-ignore a11y-missing-attribute -->
             <img
                 src="{src}"
+                alt="{name}"
                 loading="lazy"
                 class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
                 class:opacity-100={loaded}
-                class:blur-3xl={nsfw && nsfwBlur}
                 on:load={() => (loaded = true)}
+                
             />
         </picture>
     </div>

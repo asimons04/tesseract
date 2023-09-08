@@ -1,13 +1,15 @@
 <script lang="ts">
+  import type { postDisplayType } from './helpers.js'
+  
   import Link from '$lib/components/input/Link.svelte'
   import { userSettings } from '$lib/settings.js'
-  import { Icon, Link as LinkIcon } from 'svelte-hero-icons'
 
   export let url: string
   export let thumbnail_url: string
   export let nsfw: boolean = false
   export let title:string
-
+  export let displayType: postDisplayType
+  
   let loaded = false;
 </script>
 
@@ -29,7 +31,7 @@
                 
                 class:opacity-100={loaded}
                 on:load={() => (loaded = true)}
-                class:blur-3xl={nsfw}
+                class:blur-3xl={nsfw && $userSettings.nsfwBlur}
             />
         </div>
     </div>

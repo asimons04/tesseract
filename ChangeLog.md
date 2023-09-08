@@ -1,6 +1,13 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.42
+### NSFW Blur Fixes
+- Fixed bug with NSFW blur applying to the post instead of the feed. Not sure if inherited from parent project or introduced in the fork; all testing was done against an instance that did not allow NSFW and with the profile option to "Show NSFW content" disabled. 
+  - Updated testing scenarios to account for NSFW content.
+- NSFW blur now applies to embedded content.  If "Blur NSFW" is enabled, embeded content marked NSFW will instead show a thumbnail in the feed, regardless of embed media settings, and the thumbnail will be blurred. Clicking into the post will show the embed (if that option is enabed).
+- Changed verbiage for "Blur NSFW" setting to indicate it only applies to the feed. Content will not be blurred in the post.
+
 ## 1.2.41
 ### Admin Panel
 - Put config sections into `<Setting>` cards to give it better spacing and more contrast on `/admin/config` and `/admin/instances` pages.
