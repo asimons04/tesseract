@@ -26,32 +26,34 @@
 {#if displayType == 'feed'}
 <a
     href="/post/{instance}/{id}"
-    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full"
+    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full m-1"
     data-sveltekit-preload-data="off"
     aria-label={name}
     title={name}
 >
-    <div class="ml-auto mr-auto max-w-3xl">
-        <picture class="rounded-md overflow-hidden max-h-[min(50vh,500px)] w-full max-w-full">
-            <source
-                srcset="{url}?thumbnail=768&format=webp"
-                media="(max-width: 768px)"
-            />
+    <div class="m-1">
+        <div class="ml-auto mr-auto max-w-3xl">
+            <picture class="rounded-md overflow-hidden max-h-[min(50vh,500px)] w-full max-w-full">
+                <source
+                    srcset="{url}?thumbnail=768&format=webp"
+                    media="(max-width: 768px)"
+                />
 
-            <source
-                srcset="{url}?format=webp"
-                media="(max-width: 1024px)"
-            />
+                <source
+                    srcset="{url}?format=webp"
+                    media="(max-width: 1024px)"
+                />
 
-            <img
-                src="{src}"
-                loading="lazy"
-                class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
-                class:opacity-100={loaded}
-                class:blur-3xl={(nsfw && $userSettings.nsfwBlur)}
-                on:load={() => (loaded = true)}
-            />
-        </picture>
+                <img
+                    src="{src}"
+                    loading="lazy"
+                    class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
+                    class:opacity-100={loaded}
+                    class:blur-3xl={(nsfw && $userSettings.nsfwBlur)}
+                    on:load={() => (loaded = true)}
+                />
+            </picture>
+        </div>
     </div>
 </a>
 
@@ -59,7 +61,7 @@
 
 {#if displayType =='post'}
 <div
-    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full"
+    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full m-1"
     data-sveltekit-preload-data="off"
     aria-label={name}
 >
