@@ -9,7 +9,6 @@ All major/minor changes between releases will be documented here.
 
 - Added option to enable autoplay for YouTube videos when opening posts (not available in feed for obvious reasons)
 
-
 ### Post View
 - Standardized 1px margin around post images (same as YT videos) for consistent layout.
 
@@ -18,6 +17,9 @@ All major/minor changes between releases will be documented here.
 
 ### Sidebar
 - Removed 'About' from sidebar. Still acccessible from profile menu
+
+### More NSFW Blur Fixes
+- Fixed another broken NSFW blur with post image thumbnails.
 
 
 ## 1.2.42

@@ -245,6 +245,7 @@
                 url={post.post_view.post.url}
                 nsfw={post.post_view.post.nsfw}
                 title={post.post_view.post.name}
+                displayType={pDisplayType}
             />
             {/if}
     

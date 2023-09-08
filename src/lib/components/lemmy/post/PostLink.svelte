@@ -32,7 +32,7 @@
                     
                     class:opacity-100={loaded}
                     on:load={() => (loaded = true)}
-                    class:blur-3xl={nsfw && $userSettings.nsfwBlur}
+                    class:blur-3xl={nsfw && $userSettings.nsfwBlur && displayType==='feed'}
                 />
             </div>
         </div>

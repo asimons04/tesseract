@@ -150,6 +150,7 @@
             thumbnail_url="{post.post.thumbnail_url}?format=webp&thumbnail=768"
             nsfw={post.post.nsfw}
             title={post.post.name}
+            displayType={pDisplayType}
         />
         {/if}
         
