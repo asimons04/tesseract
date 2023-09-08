@@ -15,13 +15,15 @@
     import { 
         ArrowPath,
         ArrowSmallLeft,
+        ChevronDoubleLeft,
+        ChevronDoubleRight,
         ExclamationTriangle, 
         Icon 
     } from 'svelte-hero-icons'
 
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import Card from '$lib/components/ui/Card.svelte'
-
+    import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
@@ -41,6 +43,7 @@
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
     import { userSettings } from '$lib/settings.js'
     import { getSessionStorage, setSessionStorage } from '$lib/session.js'
+    import { fly } from 'svelte/transition'
 
     export let data
     
@@ -121,39 +124,106 @@
       max_depth: 3,
     })
   }
+
 </script>
 
 <svelte:head>
-  <title>{post.post_view.post.name}</title>
-  <meta property="og:title" content={post.post_view.post.name} />
-  <meta property="og:url" content={$page.url.toString()} />
-  {#if isImage(post.post_view.post.url)}
-    <meta property="og:image" content={post.post_view.post.url} />
-  {/if}
-  {#if post.post_view.post.body}
-    <meta property="og:description" content={post.post_view.post.body} />
-  {/if}
+    <title>{post.post_view.post.name}</title>
+    <meta property="og:title" content={post.post_view.post.name} />
+    <meta property="og:url" content={$page.url.toString()} />
+    {#if isImage(post.post_view.post.url)}
+        <meta property="og:image" content={post.post_view.post.url} />
+    {/if}
+
+    {#if post.post_view.post.body}
+        <meta property="og:description" content={post.post_view.post.body} />
+    {/if}
 </svelte:head>
 
+   
 <div class="flex flex-col md:flex-row gap-4 w-full">
-    <div class="flex flex-col gap-2 w-full">
+    <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
-        <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
+        <!--- Menu bar above post content --->
+        <div class="flex flex-row gap-2 w-full mb-2 justify-between">
             
-            <!--- Menu bar above post content --->
-            <div class="flex flex-row gap-2 w-full mb-2">
-                <Button class="font-normal" title="Go back to feed"
-                    on:click={() => {
-                        history.back();
-                    }}
-                    hidden={history.length<2}
+            <!--- Hide "show/hide sidebar" button if it's not present --->
+            <div class="hidden sm:flex">
+                <Button
+                    alignment="left"
+                    on:click={() =>
+                        ($userSettings.expandSidebar = !$userSettings.expandSidebar)
+                    }
+                    class="w-max !p-2 hover:bg-slate-200"
+                    aria-label={$userSettings.expandSidebar
+                        ? 'Collapse sidebar'
+                        : 'Expand sidebar'
+                    }
+                    title={$userSettings.expandSidebar
+                        ? 'Collapse sidebar'
+                        : 'Expand sidebar'
+                    }
                 >
-                    <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
-                    <span class="hidden md:inline">Return to Feed</span>
+                    <Icon
+                        src={ChevronDoubleLeft}
+                        mini
+                        size="16"
+                        class="transition-transform {$userSettings.expandSidebar
+                            ? ''
+                            : 'rotate-180'}"
+                    />
                 </Button>
             </div>
-            
-            
+           
+            <!--- Button to Return to Feed --->
+            <Button class="font-normal" title="Go back to feed"
+                on:click={() => {
+                    history.back();
+                }}
+                hidden={history.length<2}
+            >
+                <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
+                <span class="hidden md:inline">Return to Feed</span>
+            </Button>
+
+            <!--- Hide "show/hide community sidebar" button if it's not present --->
+            <div class="hidden xl:block">
+                <Button
+                    alignment="right"
+                    on:click={() =>
+                        ($userSettings.expandCommunitySidebar = !$userSettings.expandCommunitySidebar)
+                    }
+                    class="w-max hover:bg-slate-200"
+                    aria-label={$userSettings.expandCommunitySidebar
+                        ? 'Collapse community sidebar'
+                        : 'Expand community sidebar'
+                    }
+                    title={$userSettings.expandCommunitySidebar
+                        ? 'Collapse community sidebar'
+                        : 'Expand community sidebar'
+                    }
+                >
+                    <Icon
+                        src={ChevronDoubleRight}
+                        mini
+                        size="16"
+                        class="transition-transform {$userSettings.expandCommunitySidebar
+                            ? ''
+                            : 'rotate-180'}"
+                    />
+                </Button>
+            </div>
+        </div>
+        
+        <!--- Post and Comments-->
+        <div class="flex flex-col gap-2 sm:gap-2 max-w-full w-full min-w-0"
+            in:fly={{
+                y: -8,
+                duration: 500,
+                opacity: 0,
+                delay: index < 4 ? index * 100 : 0,
+            }}
+        >
             {#if $page.params.instance.toLowerCase() != $instance.toLowerCase()}
             <Card cardColor="warning" class="p-4 flex flex-col gap-1">
                 <Icon
@@ -183,7 +253,7 @@
                 published={new Date(post.post_view.post.published + 'Z')}
                 saved={post.post_view.saved}
             />
-  
+
             <h1 class="font-bold text-lg">{post.post_view.post.name}</h1>
             {#if pType == "image"}
             <PostImage
@@ -202,7 +272,7 @@
                 url = {post.post_view.post.url}
             />
             {/if}
-            
+        
             {#if pType == "youtube"}
             <PostYouTube
                 post = {post.post_view}
@@ -248,14 +318,15 @@
                 displayType={pDisplayType}
             />
             {/if}
-    
+
             <!--- Post Body --->
             {#if post.post_view.post.body}
             <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">
                 <Markdown source={post.post_view.post.body} />
             </div>
             {/if}
-  
+            
+            <!--- Post Action Buttons --->
             <div class="w-full relative">
                 <PostActions
                     bind:post={post.post_view}
@@ -269,108 +340,115 @@
 
             <!--- Crosspost Bar --->
             {#if post.cross_posts?.length > 0}
-            <details
-                class="text-sm font-bold mt-2 w-full cursor-pointer"
-                open={post.cross_posts?.length <= 3}
-            >
-                <summary class="inline-block w-full">
-                    <SectionTitle class="text-inherit dark:text-inherit">
-                        Crossposts 
-                        <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
-                            {post.cross_posts.length}
-                        </span>
-                    </SectionTitle>
-                </summary>
-                    
-                <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex flex-col">
-                    {#each post.cross_posts as crosspost}
-                    <div class="py-2.5 flex flex-col gap-1">
-                        <span class="text-xs flex flex-col pointer-events-none">
-                            <CommunityLink
-                                community={crosspost.community}
-                                avatarSize={22}
-                                avatar={true}
-                            />
-                        </span>
-                        <Link
-                            class="text-sm"
-                            href="/post/{$page.params.instance}/{crosspost.post.id}"
-                        >
-                            {crosspost.post.name}
-                        </Link>
-                    </div>
-                    {/each}
-                </div>
-            </details>
-            {/if}
-        </div>
-
-        <div class="mt-4 flex flex-col gap-2 w-full">
-            <div class="font-bold text-lg">
-                Comments 
-                <span class="text-sm font-normal ml-2 opacity-80">
-                    {post.post_view.counts.comments}
-                </span>
-            </div>
-
-            <div class="flex flex-row justify-between">
-                <MultiSelect
-                    options={['Hot', 'Top', 'New']}
-                    bind:selected={commentSort}
-                    on:select={reloadComments}
-                />
-
-                <Button class="font-normal" title="Reload comments"
-                    on:click={() => {
-                        reloadComments();
-                    }}
+                <details
+                    class="text-sm font-bold mt-2 w-full cursor-pointer"
+                    open={post.cross_posts?.length <= 3}
                 >
-                    <Icon src={ArrowPath} mini size="16" slot="icon" />
-                    <span class="hidden md:inline">Reload Comments</span>
-                </Button>
-            </div>
-
-            {#if data.singleThread}
-                <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap gap-4">
-                    <p>You're viewing a single thread.</p>
-                    <Button on:click={reloadComments}>View full thread</Button>
-                </Card>
+                    <summary class="inline-block w-full">
+                        <SectionTitle class="text-inherit dark:text-inherit">
+                            Crossposts 
+                            <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
+                                {post.cross_posts.length}
+                            </span>
+                        </SectionTitle>
+                    </summary>
+                        
+                    <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex flex-col">
+                        {#each post.cross_posts as crosspost}
+                        <div class="py-2.5 flex flex-col gap-1">
+                            <span class="text-xs flex flex-col pointer-events-none">
+                                <CommunityLink
+                                    community={crosspost.community}
+                                    avatarSize={22}
+                                    avatar={true}
+                                />
+                            </span>
+                            <Link
+                                class="text-sm"
+                                href="/post/{$page.params.instance}/{crosspost.post.id}"
+                            >
+                                {crosspost.post.name}
+                            </Link>
+                        </div>
+                        {/each}
+                    </div>
+                </details>
             {/if}
-
-            {#await data.streamed.comments}
-                <div class="h-16 mx-auto grid place-items-center">
-                    <Spinner width={24} />
-                </div>
-                {:then comments}
-                {#if $profile?.user}
-                    <CommentForm
-                        postId={post.post_view.post.id}
-                        on:comment={(comment) =>
-                        (comments.comments = [
-                            comment.detail.comment_view,
-                            ...comments.comments,
-                        ])}
-                        locked={post.post_view.post.locked ||
-                        $page.params.instance.toLowerCase() != $instance.toLowerCase()}
-                    />
-                {/if}
             
-                {#await buildCommentsTreeAsync(comments.comments)}
+            <!--- Comments --->
+            <div class="mt-4 flex flex-col gap-2 w-full">
+                <div class="font-bold text-lg">
+                    Comments 
+                    <span class="text-sm font-normal ml-2 opacity-80">
+                        {post.post_view.counts.comments}
+                    </span>
+                </div>
+
+                <div class="flex flex-row justify-between">
+                    <MultiSelect
+                        options={['Hot', 'Top', 'New']}
+                        bind:selected={commentSort}
+                        on:select={reloadComments}
+                    />
+
+                    <Button class="font-normal" title="Reload comments"
+                        on:click={() => {
+                            reloadComments();
+                        }}
+                    >
+                        <Icon src={ArrowPath} mini size="16" slot="icon" />
+                        <span class="hidden md:inline">Reload Comments</span>
+                    </Button>
+                </div>
+
+                {#if data.singleThread}
+                    <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap gap-4">
+                        <p>You're viewing a single thread.</p>
+                        <Button on:click={reloadComments}>View full thread</Button>
+                    </Card>
+                {/if}
+
+                {#await data.streamed.comments}
                     <div class="h-16 mx-auto grid place-items-center">
-                        <Spinner width={36} />
+                        <Spinner width={24} />
                     </div>
                     {:then comments}
-                    <Comments post={post.post_view.post} nodes={comments} isParent={true} />
+                    {#if $profile?.user}
+                        <CommentForm
+                            postId={post.post_view.post.id}
+                            on:comment={(comment) =>
+                            (comments.comments = [
+                                comment.detail.comment_view,
+                                ...comments.comments,
+                            ])}
+                            locked={post.post_view.post.locked ||
+                            $page.params.instance.toLowerCase() != $instance.toLowerCase()}
+                        />
+                    {/if}
+                
+                    {#await buildCommentsTreeAsync(comments.comments)}
+                        <div class="h-16 mx-auto grid place-items-center">
+                            <Spinner width={36} />
+                        </div>
+                        {:then comments}
+                        <Comments post={post.post_view.post} nodes={comments} isParent={true} />
+                    {/await}
+                    {:catch}
+                        <div class="bg-red-500/10 border border-red-500 rounded-md p-4">
+                            Failed to load comments.
+                        </div>
                 {/await}
-                {:catch}
-                    <div class="bg-red-500/10 border border-red-500 rounded-md p-4">
-                        Failed to load comments.
-                    </div>
-            {/await}
+            </div>
         </div>
     </div>
 
-    <div class="hidden xl:block">
+    <!--- Community Sidebar--->
+    <div class="
+        {$userSettings.expandCommunitySidebar
+        ? 'hidden xl:block'
+        : 'hidden'}
+        "
+     >
         <CommunityCard community_view={data.post.community_view} />
     </div>
 </div>  

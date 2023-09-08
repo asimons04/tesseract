@@ -35,7 +35,7 @@ interface Settings {
     }
     fullWidthLayout: boolean
     expandSidebar: boolean
-    
+    expandCommunitySidebar: boolean
     notifications: {
         enabled: boolean
         pollRate: number
@@ -91,6 +91,7 @@ export const defaultSettings: Settings = {
     },
     fullWidthLayout: toBool(env.PUBLIC_FULL_WIDTH_LAYOUT)               ?? false,
     expandSidebar:   toBool(env.PUBLIC_EXPAND_SIDEBAR)                  ?? true,
+    expandCommunitySidebar:                                             true,
     
     notifications: {
         enabled:    false,

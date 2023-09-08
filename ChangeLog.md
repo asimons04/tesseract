@@ -3,7 +3,7 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.43
 ### Media 
-- You can now set your preferred size for post images and media (videos, Spotify embeds, etc).  Your selection will be used as the maximum size. Note that it will not scale an image larger than the source.
+- You can now set your preferred size for post images and media (videos, Spotify embeds, etc).  Your selection will be used as the maximum size. Note that it will not scale an image larger than the source.  You can set separate preferences for images and videos/embeds.
 
 - Added `end` time support for YouTube-like embeds.  In addition to the `start` parameter that was already supported, you can specify `end` in the YouTube URL to set a preferred stop time, in seconds, from the start of the video.
 
@@ -13,7 +13,7 @@ All major/minor changes between releases will be documented here.
 - Standardized 1px margin around post images (same as used with embeds) for consistent layout.
 
 ### Action Menus
-- Action menus now appear above the button rather than below. Should make it easier to use mod tools when on mobile. No more constant downscrolling to get to the options.
+- Action menus now appear above the button rather than below. Should make it easier to use mod tools when on mobile. No more constant downscrolling to get to the options!
 
 ### Sidebar
 - Removed 'About' from sidebar. Still acccessible from profile menu
