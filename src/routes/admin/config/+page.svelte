@@ -8,9 +8,11 @@
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { getClient } from '$lib/lemmy.js'
-    import type { EditSite, GetFederatedInstances } from 'lemmy-js-client'
+    import type { EditSite } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
+
+    import Setting from '$lib/components/ui/Setting.svelte'
 
     export let data: PageData;
     
@@ -70,174 +72,182 @@
     </h1>
     {#if formData}
         
-        <div class="flexrow">
-            <div class="flexcol flexcol-50 mt-2">
-                <TextInput bind:value={formData.name} label="Name" />
-                <span class="mb-2"></span>
-                <TextInput bind:value={formData.description} label="Description" />
-            </div>
 
-            <div class="flexcol flexcol-50  mt-2">
-                <p class="font-bold">Site Options</p>
-                <hr class="mb-1 border-zinc-400"/>
-                
-                <div class="flexrow">
-                    <div class="flexcol">
-                        <Checkbox bind:checked={formData.enable_downvotes} defaultValue={true}>
-                            Enable downvotes
-                        </Checkbox>
-                
-                        <Checkbox bind:checked={formData.enable_nsfw} defaultValue={true}>
-                            Enable NSFW
-                        </Checkbox>
-                
-                        <Checkbox bind:checked={formData.community_creation_admin_only} defaultValue={true}>
-                            Only admins can create communities
-                        </Checkbox>
+        <Setting>
+            <span slot="title">General</span>
+            <span slot="description">Set your instance's name, description, and base options</span>
+            <div class="flexrow">
+                <div class="flexcol flexcol-50 mt-2">
+                    <TextInput bind:value={formData.name} label="Name" />
+                    <span class="mb-2"></span>
+                    <TextInput bind:value={formData.description} label="Description" />
+                </div>
 
-                        <Checkbox bind:checked={formData.hide_modlog_mod_names} defaultValue={true}>
-                            Hide modlog mod names
-                        </Checkbox>
-                    </div>
-
-                    <div class="flexcol">
-                        <Checkbox bind:checked={formData.reports_email_admins} defaultValue={true}>
-                            Email admins on receiving new reports
-                        </Checkbox>
-                
-                        <Checkbox bind:checked={formData.private_instance} defaultValue={true}>
-                            Private instance
-                        </Checkbox>
+                <div class="flexcol flexcol-50  mt-2">
+                    <p class="font-bold">Site Options</p>
+                    <hr class="mb-1 border-zinc-400"/>
                     
-                        <Checkbox bind:checked={formData.federation_enabled} defaultValue={true}>
-                            Federation enabled
-                        </Checkbox>
+                    <div class="flexrow">
+                        <div class="flexcol">
+                            <Checkbox bind:checked={formData.enable_downvotes} defaultValue={true}>
+                                Enable downvotes
+                            </Checkbox>
+                    
+                            <Checkbox bind:checked={formData.enable_nsfw} defaultValue={true}>
+                                Enable NSFW
+                            </Checkbox>
+                    
+                            <Checkbox bind:checked={formData.community_creation_admin_only} defaultValue={true}>
+                                Only admins can create communities
+                            </Checkbox>
+
+                            <Checkbox bind:checked={formData.hide_modlog_mod_names} defaultValue={true}>
+                                Hide modlog mod names
+                            </Checkbox>
+                        </div>
+
+                        <div class="flexcol">
+                            <Checkbox bind:checked={formData.reports_email_admins} defaultValue={true}>
+                                Email admins on receiving new reports
+                            </Checkbox>
+                    
+                            <Checkbox bind:checked={formData.private_instance} defaultValue={true}>
+                                Private instance
+                            </Checkbox>
+                        
+                            <Checkbox bind:checked={formData.federation_enabled} defaultValue={true}>
+                                Federation enabled
+                            </Checkbox>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Setting>
+       
         
-        <p class="mt-2 font-bold">Registration Options</p>
-        <hr class="border-zinc-400"/>
-        
-        
-
-        <div class="flexrow">
-            <div class="flexcol flexcol-30 mt-2">
-
-                <div class="flexrow">
-                    <div class="flexcol mt-2">
-                        <!--- Registration Mode--->
-                        <SelectMenu
-                            label="Registration Mode"
-                            alignment="top-left"
-                            options={['Closed', 'RequireApplication', 'Open']}
-                            optionNames={['Closed', 'Require Application', 'Open Registration']}
-                            selected={formData.registration_mode ?? 'Open'}
-                            on:select={(e) => {
-                                // @ts-ignore
-                                formData.registration_mode = e.detail
-                            }}
-                        />
-                    </div>
-
-                    <div class="flexcol mt-2">
-                        <!--- Captcha State and Difficulty--->
-                        {#if formData.registration_mode != 'Closed'}
+        <Setting>
+            <span slot="title">Registration Options</span>
+            <span slot="description">Configure whether your instance is open for registrations and which options to enable for the selected registration mode.</span>
+            <!--<hr class="border-zinc-400"/>-->
+            
+            <div class="flexrow">
+                <div class="flexcol flexcol-30 mt-2">
+    
+                    <div class="flexrow">
+                        
+                        <div class="flexcol mt-2">
+                            <!--- Registration Mode--->
                             <SelectMenu
-                                label="Captcha"
+                                label="Registration Mode"
                                 alignment="top-left"
-                                options={['off', 'easy', 'medium', 'hard']}
-                                optionNames={['Off', 'Easy', 'Medium', 'Hard']}
-                                
-                                selectedFunc={() => {
-                                    if (formData.captcha_enabled && formData.captcha_difficulty) { return formData.captcha_difficulty.toLowerCase(); }
-                                    if (formData.captcha_enabled && !formData.captcha_difficulty) { return 'easy'; }
-                                    if (!formData.captcha_enabled) { return 'off'; }
-                                }}
-                                
+                                options={['Closed', 'RequireApplication', 'Open']}
+                                optionNames={['Closed', 'Require Application', 'Open Registration']}
+                                selected={formData.registration_mode ?? 'Open'}
                                 on:select={(e) => {
                                     // @ts-ignore
-                                    if (e.detail == 'off') { formData.captcha_enabled = false; }
-                                    else {
-                                        formData.captcha_enabled = true;
-                                        formData.captcha_difficulty = e.detail
-                                    }
+                                    formData.registration_mode = e.detail
                                 }}
                             />
+                        </div>
+    
+                        <div class="flexcol mt-2">
+                            <!--- Captcha State and Difficulty--->
+                            {#if formData.registration_mode != 'Closed'}
+                                <SelectMenu
+                                    label="Captcha"
+                                    alignment="top-left"
+                                    options={['off', 'easy', 'medium', 'hard']}
+                                    optionNames={['Off', 'Easy', 'Medium', 'Hard']}
+                                    
+                                    selectedFunc={() => {
+                                        if (formData.captcha_enabled && formData.captcha_difficulty) { return formData.captcha_difficulty.toLowerCase(); }
+                                        if (formData.captcha_enabled && !formData.captcha_difficulty) { return 'easy'; }
+                                        if (!formData.captcha_enabled) { return 'off'; }
+                                    }}
+                                    
+                                    on:select={(e) => {
+                                        // @ts-ignore
+                                        if (e.detail == 'off') { formData.captcha_enabled = false; }
+                                        else {
+                                            formData.captcha_enabled = true;
+                                            formData.captcha_difficulty = e.detail
+                                        }
+                                    }}
+                                />
+                            {/if}
+                        </div>
+                    </div>
+    
+                    <div class="mt-2">
+                        {#if formData.registration_mode != 'Closed'}
+                            <p class="font-bold">Email</p>
+                            <hr class="mb-1 border-zinc-400"/>
+                            <Checkbox bind:checked={formData.require_email_verification} defaultValue={true}>
+                                Require email verification
+                            </Checkbox>
+                        {/if}
+                        
+                        {#if formData.registration_mode == 'RequireApplication'}
+                            <Checkbox bind:checked={formData.application_email_admins} defaultValue={true}>
+                                Email admins on receiving new applications
+                            </Checkbox>
                         {/if}
                     </div>
                 </div>
-
-                <div class="mt-2">
-                    {#if formData.registration_mode != 'Closed'}
-                        <p class="font-bold">Email</p>
-                        <hr class="mb-1 border-zinc-400"/>
-                        <Checkbox bind:checked={formData.require_email_verification} defaultValue={true}>
-                            Require email verification
-                        </Checkbox>
-                    {/if}
-                    
+                
+                <div class="flexcol flexcol-70 mt-2">
                     {#if formData.registration_mode == 'RequireApplication'}
-                        <Checkbox bind:checked={formData.application_email_admins} defaultValue={true}>
-                            Email admins on receiving new applications
-                        </Checkbox>
+                        <MarkdownEditor
+                            previewButton
+                            label="Application Question"
+                            bind:value={formData.application_question}
+                        />
                     {/if}
                 </div>
             </div>
-            
-            <div class="flexcol flexcol-70 mt-2">
-                {#if formData.registration_mode == 'RequireApplication'}
+
+
+
+        </Setting>
+        
+        <Setting>
+            <span slot="title">Slur Fitler</span>
+            <span title="description">
+                A regex containing the slurs you want to prohibit in content. Be careful since a malformed regex will prevent the site from working,
+                and you will have to clear the value from the database directly to resolve.
+            </span>
+
+            <TextInput
+                bind:value={formData.slur_filter_regex}
+                label="Slur Filter Regex"
+                placeholder="(word1|word2)"
+            />
+        </Setting>
+
+        <Setting>
+            <span slot="title">Sidebar and Legal Content</span>
+            <span slot="description">Edit the content that appears in the sidebar of your site as well as what shows on the "Legal" page.</span>
+
+            <!--- Sidebar and Legal Page Content--->
+            <div class="flexrow">
+                <div class="flexcol mt-2">
                     <MarkdownEditor
                         previewButton
-                        label="Application Question"
-                        bind:value={formData.application_question}
+                        bind:value={formData.sidebar}
+                        label="Sidebar Content"
+                        rows={15}
                     />
-                {/if}
+                </div>
+
+                <div class="flexcol mt-2">
+                    <MarkdownEditor
+                        previewButton
+                        bind:value={formData.legal_information}
+                        label="Legal Page Content"
+                        rows={15}
+                    />
+                </div>
             </div>
-        </div>
-
-
-
-
-        <hr class="border-zinc-400"/>
-
-        <TextInput
-            bind:value={formData.slur_filter_regex}
-            label="Slur Filter Regex"
-            placeholder="(word1|word2)"
-        />
-
-
-        <!--- Sidebar and Legal Page Content--->
-        <div class="flexrow">
-            <div class="flexcol mt-2">
-                <MarkdownEditor
-                    previewButton
-                    bind:value={formData.sidebar}
-                    label="Sidebar Content"
-                    rows={15}
-                />
-            </div>
-
-            <div class="flexcol mt-2">
-                <MarkdownEditor
-                    previewButton
-                    bind:value={formData.legal_information}
-                    label="Legal Page Content"
-                    rows={15}
-                />
-            </div>
-        </div>
-    
-       
-        
-
-
-        
-        
-        
+        </Setting>
     {/if}
-
-    
 </form>

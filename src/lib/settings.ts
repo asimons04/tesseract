@@ -104,7 +104,7 @@ export const defaultSettings: Settings = {
         postLinks:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ?? false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ?? false,
     },
-    newVote:        toBool(env.PUBLIC_NEW_VOTE_BUTTONS)                 ?? true,
+    newVote:        toBool(env.PUBLIC_NEW_VOTE_BUTTONS)                 ?? false,
     modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ?? true,
     debugInfo: false,
     systemUI: true,

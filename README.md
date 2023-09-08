@@ -75,14 +75,18 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 
 ### Moderation
-- [ ] Add "Purge person" option to admin menu
+- [ ] Add "Purge person" and/or "purge content" option to admin menu. 
+  - "Ban and Purge Content" is the plan.  Purging user does not result in a ban (unless they were banned on their home instance which is not guaranteed).  I don't think the API has a way to do this directly, so may have to do one or more searches for the `person_id` and purge each in a loop over multiple API calls.
 - [ ] Add option for  mods/admins to hide deleted comments and logic to implement that
 
 ### UI
-
 #### General 
-- [ ] Fix white on grey `<option>` values in theme selection menu.
+- [ ] Fix white on grey `<option>` values in theme selection menu (Chrome/ium only).
 - [ ] Move post action buttons to top (in line with community and OP info)
+- [ ] Implement a `/legal` page to render the value returned from the API
+- [ ] Implement a public `/instances` page to render the linked, blocked, and allowed instances
+- [ ] Bug: NSFW blur in feed is broken
+
 
 #### Vote Buttons
 - [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
@@ -92,6 +96,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 #### Sidebar
 - [ ] Add inline search/filter for subscribed communities.
 - [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
+- [ ] Remove 'About' from sidebar
 
 #### Settings
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
@@ -103,8 +108,8 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 #### Admin Panel
 - [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
-
-
+- [ ] Add check to make sure the slur filter regex is valid before sending to API.
+- [ ] Add toggle to `/admin/instances` to select an operating mode: blocklist vs allow list and hide the non-selected 
 
 
 

@@ -1,5 +1,13 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+
+## 1.2.41
+### Admin Panel
+- Put config sections into `<Setting>` cards to give it better spacing and more contrast on `/admin/config` and `/admin/instances` pages.
+- Moved `Setting.svelte` component from `routes/settings` to `lib/components/ui`
+
+
+
 ## 1.2.4
 ### Media Handling
 - Updated YouTube component to recognize and embed YouTube Shorts links :sigh:

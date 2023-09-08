@@ -9,8 +9,7 @@
     import Checkbox from '$lib/components/input/Checkbox.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
-   
+    import Setting from '$lib/components/ui/Setting.svelte'
     
     import type { EditSite, Instance } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
@@ -120,45 +119,36 @@
             Save
         </Button>
     </h1>
-    
-    <p class="text-sm mb-1">
-        Manage which instances yours federates with.  Please note that these lists are mutually exclusive.  Sites on the "Blocked Instances" list will be prohibited from 
-        interacting with your local instance.  Conversely, sites in the "Allowed Instances" list will be the ONLY instances yours communicates with, and the block list
-        will be ignored.
-    </p>
 
-    <p class="text-sm mb-1">
-        Domains can be added one per line and/or you can drop in a comma-delimited list.
-    </p>
+    <Setting>
+        <span slot="title">Blocked / Allowed Lists</span>
+        <span slot="description">
+            Manage which instances yours federates with.  Please note that these lists are mutually exclusive.  Sites on the "Blocked Instances" list will be prohibited from 
+            interacting with your local instance.  Conversely, sites in the "Allowed Instances" list will be the ONLY instances yours communicates with, and the block list
+            will be ignored.  Domains can be added one per line and/or you can drop in a comma-delimited list.
+        </span>
 
-
-    
-
-
-    
-    <div class="flexrow">
-        <div class="flexcol mt-4">
-            <TextArea 
-                bind:value={formData.blocked_instances} 
-                label="Blocked Instances" 
-                rows=15
-                spellcheck="false"
-            />
+        <div class="flexrow">
+            <div class="flexcol mt-4">
+                <TextArea 
+                    bind:value={formData.blocked_instances} 
+                    label="Blocked Instances" 
+                    rows=15
+                    spellcheck="false"
+                />
+            </div>
+                
+            <div class="flexcol mt-4">
+                <TextArea 
+                    bind:value={formData.allowed_instances} 
+                    label="Allowed Instances" 
+                    placeholder="If you are operating in 'blocklist' mode, this box should remain empty"
+                    rows=15
+                    spellcheck="false"
+                />
+            </div>
         </div>
-            
-        <div class="flexcol mt-4">
-            <TextArea 
-                bind:value={formData.allowed_instances} 
-                label="Allowed Instances" 
-                rows=15
-                spellcheck="false"
-            />
-        </div>
-    </div>
-        
-    
-
-    
+    </Setting>
     {/if}
 </form>
 
