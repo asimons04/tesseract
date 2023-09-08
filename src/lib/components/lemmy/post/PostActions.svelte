@@ -112,7 +112,7 @@
     <ModerationMenu bind:item={post} community={post.community} />
   {/if}
   <Menu
-    alignment="bottom-right"
+    alignment="top-right"
     containerClass="overflow-auto max-h-[400px]"
     bind:toggleOpen
   >

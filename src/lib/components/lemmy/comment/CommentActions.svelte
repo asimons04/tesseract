@@ -62,7 +62,7 @@
         <CommentModerationMenu bind:item={comment} />
     {/if}
   
-    <Menu class="top-0 leading-3" alignment="bottom-center">
+    <Menu class="top-0 leading-3" alignment="top-center">
         <Button
             slot="button"
             on:click={toggleOpen}
