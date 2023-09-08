@@ -71,6 +71,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 ### Community Discovery
 - [ ] Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
 - [ ] Periodically pull the JSON DB for browse.feddit.de and use that to integrate a feidverse-wide community browser.
+- [ ] Card view for Communities
 
 
 
