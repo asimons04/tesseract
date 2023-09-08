@@ -1,6 +1,15 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.43
+### Post View
+- Standardized 1px margin around post images (same as YT videos) for consistent layout.
+
+### Action Menus
+- Action menus now appear above the button rather than below. Should make it easier to use mod tools when on mobile. No more constant downscrolling to get to the options.
+
+
+
 ## 1.2.42
 ### NSFW Blur Fixes
 - Fixed bug with NSFW blur applying to the post instead of the feed. Not sure if inherited from parent project or introduced in the fork; all testing was done against an instance that did not allow NSFW and with the profile option to "Show NSFW content" disabled. 
