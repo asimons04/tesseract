@@ -2,6 +2,7 @@
     import Switch from '$lib/components/input/Switch.svelte'
     import { defaultSettings, userSettings, YTFrontends } from '$lib/settings'
     import Setting from './Setting.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -105,12 +106,51 @@
                             <Checkbox bind:checked={$userSettings.newVote}>             Use New Vote Design</Checkbox>
                             <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
                             
-                            <span class="block my-1 font-bold mt-4">Post Style</span>
-                            <MultiSelect
-                                options={[false, true]}
-                                optionNames={['Cards', 'Compact']}
-                                bind:selected={$userSettings.showCompactPosts}
-                            />
+                            <div class="flexrow">
+                                <div class="flexcol flexcol-33 mt-2">
+                                    <SelectMenu
+                                        label="Post Style"
+                                        alignment="top-left"
+                                        options={[false, true]}
+                                        optionNames={['Cards', 'Compact']}
+                                        selected={$userSettings.showCompactPosts
+                                            ? 'Compact'
+                                            : 'Cards'
+                                        }
+                                        on:select={(e) => {
+                                            $userSettings.showCompactPosts = e.detail;
+                                        }}
+                                    />
+                                </div>
+
+                                <div class="flexcol flexcol-33 mt-2">
+                                    <SelectMenu
+                                        label="Image Size"
+                                        alignment="top-left"
+                                        optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
+                                        options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
+                                        selected={$userSettings.imageSize}
+                                        on:select={(e) => {
+                                            // @ts-ignore
+                                            $userSettings.imageSize = e.detail
+                                        }}
+                                    />
+                                </div>
+
+                                <div class="flexcol flexcol-33 mt-2">
+                                    <SelectMenu
+                                        label="Video/Embed Size"
+                                        alignment="top-left"
+                                        optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
+                                        options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
+                                        selected={$userSettings.videoSize}
+                                        on:select={(e) => {
+                                            // @ts-ignore
+                                            $userSettings.videoSize = e.detail
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </Setting>
                     </div>
                     
@@ -153,6 +193,7 @@
                             
                             <Checkbox bind:checked={$userSettings.embeddedMedia.enableFeed}>Enable embedded content in feed</Checkbox>
                             <Checkbox bind:checked={$userSettings.embeddedMedia.enablePost}>Enable embedded content in posts</Checkbox>
+                            <Checkbox bind:checked={$userSettings.embeddedMedia.autoplayPost}>Autoplay supported content when opening posts</Checkbox>
                             
                             <span class="block my-1 font-bold">YouTube Frontend</span>
                             <div class="flex flex-row flex-wrap">

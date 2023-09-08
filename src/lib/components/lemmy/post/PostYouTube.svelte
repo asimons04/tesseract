@@ -38,13 +38,24 @@
     
         // Search for valid extra parameters
         if (videoID) {
-            // Disable autoplay
-            extraParams += "&autoplay=0";
+            // Enable autoplay videos in post if setting is enabled
+            if (displayType ==  'post' && $userSettings.embeddedMedia.autoplayPost) {
+                extraParams += "&autoplay=1";
+            }
+            else {
+                extraParams += "&autoplay=0";
+            }
 
             // Start time: Can be either t (legacy) or start
             let startTime = new URL(post.post.url).searchParams.get('t') ?? new URL(post.post.url).searchParams.get('start');
             if (startTime) {
                 extraParams += `&start=${startTime}`
+            }
+
+            // End time: 
+            let endTime = new URL(post.post.url).searchParams.get('end');
+            if (startTime) {
+                extraParams += `&end=${endTime}`
             }
         }
     }
@@ -83,14 +94,15 @@
     
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
         
-        <div class="ml-auto mr-auto max-w-4xl">
+        <div class="ml-auto mr-auto {$userSettings.videoSize ?? 'max-w-4xl'}">
             <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
                 <iframe 
                     class="flexiframe"
                     src="{embedURL}?{extraParams}" 
-                    allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
+                    allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                     loading="lazy"
-                    allowfullscreen 
+                    allowfullscreen
+                    title="YouTube: {post.post.name}"
                 >
                 </iframe>
             </div>

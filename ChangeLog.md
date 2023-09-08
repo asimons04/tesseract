@@ -2,6 +2,14 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.43
+### Image and Video Sizes Are Configurable
+- You can now set your preferred size for post images and media (videos, Spotify embeds, etc).  Your selection will be used as the maximum size. Note that it will not scale an image larger than the source.
+
+- Added `end` time support for YouTube-like embeds.  In addition to the `start` parameter that was already supported, you can specify `end` in the YouTube URL to set a preferred stop time, in seconds, from the start of the video.
+
+- Added option to enable autoplay for YouTube videos when opening posts (not available in feed for obvious reasons)
+
+
 ### Post View
 - Standardized 1px margin around post images (same as YT videos) for consistent layout.
 

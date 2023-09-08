@@ -60,7 +60,10 @@ interface Settings {
         enablePost: boolean
         YTFrontend: 'YouTube' | 'Invidious' 
         customInvidious: string
+        autoPlayPost: boolean
     }
+    imageSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
+    videoSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
 }
 
 export const defaultSettings: Settings = {
@@ -114,7 +117,10 @@ export const defaultSettings: Settings = {
         enablePost:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)    ?? true,
         YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                      ?? 'YouTube',
         customInvidious:                                                 'yewtu.be',
+        autoPlayPost:                                                    false,
     },
+    imageSize:                                                           'max-w-3xl',
+    videoSize:                                                           'w-full',
 }
 
 export const userSettings = writable(defaultSettings)

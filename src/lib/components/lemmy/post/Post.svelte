@@ -62,20 +62,20 @@
     
         <!--- Show Compact Posts --->
         {#if $userSettings.showCompactPosts && (post.post.thumbnail_url || isImage(post.post.url))}
-        <div class="flex-none w-24 h-24">
+        <div class="flex-none w-32 h-32">
             <a href="/post/{getInstance()}/{post.post.id}">
                 <!--- Evaluate if these are redundant/pointless --->
                 {#if post.post.thumbnail_url}
                     <img
                         src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
                         loading="lazy"
-                        class="object-cover bg-slate-100 rounded-md h-24 w-24 border border-slate-200 dark:border-zinc-700"
+                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                     />
                 {:else}
                     <img
                         src="{post.post.url}?thumbnail=256&format=webp"
                         loading="lazy"
-                        class="object-cover bg-slate-100 rounded-md h-24 w-24 border border-slate-200 dark:border-zinc-700"
+                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                     />
                 {/if}
             </a>

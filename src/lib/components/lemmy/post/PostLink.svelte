@@ -24,7 +24,7 @@
 >
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
         <div class="m-1">
-            <div class="ml-auto mr-auto max-w-4xl">
+            <div class="ml-auto mr-auto {$userSettings.imageSize ?? 'max-w-3xl'}">
                 <img
                     src="{thumbnail_url}"
                     loading="lazy"

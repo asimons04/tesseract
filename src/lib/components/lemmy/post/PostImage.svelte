@@ -32,8 +32,8 @@
     title={name}
 >
     <div class="m-1">
-        <div class="ml-auto mr-auto max-w-3xl">
-            <picture class="rounded-md overflow-hidden max-h-[min(50vh,500px)] w-full max-w-full">
+        <div class="ml-auto mr-auto {$userSettings.imageSize ?? 'max-w-3xl'}"> 
+            <picture class="rounded-md overflow-hidden   max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
                 <source
                     srcset="{url}?thumbnail=768&format=webp"
                     media="(max-width: 768px)"
@@ -65,8 +65,8 @@
     data-sveltekit-preload-data="off"
     aria-label={name}
 >
-    <div class="ml-auto mr-auto mt-1 mb-1 max-w-4xl">
-        <picture class="rounded-md overflow-hidden max-h-[min(50vh,500px)] max-w-full">
+    <div class="ml-auto mr-auto mt-1 mb-1 {$userSettings.imageSize ?? 'max-w-3xl'}">
+        <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
             <source
                 srcset="{url}?thumbnail=768&format=webp"
                 media="(max-width: 768px)"
