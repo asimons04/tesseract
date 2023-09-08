@@ -5,6 +5,9 @@ All major/minor changes between releases will be documented here.
 ### Media 
 - You can now set your preferred size for post images and media (videos, Spotify embeds, etc).  Your selection will be used as the maximum size. Note that it will not scale an image larger than the source.  You can set separate preferences for images and videos/embeds.
 
+    - Embedded videos in the feed are sized according to your image size preference. 
+    - Embedded videos when viewing the post are sized according to your video size preference.
+
 - Added `end` time support for YouTube-like embeds.  In addition to the `start` parameter that was already supported, you can specify `end` in the YouTube URL to set a preferred stop time, in seconds, from the start of the video.
 
 - Added option to enable autoplay for YouTube videos when opening posts (not available in feed for obvious reasons)
@@ -15,8 +18,9 @@ All major/minor changes between releases will be documented here.
 ### Action Menus
 - Action menus now appear above the button rather than below. Should make it easier to use mod tools when on mobile. No more constant downscrolling to get to the options!
 
-### Sidebar
+### Sidebars
 - Removed 'About' from sidebar. Still acccessible from profile menu
+- Community sidebar can now be minimized when viewing posts
 
 ### More NSFW Blur Fixes
 - Fixed another broken NSFW blur with post image thumbnails.

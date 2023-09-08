@@ -67,6 +67,11 @@
         
         return false;
     }
+
+    function displaySize() {
+        if (displayType == 'feed') { return $userSettings.imageSize ?? 'max-w-3xl' }
+        if (displayType == 'post') { return $userSettings.videoSize ?? 'max-w-4xl' }
+    }
 </script>
 
 <style>
@@ -94,7 +99,7 @@
     
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
         
-        <div class="ml-auto mr-auto {$userSettings.videoSize ?? 'max-w-4xl'}">
+        <div class="ml-auto mr-auto {displaySize()}">
             <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
                 <iframe 
                     class="flexiframe"
