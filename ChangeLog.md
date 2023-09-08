@@ -8,6 +8,8 @@ All major/minor changes between releases will be documented here.
 ### Action Menus
 - Action menus now appear above the button rather than below. Should make it easier to use mod tools when on mobile. No more constant downscrolling to get to the options.
 
+### Sidebar
+- Removed 'About' from sidebar. Still acccessible from profile menu
 
 
 ## 1.2.42

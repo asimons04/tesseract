@@ -95,13 +95,6 @@
         
     </SidebarButton>
 
-
-    <!---About--->
-    <SidebarButton href="/about" expanded={$userSettings.expandSidebar}>
-        <Icon src={InformationCircle} mini size="18" title="About"/>
-        <span class:hidden={!$userSettings.expandSidebar}>About</span>
-    </SidebarButton>
-
     <!--- Account Selector --->
     {#if $profileData.profiles.length >= 1}
         <hr class="border-slate-300 dark:border-zinc-800 my-1" />

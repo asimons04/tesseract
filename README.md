@@ -82,10 +82,8 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 ### UI
 #### General 
 - [ ] Fix white on grey `<option>` values in theme selection menu (Chrome/ium only).
-- [ ] Move post action buttons to top (in line with community and OP info)
 - [ ] Implement a `/legal` page to render the value returned from the API
 - [ ] Implement a public `/instances` page to render the linked, blocked, and allowed instances
-- [ ] Bug: NSFW blur in feed is broken
 
 
 #### Vote Buttons
@@ -96,15 +94,9 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 #### Sidebar
 - [ ] Add inline search/filter for subscribed communities.
 - [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
-- [ ] Remove 'About' from sidebar
 
 #### Settings
 - [ ] Add user preference to determine post image sizing: `small|normal|large`
-- [ ] Add user setting to allow hiding posts from accounts newer than a defined period.
-  - Preset intervals:  1d, 3d, 5d
-  - Need to be careful with the implementation of this.  Mods/Admins should _never_ have this option enabled and be prevented from doing so as they need to be able to see and remove any content that violates laws or community/instance rules.
-  - Is this even a useful feature? Spam accounts could simply sit dormant for a few days before posting anything. 
-  - Legit new users may be temporarily silenced.
 
 #### Admin Panel
 - [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
