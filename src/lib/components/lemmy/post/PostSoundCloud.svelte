@@ -63,6 +63,7 @@
                     allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                     loading="lazy"
                     allowfullscreen 
+                    title="Sound Cloud: {post.post.name}"
                 >
                 </iframe>
             </div>

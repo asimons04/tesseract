@@ -1,35 +1,41 @@
 <script lang="ts">
-  import { md, mdInline, photonify } from '$lib/components/markdown/markdown'
-  import { userSettings } from '$lib/settings.js'
-  export let source: string = ''
-  export let inline: boolean = false
+    import { md, mdInline, photonify } from '$lib/components/markdown/markdown'
+    import { userSettings } from '$lib/settings.js'
+    import markdown_it_highlightjs from 'markdown-it-highlightjs'
+    
+    export let source: string = ''
+    export let inline: boolean = false
 
-  function replaceURLs(node: HTMLElement) {
-    const links = node.querySelectorAll('a')
+    function replaceURLs(node: HTMLElement) {
+        const links = node.querySelectorAll('a')
 
-    links.forEach((l) => {
-      const photonified = photonify(l.href)
-      if (photonified) l.href = photonified
-      if ($userSettings.openInNewTab.postLinks) l.target = '_blank'
-    })
-  }
+        links.forEach((l) => {
+            const photonified = photonify(l.href)
+            if (photonified) l.href = photonified
+            if ($userSettings.openInNewTab.postLinks) l.target = '_blank'
+        })
+    }
 
-  let div: HTMLElement
+    if ($userSettings.highlightCode) {
+        md.use(markdown_it_highlightjs, {
+            inline: true,
+        })
+    }
 
-  $: if (source && div) {
-    replaceURLs(div)
-  }
+    let div: HTMLElement
+
+    $: if (source && div) {
+        replaceURLs(div)
+    }
 </script>
 
-<div
-  bind:this={div}
-  class="break-words flex flex-col markdown gap-2 leading-[1.5]"
->
-  {#if inline}
-    {@html mdInline.render(source)}
-  {:else}
-    {@html md.render(source)}
-  {/if}
+
+<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5]">
+    {#if inline}
+        {@html mdInline.render(source)}
+    {:else}
+        {@html md.render(source)}
+    {/if}
 </div>
 
 <style lang="postcss">
@@ -90,4 +96,5 @@
   .markdown :global(p) {
     @apply leading-6 mb-2 max-w-full;
   }
+
 </style>

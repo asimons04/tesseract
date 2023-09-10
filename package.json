@@ -1,6 +1,6 @@
 {
   "name": "tesseract-lemmy",
-  "version": "1.2.43",
+  "version": "1.2.44",
   "private": true,
   "scripts": {
     "dev": "vite dev",
@@ -24,6 +24,7 @@
     "markdown-it-container": "^3.0.0",
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
+    "markdown-it-highlightjs": "^4.0.1",
     "nprogress": "^0.2.0",
     "postcss": "^8.4.29",
     "svelte": "^4.2.0",

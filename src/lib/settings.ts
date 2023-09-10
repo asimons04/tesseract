@@ -64,10 +64,11 @@ interface Settings {
     }
     imageSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
     videoSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
+    highlightCode: boolean
 }
 
 export const defaultSettings: Settings = {
-    newComments:                                                    true,
+    newComments:                                                        true,
     expandableImages:   toBool(env.PUBLIC_EXPANDABLE_IMAGES)            ?? true,
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ?? true,
     revertColors:       toBool(env.PUBLIC_REVERT_VOTE_COLORS)           ?? false,
@@ -122,6 +123,7 @@ export const defaultSettings: Settings = {
     },
     imageSize:                                                           'max-w-3xl',
     videoSize:                                                           'w-full',
+    highlightCode:                                                       true,
 }
 
 export const userSettings = writable(defaultSettings)

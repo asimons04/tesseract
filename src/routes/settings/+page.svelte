@@ -103,6 +103,7 @@
                             <Checkbox bind:checked={$userSettings.markReadPosts}>       Fade Title of Read Posts</Checkbox>
                             <Checkbox bind:checked={$userSettings.revertColors}>        Invert Vote Colors (orange upvote, blue downvote)</Checkbox>
                             <Checkbox bind:checked={$userSettings.nsfwBlur}>            Blur NSFW Images in Feed</Checkbox>
+                            <Checkbox bind:checked={$userSettings.highlightCode}>       Use syntax highlighting in code boxes.</Checkbox>
                             <Checkbox bind:checked={$userSettings.newVote}>             Use New Vote Design</Checkbox>
                             <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
                             

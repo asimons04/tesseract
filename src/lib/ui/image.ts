@@ -31,6 +31,7 @@ export const isInvidious = (url: string) => {
 export const isYouTube = (url:string) => {
     return (
         url.startsWith('https://youtu.be') || 
+        url.startsWith('https://m.youtube.com') || 
         url.startsWith('https://www.youtube.com') || 
         url.startsWith('https://youtube.com')
     )

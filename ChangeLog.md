@@ -1,6 +1,17 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.44
+
+### Posts/Comments
+- Code blocks now support code syntax highlighting.  You can toggle this behavior from the app settings. Default is on.
+
+### YouTube Support
+- Fixed bug where `m.youtube.com` was omitted from the detection function.
+
+### Misc
+- Addressed a few more a11y warnings.
+
 ## 1.2.43
 ### Media 
 - You can now set your preferred size for post images and media (videos, Spotify embeds, etc).  Your selection will be used as the maximum size. Note that it will not scale an image larger than the source.  You can set separate preferences for images and videos/embeds.

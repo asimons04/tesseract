@@ -78,6 +78,7 @@
                     loading="lazy"
                     allowfullscreen
                     height="352"
+                    title="Spotify: {post.post.name}"
                 >
                 </iframe>
             </div>
