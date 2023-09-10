@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { postDisplayType } from './helpers.js'
+  import type { t_postDisplayType } from './helpers.js'
   
   import Link from '$lib/components/input/Link.svelte'
   import { userSettings } from '$lib/settings.js'
@@ -8,7 +8,7 @@
   export let thumbnail_url: string
   export let nsfw: boolean = false
   export let title:string
-  export let displayType: postDisplayType
+  export let displayType: t_postDisplayType
   
   let loaded = false;
 </script>

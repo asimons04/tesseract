@@ -13,6 +13,10 @@ All major/minor changes between releases will be documented here.
 - Addressed a few more a11y warnings.
 - Profile pages now show user's combined post/comment score
 
+### Infrastructure
+- Finally got rid of that `images.ts` file and moved all of those post helper functions into `helpers.ts`
+- Added proper PostView types where I was formerly using `Object` types.
+
 
 ## 1.2.43
 ### Media 

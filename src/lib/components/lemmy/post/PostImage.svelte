@@ -1,6 +1,6 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings.js'
-    import type { postDisplayType } from './helpers.js'
+    import type { t_postDisplayType } from './helpers.js'
 
     export let instance: string
     export let name: string
@@ -8,7 +8,7 @@
     export let id: string
     export let nsfw: boolean
     export let fullResolution: boolean  // Whether to show the image in full res or append thumbnail=XXX to the image URL
-    export let displayType: postDisplayType
+    export let displayType: t_postDisplayType
 
     let loaded:boolean = false
     

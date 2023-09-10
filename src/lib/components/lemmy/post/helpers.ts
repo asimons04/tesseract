@@ -1,7 +1,10 @@
 import type { CommentView, PersonView, PostView } from 'lemmy-js-client'
 import { YTFrontends } from '$lib/settings.js'
 
-export type postDisplayType = 'post' | 'feed'
+export type t_postDisplayType = 'post' | 'feed'
+export type t_postType = 
+    'image' | 'video' | 'youtube' | 'spotify' | 
+    'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 export const isMutable = (post: PostView, me: PersonView) =>
   (me.person.admin && post.post.local) || me.person.id == post.creator.id
@@ -25,7 +28,7 @@ export const isVideo = (inputUrl: string | undefined) => {
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
-export const isEmbeddableVideo = (url: string | undefined) => {
+export const isEmbeddableVideo = (url: string | undefined):boolean => {
     if (!url) return false
     return (
         isInvidious(url) ||
@@ -36,7 +39,7 @@ export const isEmbeddableVideo = (url: string | undefined) => {
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
 // Invidious
-export const isInvidious = (url: string) => {
+export const isInvidious = (url: string):boolean => {
     for (let i=0; i<YTFrontends.invidious.length; i++) {
         if (url.startsWith(`https://${YTFrontends.invidious[i]}`)) {
             return true;
@@ -46,7 +49,7 @@ export const isInvidious = (url: string) => {
 }
 
 // YouTube
-export const isYouTube = (url:string) => {
+export const isYouTube = (url:string):boolean => {
     return (
         url.startsWith('https://youtu.be') || 
         url.startsWith('https://m.youtube.com') || 
@@ -56,7 +59,7 @@ export const isYouTube = (url:string) => {
 }
 
 //  Piped
-export const isPiped = (url: string) => {
+export const isPiped = (url: string):boolean => {
     for (let i=0; i<YTFrontends.piped.length; i++) {
         if (url.startsWith(`https://${YTFrontends.piped[i]}`)) {
             return true;
@@ -70,17 +73,18 @@ export const isPiped = (url: string) => {
 
 
 // Check if URL is for Spotify content
-export const isSpotify = (url: string | undefined) => {
+export const isSpotify = (url: string | undefined):boolean => {
     if (!url) return false;
     
     if (url.startsWith('https://open.spotify.com')) {
         return true;
     }
+    return false;
 
 }
 
 // Check if URL is for a Soundcloud asset
-export const isSoundCloud = (url:string) => {
+export const isSoundCloud = (url:string):boolean => {
     return (
         url.startsWith('https://m.soundcloud.com') || 
         url.startsWith('https://soundcloud.com') 

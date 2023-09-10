@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { postDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import type { t_postType, t_postDisplayType } from '$lib/components/lemmy/post/helpers.js'
     import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import Comments from '$lib/components/lemmy/comment/Comments.svelte'
@@ -50,8 +50,8 @@
     
     
     let post = data.post
-    let pType:string = postType(post.post_view)
-    let pDisplayType:postDisplayType = "post"
+    let pType:t_postType = postType(post.post_view)
+    let pDisplayType:t_postDisplayType = "post"
     
     let community = data.post.community_view.community;
     setSessionStorage('lastSeenCommunity', { id: community.id, name: `${community.name}@${new URL(community.actor_id).hostname}` })

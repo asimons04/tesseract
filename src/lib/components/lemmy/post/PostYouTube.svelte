@@ -1,14 +1,15 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings.js'
     import { getInstance } from '$lib/lemmy.js'
-    import type { postDisplayType } from './helpers.js'
-
+    import type { t_postDisplayType } from './helpers.js'
+    import type { PostView } from 'lemmy-js-client'
+    
     import Link from '$lib/components/input/Link.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     
-    export let post: object
-    export let displayType: postDisplayType
+    export let post: PostView
+    export let displayType: t_postDisplayType
 
     let videoID:    string | null | undefined
     let embedURL:   string = ""
