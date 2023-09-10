@@ -16,7 +16,7 @@ All major/minor changes between releases will be documented here.
 ### Infrastructure
 - Finally got rid of that `images.ts` file and moved all of those post helper functions into `helpers.ts`
 - Added proper PostView types where I was formerly using `Object` types.
-
+- Documented a few env var config options I neglected to do earlier
 
 ## 1.2.43
 ### Media 
