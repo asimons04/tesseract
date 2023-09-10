@@ -220,8 +220,10 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_DISPLAY_NAMES            | `bool`              | true                                   |
 | PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
 | PUBLIC_NEW_VOTE_BUTTONS         | `bool`              | false                                  |
-| PUBLIC_ENABLE_EMBEDS            | `bool`              | true                                   |
-| PUBLIC_YOUTUBE_FRONTEND         | YouTube\|Piped\|Invidious | YouTube                            |
+| PUBLIC_OPEN_LINKS_NEW_TAB       | `bool`              | false                                  |
+| PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | false                                  |
+| PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |
+| PUBLIC_YOUTUBE_FRONTEND         | `YouTube`\|`Invidious` | YouTube                             |
 
 The values for `SortType`, `ListingType`, and `CommentSortType` are defined by the lemmy-js-client library.  All of the values are case-sensitive and must match as they are defined in the type definitions of the [lemmy-js-client](https://github.com/LemmyNet/lemmy-js-client)
 
