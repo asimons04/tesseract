@@ -1,8 +1,9 @@
 <script lang="ts">
-    import type { postDisplayType } from './helpers.js'
+    import type { postDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import Comments from '$lib/components/lemmy/comment/Comments.svelte'
-    import { isImage, postType } from '$lib/ui/image.js'
+    //
     import { getClient, getInstance } from '$lib/lemmy.js'
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'

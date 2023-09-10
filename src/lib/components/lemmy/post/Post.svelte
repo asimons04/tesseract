@@ -1,7 +1,10 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { postDisplayType } from './helpers.js'
-    import { isImage, postType } from '$lib/ui/image.js'
+    
+    import {isImage, postType} from './helpers.js'
+    //import { isImage, postType } from '$lib/ui/image.js'
+    
     
     import Card from '$lib/components/ui/Card.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
