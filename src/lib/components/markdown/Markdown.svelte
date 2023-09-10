@@ -17,9 +17,7 @@
     }
 
     if ($userSettings.highlightCode) {
-        md.use(markdown_it_highlightjs, {
-            inline: true,
-        })
+        md.use(markdown_it_highlightjs, {})
     }
 
     let div: HTMLElement
