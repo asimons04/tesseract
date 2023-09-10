@@ -76,18 +76,16 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 ### Moderation
 - [ ] Add "Purge person" and/or "purge content" option to admin menu. 
   - "Ban and Purge Content" is the plan.  Purging user does not result in a ban (unless they were banned on their home instance which is not guaranteed).  I don't think the API has a way to do this directly, so may have to do one or more searches for the `person_id` and purge each in a loop over multiple API calls.
-- [ ] Add option for  mods/admins to hide deleted comments and logic to implement that
+- [ ] Add option for mods/admins to hide deleted comments and logic to implement that
 
 ### UI
 #### General 
-- [ ] Fix white on grey `<option>` values in theme selection menu (Chrome/ium only).
+- [ ] Fix white on grey `<option>` values in theme selection menu (Chrome[ium] only).
 - [ ] Implement a `/legal` page to render the value returned from the API
 - [ ] Implement a public `/instances` page to render the linked, blocked, and allowed instances
 
 
 #### Vote Buttons
-- [ ] Choose a vote button style and commit to it; remove unused option and its supporting code
-  - Old vote style is the winner
 - [ ] Add user option to select left/right side for vote buttons
 
 #### Sidebar
@@ -109,6 +107,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 - [ ] Add option to "quick play" from thumbnail in feed. If embedded media disabled in feed, thumbnails will have click action replace thumbnail with lazy-loading iframe. This _should_ prevent a bunch of iframes from loading until you click the static thumbnail to reveal it while keeping quick/convenient access to media posts without leaving the feed.
 
 - [ ] Direct videos don't have thumbnail attributes, but ones hosted via pict-rs can add ?format=webp to the URL.  Add this and enable direct videos to not be embedded if that option is set.
+
 - [ ] Detect Youtube/Piped/Invidious links in post bodies and comments.  Optionally render those inline depending on user setting
 
 ## Public Hosted Demo Instance

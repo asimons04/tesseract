@@ -17,7 +17,6 @@ interface Settings {
     expandableImages: boolean
     markReadPosts: boolean
     instance?: string
-    revertColors: boolean
     showInstances: {
         user: boolean
         community: boolean
@@ -51,7 +50,6 @@ interface Settings {
         postLinks: boolean,
         posts: boolean,
     },
-    newVote: boolean
     modlogCardView: boolean | undefined
     debugInfo: boolean
     systemUI: boolean
@@ -71,8 +69,7 @@ export const defaultSettings: Settings = {
     newComments:                                                        true,
     expandableImages:   toBool(env.PUBLIC_EXPANDABLE_IMAGES)            ?? true,
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ?? true,
-    revertColors:       toBool(env.PUBLIC_REVERT_VOTE_COLORS)           ?? false,
-    
+
     showInstances: {
         user:           toBool(env.PUBLIC_SHOW_INSTANCES_USER)          ?? false,
         community:      toBool(env.PUBLIC_SHOW_INSTANCES_COMMUNITY)     ?? true,
@@ -109,7 +106,6 @@ export const defaultSettings: Settings = {
         postLinks:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ?? false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ?? false,
     },
-    newVote:        toBool(env.PUBLIC_NEW_VOTE_BUTTONS)                 ?? false,
     modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ?? true,
     debugInfo: false,
     systemUI: true,

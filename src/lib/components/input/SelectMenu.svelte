@@ -24,7 +24,7 @@
 </script>
 
 {#if label}
-    <div class="block font-bold text-sm w-max">{label}</div>
+    <div class="block font-bold text-sm w-max mb-2">{label}</div>
 {/if}
 
 <Menu {alignment}>
