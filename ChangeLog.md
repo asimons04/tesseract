@@ -1,6 +1,10 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.45
+
+
+
 ## 1.2.44
 
 ### Posts/Comments
@@ -14,7 +18,7 @@ All major/minor changes between releases will be documented here.
 
 ### Misc
 - Addressed a few more a11y warnings.
-  - `<iframe>` element requires `title` attribute in YouTube, Spotify, and Soundcloud components
+  - Fixed '`<iframe>` element requires `title` attribute' in YouTube, Spotify, and Soundcloud components
   - Cleaned up [Settings](/settings) page to match format used in [Admin](/admin)
 - Profile pages now show user's combined post/comment score
 
