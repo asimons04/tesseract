@@ -5,7 +5,7 @@ Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Table of Contents
-- [Screenshots](#Screenshots)
+- [Features](#Features)
 - [Supported Media](#Supported-Media)
 - [Get Support](#Support)
 - [Roadmap](#Roadmap)
@@ -22,10 +22,34 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
   - [Configuring Default Settings](#Configuring-Default-Settings)
 - [Donate](#Donate)
 
+## Features
+- Full media support in feed and posts (Spotify, YouTube/Invidious/Piped, Soundcloud, etc).
+
+- Designed for desktop and mobile. All desktop features are available in mobile.
+
+- Code syntax highlighting in code and inline code blocks.
+
+- Installable as a PWA
+
+- If you host your own Tesseract instance, you can use it as a frontend for any Lemmy instance.
+
+- User-configurable image/video sizes in feed and posts
+
+- Full Lemmy server config options. Anything you can configure in Lemmy-UI, you can configure in Tesseract*
+  - Except 2FA options.  Working to add in QR code support.
+  - 2FA login is implemented, though.
+
+- Most aspects of the UI can be configured by the end user. Server admins can set default preferences via `env` vars.
+
+- Easier moderation than Lemmy-UI
+  - Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI
+  - Local instance admins have full moderation control of the instance as with Lemmy-UI
+  - Modlog support on both desktop and mobile.
+  - Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
+
+- Maintained by someone who is a Lemmy users, administrator, and moderator.  
 
 
-## Screen Shots
-(Slightly outdated) Screenshots are available at the [bottom of the page](#Screenshots).
 
 
 ## Supported Media
