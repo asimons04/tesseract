@@ -6,6 +6,7 @@
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import {
+        Cake,
         Calendar,
         ChatBubbleOvalLeftEllipsis,
         Envelope,
@@ -14,6 +15,7 @@
         PencilSquare,
         ShieldCheck,
         ShieldExclamation,
+        Trophy,
         UserPlus,
     } from 'svelte-hero-icons'
     import Button from '$lib/components/input/Button.svelte'
@@ -189,7 +191,7 @@
                 alt={data.person_view.person.name}
             />
             <span class="flex flex-row items-center gap-1 text-sm">
-                <Icon src={Calendar} width={16} height={16} mini />
+                <Icon src={Cake} width={16} height={16} mini />
                 <span class="capitalize">
                     <RelativeDate date={new Date(data.person_view.person.published + 'Z')}/>
                 </span>
@@ -205,6 +207,12 @@
                     <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
                     <FormattedNumber number={data.person_view.counts.comment_count} />
                 </span>
+                
+                <span class="flex flex-row items-center gap-1">
+                    <Icon src={Trophy} width={16} height={16} mini />
+                    <FormattedNumber number={(data.person_view.counts.post_score + data.person_view.counts.comment_score)} />
+                </span>
+
             </div>
 
             {#if $profile?.user && $profile.jwt && data.person_view.person.id != $profile.user.local_user_view.person.id}
