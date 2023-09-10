@@ -6,7 +6,7 @@ All major/minor changes between releases will be documented here.
 ### Posts/Comments
 - Code blocks now support code syntax highlighting.  You can toggle this behavior from the app settings. Default is on.
 - Removed "new" vote design and supporting code
-- Removed "revert vote color" option.  Upvotes are blue, downvotes are red. Deal with it.
+- Removed "revert vote color" option.  Upvotes are blue, downvotes are red. This isn't Reddit; deal with it.
 
 
 ### YouTube Support
@@ -15,7 +15,7 @@ All major/minor changes between releases will be documented here.
 ### Misc
 - Addressed a few more a11y warnings.
   - `<iframe>` element requires `title` attribute in YouTube, Spotify, and Soundcloud components
-  - Redesigned [Settings](/settings) page to match format used in [Admin](/admin)
+  - Cleaned up [Settings](/settings) page to match format used in [Admin](/admin)
 - Profile pages now show user's combined post/comment score
 
 ### Infrastructure
