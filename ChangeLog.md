@@ -11,6 +11,8 @@ All major/minor changes between releases will be documented here.
 
 ### Misc
 - Addressed a few more a11y warnings.
+- Profile pages now show user's combined post/comment score
+
 
 ## 1.2.43
 ### Media 
