@@ -58,8 +58,6 @@ There is also a Lemmy community where you can get the latest announcements and p
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
-- [ ] Move `is[Image|Video|YouTube|Spotify|SoundCloud]` and `postType` helper functions from `ui/images.ts` to the `components/lemmy/post/helper.ts` library.
-  - WIP: Refactored all of those functions, but they're still in the `images.ts` library.
 - [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 - [ ] Consider integrating [Fediseer](https://fediseer.com/api/) support into admin tools 
   - Indicate whether posts/comments come from a guaranteed instance
@@ -96,8 +94,6 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 - [ ] Add inline search/filter for subscribed communities.
 - [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
 
-#### Settings
-- [ ] Add user preference to determine post image sizing: `small|normal|large`
 
 #### Admin Panel
 - [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
