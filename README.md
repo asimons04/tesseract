@@ -179,9 +179,7 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
 | PUBLIC_SSR_ENABLED              | `bool`              | `false`                                |
 | PUBLIC_THEME                    | system\|dark\|light | system                                 |
-| PUBLIC_EXPANDABLE_IMAGES        | `bool`              | true                                   |
 | PUBLIC_MARK_READ_POSTS          | `bool`              | true                                   |
-| PUBLIC_REVERT_VOTE_COLORS       | `bool`              | false                                  |
 | PUBLIC_SHOW_INSTANCES_USER      | `bool`              | false                                  |
 | PUBLIC_SHOW_INSTANCES_COMMUNITY | `bool`              | true                                   |
 | PUBLIC_SHOW_INSTANCES_COMMENTS  | `bool`              | false                                  |
@@ -191,11 +189,8 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_DEFAULT_COMMENT_SORT     | `CommentSortType`   | Hot                                    |
 | PUBLIC_HIDE_DELETED             | `bool`              | true                                   |
 | PUBLIC_HIDE_REMOVED             | `bool`              | false                                  |
-| PUBLIC_FULL_WIDTH_LAYOUT        | `bool`              | false                                  |
-| PUBLIC_EXPAND_SIDEBAR           | `bool`              | true                                   |
 | PUBLIC_DISPLAY_NAMES            | `bool`              | true                                   |
 | PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
-| PUBLIC_NEW_VOTE_BUTTONS         | `bool`              | false                                  |
 | PUBLIC_OPEN_LINKS_NEW_TAB       | `bool`              | false                                  |
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | false                                  |
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |

@@ -40,8 +40,8 @@
 
     function showAsEmbed() {
         if (!embedURL) { return false;}
-        if (displayType == 'feed' && $userSettings.embeddedMedia.enableFeed && (!post.post.nsfw || !$userSettings.nsfwBlur)) { return true;}
-        if (displayType == 'post' && $userSettings.embeddedMedia.enablePost) { return true;}
+        if (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) { return true;}
+        if (displayType == 'post' && $userSettings.embeddedMedia.post) { return true;}
         
         return false;
     }
@@ -90,7 +90,7 @@
 
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
-    {#if $userSettings.embeddedMedia.enablePost}
+    {#if $userSettings.embeddedMedia.post}
     <Link
         href={post.post.url}
         title={post.post.title}

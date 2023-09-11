@@ -153,14 +153,14 @@
                 <Button
                     alignment="left"
                     on:click={() =>
-                        ($userSettings.expandSidebar = !$userSettings.expandSidebar)
+                        ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
                     }
                     class="w-max !p-2 hover:bg-slate-200"
-                    aria-label={$userSettings.expandSidebar
+                    aria-label={$userSettings.uiState.expandSidebar
                         ? 'Collapse sidebar'
                         : 'Expand sidebar'
                     }
-                    title={$userSettings.expandSidebar
+                    title={$userSettings.uiState.expandSidebar
                         ? 'Collapse sidebar'
                         : 'Expand sidebar'
                     }
@@ -169,7 +169,7 @@
                         src={ChevronDoubleLeft}
                         mini
                         size="16"
-                        class="transition-transform {$userSettings.expandSidebar
+                        class="transition-transform {$userSettings.uiState.expandSidebar
                             ? ''
                             : 'rotate-180'}"
                     />
@@ -192,14 +192,14 @@
                 <Button
                     alignment="right"
                     on:click={() =>
-                        ($userSettings.expandCommunitySidebar = !$userSettings.expandCommunitySidebar)
+                        ($userSettings.uiState.expandCommunitySidebar = !$userSettings.uiState.expandCommunitySidebar)
                     }
                     class="w-max hover:bg-slate-200"
-                    aria-label={$userSettings.expandCommunitySidebar
+                    aria-label={$userSettings.uiState.expandCommunitySidebar
                         ? 'Collapse community sidebar'
                         : 'Expand community sidebar'
                     }
-                    title={$userSettings.expandCommunitySidebar
+                    title={$userSettings.uiState.expandCommunitySidebar
                         ? 'Collapse community sidebar'
                         : 'Expand community sidebar'
                     }
@@ -208,7 +208,7 @@
                         src={ChevronDoubleRight}
                         mini
                         size="16"
-                        class="transition-transform {$userSettings.expandCommunitySidebar
+                        class="transition-transform {$userSettings.uiState.expandCommunitySidebar
                             ? ''
                             : 'rotate-180'}"
                     />
@@ -438,7 +438,7 @@
 
     <!--- Community Sidebar--->
     <div class="
-        {$userSettings.expandCommunitySidebar
+        {$userSettings.uiState.expandCommunitySidebar
         ? 'hidden xl:block'
         : 'hidden'}
         "

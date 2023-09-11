@@ -2,10 +2,29 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.46
+This release has a lot of under-the-hood updates.  You probably won't _have to_ but it is advised to either clear your LocalStorage or at least go into your settings and reset them to default (and reconfigure to your liking).
+
+The configuration object that's saved to LocalStorage has had a big cleanup.  You'll see some options not set correctly after updating to this release.
+
+The following `env` vars have been removed:
+- `PUBLIC_EXPANDABLE_IMAGES`
+- `PUBLIC_REVERT_VOTE_COLORS`
+- `PUBLIC_FULL_WIDTH_LAYOUT`
+- `PUBLIC_EXPAND_SIDEBAR`
+- `PUBLIC_NEW_VOTE_BUTTONS`
+You may safely remove those from your `docker-compose.yml` or however you were passing them to Tesseract.
+
+
+
+
 ### Emoji Support
 - Added emoji support.  Can add emoji codes `:tada:`,  `:+1`, etc.
 - To do:  Add emoji picker
 - To do:  Read in instance-specific custom emojis
+
+### Setting Cleanup
+Cleaning up unused settings values and combining related ones into objects.  I did this not because it was easy, but because I _thought_ it would be easy.
+
 
 
 ## 1.2.45

@@ -13,8 +13,6 @@ const toBool = (str: string | undefined) => {
 }
 
 interface Settings {
-    newComments: boolean
-    expandableImages: boolean
     markReadPosts: boolean
     instance?: string
     showInstances: {
@@ -32,9 +30,6 @@ interface Settings {
         deleted: boolean
         removed: boolean
     }
-    fullWidthLayout: boolean
-    expandSidebar: boolean
-    expandCommunitySidebar: boolean
     notifications: {
         enabled: boolean
         pollRate: number
@@ -54,24 +49,51 @@ interface Settings {
     debugInfo: boolean
     systemUI: boolean
     embeddedMedia: {
-        enableFeed: boolean
-        enablePost: boolean
+        feed: boolean
+        post: boolean
         YTFrontend: 'YouTube' | 'Invidious' 
         customInvidious: string
-        autoPlayPost: boolean
+        autoplay: boolean
     }
     imageSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
     videoSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
+    uiState: {
+        expandSidebar: boolean
+        expandCommunitySidebar: boolean
+        expandModeratingList: boolean
+        expandSubscribedList: boolean
+    }
     highlightCode: boolean
     inlineImages: boolean
 
 }
 
 export const defaultSettings: Settings = {
-    newComments:                                                        true,
-    expandableImages:   toBool(env.PUBLIC_EXPANDABLE_IMAGES)            ?? true,
-    markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ?? true,
+    notifications: {
+        enabled:    false,
+        pollRate:   60 * 1000,
+        notifRate:  10 * 60 * 1000,
+    },
+    
+    moderation: {
+        removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
+    },
+    
+    debugInfo: false,
+    systemUI: true,
+    imageSize: 'max-w-3xl',
+    videoSize: 'w-full',
+    highlightCode: true,
+    inlineImages: true,
+    uiState: {
+        expandSidebar: true,
+        expandCommunitySidebar: true,
+        expandModeratingList: true,
+        expandSubscribedList: true
+    },
 
+    markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ?? true,
+    
     showInstances: {
         user:           toBool(env.PUBLIC_SHOW_INSTANCES_USER)          ?? false,
         community:      toBool(env.PUBLIC_SHOW_INSTANCES_COMMUNITY)     ?? true,
@@ -89,40 +111,28 @@ export const defaultSettings: Settings = {
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ?? true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ?? false,
     },
-    fullWidthLayout: toBool(env.PUBLIC_FULL_WIDTH_LAYOUT)               ?? false,
-    expandSidebar:   toBool(env.PUBLIC_EXPAND_SIDEBAR)                  ?? true,
-    expandCommunitySidebar:                                             true,
+   
     
-    notifications: {
-        enabled:    false,
-        pollRate:   60 * 1000,
-        notifRate:  10 * 60 * 1000,
-    },
     
     displayNames:   toBool(env.PUBLIC_DISPLAY_NAMES)                    ?? true,
     nsfwBlur:       toBool(env.PUBLIC_NSFW_BLUR)                        ?? true,
-    moderation: {
-        removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
-    },
+    
     openInNewTab: {
         postLinks:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ?? false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ?? false,
     },
     modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ?? true,
-    debugInfo: false,
-    systemUI: true,
+
     
     embeddedMedia: {
-        enableFeed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)    ?? false,
-        enablePost:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)    ?? true,
-        YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                      ?? 'YouTube',
-        customInvidious:                                                 'yewtu.be',
-        autoPlayPost:                                                    false,
+        feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ?? false,
+        post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ?? true,
+        YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                     ?? 'YouTube',
+        customInvidious:                                                'yewtu.be',
+        autoplay:                                                       false,
     },
-    imageSize:                                                           'max-w-3xl',
-    videoSize:                                                           'w-full',
-    highlightCode:                                                       true,
-    inlineImages:                                                        true,
+
+    
 }
 
 export const userSettings = writable(defaultSettings)

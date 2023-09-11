@@ -164,9 +164,9 @@
             <div class="flexcol flexcol-33 mt-4">
                 <h1 class="font-bold mb-4">Embedded Content</h1>
                     
-                <Checkbox bind:checked={$userSettings.embeddedMedia.enableFeed}>Enable embedded content in feed</Checkbox>
-                <Checkbox bind:checked={$userSettings.embeddedMedia.enablePost}>Enable embedded content in posts</Checkbox>
-                <Checkbox bind:checked={$userSettings.embeddedMedia.autoplayPost}>Autoplay supported content when opening posts</Checkbox>
+                <Checkbox bind:checked={$userSettings.embeddedMedia.feed}>Enable embedded content in feed</Checkbox>
+                <Checkbox bind:checked={$userSettings.embeddedMedia.post}>Enable embedded content in posts</Checkbox>
+                <Checkbox bind:checked={$userSettings.embeddedMedia.autoplay}>Autoplay supported content when opening posts</Checkbox>
                 
                 <h1 class="font-bold mt-4 mb-4">YouTube Frontend</h1>
                 
