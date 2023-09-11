@@ -29,7 +29,7 @@ Ok, so the sidebar is a bit of a rework-in-progress.  It needs to be totally re-
   - Each of those sections now scrolls independently.
   - Changed the way the communities were hidden so it's much faster now.
 
-- When the sidebar is collapsed, instead of the community icons remaining, they're hidden now (this is the hacky fix to make it sort-of do what I want without a full re-write).
+- When the sidebar is collapsed, instead of the community icons remaining, they're hidden now (this is the hacky fix to make it sort-of do what I want without the full re-implementation that it needs).
 
 - The open/close state of the `Moderating` and `Subscribed` lists is now saved to LocalStorage and will persist.
 
