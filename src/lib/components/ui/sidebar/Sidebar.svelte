@@ -32,13 +32,15 @@
 </script>
 
 <nav
-  class="hidden sm:flex flex-col pl-4 pr-4 py-4 overflow-auto sticky top-16 bottom-0
-  gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black
-  {$userSettings.expandSidebar
-    ? 'max-w-[20%] resize-x min-w-[12rem]'
-    : 'w-max max-w-max min-w-max'}"
+    class="hidden sm:flex flex-col pl-4 pr-4 py-4 overflow-auto sticky top-16 bottom-0
+        gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black
+        {$userSettings.expandSidebar
+            ? 'max-w-[20%] resize-x min-w-[12rem]'
+            : 'w-max max-w-max min-w-max'
+        }
+    "
 >
-    
+
     <Button
         alignment="left"
         on:click={() =>
@@ -116,7 +118,11 @@
             
             <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.expandSidebar && !expanded.moderating} />
             <h1 class="flex flex-row font-bold justify-between" class:hidden={!$userSettings.expandSidebar} >
-                <span>Moderating ({$profile?.user.moderates.length})</span>
+                <span>Moderating 
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
+                        {$profile?.user.moderates.length}
+                    </span>
+                </span>
                 <Button
                     on:click={() =>
                         (expanded.moderating = !expanded.moderating)
@@ -142,19 +148,25 @@
                 </Button>
             </h1>   
 
+            
             <CommunityList
                 expanded={$userSettings.expandSidebar}
                 items={$profile.user.moderates.map((i) => i.community)}
-                hidden={!expanded.moderating}
+                hidden={!expanded.moderating || !$userSettings.expandSidebar}
             />
+            
         
         {/if}
         
         <!--- Subscribed Community List --->
         <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.expandSidebar && !expanded.subscribed}/>
         <h1 class="flex flex-row text-base font-bold justify-between" class:hidden={!$userSettings.expandSidebar} >
-                
-            <span>Subscribed ({$profile?.user.follows.length})</span>
+            
+            <span>Subscribed
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
+                    {$profile?.user.follows.length}
+                </span>
+            </span>
         
             <Button
                 on:click={() =>
@@ -179,13 +191,16 @@
                         : ''}"
                 />
             </Button>
+
         </h1>
         
         <CommunityList
             expanded={$userSettings.expandSidebar}
             items={$profile.user.follows.map((i) => i.community)}
-            hidden={!expanded.subscribed}
+            hidden={!expanded.subscribed || !$userSettings.expandSidebar}
         />
+        
+        
 
         
     {:else}
