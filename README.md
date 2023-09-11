@@ -31,7 +31,9 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 
 - Installable as a PWA
 
-- If you host your own Tesseract instance, you can use it as a frontend for any Lemmy instance.
+- Multiple Hosting Options
+  - If you host your own Tesseract instance, you can use it as a frontend for any Lemmy instance.
+  - Instance admins can host Tesseract on a subdomain (there are still a few user-facing features missing before I recommend replacing Lemmy-UI completely. Namely, password resets and changes).
 
 - User-configurable image/video sizes in feed and posts
 
