@@ -6,7 +6,7 @@
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import type { ModLog } from '../+page.js'
     import ModlogAction from '../ModlogAction.svelte'
-
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     export let item: ModLog
 </script>
 
@@ -30,11 +30,17 @@
   
     <td>
         <ModlogAction action={item.actionName} />
+        
+        {#if item.expires}
+            <span class="text-xs flex items-center gap-1">
+                Expires on {new Date(item.expires).toLocaleDateString()}
+            </span>
+        {/if}
     </td>
   
     <td>
         {#if item.moderatee}
-        <UserLink showInstance={false} user={item.moderatee} />
+        <UserLink showInstance={true} user={item.moderatee} />
         {/if}
     </td>
 
@@ -52,11 +58,11 @@
     <td>
         {#if item.content && item.link}
         <Link highlight href={item.link} newtab={$userSettings.openInNewTab.postLinks}>
-            <p>{item.content}</p>
+            <p>{item.content.substring(0, 120)}</p>
         </Link>
         
         {:else if item.content}
-        <p>{item.content}</p>
+        <p>{item.content.substring(0, 120)}</p>
         {/if}
     </td>
 

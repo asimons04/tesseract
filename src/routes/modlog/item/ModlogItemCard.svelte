@@ -29,6 +29,11 @@
         <SectionTitle class="mt-2">Action</SectionTitle>
         <span class="text-base">
             <ModlogAction action={item.actionName} />
+            {#if item.expires}
+                <span class="text-xs flex items-center gap-1">
+                    Expires on {new Date(item.expires).toLocaleDateString()}
+                </span>
+            {/if}
         </span>
     {/if}
   

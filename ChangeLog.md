@@ -22,7 +22,7 @@ The following `env` vars have been removed:
 
 You may safely remove those from your `docker-compose.yml` or however you were passing them to Tesseract.
 
-## Sidebar Update
+### Sidebar Update
 Ok, so the sidebar is a bit of a rework-in-progress.  It needs to be totally re-written to do what I want it to do, and I don't have time for that right at this moment.  However, there were some quality-of-life improvements that I _did_ want to implement, so it's in kind of a hybrid state right now.
 
 - `Moderating` and `Subscribed` lists are still collapsible as before, but they're limited in height to the screen height; the sidebar no longer scrolls beyond the viewport height.  
@@ -35,7 +35,10 @@ Ok, so the sidebar is a bit of a rework-in-progress.  It needs to be totally re-
 
 - The ugly subscription counts I had in place are now less-ugly badges.
 
+### Modlog
+- Added `expires` to `ModLog` interface for `mod_ban` and `mod_ban_from_community` and added "Expires on M/D/YYYY" to "Action" column in table view and below the Action in card view.
 
+- Limited "Content" column to only show the first 120 characters of the removed content; table mode only. Card view will still show the full content.
 
 
 ### ~~Experimental: Initial Markdown Emoji Support~~
