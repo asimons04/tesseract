@@ -40,6 +40,9 @@ Ok, so the sidebar is a bit of a rework-in-progress.  It needs to be totally re-
 
 - Limited "Content" column to only show the first 120 characters of the removed content; table mode only. Card view will still show the full content.
 
+### Moderation
+- Ban modal now uses a date picker instead of having to type in the date in the correct format. Still optional, and omitting the date results in a permanent ban as before.
+
 
 ### ~~Experimental: Initial Markdown Emoji Support~~
 Note: This has been removed from this release.
