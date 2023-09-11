@@ -1,6 +1,6 @@
 import MarkdownIt from 'markdown-it'
 import markdown_it_container from 'markdown-it-container'
-
+import markdown_it_emoji from 'markdown-it-emoji'
 // @ts-ignore
 import markdown_it_sub from 'markdown-it-sub'
 // @ts-ignore
@@ -28,6 +28,7 @@ export const md = new MarkdownIt({
     })
     .use(markdown_it_sub)
     .use(markdown_it_sup)
+    .use(markdown_it_emoji)
 
 
 

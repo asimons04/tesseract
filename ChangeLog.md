@@ -1,9 +1,18 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.46
+### Emoji Support
+- Added emoji support.  Can add emoji codes `:tada:`,  `:+1`, etc.
+- To do:  Add emoji picker
+- To do:  Read in instance-specific custom emojis
+
+
 ## 1.2.45
 - User profiles rolled up into nice badges
+
 - Grabbing larger thumbnail for user profile images; keeping same size.  Avatars were fuzzy at 48x48.  Still renders as 48x48 but with a {width*2} thumbnail size (128).
+
 - Inline images in posts/comments can be disabled. Post images will still show, but any inline images in the post body or comment markup (e.g. `![Alt Text](https://example.com/image.png)`) can be configured not to expand inline and show a link instead.  Good for bandwidth-conscious usage.
 
 ### Bugfixes
@@ -17,8 +26,6 @@ All major/minor changes between releases will be documented here.
 - Removed "new" vote design and supporting code
 - Removed "revert vote color" option.  Upvotes are blue, downvotes are red. This isn't Reddit; deal with it.
 
-
-
 ### YouTube Support
 - Fixed bug where `m.youtube.com` was omitted from the detection function.
 
@@ -26,6 +33,7 @@ All major/minor changes between releases will be documented here.
 - Addressed a few more a11y warnings.
   - Fixed '`<iframe>` element requires `title` attribute' in YouTube, Spotify, and Soundcloud components
   - Cleaned up [Settings](/settings) page to match format used in [Admin](/admin)
+
 - Profile pages now show user's combined post/comment score
 
 ### Infrastructure

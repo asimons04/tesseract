@@ -22,6 +22,7 @@
     "autoprefixer": "^10.4.15",
     "jsdom": "^22.1.0",
     "markdown-it-container": "^3.0.0",
+    "markdown-it-emoji": "^2.0.2",
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "markdown-it-highlightjs": "^4.0.1",
