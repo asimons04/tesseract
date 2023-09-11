@@ -175,7 +175,7 @@ The following environment variables can be set to override the default settings.
 
 | Variable                        | Values              | Default Value                          |
 | ------------------------------- | ------------------- | -------------------------------------- |
-| PUBLIC_INSTANCE_URL             | URL                 | `beehaw.org`                           |
+| PUBLIC_INSTANCE_URL             | URL                 | `lemmy.world`                          |
 | PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
 | PUBLIC_SSR_ENABLED              | `bool`              | `false`                                |
 | PUBLIC_THEME                    | system\|dark\|light | system                                 |
