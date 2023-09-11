@@ -2,6 +2,8 @@
 
 Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and content.
 
+It started out as my personal, custom build of Photon, but it got exhausting porting over my bells and whistles each release. To that end, I finally decided to make it an official fork.
+
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Table of Contents
