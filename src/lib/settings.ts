@@ -92,44 +92,44 @@ export const defaultSettings: Settings = {
         expandSubscribedList: true
     },
 
-    markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ?? true,
+    markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  true,
     
     showInstances: {
-        user:           toBool(env.PUBLIC_SHOW_INSTANCES_USER)          ?? false,
-        community:      toBool(env.PUBLIC_SHOW_INSTANCES_COMMUNITY)     ?? true,
-        comments:       toBool(env.PUBLIC_SHOW_INSTANCES_COMMENTS)      ?? false,
+        user:           toBool(env.PUBLIC_SHOW_INSTANCES_USER)          ??  false,
+        community:      toBool(env.PUBLIC_SHOW_INSTANCES_COMMUNITY)     ??  true,
+        comments:       toBool(env.PUBLIC_SHOW_INSTANCES_COMMENTS)      ??  false,
     },
     
-    showCompactPosts:   toBool(env.PUBLIC_SHOW_COMPACT_POSTS)           ?? false,
+    showCompactPosts:   toBool(env.PUBLIC_SHOW_COMPACT_POSTS)           ??  false,
     
     defaultSort: {
-        sort:           env.PUBLIC_DEFAULT_FEED_SORT                    ?? ('Active' as any),
-        feed:           env.PUBLIC_DEFAULT_FEED                         ?? ('Local' as any),
-        comments:       env.PUBLIC_DEFAULT_COMMENT_SORT                 ?? ('Hot' as any),
+        sort:           env.PUBLIC_DEFAULT_FEED_SORT                    ??  ('Active' as any),
+        feed:           env.PUBLIC_DEFAULT_FEED                         ??  ('Local' as any),
+        comments:       env.PUBLIC_DEFAULT_COMMENT_SORT                 ??  ('Hot' as any),
     },
     hidePosts: {
-        deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ?? true,
-        removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ?? false,
+        deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
+        removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,
     },
    
     
     
-    displayNames:   toBool(env.PUBLIC_DISPLAY_NAMES)                    ?? true,
-    nsfwBlur:       toBool(env.PUBLIC_NSFW_BLUR)                        ?? true,
+    displayNames:   toBool(env.PUBLIC_DISPLAY_NAMES)                    ??  true,
+    nsfwBlur:       toBool(env.PUBLIC_NSFW_BLUR)                        ??  true,
     
     openInNewTab: {
-        postLinks:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ?? false,
-        posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ?? false,
+        postLinks:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
+        posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ??  false,
     },
-    modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ?? true,
+    modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ??  true,
 
     
     embeddedMedia: {
-        feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ?? false,
-        post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ?? true,
-        YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                     ?? 'YouTube',
-        customInvidious:                                                'yewtu.be',
-        autoplay:                                                       false,
+        feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  false,
+        post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
+        YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                     ??  'YouTube',
+        customInvidious:                                                    'yewtu.be',
+        autoplay:                                                           false,
     },
 
     
@@ -209,13 +209,6 @@ if (typeof window != 'undefined') {
     let oldUserSettings = JSON.parse(
         localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
     )
-    
-    // Migrate legacy setting
-    if (oldUserSettings.embeddedMedia.enable) {
-        oldUserSettings.embeddedMedia.enableFeed = true;
-        oldUserSettings.embeddedMedia.enablePost = true;
-        delete oldUserSettings.embeddedMedia.enable;
-    }
 
     userSettings.set({ ...defaultSettings, ...oldUserSettings })
 }

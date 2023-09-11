@@ -2,9 +2,16 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.46
-This release has a lot of under-the-hood updates.  You probably won't _have to_ but it is advised to either clear your LocalStorage or at least go into your settings and reset them to default (and reconfigure to your liking).
+This release has a lot of under-the-hood updates.  
 
-The configuration object that's saved to LocalStorage has had a big cleanup.  You'll see some options not set correctly after updating to this release.
+
+### Settings 
+Cleaned up unused settings values and combined related ones into objects.  I did this not because it was easy, but because I _thought_ it would be easy.  
+
+The configuration object that's saved to LocalStorage has had a big cleanup.  If you have existing settings, you'll notice that some options are not set correctly after updating to this release.  
+
+It is advised to either clear your LocalStorage or at least go into your Tesseract app [settings](/settings), reset them to default, and reconfigure to your liking.
+
 
 The following `env` vars have been removed:
 - `PUBLIC_EXPANDABLE_IMAGES`
@@ -12,18 +19,33 @@ The following `env` vars have been removed:
 - `PUBLIC_FULL_WIDTH_LAYOUT`
 - `PUBLIC_EXPAND_SIDEBAR`
 - `PUBLIC_NEW_VOTE_BUTTONS`
+
 You may safely remove those from your `docker-compose.yml` or however you were passing them to Tesseract.
 
+## Sidebar Update
+Ok, so the sidebar is a bit of a rework-in-progress.  It needs to be totally re-written to do what I want it to do, and I don't have time for that right at this moment.  However, there were some quality-of-life improvements that I _did_ want to implement, so it's in kind of a hybrid state right now.
+
+- `Moderating` and `Subscribed` lists are still collapsible as before, but they're limited in height to the screen height; the sidebar no longer scrolls beyond the viewport height.  
+  - Each of those sections now scrolls independently.
+  - Changed the way the communities were hidden so it's much faster now.
+
+- When the sidebar is collapsed, instead of the community icons remaining, they're hidden now (this is the hacky fix to make it sort-of do what I want without a full re-write).
+
+- The open/close state of the `Moderating` and `Subscribed` lists is now saved to LocalStorage and will persist.
+
+- The ugly subscription counts I had in place are now less-ugly badges.
 
 
 
-### Emoji Support
-- Added emoji support.  Can add emoji codes `:tada:`,  `:+1`, etc.
-- To do:  Add emoji picker
-- To do:  Read in instance-specific custom emojis
 
-### Setting Cleanup
-Cleaning up unused settings values and combining related ones into objects.  I did this not because it was easy, but because I _thought_ it would be easy.
+### ~~Experimental: Initial Markdown Emoji Support~~
+Note: This has been removed from this release.
+
+I had used `markdown-it-emoji` to add emoji support to the markdown editor, but it is incompatible with Lemmy-UI as it only _renders_ emoji codes but does not replace the text with the emoji unicode characters.  
+
+Next attempt will likely use emoji picker or something that will drop in the actual unicode characters to maintain compatibility with other Lemmy frontends.
+
+
 
 
 
