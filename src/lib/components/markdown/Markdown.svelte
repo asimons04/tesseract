@@ -16,10 +16,9 @@
         })
     }
 
+    // Highlight code syntax if user option set
     if ($userSettings.highlightCode) {
-        md.use(markdown_it_highlightjs, {
-            inline: true,
-        })
+        md.use(markdown_it_highlightjs, {})
     }
 
     let div: HTMLElement
@@ -47,6 +46,10 @@
   }
   .markdown :global(h3) {
     @apply text-xl font-bold;
+  }
+  
+  .markdown :global(h4) {
+    @apply text-lg font-bold;
   }
 
   .markdown :global(details) {
@@ -96,5 +99,7 @@
   .markdown :global(p) {
     @apply leading-6 mb-2 max-w-full;
   }
+
+
 
 </style>

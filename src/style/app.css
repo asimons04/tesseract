@@ -58,8 +58,9 @@ body {
 
 pre {
   @apply bg-slate-100 p-2 rounded-md my-2 max-w-full whitespace-pre-wrap
-  border-slate-200 border dark:bg-zinc-900 dark:border-zinc-800 text-sm;
+  border-slate-200 border bg-slate-50 dark:bg-black dark:border-zinc-800 text-sm;
 }
+
 
 :not(pre) > code {
   @apply bg-slate-100 border border-slate-300 dark:bg-zinc-800
@@ -70,6 +71,8 @@ pre {
   padding-bottom: 0.125rem;
   border-radius: 3px;
 }
+
+
 
 ::-webkit-scrollbar {
   width: 3px;

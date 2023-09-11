@@ -13,6 +13,7 @@ All major/minor changes between releases will be documented here.
 - Removed "revert vote color" option.  Upvotes are blue, downvotes are red. This isn't Reddit; deal with it.
 
 
+
 ### YouTube Support
 - Fixed bug where `m.youtube.com` was omitted from the detection function.
 
