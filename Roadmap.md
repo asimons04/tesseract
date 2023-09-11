@@ -47,6 +47,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
     - Scroll to comments div
 
 
+
 #### Vote Buttons
 - Add user option to select left/right side for vote buttons
 

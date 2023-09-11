@@ -63,6 +63,8 @@ interface Settings {
     imageSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
     videoSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
     highlightCode: boolean
+    inlineImages: boolean
+
 }
 
 export const defaultSettings: Settings = {
@@ -120,6 +122,7 @@ export const defaultSettings: Settings = {
     imageSize:                                                           'max-w-3xl',
     videoSize:                                                           'w-full',
     highlightCode:                                                       true,
+    inlineImages:                                                        true,
 }
 
 export const userSettings = writable(defaultSettings)

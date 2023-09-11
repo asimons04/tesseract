@@ -21,6 +21,11 @@
         md.use(markdown_it_highlightjs, {})
     }
 
+    // Disable inline images if user option set
+    if (!$userSettings.inlineImages) {
+        md.disable(['image'])
+    }
+
     let div: HTMLElement
 
     $: if (source && div) {

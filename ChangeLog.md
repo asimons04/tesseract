@@ -3,8 +3,8 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.45
 - User profiles rolled up into nice badges
-- Grabbing larger thumbnail for user profile images; keeping same size.  Avatars were fuzzy at 48x48.  Now renders as 48x48 but with a {width*2} thumbnail size.
-
+- Grabbing larger thumbnail for user profile images; keeping same size.  Avatars were fuzzy at 48x48.  Still renders as 48x48 but with a {width*2} thumbnail size (128).
+- Inline images in posts/comments can be disabled. Post images will still show, but any inline images in the post body or comment markup (e.g. `![Alt Text](https://example.com/image.png)`) can be configured not to expand inline and show a link instead.  Good for bandwidth-conscious usage.
 
 ### Bugfixes
 - Fixed white on grey `<option>` values in theme selection menu (Chrome[ium] only).

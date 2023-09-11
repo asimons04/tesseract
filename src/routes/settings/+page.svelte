@@ -158,6 +158,7 @@
                 <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
                 <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
                 <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
+                <Checkbox bind:checked={$userSettings.inlineImages}>Enable inline images in posts/comments</Checkbox>
             </div>
 
             <div class="flexcol flexcol-33 mt-4">
