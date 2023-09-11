@@ -2,6 +2,10 @@
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
+- Password reset
+
+- Password changes
+
 - Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
 - Consider integrating [Fediseer](https://fediseer.com/api/) support into admin tools 
@@ -37,7 +41,6 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 
 ### UI
-#### General 
 - Implement a `/legal` page to render the value returned from the API
 
 - Implement a public `/instances` page to render the linked, blocked, and allowed instances
@@ -46,6 +49,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
     - Will pre-empt autoplay setting for videos
     - Scroll to comments div
 
+- Add emoji picker into post/comment markdown editor
 
 
 #### Vote Buttons
