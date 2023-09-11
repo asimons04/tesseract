@@ -2,7 +2,12 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.45
+- User profiles rolled up into nice badges
+- Grabbing larger thumbnail for user profile images; keeping same size.  Avatars were fuzzy at 48x48.  Now renders as 48x48 but with a {width*2} thumbnail size.
 
+
+### Bugfixes
+- Fixed white on grey `<option>` values in theme selection menu (Chrome[ium] only).
 
 
 ## 1.2.44

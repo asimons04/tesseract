@@ -1,5 +1,6 @@
 <script lang="ts">
     import { profile, profileData, setUserID } from '$lib/auth.js'
+    import { userSettings } from '$lib/settings.js'
     import Button from '$lib/components/input/Button.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
@@ -277,7 +278,7 @@
                 <select
                     bind:value={$theme}
                     on:click|stopPropagation
-                    class="ml-auto w-max px-1 rounded-sm cursor-pointer bg-transparent border dark:border-zinc-700"
+                    class="ml-auto w-max px-1 rounded-sm cursor-pointer bg-slate-200 dark:bg-zinc-900 border dark:border-zinc-700"
                 >
                     <option value="system">System</option>
                     <option value="light">Light</option>
@@ -291,6 +292,10 @@
             <div class="flex flex-row gap-2 w-full">
               <!-- svelte-ignore missing-declaration -->
                 <span class="mr-auto">v{__VERSION__}</span>
+                <span class="ml-auto">
+                    <Link href="https://github.com/asimons04/Tesseract/" title="Tesseract on Github" newtab={$userSettings.openInNewTab.postLinks}>GitHub</Link>
+                </span>
+            </div>
         </li>
     </Menu>
 </nav>

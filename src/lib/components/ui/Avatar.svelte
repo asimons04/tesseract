@@ -16,7 +16,7 @@
 
 {#if url}
   <img
-    src="{url}?format=webp&thumbnail={findClosestNumber(sizes, res || width)}"
+    src="{url}?format=webp&thumbnail={findClosestNumber(sizes, res || width*2)}"
     {alt}
     {width}
     {title}

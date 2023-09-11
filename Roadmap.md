@@ -33,13 +33,11 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 ### User Profile Page
 -  Add a "active in" section with community cards for ones the user is active in
     - Clicking into that will take you to the community page and filtered for submissions from the user
-- Combine avatar and name/instance to a kind of badge
+
 
 
 ### UI
 #### General 
-- Fix white on grey `<option>` values in theme selection menu (Chrome[ium] only).
-
 - Implement a `/legal` page to render the value returned from the API
 
 - Implement a public `/instances` page to render the linked, blocked, and allowed instances
