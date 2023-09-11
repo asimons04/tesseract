@@ -1,5 +1,6 @@
 <script lang="ts">
     import Post from '$lib/components/lemmy/post/Post.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
@@ -182,38 +183,56 @@
             on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
         />
     </div>
-
-    <div class="mx-auto">
+    <div>
         <StickyCard>
-            <Avatar
-                width={64}
-                url={data.person_view.person.avatar}
-                alt={data.person_view.person.name}
-            />
-            <span class="flex flex-row items-center gap-1 text-sm">
-                <Icon src={Cake} width={16} height={16} mini />
-                <span class="capitalize">
-                    <RelativeDate date={new Date(data.person_view.person.published + 'Z')}/>
-                </span>
-            </span>
-      
-            <div class="text-sm flex flex-row flex-wrap gap-3">
-                <span class="flex flex-row items-center gap-1">
-                    <Icon src={PencilSquare} width={16} height={16} mini />
-                    <FormattedNumber number={data.person_view.counts.post_count} />
-                </span>
-        
-                <span class="flex flex-row items-center gap-1">
-                    <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                    <FormattedNumber number={data.person_view.counts.comment_count} />
-                </span>
-                
-                <span class="flex flex-row items-center gap-1">
-                    <Icon src={Trophy} width={16} height={16} mini />
-                    <FormattedNumber number={(data.person_view.counts.post_score + data.person_view.counts.comment_score)} />
-                </span>
+            <Card>
+                <div class="flex flex-row gap-3 items-center p-3">
+                    <div class="flex-shrink-k">
+                        <Avatar
+                            width={64}
+                            url={data.person_view.person.avatar}
+                            alt={data.person_view.person.name}
+                        />
+                    </div>
 
-            </div>
+                    <div class="flex flex-col gap-0">
+                        <div>
+                            <h1 class="font-bold text-lg">
+                                <UserLink badges user={data.person_view.person} showInstance={false} />
+                            </h1>
+                            <span>{new URL(data.person_view.person.actor_id).hostname}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-sm flex flex-row justify-items-center gap-3 p-3">
+                    
+                    <div class="flex flex-row items-center gap-1">
+                        <Icon src={Cake} width={16} height={16} mini />
+                        <span class="capitalize">
+                            <RelativeDate date={new Date(data.person_view.person.published + 'Z')}/>
+                        </span>
+                    </div>
+                    
+                    <div class="flex flex-row items-center gap-1">
+                        <Icon src={PencilSquare} width={16} height={16} mini />
+                        <FormattedNumber number={data.person_view.counts.post_count} />
+                    </div>
+            
+                    <div class="flex flex-row items-center gap-1">
+                        <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
+                        <FormattedNumber number={data.person_view.counts.comment_count} />
+                    </div>
+                    
+                    <div class="flex flex-row items-center gap-1">
+                        <Icon src={Trophy} width={16} height={16} mini />
+                        <FormattedNumber number={(data.person_view.counts.post_score + data.person_view.counts.comment_score)} />
+                    </div>
+
+                </div>
+            </Card>
+        
+            
 
             {#if $profile?.user && $profile.jwt && data.person_view.person.id != $profile.user.local_user_view.person.id}
                 <div class="flex flex-col gap-2">
@@ -257,7 +276,7 @@
                 </div>
 
                 {#if isAdmin($profile?.user)}
-                <Menu class="ml-auto" alignment="bottom-right">
+                <Menu class="ml-auto" alignment="top-right">
                     <Button size="square-md" let:toggleOpen on:click={toggleOpen} slot="button">
                         <ShieldIcon width={16} filled />
                     </Button>
@@ -275,13 +294,10 @@
                 {/if}
             {/if}
 
-            <div>
-                <h1 class="font-bold text-lg">
-                    <UserLink badges user={data.person_view.person} />
-                </h1>
-                <span>{new URL(data.person_view.person.actor_id).hostname}</span>
-            </div>
+            
             {#if data.person_view.person.bio}
+                <h1 class="font-bold text-lg">About Me</h1>
+            
                 <Markdown source={data.person_view.person.bio} />
             {/if}
         </StickyCard>
