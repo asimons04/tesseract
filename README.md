@@ -36,8 +36,10 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 - User-configurable image/video sizes in feed and posts
 
 - Full Lemmy server config options. Anything you can configure in Lemmy-UI, you can configure in Tesseract*
-  - Except 2FA options.  Working to add in QR code support.
-  - 2FA login is implemented, though.
+  - Except the following:
+    - Enabling 2FA on your profile (working on QR code support and to see what next Lemmy BE fixes)
+    - Password changes
+    - Forgot password
 
 - Most aspects of the UI can be configured by the end user. Server admins can set default preferences via `env` vars.
 
@@ -47,7 +49,7 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
   - Modlog support on both desktop and mobile.
   - Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
 
-- Maintained by someone who is a Lemmy users, administrator, and moderator.  
+- Maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  
 
 
 
@@ -79,6 +81,8 @@ There is also a Lemmy community where you can get the latest announcements and p
 
 ## Roadmap
 The "to do" and roadmap has been moved to [a dedicated file](/Roadmap.md).
+
+Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
