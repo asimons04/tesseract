@@ -154,7 +154,7 @@
                 <Checkbox bind:checked={$userSettings.showInstances.community}>Show the instance communities belong to.</Checkbox>
 
 
-                <h1 class="font-bold mt-4">Misc Settings</h1>
+                <h1 class="font-bold mt-4 mb-4">Misc Settings</h1>
                 <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
                 <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
                 <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
@@ -167,7 +167,7 @@
                 <Checkbox bind:checked={$userSettings.embeddedMedia.enablePost}>Enable embedded content in posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.embeddedMedia.autoplayPost}>Autoplay supported content when opening posts</Checkbox>
                 
-                <h1 class="font-bold mt-4">YouTube Frontend</h1>
+                <h1 class="font-bold mt-4 mb-4">YouTube Frontend</h1>
                 
                 <div class="flex flex-row flex-wrap">
                     <MultiSelect
