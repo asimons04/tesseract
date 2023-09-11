@@ -1,0 +1,55 @@
+## Roadmap 
+Completed "to do"s have been moved to the [change log](./ChangeLog.md).
+
+### Infrastructure
+- [ ] Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
+- [ ] Consider integrating [Fediseer](https://fediseer.com/api/) support into admin tools 
+  - Indicate whether posts/comments come from a guaranteed instance
+  - Allow users to hide content from non-guaranteed instances
+  - See cesures and endorcements of each linked instance as well as guarantor (apply SVG bage also)
+  - Allow to endorse/guarantee instance from admin panel
+  - Censure instance 
+
+### Community Discovery
+- [ ] Expand functionality of "Explore" to show a list of the linked instances. Selecting an instance will poll its communities and render a list you can subscribe to if logged in.
+- [ ] Periodically pull the JSON DB for browse.feddit.de and use that to integrate a feidverse-wide community browser.
+- [ ] Card view for Communities
+
+
+
+### Moderation
+- [ ] Add "Purge person" and/or "purge content" option to admin menu. 
+  - "Ban and Purge Content" is the plan.  Purging user does not result in a ban (unless they were banned on their home instance which is not guaranteed).  I don't think the API has a way to do this directly, so may have to do one or more searches for the `person_id` and purge each in a loop over multiple API calls.
+- [ ] Add option for mods/admins to hide deleted comments and logic to implement that
+
+### UI
+#### General 
+- [ ] Fix white on grey `<option>` values in theme selection menu (Chrome[ium] only).
+- [ ] Implement a `/legal` page to render the value returned from the API
+- [ ] Implement a public `/instances` page to render the linked, blocked, and allowed instances
+
+
+#### Vote Buttons
+- [ ] Add user option to select left/right side for vote buttons
+
+#### Sidebar
+- [ ] Add inline search/filter for subscribed communities.
+- [ ] The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
+
+
+#### Admin Panel
+- [ ] Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
+- [ ] Add check to make sure the slur filter regex is valid before sending to API.
+- [ ] Add toggle to `/admin/instances` to select an operating mode: blocklist vs allow list and hide the non-selected 
+
+
+
+### Modlog
+- [ ] Enhance filtering beyond just community
+
+### Media Handling
+- [ ] Add option to "quick play" from thumbnail in feed. If embedded media disabled in feed, thumbnails will have click action replace thumbnail with lazy-loading iframe. This _should_ prevent a bunch of iframes from loading until you click the static thumbnail to reveal it while keeping quick/convenient access to media posts without leaving the feed.
+
+- [ ] Direct videos don't have thumbnail attributes, but ones hosted via pict-rs can add ?format=webp to the URL.  Add this and enable direct videos to not be embedded if that option is set.
+
+- [ ] Detect Youtube/Piped/Invidious links in post bodies and comments.  Optionally render those inline depending on user setting
