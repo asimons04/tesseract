@@ -81,7 +81,7 @@ export const defaultSettings: Settings = {
     
     debugInfo: false,
     systemUI: true,
-    imageSize: 'max-w-3xl',
+    imageSize: 'max-w-md',
     videoSize: 'w-full',
     highlightCode: true,
     inlineImages: true,
