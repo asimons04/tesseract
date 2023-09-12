@@ -65,7 +65,7 @@
       />
     </div>
   </div>
-  <div class="hidden xl:block">
+  <div class="hidden lg:block xl:block">
     {#await data.streamed.site}
       <StickyCard>
         <div class="h-64 grid place-items-center">

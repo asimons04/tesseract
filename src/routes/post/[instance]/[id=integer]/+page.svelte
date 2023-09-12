@@ -188,7 +188,7 @@
             </Button>
 
             <!--- Hide "show/hide community sidebar" button if it's not present --->
-            <div class="hidden xl:block">
+            <div class="hidden lg:block xl:block">
                 <Button
                     alignment="right"
                     on:click={() =>
@@ -439,7 +439,7 @@
     <!--- Community Sidebar--->
     <div class="
         {$userSettings.uiState.expandCommunitySidebar
-        ? 'hidden xl:block'
+        ? 'hidden lg:block xl:block'
         : 'hidden'}
         "
      >

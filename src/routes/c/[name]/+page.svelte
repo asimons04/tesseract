@@ -60,7 +60,7 @@
         </span>
       </div>
     </div>
-    <div class="xl:hidden">
+    <div class="lg:hidden xl:hidden">
       <Button color="secondary" on:click={() => (sidebar = !sidebar)}>
         About
       </Button>
@@ -74,7 +74,7 @@
       on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
     />
   </div>
-  <div class="hidden xl:block">
+  <div class="hidden lg:block xl:block">
     <CommunityCard community_view={data.community.community_view} />
   </div>
 </div>

@@ -1,12 +1,20 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 ## 1.2.47
-- Fixed bug introduced in 1.2.46 that caused the user/community/site sidebars to grow far too large when the window size reduces.
-  - Backported to 1.2.46
 
+### Bugfixes
+- Fixed bug introduced in 1.2.46 that caused the user/community/site sidebars to grow far too large when the window size reduces.
+  - Backported to 1.2.46 and re-released
+
+### UI
 - Refined user card in profiles. Now always shows their display name (when available) and their @{user}@{domain} fully-qualified name below that.
 
-- 
+### Modlog
+- Added more specific action details to modlog:
+  - Temporary vs Permanent instance/community bans are now indicated along with the expiry date for temp bans.
+  - Reworked column widths 
+  - Added instance to the moderator names
+
 
 
 ## 1.2.46
