@@ -20,7 +20,7 @@ Added support for experimental features that are disabled by default but can be 
 
 **Theater Mode**
 
-When opening a post that contains a YouTube video, there is a button next to the post actions that will enter "Theater Mode".  It works similarly to YouTube's in that it hides both sidebars and scrolls the video fully into view.  Kind of a pseudo-fullscreen.  I don't know why I spent an hour and a half implementing this since the actual fullscreen button is like 10 freaking pixels away, but it's there.
+When opening a post that contains a YouTube video, there is a button next to the post actions that will enter "Theater Mode".  It works similarly to YouTube's in that it hides both sidebars and scrolls the video fully into view.  Kind of a pseudo-fullscreen.  I don't know why I spent an hour and a half implementing this since the actual fullscreen button is like 10 freaking pixels away, but it's there. I guess it could be useful if the video has fullscreen option disabled for embeds. 
 
 ## 1.2.47
 
