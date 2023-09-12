@@ -66,6 +66,7 @@ interface Settings {
         expandSubscribedList: boolean
     }
     highlightCode: boolean
+    highlightInlineCode: boolean
     inlineImages: boolean
     experimentalFeatures: boolean
 
@@ -89,6 +90,7 @@ export const defaultSettings: Settings = {
         post: 'w-full'
     },
     highlightCode: true,
+    highlightInlineCode: false,
     inlineImages: true,
     uiState: {
         expandSidebar: true,

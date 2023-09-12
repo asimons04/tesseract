@@ -18,7 +18,9 @@
 
     // Highlight code syntax if user option set
     if ($userSettings.highlightCode) {
-        md.use(markdown_it_highlightjs, {})
+        md.use(markdown_it_highlightjs, {
+            inline: $userSettings.highlightInlineCode ?? false
+        })
     }
 
     // Disable inline images if user option set

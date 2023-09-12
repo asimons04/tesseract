@@ -94,8 +94,11 @@
                 <Checkbox bind:checked={$userSettings.hidePosts.removed}>   Hide Removed Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.markReadPosts}>       Fade Title of Read Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.nsfwBlur}>            Blur NSFW Images in Feed</Checkbox>
-                <Checkbox bind:checked={$userSettings.highlightCode}>       Use syntax highlighting in code boxes.</Checkbox>
-                <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
+                <Checkbox bind:checked={$userSettings.highlightCode}>       Use syntax highlighting in code blocks.</Checkbox>
+                <Checkbox bind:checked={$userSettings.highlightInlineCode}> Use syntax highlighting in inline code.</Checkbox>
+                <Checkbox bind:checked={$userSettings.inlineImages}>        Enable inline images in posts/comments</Checkbox>
+                <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
+
                     
                 <div class="flex justify-between mt-4">
                     <div>
@@ -155,10 +158,9 @@
 
 
                 <h1 class="font-bold mt-4 mb-4">Misc Settings</h1>
-                <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
                 <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
                 <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
-                <Checkbox bind:checked={$userSettings.inlineImages}>Enable inline images in posts/comments</Checkbox>
+                <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.experimentalFeatures}>Enable experimental features</Checkbox>
             </div>
 

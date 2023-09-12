@@ -3,14 +3,17 @@ All major/minor changes between releases will be documented here.
 ## 1.2.48
 
 ### Infrastructure
-Cleaned up some custom types defined in `lib/components/lemmy/post/helper.ts` and used in most `Post` components.
+Cleaned up the custom types defined in `lib/components/lemmy/post/helper.ts` and used in most `Post` components.
 
 ### Feed and Post Image Sizes 
 The options for setting the image and video sizes are more sane now.  Instead of images vs videos, it's now feed versus post.  All media in the feed will be sized based on your "feed" setting, and all media in posts will be sized according to your "post" image size selection.
 
 **Notes**:
   - Since the setting structure changed, inserted a migration step which _should_ negate having to flush LocalStorage because of this.
-  - If pages fail with errors in the console, flush local storage.
+  - If the app fails to load and/or has errors in the console, flush local storage.
+
+### Code Syntax Highlighting
+Added additional setting to enable syntax highlighting for inline code.  Note that this depends on highlighting being enabled in code blocks. It's not currently bound to the state of that option.
 
 ### Experimental Features
 Added support for experimental features that are disabled by default but can be enabled by the user. In the settings panel, there's a checkbox to "Enable experimental features" which will enable them all.
