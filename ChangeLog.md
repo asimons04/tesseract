@@ -7,14 +7,17 @@ All major/minor changes between releases will be documented here.
   - Backported to 1.2.46 and re-released
 
 ### UI
-- Refined user card in profiles. Now always shows their display name (when available) and their @{user}@{domain} fully-qualified name below that.
+Trying to elimiate more dead space, or at least make it less apparent.
 - User/community/site sidebars stay open for a greater range of screen width.
+
 - Added margins to post feed cards
+
+- Refined user card in profiles. Now always shows their display name (when available) and their @{user}@{domain} fully-qualified name below that.
 
 ### Modlog
 - Added more specific action details to modlog:
   - Temporary vs Permanent instance/community bans are now indicated along with the expiry date for temp bans.
-  - Reworked column widths 
+  - Reworked column widths for better display
   - Added instance to the moderator names
 
 

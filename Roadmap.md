@@ -61,8 +61,6 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 #### Sidebar
 - Add inline search/filter for subscribed communities.
 
-- The community counts on the sidebar Moderating/Subscribed headers are ugly. Change those to a badge or something, I dunno.
-
 
 #### Admin Panel
 - Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
