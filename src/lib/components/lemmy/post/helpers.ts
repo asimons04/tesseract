@@ -10,7 +10,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    'image' | 'video' | 'youtube' | 'spotify' | 
+    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 
     'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -116,7 +116,7 @@ export const isSoundCloud = (url:string):boolean => {
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
-export const postType = (post: PostView | undefined, displayType: PostDisplayType ) => {
+export const postType = (post: PostView | undefined ) => {
     
     if (!post) return false
     

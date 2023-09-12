@@ -66,65 +66,64 @@
         }
     })
 
-  afterNavigate(async () => {
-    // reactivity hack
-    post = data.post
+    afterNavigate(async () => {
+        // reactivity hack
+        post = data.post
 
-    if ($page.params.instance.toLowerCase() != $instance.toLowerCase()) {
-      if (!$profile?.jwt) return
-      toast({
-        content: 'Do you want to open this post on your home instance?',
-        action: () => {
-          if ($profile?.jwt) fetchOnHome($profile.jwt)
-        },
-        duration: 9999 * 1000,
-      })
-    }
-  })
-
-  const fetchOnHome = async (jwt: string) => {
-    const id = toast({
-      content: 'Attempting to fetch this post on your home instance...',
-      loading: true,
+        if ($page.params.instance.toLowerCase() != $instance.toLowerCase()) {
+            if (!$profile?.jwt) return
+            toast({
+                content: 'Do you want to open this post on your home instance?',
+                action: () => {
+                    if ($profile?.jwt) fetchOnHome($profile.jwt)
+                },
+                duration: 9999 * 1000,
+            })
+        }
     })
 
-    try {
-      const res = await getClient().resolveObject({
-        auth: jwt,
-        q: post.post_view.post.ap_id,
-      })
+    const fetchOnHome = async (jwt: string) => {
+        const id = toast({
+            content: 'Attempting to fetch this post on your home instance...',
+            loading: true,
+        })
 
-      if (res.post) {
-        removeToast(id)
-        goto(`/post/${$instance}/${res.post.post.id}`, {}).then(() =>
-          removeToast(id)
-        )
-      }
-    } catch (err) {
-      removeToast(id)
+        try {
+            const res = await getClient().resolveObject({
+                auth: jwt,
+                q: post.post_view.post.ap_id,
+            })
+
+            if (res.post) {
+                removeToast(id)
+                goto(`/post/${$instance}/${res.post.post.id}`, {})
+                .then(() => removeToast(id))
+            }
+        } catch (err) {
+            removeToast(id)
+        }
     }
-  }
 
-  let commentsPage = 1
-  let commentSort: CommentSortType = data.commentSort
-  let loading = false
-  let moreComments = true
-  let loaded = false
+    let commentsPage = 1
+    let commentSort: CommentSortType = data.commentSort
+    let loading = false
+    let moreComments = true
+    let loaded = false
 
-  async function reloadComments() {
-    data.singleThread = false
-    commentsPage = 1
+    async function reloadComments() {
+        data.singleThread = false
+        commentsPage = 1
 
-    data.streamed.comments = getClient().getComments({
-      auth: $profile?.jwt,
-      page: 1,
-      limit: 25,
-      type_: 'All',
-      post_id: post.post_view.post.id,
-      sort: commentSort,
-      max_depth: 3,
-    })
-  }
+        data.streamed.comments = getClient().getComments({
+            auth: $profile?.jwt,
+            page: 1,
+            limit: 25,
+            type_: 'All',
+            post_id: post.post_view.post.id,
+            sort: commentSort,
+            max_depth: 3,
+        })
+    }
 
 </script>
 
@@ -324,6 +323,8 @@
             <div class="w-full relative">
                 <PostActions
                     bind:post={post.post_view}
+                    postType={pType}
+                    postDisplayType={pDisplayType}
                     on:edit={() =>
                         toast({
                         content: 'The post was edited successfully.',

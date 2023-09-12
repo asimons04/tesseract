@@ -1,9 +1,8 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import type { PostDisplayType } from './helpers.js'
+    import type { PostType, PostDisplayType } from './helpers.js'
     
     import {isImage, postType} from './helpers.js'
-    //import { isImage, postType } from '$lib/ui/image.js'
     
     
     import Card from '$lib/components/ui/Card.svelte'
@@ -30,7 +29,7 @@
     export let actions: boolean = true
     export let hideCommunity = false
     
-    let pType:string = postType(post)
+    let pType:PostType = postType(post)
     let pDisplayType: PostDisplayType = "feed"
 
 </script>

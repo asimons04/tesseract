@@ -1,7 +1,9 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 ## 1.2.48
-- Cleaned up some more types
+
+### Infrastructure
+Cleaned up some custom types defined in `lib/components/lemmy/post/helper.ts` and used in most `Post` components.
 
 ### Feed and Post Image Sizes 
 The options for setting the image and video sizes are more sane now.  Instead of images vs videos, it's now feed versus post.  All media in the feed will be sized based on your "feed" setting, and all media in posts will be sized according to your "post" image size selection.
@@ -10,6 +12,12 @@ The options for setting the image and video sizes are more sane now.  Instead of
   - Since the setting structure changed, inserted a migration step which _should_ negate having to flush LocalStorage because of this.
   - If pages fail with errors in the console, flush local storage.
 
+### Experimental Features
+Added support for experimental features that are disabled by default but can be enabled by the user. In the settings panel, there's a checkbox to "Enable experimental features" which will enable them all.
+
+**Theater Mode**
+
+When opening a post that contains a YouTube video, there is a button next to the post actions that will enter "Theater Mode".  It works similarly to YouTube's in that it hides both sidebars and scrolls the video fully into view.  Kind of a pseudo-fullscreen.  I don't know why I spent an hour and a half implementing this since the actual fullscreen button is like 10 freaking pixels away, but it's there.
 
 ## 1.2.47
 

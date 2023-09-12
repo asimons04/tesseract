@@ -67,6 +67,7 @@ interface Settings {
     }
     highlightCode: boolean
     inlineImages: boolean
+    experimentalFeatures: boolean
 
 }
 
@@ -127,6 +128,7 @@ export const defaultSettings: Settings = {
     },
     modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ??  true,
 
+    experimentalFeatures:                                               false,
     
     embeddedMedia: {
         feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  false,
