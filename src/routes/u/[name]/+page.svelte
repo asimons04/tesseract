@@ -168,14 +168,15 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
-
-            {#each data.items as item (item.counts.id)}
-                {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
-                    <CommentItem comment={item} />
-                {:else if !isCommentView(item) && (data.type == 'all' || data.type == 'posts')}
-                    <Post post={item} />
-                {/if}
-            {/each}
+            <div class="w-full sm:w-full md:w-[80%] lg:w-[80%] xl:w-[80%] flex flex-col gap-3 ml-auto mr-auto">
+                {#each data.items as item (item.counts.id)}
+                    {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
+                        <CommentItem comment={item} />
+                    {:else if !isCommentView(item) && (data.type == 'all' || data.type == 'posts')}
+                        <Post post={item} />
+                    {/if}
+                {/each}
+            </div>
         {/if}
     
         <Pageination

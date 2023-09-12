@@ -1,41 +1,47 @@
 <script lang="ts">
-  import Button from '$lib/components/input/Button.svelte'
-  import Post from '$lib/components/lemmy/post/Post.svelte'
-  import Placeholder from '$lib/components/ui/Placeholder.svelte'
-  import { userSettings } from '$lib/settings.js'
-  import type { PostView } from 'lemmy-js-client'
-  import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
-  import { fly } from 'svelte/transition'
+    import Button from '$lib/components/input/Button.svelte'
+    import Post from '$lib/components/lemmy/post/Post.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import { userSettings } from '$lib/settings.js'
+    import type { PostView } from 'lemmy-js-client'
+    import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
+    import { fly } from 'svelte/transition'
 
-  export let posts: PostView[]
+    export let posts: PostView[]
 </script>
 
 {#if posts.length == 0}
-  <div class="h-full grid place-items-center">
-    <Placeholder
-      icon={ArchiveBox}
-      title="No posts"
-      description="There are no posts that match this filter."
-    >
-      <Button href="/communities">
-        <Icon src={Plus} size="16" mini slot="icon" />
-        <span>Follow some communities</span>
-      </Button>
-    </Placeholder>
-  </div>
+    <div class="h-full grid place-items-center">
+        <Placeholder
+            icon={ArchiveBox}
+            title="No posts"
+            description="There are no posts that match this filter."
+        >
+            <Button href="/communities">
+                <Icon src={Plus} size="16" mini slot="icon" />
+                <span>Follow some communities</span>
+            </Button>
+        </Placeholder>
+    </div>
+
 {:else}
-  {#each posts as post, index (post.post.id)}
-    {#if !($userSettings.hidePosts.deleted && post.post.deleted) && !($userSettings.hidePosts.removed && post.post.removed)}
-      <div
-        in:fly={{
-          y: -8,
-          duration: 500,
-          opacity: 0,
-          delay: index < 4 ? index * 100 : 0,
-        }}
-      >
-        <Post {post} />
-      </div>
-    {/if}
-  {/each}
+    <div class="w-full sm:w-full md:w-[80%] lg:w-[80%] xl:w-[80%]
+        ml-auto mr-auto flex flex-col gap-3
+        "
+    >
+    {#each posts as post, index (post.post.id)}
+        {#if !($userSettings.hidePosts.deleted && post.post.deleted) && !($userSettings.hidePosts.removed && post.post.removed)}
+            <div
+                in:fly={{
+                    y: -8,
+                    duration: 500,
+                    opacity: 0,
+                    delay: index < 4 ? index * 100 : 0,
+                }}
+            >
+                <Post {post} />
+            </div>
+        {/if}
+    {/each}
+    </div>
 {/if}

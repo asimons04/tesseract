@@ -8,6 +8,8 @@ All major/minor changes between releases will be documented here.
 
 ### UI
 - Refined user card in profiles. Now always shows their display name (when available) and their @{user}@{domain} fully-qualified name below that.
+- User/community/site sidebars stay open for a greater range of screen width.
+- Added margins to post feed cards
 
 ### Modlog
 - Added more specific action details to modlog:
