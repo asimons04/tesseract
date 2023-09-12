@@ -200,7 +200,7 @@
                             <h1 class="font-bold text-lg">
                                 <UserLink badges user={data.person_view.person} showInstance={false} />
                             </h1>
-                            <span>{new URL(data.person_view.person.actor_id).hostname}</span>
+                            <span>@{data.person_view.person.name}@{new URL(data.person_view.person.actor_id).hostname}</span>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,13 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.47
+- Fixed bug introduced in 1.2.46 that caused the user/community/site sidebars to grow far too large when the window size reduces.
+  - Backported to 1.2.46
+
+- Refined user card in profiles. Now always shows their display name (when available) and their @{user}@{domain} fully-qualified name below that.
+
+- 
+
 
 ## 1.2.46
 This release has a lot of under-the-hood updates.  
