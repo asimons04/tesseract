@@ -100,9 +100,9 @@
         <div style="width:100%; overflow-x: auto;">
             <table class="table overflow-x-auto table-fixed relative" style="min-width: 800px;">
                 <colgroup class="table-fixed">
-                    <col width="8%" />
-                    <col width="18%" />
-                    <col width="12%" class="overflow-x-auto" />
+                    <col width="5%" />
+                    <col width="15%" />
+                    <col width="18%" class="overflow-x-auto" />
                     <col width="8%" />
                     <col width="10%" />
                     <col width="18%" />

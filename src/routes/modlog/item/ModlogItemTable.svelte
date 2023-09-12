@@ -20,7 +20,7 @@
     <td>
         {#if item.moderator}
         <UserLink
-            showInstance={false}
+            showInstance={true}
             avatar
             avatarSize={20}
             user={item.moderator}
@@ -29,7 +29,7 @@
     </td>
   
     <td>
-        <ModlogAction action={item.actionName} />
+        <ModlogAction action={item.actionName} expires={item.expires ?? undefined} />
         
         {#if item.expires}
             <span class="text-xs flex items-center gap-1">
