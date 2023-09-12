@@ -1,6 +1,6 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings.js'
-    import type { t_postDisplayType } from './helpers.js'
+    import type { PostDisplayType } from './helpers.js'
 
     export let instance: string
     export let name: string
@@ -8,7 +8,7 @@
     export let id: string
     export let nsfw: boolean
     export let fullResolution: boolean  // Whether to show the image in full res or append thumbnail=XXX to the image URL
-    export let displayType: t_postDisplayType
+    export let displayType: PostDisplayType
 
     let loaded:boolean = false
     
@@ -32,7 +32,7 @@
     title={name}
 >
     <div class="m-1">
-        <div class="ml-auto mr-auto {$userSettings.imageSize ?? 'max-w-3xl'}"> 
+        <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
             <picture class="rounded-md overflow-hidden   max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
                 <source
                     srcset="{url}?thumbnail=768&format=webp"
@@ -65,7 +65,7 @@
     data-sveltekit-preload-data="off"
     aria-label={name}
 >
-    <div class="ml-auto mr-auto mt-1 mb-1 {$userSettings.imageSize ?? 'max-w-3xl'}">
+    <div class="ml-auto mr-auto mt-1 mb-1 {$userSettings.imageSize.post ?? 'max-w-3xl'}">
         <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
             <source
                 srcset="{url}?thumbnail=768&format=webp"

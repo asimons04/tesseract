@@ -1,24 +1,46 @@
 import type { CommentView, PersonView, PostView } from 'lemmy-js-client'
 import { YTFrontends } from '$lib/settings.js'
+import { userSettings as UserSettings} from '$lib/settings.js'
+import { get } from 'svelte/store';
 
-export type t_postDisplayType = 'post' | 'feed'
-export type t_postType = 
+// Import user settings
+let userSettings: any = get(UserSettings);
+
+// Export types used in post detection
+export type PostDisplayType = 'post' | 'feed'
+
+export type PostType = 
     'image' | 'video' | 'youtube' | 'spotify' | 
     'soundcloud' | 'link' |  'thumbLink' | 'text';
 
+// Check whether current user can make changes to posts/comments
+// Note:  These appear to be no longer referenced anywhere.  Marking as deprecated.
 export const isMutable = (post: PostView, me: PersonView) =>
-  (me.person.admin && post.post.local) || me.person.id == post.creator.id
+    (me.person.admin && post.post.local) || me.person.id == post.creator.id
 
 export const isCommentMutable = (comment: CommentView, me: PersonView) =>
-  me.person.id == comment.creator.id
+    me.person.id == comment.creator.id
 
 
-export const isImage = (url: string | undefined) => {
-  if (!url) return false
-
-  return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(new URL(url).pathname)
+// Return the image size based on the display type (feed/post) and the user's preference
+export const imageSize = (displayType:PostDisplayType, ) => {
+    if (displayType == 'feed') {
+        return userSettings.imageSize.feed;
+    }
+    else if (displayType == 'post') {
+        return  userSettings.imageSize.post;
+    }
 }
 
+
+
+
+// Check if the provided URL is an image
+export const isImage = (url: string | undefined) => {
+    if (!url) return false
+    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(new URL(url).pathname)
+}
+// Check if provided URL is a video
 export const isVideo = (inputUrl: string | undefined) => {
   if (!inputUrl) return false
 
@@ -94,7 +116,7 @@ export const isSoundCloud = (url:string):boolean => {
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
-export const postType = (post: PostView | undefined, displayType: postDisplayType ) => {
+export const postType = (post: PostView | undefined, displayType: PostDisplayType ) => {
     
     if (!post) return false
     

@@ -1,16 +1,18 @@
 <script lang="ts">
-  import type { t_postDisplayType } from './helpers.js'
-  
-  import Link from '$lib/components/input/Link.svelte'
-  import { userSettings } from '$lib/settings.js'
+    import type { PostDisplayType } from './helpers.js'
 
-  export let url: string
-  export let thumbnail_url: string
-  export let nsfw: boolean = false
-  export let title:string
-  export let displayType: t_postDisplayType
-  
-  let loaded = false;
+    import Link from '$lib/components/input/Link.svelte'
+    import { userSettings } from '$lib/settings.js'
+    import { imageSize} from './helpers.js'
+
+    export let url: string
+    export let thumbnail_url: string
+    export let nsfw: boolean = false
+    export let title:string
+    export let displayType: PostDisplayType
+
+    let loaded = false;
+    let size: string = imageSize(displayType);
 </script>
 
 
@@ -24,7 +26,7 @@
 >
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
         <div class="m-1">
-            <div class="ml-auto mr-auto {$userSettings.imageSize ?? 'max-w-3xl'}">
+            <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                 <img
                     src="{thumbnail_url}"
                     loading="lazy"

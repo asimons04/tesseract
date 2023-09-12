@@ -116,28 +116,28 @@
 
                     <div>
                         <SelectMenu
-                            label="Image Size"
+                            label="Feed Image Size"
                             alignment="top-left"
                             optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
                             options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
-                            selected={$userSettings.imageSize}
+                            selected={$userSettings.imageSize.feed}
                             on:select={(e) => {
                                 // @ts-ignore
-                                $userSettings.imageSize = e.detail
+                                $userSettings.imageSize.feed = e.detail
                             }}
                         />
                     </div>
 
                     <div>
                         <SelectMenu
-                            label="Video/Embed Size"
+                            label="Post Image Size"
                             alignment="top-left"
                             optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
                             options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
-                            selected={$userSettings.videoSize}
+                            selected={$userSettings.imageSize.post}
                             on:select={(e) => {
                                 // @ts-ignore
-                                $userSettings.videoSize = e.detail
+                                $userSettings.imageSize.post = e.detail
                             }}
                         />
                     </div>

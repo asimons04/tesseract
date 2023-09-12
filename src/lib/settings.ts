@@ -55,8 +55,10 @@ interface Settings {
         customInvidious: string
         autoplay: boolean
     }
-    imageSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
-    videoSize: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
+    imageSize: {
+        feed: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
+        post: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
+    }
     uiState: {
         expandSidebar: boolean
         expandCommunitySidebar: boolean
@@ -81,8 +83,10 @@ export const defaultSettings: Settings = {
     
     debugInfo: false,
     systemUI: true,
-    imageSize: 'max-w-md',
-    videoSize: 'w-full',
+    imageSize: {
+        feed: 'max-w-md',
+        post: 'w-full'
+    },
     highlightCode: true,
     inlineImages: true,
     uiState: {
@@ -203,12 +207,17 @@ export const YTFrontends = {
 }
 
 
-
 if (typeof window != 'undefined') {
 
     let oldUserSettings = JSON.parse(
         localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
     )
+
+    // Migration step to convert to new image size struct
+    if (typeof oldUserSettings.imageSize == 'string') {
+        delete oldUserSettings.imageSize;
+        oldUserSettings.imageSize = defaultSettings.imageSize;
+    }
 
     userSettings.set({ ...defaultSettings, ...oldUserSettings })
 }

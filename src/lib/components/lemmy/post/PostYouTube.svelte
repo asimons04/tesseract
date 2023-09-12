@@ -1,20 +1,21 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings.js'
     import { getInstance } from '$lib/lemmy.js'
-    import type { t_postDisplayType } from './helpers.js'
+    import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
     import Link from '$lib/components/input/Link.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    
+    import { imageSize} from './helpers.js'
+
     export let post: PostView
-    export let displayType: t_postDisplayType
+    export let displayType: PostDisplayType
 
     let videoID:    string | null | undefined
     let embedURL:   string = ""
     let extraParams:string = ""
-    
+    let size: string = imageSize(displayType);
 
     
     if (post.post && post.post.url) {
@@ -69,10 +70,7 @@
         return false;
     }
 
-    function displaySize() {
-        if (displayType == 'feed') { return $userSettings.imageSize ?? 'max-w-3xl' }
-        if (displayType == 'post') { return $userSettings.videoSize ?? 'max-w-4xl' }
-    }
+
 </script>
 
 <style>
@@ -95,26 +93,26 @@
 
 
 {#if showAsEmbed()}
-<Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
-    
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
+    <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
         
-        <div class="ml-auto mr-auto {displaySize()}">
-            <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
-                <iframe 
-                    class="flexiframe"
-                    src="{embedURL}?{extraParams}" 
-                    allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
-                    loading="lazy"
-                    allowfullscreen
-                    title="YouTube: {post.post.name}"
-                >
-                </iframe>
+        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
+            
+            <div class="ml-auto mr-auto {size}">
+                <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
+                    <iframe 
+                        class="flexiframe"
+                        src="{embedURL}?{extraParams}" 
+                        allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
+                        loading="lazy"
+                        allowfullscreen
+                        title="YouTube: {post.post.name}"
+                    >
+                    </iframe>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
