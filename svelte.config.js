@@ -13,15 +13,15 @@ const config = {
 		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: process.env.ADAPTER == 'node' ? node() : auto(),
-		//csrf: {
-        //          checkOrigin: false,
-        //	},
+		csrf: {
+                  checkOrigin: true,
+        },
         csp: {
 			directives: {
 				'default-src':  ['self'],
                 'connect-src':  ['*'],
                 'manifest-src': ['self'],
-                'img-src':      ['*', 'data:'],
+                'img-src':      ['*', 'data:', 'blob:'],
                 'script-src':   ['self'],
                 'style-src':    ['self', 'unsafe-inline'],
                 'form-action':  ['self'],

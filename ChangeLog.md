@@ -2,7 +2,9 @@
 All major/minor changes between releases will be documented here.  
 ## 1.2.51
 ### Security
-Added CSP directives
+Added and tuned CSP directives
+
+
 
 
 
