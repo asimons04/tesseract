@@ -64,6 +64,7 @@ interface Settings {
         expandCommunitySidebar: boolean
         expandModeratingList: boolean
         expandSubscribedList: boolean
+        expandAccountsList: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -96,7 +97,8 @@ export const defaultSettings: Settings = {
         expandSidebar: true,
         expandCommunitySidebar: true,
         expandModeratingList: true,
-        expandSubscribedList: true
+        expandSubscribedList: true,
+        expandAccountsList: true,
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,

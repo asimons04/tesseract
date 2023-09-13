@@ -1,13 +1,16 @@
 <script lang="ts">
     import {
+        AdjustmentsHorizontal,
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
         ChevronDoubleLeft,
         ChevronDoubleDown,
         Cog6Tooth,
         GlobeAlt,
+        HandRaised,
         Home,
         Icon,
+        InboxStack,
         InformationCircle,
         Identification,
         Minus,
@@ -99,16 +102,66 @@
 
     <!--- Account Selector --->
     {#if $profileData.profiles.length >= 1}
-        <hr class="border-slate-300 dark:border-zinc-800 my-1" />
-        {#each $profileData.profiles as prof, index (prof.id)}
-            <div animate:flip={{ duration: 300, easing: expoOut }} class="w-full">
-                <ProfileButton {index} {prof} expanded={$userSettings.uiState.expandSidebar} />
-            </div>
-        {/each}
-        <SidebarButton href="/accounts" expanded={$userSettings.uiState.expandSidebar}>
-            <Icon src={UserGroup} mini size="18" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Accounts</span>
-        </SidebarButton>
+        
+        <div class="flex flex-col" class:hidden={!$userSettings.uiState.expandSidebar}>
+            <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+            
+            <span class="flex flex-row justify-between">
+                <SidebarButton 
+                    expanded={$userSettings.uiState.expandSidebar}
+                    on:click={() =>
+                        ($userSettings.uiState.expandAccountsList = !$userSettings.uiState.expandAccountsList)
+                    }
+                >
+                    <Icon src={UserGroup} mini size="18" />
+                    <span class:hidden={!$userSettings.uiState.expandSidebar}>Accounts</span>
+                </SidebarButton>
+                
+                <Button
+                    on:click={() =>
+                        ($userSettings.uiState.expandAccountsList = !$userSettings.uiState.expandAccountsList)
+                    }
+                    class="!p-2 hover:bg-slate-200"
+                    aria-label={$userSettings.uiState.expandAccountsList
+                        ? 'Collapse account list'
+                        : 'Expand account list'
+                    }
+                    title={$userSettings.uiState.expandAccountsList
+                        ? 'Collapse account list'
+                        : 'Expand account list'
+                    }
+                >
+                    <Icon
+                        src={ChevronDoubleDown}
+                        mini
+                        size="16"
+                        class="transition-transform {$userSettings.uiState.expandAccountsList
+                            ? 'rotate-180'
+                            : ''}"
+                    />
+                </Button>
+
+            </span>
+            
+            
+
+            <span class="flex flex-col" class:hidden={!$userSettings.uiState.expandAccountsList}>
+                {#each $profileData.profiles as prof, index (prof.id)}
+                    <div animate:flip={{ duration: 300, easing: expoOut }} class="w-full">
+                        <ProfileButton {index} {prof} expanded={$userSettings.uiState.expandSidebar} />
+                    </div>
+                {/each}
+                
+                <SidebarButton href="/accounts" expanded={$userSettings.uiState.expandSidebar}>
+                    <Icon src={AdjustmentsHorizontal} mini size="18" />
+                    <span class:hidden={!$userSettings.uiState.expandSidebar}>Manage Accounts</span>
+                </SidebarButton>
+                
+            </span>
+
+            
+        </div>
+        
     {/if}
     
 
@@ -117,12 +170,20 @@
         {#if $profile?.user.moderates.length > 0}
             
             <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.uiState.expandSidebar} />
-            <h1 class="flex flex-row font-bold justify-between" class:hidden={!$userSettings.uiState.expandSidebar} >
-                <span>Moderating 
+            <h1 class="flex flex-row text-sm transition-colors justify-between" class:hidden={!$userSettings.uiState.expandSidebar} >
+                <SidebarButton 
+                    expanded={$userSettings.uiState.expandSidebar}
+                    on:click={() =>
+                        ($userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList)
+                    }
+                >
+                    <Icon src={HandRaised} mini size="18" />
+                    <span class:hidden={!$userSettings.uiState.expandSidebar}>Moderating</span>
                     <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
                         {$profile?.user.moderates.length}
                     </span>
-                </span>
+                </SidebarButton>
+                
                 <Button
                     on:click={() =>
                         ($userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList)
@@ -160,13 +221,20 @@
         
         <!--- Subscribed Community List --->
         <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.uiState.expandSidebar}/>
-        <h1 class="flex flex-row text-base font-bold justify-between" class:hidden={!$userSettings.uiState.expandSidebar} >
-            
-            <span>Subscribed
+        <h1 class="flex flex-row text-sm transition-colors justify-between" class:hidden={!$userSettings.uiState.expandSidebar} >
+            <SidebarButton 
+                expanded={$userSettings.uiState.expandSidebar}
+                on:click={() =>
+                    ($userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList)
+                }
+            >
+                <Icon src={InboxStack} mini size="18" />
+                <span class:hidden={!$userSettings.uiState.expandSidebar}>Subscribed</span>
                 <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
                     {$profile?.user.follows.length}
                 </span>
-            </span>
+            </SidebarButton>
+            
         
             <Button
                 on:click={() =>
