@@ -48,12 +48,13 @@
 
     export let data
     
-    
     let post = data.post
+    let community = data.post.community_view.community;
+    
     let pType:PostType = postType(post.post_view)
     let pDisplayType:PostDisplayType = "post"
     
-    let community = data.post.community_view.community;
+    
     setSessionStorage('lastSeenCommunity', { id: community.id, name: `${community.name}@${new URL(community.actor_id).hostname}` })
     
     onMount(async () => {
@@ -337,7 +338,7 @@
                     />
                 </div>
             </div>
-
+            
             <!--- Crosspost Bar --->
             {#if post.cross_posts?.length > 0}
                 <details
