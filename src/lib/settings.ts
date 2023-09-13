@@ -86,7 +86,7 @@ export const defaultSettings: Settings = {
     debugInfo: false,
     systemUI: true,
     imageSize: {
-        feed: 'max-w-md',
+        feed: 'max-w-4xl',
         post: 'w-full'
     },
     highlightCode: true,
