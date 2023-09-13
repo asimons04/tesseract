@@ -1,5 +1,17 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.52
+### Sidebar Improvements
+- Removed the hacks I had to make the sidebar behave; added a missing `flex flex-col` class to the community list container div to resolve.
+- Community icons are now visible again when sidebar is collapsed.  Whoo hoo!
+- Removed up/down arrows that used to collapse the accounts/moderating/subscribed sections. The header/button now performs that role.
+- All sidebar buttons now have tooltips. Makes it much, _much_ easier to use while collapsed, especially to switch between accounts.
+
+### Bugfixes
+- Fixed unhandled exception in date handling component
+
+
+
 ## 1.2.51
 ### Security
 Added and tuned CSP directives
@@ -10,7 +22,7 @@ Added and tuned CSP directives
 - Moved button that takes you to `/accounts` to a button _within_ the collapsible section. Renamed to "Manage Accounts"
 - Turned `Moderating` and `Subscribed` headers into buttons which expand/collapse those sections.  Looks a lot sleeker
   - Up/down arrows to the right of those are now redundant.  Considering removing them.
-  
+
 
 
 
