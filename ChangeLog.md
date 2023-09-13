@@ -1,5 +1,13 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.50
+### Bugfixes
+
+- Fixed NSFW blur not applying to compact view in feed (cards were fixed in 1.2.42)
+
+- Updated comment vote arrows to match those used for posts. Left borders around those (for now?)
+
+
 ## 1.2.49
 
 ### Feed

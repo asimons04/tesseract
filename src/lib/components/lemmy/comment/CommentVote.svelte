@@ -1,5 +1,7 @@
 <script lang="ts">
     import {
+        ArrowUp,
+        ArrowDown,
         ChevronDown,
         ChevronUp,
         Icon,
@@ -73,7 +75,7 @@
         class="px-1.5 {vote == 1 ? voteColor(vote) : ''}"
         aria-label="Upvote"
     >
-        <Icon src={ChevronUp} width={19} mini />
+        <Icon src={ArrowUp} width={19} mini />
     </button>
     
     <span class="text-sm font-medium {voteColor(vote)}">
@@ -85,7 +87,7 @@
         class="px-1.5 {vote == -1 ? voteColor(vote) : ''}"
         aria-label="Downvote"
     >
-        <Icon src={ChevronDown} width={19} mini />
+        <Icon src={ArrowDown} width={19} mini />
     </button>
 </div>
 
