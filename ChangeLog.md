@@ -9,7 +9,7 @@ All major/minor changes between releases will be documented here.
 
 ### Bugfixes
 - Fixed unhandled exception in date handling component
-
+- Removed "+Z" from a function that takes the date from the API, creates a date object, and passes it to a function that returns a relative date (e.g. 1 mo ago). API may be sending an incorrectly formatted time, but it works fine without the timezone and there's an upcoming fix to send the proper timestamp. 
 
 
 ## 1.2.51
