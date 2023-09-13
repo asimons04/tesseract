@@ -77,91 +77,91 @@
 </script>
 
 {#if href}
-  <a
-    {href}
-    on:click
-    {...$$restProps}
-    class:hidden={hidden}
-    class="
-      {buttonColor[color]}
-      {buttonSize[size]}
-      {buttonRoundness[rounded]}
-      text-sm transition-colors disabled:!opacity-70 disabled:!pointer-events-none
-      disabled:!border disabled:!border-slate-300 disabled:!bg-slate-200 disabled:dark:!border-zinc-700 disabled:dark:!bg-zinc-800
-      {$$props.class}
-     {loading
-      ? color == 'primary'
-        ? '!bg-transparent !text-inherit'
-        : ''
-      : ''}"
-  >
-    <div
-      class="flex flex-row items-center gap-1.5 h-full {buttonAlignment[
-        alignment
-      ]}"
+    <a
+        {href}
+        on:click
+        {...$$restProps}
+        title={title}
+        class:hidden={hidden}
+        class="
+            {buttonColor[color]}
+            {buttonSize[size]}
+            {buttonRoundness[rounded]}
+            text-sm transition-colors disabled:!opacity-70 disabled:!pointer-events-none
+            disabled:!border disabled:!border-slate-300 disabled:!bg-slate-200 disabled:dark:!border-zinc-700 disabled:dark:!bg-zinc-800
+            {$$props.class}
+            {loading
+                ? color == 'primary'
+                ? '!bg-transparent !text-inherit'
+                : ''
+                : ''
+            }
+        "
     >
-      {#if loading}
-        <Spinner
-          width={loaderWidth
-            ? loaderWidth
-            : size == 'lg'
-            ? 20
-            : size == 'md'
-            ? 18
-            : size == 'sm'
-            ? 16
-            : 16}
-        />
-      {:else if $$slots.icon}
-        <slot name="icon" />
-      {:else if icon}
-        <Icon src={icon} size="16" mini />
-      {/if}
-      <slot />
-    </div>
-  </a>
+        <div class="flex flex-row items-center gap-1.5 h-full {buttonAlignment[alignment]}">
+            {#if loading}
+                <Spinner
+                    width={loaderWidth
+                        ? loaderWidth
+                        : size == 'lg'
+                        ? 20
+                        : size == 'md'
+                        ? 18
+                        : size == 'sm'
+                        ? 16
+                        : 16
+                    }
+                />
+            {:else if $$slots.icon}
+                <slot name="icon" />
+            {:else if icon}
+                <Icon src={icon} size="16" mini />
+            {/if}
+            <slot />
+        </div>
+    </a>
 {:else}
-  <button
-    {...$$restProps}
-    on:click
-    class="
-      {buttonColor[color]}
-      {buttonSize[size]}
-      {buttonRoundness[rounded]}
-      text-sm transition-colors disabled:!opacity-70 disabled:!pointer-events-none
-      disabled:!border disabled:!border-slate-300 disabled:!bg-slate-200
-      disabled:dark:!border-zinc-700 disabled:dark:!bg-zinc-800 disabled:text-inherit
-      {$$props.class}
-     {loading
-      ? color == 'primary'
-        ? '!bg-transparent !text-inherit'
-        : ''
-      : ''}"
-    type={submit ? 'submit' : 'button'}
-    title={title}
-    class:hidden={hidden}
-  >
-    <div
-      class="flex flex-row items-center gap-1.5 {buttonAlignment[alignment]}"
+    <button
+        {...$$restProps}
+        on:click
+        class="
+            {buttonColor[color]}
+            {buttonSize[size]}
+            {buttonRoundness[rounded]}
+            text-sm transition-colors disabled:!opacity-70 disabled:!pointer-events-none
+            disabled:!border disabled:!border-slate-300 disabled:!bg-slate-200
+            disabled:dark:!border-zinc-700 disabled:dark:!bg-zinc-800 disabled:text-inherit
+            {$$props.class}
+            {loading
+                ? color == 'primary'
+                ? '!bg-transparent !text-inherit'
+                : ''
+                : ''
+            }"
+            type={submit ? 'submit' : 'button'}
+            title={title}
+            class:hidden={hidden}
     >
-      {#if loading}
-        <Spinner
-          width={loaderWidth
-            ? loaderWidth
-            : size == 'lg'
-            ? 20
-            : size == 'md'
-            ? 18
-            : size == 'sm'
-            ? 16
-            : 16}
-        />
-      {:else if $$slots.icon}
-        <slot name="icon" />
-      {:else if icon}
-        <Icon src={icon} size="16" mini />
-      {/if}
-      <slot />
-    </div>
-  </button>
+        <div class="flex flex-row items-center gap-1.5 {buttonAlignment[alignment]}">
+            {#if loading}
+                <Spinner
+                    width={loaderWidth
+                        ? loaderWidth
+                        : size == 'lg'
+                        ? 20
+                        : size == 'md'
+                        ? 18
+                        : size == 'sm'
+                        ? 16
+                        : 16
+                    }
+                />
+            {:else if $$slots.icon}
+                <slot name="icon" />
+            {:else if icon}
+                <Icon src={icon} size="16" mini />
+            {/if}
+            <slot />
+        </div>
+    </button>
 {/if}

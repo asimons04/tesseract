@@ -50,51 +50,43 @@
             ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
         }
         class="w-max !p-2 hover:bg-slate-200"
-        aria-label={$userSettings.uiState.expandSidebar
-            ? 'Collapse sidebar'
-            : 'Expand sidebar'
-        }
-        title={$userSettings.uiState.expandSidebar
-            ? 'Collapse sidebar'
-            : 'Expand sidebar'
-        }
+        aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
+        title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
     >
         <Icon
             src={ChevronDoubleLeft}
             mini
             size="16"
-            class="transition-transform {$userSettings.uiState.expandSidebar
-                ? ''
-                : 'rotate-180'}"
+            class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"
         />
     </Button>
     
 
     <!---Frontpage--->
-    <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar}>
+    <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home">
         <Icon src={Home} mini size="18" title="Home" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
 
     <!---Popular --->
-    <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar}>
+    <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular">
         <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
     </SidebarButton>
     
     <!---Settings--->
-    <SidebarButton href="/settings" expanded={$userSettings.uiState.expandSidebar}>
+    <SidebarButton href="/settings" expanded={$userSettings.uiState.expandSidebar} title="Settings">
         <Icon src={Cog6Tooth} mini size="18" title="Settings" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Settings</span>
     </SidebarButton>
 
     <!---Communities--->
-    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar}>
+    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities">
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Communities</span>
     </SidebarButton>
 
-    <SidebarButton href="/modlog" expanded={$userSettings.uiState.expandSidebar}>
+    <SidebarButton href="/modlog" expanded={$userSettings.uiState.expandSidebar} title="Modlog">
         <Icon src={Newspaper} size="16" mini />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Modlog</span>
         
@@ -103,56 +95,29 @@
     <!--- Account Selector --->
     {#if $profileData.profiles.length >= 1}
         
-        <div class="flex flex-col" class:hidden={!$userSettings.uiState.expandSidebar}>
+        <div class="flex flex-col">
             <hr class="border-slate-300 dark:border-zinc-800 my-1" />
             
-            <span class="flex flex-row justify-between">
-                <SidebarButton 
-                    expanded={$userSettings.uiState.expandSidebar}
-                    on:click={() =>
-                        ($userSettings.uiState.expandAccountsList = !$userSettings.uiState.expandAccountsList)
-                    }
-                >
-                    <Icon src={UserGroup} mini size="18" />
-                    <span class:hidden={!$userSettings.uiState.expandSidebar}>Accounts</span>
-                </SidebarButton>
-                
-                <Button
-                    on:click={() =>
-                        ($userSettings.uiState.expandAccountsList = !$userSettings.uiState.expandAccountsList)
-                    }
-                    class="!p-2 hover:bg-slate-200"
-                    aria-label={$userSettings.uiState.expandAccountsList
-                        ? 'Collapse account list'
-                        : 'Expand account list'
-                    }
-                    title={$userSettings.uiState.expandAccountsList
-                        ? 'Collapse account list'
-                        : 'Expand account list'
-                    }
-                >
-                    <Icon
-                        src={ChevronDoubleDown}
-                        mini
-                        size="16"
-                        class="transition-transform {$userSettings.uiState.expandAccountsList
-                            ? 'rotate-180'
-                            : ''}"
-                    />
-                </Button>
-
-            </span>
-            
-            
+            <SidebarButton 
+                class="w-full"
+                title="{$userSettings.uiState.expandAccountsList ? 'Collapse' : 'Expand'} User Account List"
+                expanded={$userSettings.uiState.expandSidebar}
+                on:click={() =>
+                    ($userSettings.uiState.expandAccountsList = !$userSettings.uiState.expandAccountsList)
+                }
+            >
+                <Icon src={UserGroup} mini size="18" />
+                <span class:hidden={!$userSettings.uiState.expandSidebar}>Accounts</span>
+            </SidebarButton>
 
             <span class="flex flex-col" class:hidden={!$userSettings.uiState.expandAccountsList}>
                 {#each $profileData.profiles as prof, index (prof.id)}
                     <div animate:flip={{ duration: 300, easing: expoOut }} class="w-full">
-                        <ProfileButton {index} {prof} expanded={$userSettings.uiState.expandSidebar} />
+                        <ProfileButton {index} {prof} expanded={$userSettings.uiState.expandSidebar}/>
                     </div>
                 {/each}
                 
-                <SidebarButton href="/accounts" expanded={$userSettings.uiState.expandSidebar}>
+                <SidebarButton href="/accounts" expanded={$userSettings.uiState.expandSidebar} title="Manage Accounts">
                     <Icon src={AdjustmentsHorizontal} mini size="18" />
                     <span class:hidden={!$userSettings.uiState.expandSidebar}>Manage Accounts</span>
                 </SidebarButton>
@@ -166,111 +131,64 @@
     
 
     {#if $profile?.user}
-        <!--- Moderating --->
+        <!--- Communities User is Moderating --->
         {#if $profile?.user.moderates.length > 0}
             
-            <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.uiState.expandSidebar} />
-            <h1 class="flex flex-row text-sm transition-colors justify-between" class:hidden={!$userSettings.uiState.expandSidebar} >
-                <SidebarButton 
-                    expanded={$userSettings.uiState.expandSidebar}
-                    on:click={() =>
-                        ($userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList)
-                    }
-                >
-                    <Icon src={HandRaised} mini size="18" />
-                    <span class:hidden={!$userSettings.uiState.expandSidebar}>Moderating</span>
+            <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+            <SidebarButton 
+                class="w-full"  
+                title="{$userSettings.uiState.expandModeratingList ? 'Collapse' : 'Expand'} Communities I Moderate List"  
+                expanded={$userSettings.uiState.expandSidebar}
+                on:click={() =>
+                    ($userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList)
+                }
+            >
+                <Icon src={HandRaised} mini size="18" />
+                <span class:hidden={!$userSettings.uiState.expandSidebar}>
+                    Moderating
                     <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
                         {$profile?.user.moderates.length}
                     </span>
-                </SidebarButton>
-                
-                <Button
-                    on:click={() =>
-                        ($userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList)
-                    }
-                    class="!p-2 hover:bg-slate-200"
-                    aria-label={$userSettings.uiState.expandModeratingList
-                        ? 'Collapse my communities'
-                        : 'Expand my Communities'
-                    }
-                    title={$userSettings.uiState.expandModeratingList
-                        ? 'Collapse my communities'
-                        : 'Expand my Communities'
-                    }
-                >
-                    <Icon
-                        src={ChevronDoubleDown}
-                        mini
-                        size="16"
-                        class="transition-transform {$userSettings.uiState.expandModeratingList
-                            ? 'rotate-180'
-                            : ''}"
-                    />
-                </Button>
-            </h1>   
-
+                </span>
+            </SidebarButton>
             
             <CommunityList
                 expanded={$userSettings.uiState.expandSidebar}
                 items={$profile.user.moderates.map((i) => i.community)}
-                hidden={!$userSettings.uiState.expandModeratingList || !$userSettings.uiState.expandSidebar}
+                hidden={!$userSettings.uiState.expandModeratingList}
             />
             
         
         {/if}
         
         <!--- Subscribed Community List --->
-        <hr class="border-slate-300 dark:border-zinc-800 my-1" class:hidden={!$userSettings.uiState.expandSidebar}/>
-        <h1 class="flex flex-row text-sm transition-colors justify-between" class:hidden={!$userSettings.uiState.expandSidebar} >
-            <SidebarButton 
-                expanded={$userSettings.uiState.expandSidebar}
-                on:click={() =>
-                    ($userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList)
-                }
-            >
-                <Icon src={InboxStack} mini size="18" />
-                <span class:hidden={!$userSettings.uiState.expandSidebar}>Subscribed</span>
+        <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+        
+        <SidebarButton 
+            class="w-full"
+            title="{$userSettings.uiState.expandSubscribedList ? 'Collapse' : 'Expand'} My Community Subscriptions List"  
+            expanded={$userSettings.uiState.expandSidebar}
+            on:click={() =>
+                ($userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList)
+            }
+        >
+            <Icon src={InboxStack} mini size="18" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>
+                Subscribed
                 <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
                     {$profile?.user.follows.length}
                 </span>
-            </SidebarButton>
-            
+            </span>
+        </SidebarButton>
         
-            <Button
-                on:click={() =>
-                    ($userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList)
-                }
-                class="!p-2 hover:bg-slate-200"
-                aria-label={$userSettings.uiState.expandSubscribedList
-                    ? 'Collapse my subscriptions'
-                    : 'Expand my subscriptions'
-                }
-                title={$userSettings.uiState.expandSubscribedList
-                    ? 'Collapse my subscriptions'
-                    : 'Expand my subscriptions'
-                }
-            >
-                <Icon
-                    src={ChevronDoubleDown}
-                    mini
-                    size="16"
-                    class="transition-transform {$userSettings.uiState.expandSubscribedList
-                        ? 'rotate-180'
-                        : ''}"
-                />
-            </Button>
-
-        </h1>
         
         <CommunityList
             expanded={$userSettings.uiState.expandSidebar}
             items={$profile.user.follows.map((i) => i.community)}
-            hidden={!$userSettings.uiState.expandSubscribedList || !$userSettings.uiState.expandSidebar}
+            hidden={!$userSettings.uiState.expandSubscribedList }
         />
-        
-        
+        <!--hidden={!$userSettings.uiState.expandSubscribedList || !$userSettings.uiState.expandSidebar}-->
 
-        
     {:else}
         <Button
             class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"

@@ -1,17 +1,17 @@
 <script lang="ts">
-  import Button from '$lib/components/input/Button.svelte'
-  import Avatar from '$lib/components/ui/Avatar.svelte'
-  import type { Community } from 'lemmy-js-client'
-  import { flip } from 'svelte/animate'
-  import { expoOut } from 'svelte/easing'
-  import { slide, fade } from 'svelte/transition'
+    import Button from '$lib/components/input/Button.svelte'
+    import Avatar from '$lib/components/ui/Avatar.svelte'
+    import type { Community } from 'lemmy-js-client'
+    import { flip } from 'svelte/animate'
+    import { expoOut } from 'svelte/easing'
+    import { slide, fade } from 'svelte/transition'
 
-  export let items: Community[]
-  export let expanded: boolean
-  export let hidden: boolean
+    export let items: Community[]
+    export let expanded: boolean
+    export let hidden: boolean
 </script>
 
-<div class="min-h-[10vh] h-auto overflow-y-auto"
+<div class="min-h-[10vh] h-auto overflow-y-auto flex flex-col"
     class:hidden={hidden}
 >
     {#each items.sort( (a, b) => a.title.localeCompare(b.title) ) as follow (follow.id)}
@@ -24,6 +24,7 @@
                 color="tertiary"
                 alignment="left"
                 href="/c/{follow.name}@{new URL(follow.actor_id).hostname}"
+                title="{follow.name}"
             >
                 <div class="flex-none">
                     <Avatar
