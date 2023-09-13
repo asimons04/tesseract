@@ -25,7 +25,7 @@
     </div>
 
 {:else}
-    <div class="w-full sm:w-full md:w-[80%] lg:w-[80%] xl:w-[80%]
+    <div class="w-full sm:w-full md:w-[90%] lg:w-[80%] xl:w-[70%]
         ml-auto mr-auto flex flex-col gap-5
         "
     >
