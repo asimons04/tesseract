@@ -317,24 +317,25 @@
             {/if}
 
             <!--- Post Body --->
-            {#if post.post_view.post.body}
-            <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">
-                <Markdown source={post.post_view.post.body} />
-            </div>
-            {/if}
             
-            <!--- Post Action Buttons --->
-            <div class="w-full relative">
-                <PostActions
-                    bind:post={post.post_view}
-                    postType={pType}
-                    postDisplayType={pDisplayType}
-                    on:edit={() =>
-                        toast({
-                        content: 'The post was edited successfully.',
-                        type: 'success',
-                    })}
-                />
+            <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">
+                {#if post.post_view.post.body}    
+                    <Markdown source={post.post_view.post.body} />
+                {/if}
+                
+                <!--- Post Action Buttons --->
+                <div class="w-full relative">
+                    <PostActions
+                        bind:post={post.post_view}
+                        postType={pType}
+                        postDisplayType={pDisplayType}
+                        on:edit={() =>
+                            toast({
+                            content: 'The post was edited successfully.',
+                            type: 'success',
+                        })}
+                    />
+                </div>
             </div>
 
             <!--- Crosspost Bar --->
@@ -375,7 +376,7 @@
             {/if}
             
             <!--- Comments --->
-            <div class="mt-4 flex flex-col gap-2 w-full">
+            <div id="comments" class="mt-4 flex flex-col gap-2 w-full">
                 <div class="font-bold text-lg">
                     Comments 
                     <span class="text-sm font-normal ml-2 opacity-80">

@@ -86,7 +86,7 @@
     </Modal>
 {/if}
 
-<div class="flex flex-row gap-2 items-center h-8">
+<div class="flex flex-row mt-4 gap-2 items-center h-8">
     <PostVote
         post={post.post}
         bind:vote={post.my_vote}
@@ -96,7 +96,7 @@
     <Button
         size="sm"
         href="/post/{getInstance()}/{post.post.id}"
-        class="!text-inherit h-8 px-3"
+        class="!text-inherit h-8 px-3 border-none"
         title="Comments"
     >
         <Icon
