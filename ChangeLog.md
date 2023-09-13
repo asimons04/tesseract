@@ -1,5 +1,18 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.49
+
+### Feed
+- Increased gap between posts a bit
+- Increased margins in post to give them more of a card feeling. 
+- Increased default feed image size to extra large to account for the increased margins. Only the default setting was changed. Existing preferences will take precedence.
+- Default option for "Fade title of read posts" changed to false. Again, existing preferences will take precedence.
+
+### Posts
+- Changed vote button design and flattened it and the comment button
+- Limited YT-style videos to 88% viewport width even when "full-width" is selected. This keeps them from getting too large with both sidebars collapsed (would often get cropped by the navbar).
+- 
+
 ## 1.2.48
 
 ### Infrastructure

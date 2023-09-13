@@ -99,7 +99,7 @@ export const defaultSettings: Settings = {
         expandSubscribedList: true
     },
 
-    markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  true,
+    markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
     
     showInstances: {
         user:           toBool(env.PUBLIC_SHOW_INSTANCES_USER)          ??  false,
