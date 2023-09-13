@@ -96,8 +96,8 @@
         
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
             
-            <div class="ml-auto mr-auto max-h-[90vh] {size}">
-                <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
+            <div class="ml-auto mr-auto max-w-[88vw] {size}">
+                <div class="flexiframe-container rounded-md max-w-screen mx-auto">
                     <iframe 
                         id="{post.post.id}"
                         class="flexiframe"

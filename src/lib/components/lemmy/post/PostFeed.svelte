@@ -26,7 +26,7 @@
 
 {:else}
     <div class="w-full sm:w-full md:w-[80%] lg:w-[80%] xl:w-[80%]
-        ml-auto mr-auto flex flex-col gap-3
+        ml-auto mr-auto flex flex-col gap-5
         "
     >
     {#each posts as post, index (post.post.id)}
