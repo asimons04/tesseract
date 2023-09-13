@@ -4,7 +4,13 @@ All major/minor changes between releases will be documented here.
 ### Security
 Added and tuned CSP directives
 
-
+### Sidebar Updates
+- Accounts section is now collapsible
+- Accounts button now toggles the expand/collapse of that section
+- Moved button that takes you to `/accounts` to a button _within_ the collapsible section. Renamed to "Manage Accounts"
+- Turned `Moderating` and `Subscribed` headers into buttons which expand/collapse those sections.  Looks a lot sleeker
+  - Up/down arrows to the right of those are now redundant.  Considering removing them.
+  
 
 
 
