@@ -1,5 +1,11 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.51
+### Security
+Added CSP directives
+
+
+
 ## 1.2.50
 ### Bugfixes
 

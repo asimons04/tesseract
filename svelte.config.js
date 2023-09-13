@@ -16,14 +16,22 @@ const config = {
 		//csrf: {
         //          checkOrigin: false,
         //	},
-        // csp: {
-		// 	directives: {
-		// 		'script-src': ['self'],
-		// 		'object-src': ['none'],
-		// 		'base-uri': ['none']
-		// 	},
-		// 	mode: 'nonce'
-		// }
+        csp: {
+			directives: {
+				'default-src':  ['self'],
+                'connect-src':  ['*'],
+                'manifest-src': ['self'],
+                'img-src':      ['*', 'data:'],
+                'script-src':   ['self'],
+                'style-src':    ['self', 'unsafe-inline'],
+                'form-action':  ['self'],
+                'base-uri':     ['self'],
+                'frame-src':    ['*'],
+                'media-src':    ['*', 'data:'],
+		 		'object-src':   ['none'],
+			},
+			mode: 'nonce'
+		}
 		
 	},
 };
