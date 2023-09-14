@@ -259,6 +259,11 @@
             <Icon src={InformationCircle} mini width={16} />
             About
         </MenuButton>
+
+        <MenuButton link href="/legal">
+            <Icon src={InformationCircle} mini width={16} />
+            Legal
+        </MenuButton>
       
         <MenuButton>
             <Icon

@@ -2,9 +2,7 @@
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
-- Password reset
-
-- Password changes
+- Add "Guest" and the instance it's hooked to in Account switcher menu in sidebar
 
 - Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
@@ -41,10 +39,6 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 
 ### UI
-- Implement a `/legal` page to render the value returned from the API
-  - `/about` should link to `/legal`
-  - Add `/legal` link to sidebar
-  - Add `/legal` link to site card
 
 - Implement a public `/instances` page to render the linked, blocked, and allowed instances
 
