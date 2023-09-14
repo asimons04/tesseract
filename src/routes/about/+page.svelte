@@ -1,6 +1,6 @@
 <script>
-  import Link from '$lib/components/input/Link.svelte'
-  import Logo from '$lib/components/ui/Logo.svelte'
+    import Link from '$lib/components/input/Link.svelte'
+    import Logo from '$lib/components/ui/Logo.svelte'
     import Application from '../admin/applications/Application.svelte';
 </script>
 
@@ -23,34 +23,15 @@
         as media and presentation are concerned.
     </p>
     
-    <h2 class="text-2xl font-bold leading-8">How does Tesseract differ from Photon?</h2>
-    <p>Right now, only minimally, but also substantially in terms of qualify of life features that I want in a Lemmy frontend.</p>
-    
-    <p>
-        I fully admit that I'm standing on the shoulders of giants here, but as time progresses, I hope to make this client my own
-        with unique features and enhancements tailored to the evolving landscape of the Lemmy ecosystem.
-    </p>
     
     <h3 class="text-xl font-bold leading-8">Features Unique to Tesseract</h3>
     <ul class="list-disc pl-4 my-3">
-        <li>Inline media players for Youtube and Spotify (more coming eventually)</li>
+        <li>Inline media players for Youtube, Spotify, and SoundCloud (more coming eventually/as-demanded)</li>
         <li>More focus on images in feed and post view.</li>
         <li>A more "new" Reddit-like look and feel</li>
         <li>For a full list, please see the <Link href="https://github.com/asimons04/Tesseract/blob/main/ChangeLog.md" newtab={true} title="ChangeLog.md" highlight>change log</Link>.</li>
     </ul>
 
-    <h2 class="text-2xl font-bold leading-8">Roadmap</h2>
-    <p>
-        There are a few things I have in mind to start with, but only a few are fully fleshed out as far as the implementation goes:
-    </p>
-
-    <ul class="list-disc pl-4 my-3">
-        <li>Adding a search field to the top navbar for quick searching.</li>
-        <li>
-            For the rest, see the <Link href="https://github.com/asimons04/Tesseract/blob/main/README.md" newtab={true} title="README.md" highlight>README.md</Link>
-            on the GitHub page.
-        </li>
-    </ul>
 
     <h2 class="text-2xl font-bold leading-8">Support/Contributions</h2>
     <p>
