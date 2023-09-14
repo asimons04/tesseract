@@ -3,7 +3,9 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.53
 ### Bugfixes
-If Tesseract is locked to a particular instance, bypasses the `/accounts` page and takes you straight to the login page for the instance.
+- If Tesseract is locked to a particular instance, and there are no accounts setup yet, it will take you straight to /login and bypass /accounts.
+
+
 
 ### Implementing Missing Features
 #### Legal Page

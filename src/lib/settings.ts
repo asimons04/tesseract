@@ -219,7 +219,7 @@ if (typeof window != 'undefined') {
         localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
     )
 
-    // Migration step to convert to new image size struct
+    // Migrations from old settings styles to new
     if (typeof oldUserSettings.imageSize == 'string') {
         delete oldUserSettings.imageSize;
         oldUserSettings.imageSize = defaultSettings.imageSize;
