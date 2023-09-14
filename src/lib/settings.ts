@@ -135,7 +135,7 @@ export const defaultSettings: Settings = {
     experimentalFeatures:                                               false,
     
     embeddedMedia: {
-        feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  false,
+        feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  true,
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
         YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                     ??  'YouTube',
         customInvidious:                                                    'yewtu.be',
