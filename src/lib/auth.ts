@@ -9,131 +9,129 @@ import type { GetSiteResponse, MyUserInfo } from 'lemmy-js-client'
 import { get, writable } from 'svelte/store'
 
 const getDefaultProfile = (): Profile => ({
-  id: -1,
-  instance: get(profileData)?.defaultInstance ?? get(instance),
+    id: -1,
+    instance: get(profileData)?.defaultInstance ?? get(instance),
 })
 
 function getFromStorage<T>(key: string): T | undefined {
-  if (typeof localStorage == 'undefined') return undefined
-  const lc = localStorage.getItem(key)
-  if (!lc) return undefined
-
-  return JSON.parse(lc)
+    if (typeof localStorage == 'undefined') return undefined
+    const lc = localStorage.getItem(key)
+    if (!lc) return undefined
+    return JSON.parse(lc)
 }
 
 function setFromStorage(key: string, item: any, stringify: boolean = true) {
-  if (typeof localStorage == 'undefined') return
-  return localStorage.setItem(key, stringify ? JSON.stringify(item) : item)
+    if (typeof localStorage == 'undefined') return
+    return localStorage.setItem(key, stringify ? JSON.stringify(item) : item)
 }
 
 export interface Profile {
-  id: number
-  instance: string
-  jwt?: string
-  user?: PersonData
-  username?: string
-  favorites?: number[]
-  color?: string
+    id: number
+    instance: string
+    jwt?: string
+    user?: PersonData
+    username?: string
+    favorites?: number[]
+    color?: string
 }
 
-/**
- * What gets stored in localstorage.
- */
+// What gets stored in localstorage.
 interface ProfileData {
-  profiles: Profile[]
-  profile: number
-  defaultInstance?: string
+    profiles: Profile[]
+    profile: number
+    defaultInstance?: string
 }
 
 interface PersonData extends MyUserInfo {
-  unreads: number
-  reports: number
+    unreads: number
+    reports: number
 }
 
 export let profileData = writable<ProfileData>(
-  getFromStorage<ProfileData>('profileData') ?? { profiles: [], profile: -1 }
+    getFromStorage<ProfileData>('profileData') ?? { profiles: [], profile: -1 }
 )
 
 // stupid hack to get dev server working
 // why does this always happen to me
 
 let initialInstance = get(profileData).defaultInstance
-
 profileData.subscribe(async (pd) => {
-  setFromStorage('profileData', pd)
+    setFromStorage('profileData', pd)
 
-  if (pd.profile == -1 && initialInstance != pd.defaultInstance) {
-    initialInstance = get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL
-    instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
-  }
+    if (pd.profile == -1 && initialInstance != pd.defaultInstance) {
+        initialInstance = get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL
+        instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
+    }
 })
 
 export let profile = writable<Profile | undefined>(getProfile())
 
 profile.subscribe(async (p) => {
-  if (p?.id == -1) {
-    instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
-  }
-  if (!p || !p.jwt) {
-    profileData.update((pd) => ({ ...pd, profile: -1 }))
-    return
-  }
-  if (p.user) return
+    if (p?.id == -1) {
+        instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
+    }
 
-  instance.set(p.instance)
-  // fetch the user because p.user is undefined
-  const user = await userFromJwt(p.jwt, p.instance)
-  site.set(user?.site)
+    if (!p || !p.jwt) {
+        profileData.update((pd) => ({ ...pd, profile: -1 }))
+        return
+    }
 
-  profile.update(() => ({
-    ...p,
-    user: user!.user,
-    username: user?.user.local_user_view.person.name,
-  }))
+    if (p.user) return
+
+    instance.set(p.instance)
+
+    // fetch the user because p.user is undefined
+    const user = await userFromJwt(p.jwt, p.instance)
+    site.set(user?.site)
+
+    profile.update(() => ({
+        ...p,
+        user: user!.user,
+        username: user?.user.local_user_view.person.name,
+    }))
 })
 
 export async function setUser(jwt: string, inst: string, username: string) {
-  try {
-    new URL(`https://${inst}`)
-  } catch (err) {
-    return
-  }
-
-  const user = await userFromJwt(jwt, inst)
-  if (!user) {
-    toast({
-      content: 'Failed to fetch your user. Is your instance down?',
-      type: 'error',
-    })
-
-    return
-  }
-
-  instance.set(inst)
-
-  profileData.update((pd) => {
-    // too lazy to make a decent system
-    const id = Math.floor(Math.random() * 100000)
-
-    const newProfile: Profile = {
-      id: id,
-      instance: inst,
-      jwt: jwt,
-      username: user.user.local_user_view.person.name,
+    try {
+        new URL(`https://${inst}`)
+    } catch (err) {
+        return
     }
 
-    profile.set({
-      ...newProfile,
-      user: user!.user,
+    const user = await userFromJwt(jwt, inst)
+    if (!user) {
+        toast({
+            content: 'Failed to fetch your user. Is your instance down?',
+            type: 'error',
+        })
+        return
+    }
+
+    instance.set(inst)
+
+    profileData.update((pd) => {
+        // too lazy to make a decent system
+        const id = Math.floor(Math.random() * 100000)
+
+        const newProfile: Profile = {
+            id: id,
+            instance: inst,
+            jwt: jwt,
+            username: user.user.local_user_view.person.name,
+        }
+
+        profile.set({
+            ...newProfile,
+            user: user!.user,
+        })
+
+        return {
+            profile: id,
+            profiles: [...pd.profiles, newProfile],
+        }
     })
 
-    return {
-      profile: id,
-      profiles: [...pd.profiles, newProfile],
-    }
-  })
-
-  return user
+    return user
 }
 
 async function userFromJwt(

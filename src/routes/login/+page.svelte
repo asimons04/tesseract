@@ -19,36 +19,36 @@
     }
 
     async function logIn() {
-    data.loading = true
+        data.loading = true
 
-    try {
-        data.instance = data.instance.trim()
-        if (!(await validateInstance(data.instance))) {
-            throw new Error('Failed to contact that instance. Is it down?')
+        try {
+            data.instance = data.instance.trim()
+            if (!(await validateInstance(data.instance))) {
+                throw new Error('Failed to contact that instance. Is it down?')
+            }
+
+            const response = await getClient(data.instance).login({
+                username_or_email: data.username.trim(),
+                password: data.password,
+                totp_2fa_token: data.totp,
+            })
+
+            if (response?.jwt) {
+                await setUser(response.jwt, data.instance, data.username)
+
+                toast({ content: 'Successfully logged in.', type: 'success' })
+                goto('/')
+            } else {
+                throw new Error('Invalid credentials')
+            }
+        } catch (error) {
+            toast({
+                content: error as any,
+                type: 'error',
+            })
         }
-
-        const response = await getClient(data.instance).login({
-            username_or_email: data.username.trim(),
-            password: data.password,
-            totp_2fa_token: data.totp,
-        })
-
-        if (response?.jwt) {
-            await setUser(response.jwt, data.instance, data.username)
-
-            toast({ content: 'Successfully logged in.', type: 'success' })
-            goto('/')
-        } else {
-            throw new Error('Invalid credentials')
-        }
-    } catch (error) {
-        toast({
-            content: error as any,
-            type: 'error',
-        })
+        data.loading = false
     }
-    data.loading = false
-}
 </script>
 
 <svelte:head>

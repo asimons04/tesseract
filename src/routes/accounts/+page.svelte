@@ -1,88 +1,91 @@
 <script lang="ts">
-  import {
-    profileData,
-    setUserID,
-    profile as currentProfile,
-    resetProfile,
-    deleteProfile,
-    moveProfile,
-    type Profile,
-    profile,
-  } from '$lib/auth.js'
-  import Button from '$lib/components/input/Button.svelte'
-  import TextInput from '$lib/components/input/TextInput.svelte'
-  import EditableList from '$lib/components/ui/list/EditableList.svelte'
-  import Menu from '$lib/components/ui/menu/Menu.svelte'
-  import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
-  import DebugObject from '$lib/components/util/debug/DebugObject.svelte'
-  import {
-    DEFAULT_INSTANCE_URL,
-    LINKED_INSTANCE_URL,
-    instance,
-  } from '$lib/instance.js'
-  import { validateInstance } from '$lib/lemmy.js'
-  import ProfileAvatar from '$lib/lemmy/ProfileAvatar.svelte'
-  import { userSettings } from '$lib/settings.js'
-  import {
-    ArrowLeftOnRectangle,
-    ArrowUturnLeft,
-    BugAnt,
-    ChevronDown,
-    ChevronUp,
-    EllipsisHorizontal,
-    Icon,
-    PaintBrush,
-    Plus,
-    Trash,
-  } from 'svelte-hero-icons'
-  import { flip } from 'svelte/animate'
-  import { expoInOut, expoOut } from 'svelte/easing'
+    import {
+        profileData,
+        setUserID,
+        profile as currentProfile,
+        resetProfile,
+        deleteProfile,
+        moveProfile,
+        type Profile,
+        profile,
+    } from '$lib/auth.js'
+    import Button from '$lib/components/input/Button.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
+    import EditableList from '$lib/components/ui/list/EditableList.svelte'
+    import Menu from '$lib/components/ui/menu/Menu.svelte'
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import DebugObject from '$lib/components/util/debug/DebugObject.svelte'
+    import {
+        DEFAULT_INSTANCE_URL,
+        LINKED_INSTANCE_URL,
+        instance,
+    } from '$lib/instance.js'
+    import { validateInstance } from '$lib/lemmy.js'
+    import ProfileAvatar from '$lib/lemmy/ProfileAvatar.svelte'
+    import { userSettings } from '$lib/settings.js'
+    import {
+        ArrowLeftOnRectangle,
+        ArrowUturnLeft,
+        BugAnt,
+        ChevronDown,
+        ChevronUp,
+        EllipsisHorizontal,
+        Icon,
+        PaintBrush,
+        Plus,
+        Trash,
+    } from 'svelte-hero-icons'
+    import { flip } from 'svelte/animate'
+    import { expoInOut, expoOut } from 'svelte/easing'
+    import { goto } from '$app/navigation'
+    
+    let newInstance: string = $profileData.defaultInstance ?? DEFAULT_INSTANCE_URL
+    let loading = false
 
-  let newInstance: string = $profileData.defaultInstance ?? DEFAULT_INSTANCE_URL
-  let loading = false
+    async function changeGuestInstance() {
+        loading = true
+        try {
+            const valid = await validateInstance(newInstance.trim())
 
-  async function changeGuestInstance() {
-    loading = true
-    try {
-      const valid = await validateInstance(newInstance.trim())
+            if (!valid) {
+                throw new Error('invalid instance')
+            }
 
-      if (!valid) {
-        throw new Error('invalid instance')
-      }
+            toast({
+                content: 'Changed guest instance.',
+                type: 'success',
+            })
+        } catch (err) {
+            toast({
+                content: 'Failed to contact that instance URL. Is it down?',
+                type: 'error',
+            })
 
-      toast({
-        content: 'Changed guest instance.',
-        type: 'success',
-      })
-    } catch (err) {
-      toast({
-        content: 'Failed to contact that instance URL. Is it down?',
-        type: 'error',
-      })
+            loading = false
+            return
+        }
 
-      loading = false
-
-      return
+        $profileData.defaultInstance = newInstance
+        if ($currentProfile && $currentProfile.id == -1) {
+            $instance = newInstance
+        }
+        loading = false
     }
 
-    $profileData.defaultInstance = newInstance
-    if ($currentProfile && $currentProfile.id == -1) {
-      $instance = newInstance
+    let debugging = false
+    let debugProfile: Profile | undefined = undefined
+
+    // Redirect to login if there are no profiles and Tesseract is configured to be locked to a specific instance
+    if (LINKED_INSTANCE_URL && $profileData.profiles.length == 0) {
+        goto(`/login`)
     }
-    loading = false
-  }
-
-  let debugging = false
-  let debugProfile: Profile | undefined = undefined
-  
-  //let toggleOpen: Function; 
-
 </script>
 
 <svelte:head>
   <title>Accounts</title>
 </svelte:head>
+
 
 {#if debugging}
   <DebugObject

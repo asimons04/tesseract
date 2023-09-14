@@ -2,11 +2,17 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.53
+### Bugfixes
+If Tesseract is locked to a particular instance, bypasses the `/accounts` page and takes you straight to the login page for the instance.
+
 ### Implementing Missing Features
 #### Legal Page
 The admin-defined `legal_information` is now rendered on a page at `/legal` like in Lemmy-UI
 
 #### Password Recovery
+- Password reset functionality has been added at `/forgot_password`. 
+- Added "Forgot password" link to the login page
+
 
 
 

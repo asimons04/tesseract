@@ -34,7 +34,6 @@
 
     async function submit() {
         submitting = true
-
         try {
             const res = await getClient(instance, fetch).passwordReset({
                 email: email,
@@ -68,7 +67,8 @@
   
     <h1 class="font-bold text-3xl">Recover Account Password</h1>
     <p class="text-sm">
-        Enter your registerd email address to begin the password recovery process.  You will not be able to reset your password without an email.
+        Enter your registerd email address to begin the password recovery process.  You will not be able to reset your 
+        password if you did not register an email when your account was created.
     </p>
     <TextInput
         bind:value={email}
