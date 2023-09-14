@@ -1,71 +1,71 @@
 import { profile } from '$lib/auth.js'
 import { getClient } from '$lib/lemmy.js'
 import type {
-  AdminPurgeCommentView,
-  AdminPurgeCommunityView,
-  AdminPurgePersonView,
-  AdminPurgePostView,
-  Community,
-  ModAddCommunityView,
-  ModAddView,
-  ModBanFromCommunityView,
-  ModBanView,
-  ModFeaturePostView,
-  ModHideCommunityView,
-  ModLockPostView,
-  ModRemoveCommentView,
-  ModRemovePostView,
-  ModTransferCommunityView,
-  ModlogActionType,
-  ModlogListParams,
-  Person,
+    AdminPurgeCommentView,
+    AdminPurgeCommunityView,
+    AdminPurgePersonView,
+    AdminPurgePostView,
+    Community,
+    ModAddCommunityView,
+    ModAddView,
+    ModBanFromCommunityView,
+    ModBanView,
+    ModFeaturePostView,
+    ModHideCommunityView,
+    ModLockPostView,
+    ModRemoveCommentView,
+    ModRemovePostView,
+    ModTransferCommunityView,
+    ModlogActionType,
+    ModlogListParams,
+    Person,
 } from 'lemmy-js-client'
 import { get } from 'svelte/store'
 
 export type ActionName =
-  | 'ban'
-  | 'banCommunity'
-  | 'unban'
-  | 'unbanCommunity'
-  | 'postRemoval'
-  | 'postRestore'
-  | 'commentRemoval'
-  | 'commentRestore'
-  | 'postLock'
-  | 'postUnlock'
-  | 'postUnfeature'
-  | 'postFeature'
-  | 'modAdd'
-  | 'modRemove'
-  | 'purge'
-  | 'Unknown'
+    | 'ban'
+    | 'banCommunity'
+    | 'unban'
+    | 'unbanCommunity'
+    | 'postRemoval'
+    | 'postRestore'
+    | 'commentRemoval'
+    | 'commentRestore'
+    | 'postLock'
+    | 'postUnlock'
+    | 'postUnfeature'
+    | 'postFeature'
+    | 'modAdd'
+    | 'modRemove'
+    | 'purge'
+    | 'Unknown'
 
 type ModAction =
-  | ModBanFromCommunityView
-  | ModRemoveCommentView
-  | ModRemovePostView
-  | ModAddCommunityView
-  | ModLockPostView
-  | ModFeaturePostView
-  | ModTransferCommunityView
-  | AdminPurgeCommentView
-  | AdminPurgeCommunityView
-  | AdminPurgePostView
-  | AdminPurgePersonView
-  | ModHideCommunityView
-  | ModBanView
-  | ModAddView
+    | ModBanFromCommunityView
+    | ModRemoveCommentView
+    | ModRemovePostView
+    | ModAddCommunityView
+    | ModLockPostView
+    | ModFeaturePostView
+    | ModTransferCommunityView
+    | AdminPurgeCommentView
+    | AdminPurgeCommunityView
+    | AdminPurgePostView
+    | AdminPurgePersonView
+    | ModHideCommunityView
+    | ModBanView
+    | ModAddView
 
 export interface ModLog {
-  reason?: string
-  moderatee?: Person
-  content?: string
-  moderator?: Person
-  community?: Community
-  actionName: ActionName
-  timestamp: number
-  link?: string
-  expires?:number
+    reason?: string
+    moderatee?: Person
+    content?: string
+    moderator?: Person
+    community?: Community
+    actionName: ActionName
+    timestamp: number
+    link?: string
+    expires?:number
 }
 
 const fullUserName = (user: Person) => `${user.name}@${new URL(user.actor_id).hostname}`

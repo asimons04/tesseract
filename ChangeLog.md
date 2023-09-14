@@ -1,5 +1,17 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.54
+### Bugfixes and Such
+#### Signup Process
+Fixed two bugs with the signup process:
+- The submit function assumed a JWT was returned on successful signup.  If email verification and/or applications are required, no JWT is returned.  That was causing an erroneous "Invalid credentials" error toast to pop up even if the signup was otherwise successful.
+ 
+ Second, upon successful signup, the signup page just left you there with the submit button spinning.  This is due to the above expectation of a JWT that was not issued.  It now redirects you to the homepage.
+
+ #### Email Verification
+ There weren't any bugs to fix, but I made the process cleaner as well as created a landing page explaining the next steps to the user.  This is mostly to reduce confusion in the lag between "email is verified" and application is approved; users often try to log in and cannot until they are approved.
+
+ 
 
 ## 1.2.53
 This is a pretty feature-ful update.

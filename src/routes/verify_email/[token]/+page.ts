@@ -1,28 +1,24 @@
 import { getClient, getInstance } from '$lib/lemmy.js'
 
+let success: boolean = false;
+
 export async function load({ params, fetch }) {
-    const instance = getInstance();
+
+    const instance:String = getInstance();
     const token:String = params.token;
-    const result = {
-        status: 404,
-        message: ""
-    }
 
     try {
-        
         const res = await getClient(instance, fetch).verifyEmail({
             token: token
         })
-
-        result.status = 200;
-        result.message = "Successfully verified token";
-        return result;
-
+        success = true
     }
     catch (err){
-        result.status = 404;
-        result.message = err as any;
-        return result;
+        success = false;
+    }
+    
+    return {
+        success: success
     }
     
 
