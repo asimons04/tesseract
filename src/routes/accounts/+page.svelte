@@ -251,7 +251,7 @@
     </EditableList>
 
     <div class="mt-auto" />
-    <div class="flex flex-row font-normal gap-2">
+    <div class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined}>
         <TextInput
             on:change={changeGuestInstance}
             placeholder="Instance URL"

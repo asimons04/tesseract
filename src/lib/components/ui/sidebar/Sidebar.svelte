@@ -1,8 +1,10 @@
 <script lang="ts">
+    import { LINKED_INSTANCE_URL } from "$lib/instance.js"
     import {
         AdjustmentsHorizontal,
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
+        BuildingOffice,
         ChevronDoubleLeft,
         ChevronDoubleDown,
         Cog6Tooth,
@@ -187,7 +189,7 @@
     {:else}
         <Button
             class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
-            href="/accounts"
+            href="/login"
             color="tertiary"
             alignment="left"
         >
@@ -204,5 +206,17 @@
             <Icon mini src={Identification} size="18" title="Sign Up"/>
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Sign Up</span>
         </Button>
+        
+        {#if !LINKED_INSTANCE_URL}
+            <Button
+                class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
+                href="/accounts"
+                color="tertiary"
+                alignment="left"
+            >
+                <Icon mini src={BuildingOffice} size="18" />
+                <span class:hidden={!$userSettings.uiState.expandSidebar}>Change Guest Instance</span>
+            </Button>
+        {/if}
     {/if}
 </nav>
