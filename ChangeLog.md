@@ -1,5 +1,15 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+
+## 1.2.53
+### Implementing Missing Features
+#### Legal Page
+The admin-defined `legal_information` is now rendered on a page at `/legal` like in Lemmy-UI
+
+#### Password Recovery
+
+
+
 ## 1.2.52
 ### Sidebar Improvements
 - Removed the hacks I had to make the sidebar behave; added a missing `flex flex-col` class to the community list container div to resolve.
