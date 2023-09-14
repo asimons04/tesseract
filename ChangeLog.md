@@ -2,13 +2,13 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.53
-### Account Mangement
-- If Tesseract is locked to a particular instance, and there are no accounts setup yet, it will take you straight to /login and bypass /accounts.
+### Accounts Mangement
+- If Tesseract is locked to a particular instance, and there are no accounts setup yet, it will take you straight to `/login` and bypass `/accounts`.
 - Hid references to setting guest instance if Tesseract is locked to the one configured by the admin (formerly, those were simply disabled form elements)
-- Login button in sidebar now goes to /login (if not locked to instance) or /login/{instance} if instance locked
+- Login button in sidebar now goes to `/login` (if not locked to instance) or `/login/{instance}` if instance locked
 
 ### Login Page
-- Login page no longer asks for domain.  Added an interstitial page where it asks for your instance (like /signup).
+- Login page no longer asks for domain.  Added an interstitial page where it asks for your instance (like `/signup`).
 - Login page now shows the site icon and name for the site you are logging into.
 
 
@@ -24,6 +24,7 @@ The admin-defined `legal_information` is now rendered on a page at `/legal` like
 - Decreased sidebar width to 18%.
 - Trying to make the width configurable in a way that sticks, but efforts to date have been problematic.
 - All account pages (signup, login, and forgot password) now show the instance logo and title at the top to make it more clear which instance you're working with.
+- Window title now reflects the Lemmy instance you're connected to.
 
 
 

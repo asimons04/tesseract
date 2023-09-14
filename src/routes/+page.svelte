@@ -21,18 +21,20 @@
   export let data
 
   let sidebar = false
+
 </script>
 
 <svelte:head>
-  <title>Tesseract</title>
+    <title>{data.site.site_view.site.name}</title>
 </svelte:head>
+
+
+
 
 <Modal bind:open={sidebar}>
   <span slot="title">About</span>
   <div class="mx-auto">
-    {#await data.streamed.site then site}
-      <SiteCard site={site.site_view} taglines={site.taglines} />
-    {/await}
+      <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
   </div>
 </Modal>
 
@@ -66,18 +68,6 @@
     </div>
   </div>
   <div class="hidden lg:block xl:block">
-    {#await data.streamed.site}
-      <StickyCard>
-        <div class="h-64 grid place-items-center">
-          <Spinner width={32} />
-        </div>
-      </StickyCard>
-    {:then site}
-      <SiteCard site={site.site_view} taglines={site.taglines} />
-    {:catch}
-      <StickyCard>
-        <h1 class="font-bold text-lg">Failed to load</h1>
-      </StickyCard>
-    {/await}
+      <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
   </div>
 </div>
