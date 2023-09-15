@@ -1,5 +1,7 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.56
+
 ## 1.2.55
 ### Bugfixes and Optimizations
 - Fixed bug with `/login`, `/forgot_password`, and `/signup` where they were sometimes not detecting the specified instance. 
