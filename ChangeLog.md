@@ -15,6 +15,13 @@ The submit function assumed a JWT was returned on successful signup.  If email v
  #### Forgot Password
  Added error checking/handling to the `getSite` call that happens in the background
 
+### Sidebar Enhancements
+Reimplemented the way the community sidebars are collapsed/shown.  
+- The button is now part of the sidebar (rather than at the top of the post).  
+- Sidebar can be collapsed in the feed and post views.  
+- Site sidebar can also be collapsed now
+- Put site and community icons, names/addreses, and stats in cards (similar to how profile views now are).
+
 
 ## 1.2.53
 This is a pretty feature-ful update.
