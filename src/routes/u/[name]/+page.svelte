@@ -39,6 +39,7 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import { searchParam } from '$lib/util.js'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import { userSettings } from '$lib/settings.js'
 
     export let data
     let blocking = false
@@ -144,12 +145,13 @@
 
 <div class="flex flex-col-reverse lg:flex-row gap-4 max-w-full w-full">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        <div class="flex flex-row gap-4 flex-wrap">
+        <div class="flex flex-row gap-4 justify-between flex-wrap">
             <MultiSelect
                 options={['New', 'TopAll', 'Old']}
                 optionNames={['New', 'Top', 'Old']}
                 selected={data.sort}
                 on:select={(e) => searchParam($page.url, 'sort', e.detail, 'page')}
+                headless={true}
             />
       
             <MultiSelect
@@ -157,7 +159,20 @@
                 optionNames={['All', 'Posts', 'Comments']}
                 selected={data.type}
                 on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+                headless={true}
             />
+
+            <MultiSelect
+                    options={['Cards', 'Compact']}
+                    selected={$userSettings.showCompactPosts
+                        ? 'Compact'
+                        : 'Cards'
+                    }
+                    on:select={(e) => {
+                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                    }}
+                    headless={true}
+                />
         </div>
 
 

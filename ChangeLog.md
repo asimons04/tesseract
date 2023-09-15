@@ -2,14 +2,23 @@
 All major/minor changes between releases will be documented here.  
 ## 1.2.55
 ### Bugfixes and Optimizations
-- Fixed bug with `/login`, `/forgot_password`, and `/signup` where they were sometimes not detecting the specified instance.
+- Fixed bug with `/login`, `/forgot_password`, and `/signup` where they were sometimes not detecting the specified instance. 
 
 - Fixed bug that allowed logging in or signing up to other instances when Tesseract is configured to be locked to a specific one
   - Not really a security issue, per se, but an issue nonetheless
 
-- Removed unused `import`s in several components to reduce overhead
+- Removed some more unused `import`s in several components to reduce overhead
 
 - Removed `validateInstance` from the login submit function since it's pre-validated before the page is rendered (if the instance is invalid, the login page will throw a controlled 500 error because it couldn't fetch the site name/logo).
+
+- Fixed another `select` grey on white bug that only existed in Chrome(ium).
+
+### UI Enhancements
+- Added "Return to Feed" and "Scroll to Top" buttons to the bottom of post page (below comments)
+- Can now toggle between compact post and cards from the feed, community feed, and profile view.
+- Option buttons on top of feed/community/user pages are now less intense
+
+
 
 
 ## 1.2.54

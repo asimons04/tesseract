@@ -13,9 +13,7 @@
 
   const dispatcher = createEventDispatcher<{ select: T }>()
 
-  $: {
-    dispatcher('select', selected)
-  }
+  $: { dispatcher('select', selected)}
 
   let containerClass = `
     flex flex-row items-center w-max max-w-full overflow-auto
@@ -45,37 +43,39 @@
 </script>
 
 <div class={containerClass}>
-  {#each options.slice(0, items) as option, index}
-    <button
-      class={buttonClass(selected == option)}
-      on:click|preventDefault={() => (selected = option)}
-      disabled={disabled[index] ?? false}
-      type="button"
-    >
-      {optionNames[index] || option}
-      {#if headless && option == selected}
-        <div
-          class="absolute -bottom-1 left-0 w-full border-b-2 rounded-t-sm border-black dark:border-white"
-        />
-      {/if}
-    </button>
-  {/each}
-  {#if options.length > items}
+    {#each options.slice(0, items) as option, index}
+        <button
+            class={buttonClass(selected == option)}
+            on:click|preventDefault={() => (selected = option)}
+            disabled={disabled[index] ?? false}
+            type="button"
+        >
+            {optionNames[index] || option}
+            {#if headless && option == selected}
+                <div class="absolute -bottom-1 left-0 w-full border-b-2 rounded-t-sm border-black dark:border-white"/>
+            {/if}
+        </button>
+    {/each}
+
+    {#if options.length > items}
     <select
-      bind:value={selected}
-      class="bg-inherit text-sm mr-2 p-1.5 rounded-md cursor-pointer {options
-        .slice(items)
-        .includes(selected)
-        ? 'bg-slate-900 text-slate-50 dark:bg-zinc-100 dark:text-black w-max'
-        : 'w-4'}"
+        bind:value={selected}
+        class="dark:bg-slate-900 bg-zinc-100 text-sm mr-2 p-1.5 rounded-md cursor-pointer 
+        {options
+            .slice(items)
+            .includes(selected)
+                ? 'bg-slate-900 text-slate-50 dark:bg-zinc-100 dark:text-black w-max'
+                : 'w-4'
+        }"
     >
-      <Button color="tertiary">
-        <Icon src={ChevronDown} size="16" mini />
-      </Button>
-      {#each options.slice(items) as option, index}
-        <option value={option}>{optionNames[index + items] || option}</option>
-      {/each}
+        <Button color="tertiary">
+            <Icon src={ChevronDown} size="16" mini />
+        </Button>
+        {#each options.slice(items) as option, index}
+            <option value={option}>{optionNames[index + items] || option}</option>
+        {/each}
     </select>
-  {/if}
+    {/if}
 </div>
+
 <slot {selected} />

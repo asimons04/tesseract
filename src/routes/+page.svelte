@@ -28,46 +28,54 @@
     <title>{data.site.site_view.site.name}</title>
 </svelte:head>
 
-
-
-
-<Modal bind:open={sidebar}>
-  <span slot="title">About</span>
-  <div class="mx-auto">
-      <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
-  </div>
-</Modal>
-
 <div class="flex flex-row gap-4 w-full h-full">
-  <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-    <header>
-      <h1 class="text-3xl font-bold">Frontpage</h1>
-    </header>
-    <div class="xl:hidden">
-      <Button on:click={() => (sidebar = !sidebar)}>About</Button>
+    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
+        <header>
+            <h1 class="text-3xl font-bold">Frontpage</h1>
+        </header>
+
+        <div class="xl:hidden">
+            <Button on:click={() => (sidebar = !sidebar)}>About</Button>
+        </div>
+
+        <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
+            <MultiSelect
+                options={['Subscribed', 'Local', 'All']}
+                disabled={[$profile?.jwt == undefined]}
+                selected={data.listingType}
+                on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+                headless={true}
+            />
+      
+            <MultiSelect
+                options={['Cards', 'Compact']}
+                selected={$userSettings.showCompactPosts
+                    ? 'Compact'
+                    : 'Cards'
+                }
+                on:select={(e) => {
+                    $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                }}
+                headless={true}
+            />
+
+
+            <Sort selected={data.sort} headless={true} />
+        </div>
+
+        <section class="flex flex-col gap-3 sm:gap-4 h-full">
+            <PostFeed posts={data.posts.posts} />
+        </section>
+
+        <div class="mt-auto">
+            <Pageination
+                page={data.page}
+                on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
+            />
+        </div>
     </div>
-    <div
-      class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap"
-    >
-      <MultiSelect
-        options={['Subscribed', 'Local', 'All']}
-        disabled={[$profile?.jwt == undefined]}
-        selected={data.listingType}
-        on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-      />
-      <Sort selected={data.sort} />
+
+    <div class="hidden lg:block xl:block">
+        <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
     </div>
-    <section class="flex flex-col gap-3 sm:gap-4 h-full">
-      <PostFeed posts={data.posts.posts} />
-    </section>
-    <div class="mt-auto">
-      <Pageination
-        page={data.page}
-        on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-      />
-    </div>
-  </div>
-  <div class="hidden lg:block xl:block">
-      <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
-  </div>
 </div>

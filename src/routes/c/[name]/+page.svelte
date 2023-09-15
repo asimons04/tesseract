@@ -34,47 +34,53 @@
   })
 </script>
 
-<Modal bind:open={sidebar}>
-  <span slot="title">About</span>
-  <div class="mx-auto">
-    <CommunityCard community_view={data.community.community_view} />
-  </div>
-</Modal>
 
 <div class="flex flex-col md:flex-row gap-4 w-full">
-  <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
-    <div class="flex flex-row gap-3 items-center">
-      <Avatar
-        width={48}
-        url={data.community.community_view.community.icon}
-        alt={data.community.community_view.community.name}
-      />
-      <div class="flex flex-col gap-0">
-        <h1 class="font-bold text-xl">
-          {data.community.community_view.community.title}
-        </h1>
-        <span class="dark:text-zinc-400 text-slate-600 text-sm">
-          !{data.community.community_view.community.name}@{new URL(
-            data.community.community_view.community.actor_id
-          ).hostname}
-        </span>
-      </div>
+    <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
+        <div class="flex flex-row gap-3 items-center">
+            <Avatar
+                width={48}
+                url={data.community.community_view.community.icon}
+                alt={data.community.community_view.community.name}
+            />
+            <div class="flex flex-col gap-0">
+                <h1 class="font-bold text-xl">
+                    {data.community.community_view.community.title}
+                </h1>
+                <span class="dark:text-zinc-400 text-slate-600 text-sm">
+                    !{data.community.community_view.community.name}@{new URL(
+                        data.community.community_view.community.actor_id
+                    ).hostname}
+                </span>
+            </div>
+        </div>
+    
+        <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
+            <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
+                <Sort selected={data.sort} headless={true}/>
+
+                <MultiSelect
+                    options={['Cards', 'Compact']}
+                    selected={$userSettings.showCompactPosts
+                        ? 'Compact'
+                        : 'Cards'
+                    }
+                    on:select={(e) => {
+                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                    }}
+                    headless={true}
+                />
+            </div>
+        </div>
+
+        <PostFeed posts={data.posts.posts} />
+        <Pageination
+            page={data.page}
+            on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
+        />
     </div>
-    <div class="lg:hidden xl:hidden">
-      <Button color="secondary" on:click={() => (sidebar = !sidebar)}>
-        About
-      </Button>
+
+    <div class="hidden lg:block xl:block">
+        <CommunityCard community_view={data.community.community_view} />
     </div>
-    <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
-      <Sort selected={data.sort} />
-    </div>
-    <PostFeed posts={data.posts.posts} />
-    <Pageination
-      page={data.page}
-      on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-    />
-  </div>
-  <div class="hidden lg:block xl:block">
-    <CommunityCard community_view={data.community.community_view} />
-  </div>
 </div>

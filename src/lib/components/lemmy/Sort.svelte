@@ -5,6 +5,8 @@
 
   export let selected: string
   export let navigate: boolean = true
+  export let headless:boolean = false
+
 </script>
 
 <MultiSelect
@@ -49,4 +51,5 @@
     if (navigate) searchParam($page.url, 'sort', e.detail, 'page')
   }}
   class="w-full"
+  headless={headless}
 />
