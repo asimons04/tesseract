@@ -78,11 +78,11 @@
         <!--- End Album Art from Thumbnail--->
         
         <!---Iframe with player--->
-        <div class="overflow-hidden z-10 relative mt-[-120px] rounded-md max-w-full max-h-[128px]">
+        <div class="overflow-hidden z-10 relative mt-[-120px]  max-w-full max-h-[128px]">
             <div class="ml-auto mr-auto w-full}">
-                <div class="flexiframe-container rounded-md max-w-screen max-h-[128px] mx-auto">
+                <div class="flexiframe-container  max-w-screen max-h-[128px] mx-auto">
                     <iframe 
-                        class="flexiframe rounded-md"
+                        class="flexiframe rounded-b-md"
                         src="{embedURL}" 
                         allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                         loading="lazy"
