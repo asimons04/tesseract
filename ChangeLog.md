@@ -4,9 +4,14 @@ All major/minor changes between releases will be documented here.
 ### Added Support for Bandcamp Embeds
 Bandcamp links are now recognized. If they provide an embed URL (most do), an embedded player will be placed in the feed/post (depending on your embed media settings).  
 
-Had to go with the small player since their embed player is absolutely awful and does not work well (cough AT ALL cough) with responsive design.
+Had to go with the small player since their embed player is absolutely awful and does not work well with responsive design (cough AT ALL cough).   The small player  looked _okay_ on desktop but crappy on mobile since mobile didn't show the little, tiny album art. :sigh: So, I hacked together the Lemmy thumbnail image and the small player into something that kinda, _mostly_ doesn't suck.  Most importantly, it scales.  Or rather, it scales as much as it can and doesn't show ugly empty white space.
 
-I think that's all for this release.  Did not realize how much I was going to have to fight that embed to be even _slightly_ responsive.  
+It shows the thumbnail and then overlays the embed player on the bottom 120 pixels of the album art.  So if you have media embeds enabled, it'll pop in over top of the existing album art.  And they're size-locked and scale together very well
+
+I think that's all for this release.  I had backburnered adding support for Bandcamp because I knew their player was going to be a challenge, but this was ridiculous and involved re-evaluating expectations multiple times and finally hacking something together.
+
+Y'all better use this. lol
+
 
 
 ## 1.2.55
