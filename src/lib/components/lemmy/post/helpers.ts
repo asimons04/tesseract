@@ -10,7 +10,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 
+    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' |
     'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -92,8 +92,6 @@ export const isPiped = (url: string):boolean => {
 }
 
 
-
-
 // Check if URL is for Spotify content
 export const isSpotify = (url: string | undefined):boolean => {
     if (!url) return false;
@@ -140,6 +138,9 @@ export const postType = (post: PostView | undefined ) => {
         return "soundcloud"
     }
 
+    if (post.post.embed_video_url && post.post.embed_video_url.startsWith("https://bandcamp.com")) {
+        return "bandcamp"
+    }
 
     if (
         post.post.url && !post.post.thumbnail_url) {

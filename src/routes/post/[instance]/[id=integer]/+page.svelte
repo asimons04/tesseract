@@ -27,11 +27,13 @@
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
     import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
+    import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
 
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import type { CommentSortType } from 'lemmy-js-client'
@@ -219,6 +221,14 @@
 
             {#if pType == "spotify"}
             <PostSpotify
+                post = {post.post_view}
+                displayType={pDisplayType}
+            />
+            {/if}
+
+            <!--- Bandcamp Embed --->
+            {#if pType == "bandcamp"}
+            <PostBandcamp
                 post = {post.post_view}
                 displayType={pDisplayType}
             />

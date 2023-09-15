@@ -1,17 +1,19 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
-    
     import {isImage, postType} from './helpers.js'
-    
-    
+    import { getInstance } from '$lib/lemmy.js'
+    import { userSettings } from '$lib/settings.js'
+
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+
+
     
-    import { getInstance } from '$lib/lemmy.js'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
-    import { userSettings } from '$lib/settings.js'
-    
+    import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
@@ -21,8 +23,7 @@
     
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    
 
 
     export let post: PostView
@@ -121,6 +122,14 @@
         {#if pType == "video"}
         <PostVideo
             url = {post.post.url}
+        />
+        {/if}
+
+        <!--- Bandcamp Embed --->
+        {#if pType == "bandcamp"}
+        <PostBandcamp
+            post = {post}
+            displayType={pDisplayType}
         />
         {/if}
 
