@@ -1,6 +1,10 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 ## 1.2.56
+### Added Support for Bandcamp Embeds
+Bandcamp links are now recognized. If they provide an embed URL (most do), an embedded player will be placed in the feed/post (depending on your embed media settings)
+
+
 
 ## 1.2.55
 ### Bugfixes and Optimizations
