@@ -50,25 +50,48 @@
 
 
 {#if showAsEmbed()}
-<Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full max-h-[128px]">
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
-        <div class="ml-auto mr-auto w-full}">
-            <div class="flexiframe-container rounded-md max-w-screen max-h-[128px] mx-auto">
-                <iframe 
-                    class="flexiframe"
-                    src="{embedURL}" 
-                    allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
-                    loading="lazy"
-                    allowfullscreen
-                    title="Bandcamp: {post.post.name}"
-                >
-                </iframe>
+    <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
+
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+        
+        <!--- Album Art from Thumbnail --->
+        {#if post.post.thumbnail_url}
+        <div class="max-w-full">
+            <div class="ml-auto mr-auto h-auto} max-w-[627px]">
+                <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
+                    <!-- svelte-ignore a11y-missing-attribute -->
+                    <img
+                        src="{post.post.thumbnail_url}"
+                        alt="{post.post.name}"
+                        loading="lazy"
+                        class="object-cover rounded-md h-auto z-30"
+                    />
+                </picture>
             </div>
         </div>
-
+        {/if}
+        <!--- End Album Art from Thumbnail--->
+        
+        <!---Iframe with player--->
+        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 mt-1 rounded-md max-w-full max-h-[128px]">
+            <div class="ml-auto mr-auto w-full}">
+                <div class="flexiframe-container rounded-md max-w-screen max-h-[128px] mx-auto">
+                    <iframe 
+                        class="flexiframe"
+                        src="{embedURL}" 
+                        allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
+                        loading="lazy"
+                        allowfullscreen
+                        title="Bandcamp: {post.post.name}"
+                    >
+                    </iframe>
+                </div>
+            </div>
+        </div>
+        <!---End Iframe with Player--->
+        
+        
     </div>
-</div>
 
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
