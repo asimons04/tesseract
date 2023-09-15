@@ -13,11 +13,10 @@
     
     let trackID:    String = ""
     let embedURL:   String = ""
-    let extraParams:string = ""
 
     // Generate the embed URL for the given post URL
     if (post.post && post.post.embed_video_url) {
-        embedURL = post.post.embed_video_url.replace('size=small', 'size=large').replace('artwork=small','artwork=large');
+        embedURL = post.post.embed_video_url.replace('artwork=small','artwork=large');
     }
 
     function showAsEmbed() {
@@ -27,6 +26,7 @@
         
         return false;
     }
+
 </script>
 
 <style>
@@ -34,15 +34,15 @@
         position: relative;
         overflow: hidden;
         padding-top: 56.25%;
-        width: 350px;
+        width: 90%
     }
 
     .flexiframe {
         position: absolute;
         top: 0;
         left: 0;
-        height: 530px;
-        width: 350px;
+        height: 100%;
+        width: 100%;
         border:0;
     }
 </style>
@@ -51,18 +51,17 @@
 
 {#if showAsEmbed()}
 <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-[352px]">
+<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-auto">
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
         <div class="ml-auto mr-auto {$userSettings.videoSize ?? 'max-w-3xl'}">
-            <div class="flexiframe-container rounded-md max-w-screen h-[352px] mx-auto">
+            <div class="flexiframe-container rounded-md max-w-screen h-auto mx-auto">
                 <iframe 
                     class="flexiframe"
-                    src="{embedURL}?{extraParams}" 
+                    src="{embedURL}" 
                     allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                     loading="lazy"
                     allowfullscreen
-                    height="352"
-                    title="Spotify: {post.post.name}"
+                    title="Bandcamp: {post.post.name}"
                 >
                 </iframe>
             </div>
