@@ -1,5 +1,13 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+## 1.2.55
+### Bugfixes
+- Fixed bug with /login, /forgot_password, and /signup where they were sometimes not detecting the specified instance.
+- Fixed bug that allowed logging in or signing up to other instances when Tesseract is configured to be locked to a specific one
+  - Not really a security issue, per se, but an issue nonetheless
+
+  
+
 ## 1.2.54
 ### Bugfixes and Such
 #### Signup Process
