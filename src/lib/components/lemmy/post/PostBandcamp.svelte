@@ -16,7 +16,7 @@
 
     // Generate the embed URL for the given post URL
     if (post.post && post.post.embed_video_url) {
-        embedURL = post.post.embed_video_url.replace('artwork=small','artwork=large');
+        embedURL = post.post.embed_video_url
     }
 
     function showAsEmbed() {
@@ -34,14 +34,14 @@
         position: relative;
         overflow: hidden;
         padding-top: 56.25%;
-        width: 90%
+        max-width: 627px;
     }
 
     .flexiframe {
         position: absolute;
         top: 0;
         left: 0;
-        height: 100%;
+        height: 120px;
         width: 100%;
         border:0;
     }
@@ -51,10 +51,10 @@
 
 {#if showAsEmbed()}
 <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-auto">
+<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full max-h-[128px]">
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
-        <div class="ml-auto mr-auto {$userSettings.videoSize ?? 'max-w-3xl'}">
-            <div class="flexiframe-container rounded-md max-w-screen h-auto mx-auto">
+        <div class="ml-auto mr-auto w-full}">
+            <div class="flexiframe-container rounded-md max-w-screen max-h-[128px] mx-auto">
                 <iframe 
                     class="flexiframe"
                     src="{embedURL}" 
