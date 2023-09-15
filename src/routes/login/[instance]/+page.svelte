@@ -5,12 +5,10 @@
     import Button from '$lib/components/input/Button.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { DEFAULT_INSTANCE_URL, LINKED_INSTANCE_URL } from '$lib/instance.js'
-    import { getClient, validateInstance } from '$lib/lemmy.js'
-    import { AtSymbol, Icon } from 'svelte-hero-icons'
+    import { getClient } from '$lib/lemmy.js'
 
     export let data;
     
@@ -29,11 +27,6 @@
         formData.loading = true
 
         try {
-            formData.instance = formData.instance.trim()
-            if (!(await validateInstance(formData.instance))) {
-                throw new Error('Failed to contact that instance. Is it down?')
-            }
-
             const response = await getClient(formData.instance).login({
                 username_or_email: formData.username.trim(),
                 password: formData.password,

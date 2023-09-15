@@ -1,12 +1,16 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 ## 1.2.55
-### Bugfixes
-- Fixed bug with /login, /forgot_password, and /signup where they were sometimes not detecting the specified instance.
+### Bugfixes and Optimizations
+- Fixed bug with `/login`, `/forgot_password`, and `/signup` where they were sometimes not detecting the specified instance.
+
 - Fixed bug that allowed logging in or signing up to other instances when Tesseract is configured to be locked to a specific one
   - Not really a security issue, per se, but an issue nonetheless
 
-  
+- Removed unused `import`s in several components to reduce overhead
+
+- Removed `validateInstance` from the login submit function since it's pre-validated before the page is rendered (if the instance is invalid, the login page will throw a controlled 500 error because it couldn't fetch the site name/logo).
+
 
 ## 1.2.54
 ### Bugfixes and Such
