@@ -6,7 +6,7 @@ Bandcamp links are now recognized. If they provide an embed URL (most do), an em
 
 Had to go with the small player since their embed player is absolutely awful and does not work well (cough AT ALL cough) with responsive design.
 
-
+I think that's all for this release.  Did not realize how much I was going to have to fight that embed to be even _slightly_ responsive.  
 
 
 ## 1.2.55
