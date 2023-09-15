@@ -60,7 +60,7 @@
     {#if options.length > items}
     <select
         bind:value={selected}
-        class="dark:bg-slate-900 bg-zinc-100 text-sm mr-2 p-1.5 rounded-md cursor-pointer 
+        class="bg-inherit text-sm mr-2 p-1.5 rounded-md cursor-pointer 
         {options
             .slice(items)
             .includes(selected)
@@ -72,7 +72,7 @@
             <Icon src={ChevronDown} size="16" mini />
         </Button>
         {#each options.slice(items) as option, index}
-            <option value={option}>{optionNames[index + items] || option}</option>
+            <option class="dark:bg-zinc-900 bg-slate-100" value={option}>{optionNames[index + items] || option}</option>
         {/each}
     </select>
     {/if}
