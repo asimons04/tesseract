@@ -21,6 +21,7 @@
       ArrowLeftOnRectangle,
       Bars3,
       Bookmark,
+      BuildingOffice,
       Cog6Tooth,
       CommandLine,
       ComputerDesktop,
@@ -261,7 +262,7 @@
         </MenuButton>
 
         <MenuButton link href="/legal">
-            <Icon src={InformationCircle} mini width={16} />
+            <Icon src={BuildingOffice} mini width={16} />
             Legal
         </MenuButton>
       

@@ -12,7 +12,7 @@
         HandRaised,
         Home,
         Icon,
-        InboxStack,
+        InboxArrowDown,
         InformationCircle,
         Identification,
         Minus,
@@ -169,7 +169,7 @@
                 ($userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList)
             }
         >
-            <Icon src={InboxStack} mini size="18" />
+            <Icon src={InboxArrowDown} mini size="18" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>
                 Subscribed
                 <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">

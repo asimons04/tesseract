@@ -24,7 +24,7 @@
                 color="tertiary"
                 alignment="left"
                 href="/c/{follow.name}@{new URL(follow.actor_id).hostname}"
-                title="{follow.name}"
+                title="{follow.title}"
             >
                 <div class="flex-none">
                     <Avatar
