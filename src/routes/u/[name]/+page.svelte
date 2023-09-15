@@ -186,7 +186,7 @@
     </div>
     
     <div>
-        <StickyCard>
+        <StickyCard class="p-3">
             <Card>
                 <div class="flex flex-row gap-3 items-center p-3">
                     <div class="flex-shrink-k">
@@ -207,26 +207,26 @@
                     </div>
                 </div>
 
-                <div class="text-sm flex flex-row justify-items-center gap-3 p-3">
+                <div class="mt-4 text-sm flex flex-row justify-between gap-3 p-3 w-[95%] ml-auto mr-auto">
                     
-                    <div class="flex flex-row items-center gap-1">
+                    <div class="flex flex-row items-center gap-2">
                         <Icon src={Cake} width={16} height={16} mini />
                         <span class="capitalize">
                             <RelativeDate date={new Date(data.person_view.person.published + 'Z')}/>
                         </span>
                     </div>
                     
-                    <div class="flex flex-row items-center gap-1">
+                    <div class="flex flex-row items-center gap-2">
                         <Icon src={PencilSquare} width={16} height={16} mini />
                         <FormattedNumber number={data.person_view.counts.post_count} />
                     </div>
             
-                    <div class="flex flex-row items-center gap-1">
+                    <div class="flex flex-row items-center gap-2">
                         <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
                         <FormattedNumber number={data.person_view.counts.comment_count} />
                     </div>
                     
-                    <div class="flex flex-row items-center gap-1">
+                    <div class="flex flex-row items-center gap-2">
                         <Icon src={Trophy} width={16} height={16} mini />
                         <FormattedNumber number={(data.person_view.counts.post_score + data.person_view.counts.comment_score)} />
                     </div>

@@ -16,7 +16,6 @@
     import { 
         ArrowPath,
         ArrowSmallLeft,
-        ChevronDoubleLeft,
         ChevronDoubleRight,
         ExclamationTriangle, 
         Icon 
@@ -147,39 +146,8 @@
         
         <!--- Menu bar above post content --->
         <div class="flex flex-row gap-2 w-full mb-2 justify-between">
-            
-            <!--- Hide "show/hide sidebar" button if it's not present --->
-            <div class="">
-                <div class=" hidden sm:flex">
-                    <Button
-                        alignment="left"
-                        on:click={() =>
-                            ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
-                        }
-                        class="w-max !p-2 hover:bg-slate-200"
-                        aria-label={$userSettings.uiState.expandSidebar
-                            ? 'Collapse sidebar'
-                            : 'Expand sidebar'
-                        }
-                        title={$userSettings.uiState.expandSidebar
-                            ? 'Collapse sidebar'
-                            : 'Expand sidebar'
-                        }
-                    >
-                        <Icon
-                            src={ChevronDoubleLeft}
-                            mini
-                            size="16"
-                            class="transition-transform {$userSettings.uiState.expandSidebar
-                                ? ''
-                                : 'rotate-180'}"
-                        />
-                    </Button>
-                </div>
-            </div>
-           
             <!--- Button to Return to Feed --->
-            <Button class="font-normal" title="Go back to feed"
+            <Button class="font-normal w-full" title="Go back to feed"
                 on:click={() => {
                     history.back();
                 }}
@@ -188,36 +156,6 @@
                 <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
                 <span class="hidden md:inline">Return to Feed</span>
             </Button>
-
-            <!--- Hide "show/hide community sidebar" button if it's not present --->
-            <div class="">
-                <div class="hidden lg:block xl:block">
-                    <Button
-                        alignment="right"
-                        on:click={() =>
-                            ($userSettings.uiState.expandCommunitySidebar = !$userSettings.uiState.expandCommunitySidebar)
-                        }
-                        class="w-max hover:bg-slate-200"
-                        aria-label={$userSettings.uiState.expandCommunitySidebar
-                            ? 'Collapse community sidebar'
-                            : 'Expand community sidebar'
-                        }
-                        title={$userSettings.uiState.expandCommunitySidebar
-                            ? 'Collapse community sidebar'
-                            : 'Expand community sidebar'
-                        }
-                    >
-                        <Icon
-                            src={ChevronDoubleRight}
-                            mini
-                            size="16"
-                            class="transition-transform {$userSettings.uiState.expandCommunitySidebar
-                                ? ''
-                                : 'rotate-180'}"
-                        />
-                    </Button>
-                </div>
-            </div>
         </div>
         
         <!--- Post and Comments-->
@@ -442,14 +380,12 @@
             </div>
         </div>
     </div>
-
+    
+    
+   
+    
     <!--- Community Sidebar--->
-    <div class="
-        {$userSettings.uiState.expandCommunitySidebar
-        ? 'hidden lg:block xl:block'
-        : 'hidden'}
-        "
-     >
+    <div class="w-auto">
         <CommunityCard community_view={data.post.community_view} />
     </div>
 </div>  

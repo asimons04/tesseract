@@ -13,7 +13,7 @@ The submit function assumed a JWT was returned on successful signup.  If email v
  There weren't any bugs to fix, but I made the process cleaner as well as created a landing page explaining the next steps to the user.  This is mostly to reduce confusion in the lag between "email is verified" and application is approved; users often try to log in and cannot until they are approved.
 
  #### Forgot Password
- Added error checking/handling to the getSite call that happens in the background
+ Added error checking/handling to the `getSite` call that happens in the background
 
 
 ## 1.2.53
