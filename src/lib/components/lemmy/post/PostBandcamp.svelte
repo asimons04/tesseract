@@ -17,6 +17,11 @@
     // Generate the embed URL for the given post URL
     if (post.post && post.post.embed_video_url) {
         embedURL = post.post.embed_video_url
+
+        let opts = "/bgcol=1F1F24/";
+        opts += "/linkcol=F4F4F5/";
+        //opts += "/transparent=true/"
+        embedURL += opts;
     }
 
     function showAsEmbed() {
