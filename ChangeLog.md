@@ -1,5 +1,23 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
+
+## 1.2.57
+### UI
+- Moderation and post action buttons now open to the left of the button instead of above/below.
+- Added site logo and name to top of legal page
+- Legal page is instance specific
+
+### Security
+Tightened up routes that take the instances into account.
+
+If Tesseract is admin-locked to a specific instance, routes like `/legal/{instance}`, `/forgot_password/{instance}`, etc were already properly working against the admin-defined instance, but the URL still showed whatever instance the user provided. Now, there is a redirect to `/{page}/{defined_instance}` to remove any ambiguity.
+
+For example, in prior release, if you browsed to `/signup/lemmy.world` but Tesseract was locked to, say, `lemmy.ml`, the signup page would have all of the details for `lemmy.ml` and you would be signing up against that, but the URL would show `lemmy.world`.  
+
+While this didn't cause any technical problems, it could be ambiguous or confusing as to where you're signing up.  Now, under the same configuration, if you browsed to `/signup/lemmy.world`, it would redirect you to `/signup/lemmy.ml`.
+
+
+
 ## 1.2.56
 ### Added Support for Bandcamp Embeds
 Bandcamp links are now recognized. Just drop the link to the album/track page from your browser. 

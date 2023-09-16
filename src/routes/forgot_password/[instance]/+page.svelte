@@ -7,10 +7,17 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { getClient } from '$lib/lemmy.js'
     import type { GetCaptchaResponse } from 'lemmy-js-client'
+    import { LINKED_INSTANCE_URL } from "$lib/instance.js";
 
     export let data
 
+    if (LINKED_INSTANCE_URL && LINKED_INSTANCE_URL != $page.params.instance) {
+        goto(`/forgot_password/${LINKED_INSTANCE_URL}`);
+    }
+
     const instance = $page.params.instance
+    
+    
     let email: string | undefined = ''
     let submitting: boolean = false
   
