@@ -12,6 +12,8 @@ Nothing groundbreaking but quite a few UI tweaks:
 - Added "scroll to bottom" button to top bar on posts
 - Fixed bouncy collapse/expand button right-hand sidebar
 - Added slight margins to `/post` view
+- Profile menu now shows your display name instead of username (username if you haven't set display name)
+- Removed Modlog link from sidebar and navbar. Now located in profile menu
 
 
 ### Security

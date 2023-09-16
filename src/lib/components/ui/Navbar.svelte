@@ -125,16 +125,6 @@
             <Icon mini src={GlobeAlt} size="16" slot="icon" />
             <span class="hidden md:inline">Explore</span>
         </Button>
-
-        <!---Modlog--->
-        <Button
-            href="/modlog"
-            aria-label="Modlog"
-            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
-        >
-            <Icon mini src={Newspaper} size="16" slot="icon" />
-            <span class="hidden md:inline">Modlog</span>
-        </Button>
       
         <!--- 'Create' Menu--->
         <Menu alignment="bottom-right">
@@ -214,11 +204,11 @@
             {/if}
         </button>
 
-
+        <!--- User-Specific Options--->
         <li class="text-xs opacity-80 text-left mx-4 my-1 py-1">
-            {$profile?.user ? $profile.user.local_user_view.person.name : 'Profile'}
+            {$profile?.user ? $profile.user.local_user_view.person.display_name ?? $profile.user.local_user_view.person.name : 'Profile'}
         </li>
-
+        
         {#if $profile?.user}
             <MenuButton link href="/profile">
                 <Icon src={UserCircle} mini width={16} /> Profile
@@ -249,7 +239,21 @@
         </MenuButton>
 
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-      
+        
+        <!--- Site-specific Links--->
+        <li class="text-xs px-4 py-1 my-1 opacity-80">{$site.site_view.site.name}</li>
+            <MenuButton link href="/modlog">
+                <Icon src={Newspaper} mini width={16} />
+                Modlog
+            </MenuButton>
+        
+            <MenuButton link href="/legal">
+                <Icon src={BuildingOffice} mini width={16} />
+                Legal
+            </MenuButton>
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+
+        <!--- Application Settings/Info --->
         <li class="text-xs px-4 py-1 my-1 opacity-80">App</li>
         <MenuButton link href="/settings">
             <Icon src={Cog6Tooth} mini width={16} />
@@ -261,10 +265,7 @@
             About
         </MenuButton>
 
-        <MenuButton link href="/legal">
-            <Icon src={BuildingOffice} mini width={16} />
-            Legal
-        </MenuButton>
+        
       
         <MenuButton>
             <Icon
