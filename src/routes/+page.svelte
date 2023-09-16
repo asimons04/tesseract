@@ -31,11 +31,11 @@
 <div class="flex flex-row gap-4 w-full h-full">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         <header>
-            <h1 class="text-3xl font-bold">Frontpage</h1>
+            <h1 class="p-3 text-3xl font-bold">{data.site.site_view.site.name} | Frontpage</h1>
         </header>
 
         <div class="xl:hidden">
-            <Button on:click={() => (sidebar = !sidebar)}>About</Button>
+            <!---<Button on:click={() => (sidebar = !sidebar)}>About</Button>--->
         </div>
 
         <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
