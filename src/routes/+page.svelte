@@ -17,6 +17,7 @@
   import { userSettings } from '$lib/settings.js'
   import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
   import Placeholder from '$lib/components/ui/Placeholder.svelte'
+  import Avatar from '$lib/components/ui/Avatar.svelte'
 
   export let data
 
@@ -31,14 +32,19 @@
 <div class="flex flex-row gap-4 w-full h-full">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         <header>
-            <h1 class="p-3 text-3xl font-bold">{data.site.site_view.site.name} | Frontpage</h1>
+            <span class="flex flex-row gap-4 items-center font-bold text-xl text-center mx-auto">
+                {#if data.site.site_view.site.icon}
+                    <Avatar circle={false} width={48} url={data.site.site_view.site.icon} />
+                {/if}
+                {data.site.site_view.site.name} | Frontpage
+            </span>
         </header>
 
         <div class="xl:hidden">
             <!---<Button on:click={() => (sidebar = !sidebar)}>About</Button>--->
         </div>
 
-        <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
+        <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap px-2">
             <MultiSelect
                 options={['Subscribed', 'Local', 'All']}
                 disabled={[$profile?.jwt == undefined]}
@@ -67,7 +73,7 @@
             <PostFeed posts={data.posts.posts} />
         </section>
 
-        <div class="mt-auto">
+        <div class="mt-auto px-2">
             <Pageination
                 page={data.page}
                 on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}

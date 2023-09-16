@@ -35,7 +35,7 @@
 </script>
 
 
-<div class="flex flex-col md:flex-row gap-4 w-full">
+<div class="flex flex-col md:flex-row gap-4 w-full px-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
         <div class="flex flex-row gap-3 items-center">
             <Avatar

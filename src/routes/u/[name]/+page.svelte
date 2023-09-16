@@ -143,7 +143,7 @@
     </Modal>
 {/if}
 
-<div class="flex flex-col-reverse lg:flex-row gap-4 max-w-full w-full">
+<div class="flex flex-col-reverse lg:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         <div class="flex flex-row gap-4 justify-between flex-wrap">
             <MultiSelect
