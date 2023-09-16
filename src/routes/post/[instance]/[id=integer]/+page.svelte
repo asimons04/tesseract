@@ -18,6 +18,7 @@
         ArrowSmallLeft,
         ChevronDoubleRight,
         ChevronDoubleUp,
+        ChevronDoubleDown,
         ExclamationTriangle, 
         Icon 
     } from 'svelte-hero-icons'
@@ -149,6 +150,7 @@
         
         <!--- Menu bar above post content --->
         <div class="flex flex-row gap-2 w-full mb-2 justify-between">
+            
             <!--- Button to Return to Feed --->
             <Button class="font-normal w-full" title="Go back to feed"
                 on:click={() => {
@@ -159,6 +161,17 @@
                 <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
                 <span class="hidden md:inline">Return to Feed</span>
             </Button>
+            
+            <!--- Button to Scroll to the Bottom --->
+            <Button class="font-normal w-full" title="Scroll to Top"
+                on:click={() => {
+                    window.scrollTo(0,document.body.scrollHeight);
+                }}
+            >
+                <Icon src={ChevronDoubleDown} mini size="16" slot="icon" />
+                <span class="hidden md:inline">Scroll to Bottom</span>
+            </Button>
+            
         </div>
         
         
@@ -428,7 +441,7 @@
    
     
     <!--- Community Sidebar--->
-    <div class="w-auto">
+    <div class="w-auto mt-[-26px]">
         <CommunityCard community_view={data.post.community_view} />
     </div>
 </div>  

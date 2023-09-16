@@ -80,7 +80,7 @@
         />
     </div>
 
-    <div class="hidden lg:block xl:block">
+    <div class="hidden lg:block xl:block mt-[-26px]">
         <CommunityCard community_view={data.community.community_view} />
     </div>
 </div>
