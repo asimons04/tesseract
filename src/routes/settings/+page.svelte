@@ -24,7 +24,7 @@
     <title>Settings</title>
 </svelte:head>
 
-<div class="flex flex-col">
+<div class="flex flex-col p-2">
     <h1 class="text-3xl font-bold flex justify-between">
         Settings 
         <Button

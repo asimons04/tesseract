@@ -2,8 +2,8 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.57
-### Implemented Missing Feature
-I wrote the part to send the password reset email, but forgot to write the hanlder to set the new password.  That has been added.
+### Password Reset Handler Part II
+I wrote the part to _send_ the password reset email, but forgot to write the hanlder to set the new password.  That has been added.
 
 ### UI
 Nothing groundbreaking but quite a few UI tweaks:

@@ -102,7 +102,7 @@
 {/if}
 
 {#if $profileData.profiles.length == 0}
-    <div class="h-full flex items-center justify-center">
+    <div class="p-2 flex items-center justify-center">
         <div class="text-slate-600 dark:text-zinc-400 flex flex-col justify-center items-center py-8 gap-4">
             <div class="flex flex-col items-center">
                 <Icon src={ArrowLeftOnRectangle} size="48" solid />
@@ -136,7 +136,7 @@
         </div>
     </div>
 {:else}
-    <div class="flex flex-col h-full gap-4">
+    <div class="p-2 flex flex-col gap-4">
         <div class="flex flex-row justify-between">
             <h1 class="text-2xl font-bold">Accounts</h1>
         </div>
@@ -250,28 +250,28 @@
         </div>
     </EditableList>
 
-    <div class="mt-auto" />
-    <div class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined}>
-        <TextInput
-            on:change={changeGuestInstance}
-            placeholder="Instance URL"
-            label="Guest instance"
-            bind:value={newInstance}
-            disabled={LINKED_INSTANCE_URL != undefined}
-        />
-        <Button
-            color="primary"
-            {loading}
-            disabled={loading || LINKED_INSTANCE_URL != undefined}
-            class="h-[42px] self-end"
-        >
-            Change
-        </Button>
-    </div>
+    <div class="mt-auto p-2" />
+        <div class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined}>
+            <TextInput
+                on:change={changeGuestInstance}
+                placeholder="Instance URL"
+                label="Guest instance"
+                bind:value={newInstance}
+                disabled={LINKED_INSTANCE_URL != undefined}
+            />
+            <Button
+                color="primary"
+                {loading}
+                disabled={loading || LINKED_INSTANCE_URL != undefined}
+                class="h-[42px] self-end"
+            >
+                Change
+            </Button>
+        </div>
 
-    <Button href="/login" size="lg">
-        <Icon slot="icon" src={Plus} size="16" mini />
-            Add more
-    </Button>
+        <Button href="/login" size="lg">
+            <Icon slot="icon" src={Plus} size="16" mini />
+                Add more
+        </Button>
     </div>
 {/if}
