@@ -1,5 +1,12 @@
 ## Roadmap 
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
+### 1.2.53
+
+#### Compact View Refresh
+I've completely ignored compact view thus far.  Time to give it a spruce up
+
+#### 
+
 
 ### Infrastructure
 - Add "Guest" and the instance it's hooked to in Account switcher menu in sidebar
