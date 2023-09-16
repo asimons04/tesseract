@@ -35,7 +35,7 @@
 </script>
 
 
-<div class="flex flex-col md:flex-row gap-4 w-full">
+<div class="flex flex-col md:flex-row gap-4 w-full px-2 pl-3 pt-4">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
         <div class="flex flex-row gap-3 items-center">
             <Avatar
@@ -80,7 +80,7 @@
         />
     </div>
 
-    <div class="hidden lg:block xl:block">
+    <div class="hidden lg:block xl:block mt-[-8px]">
         <CommunityCard community_view={data.community.community_view} />
     </div>
 </div>

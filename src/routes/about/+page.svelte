@@ -17,17 +17,9 @@
         my unnamed custom build of Photon before I decided to make it into an official fork.
     </p>
     
-<<<<<<< HEAD
-=======
-    
->>>>>>> 1.2.53
-    
+       
     <h2 class="text-2xl font-bold leading-8 ">Features</h2>
     <ul class="list-disc pl-4 my-3">
-<<<<<<< HEAD
-        <li>Inline media players for Youtube, Spotify, and SoundCloud (more coming eventually/as-demanded)</li>
-        <li>More focus on images in feed and post view.</li>
-=======
         <li>
             Full media support in feed and posts:
             <ul class="list-disc pl-4">
@@ -39,7 +31,6 @@
             <p class="my-2">Users can enable/disable media embeds from their settings.</p>
         </li>
         <li>Optimized for desktop and mobile. All desktop features are available in mobile.</li>
->>>>>>> 1.2.53
         <li>A more "new" Reddit-like look and feel</li>
         <li>Code syntax highlighting.</li>
         <li>Full admin tools to manage your Lemmy instance</li>
@@ -47,8 +38,6 @@
         <li>Modlog and Moderation Tools</li>
     </ul>
 
-<<<<<<< HEAD
-=======
     <h2 class="text-2xl font-bold leading-8">Get Tesseract</h2>
     <!--
     <div class="flex flex-row my-3">
@@ -61,7 +50,6 @@
                 <img src="https://y.yarn.co/01fce8e0-fbf0-4109-a649-de693986fc88_text.gif" alt="Verna from '30 Rock' saying 'You made it?'"/>
             </div>
         </div>
->>>>>>> 1.2.53
 
         <div class="flex flex-row flex-wrap">
             <div class="flex-initial">

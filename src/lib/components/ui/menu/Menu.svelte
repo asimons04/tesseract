@@ -19,21 +19,26 @@
     export const toggleOpen = () => (open = !open)
   
     function getOriginClass(origin: Alignment) {
-      switch (origin) {
-        case 'top-right':
-          return 'bottom-[100%] right-0 origin-bottom-right'
-        case 'bottom-left':
-          return 'top-[100%] origin-top-left'
-        case 'top-left':
-          return 'bottom-[100%] left-0 origin-bottom-left'
-        case 'bottom-right':
-          return 'top-[100%] right-0 origin-top-right'
-        case 'top-center':
-          return 'bottom-[100%] -left-[450%] origin-bottom'
-        case 'bottom-center':
-          return 'top-[100%] -left-[450%] origin-top'
-        default:
-          return 'bottom-[100%] origin-top-left'
+        switch (origin) {
+            case 'top-right':
+                return 'bottom-[100%] right-0 origin-bottom-right'
+            case 'bottom-left':
+                return 'top-[100%] origin-top-left'
+            case 'top-left':
+                return 'bottom-[100%] left-0 origin-bottom-left'
+            case 'bottom-right':
+                return 'top-[100%] right-0 origin-top-right'
+            case 'top-center':
+                return 'bottom-[100%] -left-[450%] origin-bottom'
+            case 'bottom-center':
+                return 'top-[100%] -left-[450%] origin-top'
+
+            case 'side-left':
+                return 'bottom-[-500%] right-[120%]'
+            case 'side-right':
+                return 'bottom-[-500%] right-[-120%]'
+            default:
+                return 'bottom-[100%] origin-top-left'
       }
     }
   </script>
@@ -62,10 +67,10 @@
           start: 0.95,
           easing: expoOut,
         }}
-        class="list-none absolute max-h-96 z-30 overflow-auto {getOriginClass(
+        class="list-none absolute h-auto z-30 overflow-auto {getOriginClass(
           alignment
         )}
-            rounded-lg py-2 min-w-[16rem] my-2 flex flex-col shadow-sm
+            rounded-lg py-1 min-w-[16rem] my-2 flex flex-col shadow-sm
             bg-white dark:bg-zinc-900 backdrop-blur-2xl border border-slate-200 dark:border-zinc-800
             {$$props.containerClass}"
       >

@@ -1,46 +1,52 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
-  import { page } from '$app/stores'
-  import Button from '$lib/components/input/Button.svelte'
-  import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
-  import Card from '$lib/components/ui/Card.svelte'
-  import Pageination from '$lib/components/ui/Pageination.svelte'
-  import Placeholder from '$lib/components/ui/Placeholder.svelte'
-  import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
-  import { searchParam } from '$lib/util.js'
-  import { ClipboardDocumentCheck, Icon } from 'svelte-hero-icons'
-  import Application from './Application.svelte'
-  import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import { goto } from '$app/navigation'
+    import { page } from '$app/stores'
+    import Button from '$lib/components/input/Button.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
+    import Pageination from '$lib/components/ui/Pageination.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
+    import { searchParam } from '$lib/util.js'
+    import { ClipboardDocumentCheck, Icon } from 'svelte-hero-icons'
+    import Application from './Application.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
 
-  export let data
+    export let data
 </script>
 
-<h1 class="font-bold text-2xl">Applications</h1>
-<MultiSelect
-  options={[false, true]}
-  selected={data.unreadOnly ?? true}
-  optionNames={['All', 'Unread']}
-  on:select={(e) =>
-    searchParam($page.url, 'unreadOnly', e.detail.toString(), 'page')}
-/>
-{#if data.applications && data.applications.length > 0}
-  <div class="flex flex-col gap-4">
-    {#each data.applications as application (application.registration_application.id)}
-      <Application {application} />
-    {/each}
-  </div>
-  {#if data.applications.length >= 40}
-    <div class="mt-auto">
-      <Pageination
-        page={data.page}
-        on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-      />
-    </div>
-  {/if}
-{:else}
-  <Placeholder
-    icon={ClipboardDocumentCheck}
-    title="No new applications"
-    description="Applications to join your instance will appear here."
-  />
-{/if}
+<div class="p-2">
+    <h1 class="font-bold text-2xl">Applications</h1>
+    <MultiSelect
+        options={[false, true]}
+        selected={data.unreadOnly ?? true}
+        optionNames={['All', 'Unread']}
+        on:select={(e) =>
+            searchParam($page.url, 'unreadOnly', e.detail.toString(), 'page')
+        }
+    />
+
+    {#if data.applications && data.applications.length > 0}
+        <div class="flex flex-col gap-4">
+            {#each data.applications as application (application.registration_application.id)}
+                <Application {application} />
+            {/each}
+        </div>
+
+        {#if data.applications.length >= 40}
+            <div class="mt-auto">
+                <Pageination
+                    page={data.page}
+                    on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
+                />
+            </div>
+        {/if}
+
+    {:else}
+        <Placeholder
+            icon={ClipboardDocumentCheck}
+            title="No new applications"
+            description="Applications to join your instance will appear here."
+        />
+    {/if}
+</div>

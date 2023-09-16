@@ -1,40 +1,56 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
+
     import Button from '$lib/components/input/Button.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { getClient } from '$lib/lemmy.js'
-    import type { GetCaptchaResponse } from 'lemmy-js-client'
-    import { LINKED_INSTANCE_URL } from "$lib/instance.js";
+    
+    import type { PasswordChangeAfterReset } from 'lemmy-js-client'
+    import { LINKED_INSTANCE_URL, instance as Instance } from "$lib/instance.js";
 
     export let data
 
-    if (LINKED_INSTANCE_URL && LINKED_INSTANCE_URL != $page.params.instance) {
-        goto(`/forgot_password/${LINKED_INSTANCE_URL}`);
+    let instance = LINKED_INSTANCE_URL ?? $Instance;
+    
+
+    let formData:PasswordChangeAfterReset = {
+        token: $page.params.token,
+        password: "",
+        password_verify: ""
     }
 
-    const instance = $page.params.instance
-    
-    
-    let email: string | undefined = ''
     let submitting: boolean = false
   
-    $: if (email == '') email = undefined
 
 
     async function submit() {
         submitting = true
-        try {
-            const res = await getClient(instance, fetch).passwordReset({
-                email: email,
-            })
-
+        if (formData.password != formData.password_verify) {
             toast({
-                content: `A password reset email was sent to ${email}. Please check your inbox and follow the instructions.`,
+                content: "Passwords do not match.",
+                type: 'error'
+
+            })
+            submitting=false;
+            return;
+        }
+        
+        try {
+            const res = await getClient(instance, fetch).passwordChangeAfterReset({
+                ...formData
+            })
+            
+            console.log(res);
+            
+            toast({
+                content: `Your password was successfully changed.`,
                 type: 'success',
             })
+            submitting=false;
             goto('/login');
             
         } catch (err) {
@@ -48,7 +64,7 @@
 </script>
 
 <svelte:head>
-    <title>Forgot Password</title>
+    <title>Change Password</title>
 </svelte:head>
 
 <form class="flex flex-col gap-4 max-w-2xl mx-auto" on:submit|preventDefault={submit}>
@@ -59,16 +75,22 @@
         {data.site_view.site.name}
     </span>
   
-    <h1 class="font-bold text-3xl">Recover Account Password</h1>
+    <h1 class="font-bold text-3xl">Set New Password</h1>
     <p class="text-sm">
-        Enter your registerd email address to begin the password recovery process.  You will not be able to reset your 
-        password if you did not register an email when your account was created.
+        
     </p>
     <TextInput
-        bind:value={email}
-        label="Email"
+        bind:value={formData.password}
+        label="New password"
         required={true}
-        type="email"
+        type="password"
+    />
+
+    <TextInput
+        bind:value={formData.password_verify}
+        label="Confirm password"
+        required={true}
+        type="password"
     />
     
     <Button
@@ -79,6 +101,6 @@
         disabled={submitting}
         class="mt-auto"
     >
-        Submit
+        Save
     </Button>
 </form>

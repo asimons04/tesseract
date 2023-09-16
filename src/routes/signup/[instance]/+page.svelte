@@ -22,10 +22,17 @@
         QuestionMarkCircle,
         XCircle,
     } from 'svelte-hero-icons'
+    import { LINKED_INSTANCE_URL } from "$lib/instance.js";
 
     export let data
 
-    const instance = $page.params.instance
+    if (LINKED_INSTANCE_URL && LINKED_INSTANCE_URL != $page.params.instance) {
+        goto(`/signup/${LINKED_INSTANCE_URL}`);
+    }
+    
+    const instance =  $page.params.instance
+    
+    
     let captchaRequired = data.site_view.local_site.captcha_enabled
     let email: string | undefined = ''
 

@@ -1,15 +1,13 @@
-import { getClient } from '$lib/lemmy.js'
-import { error } from '@sveltejs/kit'
+import { LINKED_INSTANCE_URL } from "$lib/instance.js";
+import { redirect } from "@sveltejs/kit";
+import { getInstance } from '$lib/lemmy.js'
 
-export async function load(req: any) {
-    try {
-        return {
-            site: await getClient(undefined, req.fetch).getSite({}),
-        }
-    } catch (err) {
-        throw error(500, {
-            message: 'Failed to fetch legal page.',
-        })
+
+export const load = () => {
+    if (LINKED_INSTANCE_URL) {
+        throw redirect(300, `/legal/${LINKED_INSTANCE_URL}`)
+    }
+    else {
+        throw redirect(300, `/legal/${getInstance()}`)
     }
 }
-

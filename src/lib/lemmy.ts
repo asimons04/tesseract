@@ -12,9 +12,9 @@ async function customFetch(
     input: RequestInfo | URL,
     init?: RequestInit | undefined
 ): Promise<Response> {
-  const res = await func(input, init)
-  if (!res.ok) throw error(res.status, await res.text())
-  return res
+    const res = await func(input, init)
+    if (!res.ok) throw error(res.status, await res.text())
+    return res
 }
 
 export function getClient(
@@ -43,6 +43,7 @@ if (LINKED_INSTANCE_URL) {
     .getSite({})
     .then((s) => site.set(s))
 }
+
 
 export async function validateInstance(instance: string): Promise<boolean> {
     if (instance == '') return false

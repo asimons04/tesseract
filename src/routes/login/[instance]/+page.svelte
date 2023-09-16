@@ -12,11 +12,13 @@
 
     export let data;
     
+    if (LINKED_INSTANCE_URL && LINKED_INSTANCE_URL != $page.params.instance) {
+        goto(`/login/${LINKED_INSTANCE_URL}`);
+    }
     
-    const instance = $page.params.instance
-    
+   
     let formData = {
-        instance: instance,
+        instance: $page.params.instance,
         username: '',
         password: '',
         totp: '',

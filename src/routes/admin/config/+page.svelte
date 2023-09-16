@@ -62,7 +62,7 @@
   <title>Administration</title>
 </svelte:head>
 
-<form class="flex flex-col gap-4" on:submit|preventDefault={save}>
+<form class="flex flex-col gap-4 p-2" on:submit|preventDefault={save}>
     <h1 class="flex flex-row justify-between">
         <span class="font-bold text-2xl">Site Configuration</span>
         

@@ -18,6 +18,7 @@
         ArrowSmallLeft,
         ChevronDoubleRight,
         ChevronDoubleUp,
+        ChevronDoubleDown,
         ExclamationTriangle, 
         Icon 
     } from 'svelte-hero-icons'
@@ -144,11 +145,12 @@
 </svelte:head>
 
    
-<div class="flex flex-col md:flex-row gap-4 w-full">
+<div class="flex flex-col md:flex-row gap-4 w-full px-2 py-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
         <!--- Menu bar above post content --->
-        <div class="flex flex-row gap-2 w-full mb-2 justify-between">
+        <div class="flex flex-row gap-2 w-full mb-2 justify-between mt-[-8px]" class:hidden={!$userSettings.uiState.showPWAButtons}>
+            
             <!--- Button to Return to Feed --->
             <Button class="font-normal w-full" title="Go back to feed"
                 on:click={() => {
@@ -159,10 +161,24 @@
                 <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
                 <span class="hidden md:inline">Return to Feed</span>
             </Button>
+            
+            <!--- Button to Scroll to the Bottom --->
+            <Button class="font-normal w-full" title="Scroll to Top"
+                on:click={() => {
+                    window.scrollTo(0,document.body.scrollHeight);
+                }}
+            >
+                <Icon src={ChevronDoubleDown} mini size="16" slot="icon" />
+                <span class="hidden md:inline">Scroll to Bottom</span>
+            </Button>
+            
         </div>
         
         <!--- Post and Comments-->
-        <div class="flex flex-col gap-2 sm:gap-2 max-w-full w-full min-w-0">
+        <div class="flex flex-col gap-2 sm:gap-2 
+            w-full sm:w-full md:w-[90%]
+            ml-auto mr-auto
+        ">
             {#if $page.params.instance.toLowerCase() != $instance.toLowerCase()}
             <Card cardColor="warning" class="p-4 flex flex-col gap-1">
                 <Icon
@@ -391,7 +407,7 @@
             </div>
 
             <!--- Menu bar below post/comments content --->
-            <div class="flex flex-row gap-2 w-full mb-2 justify-between">
+            <div class="flex flex-row gap-2 w-full mb-2 justify-between" class:hidden={!$userSettings.uiState.showPWAButtons}>
                 <!--- Button to Return to Feed --->
                 <Button class="font-normal w-full" title="Go back to feed"
                     on:click={() => {
@@ -422,7 +438,7 @@
    
     
     <!--- Community Sidebar--->
-    <div class="w-auto">
+    <div class="w-auto mt-[-8px]">
         <CommunityCard community_view={data.post.community_view} />
     </div>
 </div>  

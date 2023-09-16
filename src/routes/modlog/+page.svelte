@@ -16,7 +16,7 @@
     <title>Modlog</title>
 </svelte:head>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-4 p-2">
     <h1 class="font-bold text-2xl">Modlog</h1>
     <div class="flex flex-col gap-2">
         <MultiSelect
