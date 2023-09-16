@@ -145,11 +145,11 @@
 </svelte:head>
 
    
-<div class="flex flex-col md:flex-row gap-4 w-full px-2">
+<div class="flex flex-col md:flex-row gap-4 w-full px-2 py-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
         <!--- Menu bar above post content --->
-        <div class="flex flex-row gap-2 w-full mb-2 justify-between">
+        <div class="flex flex-row gap-2 w-full mb-2 justify-between" class:hidden={!$userSettings.uiState.showPWAButtons}>
             
             <!--- Button to Return to Feed --->
             <Button class="font-normal w-full" title="Go back to feed"
@@ -173,9 +173,6 @@
             </Button>
             
         </div>
-        
-        
-        
         
         <!--- Post and Comments-->
         <div class="flex flex-col gap-2 sm:gap-2 
@@ -410,7 +407,7 @@
             </div>
 
             <!--- Menu bar below post/comments content --->
-            <div class="flex flex-row gap-2 w-full mb-2 justify-between">
+            <div class="flex flex-row gap-2 w-full mb-2 justify-between" class:hidden={!$userSettings.uiState.showPWAButtons}>
                 <!--- Button to Return to Feed --->
                 <Button class="font-normal w-full" title="Go back to feed"
                     on:click={() => {

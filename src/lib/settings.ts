@@ -65,6 +65,7 @@ interface Settings {
         expandModeratingList: boolean
         expandSubscribedList: boolean
         expandAccountsList: boolean
+        showPWAButtons: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -99,6 +100,7 @@ export const defaultSettings: Settings = {
         expandModeratingList: true,
         expandSubscribedList: true,
         expandAccountsList: true,
+        showPWAButtons: false,
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,

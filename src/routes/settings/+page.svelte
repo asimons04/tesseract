@@ -98,6 +98,7 @@
                 <Checkbox bind:checked={$userSettings.highlightInlineCode}> Use syntax highlighting in inline code.</Checkbox>
                 <Checkbox bind:checked={$userSettings.inlineImages}>        Enable inline images in posts/comments</Checkbox>
                 <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
+                <Checkbox bind:checked={$userSettings.uiState.showPWAButtons}>Enable navigation buttons in posts.</Checkbox>
 
                     
                 <div class="flex justify-between mt-4">
