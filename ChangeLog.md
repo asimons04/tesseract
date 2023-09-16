@@ -3,40 +3,54 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.57
 ### Password Reset Handler Part II
-I wrote the part to _send_ the password reset email, but forgot to write the hanlder to set the new password.  That has been added.
+I wrote the part to _send_ the password reset email, but forgot to write the hanlder to validate the token and _set_ the new password.  That has been added, and password reset functionality is now 100%. 
 
-### UI
-Nothing groundbreaking but quite a few UI tweaks:
+Last remaining item for account management is normal password change.
+
+
+
+### UI Refinement
+Nothing groundbreaking but quite a few UI tweaks that add up to a lot:
 
 - Moderation and post action buttons now open to the left of the button instead of above/below.
 - Added site logo and name to top of legal page and front page
 - Legal page is now instance specific
 - Removed some excessive padding to make page cleaner
-- Added "scroll to bottom" button to top bar on posts
-- Fixed bouncy collapse/expand button right-hand sidebar
+- Added "scroll to top/bottom" buttons above/below posts along with "return to feed" button.
+- Made the above mentioned navigation bars optional. Default is off.
+
+- Fixed "bouncy" collapse/expand button right-hand sidebar
 
 - Added slight margins to `/post` view
+- Capped the width of posts/comments in `/saved` lists until I figure out what I want to do there. Looks much cleaner.
+
 - Profile menu now shows your display name instead of username (username if you haven't set display name)
-- Removed Modlog link from sidebar and navbar. Now located in profile menu
+
+- Removed Modlog and Admin links from sidebar and navbar, respectively. Both are now located in profile menu.
+
 - Menus are more compact now
+
 - You can toggle light/dark mode by clicking the Theme button in the profile menu
 
 
 
+
 ### New Configuration Options
-#### Disable Modlog for Regular Users (env var)
+#### Disable Modlog for Regular Users
 This setting controls whether regular users will see the Modlog button in the UI.
 
 Note that the modlog API endpoint does not require authentication.  This _will not_ prevent a determined user from looking at your modlog.  If you are also running Lemmy-UI, they can also just view the modlog there.  
 
-To use this option, add an environment variable called `PUBLIC_DISABLE_MODLOG_USERS` and set its value to `true`.  If omitted, it will be treated as `false`.
+To use this option, add an environment variable called `PUBLIC_DISABLE_MODLOG_USERS=true` .  If omitted, it will be treated as `false` (default behavior), and modlog button will be visible to all.
+
+There is no way to set this via the UI as all data stored is local.
 
 #### Accessibility Buttons
 You can now change whether the "Back to feed", "jump to bottom", "jump to top" buttons are shown.  These are useful in some cases, clutter in others.  You can now turn them off in your app settings.
 
 
 ### Security
-Tightened up routes that take the instances into account.
+Tightened up routes that take the current instance into account.
 
 If Tesseract is admin-locked to a specific instance, routes like `/legal/{instance}`, `/forgot_password/{instance}`, etc were already properly working against the admin-defined instance, but the URL still showed whatever instance the user provided. Now, there is a redirect to `/{page}/{defined_instance}` to remove any ambiguity.
 
