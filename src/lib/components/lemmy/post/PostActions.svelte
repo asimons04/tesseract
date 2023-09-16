@@ -158,7 +158,7 @@
         </Button>
     {/if}
     <Menu
-        alignment="top-right"
+        alignment="side-left"
         containerClass="overflow-auto max-h-[400px]"
         bind:toggleOpen
     >
