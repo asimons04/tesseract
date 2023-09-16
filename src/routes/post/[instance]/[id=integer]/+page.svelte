@@ -161,8 +161,14 @@
             </Button>
         </div>
         
+        
+        
+        
         <!--- Post and Comments-->
-        <div class="flex flex-col gap-2 sm:gap-2 max-w-full w-full min-w-0">
+        <div class="flex flex-col gap-2 sm:gap-2 
+            w-full sm:w-full md:w-[90%]
+            ml-auto mr-auto
+        ">
             {#if $page.params.instance.toLowerCase() != $instance.toLowerCase()}
             <Card cardColor="warning" class="p-4 flex flex-col gap-1">
                 <Icon

@@ -157,6 +157,8 @@
             <Icon src={RectangleGroup} mini size="16" slot="icon" />
         </Button>
     {/if}
+
+
     <Menu
         alignment="side-left"
         containerClass="overflow-auto max-h-[400px]"
@@ -236,10 +238,8 @@
             <MenuButton
                 on:click={() => {
                     setSessionStorage('postDraft', {
-                        body: `cross-posted from: ${post.post.ap_id}\n${
+                        body: `cross-posted from: ${post.post.ap_id}\n\n${
                             post.post.body
-                            ? '>' + post.post.body.split('\n').join('\n> ')
-                            : ''
                         }`,
                         url: post.post.url,
                         title: post.post.name,
