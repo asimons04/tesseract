@@ -14,7 +14,8 @@
 
     export let data
 
-    export let instance = LINKED_INSTANCE_URL ?? $Instance;
+    let instance = LINKED_INSTANCE_URL ?? $Instance;
+    
 
     let formData:PasswordChangeAfterReset = {
         token: $page.params.token,

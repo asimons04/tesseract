@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <div class="hidden lg:block xl:block mt-[2px]">
+    <div class="hidden lg:block xl:block mt-[-8px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
     </div>
 </div>
