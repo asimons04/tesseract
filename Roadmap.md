@@ -3,7 +3,7 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
 ### Infrastructure
 - Add "Guest" and the instance it's hooked to in Account switcher menu in sidebar
-
+- Need to implement normal password change. Now that password recovery is completed, this is likely next.
 - Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 
 - Consider integrating [Fediseer](https://fediseer.com/api/) support into admin tools 
