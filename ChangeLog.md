@@ -6,7 +6,7 @@ All major/minor changes between releases will be documented here.
 Nothing groundbreaking but quite a few UI tweaks:
 
 - Moderation and post action buttons now open to the left of the button instead of above/below.
-- Added site logo and name to top of legal page
+- Added site logo and name to top of legal page and front page
 - Legal page is now instance specific
 - Removed some excessive padding to make page cleaner
 - Added "scroll to bottom" button to top bar on posts

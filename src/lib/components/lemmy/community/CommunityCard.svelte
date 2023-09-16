@@ -77,7 +77,7 @@
 </script>
 
 <!---Button to hide/show the community sidebar--->
-<aside class="sticky top-[4.2rem] flex flex-col pr-4 hidden lg:block xl:block">
+<aside class="sticky top-[4.7rem] flex flex-col pr-4 hidden lg:block xl:block">
     <div class="grid justify-items-end w-full mr-2">
         <Button
             alignment="right"

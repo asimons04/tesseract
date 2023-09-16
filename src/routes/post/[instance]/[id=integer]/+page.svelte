@@ -438,7 +438,7 @@
    
     
     <!--- Community Sidebar--->
-    <div class="w-auto mt-[-26px]">
+    <div class="w-auto mt-[2px]">
         <CommunityCard community_view={data.post.community_view} />
     </div>
 </div>  

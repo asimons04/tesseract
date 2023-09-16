@@ -35,6 +35,8 @@
                 content: `A password reset email was sent to ${email}. Please check your inbox and follow the instructions.`,
                 type: 'success',
             })
+            goto('/login');
+            
         } catch (err) {
             toast({
                 content: err as any,

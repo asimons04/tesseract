@@ -24,7 +24,7 @@
 </script>
 
 <!--- Button to expand/collapse the site-info sidebar --->
-<aside class="sticky top-[4.2rem] flex flex-col pr-4">
+<aside class="sticky top-[4.7rem] flex flex-col pr-4">
     <div class="grid justify-items-end w-full mr-2">
         <Button
             alignment="right"
