@@ -6,6 +6,11 @@ All major/minor changes between releases will be documented here.
 - Moderation and post action buttons now open to the left of the button instead of above/below.
 - Added site logo and name to top of legal page
 - Legal page is instance specific
+- Removed excessing padding to make page cleaner
+- Added "scroll to bottom" button to top bar on posts
+- Fixed bouncy collapse/expand button right-hand sidebar
+- Added slight margins to `/post` view
+
 
 ### Security
 Tightened up routes that take the instances into account.
