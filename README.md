@@ -184,6 +184,7 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
 | PUBLIC_SSR_ENABLED              | `bool`              | `false`                                |
 | PUBLIC_THEME                    | system\|dark\|light | system                                 |
+| PUBLIC_DISABLE_MODLOG_USERS     | `bool`              | false                                  |
 | PUBLIC_MARK_READ_POSTS          | `bool`              | true                                   |
 | PUBLIC_SHOW_INSTANCES_USER      | `bool`              | false                                  |
 | PUBLIC_SHOW_INSTANCES_COMMUNITY | `bool`              | true                                   |

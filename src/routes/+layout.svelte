@@ -37,28 +37,27 @@
   }
 
   $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
+
 </script>
 
 <svelte:head>
-  <meta name="theme-color" content={inDarkTheme() ? '#020202' : '#f1f6f9'} />
-  {@html webManifest}
+    <meta name="theme-color" content={inDarkTheme() ? '#020202' : '#f1f6f9'} />
+    {@html webManifest}
 </svelte:head>
 
-<div
-  class="flex flex-col min-h-screen {$userSettings.systemUI
-    ? 'font-system'
-    : 'font-sans'}"
+<div class="flex flex-col min-h-screen 
+    {$userSettings.systemUI
+        ? 'font-system'
+        : 'font-sans'
+    }"
 >
-  <Navbar />
-  <ToastContainer />
-  <Moderation />
-  <div class="flex flex-row h-full w-full max-w-full flex-1">
-    <Sidebar />
-    <main
-      class="min-w-0 w-full flex-[3] sm:rounded-tl-lg
-      border-slate-200 dark:border-zinc-900 sm:border-l border-t"
-    >
-      <slot />
-    </main>
-  </div>
+    <Navbar />
+    <ToastContainer />
+    <Moderation />
+    <div class="flex flex-row h-full w-full max-w-full flex-1">
+        <Sidebar />
+        <main class="min-w-0 w-full flex-[3] sm:rounded-tl-lg border-slate-200 dark:border-zinc-900 sm:border-l border-t">
+            <slot />
+        </main>
+    </div>
 </div>

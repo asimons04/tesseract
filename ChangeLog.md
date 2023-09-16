@@ -11,9 +11,23 @@ Nothing groundbreaking but quite a few UI tweaks:
 - Removed some excessive padding to make page cleaner
 - Added "scroll to bottom" button to top bar on posts
 - Fixed bouncy collapse/expand button right-hand sidebar
+- 
 - Added slight margins to `/post` view
 - Profile menu now shows your display name instead of username (username if you haven't set display name)
 - Removed Modlog link from sidebar and navbar. Now located in profile menu
+- Menus are more compact now
+- You can toggle light/dark mode by clicking the Theme button in the profile menu
+
+### New Configuration Options
+#### Disable Modlog for Regular Users (env var)
+This setting controls whether regular users will see the Modlog button in the UI.
+
+Note that the modlog API endpoint does not require authentication.  This _will not_ prevent a determined user from looking at your modlog.  If you are also running Lemmy-UI, they can also just view the modlog there.  
+
+To use this option, add an environment variable called `PUBLIC_DISABLE_MODLOG_USERS` and set its value to `true`.  If omitted, it will be treated as `false`.
+
+#### Accessibility Buttons
+You can now change whether the "Back to feed", "jump to bottom", "jump to top" buttons are shown.  These are useful in some cases, clutter in others.  You can now turn them off in your app settings.
 
 
 ### Security

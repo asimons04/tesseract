@@ -1,6 +1,8 @@
 <script lang="ts">
     import { profile, profileData, setUserID } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
+    import { env } from '$env/dynamic/public'
+
     import Button from '$lib/components/input/Button.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
@@ -40,6 +42,9 @@
     } from 'svelte-hero-icons'
   
     let scrollY = 0
+
+    export const DISABLE_MODLOG_USERS = (env.PUBLIC_DISABLE_MODLOG_USERS ?? 'false').toLowerCase() == 'true'
+
 </script>
   
 <svelte:window bind:scrollY />
@@ -80,16 +85,7 @@
     </div>
 
     <div class="flex flex-row gap-2 py-2 px-2">
-        {#if $profile?.user && isAdmin($profile.user)}
-            <Button
-                href="/admin"
-                aria-label="Admin"
-                class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 relative hover:border-slate-300"
-            >
-                <Icon src={CommandLine} mini size="16" slot="icon" />
-                <span class="hidden md:inline">Admin</span>
-            </Button>
-        {/if}
+        
       
         {#if amModOfAny($profile?.user)}
             <Button
@@ -175,7 +171,7 @@
     <Menu
       alignment="bottom-right"
       itemsClass="h-8 md:h-8"
-      containerClass="!max-h-[28rem]"
+      containerClass="!max-h-[90vh]"
     >
         <!---Profile Button / Avatar Image--->
         <button
@@ -241,16 +237,42 @@
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!--- Site-specific Links--->
-        <li class="text-xs px-4 py-1 my-1 opacity-80">{$site.site_view.site.name}</li>
-            <MenuButton link href="/modlog">
-                <Icon src={Newspaper} mini width={16} />
-                Modlog
-            </MenuButton>
+        <li class="text-xs px-4 py-1 my-1 opacity-80">
+                {#if $site && $site.site_view}
+                    {$site.site_view.site.name}
+                {:else if $instance}
+                    {$instance}
+                {:else}
+                    Instance
+                {/if}
+        </li>
         
-            <MenuButton link href="/legal">
-                <Icon src={BuildingOffice} mini width={16} />
-                Legal
+        <!--- /admin Button --->
+        {#if $profile?.user && isAdmin($profile.user)}
+            <MenuButton link href="/admin"
+                aria-label="Admin Panel"
+            >
+                <Icon src={CommandLine} mini width={16} />
+                Admin Panel
             </MenuButton>
+        {/if}
+
+        <!--- Optionally hide the modlog from non-moderators/non-admins. --->
+        {#if 
+            !DISABLE_MODLOG_USERS || 
+            ($profile?.user && isAdmin($profile.user)) || 
+            ($profile?.user && amModOfAny($profile?.user))  
+        }
+                <MenuButton link href="/modlog">
+                    <Icon src={Newspaper} mini width={16} />
+                    Modlog
+                </MenuButton>
+        {/if}
+        
+        <MenuButton link href="/legal">
+            <Icon src={BuildingOffice} mini width={16} />
+            Legal
+        </MenuButton>
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
 
         <!--- Application Settings/Info --->
@@ -265,9 +287,12 @@
             About
         </MenuButton>
 
-        
-      
-        <MenuButton>
+        <MenuButton 
+            on:click={ () => {
+                $theme = dark() ? 'light' : 'dark'}
+            }
+        >
+            
             <Icon
                 src={$theme == 'system'
                     ? ComputerDesktop
@@ -281,7 +306,10 @@
                 size="16"
             />
             <div class="flex flex-row flex-wrap justify-between w-full">
-                <span>Theme</span>
+                <span>
+                    Theme
+                </span>
+                
                 <select
                     bind:value={$theme}
                     on:click|stopPropagation

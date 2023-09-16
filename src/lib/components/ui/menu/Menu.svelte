@@ -67,7 +67,7 @@
           start: 0.95,
           easing: expoOut,
         }}
-        class="list-none absolute max-h-96 z-30 overflow-auto {getOriginClass(
+        class="list-none absolute h-auto z-30 overflow-auto {getOriginClass(
           alignment
         )}
             rounded-lg py-1 min-w-[16rem] my-2 flex flex-col shadow-sm
