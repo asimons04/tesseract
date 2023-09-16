@@ -55,7 +55,7 @@
   <div class="flex flex-row h-full w-full max-w-full flex-1">
     <Sidebar />
     <main
-      class="p-3 sm:p-6 min-w-0 w-full flex-[3] sm:rounded-tl-lg
+      class="min-w-0 w-full flex-[3] sm:rounded-tl-lg
       border-slate-200 dark:border-zinc-900 sm:border-l border-t"
     >
       <slot />
