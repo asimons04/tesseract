@@ -149,7 +149,7 @@
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
         <!--- Menu bar above post content --->
-        <div class="flex flex-row gap-2 w-full mb-2 justify-between mt-[-8px]" class:hidden={!$userSettings.uiState.showPWAButtons}>
+        <div class="flex flex-row gap-2 w-full mb-2 justify-between" class:hidden={!$userSettings.uiState.showPWAButtons}>
             
             <!--- Button to Return to Feed --->
             <Button class="font-normal w-full" title="Go back to feed"
