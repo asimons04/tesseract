@@ -57,13 +57,6 @@
 
 <div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5]">
     {@html rendered}
-<!---
-    {#if inline}
-        {@html mdInline.render(source)}
-    {:else}
-        {@html md.render(source)}
-    {/if}
---->
 </div>
 
 <style lang="postcss">
