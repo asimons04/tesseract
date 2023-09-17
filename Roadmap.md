@@ -43,6 +43,12 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 -  Add a "active in" section with community cards for ones the user is active in
     - Clicking into that will take you to the community page and filtered for submissions from the user
 
+### Community Pages
+- Show list of moderators for the community
+- Add link to modlog that pre-filters for that community
+
+### Site Card
+- Show list of site administrators
 
 
 ### UI
@@ -59,8 +65,6 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 #### Vote Buttons
 - Add user option to select left/right side for vote buttons
 
-#### Sidebar
-- Add inline search/filter for subscribed communities.
 
 
 #### Admin Panel

@@ -3,6 +3,7 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.58
 - Added community filtering in the sidebar.  You can now filter your subscribed communities for quick access.
+  - To do:  Manually implement a "clear" button for the search field because Firefox still does not support that natively :sigh:
 - Added input type "search" support to `TextInput` component.
 
 
