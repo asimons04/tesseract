@@ -7,8 +7,12 @@ Right now, as far as what gets developed, it's mostly "fixing whatever is annoyi
 
 I realize that is less than professional, but this project is a hobby :shrug:.
 
+### Accounts Management
+- Move Account Selector from sidebar to profile menu
+- Add capability to change password
 
-#### Compact View Refresh
+
+### Compact View Refresh
 I've completely ignored compact view thus far.  Time to give it a spruce up
 
 ### Community Pages
@@ -22,6 +26,13 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 - Favorites list and button on each community to add/remove from favorites
   - Is this needed now that search filtering is added??
 
+### Feed
+- Keyword filter:  Filters out posts that contain any keywords specified by the user
+  - Each filter would be device-specific, unfortunately, as they would have to be saved to LocalStorage
+
+### Code Blocks
+- Fix broken HTML in code blocks
+  - 
 
 ### Infrastructure
 - Add "Guest" and the instance it's hooked to in Account switcher menu in sidebar
@@ -74,8 +85,6 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 
 #### Vote Buttons
 - Add user option to select left/right side for vote buttons
-
-
 
 #### Admin Panel
 - Fix /admin panel so it doesn't render for non-admins.  Granted, it's all public API data and they can't change anything, but unauth users shouldn't even see it.
