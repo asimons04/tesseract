@@ -11,7 +11,16 @@ I realize that is less than professional, but this project is a hobby :shrug:.
 #### Compact View Refresh
 I've completely ignored compact view thus far.  Time to give it a spruce up
 
-#### 
+### Community Pages
+- Show list of moderators for the community
+- Add link to modlog that pre-filters for that community
+
+### Site Card
+- Show list of site administrators
+
+### Sidebar
+- Favorites list and button on each community to add/remove from favorites
+  - Is this needed now that search filtering is added??
 
 
 ### Infrastructure
@@ -49,12 +58,7 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 -  Add a "active in" section with community cards for ones the user is active in
     - Clicking into that will take you to the community page and filtered for submissions from the user
 
-### Community Pages
-- Show list of moderators for the community
-- Add link to modlog that pre-filters for that community
 
-### Site Card
-- Show list of site administrators
 
 
 ### UI
