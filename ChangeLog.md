@@ -2,9 +2,16 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.58
+### Sidebar Enhancements
 - Added community filtering in the sidebar.  You can now filter your subscribed communities for quick access.
-  - To do:  Manually implement a "clear" button for the search field because Firefox still does not support that natively :sigh:
+- When collapsing/expanding "Subscribed" or "Moderating" lists in sidebar, they're now mutually exclusive.  If subscribed is open, moderating will close, and vice-versa.  
+- Added indent to community list
+- Fixed subscription count badge contrast in light mode
+
+
+### Components
 - Added input type "search" support to `TextInput` component.
+- To do:  Manually implement a "clear" button for the search field because Firefox still does not support that natively :sigh:
 
 
 

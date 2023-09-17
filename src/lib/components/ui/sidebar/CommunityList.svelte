@@ -13,19 +13,13 @@
 </script>
 
 <!---min-h-[10vh]--->
-<div class="h-auto overflow-y-auto flex flex-col"
+<div class="h-auto overflow-y-auto flex flex-col { expanded ? 'pl-4' : '' }"
     class:hidden={hidden}
 >
     {#each items.sort( (a, b) => a.title.localeCompare(b.title) ) as follow (follow.id)}
         <div class="inline-flex w-full"
             animate:fade={{ duration: 50, easing: expoOut }}
-            class:hidden={
-                (filter &&
-                    (
-                        !follow.title.toLowerCase().includes(filter) 
-                    )
-                )
-            }
+            class:hidden={ filter && !follow.title.toLowerCase().trim().includes(filter.trim()) }
         >
         
             <Button

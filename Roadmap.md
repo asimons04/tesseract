@@ -1,6 +1,12 @@
 ## Roadmap 
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
-### 1.2.53
+
+This is less of a roadmap to what feature will be implemented in what upcoming version and more of a scratch pad for ideas I have that I'm considering implementing.  Not everything listed here will be added, either because it's a dumb idea, not possible, or because I don't feel like it.
+
+Right now, as far as what gets developed, it's mostly "fixing whatever is annoying me",  "this is broken and I need it to work", or "whatever I feel like adding today".
+
+I realize that is less than professional, but this project is a hobby :shrug:.
+
 
 #### Compact View Refresh
 I've completely ignored compact view thus far.  Time to give it a spruce up

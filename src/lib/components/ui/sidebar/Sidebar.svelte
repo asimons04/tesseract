@@ -126,26 +126,8 @@
         <!--- Subscribed Community List --->
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
-        <SidebarButton 
-            class="w-full"
-            title="{$userSettings.uiState.expandSubscribedList ? 'Collapse' : 'Expand'} Subscriptions"  
-            expanded={$userSettings.uiState.expandSidebar}
-            on:click={() => {
-                $userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList
-                $userSettings.uiState.expandModeratingList = false;
-            }}
-        >
-            <Icon src={InboxArrowDown} mini size="18" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>
-                Subscribed
-                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
-                    {$profile?.user.follows.length}
-                </span>
-            </span>
-        </SidebarButton>
-
         <!--- Search field to filter the subscribed communities--->
-        <div class="pl-4 pr-4" class:hidden={!$userSettings.uiState.expandSidebar }>
+        <div class:hidden={!$userSettings.uiState.expandSidebar }>
             <TextInput 
                 type="search"
                 placeholder="Filter communities"
@@ -165,8 +147,28 @@
                 class="h-8"
             />
         </div>
+
+        <SidebarButton 
+            class="w-full"
+            title="{$userSettings.uiState.expandSubscribedList ? 'Collapse' : 'Expand'} Subscriptions"  
+            expanded={$userSettings.uiState.expandSidebar}
+            on:click={() => {
+                $userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList
+                $userSettings.uiState.expandModeratingList = false;
+            }}
+        >
+            <Icon src={InboxArrowDown} mini size="18" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>
+                Subscribed
+                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
+                    {$profile?.user.follows.length}
+                </span>
+            </span>
+        </SidebarButton>
+
         
-        <!--- The actual community list --->
+        
+        <!--- Subscribed community list --->
         <CommunityList
             expanded={$userSettings.uiState.expandSidebar}
             items={$profile.user.follows.map((i) => i.community)}
@@ -236,4 +238,25 @@
             </Button>
         {/if}
     {/if}
+    
+    <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+    <Button
+        class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"    
+        href="#"
+        color="tertiary"
+        alignment="left"
+        on:click={() =>
+            ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
+        }
+        aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
+        title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
+    >
+        <Icon
+            src={ChevronDoubleLeft}
+            mini
+            size="18"
+            class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"
+        />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar</span>
+    </Button>
 </nav>
