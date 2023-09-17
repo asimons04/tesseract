@@ -25,6 +25,7 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 ### Sidebar
 - Favorites list and button on each community to add/remove from favorites
   - Is this needed now that search filtering is added??
+- Remove "settings" button from sidebar
 
 ### Feed
 - Keyword filter:  Filters out posts that contain any keywords specified by the user

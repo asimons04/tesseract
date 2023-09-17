@@ -72,12 +72,6 @@
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
     </SidebarButton>
     
-    <!---Settings--->
-    <SidebarButton href="/settings" expanded={$userSettings.uiState.expandSidebar} title="Settings">
-        <Icon src={Cog6Tooth} mini size="18" title="Settings" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Settings</span>
-    </SidebarButton>
-
     <!---Communities--->
     <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities">
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
