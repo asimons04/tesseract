@@ -1,6 +1,11 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.58.1
+### Out of Band Release / Bugfix
+Markdown component was getting an unhandled error _sometimes_ and killing the rest of the thread.  Added try/catch to handle it gracefully.
+
+
 ## 1.2.58
 ### Sidebar Enhancements
 Gott say, I've been putting the community filter off for a while, but I'm glad I finally implemented this.  Such a quality of life improvement.
