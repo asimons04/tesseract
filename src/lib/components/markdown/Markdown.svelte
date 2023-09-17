@@ -33,15 +33,37 @@
     $: if (source && div) {
         replaceURLs(div)
     }
+
+    // Render the markdown in a try/catch since sometimes it randomly fails. I think this is due to truncating it for the feed previews.
+    let rendered:HTML
+    try {
+        if (inline) {
+            rendered = mdInline.render(source)
+        }
+        else {
+            rendered = md.render(source)
+        }
+    }
+    catch {
+        try {
+            rendered = mdInline.render(source)
+        }
+        catch {
+            rendered = "<p>Failed to render the markdown</p>";
+        }
+    }
 </script>
 
 
 <div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5]">
+    {@html rendered}
+<!---
     {#if inline}
         {@html mdInline.render(source)}
     {:else}
         {@html md.render(source)}
     {/if}
+--->
 </div>
 
 <style lang="postcss">
