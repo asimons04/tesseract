@@ -187,6 +187,7 @@
                 expanded={$userSettings.uiState.expandSidebar}
                 on:click={() => {
                     $userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList;
+                    // Hide the "subscribed" list
                     $userSettings.uiState.expandSubscribedList = false;
                 }}
             >
