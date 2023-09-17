@@ -15,6 +15,7 @@
         InboxArrowDown,
         InformationCircle,
         Identification,
+        MagnifyingGlass,
         Minus,
         Plus,
         UserGroup
@@ -78,50 +79,13 @@
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Communities</span>
     </SidebarButton>
 
-    <!--- Account Selector --->
-    {#if $profileData.profiles.length >= 1}
-        
-        <div class="flex flex-col">
-            <hr class="border-slate-300 dark:border-zinc-800 my-1" />
-            
-            <SidebarButton 
-                class="w-full"
-                title="{$userSettings.uiState.expandAccountsList ? 'Collapse' : 'Expand'} User Account List"
-                expanded={$userSettings.uiState.expandSidebar}
-                on:click={() =>
-                    ($userSettings.uiState.expandAccountsList = !$userSettings.uiState.expandAccountsList)
-                }
-            >
-                <Icon src={UserGroup} mini size="18" />
-                <span class:hidden={!$userSettings.uiState.expandSidebar}>Accounts</span>
-            </SidebarButton>
-
-            <span class="flex flex-col" class:hidden={!$userSettings.uiState.expandAccountsList}>
-                {#each $profileData.profiles as prof, index (prof.id)}
-                    <div animate:flip={{ duration: 300, easing: expoOut }} class="w-full">
-                        <ProfileButton {index} {prof} expanded={$userSettings.uiState.expandSidebar}/>
-                    </div>
-                {/each}
-                
-                <SidebarButton href="/accounts" expanded={$userSettings.uiState.expandSidebar} title="Manage Accounts">
-                    <Icon src={AdjustmentsHorizontal} mini size="18" />
-                    <span class:hidden={!$userSettings.uiState.expandSidebar}>Manage Accounts</span>
-                </SidebarButton>
-                
-            </span>
-
-            
-        </div>
-        
-    {/if}
-    
 
     {#if $profile?.user}
         <!--- Subscribed Community List --->
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
         <!--- Search field to filter the subscribed communities--->
-        <div class:hidden={!$userSettings.uiState.expandSidebar }>
+        <div class="p-3 flex" class:hidden={!$userSettings.uiState.expandSidebar}>
             <TextInput 
                 type="search"
                 placeholder="Filter communities"
@@ -138,9 +102,10 @@
                     // Hide the 'moderating list'
                     $userSettings.uiState.expandModeratingList = false;
                 }}
-                class="h-8"
+                class="h-8 w-full"
             />
         </div>
+        
 
         <SidebarButton 
             class="w-full"
@@ -151,10 +116,12 @@
                 $userSettings.uiState.expandModeratingList = false;
             }}
         >
+
             <Icon src={InboxArrowDown} mini size="18" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>
+            
+            <span class="w-full flex flex-row justify-between" class:hidden={!$userSettings.uiState.expandSidebar}>
                 Subscribed
-                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
+                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
                     {$profile?.user.follows.length}
                 </span>
             </span>
@@ -173,7 +140,6 @@
         
         <!--- Communities User is Moderating --->
         {#if $profile?.user.moderates.length > 0}
-
             <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
             <SidebarButton 
                 class="w-full"  
@@ -186,7 +152,7 @@
                 }}
             >
                 <Icon src={HandRaised} mini size="18" />
-                <span class:hidden={!$userSettings.uiState.expandSidebar}>
+                <span class="w-full flex flex-row justify-between" class:hidden={!$userSettings.uiState.expandSidebar}>
                     Moderating
                     <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
                         {$profile?.user.moderates.length}
@@ -234,24 +200,4 @@
         {/if}
     {/if}
     
-    <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
-    <Button
-        class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"    
-        href="#"
-        color="tertiary"
-        alignment="left"
-        on:click={() =>
-            ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
-        }
-        aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-        title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-    >
-        <Icon
-            src={ChevronDoubleLeft}
-            mini
-            size="18"
-            class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"
-        />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar</span>
-    </Button>
 </nav>

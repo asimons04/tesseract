@@ -2,6 +2,7 @@
     import { profile, profileData, setUserID } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
     import { env } from '$env/dynamic/public'
+    import { goto } from '$app/navigation'
 
     import Button from '$lib/components/input/Button.svelte'
     import Link from '$lib/components/input/Link.svelte'
@@ -11,6 +12,10 @@
       isAdmin,
     } from '$lib/components/lemmy/moderation/moderation.js'
     
+    import ProfileButton from '$lib/components/ui/sidebar/ProfileButton.svelte'
+
+
+
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Logo from '$lib/components/ui/Logo.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
@@ -20,28 +25,31 @@
     import { site } from '$lib/lemmy.js'
     import { theme } from '$lib/ui/colors.js'
     import {
-      ArrowLeftOnRectangle,
-      Bars3,
-      Bookmark,
-      BuildingOffice,
-      Cog6Tooth,
-      CommandLine,
-      ComputerDesktop,
-      GlobeAlt,
-      Icon,
-      Inbox,
-      InformationCircle,
-      MagnifyingGlass,
-      Moon,
-      Newspaper,
-      PencilSquare,
-      Plus,
-      Sun,
-      UserCircle,
-      UserGroup,
+        AdjustmentsHorizontal,
+        ArrowLeftOnRectangle,
+        Bars3,
+        Bookmark,
+        BuildingOffice,
+        Cog6Tooth,
+        CommandLine,
+        ComputerDesktop,
+        GlobeAlt,
+        Icon,
+        Inbox,
+        InformationCircle,
+        MagnifyingGlass,
+        Moon,
+        Newspaper,
+        PencilSquare,
+        Plus,
+        Sun,
+        UserCircle,
+        UserGroup,
     } from 'svelte-hero-icons'
   
     let scrollY = 0
+    let expandAccountsMenu:boolean = false;
+
 
     export const DISABLE_MODLOG_USERS = (env.PUBLIC_DISABLE_MODLOG_USERS ?? 'false').toLowerCase() == 'true'
 
@@ -86,12 +94,13 @@
 
     <div class="flex flex-row gap-2 py-2 px-2">
         
-      
+        <!--- Show Reports Button if Mod --->
         {#if amModOfAny($profile?.user)}
             <Button
                 href="/moderation"
                 aria-label="Moderation"
                 class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
+                on:click={()=>toggleOpen()}
             >
                 {#if $profile?.user?.reports ?? 0 > 0}
                     <div class="rounded-full w-2 h-2 bg-red-500 absolute -top-1 -left-1"/>
@@ -169,9 +178,9 @@
 
     <!--- Profile Menu --->
     <Menu
-      alignment="bottom-right"
-      itemsClass="h-8 md:h-8"
-      containerClass="!max-h-[90vh]"
+        alignment="bottom-right"
+        itemsClass="h-8 md:h-8"
+        containerClass="!max-h-[90vh]"
     >
         <!---Profile Button / Avatar Image--->
         <button
@@ -181,6 +190,7 @@
             let:toggleOpen
             on:click={toggleOpen}
         >
+        <!--let:toggleOpen-->
             {#if $profile?.user}
                 <div class="w-8 h-8 aspect-square object-cover rounded-full">
                     <Avatar
@@ -226,13 +236,37 @@
             </MenuButton>
         {/if}
       
-        <MenuButton link href="/accounts">
-            <Icon src={UserGroup} mini width={16} />
-            Accounts
-            <span class="text-xs font-bold bg-slate-100 dark:bg-zinc-700 px-2 py-0.5 rounded-md ml-auto">
-                {$profileData.profiles.length}
-            </span>
+        <!--- Account Selection Submenu--->
+        <MenuButton>
+            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
+                aria-role="button"
+                on:click={(e) => {
+                    expandAccountsMenu = !expandAccountsMenu;
+                    expandAccountsMenu = expandAccountsMenu;
+                }}
+            >
+                <Icon src={UserGroup} mini width={16} />
+                Accounts
+                <span class="text-xs font-bold bg-slate-100 dark:bg-zinc-700 px-2 py-0.5 rounded-md ml-auto">
+                    {$profileData.profiles.length}
+                </span>
+            </div>
         </MenuButton>
+        
+        <!--- Accounts List --->
+        <div class="flex flex-col w-full pl-1" class:hidden={!expandAccountsMenu}>
+            <div class="flex flex-col items-start w-full">
+                {#each $profileData.profiles as prof, index (prof.id)}
+                    <ProfileButton {index} {prof} expanded={true}/>
+                {/each}
+            </div>
+
+            <MenuButton link href="/accounts">
+                <Icon src={AdjustmentsHorizontal} mini width={16} />
+                Manage Accounts
+            </MenuButton>
+        </div>
+        
 
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         

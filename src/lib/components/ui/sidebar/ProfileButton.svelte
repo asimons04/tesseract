@@ -35,7 +35,7 @@
             switching = false
         }
     }
-    class="w-full hover:bg-slate-200 {expanded ? '' : '!p-1.5'} {$profile?.id == prof.id ? 'font-bold' : ''}"
+    class="w-full {$profile?.id == prof.id ? 'font-bold' : ''}"
 >
     <ProfileAvatar
         profile={prof}

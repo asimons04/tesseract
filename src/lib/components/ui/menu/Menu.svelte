@@ -43,42 +43,46 @@
     }
   </script>
   
+  <!--- Closes the profile menu if clicking outside of it --->
   <svelte:body
     on:click={(e) => {
-      if (!element.contains(e.target)) {
-        open = false
-      }
+        if (!element.contains(e.target)) {
+            open = false
+        }
     }}
   />
   
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div
-    class="overflow-visible {absolute
-      ? 'absolute'
-      : 'relative'} cursor-auto {clazz} {itemsClass}"
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="overflow-visible 
+    {absolute
+        ? 'absolute'
+        : 'relative'} cursor-auto {clazz} {itemsClass
+    }"
     bind:this={element}
     tabindex="-1"
-  >
+>
     <slot name="button" {toggleOpen} />
+    
     {#if open}
-      <menu
-        transition:scale|local={{
-          duration: 200,
-          start: 0.95,
-          easing: expoOut,
-        }}
-        class="list-none absolute h-auto z-30 overflow-auto {getOriginClass(
-          alignment
-        )}
-            rounded-lg py-1 min-w-[16rem] my-2 flex flex-col shadow-sm
-            bg-white dark:bg-zinc-900 backdrop-blur-2xl border border-slate-200 dark:border-zinc-800
-            {$$props.containerClass}"
-      >
-        {#if open}
-          <div on:click={toggleOpen} class="flex flex-col gap-0">
-            <slot {toggleOpen} />
-          </div>
-        {/if}
-      </menu>
+        <menu
+            transition:scale|local={{
+                duration: 200,
+                start: 0.95,
+                easing: expoOut,
+            }}
+            class="list-none absolute h-auto z-30 overflow-auto 
+                {getOriginClass(alignment)}
+                rounded-lg py-1 min-w-[16rem] my-2 flex flex-col shadow-sm
+                bg-white dark:bg-zinc-900 backdrop-blur-2xl border border-slate-200 dark:border-zinc-800
+                {$$props.containerClass}
+            "
+        >
+            {#if open}
+                <!-- on:click={toggleOpen} -->
+                <div class="flex flex-col gap-0">
+                    <slot {toggleOpen} />
+                </div>
+            {/if}
+        </menu>
     {/if}
-  </div>
+</div>
