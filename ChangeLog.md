@@ -1,6 +1,12 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.58
+- Added community filtering in the sidebar.  You can now filter your subscribed communities for quick access.
+- Added input type "search" support to `TextInput` component.
+
+
+
 ## 1.2.57
 ### Password Reset Handler Part II
 I wrote the part to _send_ the password reset email, but forgot to write the hanlder to validate the token and _set_ the new password.  That has been added, and password reset functionality is now 100%. 

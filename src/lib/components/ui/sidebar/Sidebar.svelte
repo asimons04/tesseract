@@ -20,6 +20,7 @@
         UserGroup
     } from 'svelte-hero-icons'
     import Button from '../../input/Button.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
     import { profile, profileData } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
     import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
@@ -27,6 +28,7 @@
     import ProfileButton from '$lib/components/ui/sidebar/ProfileButton.svelte'
     import { flip } from 'svelte/animate'
     import { expoOut } from 'svelte/easing'
+    let communityFilterTerm:string = '';
 
 </script>
 
@@ -121,22 +123,75 @@
     
 
     {#if $profile?.user}
+        <!--- Subscribed Community List --->
+        <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+        
+        <SidebarButton 
+            class="w-full"
+            title="{$userSettings.uiState.expandSubscribedList ? 'Collapse' : 'Expand'} Subscriptions"  
+            expanded={$userSettings.uiState.expandSidebar}
+            on:click={() => {
+                $userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList
+                $userSettings.uiState.expandModeratingList = false;
+            }}
+        >
+            <Icon src={InboxArrowDown} mini size="18" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>
+                Subscribed
+                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
+                    {$profile?.user.follows.length}
+                </span>
+            </span>
+        </SidebarButton>
+
+        <!--- Search field to filter the subscribed communities--->
+        <div class="pl-4 pr-4" class:hidden={!$userSettings.uiState.expandSidebar }>
+            <TextInput 
+                type="search"
+                placeholder="Filter communities"
+                bind:value={communityFilterTerm}
+                on:keyup={() => { 
+                    // Set the search term to lowercase for comparison 
+                    communityFilterTerm = communityFilterTerm.toLowerCase();
+                    
+                    // Expand the subscribed list since that's where the result will appear
+                    if (!$userSettings.uiState.expandSubscribedList) {
+                        $userSettings.uiState.expandSubscribedList = true;
+                    }
+
+                    // Hide the 'moderating list'
+                    $userSettings.uiState.expandModeratingList = false;
+                }}
+                class="h-8"
+            />
+        </div>
+        
+        <!--- The actual community list --->
+        <CommunityList
+            expanded={$userSettings.uiState.expandSidebar}
+            items={$profile.user.follows.map((i) => i.community)}
+            hidden={!$userSettings.uiState.expandSubscribedList }
+            filter={communityFilterTerm}
+        />
+
+        
         <!--- Communities User is Moderating --->
         {#if $profile?.user.moderates.length > 0}
-            
+
             <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
             <SidebarButton 
                 class="w-full"  
-                title="{$userSettings.uiState.expandModeratingList ? 'Collapse' : 'Expand'} Communities I Moderate List"  
+                title="{$userSettings.uiState.expandModeratingList ? 'Collapse' : 'Expand'} Moderating"  
                 expanded={$userSettings.uiState.expandSidebar}
-                on:click={() =>
-                    ($userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList)
-                }
+                on:click={() => {
+                    $userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList;
+                    $userSettings.uiState.expandSubscribedList = false;
+                }}
             >
                 <Icon src={HandRaised} mini size="18" />
                 <span class:hidden={!$userSettings.uiState.expandSidebar}>
                     Moderating
-                    <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
+                    <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
                         {$profile?.user.moderates.length}
                     </span>
                 </span>
@@ -147,38 +202,7 @@
                 items={$profile.user.moderates.map((i) => i.community)}
                 hidden={!$userSettings.uiState.expandModeratingList}
             />
-            
-        
         {/if}
-        
-        <!--- Subscribed Community List --->
-        <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
-        
-        <SidebarButton 
-            class="w-full"
-            title="{$userSettings.uiState.expandSubscribedList ? 'Collapse' : 'Expand'} My Community Subscriptions List"  
-            expanded={$userSettings.uiState.expandSidebar}
-            on:click={() =>
-                ($userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList)
-            }
-        >
-            <Icon src={InboxArrowDown} mini size="18" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>
-                Subscribed
-                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                    {$profile?.user.follows.length}
-                </span>
-            </span>
-        </SidebarButton>
-        
-        
-        <CommunityList
-            expanded={$userSettings.uiState.expandSidebar}
-            items={$profile.user.follows.map((i) => i.community)}
-            hidden={!$userSettings.uiState.expandSubscribedList }
-        />
-        <!--hidden={!$userSettings.uiState.expandSubscribedList || !$userSettings.uiState.expandSidebar}-->
-
     {:else}
         <Button
             class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"

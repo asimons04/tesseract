@@ -9,14 +9,23 @@
     export let items: Community[]
     export let expanded: boolean
     export let hidden: boolean
+    export let filter: string
 </script>
 
-<div class="min-h-[10vh] h-auto overflow-y-auto flex flex-col"
+<!---min-h-[10vh]--->
+<div class="h-auto overflow-y-auto flex flex-col"
     class:hidden={hidden}
 >
     {#each items.sort( (a, b) => a.title.localeCompare(b.title) ) as follow (follow.id)}
         <div class="inline-flex w-full"
-            animate:fade={{ duration: 250, easing: expoOut }}
+            animate:fade={{ duration: 50, easing: expoOut }}
+            class:hidden={
+                (filter &&
+                    (
+                        !follow.title.toLowerCase().includes(filter) 
+                    )
+                )
+            }
         >
         
             <Button
@@ -24,7 +33,7 @@
                 color="tertiary"
                 alignment="left"
                 href="/c/{follow.name}@{new URL(follow.actor_id).hostname}"
-                title="{follow.title}"
+                title="{follow.title}@{new URL(follow.actor_id).hostname}"
             >
                 <div class="flex-none">
                     <Avatar
