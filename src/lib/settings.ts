@@ -97,7 +97,7 @@ export const defaultSettings: Settings = {
     uiState: {
         expandSidebar: true,
         expandCommunitySidebar: true,
-        expandModeratingList: true,
+        expandModeratingList: false,
         expandSubscribedList: true,
         expandAccountsList: true,
         showPWAButtons: false,
