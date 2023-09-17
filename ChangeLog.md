@@ -2,7 +2,8 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.59
-
+- Moved "Accounts" menu and account switcher from sidebar to profile menu.
+  - The "Accounts" button in the profile menu now opens a sub-menu to either manage or switch between accounts.
 - Changed default config option for "expand moderating list" to false since "subscribed" and "moderating" lists are now mutually exclusive. Prevents inconsistent behavior on first load.
 
 
