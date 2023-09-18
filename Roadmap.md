@@ -58,6 +58,9 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 
 - Card view for Communities
 - BUG:  Removed/Deleted communities should not show up in `/communities`.  
+  - Oh, they only show up for admins (doh).  That's on par with lemmy-ui
+  - No issue then, i guess
+  
 
 
 ### Moderation
