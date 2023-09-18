@@ -138,11 +138,6 @@
                         !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
                     </span>
                 </a>
-                {#if community_view.community.nsfw}
-                    <div class="flex flex-row ml-auto gap-2 flex-wrap">    
-                        <Badge color="red">NSFW</Badge>
-                    </div>
-                {/if}
             </div>
         </div>
 

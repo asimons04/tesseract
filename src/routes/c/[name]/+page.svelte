@@ -54,7 +54,7 @@
                 <h1 class="font-bold text-xl flex flex-row justify-between">
                     {data.community.community_view.community.title}
 
-                    {#if data.community.community_view.community.nsfw}
+                    {#if data.community.community_view.community.nsfw && $userSettings.tagNSFWCommunities}
                         <Badge color="red">NSFW</Badge>
                     {/if}
                 </h1>

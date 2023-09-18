@@ -6,6 +6,7 @@
     import { flip } from 'svelte/animate'
     import { expoOut } from 'svelte/easing'
     import { slide, fade } from 'svelte/transition'
+    import { userSettings } from '$lib/settings.js'
 
     export let items: Community[]
     export let expanded: boolean
@@ -21,7 +22,7 @@
     {#each items.sort( (a, b) => a.title.localeCompare(b.title) ) as follow (follow.id)}
         <div class="inline-flex w-full"
             animate:fade={{ duration: 50, easing: expoOut }}
-            class:hidden={ filter && !follow.title.toLowerCase().trim().includes(filter.trim()) }
+            class:hidden={ filter && !follow.title.toLowerCase().trim().includes(filter.toLowerCase().trim()) }
         >
         
             <Button
@@ -44,7 +45,7 @@
                 <span class="w-full break-words flex flex-row justify-between" class:hidden={!expanded}>
                     {follow.title.replace('&amp;', '&')}
 
-                    {#if follow.nsfw}
+                    {#if follow.nsfw && $userSettings.tagNSFWCommunities}
                         <Badge color="red">NSFW</Badge>
                     {/if}
                 </span>
