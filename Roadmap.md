@@ -11,10 +11,15 @@ I realize that is less than professional, but this project is a hobby :shrug:.
 - Move Account Selector from sidebar to profile menu
 - Add capability to change password
 
+### Additional Embed Support
+#### Songlink/Odesli
+url= album.link/i/{#} || song.link/i/{#} -> https://odesli.co/embed/?url={url}&theme=[dark|light]
+
+
 
 ### Compact View Refresh
 I've completely ignored compact view thus far.  Time to give it a spruce up
-
+ 
 ### Community Pages
 - Show list of moderators for the community
 - Add link to modlog that pre-filters for that community
