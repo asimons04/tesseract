@@ -8,7 +8,6 @@ Right now, as far as what gets developed, it's mostly "fixing whatever is annoyi
 I realize that is less than professional, but this project is a hobby :shrug:.
 
 ### Accounts Management
-- Move Account Selector from sidebar to profile menu
 - Add capability to change password
 
 ### Additional Embed Support
@@ -58,7 +57,7 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 - Periodically pull the JSON DB for browse.feddit.de and use that to integrate a feidverse-wide community browser.
 
 - Card view for Communities
-
+- BUG:  Removed/Deleted communities should not show up in `/communities`.  
 
 
 ### Moderation
@@ -69,6 +68,8 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 
 - Extend `/c/[name]` route to `/c/[name]/u/[name]` to show a particular user's submissions for a given community.
   - Add bulk select/actions for mod actions (remove, purge, lock)
+
+- Add support to remove/restore communities
 
 
 ### User Profile Page

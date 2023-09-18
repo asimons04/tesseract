@@ -14,7 +14,7 @@ Markdown component was getting an unhandled error _sometimes_ and killing the re
 
 ## 1.2.58
 ### Sidebar Enhancements
-Gott say, I've been putting the community filter off for a while, but I'm glad I finally implemented this.  Such a quality of life improvement.
+Gotta say, I've been putting the community filter off for a while, but I'm glad I finally implemented this.  Such a quality of life improvement.
 
 - Added community filtering in the sidebar.  You can now filter your subscribed communities for quick access.
 - When collapsing/expanding "Subscribed" or "Moderating" lists in sidebar, they're now mutually exclusive.  If subscribed is open, moderating will close, and vice-versa.  
