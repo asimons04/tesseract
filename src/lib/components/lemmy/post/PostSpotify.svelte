@@ -67,52 +67,41 @@
 
 
 {#if showAsEmbed()}
-<Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-[352px]">
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
-        <div class="ml-auto mr-auto {$userSettings.videoSize ?? 'max-w-3xl'}">
-            <div class="flexiframe-container rounded-md max-w-screen h-[352px] mx-auto">
-                <iframe 
-                    class="flexiframe"
-                    src="{embedURL}?{extraParams}" 
-                    allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
-                    loading="lazy"
-                    allowfullscreen
-                    height="352"
-                    title="Spotify: {post.post.name}"
-                >
-                </iframe>
+    <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-[352px]">
+        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
+            <div class="ml-auto mr-auto {$userSettings.videoSize ?? 'max-w-3xl'}">
+                <div class="flexiframe-container rounded-md max-w-screen h-[352px] mx-auto">
+                    <iframe 
+                        class="flexiframe"
+                        src="{embedURL}?{extraParams}" 
+                        allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
+                        loading="lazy"
+                        allowfullscreen
+                        height="352"
+                        title="Spotify: {post.post.name}"
+                    >
+                    </iframe>
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
-</div>
 
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
     {#if $userSettings.embeddedMedia.post}
-    <Link
-        href={post.post.url}
-        title={post.post.title}
-        newtab={$userSettings.openInNewTab.postLinks}
-        highlight nowrap
-    />
-    <PostImage
-        instance = {getInstance()}
-        name = {post.post.name}
-        url = {post.post.thumbnail_url}
-        id = {post.post.id}
-        nsfw = {post.post.nsfw}
-        displayType={displayType}
-    />
+        <Link
+            href={post.post.url}
+            title={post.post.title}
+            newtab={$userSettings.openInNewTab.postLinks}
+            highlight nowrap
+        />
+        <PostImage post={post} displayType={displayType} />
     
     <!---Create PostLink to external link if user does not have embeds enaled for posts--->
     {:else}
-    <PostLink
-        url={post.post.url}
-        thumbnail_url="{post.post.thumbnail_url}?format=webp&thumbnail=768"
-        nsfw={post.post.nsfw}
-    />
+        <PostLink post={post}  displayType={displayType}/>
     {/if}
 
 {:else if !post.post.thumbnail_url}

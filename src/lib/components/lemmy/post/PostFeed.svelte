@@ -39,7 +39,7 @@
                     delay: index < 4 ? index * 100 : 0,
                 }}
             >
-                <Post {post} />
+                <Post post={post} />
             </div>
         {/if}
     {/each}

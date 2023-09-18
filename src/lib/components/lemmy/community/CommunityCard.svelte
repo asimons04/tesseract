@@ -1,7 +1,16 @@
 <script lang="ts">
+    import type { CommunityView } from 'lemmy-js-client'
+    
     import { profile } from '$lib/auth.js'
-    import Button from '$lib/components/input/Button.svelte'
     import { amMod } from '$lib/components/lemmy/moderation/moderation.js'
+    import { getClient } from '$lib/lemmy.js'
+    import { addSubscription } from '$lib/lemmy/user.js'
+    import { fullCommunityName } from '$lib/util.js'
+    import { userSettings } from '$lib/settings.js'
+
+    import Button from '$lib/components/input/Button.svelte'
+    import Badge from '$lib/components/ui/Badge.svelte'
+    
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Card from '$lib/components/ui/Card.svelte'
@@ -9,10 +18,8 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import { getClient } from '$lib/lemmy.js'
-    import { addSubscription } from '$lib/lemmy/user.js'
-    import { fullCommunityName } from '$lib/util.js'
-    import type { CommunityView } from 'lemmy-js-client'
+    
+    
     import {
         Calendar,
         ChatBubbleOvalLeftEllipsis,
@@ -25,7 +32,7 @@
         UserGroup,
     } from 'svelte-hero-icons'
     
-    import { userSettings } from '$lib/settings.js'
+    
 
     export let community_view: CommunityView
 
@@ -131,6 +138,11 @@
                         !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
                     </span>
                 </a>
+                {#if community_view.community.nsfw}
+                    <div class="flex flex-row ml-auto gap-2 flex-wrap">    
+                        <Badge color="red">NSFW</Badge>
+                    </div>
+                {/if}
             </div>
         </div>
 

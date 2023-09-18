@@ -101,34 +101,23 @@
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
     {#if $userSettings.embeddedMedia.post}
-    <Link
-        href={post.post.url}
-        title={post.post.title}
-        newtab={$userSettings.openInNewTab.postLinks}
-        highlight nowrap
-    />
-    <PostImage
-        instance = {getInstance()}
-        name = {post.post.name}
-        url = {post.post.thumbnail_url}
-        id = {post.post.id}
-        nsfw = {post.post.nsfw}
-        displayType={displayType}
-    />
+        <Link
+            href={post.post.url}
+            title={post.post.title}
+            newtab={$userSettings.openInNewTab.postLinks}
+            highlight nowrap
+        />
+        <PostImage post={post}  displayType={displayType} />
     
     <!---Create PostLink to external link if user does not have embeds enaled for posts--->
     {:else}
-    <PostLink
-        url={post.post.url}
-        thumbnail_url="{post.post.thumbnail_url}?format=webp&thumbnail=768"
-        nsfw={post.post.nsfw}
-    />
+        <PostLink post={post}  displayType={displayType}/>
     {/if}
 
 {:else if !post.post.thumbnail_url}
-<Link
-    href={post.post.url}
-    title={post.post.title}
-    highlight nowrap
-/>
+    <Link
+        href={post.post.url}
+        title={post.post.title}
+        highlight nowrap
+    />
 {/if}

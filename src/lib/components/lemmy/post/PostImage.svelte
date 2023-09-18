@@ -1,24 +1,29 @@
 <script lang="ts">
-    import { userSettings } from '$lib/settings.js'
     import type { PostDisplayType } from './helpers.js'
+    import type { PostView } from 'lemmy-js-client'
+    import { getInstance } from '$lib/lemmy.js'
+    import { userSettings } from '$lib/settings.js'
 
-    export let instance: string
-    export let name: string
-    export let url: string|boolean
-    export let id: string
-    export let nsfw: boolean
-    export let fullResolution: boolean  // Whether to show the image in full res or append thumbnail=XXX to the image URL
+    export let post:PostView | undefined
     export let displayType: PostDisplayType
-
-    let loaded:boolean = false
     
-    let src: string
-    if (fullResolution) {
-        src = `${url}?format=webp`
+    
+    
+    let instance: string                    = getInstance()
+    let name:string | undefined             = post.post.name ?? undefined
+    let id:number | undefined               = post.post.id ?? undefined
+    let url:string|undefined                = post.post.url ?? undefined
+    let thumbnail_url:string | undefined    = post.post.thumbnail_url ?? undefined
+    let nsfw:boolean                        = post.post.nsfw ?? false
+    let nsfwBlur:boolean                    = $userSettings.nsfwBlur ?? true
+    let loaded:boolean                      = false
+    
+    
+    // Hack to get GIFs to play in the feed.  Lemmy converts them to weird webm at best.
+    if (displayType == 'feed' && url.endsWith('.gif')) {
+        thumbnail_url = url;
     }
-    else {
-        src = `${url}?thumbnail=768&format=webp`
-    }
+
 </script>
 
 
@@ -45,7 +50,7 @@
                 />
 
                 <img
-                    src="{src}"
+                    src="{thumbnail_url ?? url}?thumbnail=768&format=webp"
                     loading="lazy"
                     class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
                     class:opacity-100={loaded}
@@ -67,18 +72,8 @@
 >
     <div class="ml-auto mr-auto mt-1 mb-1 {$userSettings.imageSize.post ?? 'max-w-3xl'}">
         <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
-            <source
-                srcset="{url}?thumbnail=768&format=webp"
-                media="(max-width: 768px)"
-            />
-
-            <source
-                srcset="{url}?format=webp"
-                media="(max-width: 1024px)"
-            />
-            <!-- svelte-ignore a11y-missing-attribute -->
             <img
-                src="{src}"
+                src="{url}?format=webp"
                 alt="{name}"
                 loading="lazy"
                 class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"

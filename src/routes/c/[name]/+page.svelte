@@ -1,15 +1,22 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
+  import { userSettings } from '$lib/settings.js'
+  
+  import Badge from '$lib/components/ui/Badge.svelte'
+  import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+  import Post from '$lib/components/lemmy/post/Post.svelte'
+
   import Link from '$lib/components/input/Link.svelte'
   import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-  import Post from '../../../lib/components/lemmy/post/Post.svelte'
-  import { goto } from '$app/navigation'
+  
   import Card from '$lib/components/ui/StickyCard.svelte'
   import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
+
   import Button from '$lib/components/input/Button.svelte'
   import { Color } from '$lib/ui/colors'
   import { fly } from 'svelte/transition'
-  import { userSettings } from '$lib/settings.js'
+
   import Modal from '$lib/components/ui/modal/Modal.svelte'
   import Pageination from '$lib/components/ui/Pageination.svelte'
   import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -17,7 +24,7 @@
   import { fullCommunityName, searchParam } from '$lib/util.js'
   import { onDestroy, onMount } from 'svelte'
   import { setSessionStorage } from '$lib/session.js'
-  import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+
 
   export let data
 
@@ -46,6 +53,12 @@
             <div class="flex flex-col gap-0">
                 <h1 class="font-bold text-xl">
                     {data.community.community_view.community.title}
+
+                    {#if data.community.community_view.community.nsfw}
+                        <div class="flex flex-row ml-auto gap-2 flex-wrap">    
+                            <Badge color="red">NSFW</Badge>
+                        </div>
+                    {/if}
                 </h1>
                 <span class="dark:text-zinc-400 text-slate-600 text-sm">
                     !{data.community.community_view.community.name}@{new URL(
@@ -53,6 +66,7 @@
                     ).hostname}
                 </span>
             </div>
+            
         </div>
     
         <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">

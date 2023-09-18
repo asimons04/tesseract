@@ -195,92 +195,40 @@
             </Card>
             {/if}
 
-            <PostMeta
-                community={post.post_view.community}
-                user={post.post_view.creator}
-                upvotes={post.post_view.counts.upvotes}
-                downvotes={post.post_view.counts.downvotes}
-                deleted={post.post_view.post.deleted}
-                removed={post.post_view.post.removed}
-                locked={post.post_view.post.locked}
-                featured={post.post_view.post.featured_community || post.post_view.post.featured_local}
-                nsfw={post.post_view.post.nsfw}
-                published={new Date(post.post_view.post.published + 'Z')}
-                saved={post.post_view.saved}
-            />
-
-            <h1 class="font-bold text-lg">{post.post_view.post.name}</h1>
+            <PostMeta post={post.post_view} />
+            
+            {#if pType == "link" || pType == "thumbLink"}
+                <PostLink post={post.post_view} displayType={pDisplayType} />
+            {/if}
+            
             {#if pType == "image"}
-            <PostImage
-                name = {post.post_view.post.name}
-                url = {post.post_view.post.url}
-                id = {post.post_view.post.id}
-                nsfw = {post.post_view.post.nsfw}
-                nsfwBlur = {$userSettings.nsfwBlur}
-                displayType="post"
-                fullResolution = {true}
-            />
+                <PostImage post={post.post_view} displayType={pDisplayType} />
             {/if}
 
             {#if pType == "video"}
-            <PostVideo
-                url = {post.post_view.post.url}
-            />
+                <PostVideo post = {post.post_view} />
             {/if}
         
             {#if pType == "youtube"}
-            <PostYouTube
-                post = {post.post_view}
-                displayType={pDisplayType}
-            />
+                <PostYouTube post = {post.post_view} displayType={pDisplayType} />
             {/if}
 
             {#if pType == "spotify"}
-            <PostSpotify
-                post = {post.post_view}
-                displayType={pDisplayType}
-            />
+                <PostSpotify post = {post.post_view} displayType={pDisplayType} />
             {/if}
 
             <!--- Bandcamp Embed --->
             {#if pType == "bandcamp"}
-            <PostBandcamp
-                post = {post.post_view}
-                displayType={pDisplayType}
-            />
+                <PostBandcamp post = {post.post_view} displayType={pDisplayType} />
             {/if}
 
             {#if pType == "soundcloud"}
-            <PostSoundCloud
-                post = {post.post_view}
-                displayType={pDisplayType}
-            />
+                <PostSoundCloud post = {post.post_view} displayType={pDisplayType} />
             {/if}
 
-            {#if pType == "link"}
-            <a
-                href={post.post_view.post.url}
-                target="{$userSettings.openInNewTab.postLinks
-                    ? '_blank'
-                    : '_self'
-                }"
-                class="max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-sky-400 hover:underline text-xs"
-                style="word-break: break-word;"
-                title={post.post_view.post.name}
-            >
-                {post.post_view.post.url}
-            </a>
-            {/if}
+            
 
-            {#if pType == "thumbLink"}
-            <PostLink
-                thumbnail_url={post.post_view.post.thumbnail_url}
-                url={post.post_view.post.url}
-                nsfw={post.post_view.post.nsfw}
-                title={post.post_view.post.name}
-                displayType={pDisplayType}
-            />
-            {/if}
+            
 
             <!--- Post Body --->
             

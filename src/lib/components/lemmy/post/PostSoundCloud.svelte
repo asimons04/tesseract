@@ -1,15 +1,17 @@
 <script lang="ts">
-    import { userSettings } from '$lib/settings.js'
-    import { getInstance } from '$lib/lemmy.js'
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
+    
+    import { userSettings } from '$lib/settings.js'
+    import { getInstance } from '$lib/lemmy.js'
+    import { imageSize} from './helpers.js'
 
     import Link from '$lib/components/input/Link.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import { imageSize} from './helpers.js'
+    
 
-    export let post: PostView
+    export let post: PostView | undefined
     export let displayType: PostDisplayType
 
     let embedURL:   string = ""
@@ -85,22 +87,11 @@
         newtab={$userSettings.openInNewTab.postLinks}
         highlight nowrap
     />
-    <PostImage
-        instance = {getInstance()}
-        name = {post.post.name}
-        url = {post.post.thumbnail_url}
-        id = {post.post.id}
-        nsfw = {post.post.nsfw}
-        displayType={displayType}
-    />
+    <PostImage post={post} displayType={displayType}/>
     
     <!---Create PostLink to external link if user does not have embeds enaled for posts--->
     {:else}
-    <PostLink
-        url={post.post.url}
-        thumbnail_url="{post.post.thumbnail_url}?format=webp&thumbnail=768"
-        nsfw={post.post.nsfw}
-    />
+        <PostLink post={post} displayType={displayType}/>
     {/if}
 
 {:else if !post.post.thumbnail_url}
