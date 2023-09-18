@@ -40,12 +40,12 @@
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
             <picture class="rounded-md overflow-hidden w-full max-h-[min(50vh,500px)]  max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
                 <source
-                    srcset="{url}?thumbnail=768&format=webp"
+                    srcset="{thumbnail_url ?? url}?thumbnail=768&format=webp"
                     media="(max-width: 768px)"
                 />
 
                 <source
-                    srcset="{url}?format=webp"
+                    srcset="{thumbnail_url ?? url}?format=webp"
                     media="(max-width: 1024px)"
                 />
 

@@ -22,7 +22,7 @@
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
     
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    
+    import { Icon, Link } from 'svelte-hero-icons'
     
 
 
@@ -30,7 +30,7 @@
     export let actions: boolean = true
     export let hideCommunity = false
     
-    export let pDisplayType: PostDisplayType = "feed"
+    export let displayType: PostDisplayType = "feed"
     
     
     // Determe post type based on its attributes
@@ -38,48 +38,83 @@
     let instance        = getInstance();
 </script>
 
-<Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
-    <div class="flex flex-row w-full gap-2.5">
-        
-        <PostMeta post={post} />
-    
-        <!--- Show Compact Posts --->
-        {#if $userSettings.showCompactPosts && (post.post.thumbnail_url || isImage(post.post.url))}
-        
-            <div class="flex-none w-32 h-32">
-                <a href="/post/{getInstance()}/{post.post.id}">
 
-                    {#if post.post.thumbnail_url}
-                        <img
-                            src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    {:else}
-                        <img
-                            src="{post.post.url}?thumbnail=256&format=webp"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    {/if}
-                </a>
-            </div>
+
+<!--- Compact Posts --->
+{#if $userSettings.showCompactPosts}
+<Card class="bg-white flex flex-row w-full p-5 gap-2.5" id={post.post.id}>
+    
+    <!--- Post Header and Title --->
+    <div class="flex flex-col w-full gap-2.5">
+        <PostMeta post={post} displayType={displayType}/>
+        
+        {#if actions}
+            <PostActions bind:post
+                on:edit={(e) => {
+                    toast({
+                        content: 'The post was edited successfully.',
+                        type: 'success',
+                    })
+                }}
+            />
         {/if}
     </div>
-  
-    {#if !$userSettings.showCompactPosts}
+    
+    <!--- Thumbnail --->
+    <div class="flex-none w-32 h-32 ml-4 mt-auto mb-auto">
+        <a href="/post/{getInstance()}/{post.post.id}">
+            <!--- Thumbnail --->
+            {#if post.post.thumbnail_url || isImage(post.post.url)}
+                {#if post.post.thumbnail_url}
+                    <img
+                        src="{post.post.thumbnail_url}?thumbnail=128&format=webp"
+                        loading="lazy"
+                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                        class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                    />
+                {:else}
+                    <img
+                        src="{post.post.url}?thumbnail=128&format=webp"
+                        loading="lazy"
+                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                        class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                    />
+                {/if}
+            <!--- Placeholder Image--->
+            {:else}
+                <div class="w-32 h-32 bg-zinc-200 dark:bg-zinc-500">
+                    <span class="flex justify-center pt-[36%]">
+                        <Icon src={Link} size="32" />
+                    </span>
+                </div>
+            
+            {/if}
+        </a>
+    </div>
+
+
+    
+</Card>
+{/if}
+
+
+<!--- Card Posts --->
+{#if !$userSettings.showCompactPosts}
+    <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
+        <div class="flex flex-row w-full gap-2.5">
+            <PostMeta post={post} />
+        </div>
+    
         <!--- Link-style post without thumbnail URL--->
         {#if pType == "link" || pType == "thumbLink"}
-            <PostLink post={post} displayType={pDisplayType} />
+            <PostLink post={post} displayType={displayType} />
         {/if}
 
         <!--- Direct Image Post --->
         {#if pType == "image"}
-            <PostImage post={post} displayType={pDisplayType}/>
+            <PostImage post={post} displayType={displayType}/>
         {/if}
-        
+            
         <!--- Direct Video Post --->
         {#if pType == "video"}
             <PostVideo post={post} />
@@ -87,49 +122,50 @@
 
         <!--- Bandcamp Embed --->
         {#if pType == "bandcamp"}
-            <PostBandcamp post={post} displayType={pDisplayType}/>
+            <PostBandcamp post={post} displayType={displayType}/>
         {/if}
 
         <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
         {#if pType == "youtube"}
-            <PostYouTube post={post} displayType={pDisplayType} />
+            <PostYouTube post={post} displayType={displayType} />
         {/if}
 
         <!--- Spotify Embed --->
         {#if pType == "spotify"}
-            <PostSpotify post={post} displayType={pDisplayType} />
+            <PostSpotify post={post} displayType={displayType} />
         {/if}
 
         <!--- Soundcloud Embed --->
         {#if pType == "soundcloud"}
-            <PostSoundCloud post={post} displayType={pDisplayType} />
+            <PostSoundCloud post={post} displayType={displayType} />
         {/if}
 
-        
+            
         <!--- Show first 350 characters of post body as a preview --->
         {#if post.post.body && !post.post.nsfw}
-        <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
-            <!---inline--->
-            <Markdown
-                source={post.post.body.length > 350
+            <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
+                <Markdown source={post.post.body.length > 350
                     ? `${post.post.body.slice(0, 350)}...`
                     : post.post.body
-                }
-            />
-        </div>
+                    }
+                />
+            </div>
         {/if}
-    {/if}
+            
+        {#if actions}
+            <PostActions bind:post
+                on:edit={(e) => {
+                    toast({
+                        content: 'The post was edited successfully.',
+                        type: 'success',
+                    })
+                }}
+            />
+        {/if}
+    </Card>
+{/if}
 
-    {#if actions}
-        <PostActions
-            bind:post
-            on:edit={(e) => {
-                toast({
-                    content: 'The post was edited successfully.',
-                    type: 'success',
-                })
-            }}
-        />
-    {/if}
-</Card>
+
+
+
 

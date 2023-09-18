@@ -180,22 +180,22 @@
             ml-auto mr-auto
         ">
             {#if $page.params.instance.toLowerCase() != $instance.toLowerCase()}
-            <Card cardColor="warning" class="p-4 flex flex-col gap-1">
-                <Icon
-                    src={ExclamationTriangle}
-                    width={24}
-                    solid
-                    class="text-yellow-500"
-                />
-                <h1 class="font-bold">Warning</h1>
-                <p class="text-sm">
-                    This URL is for a different instance than you're logged into. You
-                    probably won't be able to vote or comment.
-                </p>
-            </Card>
+                <Card cardColor="warning" class="p-4 flex flex-col gap-1">
+                    <Icon
+                        src={ExclamationTriangle}
+                        width={24}
+                        solid
+                        class="text-yellow-500"
+                    />
+                    <h1 class="font-bold">Warning</h1>
+                    <p class="text-sm">
+                        This URL is for a different instance than you're logged into. You
+                        probably won't be able to vote or comment.
+                    </p>
+                </Card>
             {/if}
 
-            <PostMeta post={post.post_view} />
+            <PostMeta post={post.post_view} displayType={pDisplayType}/>
             
             {#if pType == "link" || pType == "thumbLink"}
                 <PostLink post={post.post_view} displayType={pDisplayType} />

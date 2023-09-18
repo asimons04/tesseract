@@ -1,10 +1,12 @@
 <script lang="ts">
+    import type { Community, Person, PostView } from 'lemmy-js-client'
+    import type { PostDisplayType } from './helpers.js'
+
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import type { Community, Person, PostView } from 'lemmy-js-client'
     
     import {
         Bookmark,
@@ -18,7 +20,8 @@
     import { getInstance } from '$lib/lemmy.js'
     import { userSettings } from '$lib/settings.js'
 
-    export let post: PostView | undefined   = undefined
+    export let post: PostView | undefined       = undefined
+    export let displayType: PostDisplayType     = 'feed';
 
     // Extract data from post object for easier reference
     let community: Community | undefined    = post.community ?? undefined
@@ -38,7 +41,6 @@
     let removed: boolean                    = post.post.removed ?? false
     let locked: boolean                     = post.post.locked ?? false
     let read: boolean                       = post.read ?? false
-
 
 </script>
 
@@ -124,7 +126,7 @@
         class:dark:text-zinc-400={read && $userSettings.markReadPosts}
         title="{title}"
     >
-        <h1 class="font-bold text-lg">{title}</h1>    
+        <h1 class="text-lg" class:font-bold={displayType==='post'}>{title}</h1>    
     
     </a>
 
