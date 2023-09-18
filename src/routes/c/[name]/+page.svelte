@@ -50,14 +50,12 @@
                 url={data.community.community_view.community.icon}
                 alt={data.community.community_view.community.name}
             />
-            <div class="flex flex-col gap-0">
-                <h1 class="font-bold text-xl">
+            <div class="flex flex-col gap-0 w-full">
+                <h1 class="font-bold text-xl flex flex-row justify-between">
                     {data.community.community_view.community.title}
 
                     {#if data.community.community_view.community.nsfw}
-                        <div class="flex flex-row ml-auto gap-2 flex-wrap">    
-                            <Badge color="red">NSFW</Badge>
-                        </div>
+                        <Badge color="red">NSFW</Badge>
                     {/if}
                 </h1>
                 <span class="dark:text-zinc-400 text-slate-600 text-sm">

@@ -94,6 +94,7 @@
                 <Checkbox bind:checked={$userSettings.hidePosts.removed}>   Hide Removed Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.markReadPosts}>       Fade Title of Read Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.nsfwBlur}>            Blur NSFW Images in Feed</Checkbox>
+                <Checkbox bind:checked={$userSettings.tagNSFWCommunities}>  Show NSFW badges on Communities</Checkbox>
                 <Checkbox bind:checked={$userSettings.highlightCode}>       Use syntax highlighting in code blocks.</Checkbox>
                 <Checkbox bind:checked={$userSettings.highlightInlineCode}> Use syntax highlighting in inline code.</Checkbox>
                 <Checkbox bind:checked={$userSettings.inlineImages}>        Enable inline images in posts/comments</Checkbox>
