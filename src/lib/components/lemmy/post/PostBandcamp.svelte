@@ -103,7 +103,7 @@
     {#if $userSettings.embeddedMedia.post}
         <Link
             href={post.post.url}
-            title={post.post.title}
+            title={post.post.name}
             newtab={$userSettings.openInNewTab.postLinks}
             highlight nowrap
         />
@@ -117,7 +117,7 @@
 {:else if !post.post.thumbnail_url}
     <Link
         href={post.post.url}
-        title={post.post.title}
+        title={post.post.name}
         highlight nowrap
     />
 {/if}

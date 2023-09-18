@@ -21,8 +21,10 @@
     import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
     
+    import Link from '$lib/components/input/Link.svelte'
+
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    import { Icon, Link } from 'svelte-hero-icons'
+    import { Icon, Link as LinkIcon } from 'svelte-hero-icons'
     
 
 
@@ -45,9 +47,19 @@
 <Card class="bg-white flex flex-row w-full p-5 gap-2.5" id={post.post.id}>
     
     <!--- Post Header and Title --->
-    <div class="flex flex-col w-full gap-2.5">
+    <div class="flex flex-col w-[80%] gap-2.5">
         <PostMeta post={post} displayType={displayType}/>
         
+        {#if post.post.url && !isImage(post.post.url)}
+            <Link
+                href={post.post.url}
+                title={post.post.url}
+                highlight
+            >
+                {new URL(post.post.url).host}
+            </Link>
+        {/if}
+
         {#if actions}
             <PostActions bind:post
                 on:edit={(e) => {
@@ -61,20 +73,20 @@
     </div>
     
     <!--- Thumbnail --->
-    <div class="flex-none w-32 h-32 ml-4 mt-auto mb-auto">
+    <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
         <a href="/post/{getInstance()}/{post.post.id}">
             <!--- Thumbnail --->
             {#if post.post.thumbnail_url || isImage(post.post.url)}
                 {#if post.post.thumbnail_url}
                     <img
-                        src="{post.post.thumbnail_url}?thumbnail=128&format=webp"
+                        src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
                         loading="lazy"
                         class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                         class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
                     />
                 {:else}
                     <img
-                        src="{post.post.url}?thumbnail=128&format=webp"
+                        src="{post.post.url}?thumbnail=256&format=webp"
                         loading="lazy"
                         class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                         class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
@@ -82,11 +94,12 @@
                 {/if}
             <!--- Placeholder Image--->
             {:else}
-                <div class="w-32 h-32 bg-zinc-200 dark:bg-zinc-500">
-                    <span class="flex justify-center pt-[36%]">
-                        <Icon src={Link} size="32" />
-                    </span>
-                </div>
+                <img
+                    src="/img/placeholder.png"
+                    loading="lazy"
+                    class="object-cover bg-slate-100 dark:bg-zinc-800 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                    class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                />
             
             {/if}
         </a>
