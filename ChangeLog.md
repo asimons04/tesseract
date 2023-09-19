@@ -8,19 +8,19 @@ Completely re-implemented the way posts are rendered.  If nothing looks differen
 
 The only noticable difference is "Compact" view has had a complete refresh (which is why I had to re-implment everything else).  It may be subtle, but it does look a lot better and is more flexible should I want to change it later.
 
-A "list" view was requested, but I think that conflicts with one of the project's goals.  Doing a proper list view would not work well on mobile, and desktop-mobile feature partity is a priority.  To that end, I think "compact" view is about as small as I want to implement.
+A "list" view was requested, but I think that conflicts with one of the project's goals.  Doing a proper list view would not work well on mobile, and desktop-mobile feature partity is a priority.  To that end, I think "compact" view is about as small as I want to implement for the time being.
 
 ### Other Updates
 - Added an optional (default off) "NSFW" tag that will show on communities marked NSFW.  Shows in the sidebar list (when expanded) and in the community header when browsing a particular community.
-  - To enable by default, set the `PUBLIC_TAG_NSFW_COMMUNITIES` environment variable to `true`'
-- Added margins to Reports and Search views 
-- Added Cards/Compact view swietcher to Reports and Search views
+  - To enable by default, set the `PUBLIC_TAG_NSFW_COMMUNITIES` environment variable to `true`
+- Added margins to Reports, Saved, and Search views 
+- Added Cards/Compact view switcher to Reports, Saved, and Search views
 
 ### Bugfixes
 - Fixed bug where some links weren't getting the proper tooltips set
 - Fixed a few more NSFW blur inconsistencies
 - Loading a post always loads the full-res version now.  On mobile, the post was grabbing the low res thumbnail source instead of the full res one. 
-- 
+- Pretty sure I fixed all the bugs introduced with the post render revamp. Have tested thoroughly, and I think they're all squashed.
 
 ## 1.2.59
 - Moved "Accounts" menu and account switcher from sidebar to profile menu.

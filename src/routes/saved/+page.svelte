@@ -3,12 +3,14 @@
     import InboxItem from '../inbox/InboxItem.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
+    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Link from '$lib/components/input/Link.svelte'
-    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
-    import { fly } from 'svelte/transition'
     import Button from '$lib/components/input/Button.svelte'
-    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import { fly } from 'svelte/transition'
+    import { userSettings } from '$lib/settings.js'
 
     export let data
 
@@ -22,8 +24,24 @@
 
 
 <h1 class="p-2 text-2xl font-bold">Saved</h1>
+<div class="flex flex-row justify-between">
+    <div>
+        <MultiSelect
+            options={['Cards', 'Compact']}
+            selected={$userSettings.showCompactPosts
+                ? 'Compact'
+                : 'Cards'
+            }
+            on:select={(e) => {
+                $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+            }}
+            headless={true}
+        />
+    </div>
 
-<div class="flex flex-col gap-4 list-none p-2 sm:w-full lg:max-w-[75%] ml-auto mr-auto">
+</div>
+
+<div class="flex flex-col gap-4 list-none p-2 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto">
     {#if !data.data || (data.data?.length ?? 0) == 0}
         <p class="text-center opacity-60 text-lg mx-4">
             Wow, it's quite empty in here.
