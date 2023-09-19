@@ -21,8 +21,7 @@
     >
   
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div
-            transition:scale={{ start: 0.9, easing: expoOut }}
+        <div transition:scale={{ start: 0.9, easing: expoOut }}
             class="overflow-y-auto {$$props.class} rounded-xl max-w-full box-border w-full"
         >
             <div

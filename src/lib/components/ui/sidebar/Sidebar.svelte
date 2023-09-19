@@ -26,7 +26,6 @@
     import { userSettings } from '$lib/settings.js'
     import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
-    import ProfileButton from '$lib/components/ui/sidebar/ProfileButton.svelte'
     import { flip } from 'svelte/animate'
     import { expoOut } from 'svelte/easing'
     let communityFilterTerm:string = '';

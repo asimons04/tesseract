@@ -12,8 +12,7 @@
       isAdmin,
     } from '$lib/components/lemmy/moderation/moderation.js'
     
-    import ProfileButton from '$lib/components/ui/sidebar/ProfileButton.svelte'
-
+    import ProfileButton from '$lib/components/ui/navbar/ProfileButton.svelte'
 
 
     import Avatar from '$lib/components/ui/Avatar.svelte'

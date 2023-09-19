@@ -38,7 +38,6 @@
     export let community_view: CommunityView
     
     let sidebar: boolean = false
-    
     let loading = {
         blocking: false,
         subscribing: false,
@@ -92,6 +91,8 @@
         <Markdown source={community_view.community.description} />
     </div>
 </Modal>
+
+
 
 
 <!---Button to hide/show the community sidebar--->
@@ -156,7 +157,7 @@
                     <Icon src={InformationCircle} mini size="16" slot="icon" />
                 </Button>
             </div>
-            
+           
             <!---Modlog--->
             <div class="flex flex-row gap-2">
                 <Button
