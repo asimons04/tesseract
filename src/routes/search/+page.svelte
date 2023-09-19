@@ -51,6 +51,8 @@
             options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
             selected={$page.url.searchParams.get('type') ?? 'All'}
             on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+            items={5}
+            headless={true}
         />
         
         <MultiSelect
