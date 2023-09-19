@@ -2,7 +2,7 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.61
-Most a lot of little stuff in this release.
+Mostly a lot of little stuff in this release.
 
 ### Bugfixes
 - Fixed bug where community description was not changing when switching between communities without a full page refresh.
