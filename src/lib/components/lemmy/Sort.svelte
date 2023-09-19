@@ -1,21 +1,22 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import { searchParam } from '$lib/util.js'
-  import MultiSelect from '../input/MultiSelect.svelte'
+    import { page } from '$app/stores'
+    import { searchParam } from '$lib/util.js'
+    import MultiSelect from '../input/MultiSelect.svelte'
 
-  export let selected: string
-  export let navigate: boolean = true
-  export let headless:boolean = false
-
+    export let selected: string
+    export let navigate: boolean = true
+    export let headless:boolean = false
+    export let items:number = 3
 </script>
 
 <MultiSelect
+  items={items}
   options={[
     'Active',
     'Hot',
-    'TopAll',
     'New',
     'Old',
+    'TopAll',
     'TopNineMonths',
     'TopSixMonths',
     'TopThreeMonths',
@@ -31,9 +32,9 @@
   optionNames={[
     'Active',
     'Hot',
-    'Top',
     'New',
     'Old',
+    'Top All',
     'Top 9 Months',
     'Top 6 Months',
     'Top 3 Months',

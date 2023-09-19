@@ -35,7 +35,7 @@
     
 
     export let community_view: CommunityView
-    
+
     let loading = {
         blocking: false,
         subscribing: false,
@@ -84,7 +84,7 @@
 </script>
 
 <!---Button to hide/show the community sidebar--->
-<aside class="sticky top-[5.1rem] flex flex-col pr-4 hidden lg:block xl:block">
+<aside class="sticky top-[5.1rem] flex flex-col pr-4 hidden xl:block">
     <div class="grid justify-items-end w-full mr-2">
         <Button
             alignment="right"
@@ -116,12 +116,8 @@
 
 
 <!--- Hideable div to contain the main part of the community sidebar --->
-<StickyCard class="p-3 mb-3
-    {$userSettings.uiState.expandCommunitySidebar
-        ? 'hidden lg:block xl:block'
-        : 'hidden'}
-    "
->
+<StickyCard class="p-3 mb-3 {!$userSettings.uiState.expandCommunitySidebar ? 'hidden' : ''}" >
+
     <Card>
         <div class="flex flex-row gap-3 items-center p-3">
             <div class="flex-shrink-0">
@@ -139,6 +135,35 @@
                     </span>
                 </a>
             </div>
+        </div>
+        
+        <div class="px-3 mt-2 mb-2 flex flex-row gap-2 justify-between">
+            <div class="flex flex-row gap-2">
+                <Button
+                    href="/modlog?community={community_view.community.id}"
+                    color="secondary"
+                    size="lg"
+                    title="Modlog for {community_view.community.title}"
+                >
+                    <Icon src={Newspaper} mini size="16" slot="icon" />
+                </Button>
+            </div>
+            
+            {#if $profile.user && amMod($profile.user, community_view.community)}
+                <div class="flex flex-row gap-2">
+                    <Button
+                        href="/c/{fullCommunityName(
+                            community_view.community.name,
+                            community_view.community.actor_id
+                        )}/settings"
+                        size="lg"
+                        title="Edit Community"
+                    >
+                        <Icon src={Cog6Tooth} mini size="16" slot="icon" />
+                    </Button>
+                </div>
+            {/if}
+            
         </div>
 
         
@@ -213,33 +238,12 @@
                 {community_view.blocked ? 'Unblock' : 'Block'}
             </Button>
 
-            {#if $profile.user && amMod($profile.user, community_view.community)}
-                <div class="flex flex-row gap-2 ml-auto">
-                        <Button
-                            href="/c/{fullCommunityName(
-                                community_view.community.name,
-                                community_view.community.actor_id
-                            )}/settings"
-                            size="square-md"
-                        >
-                            <Icon src={Cog6Tooth} mini size="16" slot="icon" />
-                        </Button>
-                </div>
-            {/if}
+            
         </div>
     {/if}
 
-    <div class="w-full mt-2 mb-2 flex flex-col gap-2">
-        <Button
-            href="/modlog?community={community_view.community.id}"
-            color="ghost"
-            size="lg"
-        >
-            <Icon src={Newspaper} mini size="16" slot="icon" />
-            Community Modlog
-        </Button>
+    <div class="hidden xl:block">
+        <Markdown source={community_view.community.description} />
     </div>
-    
-    <Markdown source={community_view.community.description} />
 
 </StickyCard>

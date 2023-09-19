@@ -1,50 +1,64 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import { goto } from '$app/navigation'
-  import { userSettings } from '$lib/settings.js'
-  
-  import Badge from '$lib/components/ui/Badge.svelte'
-  import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
-  import Post from '$lib/components/lemmy/post/Post.svelte'
+    import { page } from '$app/stores'
+    import { goto } from '$app/navigation'
+    import { userSettings } from '$lib/settings.js'
+    import Badge from '$lib/components/ui/Badge.svelte'
+    import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+    import Post from '$lib/components/lemmy/post/Post.svelte'
 
-  import Link from '$lib/components/input/Link.svelte'
-  import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-  
-  import Card from '$lib/components/ui/StickyCard.svelte'
-  import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
+    import Link from '$lib/components/input/Link.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
 
-  import Button from '$lib/components/input/Button.svelte'
-  import { Color } from '$lib/ui/colors'
-  import { fly } from 'svelte/transition'
+    import Card from '$lib/components/ui/StickyCard.svelte'
+    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
 
-  import Modal from '$lib/components/ui/modal/Modal.svelte'
-  import Pageination from '$lib/components/ui/Pageination.svelte'
-  import Avatar from '$lib/components/ui/Avatar.svelte'
-  import Sort from '$lib/components/lemmy/Sort.svelte'
-  import { fullCommunityName, searchParam } from '$lib/util.js'
-  import { onDestroy, onMount } from 'svelte'
-  import { setSessionStorage } from '$lib/session.js'
+    import Button from '$lib/components/input/Button.svelte'
+    import { Color } from '$lib/ui/colors'
+    import { fly } from 'svelte/transition'
+
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import Pageination from '$lib/components/ui/Pageination.svelte'
+    import Avatar from '$lib/components/ui/Avatar.svelte'
+    import Sort from '$lib/components/lemmy/Sort.svelte'
+    import { fullCommunityName, searchParam } from '$lib/util.js'
+    import { onDestroy, onMount } from 'svelte'
+    import { setSessionStorage } from '$lib/session.js'
 
 
-  export let data
+    export let data
 
-  let sidebar: boolean = false
-
-  onMount(() => {
-    setSessionStorage('lastSeenCommunity', {
-      id: data.community.community_view.community.id,
-      name: fullCommunityName(
-        data.community.community_view.community.name,
-        data.community.community_view.community.actor_id
-      ),
+    let sidebar: boolean = false
+    
+    onMount(() => {
+        setSessionStorage('lastSeenCommunity', {
+            id: data.community.community_view.community.id,
+            name: fullCommunityName(
+                data.community.community_view.community.name,
+                data.community.community_view.community.actor_id
+            ),
+        })
     })
-  })
 </script>
 
+<svelte:head>
+    <title>{data.community.community_view.community.title}</title>
 
-<div class="flex flex-col md:flex-row gap-4 w-full px-2 pl-3 pt-4">
+    <meta
+        name="og:title"
+        content={data.community.community_view.community.title}
+    />
+    {#if data.community.community_view.community.description}
+        <meta
+            name="og:description"
+            content={data.community.community_view.community.description}
+        />
+    {/if}
+</svelte:head>
+
+<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
-        <div class="flex flex-row gap-3 items-center">
+        
+        <div class="flex flex-row gap-3 items-center hidden xl:block">
             <Avatar
                 width={48}
                 url={data.community.community_view.community.icon}
@@ -69,7 +83,7 @@
     
         <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
             <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
-                <Sort selected={data.sort} headless={true}/>
+                <Sort selected={data.sort} headless={true} items={0}/>
 
                 <MultiSelect
                     options={['Cards', 'Compact']}
@@ -86,13 +100,14 @@
         </div>
 
         <PostFeed posts={data.posts.posts} />
+        
         <Pageination
             page={data.page}
             on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
         />
     </div>
 
-    <div class="hidden lg:block xl:block mt-[-8px]">
+    <div class="mt-[-8px]">
         <CommunityCard community_view={data.community.community_view} />
     </div>
 </div>

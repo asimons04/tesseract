@@ -1,6 +1,18 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.61
+### Bugfixes
+- Fixed bug where community description was not changing when switching between communities without a full page refresh.
+
+### UI Tweaks
+- Moved community settings and community modlog buttons into the community card rather than below.
+- Community card sidebar now reflows above the posts on `/c/{community}` rather than hiding in a modal.  The community description is hidden in mobile view, though.
+- Right-hand sidebars hide at larger breakpoint
+- Tweaked margins a bit
+
+
+
 ## 1.2.6
 This is a fairly major update, though you probably wouldn't notice at first glance.
 

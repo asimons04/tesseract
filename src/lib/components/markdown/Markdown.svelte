@@ -36,7 +36,8 @@
 
     // Render the markdown in a try/catch since sometimes it randomly fails. I think this is due to truncating it for the feed previews.
     let rendered:HTML
-    try {
+    
+    $: try {
         if (inline) { rendered = mdInline.render(source) }
         else { rendered = md.render(source) }
     }

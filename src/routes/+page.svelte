@@ -51,6 +51,7 @@
                 selected={data.listingType}
                 on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
                 headless={true}
+                items={0}
             />
       
             <MultiSelect
@@ -66,7 +67,7 @@
             />
 
 
-            <Sort selected={data.sort} headless={true} />
+            <Sort selected={data.sort} headless={true}  items={0}/>
         </div>
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
@@ -81,7 +82,7 @@
         </div>
     </div>
 
-    <div class="hidden lg:block xl:block mt-[-8px]">
+    <div class="hidden xl:block mt-[-8px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
     </div>
 </div>

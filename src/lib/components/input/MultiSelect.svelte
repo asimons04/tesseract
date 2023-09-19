@@ -72,7 +72,7 @@
             <Icon src={ChevronDown} size="16" mini />
         </Button>
         {#each options.slice(items) as option, index}
-            <option class="dark:bg-zinc-900 bg-slate-100" value={option}>{optionNames[index + items] || option}</option>
+            <option class="dark:bg-zinc-900 dark:text-slate-100 bg-slate-100  text-zinc-900" value={option}>{optionNames[index + items] || option}</option>
         {/each}
     </select>
     {/if}
