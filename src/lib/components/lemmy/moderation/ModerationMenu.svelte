@@ -81,7 +81,7 @@
     }
 </script>
 
-<Menu alignment="side-left">
+<Menu alignment="top-right">
     <Button
         class="hover:text-green-500 dark:text-zinc-400 text-slate-500"
         on:click={toggleOpen}

@@ -16,7 +16,7 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!---Div to blur background. Diabled click event that closes modal --->
     <div
-        class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-50 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4"
+        class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4"
         transition:fade={{ duration: 200 }}
     >
   

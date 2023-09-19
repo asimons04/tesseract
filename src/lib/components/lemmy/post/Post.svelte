@@ -44,65 +44,81 @@
 
 <!--- Compact Posts --->
 {#if $userSettings.showCompactPosts}
-<Card class="bg-white flex flex-row w-full p-5 gap-2.5" id={post.post.id}>
-    
-    <!--- Post Header and Title --->
-    <div class="flex flex-col w-[80%] gap-2.5">
-        <PostMeta post={post} displayType={displayType}/>
-        
-        {#if post.post.url && !isImage(post.post.url)}
-            <Link
-                href={post.post.url}
-                title={post.post.url}
-                highlight
-            >
-                {new URL(post.post.url).host}
-            </Link>
-        {/if}
-
-        {#if actions}
-            <PostActions bind:post
-                on:edit={(e) => {
-                    toast({
-                        content: 'The post was edited successfully.',
-                        type: 'success',
-                    })
-                }}
-            />
-        {/if}
+<Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
+    <div class="w-full">
+        <PostMeta post={post} displayType={displayType} showTitle={false}/>
     </div>
-    
-    <!--- Thumbnail --->
-    <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
-        <a href="/post/{getInstance()}/{post.post.id}">
-            <!--- Thumbnail --->
-            {#if post.post.thumbnail_url || isImage(post.post.url)}
-                {#if post.post.thumbnail_url}
-                    <img
-                        src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
-                        loading="lazy"
-                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                        class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+
+    <div class="flex flex-row w-full">
+        <!--- Post Header and Title --->
+        <div class="flex flex-col w-[80%] gap-2.5">
+            <a
+                href="/post/{getInstance()}/{post.post.id}"
+                class="font-medium max-w-full w-full break-words"
+                style="word-break: break-word;"
+                class:text-slate-500={post.read && $userSettings.markReadPosts}
+                class:dark:text-zinc-400={post.read && $userSettings.markReadPosts}
+                title="{post.post.name}"
+            >
+                <h1 class="text-lg">{post.post.name}</h1>    
+            
+            </a>
+            
+            {#if post.post.url && !isImage(post.post.url)}
+                <Link
+                    href={post.post.url}
+                    title={post.post.url}
+                    highlight
+                >
+                    {new URL(post.post.url).host}
+                </Link>
+            {/if}
+
+            {#if actions}
+                <div class="w-full h-full grid items-end">
+                    <PostActions bind:post
+                        on:edit={(e) => {
+                            toast({
+                                content: 'The post was edited successfully.',
+                                type: 'success',
+                            })
+                        }}
                     />
+                </div>
+            {/if}
+        </div>
+        
+        <!--- Thumbnail --->
+        <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
+            <a href="/post/{getInstance()}/{post.post.id}">
+                <!--- Thumbnail --->
+                {#if post.post.thumbnail_url || isImage(post.post.url)}
+                    {#if post.post.thumbnail_url}
+                        <img
+                            src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
+                            loading="lazy"
+                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                        />
+                    {:else}
+                        <img
+                            src="{post.post.url}?thumbnail=256&format=webp"
+                            loading="lazy"
+                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                        />
+                    {/if}
+                <!--- Placeholder Image--->
                 {:else}
                     <img
-                        src="{post.post.url}?thumbnail=256&format=webp"
+                        src="/img/placeholder.png"
                         loading="lazy"
-                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                        class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                        class="object-cover bg-slate-100 dark:bg-zinc-600 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                     />
+                
                 {/if}
-            <!--- Placeholder Image--->
-            {:else}
-                <img
-                    src="/img/placeholder.png"
-                    loading="lazy"
-                    class="object-cover bg-slate-100 dark:bg-zinc-800 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                    class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                />
-            
-            {/if}
-        </a>
+            </a>
+        </div>
     </div>
 
 

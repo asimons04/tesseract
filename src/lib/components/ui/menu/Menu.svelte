@@ -70,7 +70,7 @@
                 start: 0.95,
                 easing: expoOut,
             }}
-            class="list-none absolute h-auto z-30 overflow-auto 
+            class="list-none absolute h-auto z-[90] overflow-auto 
                 {getOriginClass(alignment)}
                 rounded-lg py-1 min-w-[16rem] my-2 flex flex-col shadow-sm
                 bg-white dark:bg-zinc-900 backdrop-blur-2xl border border-slate-200 dark:border-zinc-800

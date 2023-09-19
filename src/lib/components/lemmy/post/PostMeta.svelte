@@ -22,6 +22,7 @@
 
     export let post: PostView | undefined       = undefined
     export let displayType: PostDisplayType     = 'feed';
+    export let showTitle:boolean                = true;
 
     // Extract data from post object for easier reference
     let community: Community | undefined    = post.community ?? undefined
@@ -117,7 +118,7 @@
         </span>
     </div>
 
-
+    {#if showTitle}
     <a
         href="/post/{getInstance()}/{id}"
         class="font-medium max-w-full w-full break-words"
@@ -129,6 +130,7 @@
         <h1 class="text-lg" class:font-bold={displayType==='post'}>{title}</h1>    
     
     </a>
+    {/if}
 
 
 </div>

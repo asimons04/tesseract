@@ -160,7 +160,7 @@
 
 
     <Menu
-        alignment="side-left"
+        alignment="top-right"
         containerClass="overflow-auto max-h-[400px]"
         bind:toggleOpen
     >
