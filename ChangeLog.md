@@ -8,17 +8,20 @@ Completely re-implemented the way posts are rendered.  If nothing looks differen
 
 The only noticable difference is "Compact" view has had a complete refresh (which is why I had to re-implment everything else).  It may be subtle, but it does look a lot better and is more flexible should I want to change it later.
 
-A "list" view was requested, but I think that conflicts with one of the project's goals.  Doing a proper list view would not work well on mobile, and desktop-mobile feature partity is a priority.  To that end, I think "compact" view is about as small as I want to implement for the time being.
+A "list" view was requested, but I think that conflicts with one of the project's goals.  Doing a proper list view would not work well on mobile, and desktop-mobile feature partity is a priority.  To that end, I think "compact" view is about as small as I want to implement for the time being.  I'm also really tired, and just the thought of implementing another view and plumbing it in makes my headache even worse.
 
 ### Other Updates
-- Added an optional (default off) "NSFW" tag that will show on communities marked NSFW.  Shows in the sidebar list (when expanded) and in the community header when browsing a particular community.
-  - To enable by default, set the `PUBLIC_TAG_NSFW_COMMUNITIES` environment variable to `true`
 - Added margins to Reports, Saved, and Search views 
 - Added Cards/Compact view switcher to Reports, Saved, and Search views
 - Put in a replace for `&amp;` in community names in the sidebar, community header, and community cards to show an ampersand.
   - Lemmy's overzealous escaping is getting on my nerves. This will do for now.
   - Need to move to utility function and also do the same in markdown for `&lt;` and `&gt;`
 - There is now a "Community Modlog" button in the community sidebar.  It will load the modlog filtered for that community.
+
+#### NSFW Community Tagging
+Added an optional (default on) "NSFW" tag that will show on communities marked NSFW.  Shows in the sidebar list (when expanded) and in the community header when browsing a particular community.
+
+To disable by default, set the `PUBLIC_TAG_NSFW_COMMUNITIES` environment variable to `false`.  Users can also adjust the behavior by unchecking that option in the app settings.
 
 ### Bugfixes
 - Fixed bug where some links weren't getting the proper tooltips set

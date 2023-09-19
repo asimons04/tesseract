@@ -128,7 +128,7 @@ export const defaultSettings: Settings = {
     
     displayNames:   toBool(env.PUBLIC_DISPLAY_NAMES)                    ??  true,
     nsfwBlur:       toBool(env.PUBLIC_NSFW_BLUR)                        ??  true,
-    tagNSFWCommunities: toBool(env.PUBLIC_TAG_NSFW_COMMUNITIES)         ??  false,
+    tagNSFWCommunities: toBool(env.PUBLIC_TAG_NSFW_COMMUNITIES)         ??  true,
     openInNewTab: {
         postLinks:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ??  false,
