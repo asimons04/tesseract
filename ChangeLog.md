@@ -2,15 +2,21 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.2.61
+Most a lot of little stuff in this release.
+
 ### Bugfixes
 - Fixed bug where community description was not changing when switching between communities without a full page refresh.
 - Fixed the hack I had to put in place to make sub-menus possible.  Menus now close when expected and stay open when they should (no more hacks needed)
 
-### UI Tweaks
+### Community Pages
 - Moved community settings and community modlog buttons into the community card rather than below.
 - Community card sidebar now reflows above the posts on `/c/{community}` rather than hiding in a modal.  The community description is hidden in mobile view, though.
   - Added "Info" button in community card mobile view to show the community details/info/rules. Hidden when sidebar is available. 
 
+### Account Management
+Added account delete buttons to the account drop down in the profile menu.  
+
+### UI Tweaks
 - Right-hand sidebars hide at larger breakpoint
 - Tweaked margins a bit
 - Tweaked max-width of sidebar at various breakpoints
