@@ -9,9 +9,17 @@ All major/minor changes between releases will be documented here.
 - Moved community settings and community modlog buttons into the community card rather than below.
 - Community card sidebar now reflows above the posts on `/c/{community}` rather than hiding in a modal.  The community description is hidden in mobile view, though.
   - Added "Info" button in community card mobile view to show the community details/info/rules. Hidden when sidebar is available. 
+
 - Right-hand sidebars hide at larger breakpoint
 - Tweaked margins a bit
 - Tweaked max-width of sidebar at various breakpoints
+- Changed selectors for feed source and sort to be single element dropdowns
+
+
+### Modlog Related Updates
+When you click the "modlog" button from within a community, it will filter the modlog for that.  It will also adjust the modlog page title and heading to reflect the selected community as well as hide the community filter search.
+
+
 
 
 

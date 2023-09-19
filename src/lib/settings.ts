@@ -163,6 +163,7 @@ export const YTFrontends = {
         'invidious.lunar.icu',
         'invidious.privacydev.net',
         'invidious.slipfox.xyz',
+        'inv.bp.projectsegfau.lt',
         'inv.tux.pizza',
         'invidious.io.lol',
         'inv.makerlab.tech',
