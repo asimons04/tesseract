@@ -90,34 +90,36 @@
         
         <!--- Thumbnail --->
         <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
-            <a href="/post/{getInstance()}/{post.post.id}">
-                <!--- Thumbnail --->
-                {#if post.post.thumbnail_url || isImage(post.post.url)}
-                    {#if post.post.thumbnail_url}
-                        <img
-                            src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
+            <div class="grid justify-items-center">
+                <a href="/post/{getInstance()}/{post.post.id}">
+                    <!--- Thumbnail --->
+                    {#if post.post.thumbnail_url || isImage(post.post.url)}
+                        {#if post.post.thumbnail_url}
+                            <img
+                                src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
+                                loading="lazy"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                            />
+                        {:else}
+                            <img
+                                src="{post.post.url}?thumbnail=256&format=webp"
+                                loading="lazy"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                            />
+                        {/if}
+                    <!--- Placeholder Image--->
                     {:else}
                         <img
-                            src="{post.post.url}?thumbnail=256&format=webp"
+                            src="/img/placeholder.png"
                             loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                            class="object-cover bg-slate-100 dark:bg-zinc-600 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                         />
+                    
                     {/if}
-                <!--- Placeholder Image--->
-                {:else}
-                    <img
-                        src="/img/placeholder.png"
-                        loading="lazy"
-                        class="object-cover bg-slate-100 dark:bg-zinc-600 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                    />
-                
-                {/if}
-            </a>
+                </a>
+            </div>
         </div>
     </div>
 

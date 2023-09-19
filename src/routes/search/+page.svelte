@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
+    import { userSettings } from '$lib/settings.js'
     import Button from '$lib/components/input/Button.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -52,6 +53,19 @@
             on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
         />
         
+        <MultiSelect
+            options={['Cards', 'Compact']}
+            selected={$userSettings.showCompactPosts
+                ? 'Compact'
+                : 'Cards'
+            }
+            on:select={(e) => {
+                $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+            }}
+            headless={true}
+        />
+        
+
         <div class="flex flex-row gap-2 items-center">
             <TextInput
                 bind:value={query}
@@ -106,7 +120,7 @@
             {/if}
         {/await}
 
-        <div class="flex flex-col gap-4 mt-4">
+        <div class="flex flex-col gap-4 mt-4 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto">
             {#each data.results as result}
                 {#if isPostView(result)}
                     <Post post={result} />

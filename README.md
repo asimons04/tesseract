@@ -196,7 +196,7 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_HIDE_DELETED             | `bool`              | true                                   |
 | PUBLIC_HIDE_REMOVED             | `bool`              | false                                  |
 | PUBLIC_DISPLAY_NAMES            | `bool`              | true                                   |
-| PUBLIC_TAG_NSFW_COMMUNITIES     | `bool`              | true                                   |
+| PUBLIC_TAG_NSFW_COMMUNITIES     | `bool`              | false                                  |
 | PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
 | PUBLIC_OPEN_LINKS_NEW_TAB       | `bool`              | false                                  |
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | false                                  |

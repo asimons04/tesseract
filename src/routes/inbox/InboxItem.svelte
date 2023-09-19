@@ -92,11 +92,7 @@
 
 <Card elevation={0} class="flex flex-col rounded-md p-5 max-w-full gap-2">
   {#if !isPrivateMessage(item)}
-    <PostMeta
-      published={new Date(item.post.published)}
-      title={item.post.name}
-      id={item.post.id}
-    />
+    <PostMeta post={item}/>
     <div
       class="flex flex-col"
       class:mt-2={$profile?.user &&

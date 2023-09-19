@@ -88,7 +88,7 @@
         <div class="p-3 flex" class:hidden={!$userSettings.uiState.expandSidebar}>
             <TextInput 
                 type="search"
-                placeholder="Filter communities"
+                placeholder="Jump to a Community"
                 bind:value={communityFilterTerm}
                 on:keyup={() => { 
                     // Set the search term to lowercase for comparison 

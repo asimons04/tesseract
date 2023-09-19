@@ -35,11 +35,7 @@
                 {#if isComment(item)}
                     <Card class="flex flex-col bg-white rounded-md p-5 flex-1">
                         <div class="flex flex-row items-center">
-                            <PostMeta
-                                title={item.post.name}
-                                id={item.post.id}
-                                published={new Date(item.post.published)}
-                            />
+                            <PostMeta post={item}/>
                         </div>
                         <div class="list-none">
                             <Comment

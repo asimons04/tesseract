@@ -1,6 +1,27 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+## 1.2.6
+This is a fairly major update, though you probably wouldn't notice at first glance.
+
+Completely re-implemented the way posts are rendered.  If nothing looks different, then I have succeeded.
+
+The only noticable difference is "Compact" view has had a complete refresh (which is why I had to re-implment everything else).  It may be subtle, but it does look a lot better and is more flexible should I want to change it later.
+
+A "list" view was requested, but I think that conflicts with one of the project's goals.  Doing a proper list view would not work well on mobile, and desktop-mobile feature partity is a priority.  To that end, I think "compact" view is about as small as I want to implement.
+
+### Other Updates
+- Added an optional (default off) "NSFW" tag that will show on communities marked NSFW.  Shows in the sidebar list (when expanded) and in the community header when browsing a particular community.
+  - To enable by default, set the `PUBLIC_TAG_NSFW_COMMUNITIES` environment variable to `true`'
+- Added margins to Reports and Search views 
+- Added Cards/Compact view swietcher to Reports and Search views
+
+### Bugfixes
+- Fixed bug where some links weren't getting the proper tooltips set
+- Fixed a few more NSFW blur inconsistencies
+- Loading a post always loads the full-res version now.  On mobile, the post was grabbing the low res thumbnail source instead of the full res one. 
+- 
+
 ## 1.2.59
 - Moved "Accounts" menu and account switcher from sidebar to profile menu.
   - The "Accounts" button in the profile menu now opens a sub-menu to either manage or switch between accounts.
