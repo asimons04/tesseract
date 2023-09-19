@@ -9,7 +9,7 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
-    
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Card from '$lib/components/ui/Card.svelte'
@@ -25,6 +25,7 @@
         ChevronDoubleRight,
         Cog6Tooth,
         Icon,
+        InformationCircle,
         Minus,
         Newspaper,
         PencilSquare,
@@ -35,7 +36,9 @@
     
 
     export let community_view: CommunityView
-
+    
+    let sidebar: boolean = false
+    
     let loading = {
         blocking: false,
         subscribing: false,
@@ -82,6 +85,14 @@
         loading.blocking = false
     }
 </script>
+
+<Modal bind:open={sidebar}>
+    <span slot="title">About</span>
+    <div class="mx-auto">
+        <Markdown source={community_view.community.description} />
+    </div>
+</Modal>
+
 
 <!---Button to hide/show the community sidebar--->
 <aside class="sticky top-[5.1rem] flex flex-col pr-4 hidden xl:block">
@@ -137,7 +148,16 @@
             </div>
         </div>
         
+        <!--- Community Action Buttons Inside The Card (Community Info, Modlog, and Settings)--->
         <div class="px-3 mt-2 mb-2 flex flex-row gap-2 justify-between">
+            <!--- Community Info Modal--->
+            <div class="flex flex-row gap-2 xl:hidden">
+                <Button color="secondary" on:click={() => (sidebar = !sidebar)} title="Community Info">
+                    <Icon src={InformationCircle} mini size="16" slot="icon" />
+                </Button>
+            </div>
+            
+            <!---Modlog--->
             <div class="flex flex-row gap-2">
                 <Button
                     href="/modlog?community={community_view.community.id}"
@@ -149,6 +169,7 @@
                 </Button>
             </div>
             
+            <!--- Settings --->
             {#if $profile.user && amMod($profile.user, community_view.community)}
                 <div class="flex flex-row gap-2">
                     <Button

@@ -8,8 +8,10 @@ All major/minor changes between releases will be documented here.
 ### UI Tweaks
 - Moved community settings and community modlog buttons into the community card rather than below.
 - Community card sidebar now reflows above the posts on `/c/{community}` rather than hiding in a modal.  The community description is hidden in mobile view, though.
+  - Added "Info" button in community card mobile view to show the community details/info/rules. Hidden when sidebar is available. 
 - Right-hand sidebars hide at larger breakpoint
 - Tweaked margins a bit
+- Tweaked max-width of sidebar at various breakpoints
 
 
 

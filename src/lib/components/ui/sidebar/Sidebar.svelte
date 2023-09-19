@@ -37,7 +37,7 @@
     class="hidden sm:flex flex-col pl-4 pr-4 pt-[1.2rem] overflow-auto sticky top-16 bottom-0
         gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black
         {$userSettings.uiState.expandSidebar
-            ? `max-w-[18%] resize-x min-w-[12rem]`
+            ? `max-w-[25%] xl:max-w-[18%] lg:max-w-[20%] resize-x min-w-[12rem]`
             : "w-max max-w-max min-w-max"
         }
     "

@@ -8,7 +8,7 @@
 
     import Link from '$lib/components/input/Link.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Card from '$lib/components/ui/StickyCard.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
 
@@ -16,7 +16,6 @@
     import { Color } from '$lib/ui/colors'
     import { fly } from 'svelte/transition'
 
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
@@ -27,7 +26,7 @@
 
     export let data
 
-    let sidebar: boolean = false
+    
     
     onMount(() => {
         setSessionStorage('lastSeenCommunity', {
@@ -58,6 +57,7 @@
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
         
+        <!--- Community Metadata -- Hide when sidebar reflows as it would be redundant--->
         <div class="flex flex-row gap-3 items-center hidden xl:block">
             <Avatar
                 width={48}
@@ -78,7 +78,6 @@
                     ).hostname}
                 </span>
             </div>
-            
         </div>
     
         <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">

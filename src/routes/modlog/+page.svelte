@@ -10,14 +10,27 @@
     import ModlogItemTable from './item/ModlogItemTable.svelte'
 
     export let data
+
+
+    // If community URL param is present, set the title to reflect the modlog is filtered for that community.
+    let communityName:string = ''
+    let communityFiltered:boolean = new URLSearchParams(window.location.search).has('community');
+
+    if (communityFiltered && data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
+        communityName += "for ";
+        communityName += data.modlog[0].community.title + " (";
+        communityName += data.modlog[0].community.name + "@";
+        communityName += new URL(data.modlog[0].community.actor_id).host + ")";
+    }
+
 </script>
 
 <svelte:head>
-    <title>Modlog</title>
+    <title>Modlog {communityName}</title>
 </svelte:head>
 
 <div class="flex flex-col gap-4 p-2">
-    <h1 class="font-bold text-2xl">Modlog</h1>
+    <h1 class="font-bold text-2xl">Modlog {communityName}</h1>
     <div class="flex flex-col gap-2">
         <MultiSelect
             options={[
@@ -61,7 +74,7 @@
             on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
         />
 
-        <div class="max-w-sm">
+        <div class="max-w-sm" class:hidden={communityFiltered}>
             <div class="block my-1 font-bold text-sm">Community</div>
             <ObjectAutocomplete
                 placeholder="Filter by community"
