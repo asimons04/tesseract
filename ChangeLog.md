@@ -15,12 +15,20 @@ A "list" view was requested, but I think that conflicts with one of the project'
   - To enable by default, set the `PUBLIC_TAG_NSFW_COMMUNITIES` environment variable to `true`
 - Added margins to Reports, Saved, and Search views 
 - Added Cards/Compact view switcher to Reports, Saved, and Search views
+- Put in a replace for `&amp;` in community names in the sidebar, community header, and community cards to show an ampersand.
+  - Lemmy's overzealous escaping is getting on my nerves. This will do for now.
+  - Need to move to utility function and also do the same in markdown for `&lt;` and `&gt;`
+- There is now a "Community Modlog" button in the community sidebar.  It will load the modlog filtered for that community.
 
 ### Bugfixes
 - Fixed bug where some links weren't getting the proper tooltips set
 - Fixed a few more NSFW blur inconsistencies
 - Loading a post always loads the full-res version now.  On mobile, the post was grabbing the low res thumbnail source instead of the full res one. 
 - Pretty sure I fixed all the bugs introduced with the post render revamp. Have tested thoroughly, and I think they're all squashed.
+
+
+
+
 
 ## 1.2.59
 - Moved "Accounts" menu and account switcher from sidebar to profile menu.

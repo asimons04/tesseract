@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { CommunityView } from 'lemmy-js-client'
-    
     import { profile } from '$lib/auth.js'
     import { amMod } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy.js'
@@ -27,6 +26,7 @@
         Cog6Tooth,
         Icon,
         Minus,
+        Newspaper,
         PencilSquare,
         Plus,
         UserGroup,
@@ -35,7 +35,7 @@
     
 
     export let community_view: CommunityView
-
+    
     let loading = {
         blocking: false,
         subscribing: false,
@@ -133,7 +133,7 @@
             </div>
             <div class="flex flex-col gap-0">
                 <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
-                    <h1 class="font-bold text-xl">{community_view.community.title}</h1>
+                    <h1 class="font-bold text-xl">{community_view.community.title.replace('&amp;', '&')}</h1>
                     <span class="dark:text-zinc-400 text-slate-600 text-sm">
                         !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
                     </span>
@@ -166,9 +166,12 @@
             </div>
         </div>
     </Card>
+    
+    
+
 
     {#if $profile?.jwt}
-        <div class="w-full mt-2 flex flex-col gap-2">
+        <div class="w-full mt-2 mb-2 flex flex-col gap-2">
             <Button
                 href="/create/post"
                 color="ghost"
@@ -225,6 +228,18 @@
             {/if}
         </div>
     {/if}
+
+    <div class="w-full mt-2 mb-2 flex flex-col gap-2">
+        <Button
+            href="/modlog?community={community_view.community.id}"
+            color="ghost"
+            size="lg"
+        >
+            <Icon src={Newspaper} mini size="16" slot="icon" />
+            Community Modlog
+        </Button>
+    </div>
+    
     <Markdown source={community_view.community.description} />
 
 </StickyCard>

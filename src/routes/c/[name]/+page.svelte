@@ -52,7 +52,7 @@
             />
             <div class="flex flex-col gap-0 w-full">
                 <h1 class="font-bold text-xl flex flex-row justify-between">
-                    {data.community.community_view.community.title}
+                    {data.community.community_view.community.title.replace('&amp;', '&')}
 
                     {#if data.community.community_view.community.nsfw && $userSettings.tagNSFWCommunities}
                         <Badge color="red">NSFW</Badge>
