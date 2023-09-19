@@ -24,7 +24,8 @@
     export let loading:boolean = false
     export let disabled:boolean = false
     export let title:string = '';
-    
+    export let toggleOpen
+
     const click = createEventDispatcher()
 </script>
 
@@ -32,12 +33,13 @@
     {#if link}
         <a
             {href}
+            on:click={(e) => click('click', e)}
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm transition-colors 
                 {buttonColors[color]} 
                 {disabled ? 'opacity-50 pointer-events-none' : ''}
             "
         >
-            <slot />
+            <slot {toggleOpen}/>
         </a>
     {:else}
         <button
@@ -54,7 +56,7 @@
             {:else}
                 <slot name="icon" />
             {/if}
-            <slot />
+            <slot {toggleOpen}/>
         </button>
     {/if}
 </div>

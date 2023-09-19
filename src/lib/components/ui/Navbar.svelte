@@ -48,10 +48,10 @@
     } from 'svelte-hero-icons'
   
     let scrollY = 0
-    let expandAccountsMenu:boolean = false;
-
-
+    
     export const DISABLE_MODLOG_USERS = (env.PUBLIC_DISABLE_MODLOG_USERS ?? 'false').toLowerCase() == 'true'
+    
+    let expandAccountsMenu:boolean = false
 
 </script>
   
@@ -190,7 +190,6 @@
             let:toggleOpen
             on:click={toggleOpen}
         >
-        <!--let:toggleOpen-->
             {#if $profile?.user}
                 <div class="w-8 h-8 aspect-square object-cover rounded-full">
                     <Avatar
@@ -216,11 +215,11 @@
         </li>
         
         {#if $profile?.user}
-            <MenuButton link href="/profile">
-                <Icon src={UserCircle} mini width={16} /> Profile
+            <MenuButton link href="/profile" >
+                    <Icon src={UserCircle} mini width={16} /> Profile
             </MenuButton>
         
-            <MenuButton link href="/inbox">
+            <MenuButton link href="/inbox" >
                 <Icon src={Inbox} mini width={16} />
                 Inbox
 
@@ -231,7 +230,7 @@
                 {/if}
             </MenuButton>
         
-            <MenuButton link href="/saved">
+            <MenuButton link href="/saved" >
                 <Icon src={Bookmark} mini width={16} /> Saved
             </MenuButton>
         {/if}
@@ -241,8 +240,8 @@
             <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
                 aria-role="button"
                 on:click={(e) => {
+                    e.stopPropagation();
                     expandAccountsMenu = !expandAccountsMenu;
-                    expandAccountsMenu = expandAccountsMenu;
                 }}
             >
                 <Icon src={UserGroup} mini width={16} />
@@ -322,9 +321,10 @@
         </MenuButton>
 
         <MenuButton 
-            on:click={ () => {
-                $theme = dark() ? 'light' : 'dark'}
-            }
+            on:click={ (e) => {
+                e.stopPropagation();
+                $theme = dark() ? 'light' : 'dark'
+            }}
         >
             
             <Icon
@@ -340,10 +340,7 @@
                 size="16"
             />
             <div class="flex flex-row flex-wrap justify-between w-full">
-                <span>
-                    Theme
-                </span>
-                
+                <span>Theme</span>
                 <select
                     bind:value={$theme}
                     on:click|stopPropagation

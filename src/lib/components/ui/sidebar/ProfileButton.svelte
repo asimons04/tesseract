@@ -19,7 +19,9 @@
     loaderWidth={20}
     title={prof.username ?? prof.user?.local_user_view.person.name}
     on:click={
-        async () => {
+        async (e) => {
+            e.stopPropagation();
+            
             switching = true
 
             if ($profile?.id == prof.id) {
@@ -33,6 +35,7 @@
             })
 
             switching = false
+
         }
     }
     class="w-full {$profile?.id == prof.id ? 'font-bold' : ''}"

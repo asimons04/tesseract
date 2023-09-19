@@ -7,16 +7,13 @@
   
     let clazz = ''
     export { clazz as class }
-  
     export let itemsClass = ''
-  
     export let absolute = false
-  
     export let alignment: Alignment = 'bottom-left'
-  
+
     let element: any
   
-    export const toggleOpen = () => (open = !open)
+    export const toggleOpen = () => ( open = !open)
   
     function getOriginClass(origin: Alignment) {
         switch (origin) {
@@ -64,8 +61,7 @@
     <slot name="button" {toggleOpen} />
     
     {#if open}
-        <menu
-            transition:scale|local={{
+        <menu transition:scale|local={{
                 duration: 200,
                 start: 0.95,
                 easing: expoOut,
@@ -79,7 +75,7 @@
         >
             {#if open}
                 <!-- on:click={toggleOpen} -->
-                <div class="flex flex-col gap-0">
+                <div on:click={toggleOpen} class="flex flex-col gap-0">
                     <slot {toggleOpen} />
                 </div>
             {/if}

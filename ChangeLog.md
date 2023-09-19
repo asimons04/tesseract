@@ -4,6 +4,7 @@ All major/minor changes between releases will be documented here.
 ## 1.2.61
 ### Bugfixes
 - Fixed bug where community description was not changing when switching between communities without a full page refresh.
+- Fixed the hack I had to put in place to make sub-menus possible.  Menus now close when expected and stay open when they should (no more hacks needed)
 
 ### UI Tweaks
 - Moved community settings and community modlog buttons into the community card rather than below.
