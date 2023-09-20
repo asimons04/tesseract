@@ -253,7 +253,7 @@
                             post.post.body
                         }`,
                         url: post.post.url,
-                        title: post.post.name,
+                        name: post.post.name,
                         loading: false,
                         nsfw: post.post.nsfw,
                         community: null,

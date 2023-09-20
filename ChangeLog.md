@@ -22,12 +22,20 @@ One major enhancement, lots of tweaks, and several bugfixes.  The bugfixes were 
 ### Post Creation and Editing
 I've completely overhauled the post creation/editing process, specifically previewing your submission.  Instead of simply rendering the markdown in the post body, it will run the post draft through the full `Post` rendering stack and show you exactly what it will look like (assuming you're posting an image or embeddable media).
 
+The post form is also much more accommodating with more room to see what you're actually typing.  
+
 #### Known Issues
 **Bandcamp**: Because Bandcamp embeds do not have a 1:1 relationship between the URL you share and the URL used for embeds, they rely on Lemmy backend retrieving the page metadata to grab the embed URL.  Because of this, previewing a post with a Bandcamp URL will not show the player.  
 
 **New Article Posts**: Previewing a new post will not show the article thumbnail as it doesn't exist yet (that is retrieved by Lemmy on the backend _after_ the post is submitted.
 
 I can hack around those by fetching that metadata in the UI, but I'm not sure if that's worth doing or not.  For now, noting these as known issues/limitations.
+
+### Crossposts
+I forget which version I changed this in, and I forgot to document it, but the crosspost behavior is now slightly different.
+
+Before it would quote `>` each line.  I personally hate that since it also messes with the paragraph spacing in various Lemmy frontends.  So, I put a stop to that in Tesseract.  It will still add `cross-posted from : {original post}` at the top, but the rest of the post body will be unquoted.
+
 
 ### UI Tweaks
 - Modal can now be specified to be full screen height.  Particularly helpful for editing posts so the markdown editor isn't like 3 lines.

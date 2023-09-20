@@ -246,6 +246,7 @@
     </slot>
     
     <div class="flex flex-row justify-between">
+        <!--- Edit / Preview Toggle --->
         <Button 
             disabled={(!data.name || !data.community)}
             color="primary"
@@ -256,24 +257,25 @@
             {previewing ? 'Edit' : 'Preview'}
         </Button>
 
-        {#if !edit}
-            <Button
-                on:click={() => {
-                    const draft = getSessionStorage('postDraft')
-                    if (draft && !edit) {
-                        // @ts-ignore
-                        draft.loading = false
-                        // @ts-ignore
-                        data = draft
-                    }
-                }}
-                size="lg"
-                disabled={!getSessionStorage('postDraft')}
-            >
-                Restore from draft
-            </Button>
-        {/if}
-
+        <!--- Restore from Draft--->
+        <Button
+            on:click={() => {
+                const draft = getSessionStorage('postDraft')
+                if (draft && !edit) {
+                    // @ts-ignore
+                    draft.loading = false
+                    // @ts-ignore
+                    data = draft
+                }
+            }}
+            size="lg"
+            disabled={!getSessionStorage('postDraft')}
+            hidden={edit}
+        >
+            Restore from draft
+        </Button>
+        
+        <!--- Submit/Save--->
         <Button
             submit
             color="primary"
