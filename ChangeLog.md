@@ -34,6 +34,8 @@ I hope to address at least the third one in a future update.  For the first two,
 - Modal can now be specified to be full screen height.  Particularly helpful for editing posts so the markdown editor isn't like 3 lines.
 - Reduced length of post body preview text in feed from 350 characters to 120.
 - Moved "submit" button for new posts/post edits to top-right instead of the bottom.
+- Increased comment edit textarea to 15 rows. Was getting a bit claustrophobic.
+
 
 ### Bugfixes
 - Fix bug where "NSFW" flag was not read into post edit form (always defaulted to false).

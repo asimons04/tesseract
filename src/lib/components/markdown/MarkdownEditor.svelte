@@ -251,10 +251,9 @@
                         }
                     }
                 }}
-                
+                {rows}
                 {...$$restProps}
             />
-            <!--{rows}-->
         {/if}
     </div>
 

@@ -65,6 +65,7 @@
         <CommentForm
             postId={node.comment_view.comment.id}
             bind:value={newComment}
+            rows={15}
             actions={false}
             preview={true}
         />
