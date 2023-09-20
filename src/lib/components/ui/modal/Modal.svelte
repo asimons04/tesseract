@@ -8,6 +8,7 @@
 
   export let action: string | undefined = undefined
   export let open = false
+  export let fullHeight:boolean = false
 
   const dispatcher = createEventDispatcher()
 </script>
@@ -22,16 +23,17 @@
   
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div transition:scale={{ start: 0.9, easing: expoOut }}
-            class="overflow-y-auto {$$props.class} rounded-xl max-w-full box-border w-full"
+            class="overflow-y-auto {$$props.class} rounded-xl max-w-full box-border w-full {fullHeight ? 'h-full' : ''}"
         >
             <div
-                class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto"
+                class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : ''}"
                 on:click={() => {}}
             >
                 <div
                     on:click|stopPropagation={() => {}}
-                    class="p-6 rounded-xl flex flex-col gap-4 w-full dark:bg-zinc-950
-                    bg-white border border-slate-200 dark:border-zinc-800"
+                    class="flex flex-col gap-4 p-3 rounded-xl overflow-y-auto  w-full 
+                    dark:bg-zinc-950 dark:border-zinc-800
+                    bg-white border border-slate-200  {fullHeight ? 'h-full' : ''}"
                     class:rounded-b-none={action}
                     class:border-b-0={action}
                 >

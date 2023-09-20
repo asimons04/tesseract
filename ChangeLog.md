@@ -16,11 +16,31 @@ All major/minor changes between releases will be documented here.
   
 
 ## 1.2.62
+One major enhancement and several bugfixes.  The bugfixes were adjacent to the feature enhancement which is why they're so specific.
+
 ### Post Creation and Editing
-The preview function for creating/editing posts will now switch between the edit fields and a complete render of the post.  
+I've completely overhauled the post creation/editing process, specifically previewing your submission.  Instead of simply rendering the markdown in the post body, it will run the post draft through the full `Post` rendering stack and show you exactly what it will look like (assuming you're posting an image or embeddable media).
+
+#### Known Issues
+**Bandcamp**: Because Bandcamp embeds do not have a 1:1 relationship between the URL you share and the URL used for embeds, they rely on Lemmy backend retrieving the page metadata to grab the embed URL.  Because of this, previewing a post with a Bandcamp URL will not show the player.  
+
+**New Article Posts**: Previewing a new post will not show the article image as it doesn't exist yet (that is retrieved by Lemmy on the backend _after_ the post is submitted.
+
+**Editing Posts** Because the post create and edit processes are intertwined (currently, anyway), I can send back the extra data that is present in existing posts when making edits, but I can't add it to the shared data structure without breaking shit.  As an example, the `thumbnail_url` retrieved for articles, etc.  Due to this, previewing an edit will not show the thumbnail.
+
+I hope to address at least the third one in a future update.  For the first two, I can hack around this by fetching that metadata in the UI, but I'm not sure if that's worth doing or not.  For now, noting these as known issues/limitations.
+
+### UI Tweaks
+- Modal can now be specified to be full screen height.  Particularly helpful for editing posts so the markdown editor isn't like 3 lines.
+- Reduced length of post body preview text in feed from 350 characters to 120.
+- Moved "submit" button for new posts/post edits to top-right instead of the bottom.
 
 ### Bugfixes
 - Fix bug where "NSFW" flag was not read into post edit form (always defaulted to false).
+- Fixed bug where post flags (saved, deleted, nsfw, featured) were not reactive and only appeared if the page was refreshed.
+  - "Removed" badge is being obstinate, though.
+- The "Share" and "Mark as Read/Unread" post actions now pop up a toast to let you know they've done something.
+- Fixed bug where editing a post wouldn't reflect without a page reload.
 
 
 ## 1.2.61

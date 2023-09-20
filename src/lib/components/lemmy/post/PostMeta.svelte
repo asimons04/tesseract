@@ -23,25 +23,42 @@
     export let post: PostView | undefined       = undefined
     export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
-console.log(post);
+
     // Extract data from post object for easier reference
+    
+    // These values don't change, so assign them once
     let community: Community | undefined    = post.community ?? undefined
     let user: Person | undefined            = post.creator ?? undefined
+    let id: number | undefined              = post.post.id ?? undefined
     let published: Date                     = new Date(post.post.published + 'Z')
 
-    let title: string | undefined           = post.post.name ?? undefined
-    let id: number | undefined              = post.post.id ?? undefined
+    // These values are mutable so define them and bind them dynamically
+    let title: string | undefined
+    let upvotes: number | undefined
+    let downvotes: number | undefined
+    let nsfw: boolean
+    let saved: boolean
+    let featured: boolean
+    let deleted: boolean
+    let removed: boolean
+    let locked: boolean
+    let read: boolean
 
-    let upvotes: number | undefined         = post.counts.upvotes ?? undefined
-    let downvotes: number | undefined       = post.counts.downvotes ?? undefined
-
-    let nsfw: boolean                       = post.post.nsfw ?? false
-    let saved: boolean                      = post.saved ?? false
-    let featured: boolean                   = (post.post.featured_local || post.post.featured_community) ?? false
-    let deleted: boolean                    = post.post.deleted ?? false
-    let removed: boolean                    = post.post.removed ?? false
-    let locked: boolean                     = post.post.locked ?? false
-    let read: boolean                       = post.read ?? false
+    
+    // Make these variables reactive
+    $: {
+        title                               = post.post.name ?? undefined
+        upvotes                             = post.counts.upvotes ?? undefined
+        downvotes                           = post.counts.downvotes ?? undefined
+        nsfw                                = post.post.nsfw ?? false
+        saved                               = post.saved ?? false
+        featured                            = (post.post.featured_local || post.post.featured_community) ?? false
+        deleted                             = post.post.deleted ?? false
+        removed                             = post.post.removed ?? false
+        locked                              = post.post.locked ?? false
+        read                                = post.read ?? false
+    }
+    
 
 </script>
 

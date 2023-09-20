@@ -27,11 +27,11 @@
   let privateMessage: boolean = false
   let loading = false
 
-  $: removed = item
-    ? isCommentView(item)
-      ? item.comment.removed
-      : item.post.removed
-    : false
+    $: removed = item
+        ? isCommentView(item)
+            ? item.comment.removed
+            : item.post.removed
+        : false
 
   const getReplyReason = (reason: string) => {
     if (!item) return `no template`
@@ -47,117 +47,110 @@
     })
   }
 
-  $: replyReason = commentReason ? getReplyReason(reason) : ''
+    $: replyReason = commentReason ? getReplyReason(reason) : ''
 
-  async function remove() {
-    if (!item) return
-    if (!$profile?.jwt) throw new Error('Unauthenticated')
+    async function remove() {
+        if (!item) return
+        if (!$profile?.jwt) throw new Error('Unauthenticated')
 
-    loading = true
+        loading = true
+        try {
+            if (purge) {
+                if (isCommentView(item)) {
+                    await getClient(undefined, fetch).purgeComment({
+                        auth: $profile.jwt,
+                        comment_id: item.comment.id,
+                        reason: reason,
+                    })
+                } else {
+                    await getClient(undefined, fetch).purgePost({
+                        auth: $profile.jwt,
+                        post_id: item.post.id,
+                        reason: reason,
+                    })
+                }
+                toast({
+                    content: 'Successfully purged that submission.',
+                    type: 'success',
+                })
 
-    try {
-      if (purge) {
-        if (isCommentView(item)) {
-          await getClient(undefined, fetch).purgeComment({
-            auth: $profile.jwt,
-            comment_id: item.comment.id,
-            reason: reason,
-          })
-        } else {
-          await getClient(undefined, fetch).purgePost({
-            auth: $profile.jwt,
-            post_id: item.post.id,
-            reason: reason,
-          })
+                loading = false
+                open = false
+                return
+            }
+
+            if (commentReason) {
+                if (replyReason == '') {
+                    toast({
+                        content: 'Your reply cannot be empty if "Reply reason" is enabled.',
+                    })
+                    return
+                }
+
+                if (privateMessage) {
+                    await getClient()
+                        .createPrivateMessage({
+                            auth: $profile.jwt,
+                            content: replyReason,
+                            recipient_id: isCommentView(item)
+                            ? item.comment.creator_id
+                            : item.post.creator_id,
+                        })
+                        .catch(() => {
+                            toast({
+                                content: 'Failed to message user. Removing anyway...',
+                                type: 'warning',
+                            })
+                        })
+                } else {
+                    await getClient().createComment({
+                        auth: $profile.jwt,
+                        content: replyReason,
+                        post_id: item.post.id,
+                        parent_id: isCommentView(item) ? item.comment.id : undefined,
+                    })
+                    .catch(() => {
+                        toast({
+                            content: 'Failed to post reply. Removing anyway...',
+                            type: 'warning',
+                        })
+                    })
+                }
+            }
+
+            if (isCommentView(item)) {
+                await getClient().removeComment({
+                    auth: $profile.jwt,
+                    comment_id: item.comment.id,
+                    removed: !removed,
+                    reason: reason || undefined,
+                })
+                item.comment.removed = !removed
+            } else if (isPostView(item)) {
+                await getClient().removePost({
+                    auth: $profile.jwt,
+                    post_id: item.post.id,
+                    removed: !removed,
+                    reason: reason || undefined,
+                })
+                item.post.removed = !removed
+            }
+            open = false
+
+            toast({
+                content: `Successfully ${
+                removed ? 'restored' : 'removed'
+                } that submission.`,
+                type: 'success',
+            })
+        } catch (err) {
+            toast({
+                content: err as any,
+                type: 'error',
+            })
         }
-
-        toast({
-          content: 'Successfully purged that submission.',
-          type: 'success',
-        })
-
         loading = false
-        open = false
-
-        return
-      }
-
-      if (commentReason) {
-        if (replyReason == '') {
-          toast({
-            content: 'Your reply cannot be empty if "Reply reason" is enabled.',
-          })
-          return
-        }
-
-        if (privateMessage) {
-          await getClient()
-            .createPrivateMessage({
-              auth: $profile.jwt,
-              content: replyReason,
-              recipient_id: isCommentView(item)
-                ? item.comment.creator_id
-                : item.post.creator_id,
-            })
-            .catch(() => {
-              toast({
-                content: 'Failed to message user. Removing anyway...',
-                type: 'warning',
-              })
-            })
-        } else {
-          await getClient()
-            .createComment({
-              auth: $profile.jwt,
-              content: replyReason,
-              post_id: item.post.id,
-              parent_id: isCommentView(item) ? item.comment.id : undefined,
-            })
-            .catch(() => {
-              toast({
-                content: 'Failed to post reply. Removing anyway...',
-                type: 'warning',
-              })
-            })
-        }
-      }
-
-      if (isCommentView(item)) {
-        await getClient().removeComment({
-          auth: $profile.jwt,
-          comment_id: item.comment.id,
-          removed: !removed,
-          reason: reason || undefined,
-        })
-        item.comment.removed = !removed
-      } else if (isPostView(item)) {
-        await getClient().removePost({
-          auth: $profile.jwt,
-          post_id: item.post.id,
-          removed: !removed,
-          reason: reason || undefined,
-        })
-
-        item.post.removed = !removed
-      }
-
-      open = false
-
-      toast({
-        content: `Successfully ${
-          removed ? 'restored' : 'removed'
-        } that submission.`,
-        type: 'success',
-      })
-    } catch (err) {
-      toast({
-        content: err as any,
-        type: 'error',
-      })
     }
-
-    loading = false
-  }
 
   const resetText = () => {
     reason = ''

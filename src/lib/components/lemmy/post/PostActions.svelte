@@ -28,6 +28,7 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import { createEventDispatcher } from 'svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import {
         amMod,
         isAdmin,
@@ -59,17 +60,18 @@
     }
 </script>
 
+<!--- Open a Modal containing the PostForm component pre-loaded with the post details--->
 {#if editing}
-    <Modal bind:open={editing}>
+    <Modal bind:open={editing} fullHeight={true}>
         <h1 slot="title" class="text-2xl font-bold">Editing post</h1>
         {#await import('./PostForm.svelte')}
-            <div class="mx-auto h-96 flex justify-center items-center">
+            <div class="mx-auto flex justify-center items-center">
                 <Spinner width={32} />
             </div>
         {:then { default: PostForm }}
             <PostForm
                 edit
-                editingPost={post.post}
+                editingPost={post}
                 on:submit={(e) => {
                     editing = false
                     post = e.detail
@@ -206,6 +208,10 @@
                 on:click={async () => {
                     if ($profile?.jwt)
                     post.read = await markAsRead(post.post, !post.read, $profile.jwt)
+                    toast({
+                        type: 'success',
+                        content: `Post marked as ${post.read ? 'read' : 'unread'}`,
+                    })
                 }}
             >
                 <Icon src={post.read ? EyeSlash : Eye} width={16} mini />
@@ -216,8 +222,13 @@
         <MenuButton
             on:click={() => {
                 navigator.share?.({
-                url: post.post.ap_id,
+                    url: post.post.ap_id,
                 }) ?? navigator.clipboard.writeText(post.post.ap_id)
+                toast({
+                    type: 'success',
+                    content: `Copied post URL to clipboard!`,
+                })
+                
             }}
         >
             <Icon src={Share} width={16} mini />
@@ -264,6 +275,7 @@
                                 !post.post.deleted,
                                 $profile.jwt
                             )
+                            post=post
                         }
                     }}
                     color="dangerSecondary"

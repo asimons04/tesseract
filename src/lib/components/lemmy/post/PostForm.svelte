@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
-    import type { Community, Post, PostView } from 'lemmy-js-client'
+    import type { Community, CommunityView, Post, PostView } from 'lemmy-js-client'
 
     import TextInput from '$lib/components/input/TextInput.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
@@ -18,7 +18,6 @@
     import { getSessionStorage, setSessionStorage } from '$lib/session.js'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
-    import {isImage} from './helpers.js'
     import PostPreview from './Post.svelte'
     
     
@@ -37,7 +36,7 @@
     | undefined = undefined
 
   export let data: {
-    community: number | null
+    community: number | Community | null
     name: string
     body: string
     image: FileList | null
@@ -55,109 +54,129 @@
   }
 
   let saveDraft = edit ? false : true
-
   let communities: Community[] = []
-
-  const dispatcher = createEventDispatcher<{ submit: PostView }>()
-
-  onMount(async () => {
-    if (editingPost) {
-      data.url = editingPost.url ?? ''
-      data.body = editingPost.body ?? ''
-      data.name = editingPost.name ?? ''
-      data.nsfw = editingPost.nsfw ?? false
-    }
-
-    if (passedCommunity) {
-      data.community = passedCommunity.id
-      communitySearch = passedCommunity.name
-    } else {
-      const list = await getClient().listCommunities({
-        auth: $profile?.jwt,
-        type_: 'All',
-        sort: 'Active',
-        limit: 40,
-      })
-
-      communities = list.communities.map((c) => c.community)
-    }
-  })
-
-  onDestroy(() => {
-    if (saveDraft) setSessionStorage('postDraft', data)
-  })
-
-  async function submit() {
-    if ((!data.community || communitySearch == '') && !edit) {
-      toast({
-        type: 'warning',
-        content: 'You need to set a community.',
-      })
-      return
-    }
-    if (!data.name || !$profile?.jwt) return
-    if (data.url && data.url != '') {
-      try {
-        new URL(data.url)
-      } catch (err) {
-        toast({
-          content: 'Invalid URL',
-          type: 'warning',
-        })
-        return
-      }
-    }
-
-    data.loading = true
-
-    try {
-      if (edit) {
-        if (!editingPost) {
-          throw new Error('Post is being edited but editingPost is null')
-        }
-
-        const post = await getClient().editPost({
-          auth: $profile.jwt,
-          name: data.name,
-          body: data.body,
-          url: data.url || undefined,
-          post_id: editingPost.id,
-          nsfw: data.nsfw,
-        })
-
-        if (!post) throw new Error('Failed to edit post')
-
-        console.log(`Edited post ${post?.post_view.post.id}`)
-
-        dispatcher('submit', post.post_view)
-      } else {
-        let image = data.image ? await uploadImage(data.image[0]) : undefined
-        data.url = image || data.url || undefined
-        const post = await getClient().createPost({
-          auth: $profile.jwt,
-          community_id: data.community!,
-          name: data.name,
-          body: data.body,
-          url: data.url,
-          nsfw: data.nsfw,
-        })
-
-        if (!post) throw new Error('Failed to upload post')
-
-        console.log(`Uploaded post ${post?.post_view.post.id}`)
-
-        saveDraft = false
-        dispatcher('submit', post.post_view)
-      }
-    } catch (err) {
-      toast({ content: err as any, type: 'error' })
-    }
-  }
-
+  
   let communitySearch = ''
   let uploadingImage = false
   let previewing = false
   let communityDetails:Community
+
+  const dispatcher = createEventDispatcher<{ submit: PostView }>()
+
+    onMount(async () => {
+        if (editingPost) {
+            console.log(editingPost)
+            data.url = editingPost.post.url ?? ''
+            data.body = editingPost.post.body ?? ''
+            data.name = editingPost.post.name ?? ''
+            data.nsfw = editingPost.post.nsfw ?? false
+            
+            data.community = editingPost.community ?? undefined
+            
+           
+        }
+
+        if (passedCommunity) {
+            data.community = passedCommunity.id
+            communitySearch = passedCommunity.name
+            communityDetails = await resolveCommunity(passedCommunity.id)
+        } else {
+            const list = await getClient().listCommunities({
+                auth: $profile?.jwt,
+                type_: 'All',
+                sort: 'Active',
+                limit: 40,
+            })
+            communities = list.communities.map((c) => c.community)
+        }
+    })
+
+    onDestroy(() => {
+        if (saveDraft) setSessionStorage('postDraft', data)
+    })
+
+    async function submit() {
+        if ((!data.community || communitySearch == '') && !edit) {
+            toast({
+                type: 'warning',
+                content: 'You need to set a community.',
+            })
+            return
+        }
+
+        if (!data.name || !$profile?.jwt) return
+        
+        if (data.url && data.url != '') {
+            try {
+                new URL(data.url)
+            } catch (err) {
+                toast({
+                    content: 'Invalid URL',
+                    type: 'warning',
+                })
+                return
+            }
+        }
+
+        data.loading = true
+
+        try {
+            if (edit) {
+                if (!editingPost) {
+                    throw new Error('Post is being edited but editingPost is null')
+                }
+
+                const post = await getClient().editPost({
+                    auth: $profile.jwt,
+                    name: data.name,
+                    body: data.body,
+                    url: data.url || undefined,
+                    post_id: editingPost.post.id,
+                    nsfw: data.nsfw,
+                })
+
+                if (!post) throw new Error('Failed to edit post')
+
+                console.log(`Edited post ${post?.post_view.post.id}`)
+
+                dispatcher('submit', post.post_view)
+            } else {
+                let image = data.image ? await uploadImage(data.image[0]) : undefined
+                data.url = image || data.url || undefined
+                const post = await getClient().createPost({
+                    auth: $profile.jwt,
+                    community_id: data.community!,
+                    name: data.name,
+                    body: data.body,
+                    url: data.url,
+                    nsfw: data.nsfw,
+                })
+
+                if (!post) throw new Error('Failed to upload post')
+
+                console.log(`Uploaded post ${post?.post_view.post.id}`)
+
+                saveDraft = false
+                dispatcher('submit', post.post_view)
+            }
+        } catch (err) {
+            toast({ content: err as any, type: 'error' })
+        }
+    }
+
+    async function resolveCommunity(id:number) {
+        const result:CommunityView = await getClient().getCommunity({
+            auth: $profile?.jwt,
+            id: id
+        })
+        if (result && result.community_view) {
+            return result.community_view.community
+        }
+            
+        
+    }
+
+  
 
 
 </script>
@@ -174,19 +193,47 @@
     {/await}
 {/if}
 
-<form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full">
+<form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full pb-6">
     <slot name="formtitle">
         <h1 class="font-bold text-xl">
             {edit ? 'Edit' : 'Create'} Post
         </h1>
     </slot>
     
-    <div class="flex flex-row">
+    <div class="flex flex-row justify-between">
         <MultiSelect
             bind:selected={previewing}
             options={[false, true]}
             optionNames={['Edit', 'Preview']}
         />
+
+        {#if !edit}
+            <Button
+                on:click={() => {
+                    const draft = getSessionStorage('postDraft')
+                    if (draft && !edit) {
+                        // @ts-ignore
+                        draft.loading = false
+                        // @ts-ignore
+                        data = draft
+                    }
+                }}
+                size="lg"
+                disabled={!getSessionStorage('postDraft')}
+            >
+                Restore from draft
+            </Button>
+        {/if}
+
+        <Button
+            submit
+            color="primary"
+            loading={data.loading}
+            size="lg"
+            disabled={data.loading}
+        >
+            Submit
+        </Button>
     </div>
 
     
@@ -266,59 +313,36 @@
 
     <!--- If Previewing Post, provide additional dummy data to render it through the Post stack--->
     {:else}
-        <PostPreview 
-            post={ 
-                { 
-                    post: {
-                        ...data,
-                    },
-                    community: communityDetails,
-                    counts: {
-                        upvotes: 1,
-                        downvotes: 0
-                    },
-                    saved: false,
-                    featured: false,
-                    deleted: false,
-                    read: false,
-                    locked: false,
-                    removed:false,
+        <div class="pb-3">
+            <PostPreview 
+                post={ 
+                    { 
+                        post: {
+                            ...data,
+                        },
+                        community: editingPost ? data.community : communityDetails,
+                        counts: {
+                            upvotes: 1,
+                            downvotes: 0
+                        },
+                        saved: false,
+                        featured: false,
+                        deleted: false,
+                        read: false,
+                        locked: false,
+                        removed:false,
+                    } 
                 } 
-            } 
-            actions={false} 
-            displayType='post'
-            autoplay={false} />
+                actions={false} 
+                displayType='post'
+                autoplay={false} 
+            />
+        </div>
     {/if}
 
     
   
-    <div class="mt-auto" />
+    
 
-    {#if !edit}
-        <Button
-            on:click={() => {
-                const draft = getSessionStorage('postDraft')
-                if (draft && !edit) {
-                    // @ts-ignore
-                    draft.loading = false
-                    // @ts-ignore
-                    data = draft
-                }
-            }}
-            size="lg"
-            disabled={!getSessionStorage('postDraft')}
-        >
-            Restore from draft
-        </Button>
-    {/if}
-
-    <Button
-        submit
-        color="primary"
-        loading={data.loading}
-        size="lg"
-        disabled={data.loading}
-    >
-        Submit
-    </Button>
+    
 </form>
