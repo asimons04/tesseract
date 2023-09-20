@@ -15,6 +15,14 @@ All major/minor changes between releases will be documented here.
 - Add moderators list to community sidebar
   
 
+## 1.2.62
+### Post Creation and Editing
+The preview function for creating/editing posts will now switch between the edit fields and a complete render of the post.  
+
+### Bugfixes
+- Fix bug where "NSFW" flag was not read into post edit form (always defaulted to false).
+
+
 ## 1.2.61
 Mostly a lot of little stuff in this release.
 

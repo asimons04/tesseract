@@ -23,7 +23,7 @@
     export let post: PostView | undefined       = undefined
     export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
-
+console.log(post);
     // Extract data from post object for easier reference
     let community: Community | undefined    = post.community ?? undefined
     let user: Person | undefined            = post.creator ?? undefined

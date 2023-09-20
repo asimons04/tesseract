@@ -89,7 +89,7 @@
     loading = false
   }
 
-  let previewing = false
+  export let previewing = false
 
   const shortcuts = {
     KeyB: () => wrapSelection('**', '**'),
@@ -113,14 +113,15 @@
     </Modal>
 {/if}
 
-<div>
+<div class="flex flex-col w-full h-full">
     {#if label}
-    <div class="block my-1 font-bold text-sm">{label}</div>
+        <div class="block my-1 font-bold text-sm">{label}</div>
     {/if}
 
-    <div class="flex flex-col border border-slate-300 dark:border-zinc-800 rounded-md overflow-hidden focus-within:border-black focus-within:dark:border-white transition-colors">
+    <div class="flex flex-col border border-slate-300 dark:border-zinc-800 rounded-md overflow-hidden focus-within:border-black focus-within:dark:border-white transition-colors w-full h-full">
         {#if previewing}
-            <div class="px-3 py-2.5 overflow-auto text-sm resize-y" style="height: {rows*24}px">
+            <!--style="height: {rows*24}px"-->
+            <div class="px-3 py-2.5 overflow-auto text-sm resize-y max-h-screen">
                 <Markdown source={beforePreview(value)} />
             </div>
 
@@ -236,7 +237,7 @@
 
             <!--Actual text area-->
             <TextArea
-                class="bg-inherit border-0 rounded-none"
+                class="bg-inherit border-0 rounded-none h-full"
                 bind:value
                 bind:item={textArea}
                 on:keydown={(e) => {
@@ -250,9 +251,10 @@
                         }
                     }
                 }}
-                {rows}
+                
                 {...$$restProps}
             />
+            <!--{rows}-->
         {/if}
     </div>
 

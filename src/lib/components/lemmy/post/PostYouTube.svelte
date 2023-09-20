@@ -11,7 +11,8 @@
 
     export let post: PostView
     export let displayType: PostDisplayType
-
+    export let autoplay:boolean|undefined = undefined;
+    
     let videoID:    string | null | undefined
     let embedURL:   string = ""
     let extraParams:string = ""
@@ -41,7 +42,8 @@
         // Search for valid extra parameters
         if (videoID) {
             // Enable autoplay videos in post if setting is enabled
-            if (displayType ==  'post' && $userSettings.embeddedMedia.autoplay) {
+            
+            if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
                 extraParams += "&autoplay=1";
             }
             else {

@@ -24,7 +24,7 @@
     }
     // If embed URL isn't provided, make our own!
     else if (post.post && post.post.url && !post.post.url.includes("/discover/")) {
-        embedURL = `https://w.soundcloud.com/player/?visual=true&url=${post.post.url}`
+        embedURL = `https://w.soundcloud.com/player/?visual=true&url=${post.post.url.replace('m.soundcloud.com', 'soundcloud.com')}`
     }
 
     function showAsEmbed() {

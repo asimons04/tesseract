@@ -31,7 +31,8 @@
     export let post: PostView
     export let actions: boolean = true
     export let hideCommunity = false
-    
+    export let autoplay:boolean|undefined = undefined;
+
     export let displayType: PostDisplayType = "feed"
     
     
@@ -158,7 +159,7 @@
 
         <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
         {#if pType == "youtube"}
-            <PostYouTube post={post} displayType={displayType} />
+            <PostYouTube post={post} displayType={displayType} autoplay={autoplay}/>
         {/if}
 
         <!--- Spotify Embed --->
@@ -172,14 +173,21 @@
         {/if}
 
             
-        <!--- Show first 350 characters of post body as a preview --->
-        {#if post.post.body && !post.post.nsfw}
+        <!--- Show first 350 characters of post body as a preview in the feed (if not NSFW)--->
+        {#if post.post.body && !post.post.nsfw && displayType=='feed'}
             <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
-                <Markdown source={post.post.body.length > 350
+                <Markdown source={post.post.body.length > 350 
                     ? `${post.post.body.slice(0, 350)}...`
                     : post.post.body
                     }
                 />
+            </div>
+        {/if}
+
+        <!--- Show full pody body if displaying in post--->
+        {#if post.post.body && displayType=='post'}
+            <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
+                <Markdown source={post.post.body} />
             </div>
         {/if}
             
