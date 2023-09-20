@@ -386,7 +386,7 @@
    
     
     <!--- Community Sidebar--->
-    <div class="hidden lg:block xl:block w-auto mt-[-8px]">
+    <div class="hidden xl:block w-auto mt-[-8px]">
         <CommunityCard community_view={data.post.community_view} />
     </div>
 </div>  

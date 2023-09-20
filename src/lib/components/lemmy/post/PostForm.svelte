@@ -176,9 +176,54 @@
         
     }
 
-  
+    function generatePostPreview() {
+        let post:PostView;
+        
+        // Validate URL
+        if (data.url && data.url != '') {
+            try {
+                new URL(data.url)
+            } catch (err) {
+                toast({
+                    content: `Invalid URL ${data.url} has been removed.`,
+                    type: 'warning',
+                })
+                data.url = ''
+            }
+        }
 
-
+        // If editing a post and the post details were passed, add them to the preview
+        if (editingPost) {
+            post =  {
+                ...editingPost,
+            }
+            // Override the editable values with those from the form
+            post.post.body = data.body;
+            post.post.url = data.url;
+            post.post.name = data.name;
+            post.post.nsfw = data.nsfw;
+            
+        }
+        
+        // If creating a post, add some dummy values so the Post component can handle it for preview rending
+        if (!editingPost) {
+            post = {
+                post: { ...data },
+                community:  communityDetails,
+                counts: {
+                    upvotes: 1,
+                    downvotes: 0
+                },
+                saved: false,
+                featured: false,
+                deleted: false,
+                read: false,
+                locked: false,
+                removed: false
+            }
+        } 
+        return post;
+    }
 </script>
 
 {#if uploadingImage}
@@ -201,12 +246,15 @@
     </slot>
     
     <div class="flex flex-row justify-between">
-        <MultiSelect
-            bind:selected={previewing}
-            options={[false, true]}
-            optionNames={['Edit', 'Preview']}
-            disabled={[false, (!data.name || !data.community)]}
-        />
+        <Button 
+            disabled={(!data.name || !data.community)}
+            color="primary"
+            on:click={() => {
+                previewing = !previewing;
+            }}
+        >
+            {previewing ? 'Edit' : 'Preview'}
+        </Button>
 
         {#if !edit}
             <Button
@@ -243,40 +291,39 @@
     {#if !previewing}
         
         <!--- Hide Community Selection Field if Editing Existing Post--->
-        {#if !edit}
-            <div>
-                <div class="flex flex-row">
-                    <span class="block my-1 font-bold text-sm">
-                        Community <span class="text-red-500">*</span>
-                    </span>
-                    {#if data.community}
-                        <Icon
-                            src={Check}
-                            mini
-                            size="20"
-                            class="text-green-400 ml-auto inline"
-                        />
-                    {/if}
-                </div>
-
-                <ObjectAutocomplete
-                    bind:q={communitySearch}
-                    bind:items={communities}
-                    jwt={$profile?.jwt}
-                    listing_type="All"
-                    on:select={(e) => {
-                        const c = e.detail
-                        if (!c) {
-                            data.community = null
-                            return
-                        }
-                        data.community = c.id
-                        communityDetails = c
-                        communitySearch = `${c.name}@${new URL(c.actor_id).hostname}`
-                    }}
-                />
+        <div class:hidden={edit}>
+            <div class="flex flex-row">
+                <span class="block my-1 font-bold text-sm">
+                    Community <span class="text-red-500">*</span>
+                </span>
+                {#if data.community}
+                    <Icon
+                        src={Check}
+                        mini
+                        size="20"
+                        class="text-green-400 ml-auto inline"
+                    />
+                {/if}
             </div>
-        {/if}
+
+            <ObjectAutocomplete
+                bind:q={communitySearch}
+                bind:items={communities}
+                jwt={$profile?.jwt}
+                listing_type="All"
+                on:select={(e) => {
+                    const c = e.detail
+                    if (!c) {
+                        data.community = null
+                        return
+                    }
+                    data.community = c.id
+                    communityDetails = c
+                    communitySearch = `${c.name}@${new URL(c.actor_id).hostname}`
+                }}
+            />
+        </div>
+        
 
         <!--- Post Title--->
         <TextInput
@@ -312,38 +359,15 @@
             bind:previewing={previewing}
         />
 
-    <!--- If Previewing Post, provide additional dummy data to render it through the Post stack--->
+    <!--- Previewing Post--->
     {:else}
         <div class="pb-3">
             <PostPreview 
-                post={ 
-                    { 
-                        post: {
-                            ...data,
-                        },
-                        community: editingPost ? data.community : communityDetails,
-                        counts: {
-                            upvotes: 1,
-                            downvotes: 0
-                        },
-                        saved: false,
-                        featured: false,
-                        deleted: false,
-                        read: false,
-                        locked: false,
-                        removed:false,
-                    } 
-                } 
+                post={ generatePostPreview() } 
                 actions={false} 
                 displayType='post'
                 autoplay={false} 
             />
         </div>
     {/if}
-
-    
-  
-    
-
-    
 </form>

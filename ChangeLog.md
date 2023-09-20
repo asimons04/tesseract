@@ -27,9 +27,7 @@ I've completely overhauled the post creation/editing process, specifically previ
 
 **New Article Posts**: Previewing a new post will not show the article thumbnail as it doesn't exist yet (that is retrieved by Lemmy on the backend _after_ the post is submitted.
 
-**Editing Posts** Because the post create and edit processes are intertwined (currently, anyway), I can send back the extra data that is present in existing posts when making edits, but I can't add it to the shared data structure without breaking shit.  As an example, the `thumbnail_url` retrieved for articles, etc.  Due to this, previewing an edit will not show the thumbnail.
-
-I hope to address at least the third one in a future update.  For the first two, I can hack around this by fetching that metadata in the UI, but I'm not sure if that's worth doing or not.  For now, noting these as known issues/limitations.
+I can hack around those by fetching that metadata in the UI, but I'm not sure if that's worth doing or not.  For now, noting these as known issues/limitations.
 
 ### UI Tweaks
 - Modal can now be specified to be full screen height.  Particularly helpful for editing posts so the markdown editor isn't like 3 lines.
