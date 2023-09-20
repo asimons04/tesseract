@@ -212,7 +212,9 @@ export const YTFrontends = {
         'pipedapi.simpleprivacy.fr',
         'pipedapi.drgns.space',
         'piapi.ggtyler.dev',
-        'watchapi.pluto.lat'
+        'watchapi.pluto.lat',
+        'piped.syncpundit.io'
+
     ]
 }
 
