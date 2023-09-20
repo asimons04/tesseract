@@ -205,6 +205,7 @@
             bind:selected={previewing}
             options={[false, true]}
             optionNames={['Edit', 'Preview']}
+            disabled={[false, (!data.name || !data.community)]}
         />
 
         {#if !edit}
@@ -230,7 +231,7 @@
             color="primary"
             loading={data.loading}
             size="lg"
-            disabled={data.loading}
+            disabled={data.loading || !data.name || !data.community}
         >
             Submit
         </Button>

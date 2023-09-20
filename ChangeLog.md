@@ -17,7 +17,7 @@ All major/minor changes between releases will be documented here.
   
 
 ## 1.2.62
-One major enhancement, a few tweaks, and several bugfixes.  The bugfixes were adjacent to the feature enhancement which is why they're so specific.
+One major enhancement, lots of tweaks, and several bugfixes.  The bugfixes were adjacent to the feature enhancement which is why they're so specific.
 
 ### Post Creation and Editing
 I've completely overhauled the post creation/editing process, specifically previewing your submission.  Instead of simply rendering the markdown in the post body, it will run the post draft through the full `Post` rendering stack and show you exactly what it will look like (assuming you're posting an image or embeddable media).
@@ -25,7 +25,7 @@ I've completely overhauled the post creation/editing process, specifically previ
 #### Known Issues
 **Bandcamp**: Because Bandcamp embeds do not have a 1:1 relationship between the URL you share and the URL used for embeds, they rely on Lemmy backend retrieving the page metadata to grab the embed URL.  Because of this, previewing a post with a Bandcamp URL will not show the player.  
 
-**New Article Posts**: Previewing a new post will not show the article image as it doesn't exist yet (that is retrieved by Lemmy on the backend _after_ the post is submitted.
+**New Article Posts**: Previewing a new post will not show the article thumbnail as it doesn't exist yet (that is retrieved by Lemmy on the backend _after_ the post is submitted.
 
 **Editing Posts** Because the post create and edit processes are intertwined (currently, anyway), I can send back the extra data that is present in existing posts when making edits, but I can't add it to the shared data structure without breaking shit.  As an example, the `thumbnail_url` retrieved for articles, etc.  Due to this, previewing an edit will not show the thumbnail.
 
@@ -37,11 +37,18 @@ I hope to address at least the third one in a future update.  For the first two,
 - Moved "submit" button for new posts/post edits to top-right instead of the bottom.
 - Increased comment edit textarea to 15 rows. Was getting a bit claustrophobic.
 
+### Community Page
+- Continued work on refining community page reflows
+- Buttons are now `primary` (white in dark mode, black in light mode). 
+- Adjusted centering on community dates/counts in card
+- Moved all community action buttons into card when sidebar reflows
+- On reflow, community card mostly matches the width of the posts.
+
 
 ### Bugfixes
 - Fix bug where "NSFW" flag was not read into post edit form (always defaulted to false).
 - Fixed bug where post flags (saved, deleted, nsfw, featured) were not reactive and only appeared if the page was refreshed.
-  - "Removed" badge is being obstinate, though.
+  - To do: "Removed" badge is still being obstinate, though.
 - The "Share" and "Mark as Read/Unread" post actions now pop up a toast to let you know they've done something.
 - Fixed bug where editing a post wouldn't reflect without a page reload.
 
