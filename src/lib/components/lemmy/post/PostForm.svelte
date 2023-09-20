@@ -283,7 +283,7 @@
             size="lg"
             disabled={data.loading || !data.name || !data.community}
         >
-            Submit
+            {edit ? 'Save' : 'Create' }
         </Button>
     </div>
 
