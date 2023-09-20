@@ -1,6 +1,20 @@
 # Changelog
 All major/minor changes between releases will be documented here.  
 
+
+## Roadmap: 1.2.62 - 1.2.69
+- Debounce community filter search box
+- See if immediately feasible to do compact-> card inline expansion of a post in the feed (without rewriting everything to make that possible)
+- Hide or visually distinguish as disabled the vote buttons when not logged in
+- Investigate why saved/deleted/removed post states aren't being reactive when post action invoked.
+- Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
+- Revamp `/profile` section:
+    - Move `/saved` route from root to `/profile/saved`
+    - Create layout to Keep user info sidebar on all `/profile` pages.
+- Add admin list to site sidebar
+- Add moderators list to community sidebar
+  
+
 ## 1.2.61
 Mostly a lot of little stuff in this release.
 
