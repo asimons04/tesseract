@@ -54,7 +54,7 @@
     {/if}
 </svelte:head>
 
-<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
+<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
         
         <!--- Community Metadata -- Hide when sidebar reflows as it would be redundant--->
