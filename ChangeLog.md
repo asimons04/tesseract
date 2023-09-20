@@ -16,7 +16,7 @@ All major/minor changes between releases will be documented here.
   
 
 ## 1.2.62
-One major enhancement and several bugfixes.  The bugfixes were adjacent to the feature enhancement which is why they're so specific.
+One major enhancement, a few tweaks, and several bugfixes.  The bugfixes were adjacent to the feature enhancement which is why they're so specific.
 
 ### Post Creation and Editing
 I've completely overhauled the post creation/editing process, specifically previewing your submission.  Instead of simply rendering the markdown in the post body, it will run the post draft through the full `Post` rendering stack and show you exactly what it will look like (assuming you're posting an image or embeddable media).
