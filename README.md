@@ -11,11 +11,6 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 - [Supported Media](#Supported-Media)
 - [Get Support](#Support)
 - [Roadmap](#Roadmap)
-  - [Infrastructure](#Infrastructure)
-  - [Community Discovery](#Community-Discovery)
-  - [UI](#UI)
-  - [Modlog](#Modlog)
-  - [Media Handling](#Media-Handling)
 - [Demo Server: Try Tesseract](#Public-Hosted-Demo-Instance)
 - [Self-Hosting Tesseract](#Self-Hosting)
   - [Deploying from Docker Image](#Deploying-The-Image)
@@ -91,6 +86,8 @@ There is also a Lemmy community where you can get the latest announcements and p
 The "to do" and roadmap has been moved to [a dedicated file](/Roadmap.md).
 
 Completed "to do"s have been moved to the [change log](./ChangeLog.md).
+
+The changelog also contains an informal list of items I _hope_ to add to the next few upcoming releases.
 
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
