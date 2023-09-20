@@ -2,7 +2,7 @@
 All major/minor changes between releases will be documented here.  
 
 
-## Roadmap: 1.2.62 - 1.2.69
+## Roadmap: 1.2.63 - 1.2.69
 - Debounce community filter search box
 - See if immediately feasible to do compact-> card inline expansion of a post in the feed (without rewriting everything to make that possible)
 - Hide or visually distinguish as disabled the vote buttons when not logged in
@@ -13,6 +13,7 @@ All major/minor changes between releases will be documented here.
     - Create layout to Keep user info sidebar on all `/profile` pages.
 - Add admin list to site sidebar
 - Add moderators list to community sidebar
+- Distinguish moderators in posts/comments
   
 
 ## 1.2.62
