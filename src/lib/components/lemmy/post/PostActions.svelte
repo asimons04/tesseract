@@ -162,7 +162,7 @@
 
 
     <Menu
-        alignment="top-right"
+        alignment="bottom-right"
         containerClass="overflow-auto max-h-[400px]"
         bind:toggleOpen
     >

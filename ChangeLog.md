@@ -42,6 +42,7 @@ Before it would quote `>` each line.  I personally hate that since it also messe
 - Reduced length of post body preview text in feed from 350 characters to 120.
 - Moved "submit" button for new posts/post edits to top-right instead of the bottom.
 - Increased comment edit textarea to 15 rows. Was getting a bit claustrophobic.
+- Post action and mod menus now open bottom-right again (was top-right).  I keep moving these to make it easier to do mod work on mobile. Bottom-right always makes you have to scroll down, but top-right sometimes goes offscreen if the post is near the top of the screen.  I haven't tried bottom-right since I shrank the menu items, so hopefully that helps.
 
 ### Community Page
 - Continued work on refining community page reflows
