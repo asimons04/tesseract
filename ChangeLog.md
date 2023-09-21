@@ -5,8 +5,6 @@ All major/minor changes between releases will be documented here.
 ## Roadmap: 1.2.63 - 1.2.69
 - Debounce community filter search box
 - See if immediately feasible to do compact-> card inline expansion of a post in the feed (without rewriting everything to make that possible)
-- Hide or visually distinguish as disabled the vote buttons when not logged in
-- Investigate why saved/deleted/removed post states aren't being reactive when post action invoked.
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 - Revamp `/profile` section:
     - Move `/saved` route from root to `/profile/saved`
@@ -18,6 +16,12 @@ All major/minor changes between releases will be documented here.
 ## 1.2.63
 ### Bugfixes
 - Restoring post from draft now sets the community correctly.
+- Disabled post and comment vote buttons for guest/unathenticated users.
+
+### UI
+- Removed borders around comment vote buttons (now matches post vote buttons)
+- Post create/edit form has cancel button (if `lastSeenCommunity` is set)
+
 
 
 

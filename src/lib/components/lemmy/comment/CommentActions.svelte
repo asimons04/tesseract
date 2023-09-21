@@ -50,7 +50,7 @@
 
     <Button
         size="sm"
-        color="ghost"
+        color="tertiary"
         on:click={() => (replying = !replying)}
         disabled={comment.post.locked}
     >
@@ -68,7 +68,7 @@
             on:click={toggleOpen}
             class="!p-1"
             aria-label="Comment actions"
-            color="ghost"
+            color="tertiary"
             let:toggleOpen
         >
             <Icon src={EllipsisHorizontal} width={16} height={16} mini slot="icon" />

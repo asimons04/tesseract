@@ -21,10 +21,10 @@
 
     secondary: `border border-slate-200 dark:border-zinc-700 dark:bg-zinc-900
         hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 dark:text-zinc-400 hover:text-inherit
-        hover:dark:text-inherit`,
+        hover:dark:text-inherit border-none`,
 
     tertiary:
-      'border border-transparent bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-800 dark:text-zinc-200 disabled:border-none',
+      'border border-transparent bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none',
 
     danger:
       'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',

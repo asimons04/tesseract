@@ -26,7 +26,7 @@
         size="square-md"
         on:click={toggleOpen}
         slot="button"
-        color="ghost"
+        color="tertiary"
         let:toggleOpen
         {...$$restProps}
     >
