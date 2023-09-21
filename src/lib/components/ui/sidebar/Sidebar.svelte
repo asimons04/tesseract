@@ -18,7 +18,8 @@
         MagnifyingGlass,
         Minus,
         Plus,
-        UserGroup
+        UserGroup,
+        XCircle
     } from 'svelte-hero-icons'
     import Button from '../../input/Button.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -28,8 +29,21 @@
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
     import { flip } from 'svelte/animate'
     import { expoOut } from 'svelte/easing'
+    
+    // Support components for the community filter
     let communityFilterTerm:string = '';
-
+    let communityFiltervalue:string = '';
+    let debounceTimer: ReturnType<typeof setTimeout>;
+    function debounce(value:string,  timeout=300) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(
+            () => {
+                communityFilterTerm = value.toLowerCase();
+                clearTimeout(debounceTimer);
+            }, timeout
+        )
+        
+    }
 </script>
 
 <nav
@@ -84,25 +98,39 @@
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
         <!--- Search field to filter the subscribed communities--->
-        <div class="p-3 flex" class:hidden={!$userSettings.uiState.expandSidebar}>
+        <div class="p-3 flex flex-row gap-1" class:hidden={!$userSettings.uiState.expandSidebar}>
             <TextInput 
-                type="search"
+                bind:value={communityFiltervalue}
+                type="text"
                 placeholder="Jump to a Community"
-                bind:value={communityFilterTerm}
-                on:keyup={() => { 
-                    // Set the search term to lowercase for comparison 
-                    communityFilterTerm = communityFilterTerm.toLowerCase();
-                    
+                on:keyup={(e) => { 
+                    debounce(e.detail.srcElement.value);
                     // Expand the subscribed list since that's where the result will appear
                     if (!$userSettings.uiState.expandSubscribedList) {
                         $userSettings.uiState.expandSubscribedList = true;
                     }
 
                     // Hide the 'moderating list'
-                    $userSettings.uiState.expandModeratingList = false;
+                    if ($userSettings.uiState.expandModeratingList) {
+                        $userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList;   
+                    }
                 }}
                 class="h-8 w-full"
             />
+            <span class="my-auto cursor-pointer"
+                title="Reset Search Filter"
+                on:click={async () => {
+                    debounce('');
+                    communityFiltervalue = '';
+                    //communityFilterTerm = '';
+                }}
+            >
+                <Icon
+                    src={XCircle}
+                    mini
+                    size="18"
+                />
+            </span>
         </div>
         
 

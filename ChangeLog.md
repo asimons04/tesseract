@@ -2,8 +2,8 @@
 All major/minor changes between releases will be documented here.  
 
 
-## Roadmap: 1.2.63 - 1.2.69
-- Debounce community filter search box
+## Roadmap: 1.2.64 - 1.2.69
+
 - See if immediately feasible to do compact-> card inline expansion of a post in the feed (without rewriting everything to make that possible)
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 - Revamp `/profile` section:
@@ -17,6 +17,13 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Restoring post from draft now sets the community correctly.
 - Disabled post and comment vote buttons for guest/unathenticated users.
+- Fixed issue where if post submission fails, form is reset to resolve issue and try again (versus spinning indefinitely)
+
+### Enhancements
+- Debounced the community filter search box.  Now faster and more efficient.
+- Added browser-agnostic clear button to community filter and changed it to a regular text input.  Firefox, I love you, and you're perfect, but why the hell do you _still_ not have a native "clear" button on search input types??
+
+
 
 ### UI Tweaks
 - Removed borders around comment vote buttons (now matches post vote buttons)

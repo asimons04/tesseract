@@ -170,6 +170,7 @@
             }
         } catch (err) {
             toast({ content: err as any, type: 'error' })
+            data.loading = false
         }
     }
 
