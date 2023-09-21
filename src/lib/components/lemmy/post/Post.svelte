@@ -48,7 +48,12 @@
     // Determe post type based on its attributes
     let pType:PostType  = postType(post)
     let instance        = getInstance();
-
+    
+    function delay(millisec:number) {
+        return new Promise(resolve => {
+            setTimeout(() => { resolve('') }, millisec);
+        })
+    }
     
 </script>
 
@@ -209,7 +214,18 @@
                     color="secondary"
                     class="w-full"
                     title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-                    on:click={() => {expandPreviewText = !expandPreviewText}}
+                    on:click={async () => {
+                        expandPreviewText = !expandPreviewText
+                        
+                        await delay(10);
+                        const element = document.getElementById(post.post.id);
+                        if (element) {
+                            element.scrollIntoView({
+                                behavior: 'smooth',
+                                block: "start"
+                            });
+                        }
+                    }}
                 >
                     <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
                     {expandPreviewText ? 'Collapse' : 'Expand'}
