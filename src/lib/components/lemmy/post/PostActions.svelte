@@ -6,6 +6,8 @@
     import { getInstance } from '$lib/lemmy.js'
     import {
         ArrowTopRightOnSquare,
+        ArrowsPointingIn,
+        ArrowsPointingOut,
         Bookmark,
         BookmarkSlash,
         BugAnt,
@@ -17,7 +19,7 @@
         Icon,
         Newspaper,
         PencilSquare,
-        RectangleGroup,
+        Tv,
         Share,
         Trash,
         UserCircle,
@@ -43,15 +45,15 @@
     import { userSettings } from '$lib/settings.js'
 
     export let post: PostView
-    export let toggleOpen: Function;
     export let postType: PostType
-    export let postDisplayType: PostDisplayType
-
-    let theaterMode = false;
-    const dispatcher = createEventDispatcher<{ edit: PostView }>()
-
-    let editing = false
+    export let displayType: PostDisplayType
+    export let expandCompact: boolean
     export let debug: boolean = false
+    
+    let theaterMode = false;
+    let editing = false
+    
+    const dispatcher = createEventDispatcher<{ edit: PostView }>()
 
     function delay(millisec:number) {
         return new Promise(resolve => {
@@ -129,10 +131,26 @@
         <ModerationMenu bind:item={post} community={post.community} />
     {/if}
     
-    <!--Theater Mode Button for YouTube Videos--->
-    {#if $userSettings.experimentalFeatures && $userSettings.embeddedMedia.post && postType == "youtube"}
+    <!--- Expand Compact Post to Card--->
+    {#if displayType == 'feed' && $userSettings.showCompactPosts}
         <Button 
-            title="Theater Mode"
+            title="{expandCompact ? 'Collapse' : 'Expand'}" 
+            on:click={() => {  expandCompact = !expandCompact; }}
+        >
+            <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />
+            
+        </Button>
+    {/if}
+
+    <!--Theater Mode Button for YouTube/Vimeo Videos--->
+    {#if
+        (postType == "youtube" || postType=="vimeo" || postType=="video") && ( 
+            ($userSettings.embeddedMedia.post && displayType == 'post') ||
+            ($userSettings.embeddedMedia.feed && displayType == 'feed') 
+        )
+    }
+        <Button 
+            title="{theaterMode ? 'Exit' : ''} Theater Mode"
             on:click={
                 async () => {
                     if (!theaterMode) {
@@ -150,13 +168,13 @@
                     if (element) {
                         element.scrollIntoView({
                             behavior: 'smooth',
-                            block: "end"
+                            block: "center"
                         });
                     }
                 }
             }
         >
-            <Icon src={RectangleGroup} mini size="16" slot="icon" />
+            <Icon src={Tv} mini size="16" slot="icon" />
         </Button>
     {/if}
 
@@ -164,11 +182,11 @@
     <Menu
         alignment="side-left"
         containerClass="overflow-auto max-h-[400px]"
-        bind:toggleOpen
     >
         <Button
             slot="button"
             aria-label="Post actions"
+            let:toggleOpen
             on:click={toggleOpen}
             class="hover:text-inherit"
             size="square-md"

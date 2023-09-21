@@ -248,7 +248,7 @@
                     <PostActions
                         bind:post={post.post_view}
                         postType={pType}
-                        postDisplayType={pDisplayType}
+                        displayType={pDisplayType}
                         on:edit={() =>
                             toast({
                             content: 'The post was edited successfully.',

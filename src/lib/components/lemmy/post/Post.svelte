@@ -9,7 +9,7 @@
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    import Button from '$lib/components/input/Button.svelte'
 
     
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
@@ -25,7 +25,12 @@
     import Link from '$lib/components/input/Link.svelte'
 
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    import { Icon, Link as LinkIcon } from 'svelte-hero-icons'
+    import { 
+        Icon, 
+        Link as LinkIcon,
+        ChevronDown,
+        ChevronUp
+    } from 'svelte-hero-icons'
     
 
 
@@ -36,16 +41,21 @@
 
     export let displayType: PostDisplayType = "feed"
     
+    let expandCompact: boolean;
+    let expandPreviewText:boolean = false;
+    
     
     // Determe post type based on its attributes
     let pType:PostType  = postType(post)
     let instance        = getInstance();
+
+    
 </script>
 
 
 
 <!--- Compact Posts --->
-{#if $userSettings.showCompactPosts}
+{#if  ($userSettings.showCompactPosts && !expandCompact) }
 <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
     <div class="w-full">
         <PostMeta post={post} displayType={displayType} showTitle={false}/>
@@ -78,7 +88,10 @@
 
             {#if actions}
                 <div class="w-full h-full grid items-end">
-                    <PostActions bind:post
+                    <PostActions 
+                        bind:post 
+                        bind:expandCompact
+                        displayType={displayType}
                         on:edit={(e) => {
                             toast({
                                 content: 'The post was edited successfully.',
@@ -128,11 +141,12 @@
 
     
 </Card>
-{/if}
+
 
 
 <!--- Card Posts --->
-{#if !$userSettings.showCompactPosts}
+<!---{#if (!$userSettings.showCompactPosts) || ($userSettings.showCompactPosts && expandCompact)  }--->
+{:else}
     <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
         <div class="flex flex-row w-full gap-2.5">
             <PostMeta post={post} />
@@ -182,11 +196,29 @@
         <!--- Show first 350 characters of post body as a preview in the feed (if not NSFW)--->
         {#if post.post.body && !post.post.nsfw && displayType=='feed'}
             <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
-                <Markdown source={post.post.body.length > 120 
-                    ? `${post.post.body.slice(0, 120)}...`
-                    : post.post.body
+                
+                <Markdown source={
+                        (!expandPreviewText && post.post.body.length > 120)
+                            ? `${post.post.body.slice(0, 120)}...`
+                            : post.post.body
                     }
                 />
+                
+                {#if post.post.body.length > 120}
+                <Button
+                    color="secondary"
+                    class="w-full"
+                    title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+                    on:click={() => {expandPreviewText = !expandPreviewText}}
+                >
+                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
+                    {expandPreviewText ? 'Collapse' : 'Expand'}
+                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
+                </Button>
+                {/if}
+                
+
+
             </div>
         {/if}
 
@@ -198,7 +230,11 @@
         {/if}
             
         {#if actions}
-            <PostActions bind:post
+            <PostActions 
+                bind:post
+                bind:expandCompact
+                displayType={displayType}
+                postType={pType}
                 on:edit={(e) => {
                     toast({
                         content: 'The post was edited successfully.',
