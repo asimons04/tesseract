@@ -30,7 +30,7 @@ This branch kind of got away from me, so I should probably have bumped the versi
 
 ### New Features
 ### Compact Post Expansion
-You can now expand/collapse individual compact posts into cards as you scroll. Kind of the best of both worlds.  
+You can now expand/collapse individual compact posts into cards as you scroll. Kind of the best of both worlds, especially if you have media enabled in the feed. 
 
 ### See Full Post Body Text in the Feed
 In "Card" view mode, if a post has a body content of more than 120 characters (the current cutoff point for the preview), it will now present an "expand" option to see the full post body right in the feed. 
@@ -43,9 +43,6 @@ The "theater mode" experimental feature is now available by default.  Theater mo
 I don't know why I added that.  I guess if you want the video bigger but don't want to commit to fullscreen?  Anyway, it's there. 
 
 *Includes Invidious/Piped
-
-
-
 
 
 ### UI Tweaks
