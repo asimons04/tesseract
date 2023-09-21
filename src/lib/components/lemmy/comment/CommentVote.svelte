@@ -69,8 +69,9 @@
 
 </script>
 
-<div class="flex flex-row items-center rounded-md transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800">
+<div class="flex flex-row items-center rounded-md transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800 border-none">
     <button
+        disabled={!$profile?.user}
         on:click={upvote}
         class="px-1.5 {vote == 1 ? voteColor(vote) : ''}"
         aria-label="Upvote"
@@ -83,6 +84,7 @@
     </span>
 
     <button
+        disabled={!$profile?.user}
         on:click={downvote}
         class="px-1.5 {vote == -1 ? voteColor(vote) : ''}"
         aria-label="Downvote"
