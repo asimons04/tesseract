@@ -132,7 +132,8 @@
     {/if}
     
     <!--- Expand Compact Post to Card--->
-    {#if displayType == 'feed' && $userSettings.showCompactPosts}
+    <!--- Hide in theater mode since it's confusing and often closes the card--->
+    {#if displayType == 'feed' && $userSettings.showCompactPosts && !theaterMode}
         <Button 
             title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  expandCompact = !expandCompact; }}
