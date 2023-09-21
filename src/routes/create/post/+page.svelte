@@ -1,38 +1,38 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
-  import PostForm from '$lib/components/lemmy/post/PostForm.svelte'
-  import Card from '$lib/components/ui/Card.svelte'
-  import { profile } from '$lib/auth.js'
-  import { onMount } from 'svelte'
-  import { getSessionStorage, setSessionStorage } from '$lib/session.js'
+    import { goto } from '$app/navigation'
+    import PostForm from '$lib/components/lemmy/post/PostForm.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
+    import { profile } from '$lib/auth.js'
+    import { onMount } from 'svelte'
+    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
 
-  export let data
+    export let data
 
-  onMount(() => {
-    if (!$profile?.jwt) {
-      goto('/login')
-    }
-  })
+    onMount(() => {
+        if (!$profile?.jwt) {
+            goto('/login')
+        }
+    })
 
-  let community = getSessionStorage('lastSeenCommunity') as
-    | { id: number; name: string }
-    | undefined
+    let community = getSessionStorage('lastSeenCommunity') as
+        | { id: number; name: string }
+        | undefined
 
-  setSessionStorage('lastSeenCommunity', undefined)
+    setSessionStorage('lastSeenCommunity', undefined)
 
-  let draft = getSessionStorage('postDraft') as any
+    let draft = getSessionStorage('postDraft') as any
 </script>
 
 <svelte:head>
-  <title>Create post</title>
+    <title>Create post</title>
 </svelte:head>
 
 <div class="w-full max-w-5xl mx-auto h-full">
-  <PostForm
-    data={data.crosspost ? draft : undefined}
-    passedCommunity={community}
-    on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
-  >
+    <PostForm
+        data={data.crosspost ? draft : undefined}
+        passedCommunity={community}
+        on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
+    >
     <h1 class="text-2xl font-bold" slot="formtitle">Create Post</h1>
-  </PostForm>
+    </PostForm>
 </div>

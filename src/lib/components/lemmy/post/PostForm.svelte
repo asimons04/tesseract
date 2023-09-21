@@ -11,7 +11,16 @@
     import Button from '$lib/components/input/Button.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import SearchInput from '$lib/components/input/SearchInput.svelte'
-    import { Check, Icon, Photo } from 'svelte-hero-icons'
+    import { 
+        Check,
+        CheckCircle,
+        Eye,
+        FolderOpen,
+        Icon, 
+        PencilSquare,
+        Photo,
+        XCircle
+    } from 'svelte-hero-icons'
     import { profile } from '$lib/auth.js'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Checkbox from '$lib/components/input/Checkbox.svelte'
@@ -19,7 +28,7 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
     import PostPreview from './Post.svelte'
-    
+   
     
     export let edit = false
 
@@ -176,6 +185,8 @@
         
     }
 
+    // Creates a second PostView object based on either the current form data or the post data passed from the edit event.  
+    // Used to generate a fully-stocked PostView object to pass to the Post component in order to get a fully-rendered preview.
     function generatePostPreview() {
         let post:PostView;
         
@@ -250,29 +261,49 @@
         <Button 
             disabled={(!data.name || !data.community)}
             color="primary"
+            title="{previewing ? 'Edit' : 'Preview'}"
             on:click={() => {
                 previewing = !previewing;
             }}
         >
+            <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
             {previewing ? 'Edit' : 'Preview'}
         </Button>
 
+        <!--- Cancel Button --->
+        {#if passedCommunity}
+            <Button 
+                color="primary"
+                size="sm"
+                href="/c/{passedCommunity.name}"
+                title="Cancel"
+            >
+            <Icon src={XCircle} mini size="16"/>
+            
+        </Button>
+        {/if}
+
+
         <!--- Restore from Draft--->
         <Button
-            on:click={() => {
+            on:click={async () => {
                 const draft = getSessionStorage('postDraft')
                 if (draft && !edit) {
                     // @ts-ignore
                     draft.loading = false
                     // @ts-ignore
                     data = draft
+                    communityDetails = await resolveCommunity(draft.community)
+                    communitySearch = `${communityDetails.name}@${new URL(communityDetails.actor_id).hostname}`
                 }
             }}
-            size="lg"
+            size="sm"
+            color="primary"
             disabled={!getSessionStorage('postDraft')}
             hidden={edit}
+            title="Restore from draft"
         >
-            Restore from draft
+            <Icon src={FolderOpen} mini size="16"/>                
         </Button>
         
         <!--- Submit/Save--->
@@ -281,8 +312,10 @@
             color="primary"
             loading={data.loading}
             size="lg"
+            title="{edit ? 'Save' : 'Create' }"
             disabled={data.loading || !data.name || !data.community}
         >
+            <Icon src={CheckCircle} mini size="16"/>
             {edit ? 'Save' : 'Create' }
         </Button>
     </div>

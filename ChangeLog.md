@@ -15,6 +15,11 @@ All major/minor changes between releases will be documented here.
 - Add moderators list to community sidebar
 - Distinguish moderators in posts/comments
   
+## 1.2.63
+### Bugfixes
+- Restoring post from draft now sets the community correctly.
+
+
 
 ## 1.2.62
 One major enhancement, lots of tweaks, and several bugfixes.  The bugfixes were adjacent to the feature enhancement which is why they're so specific.
