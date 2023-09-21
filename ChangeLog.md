@@ -23,6 +23,9 @@ All major/minor changes between releases will be documented here.
 - Debounced the community filter search box.  Now faster and more efficient.
 - Added browser-agnostic clear button to community filter and changed it to a regular text input.  Firefox, I love you, and you're perfect, but why the hell do you _still_ not have a native "clear" button on search input types??
 
+### Additional Media Sources/Formats
+- Added support for Vimeo embeds
+
 
 
 ### UI Tweaks

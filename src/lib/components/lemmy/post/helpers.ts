@@ -10,7 +10,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' |
+    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' |
     'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -91,8 +91,18 @@ export const isPiped = (url: string):boolean => {
 
 }
 
+// Vimeo
+export const isVimeo = (url: string | undefined):boolean => {
+    if (!url) return false;
+    
+    if (url.startsWith('https://vimeo.com')) {
+        return true;
+    }
+    return false;
+}
 
-// Check if URL is for Spotify content
+
+// Spotify
 export const isSpotify = (url: string | undefined):boolean => {
     if (!url) return false;
     
@@ -103,13 +113,14 @@ export const isSpotify = (url: string | undefined):boolean => {
 
 }
 
-// Check if URL is for a Soundcloud asset
+// SoundCloud
 export const isSoundCloud = (url:string):boolean => {
     return (
         url.startsWith('https://m.soundcloud.com') || 
         url.startsWith('https://soundcloud.com') 
     )
 }
+
 
 
 // Returns a string representing the detected post type
@@ -132,6 +143,10 @@ export const postType = (post: PostView | undefined ) => {
     
     if (post.post.url && isSpotify(post.post.url)) {
         return "spotify"
+    }
+
+    if (post.post.url && isVimeo(post.post.url)) {
+        return "vimeo"
     }
     
     if (post.post.url && isSoundCloud(post.post.url)) {

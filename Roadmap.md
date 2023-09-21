@@ -10,14 +10,6 @@ I realize that is less than professional, but this project is a hobby :shrug:.
 ### Accounts Management
 - Add capability to change password
 
-### Additional Embed Support
-#### Songlink/Odesli
-url= album.link/i/{#} || song.link/i/{#} -> https://odesli.co/embed/?url={url}&theme=[dark|light]
-
-
-
-### Compact View Refresh
-I've completely ignored compact view thus far.  Time to give it a spruce up
  
 ### Community Pages
 - Show list of moderators for the community
@@ -29,7 +21,6 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
 ### Sidebar
 - Favorites list and button on each community to add/remove from favorites
   - Is this needed now that search filtering is added??
-- Remove "settings" button from sidebar
 
 ### Feed
 - Keyword filter:  Filters out posts that contain any keywords specified by the user
@@ -40,7 +31,8 @@ I've completely ignored compact view thus far.  Time to give it a spruce up
   - 
 
 ### Infrastructure
-- Add "Guest" and the instance it's hooked to in Account switcher menu in sidebar
+- ~~Add "Guest" and the instance it's hooked to in Account switcher menu in sidebar~~
+    - Makes menu too busy.  Can just unselect the current account for same effect.
 - Need to implement normal password change. Now that password recovery is completed, this is likely next.
 - Consider an optional, complementary backend server to add additional functionality such as saving settings to DB, keeping a cache of communities/instance details for Explore features, etc.
 

@@ -35,6 +35,7 @@
     import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
+    import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
 
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import type { CommentSortType } from 'lemmy-js-client'
@@ -224,6 +225,11 @@
 
             {#if pType == "soundcloud"}
                 <PostSoundCloud post = {post.post_view} displayType={pDisplayType} />
+            {/if}
+
+            <!--- Vimeo Embed --->
+            {#if pType == "vimeo"}
+                <PostVimeo post={post.post_view} displayType={pDisplayType} />
             {/if}
 
             

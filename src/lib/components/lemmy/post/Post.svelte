@@ -20,6 +20,7 @@
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
     import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
+    import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
     
     import Link from '$lib/components/input/Link.svelte'
 
@@ -170,6 +171,11 @@
         <!--- Soundcloud Embed --->
         {#if pType == "soundcloud"}
             <PostSoundCloud post={post} displayType={displayType} />
+        {/if}
+
+        <!--- Vimeo Embed --->
+        {#if pType == "vimeo"}
+            <PostVimeo post={post} displayType={displayType} />
         {/if}
 
             
