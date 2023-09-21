@@ -41,33 +41,28 @@
     class="w-full {$profile?.id == prof.id ? 'font-bold' : ''}"
 >
     
-        <ProfileAvatar
-            profile={prof}
-            {index}
-            selected={$profile?.id == prof.id}
-            slot="icon"
-        />
-        <span class="flex flex-col gap-0">
-            {prof.username ?? prof.user?.local_user_view.person.name}
-            <span class="text-slate-500 dark:text-zinc-400 font-normal text-xs">
-                {prof.instance}
-            </span>
+    <ProfileAvatar profile={prof} {index} selected={$profile?.id == prof.id} slot="icon" />
+    <span class="flex flex-col gap-0">
+        {prof.username ?? prof.user?.local_user_view.person.name}
+        <span class="text-slate-500 dark:text-zinc-400 font-normal text-xs">
+            {prof.instance}
         </span>
-        
-        <span class="ml-auto">
+    </span>
+    
+    <span class="ml-auto">
         <Button
                 on:click={(e) => {
                     e.stopPropagation();
                     deleteProfile(prof.id)
                 }}
-                class="!p-2"
+                size="sm"
                 color="danger"
                 title="Logout / Delete Profile"
             >
-                <Icon slot="icon" src={Trash} size="12" mini />
+                <Icon slot="icon" src={Trash} size="11" mini/>
         </Button>
-        </span>
-        
+    </span>
+    
 
 
-    </Button>
+</Button>

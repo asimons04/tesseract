@@ -80,6 +80,10 @@
                 navigator.share?.({
                     url: comment.comment.ap_id,
                 }) ?? navigator.clipboard.writeText(comment.comment.ap_id)
+                toast({
+                    type: 'success',
+                    content: `Copied comment URL to clipboard!`,
+                })
             }}
         >
             <Icon src={Square2Stack} mini size="16" />
@@ -96,10 +100,14 @@
         
             <MenuButton
                 on:click={async () => {
-                    if ($profile?.jwt)
+                    if ($profile?.jwt) {
                         comment.saved = await save(comment, !comment.saved, $profile.jwt)
                     }
-                }
+                    toast({
+                        type: 'success',
+                        content: `${comment.saved ? 'Saved' : 'Unsaved'} Comment`,
+                    })
+                }}
             >
                 <Icon src={comment.saved ? BookmarkSlash : Bookmark} mini size="16" />
                 <span>{comment.saved ? 'Unsave' : 'Save'}</span>

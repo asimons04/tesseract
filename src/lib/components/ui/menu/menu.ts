@@ -5,3 +5,5 @@ export type Alignment =
   | 'bottom-left'
   | 'bottom-center'
   | 'top-center'
+  | 'side-left'
+  | 'side-right'

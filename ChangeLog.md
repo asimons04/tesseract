@@ -18,9 +18,19 @@ All major/minor changes between releases will be documented here.
 - Restoring post from draft now sets the community correctly.
 - Disabled post and comment vote buttons for guest/unathenticated users.
 
-### UI
+### UI Tweaks
 - Removed borders around comment vote buttons (now matches post vote buttons)
 - Post create/edit form has cancel button (if `lastSeenCommunity` is set)
+- Removed borders around `tertiary`-classed buttons to flatten them.
+    - Navbar buttons
+    - Post/comment action menu buttons
+    - Post/comment moderation menu buttons
+    - Comment reply
+    - Sidebar expand/collapse buttons
+    - On-screen navigation buttons in post view ("return to feed", "scroll to top/bottom")
+- Added toast messages to comment save and share actions to indicate they've done something.
+- Made profile delete buttons smaller in account submenu
+- Post action and moderation menus open to the side. Again.  I just can't deal with them opening below and always having to scroll down.  There's got to be some way to prevent the clipping when they open `top-right` near the top of the screen.
 
 
 
