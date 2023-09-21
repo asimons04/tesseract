@@ -36,9 +36,9 @@ All major/minor changes between releases will be documented here.
     - Sidebar expand/collapse buttons
     - On-screen navigation buttons in post view ("return to feed", "scroll to top/bottom")
 - Added toast messages to comment save and share actions to indicate they've done something.
-- Made profile delete buttons smaller in account submenu
+- Decreased size of profile delete buttons in account submenu
 - Post action and moderation menus open to the side. Again.  I just can't deal with them opening below and always having to scroll down.  There's got to be some way to prevent the clipping when they open `top-right` near the top of the screen.
-
+- Added directional arrows to pagination buttons
 
 
 
