@@ -28,6 +28,7 @@
 <slot {vote} {score}>
     <div class="flex items-center text-sm gap-1 rounded-md border border-slate-200 dark:border-zinc-700 px-1 h-full duration-200 border-none">
         <Button
+            disabled={!$profile?.user}
             aria-label="Upvote"
             class={vote == 1 ? voteColor(vote) : ''}
             on:click={async () => {
@@ -47,6 +48,7 @@
         </span>
       
         <Button
+            disabled={!$profile?.user}
             aria-label="Downvote"
             class={vote == -1 ? voteColor(vote) : ''}
             on:click={async () => {
