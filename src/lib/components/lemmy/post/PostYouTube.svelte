@@ -21,7 +21,7 @@
     
     if (post.post && post.post.url) {
         // Parse URLs to pick out video IDs to create embed URLs
-        videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','')
+        videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
         
         if (!videoID) {
             videoID = new URL(post.post.url).searchParams.get('v');

@@ -13,10 +13,15 @@ All major/minor changes between releases will be documented here.
 - Add moderators list to community sidebar
 - Distinguish moderators in posts/comments
   
-## 1.2.64
+## 1.2.63.1
+Happy Friday.  This is just a tiny point-release to fix a few bugs that got overlooked in the last release.  Hoping to step away for the weekend, so wanted to get this out to fix the annoyances I noticed in 1.2.63.
+
+Have a great weekend.
 
 ### Bugfixes
-- Fixed bug with post preview so that it always previews in "post" mode rather than "feed" style.  
+- Fixed bug with post preview so that it always previews in "post" mode rather than "feed" mode (compact is never used in "post" view).  
+- Fixed bug where YouTube-style embed URLs were sometimes generated with a double slash (e.g. `/embed//{videoID}`).  YouTube didn't care about that, but Invidious was throwing an uncessary and unwarranted tantrum over something that it should have just handled.
+
 
 ### UI Changes
 - In compact view, clicking the thumbnail (or thumbnanil placeholder) will expand the compact post into a card post.
