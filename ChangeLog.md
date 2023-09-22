@@ -13,6 +13,17 @@ All major/minor changes between releases will be documented here.
 - Add moderators list to community sidebar
 - Distinguish moderators in posts/comments
   
+## 1.2.64
+
+### Bugfixes
+- Fixed bug with post preview so that it always previews in "post" mode rather than "feed" style.  
+
+### UI Changes
+- In compact view, clicking the thumbnail (or thumbnanil placeholder) will expand the compact post into a card post.
+
+
+
+
 ## 1.2.63
 This branch kind of got away from me, so I should probably have bumped the version a bit more than 0.0.1.  
 

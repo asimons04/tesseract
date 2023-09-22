@@ -28,46 +28,52 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
     import PostPreview from './Post.svelte'
-   
     
     export let edit = false
 
-  /**
-   * The post to edit
-   */
-  export let editingPost: Post | undefined = undefined
+    // The post to edit, as passed from the PostActions component
+    export let editingPost: Post | undefined = undefined
 
-  export let passedCommunity:
+    // The community passed from sessionStorage via /create/post
+    export let passedCommunity:
     | {
         id: number
         name: string
-      }
+        }
     | undefined = undefined
 
-  export let data: {
-    community: number | Community | null
-    name: string
-    body: string
-    image: FileList | null
-    url: string | undefined
-    nsfw: boolean
-    loading: boolean
-  } = {
-    community: null,
-    name: '',
-    body: '',
-    image: null,
-    url: undefined,
-    nsfw: false,
-    loading: false,
-  }
+
+
+    // Structure to hold the minimum Post fields needed to create a new post.
+    export let data: {
+        community: number | Community | null
+        name: string
+        body: string
+        image: FileList | null
+        url: string | undefined
+        nsfw: boolean
+        loading: boolean
+    } = {
+        community: null,
+        name: '',
+        body: '',
+        image: null,
+        url: undefined,
+        nsfw: false,
+        loading: false,
+    }
 
   let saveDraft = edit ? false : true
   let communities: Community[] = []
   
-  let communitySearch = ''
-  let uploadingImage = false
-  let previewing = false
+  
+  let uploadingImage:boolean = false
+  let previewing:boolean = false
+  
+  // communitySearch is used to show the community name in the community selector
+  let communitySearch:string  = ''
+  
+  // communityDetails is used to hold the community details to pass to the post preview. The `data` struct used for creation only needs the post ID, so 
   let communityDetails:Community
 
   const dispatcher = createEventDispatcher<{ submit: PostView }>()
@@ -270,7 +276,7 @@
             <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
             {previewing ? 'Edit' : 'Preview'}
         </Button>
-
+        
         <!--- Cancel Button --->
         {#if passedCommunity}
             <Button 

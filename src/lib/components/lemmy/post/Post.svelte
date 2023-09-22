@@ -60,7 +60,7 @@
 
 
 <!--- Compact Posts --->
-{#if  ($userSettings.showCompactPosts && !expandCompact) }
+{#if  ($userSettings.showCompactPosts && !expandCompact && displayType=='feed') }
 <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
     <div class="w-full">
         <PostMeta post={post} displayType={displayType} showTitle={false}/>
@@ -111,9 +111,26 @@
         <!--- Thumbnail --->
         <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
             <div class="grid justify-items-center">
-                <a href="/post/{getInstance()}/{post.post.id}">
-                    <!--- Thumbnail --->
+                <!--- Expand the post in place when clicking thumbnail--->
+                <div 
+                    role="button"
+                    title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                    class="cursor-pointer"
+                    on:click={() => {  
+                        expandCompact = !expandCompact; 
+                        const element = document.getElementById(post.post.id);
+                        if (element) {
+                            element.scrollIntoView({
+                                behavior: 'smooth',
+                                block: "start"
+                            });
+                        }
+
+                    }}
+                >
+                    
                     {#if post.post.thumbnail_url || isImage(post.post.url)}
+                        <!--- Thumbnail for Link Post--->
                         {#if post.post.thumbnail_url}
                             <img
                                 src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
@@ -121,6 +138,7 @@
                                 class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                                 class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
                             />
+                        <!---Thumbnail for Image Post--->
                         {:else}
                             <img
                                 src="{post.post.url}?thumbnail=256&format=webp"
@@ -138,7 +156,7 @@
                         />
                     
                     {/if}
-                </a>
+                </div>
             </div>
         </div>
     </div>
@@ -198,18 +216,18 @@
         {/if}
 
             
-        <!--- Show first 350 characters of post body as a preview in the feed (if not NSFW)--->
+        <!--- Show first 250 characters of post body as a preview in the feed (if not NSFW)--->
         {#if post.post.body && !post.post.nsfw && displayType=='feed'}
             <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
                 
                 <Markdown source={
-                        (!expandPreviewText && post.post.body.length > 120)
-                            ? `${post.post.body.slice(0, 120)}...`
+                        ( !expandPreviewText && post.post.body.length > 250)
+                            ? `${post.post.body.slice(0, 250)}...`
                             : post.post.body
                     }
                 />
                 
-                {#if post.post.body.length > 120}
+                {#if post.post.body.length > 250}
                 <Button
                     color="secondary"
                     class="w-full"
@@ -249,6 +267,7 @@
             <PostActions 
                 bind:post
                 bind:expandCompact
+                bind:expandPreviewText
                 displayType={displayType}
                 postType={pType}
                 on:edit={(e) => {

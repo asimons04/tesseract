@@ -136,7 +136,17 @@
     {#if displayType == 'feed' && $userSettings.showCompactPosts && !theaterMode}
         <Button 
             title="{expandCompact ? 'Collapse' : 'Expand'}" 
-            on:click={() => {  expandCompact = !expandCompact; }}
+            on:click={() => {  
+                expandCompact = !expandCompact; 
+                const element = document.getElementById(post.post.id);
+                if (element) {
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: "start"
+                    });
+                }
+
+            }}
         >
             <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />
             
