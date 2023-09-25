@@ -36,7 +36,7 @@
     </div>
     
     <div class="hidden lg:block xl:block">
-        <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
+        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
       </div>
 </div>
 

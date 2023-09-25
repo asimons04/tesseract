@@ -18,7 +18,7 @@ All major/minor changes between releases will be documented here.
     - Caused issues on mobile where the mod menu opened too far to the left.
 - Fixed bug inherited from upstream that threw an error when refreshing profile page.
 
-### Enhancements
+### Changes
 #### Moderator and Admin Visibility
 The current implementation is probably not how these will stay, but I did want to at least get them up there and plumbed in.  I'll likely polish the way they're rendered to be a little less "list" like.
 
@@ -35,7 +35,8 @@ The current implementation is probably not how these will stay, but I did want t
 
 **Note**: I don't think it's been explicitly stated, but the "Admin" badge only shows for admins local to the instance you're logged into. 
 
-
+#### Community Card (Mobile View)
+Removed the individual buttons for the community actions and put them into a menu in the card.
 
 
 

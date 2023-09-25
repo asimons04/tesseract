@@ -18,12 +18,15 @@
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
-    
+    import Menu from '$lib/components/ui/menu/Menu.svelte'
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+
     import {
         Calendar,
         ChatBubbleOvalLeftEllipsis,
         ChevronDoubleRight,
         Cog6Tooth,
+        EllipsisHorizontal,
         Icon,
         InformationCircle,
         Minus,
@@ -158,6 +161,8 @@
                     alt={community_view.community.name}
                 />
             </div>
+            
+            
             <div class="flex flex-col gap-0">
                 <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
                     <h1 class="font-bold text-xl">{community_view.community.title.replace('&amp;', '&')}</h1>
@@ -166,99 +171,119 @@
                     </span>
                 </a>
             </div>
-        </div>
 
-        <!--- 
-            Community Action Buttons Inside The Card (Community Info, Modlog, and Settings)
-            These appear when the community sidebar reflows to the top in lg and below
-        --->
-        <div class="mt-2 mb-2 flex flex-row gap-4">
-            
-            
-            <div class="flex flex-row gap-4 mx-auto xl:hidden">
-                
+            <!---Community Action Menu for Mobile View --->
+            <div class="ml-auto xl:hidden">
                 <!--- Community Info Modal--->                
-                <Button color="primary" on:click={() => (sidebar = !sidebar)} title="Community Info">
-                    <Icon src={InformationCircle} mini size="16" slot="icon" />
-                </Button>
-
-                {#if $profile?.jwt}
-                    <!---Create Post --->
-                    <Button
-                        href="/create/post"
-                        color="primary"
-                        disabled={community_view.community.posting_restricted_to_mods}
-                        title="Create post"
-                    >
-                        <Icon src={PencilSquare} mini size="16" slot="icon" />
-                    </Button>
-
-                    <!--- Subscribe/Unsubscribe--->
-                    <Button
-                        disabled={loading.subscribing}
-                        loading={loading.subscribing}
-                        color="primary"
-                        on:click={subscribe}
-                        title="{
-                            community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
-                            ? 'Unsubscribe'
-                            : 'Subscribe'
-                        }"
-                    >
-                        <Icon
-                            src={community_view.subscribed == 'Subscribed' ? Minus : Plus}
-                            mini
-                            size="16"
-                            slot="icon"
-                        />
-                    </Button>
-                    
-                    <!--- Block/Unblock Community --->
-                    <Button
-                        disabled={loading.blocking}
-                        loading={loading.blocking}
-                        color="primary"
-                        on:click={block}
-                        title="{community_view.blocked ? 'Unblock' : 'Block'} Community"
-                    >
-                        <Icon
-                            src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
-                            mini
-                            size="16"
-                            slot="icon"
-                        />
-                    </Button>
-                {/if}
-
-                <!---Modlog--->
-                <Button
-                    href="/modlog?community={community_view.community.id}"
-                    color="primary"
-                    title="Modlog for {community_view.community.title}"
+                <Menu
+                    alignment="bottom-right"
+                    itemsClass="h-8 md:h-8"
+                    containerClass="!max-h-[90vh]"
                 >
-                    <Icon src={Newspaper} mini size="16" slot="icon" />
-                </Button>
-
-                <!--- Settings --->
-                {#if $profile.user && amMod($profile.user, community_view.community)}
-                <div class="flex flex-row gap-2">
-                    <Button
-                        href="/c/{fullCommunityName(
-                            community_view.community.name,
-                            community_view.community.actor_id
-                        )}/settings"
-                        color="primary"
-                        title="Edit Community"
-                    >
-                        <Icon src={Cog6Tooth} mini size="16" slot="icon" />
+                    <Button color="primary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
+                        <Icon src={EllipsisHorizontal} mini size="16" slot="icon" />
                     </Button>
-                </div>
-                {/if}
 
 
+                    <MenuButton
+                        on:click={() => (sidebar = !sidebar)} 
+                        title="Community Info"
+                    >
+                        <Icon src={InformationCircle} mini width={16}/>
+                        Community Info
+                    </MenuButton>
+
+                    <!---Modlog--->
+                    <MenuButton link
+                        href="/modlog?community={community_view.community.id}"
+                        title="Modlog for {community_view.community.title}"
+                    >
+                        <Icon src={Newspaper} mini size="16" />
+                        Modlog for {community_view.community.title}
+                    </MenuButton>
+                    
+                    {#if $profile?.jwt}
+                        <!---Create Post --->
+                        <MenuButton link href="/create/post"
+                            disabled={community_view.community.posting_restricted_to_mods}
+                            title="Create post"
+                        >
+                            <Icon src={PencilSquare} mini size="16" />
+                            Create Post
+                        </MenuButton>
+
+                        <!--- Subscribe/Unsubscribe--->
+                        <MenuButton
+                            disabled={loading.subscribing}
+                            loading={loading.subscribing}
+                        >
+                            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
+                                on:click={ (e) => {
+                                    e.stopPropagation();
+                                    subscribe();
+                                }}
+                                title="{
+                                    community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
+                                    ? 'Unsubscribe'
+                                    : 'Subscribe'
+                                }"
+                            >
+                                <Icon
+                                    src={community_view.subscribed == 'Subscribed' ? Minus : Plus}
+                                    mini
+                                    size="16"
+                                />
+                                {
+                                    community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
+                                    ? 'Unsubscribe'
+                                    : 'Subscribe'
+                                }
+                            </div>
+
+                        </MenuButton>
+                        
+                        <!--- Block/Unblock Community --->
+                        <MenuButton
+                            disabled={loading.blocking}
+                            loading={loading.blocking}
+                        >
+                            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
+                                on:click={(e) => { 
+                                    e.stopPropagation(); 
+                                    block(); 
+                                }}
+                                title="{community_view.blocked ? 'Unblock' : 'Block'} Community"
+                            >
+                                <Icon
+                                    src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
+                                    mini
+                                    size="16"
+                                />
+                                {community_view.blocked ? 'Unblock' : 'Block'} Community
+                            </div>
+                        </MenuButton>
+                    {/if}
+                    
+                    <!--- Settings --->
+                    {#if $profile.user && amMod($profile.user, community_view.community)}
+                        <MenuButton link
+                            href="/c/{fullCommunityName(
+                                community_view.community.name,
+                                community_view.community.actor_id
+                            )}/settings"
+                            title="Edit Community"
+                        >
+                            <Icon src={Cog6Tooth} mini size="16" />
+                            Community Settings
+                        </MenuButton>
+                    {/if}                
+                </Menu>
             </div>
-        
+
         </div>
+
+
+
 
         <!-- Community subscribers, counts, etc --->
         <div class="p-2">

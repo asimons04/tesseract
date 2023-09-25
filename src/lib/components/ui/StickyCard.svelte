@@ -3,9 +3,9 @@
     sm:w-full 
     md:w-[80%] md:mx-auto
     lg:lg:w-[90%] lg:mx-auto 
-    xl:w-96
+    xl:w-96 xl:overflow-auto
     max-h-[calc(100svh-128px)]
-    overflow-auto text-sm border-slate-200 dark:border-zinc-800 {$$props.class}"
+    text-sm border-slate-200 dark:border-zinc-800 {$$props.class}"
 >
   <slot />
 </aside>
