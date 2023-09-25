@@ -196,7 +196,7 @@
                 </Card>
             {/if}
 
-            <PostMeta post={post.post_view} displayType={pDisplayType}/>
+            <PostMeta post={post.post_view} moderators={post.moderators} displayType={pDisplayType}/>
             
             {#if pType == "link" || pType == "thumbLink"}
                 <PostLink post={post.post_view} displayType={pDisplayType} />
@@ -232,9 +232,6 @@
                 <PostVimeo post={post.post_view} displayType={pDisplayType} />
             {/if}
 
-            
-
-            
 
             <!--- Post Body --->
             
@@ -341,8 +338,7 @@
                                 comment.detail.comment_view,
                                 ...comments.comments,
                             ])}
-                            locked={post.post_view.post.locked ||
-                            $page.params.instance.toLowerCase() != $instance.toLowerCase()}
+                            locked={post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
                         />
                     {/if}
                 
@@ -351,7 +347,7 @@
                             <Spinner width={36} />
                         </div>
                         {:then comments}
-                        <Comments post={post.post_view.post} nodes={comments} isParent={true} />
+                        <Comments post={post.post_view.post} moderators={post.moderators} nodes={comments} isParent={true} />
                     {/await}
                     {:catch}
                         <div class="bg-red-500/10 border border-red-500 rounded-md p-4">
@@ -393,6 +389,6 @@
     
     <!--- Community Sidebar--->
     <div class="hidden xl:block w-auto mt-[-8px]">
-        <CommunityCard community_view={data.post.community_view} />
+        <CommunityCard community_view={data.post.community_view} moderators={post.moderators}/>
     </div>
 </div>  

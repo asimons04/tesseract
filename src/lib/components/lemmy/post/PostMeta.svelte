@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Community, Person, PostView } from 'lemmy-js-client'
+    import type { Community, CommunityModeratorView, Person, PostView } from 'lemmy-js-client'
     import type { PostDisplayType } from './helpers.js'
 
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
@@ -23,7 +23,9 @@
     export let post: PostView | undefined       = undefined
     export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
+    export let moderators: Array<CommunityModeratorView> = [];
 
+    
     // Extract data from post object for easier reference
     
     // These values don't change, so assign them once
@@ -59,6 +61,8 @@
         read                                = post.read ?? false
     }
     
+    let userIsModerator:boolean = (moderators.filter((index) => index.moderator.id == user.id).length > 0)
+    
 
 </script>
 
@@ -77,7 +81,7 @@
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-1 flex-wrap items-center">
                     {#if user}
                     <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
-                        <UserLink avatarSize={20} {user} avatar={!community} />
+                        <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
                     </div>
                     {/if}
 

@@ -25,7 +25,6 @@
 
 
     export let data
-
     
     
     onMount(() => {
@@ -107,6 +106,6 @@
     </div>
 
     <div class="mt-[-8px]">
-        <CommunityCard community_view={data.community.community_view} />
+        <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators}/>
     </div>
 </div>

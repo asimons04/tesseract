@@ -12,11 +12,11 @@ export async function load({ params, url, fetch }) {
     const user = await getClient(undefined, fetch).getPersonDetails({
         limit: 20,
         page: page,
-        username: get(profile)!.user?.local_user_view.person.name,
+        username: get(profile)!.username,
         sort: sort,
         auth: get(profile)?.jwt,
     })
-
+    //username: get(profile)!.user?.local_user_view.person.name,
     const items = [...user.posts, ...user.comments]
 
     if (sort == 'TopAll') {

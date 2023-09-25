@@ -6,6 +6,7 @@
         Minus,
         Pencil,
         Plus,
+        ShieldCheck,
         Trash,
     } from 'svelte-hero-icons'
     import type { CommentNodeI } from './comments'
@@ -24,6 +25,8 @@
     export let node: CommentNodeI
     export let postId: number
     export let op: boolean = false
+    export let mod: boolean = false
+
     export let actions: boolean = true
 
     export let open = true
@@ -81,7 +84,9 @@
                     avatarSize={20}
                     avatar
                     user={node.comment_view.creator}
+                    mod={mod}
                 />
+
                 {#if op}
                     <span class="text-sky-500">OP</span>
                 {/if}
@@ -90,7 +95,7 @@
             <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-1">
                 {#if !open}
                     <div class="flex items-center gap-0.5 mr-1 text-slate-800 dark:text-zinc-200">
-                        <Icon src={ArrowUp} mini size="14" />
+                        <Icon src={ArrowUp} mini size="14" title="Moderator" />
                         {node.comment_view.counts.score}
                     </div>
                 {/if}

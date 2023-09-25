@@ -1,91 +1,100 @@
 <script lang="ts">
-  import Comment from './Comment.svelte'
-  import { buildCommentsTree, type CommentNodeI } from './comments'
-  import { page } from '$app/stores'
-  import { onMount, setContext } from 'svelte'
-  import Button from '$lib/components/input/Button.svelte'
-  import { ChevronDown, Icon } from 'svelte-hero-icons'
-  import { getClient } from '$lib/lemmy.js'
-  import type { CommentView, Post } from 'lemmy-js-client'
-  import { fly } from 'svelte/transition'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
-  import { profile } from '$lib/auth.js'
+    import type { 
+        CommentView, 
+        CommunityView, 
+        CommunityModeratorView, 
+        Post 
+    } from 'lemmy-js-client'
 
-  export let nodes: CommentNodeI[]
-  export let isParent: boolean
-  export let post: Post
+    import Comment from './Comment.svelte'
+    import { buildCommentsTree, type CommentNodeI } from './comments'
+    import { page } from '$app/stores'
+    import { onMount, setContext } from 'svelte'
+    import Button from '$lib/components/input/Button.svelte'
+    import { ChevronDown, Icon } from 'svelte-hero-icons'
+    import { getClient } from '$lib/lemmy.js'
+    
+    import { fly } from 'svelte/transition'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { profile } from '$lib/auth.js'
 
-  if (isParent) {
-    setContext('comments:tree', nodes)
-  }
+    export let nodes: CommentNodeI[]
+    export let isParent: boolean
+    export let post: Post
+    export let community: CommunityView
+    export let moderators: Array<CommunityModeratorView>
 
-  onMount(() => {
-    if (isParent && $page.url.hash) {
-      document.getElementById($page.url.hash)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      })
+    if (isParent) {
+        setContext('comments:tree', nodes)
     }
-  })
 
-  let loadingChildren = false
+    onMount(() => {
+        if (isParent && $page.url.hash) {
+            document.getElementById($page.url.hash)?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+            })
+        }
+    })
 
-async function fetchChildren(parent: CommentNodeI) {
-    if ( !(parent.comment_view.counts.child_count > 0 && parent.children.length == 0) ) return
+    let loadingChildren = false
 
-    try {
-        parent.loading = true
-        const newComments = await getClient($page.params.instance).getComments({
-            auth: $profile?.jwt,
-            max_depth: 5,
-            parent_id: parent.comment_view.comment.id,
-            type_: 'All',
-        })
+    async function fetchChildren(parent: CommentNodeI) {
+        if ( !(parent.comment_view.counts.child_count > 0 && parent.children.length == 0) ) return
 
-        if (newComments.comments.length == 0) {
-            loadingChildren = false
+        try {
+            parent.loading = true
+            const newComments = await getClient($page.params.instance).getComments({
+                auth: $profile?.jwt,
+                max_depth: 5,
+                parent_id: parent.comment_view.comment.id,
+                type_: 'All',
+            })
+
+            if (newComments.comments.length == 0) {
+                loadingChildren = false
+                toast({
+                    content: 'The API returned no comments.',
+                    type: 'error',
+                })
+                return
+            }
+
+            const tree = buildCommentsTree(newComments.comments, parent.depth)
+
+            // 0.18.2 -> 0.18.3 broke this
+            // so i'm adding this check
+            const treeParent = tree.find(
+                (c) => c.comment_view.comment.id == parent.comment_view.comment.id
+            )
+
+            if (treeParent) {
+                // < 0.18.3
+                parent.children = treeParent.children
+                if (treeParent.children.length == 0) {
+                    toast({
+                        content: 'The API returned no comments.',
+                        type: 'warning',
+                    })
+                }
+            } else {
+                // 0.18.3+
+                parent.children = tree
+                if (tree.length == 0) {
+                    toast({
+                        content: 'The API returned no comments.',
+                        type: 'warning',
+                    })
+                }
+            }
+        } catch (error) {
+            console.error(error)
             toast({
-                content: 'The API returned no comments.',
+                content: `Failed to fetch comments. ${error as any}`,
                 type: 'error',
             })
-            return
         }
-
-        const tree = buildCommentsTree(newComments.comments, parent.depth)
-
-        // 0.18.2 -> 0.18.3 broke this
-        // so i'm adding this check
-        const treeParent = tree.find(
-            (c) => c.comment_view.comment.id == parent.comment_view.comment.id
-        )
-
-        if (treeParent) {
-            // < 0.18.3
-            parent.children = treeParent.children
-            if (treeParent.children.length == 0) {
-                toast({
-                    content: 'The API returned no comments.',
-                    type: 'warning',
-                })
-            }
-        } else {
-            // 0.18.3+
-            parent.children = tree
-            if (tree.length == 0) {
-                toast({
-                    content: 'The API returned no comments.',
-                    type: 'warning',
-                })
-            }
-        }
-    } catch (error) {
-        console.error(error)
-        toast({
-            content: `Failed to fetch comments. ${error as any}`,
-            type: 'error',
-        })
     }
-}
 </script>
 
 <ul in:fly={{ opacity: 0, y: -4 }}
@@ -101,9 +110,10 @@ async function fetchChildren(parent: CommentNodeI) {
             bind:node
             open={true}
             op={post.creator_id == node.comment_view.creator.id}
+            mod={moderators?.filter((index) => index.moderator.id == node.comment_view.creator.id).length > 0}
         >
             {#if node.children?.length > 0}
-                <svelte:self {post} bind:nodes={node.children} isParent={false} />
+                <svelte:self {post} bind:nodes={node.children} moderators={moderators} isParent={false} />
             {/if}
 
             {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}
