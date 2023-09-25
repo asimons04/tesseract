@@ -127,9 +127,7 @@
         </Button>
     {/if}
   
-    {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <ModerationMenu bind:item={post} community={post.community} />
-    {/if}
+
     
     <!--- Expand Compact Post to Card--->
     <!--- Hide in theater mode since it's confusing and often closes the card--->
@@ -188,8 +186,13 @@
             <Icon src={Tv} mini size="16" slot="icon" />
         </Button>
     {/if}
-
-
+    
+    <!--- Moderation Menu--->
+    {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+        <ModerationMenu bind:item={post} community={post.community} />
+    {/if}
+    
+    <!--- Post Actions Menu --->
     <Menu
         alignment="side-left"
         containerClass="overflow-auto max-h-[400px]"

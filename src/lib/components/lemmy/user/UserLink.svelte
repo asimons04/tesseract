@@ -3,7 +3,7 @@
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import { userSettings } from '$lib/settings.js'
     import type { Person } from 'lemmy-js-client'
-    import { Icon, NoSymbol } from 'svelte-hero-icons'
+    import { Icon, NoSymbol, ShieldCheck } from 'svelte-hero-icons'
 
     export let user: Person
     export let avatar: boolean = false
@@ -11,6 +11,7 @@
     export let badges: boolean = true
     export let inComment: boolean = false
     export let showInstance: boolean = true
+    export let mod:boolean = false
 
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
@@ -40,10 +41,16 @@
         {/if}
     </span>
   
-    {#if badges && (user.admin || user.banned || user.bot_account)}
-        <span>
+    {#if badges && (user.admin || user.banned || user.bot_account || mod)}
+        <span class="flex flex-row gap-1">
             {#if user.admin}
                 <div class="text-red-500" title="Admin">
+                    <ShieldIcon width={12} filled />
+                </div>
+            {/if}
+            
+            {#if mod}
+                <div class="text-green-500" title="Moderator">
                     <ShieldIcon width={12} filled />
                 </div>
             {/if}

@@ -11,8 +11,26 @@ All major/minor changes between releases will be documented here.
     - Create layout to Keep user info sidebar on all `/profile` pages.
 - Add admin list to site sidebar
 - Add moderators list to community sidebar
-- Distinguish moderators in posts/comments
-  
+
+
+## 1.2.64
+### Bugfixes
+- Post links in compact view were not respecting "open links in new tab" preference.
+- Made sure moderation menu was always one spot to the left of post action menu
+    - Caused issues on mobile where the mod menu opened too far to the left.
+- Fixed bug inherited from upstream that threw an error when refreshing profile page.
+
+### Enhancements
+Added `mod` boolean flag to pass to `UserLink` component and implemented it similarly to the admin badge.  Mods can now have a badge assigned in post and comment views.
+- Community moderators now distinguished in comments
+- Moderators are distinguised in post headers in `/post/{instance}/{postID}` pages.
+- Feed does not currently show mod badges.  The community moderators are not returned in the `/api/v3/post/list` call, and it's not really worth it to do a separate call for each post that's returned to get those to add the badges. 
+    - Looking at Lemmy-UI, it doesn't apply badges in the feed either, likely for the same reason.
+
+Note:  I don't think it's been explicitly stated, but the "Admin" badge only shows for admins local to the instance you're logged into.
+
+
+
 ## 1.2.63.1
 Happy Friday.  This is just a tiny point-release to fix a few bugs that got overlooked in the last release.  Hoping to step away for the weekend, so wanted to get this out to fix the annoyances I noticed in 1.2.63.
 

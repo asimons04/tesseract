@@ -2,8 +2,6 @@
     import {
         ArrowUp,
         ArrowDown,
-        ChevronDown,
-        ChevronUp,
         Icon,
     } from 'svelte-hero-icons'
     import { getClient } from '$lib/lemmy'
