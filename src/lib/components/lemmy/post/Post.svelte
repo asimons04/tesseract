@@ -85,6 +85,7 @@
                 <Link
                     href={post.post.url}
                     title={post.post.url}
+                    newtab={$userSettings.openInNewTab.postLinks}
                     highlight
                 >
                     {new URL(post.post.url).host}
