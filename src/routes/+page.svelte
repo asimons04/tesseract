@@ -62,7 +62,7 @@
                 on:select={(e) => {
                     $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                 }}
-                headless={true}
+                items={0}
             />
 
 
@@ -82,6 +82,6 @@
     </div>
 
     <div class="hidden xl:block mt-[-8px]">
-        <SiteCard site={data.site.site_view} taglines={data.site.taglines} />
+        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CommunityView } from 'lemmy-js-client'
+    import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
     import { profile } from '$lib/auth.js'
     import { amMod } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy.js'
@@ -17,7 +17,7 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     
     import {
         Calendar,
@@ -38,6 +38,8 @@
     
 
     export let community_view: CommunityView
+    export let moderators: Array<CommunityModeratorView> = []
+    
     
     let sidebar: boolean = false
     let loading = {
@@ -88,9 +90,24 @@
 </script>
 
 <Modal bind:open={sidebar}>
-    <span slot="title">About</span>
+    <span slot="title">{community_view.community.title.replace('&amp;', '&')}</span>
     <div class="mx-auto">
-        <Markdown source={community_view.community.description} />
+
+        {#if moderators.length > 0}
+            <div class="flex flex-col gap-1 mt-2 mb-4">
+                <h1 class="font-bold text-xl">Moderators</h1>
+                <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+                {#each moderators as moderator}
+                    <UserLink user={moderator.moderator} avatar={true} />
+                {/each}
+            </div>
+        {/if}
+        
+        {#if community_view.community.description}
+            <h1 class="font-bold text-xl">About Community</h1>
+            <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+            <Markdown source={community_view.community.description} />
+        {/if}
     </div>
 </Modal>
 
@@ -356,7 +373,21 @@
     </div>
 
     <div class="hidden  xl:block">
-        <Markdown source={community_view.community.description} />
+        {#if moderators.length > 0}
+            <div class="flex flex-col gap-1 mt-2 mb-4">
+                <h1 class="font-bold text-xl">Moderators</h1>
+                <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+                {#each moderators as moderator}
+                    <UserLink user={moderator.moderator} avatar={true} />
+                {/each}
+            </div>
+        {/if}
+        
+        {#if community_view.community.description}
+            <h1 class="font-bold text-xl">About Community</h1>
+            <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+            <Markdown source={community_view.community.description} />
+        {/if}
     </div>
 
 </StickyCard>

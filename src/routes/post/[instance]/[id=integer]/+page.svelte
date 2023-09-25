@@ -51,7 +51,6 @@
     import { fly } from 'svelte/transition'
 
     export let data
-    console.log(data)
     
     let post = data.post
     let community = data.post.community_view.community;
@@ -390,6 +389,6 @@
     
     <!--- Community Sidebar--->
     <div class="hidden xl:block w-auto mt-[-8px]">
-        <CommunityCard community_view={data.post.community_view} />
+        <CommunityCard community_view={data.post.community_view} moderators={post.moderators}/>
     </div>
 </div>  

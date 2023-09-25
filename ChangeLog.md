@@ -4,13 +4,11 @@ All major/minor changes between releases will be documented here.
 
 ## Roadmap: 1.2.64 - 1.2.69
 
-- See if immediately feasible to do compact-> card inline expansion of a post in the feed (without rewriting everything to make that possible)
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 - Revamp `/profile` section:
     - Move `/saved` route from root to `/profile/saved`
     - Create layout to Keep user info sidebar on all `/profile` pages.
-- Add admin list to site sidebar
-- Add moderators list to community sidebar
+
 
 
 ## 1.2.64
@@ -21,13 +19,27 @@ All major/minor changes between releases will be documented here.
 - Fixed bug inherited from upstream that threw an error when refreshing profile page.
 
 ### Enhancements
-Added `mod` boolean flag to pass to `UserLink` component and implemented it similarly to the admin badge.  Mods can now have a badge assigned in post and comment views.
+#### Moderator and Admin Visibility
+The current implementation is probably not how these will stay, but I did want to at least get them up there and plumbed in.  I'll likely polish the way they're rendered to be a little less "list" like.
+
+- Moderators are now listed in the community sidebar.  
+
 - Community moderators now distinguished in comments
+
 - Moderators are distinguised in post headers in `/post/{instance}/{postID}` pages.
+
 - Feed does not currently show mod badges.  The community moderators are not returned in the `/api/v3/post/list` call, and it's not really worth it to do a separate call for each post that's returned to get those to add the badges. 
     - Looking at Lemmy-UI, it doesn't apply badges in the feed either, likely for the same reason.
 
-Note:  I don't think it's been explicitly stated, but the "Admin" badge only shows for admins local to the instance you're logged into.
+- Admins are now visible in the site sidebar
+
+**Note**: I don't think it's been explicitly stated, but the "Admin" badge only shows for admins local to the instance you're logged into. 
+
+
+
+
+
+
 
 
 

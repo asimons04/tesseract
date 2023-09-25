@@ -6,8 +6,9 @@
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     import { getClient } from '$lib/lemmy.js'
-    import type { SiteView, Tagline } from 'lemmy-js-client'
+    import type { SiteView, PersonView, Tagline } from 'lemmy-js-client'
     import {
         Calendar,
         ChatBubbleOvalLeftEllipsis,
@@ -21,6 +22,8 @@
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
+    export let admins: PersonView[] = []
+
 </script>
 
 <!--- Button to expand/collapse the site-info sidebar --->
@@ -67,12 +70,25 @@
                 <Avatar width={42} url={site.site.icon} alt={site.site.name} />
             {/if}
             
-            <div class="flex flex-col">
-                <h1 class="font-bold text-base">{site.site.name}</h1>
+            
+            <div class="flex flex-col w-full">
+                <div class="flex flex-row">
+                    <h1 class="font-bold text-base">{site.site.name}</h1>
+                    
+                    <div class="ml-auto">
+                        <span class="flex flex-row items-center gap-2 text-sm">
+                            <Icon src={Calendar} width={16} height={16} mini />
+                            <RelativeDate date={new Date(site.site.published)} />
+                        </span>
+                    </div>
+                </div>
+                
                 <span class="text-sm opacity-60">
                     {new URL(site.site.actor_id).hostname}
                 </span>
             </div>
+
+                
         </div>
 
         <div class="mt-2 p-3">
@@ -81,11 +97,6 @@
        
         <div class="p-3 ml-auto mr-auto">
             <div class="text-sm flex flex-row flex-wrap gap-3 justify-between">
-                <span class="flex flex-row items-center gap-2 text-sm">
-                    <Icon src={Calendar} width={16} height={16} mini />
-                    <RelativeDate date={new Date(site.site.published)} />
-                </span>
-                
                 <span class="flex flex-row items-center gap-2">
                     <Icon src={UserGroup} width={16} height={16} mini />
                     <FormattedNumber number={site.counts.users} />
@@ -114,6 +125,17 @@
     {#if taglines && taglines.length > 0}
         <Markdown source={taglines[Math.floor(Math.random() * taglines.length)].content} />
         <hr class="border-slate-300 dark:border-zinc-700" />
+    {/if}
+
+    {#if admins.length > 0}
+        <div class="flex flex-col gap-1 mt-2 mb-4">
+            <h1 class="font-bold text-xl">Admins</h1>
+            
+            {#each admins as admin}
+                <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
+            {/each}
+        </div>
+        <hr class="border-slate-300 dark:border-zinc-800 my-1" />
     {/if}
     
     <Markdown source={site.site.sidebar} />
