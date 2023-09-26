@@ -1,10 +1,13 @@
 <script lang="ts">
     import type { Community, CommunityModeratorView, Person, PostView } from 'lemmy-js-client'
     import type { PostDisplayType } from './helpers.js'
-
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    
+    import { getInstance } from '$lib/lemmy.js'
+    import { userSettings } from '$lib/settings.js'
+    
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     
@@ -17,8 +20,7 @@
         Trash,
     } from 'svelte-hero-icons'
     
-    import { getInstance } from '$lib/lemmy.js'
-    import { userSettings } from '$lib/settings.js'
+    
 
     export let post: PostView | undefined       = undefined
     export let displayType: PostDisplayType     = 'feed';
@@ -27,14 +29,13 @@
 
     
     // Extract data from post object for easier reference
-    
     // These values don't change, so assign them once
     let community: Community | undefined    = post.community ?? undefined
     let user: Person | undefined            = post.creator ?? undefined
     let id: number | undefined              = post.post.id ?? undefined
     let published: Date                     = new Date(post.post.published + 'Z')
 
-    // These values are mutable so define them and bind them dynamically
+    // These values are mutable so define them and bind them reactively
     let title: string | undefined
     let upvotes: number | undefined
     let downvotes: number | undefined

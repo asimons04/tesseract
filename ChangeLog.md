@@ -5,17 +5,18 @@ All major/minor changes between releases will be documented here.
 ## Roadmap: 1.2.64 - 1.2.69
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
-   
     
 
 ## 1.2.65
+This release focus mostly on refactoring, cleanup, and organizing the profile section.
+
 ### Bugfixes
 - Accidentally had duplicate `id` on both post card and video embed. Gave videos unique `id`.
 
 ### Enhancements
 - Vimeo embeds can now autoplay in posts if you have that option enabled (default is off)
-- "Saved" posts are now under your profile section
-- "Inbox" is now under the profile section.
+- "Saved" posts are now under your profile section. Removed old `/saved` route.
+- "Inbox" is now under the profile section. Removed old `/inbox` route.
 - All sub-pages in the profile section now have a common layout with your user info in the sidebar
 - Created new `UserCard` component to reduce redundant code.
 
