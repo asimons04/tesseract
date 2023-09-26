@@ -17,6 +17,7 @@ All major/minor changes between releases will be documented here.
 - "Saved" posts are now under your profile section
 - "Inbox" is now under the profile section.
 - All sub-pages in the profile section now have a common layout with your user info in the sidebar
+- Created new `UserCard` component to reduce redundant code.
 
 
 
