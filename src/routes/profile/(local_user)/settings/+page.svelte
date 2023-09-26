@@ -13,7 +13,6 @@
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
-    import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
 
     export let data
 
@@ -161,64 +160,54 @@
 {/if}
 
 
-<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
-    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        <form class="flex flex-col gap-4 h-full" on:submit|preventDefault={save}>
-        <h1 class="font-bold text-2xl">User settings</h1>
-        {#if data.local_user_view?.local_user && formData}
-            <TextInput
+<form class="flex flex-col gap-4 h-full" on:submit|preventDefault={save}>
+    <h1 class="font-bold text-2xl">User settings</h1>
+    {#if data.local_user_view?.local_user && formData}
+        <TextInput
             label="Display name"
             bind:value={formData.display_name}
             placeholder="Optional"
-            />
-            <MarkdownEditor
+        />
+        <MarkdownEditor
             images={false}
             bind:value={formData.bio}
             label="Bio"
             previewButton
-            />
-            <FileInput label="Profile image" image bind:files={profileImage} />
-            <TextInput label="Email" bind:value={formData.email} />
-            <TextInput
+        />
+        <FileInput label="Profile image" image bind:files={profileImage} />
+        <TextInput label="Email" bind:value={formData.email} />
+        <TextInput
             label="Matrix User"
             bind:value={formData.matrix_user_id}
             placeholder="@user:example.com"
-            />
-            <Checkbox bind:checked={formData.show_nsfw}>Show NSFW content</Checkbox>
-            <Checkbox bind:checked={formData.show_scores}>Show Scores</Checkbox>
-            <Checkbox bind:checked={formData.bot_account}>Bot Account</Checkbox>
-            <Checkbox bind:checked={formData.show_bot_accounts}>
-            Show Bot Accounts
-            </Checkbox>
-            <Checkbox bind:checked={formData.show_read_posts}>Show Read Posts</Checkbox>
+        />
+        <Checkbox bind:checked={formData.show_nsfw}>Show NSFW content</Checkbox>
+        <Checkbox bind:checked={formData.show_scores}>Show Scores</Checkbox>
+        <Checkbox bind:checked={formData.bot_account}>Bot Account</Checkbox>
+        <Checkbox bind:checked={formData.show_bot_accounts}>Show Bot Accounts</Checkbox>
+        <Checkbox bind:checked={formData.show_read_posts}>Show Read Posts</Checkbox>
 
-            <Button
+        <Button
             submit
             size="lg"
             color="primary"
             class="mt-auto"
             {loading}
             disabled={loading}
-            >
-            Save
-            </Button>
-        {:else}
-            <Card cardColor="warning" class="p-5">
-            The API didn't return your user settings.
-            </Card>
-        {/if}
-        <Button
-            on:click={() => deleteAccount(0)}
-            color="danger"
-            size="lg"
-            class="ml-auto"
         >
-            Delete account
+            Save
         </Button>
-        </form>
-    </div>
-
-    <div>
-        <UserCard person={data.local_user_view} />
-    </div>
-</div>
+    {:else}
+        <Card cardColor="warning" class="p-5">
+            The API didn't return your user settings.
+        </Card>
+    {/if}
+    <Button
+        on:click={() => deleteAccount(0)}
+        color="danger"
+        size="lg"
+        class="ml-auto"
+    >
+        Delete account
+    </Button>
+</form>

@@ -12,7 +12,6 @@
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
     
     import {
         ArchiveBox,
@@ -55,77 +54,68 @@
 <svelte:head>
     <title>Inbox</title>
 </svelte:head>
-<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
-    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        <div class="flex flex-row justify-between">
-            <h1 class="font-bold text-3xl">Inbox</h1>
-            <Button
-                on:click={markAllAsRead}
-                loading={markingAsRead}
-                disabled={markingAsRead}
-                size="md"
-            >
-                <Icon src={Check} width={16} mini slot="icon" />
-                    Mark all as read
-            </Button>
-        </div>
-    
-        <div class="mt-4" />
-    
-        <div class="flex flex-row gap-4 flex-wrap">
-            <MultiSelect
-                selected={data.unreadOnly}
-                options={[false, true]}
-                optionNames={['All', 'Unread']}
-                on:select={(e) => {
-                    $page.url.searchParams.delete('page')
-                    $page.url.searchParams.set('unreadOnly', (e.detail ?? false).toString())
-                    goto($page.url.toString(), {
-                        invalidateAll: true,
-                    })
-                }}
-            />
-    
-            <MultiSelect
-                selected={data.type}
-                options={['all', 'mentions', 'replies', 'messages']}
-                optionNames={['All', 'Mentions', 'Replies', 'Messages']}
-                on:select={(e) => {
-                    $page.url.searchParams.delete('page')
-                    $page.url.searchParams.set('type', e.detail ?? 'all')
-                    goto($page.url.toString(), {
-                        invalidateAll: true,
-                    })
-                }}
-            />
-        </div>
-    
-        <div class="flex flex-col gap-4 list-none my-4 flex-1">
-            {#if !data.data || (data.data?.length ?? 0) == 0}
-                <div class="mt-auto">
-                    <Placeholder
-                        icon={Inbox}
-                        title="No new notifications"
-                        description="Messages, replies, and mentions will appear here."
-                    />
-                </div>
-            {:else}
-                {#each data.data as item}
-                    <div in:fly={{ duration: 500, y: -6, opacity: 0 }}>
-                        <InboxItem {item} read={isRead(item)} />
-                    </div>
-                {/each}
-    
-                <Pageination
-                    page={data.page}
-                    on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-                />
-            {/if}
-        </div>
-    </div>
+<div class="flex flex-row justify-between">
+    <h1 class="font-bold text-3xl">Inbox</h1>
+    <Button
+        on:click={markAllAsRead}
+        loading={markingAsRead}
+        disabled={markingAsRead}
+        size="md"
+    >
+        <Icon src={Check} width={16} mini slot="icon" />
+            Mark all as read
+    </Button>
+</div>
 
+<div class="mt-4" />
 
-    <div>
-        <UserCard person={data.local_user_view} />
-    </div>
-</div>   
+<div class="flex flex-row gap-4 flex-wrap">
+    <MultiSelect
+        selected={data.unreadOnly}
+        options={[false, true]}
+        optionNames={['All', 'Unread']}
+        on:select={(e) => {
+            $page.url.searchParams.delete('page')
+            $page.url.searchParams.set('unreadOnly', (e.detail ?? false).toString())
+            goto($page.url.toString(), {
+                invalidateAll: true,
+            })
+        }}
+    />
+
+    <MultiSelect
+        selected={data.type}
+        options={['all', 'mentions', 'replies', 'messages']}
+        optionNames={['All', 'Mentions', 'Replies', 'Messages']}
+        on:select={(e) => {
+            $page.url.searchParams.delete('page')
+            $page.url.searchParams.set('type', e.detail ?? 'all')
+            goto($page.url.toString(), {
+                invalidateAll: true,
+            })
+        }}
+    />
+</div>
+
+<div class="flex flex-col gap-4 list-none my-4 flex-1">
+    {#if !data.data || (data.data?.length ?? 0) == 0}
+        <div class="mt-auto">
+            <Placeholder
+                icon={Inbox}
+                title="No new notifications"
+                description="Messages, replies, and mentions will appear here."
+            />
+        </div>
+    {:else}
+        {#each data.data as item}
+            <div in:fly={{ duration: 500, y: -6, opacity: 0 }}>
+                <InboxItem {item} read={isRead(item)} />
+            </div>
+        {/each}
+
+        <Pageination
+            page={data.page}
+            on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
+        />
+    {/if}
+</div>  
