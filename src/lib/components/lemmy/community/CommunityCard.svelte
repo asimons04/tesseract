@@ -27,6 +27,7 @@
         ChevronDoubleRight,
         Cog6Tooth,
         EllipsisHorizontal,
+        HandRaised,
         Icon,
         InformationCircle,
         Minus,
@@ -45,6 +46,8 @@
     
     
     let sidebar: boolean = false
+    let expandModerators:boolean = false
+
     let loading = {
         blocking: false,
         subscribing: false,
@@ -97,12 +100,29 @@
     <div class="mx-auto">
 
         {#if moderators.length > 0}
-            <div class="flex flex-col gap-1 mt-2 mb-4">
-                <h1 class="font-bold text-xl">Moderators</h1>
-                <hr class="border-slate-300 dark:border-zinc-800 my-1" />
-                {#each moderators as moderator}
-                    <UserLink user={moderator.moderator} avatar={true} />
-                {/each}
+            <div class="flex flex-col gap-2 mt-2 mb-4">
+                <Button
+                    color="tertiary"
+                    alignment="left"
+                    on:click={ ()=> { expandModerators = !expandModerators}}
+                 >
+                    
+                    <Icon src={HandRaised} mini size="18" />
+        
+                    <span class="w-full flex flex-row justify-between">
+                        Moderators
+                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
+                            {moderators.length}
+                        </span>
+                    </span>
+                </Button>
+                
+                <div class="flex flex-col gap-1 pl-4" class:hidden={!expandModerators}>
+                    <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+                    {#each moderators as moderator}
+                        <UserLink user={moderator.moderator} avatar={true} />
+                    {/each}
+                </div>
             </div>
         {/if}
         
@@ -150,7 +170,7 @@
 
 
 <!--- Hideable div to contain the main part of the community sidebar --->
-<StickyCard class="p-3 mb-3 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth < 640) ? 'hidden' : ''} " >
+<StickyCard class="p-3 mb-3 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
     <Card>
         <!--- Commuinity Avatar, display name, and federation name--->
         <div class="flex flex-row gap-3 items-center p-3">
@@ -400,18 +420,35 @@
     <div class="hidden  xl:block">
         {#if moderators.length > 0}
             <div class="flex flex-col gap-1 mt-2 mb-4">
-                <h1 class="font-bold text-xl">Moderators</h1>
-                <hr class="border-slate-300 dark:border-zinc-800 my-1" />
-                {#each moderators as moderator}
-                    <UserLink user={moderator.moderator} avatar={true} />
-                {/each}
+                <Button
+                    color="tertiary"
+                    alignment="left"
+                    on:click={ ()=> { expandModerators = !expandModerators}}
+                 >
+                    
+                    <Icon src={HandRaised} mini size="18" />
+        
+                    <span class="w-full flex flex-row justify-between">
+                        Moderators
+                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
+                            {moderators.length}
+                        </span>
+                    </span>
+                </Button>
+                
+                <div class="flex flex-col gap-2 pl-4" class:hidden={!expandModerators}>
+                    <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+                    {#each moderators as moderator}
+                        <UserLink user={moderator.moderator} avatar={true} />
+                    {/each}
+                </div>
             </div>
         {/if}
         
         {#if community_view.community.description}
-            <h1 class="font-bold text-xl">About Community</h1>
-            <hr class="border-slate-300 dark:border-zinc-800 my-1" />
-            <Markdown source={community_view.community.description} />
+            <div class="flex flex-col gap-1">
+                <Markdown source={community_view.community.description} />
+            </div>
         {/if}
     </div>
 

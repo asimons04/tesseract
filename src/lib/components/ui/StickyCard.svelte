@@ -1,5 +1,5 @@
 <aside
-    class="sticky top-[128px] break-words flex flex-col gap-4 
+    class="sticky top-[128px] break-words flex flex-col gap-1 
     w-full
     sm:w-full 
     md:w-[80%] md:mx-auto
