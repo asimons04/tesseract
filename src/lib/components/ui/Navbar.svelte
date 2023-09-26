@@ -214,7 +214,7 @@
         </li>
         
         {#if $profile?.user}
-            <MenuButton link href="/profile" >
+            <MenuButton link href="/profile/user" >
                     <Icon src={UserCircle} mini width={16} /> Profile
             </MenuButton>
         
