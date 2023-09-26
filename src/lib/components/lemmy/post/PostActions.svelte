@@ -173,7 +173,7 @@
                         theaterMode=false;
                     }
                     await delay(10);
-                    const element = document.getElementById(post.post.id);
+                    const element = document.getElementById("video-" + post.post.id);
                     if (element) {
                         element.scrollIntoView({
                             behavior: 'smooth',

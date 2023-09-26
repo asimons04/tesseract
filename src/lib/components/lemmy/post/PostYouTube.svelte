@@ -101,7 +101,7 @@
             <div class="ml-auto mr-auto max-w-[88vw] {size}">
                 <div class="flexiframe-container rounded-md max-w-screen mx-auto">
                     <iframe 
-                        id="{post.post.id}"
+                        id="video-{post.post.id}"
                         class="flexiframe"
                         src="{embedURL}?{extraParams}" 
                         allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 

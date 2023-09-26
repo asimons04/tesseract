@@ -15,17 +15,23 @@
     
     let videoID:    string | null | undefined
     let embedURL:   string = ""
-    let extraParams:string = ""
+    let extraParams:string = "autopause=0"
     let size: string = imageSize(displayType);
 
     
-    if (post.post && post.post.url) {
+    if (post.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
         videoID = new URL(post.post.url).pathname.replace('/','')
         embedURL = "https://player.vimeo.com/video";
         
         // Append the video ID to the embed URL
         embedURL += `/${videoID}`
+    }
+
+    if (embedURL) {
+        if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
+            extraParams += "&autoplay=1";
+        }
     }
 
     function showAsEmbed() {
@@ -65,7 +71,7 @@
             <div class="ml-auto mr-auto max-w-[88vw] {size}">
                 <div class="flexiframe-container rounded-md max-w-screen mx-auto">
                     <iframe 
-                        id="{post.post.id}"
+                        id="video-{post.post.id}"
                         class="flexiframe"
                         src="{embedURL}?{extraParams}" 
                         allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 

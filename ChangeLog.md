@@ -9,6 +9,15 @@ All major/minor changes between releases will be documented here.
     - Move `/saved` route from root to `/profile/saved`
     - Create layout to Keep user info sidebar on all `/profile` pages.
 
+## 1.2.65
+### Bugfixes
+- Accidentally had duplicate `id` on both post card and video embed. Gave videos unique `id`.
+
+### Enhancements
+- Vimeo embeds can now autoplay in posts if you have that option enabled (default is off)
+
+
+
 ## 1.2.64.1
 ### Bugfixes
 - Fixed bug where sometimes community sidebar is hidden on mobile and is unable to be restored
