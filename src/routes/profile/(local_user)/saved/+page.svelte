@@ -15,7 +15,6 @@
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
 
     export let data
-    console.log(data)
 
     const isComment = (item: CommentView | PostView): item is CommentView =>
         'comment' in item
