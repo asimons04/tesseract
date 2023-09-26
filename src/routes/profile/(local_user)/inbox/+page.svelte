@@ -25,7 +25,7 @@
     
 
     export let data
-    console.log(data)
+
     let markingAsRead = false
 
     async function markAllAsRead() {
