@@ -229,7 +229,7 @@
                 {/if}
             </MenuButton>
         
-            <MenuButton link href="/saved" >
+            <MenuButton link href="/profile/saved" >
                 <Icon src={Bookmark} mini width={16} /> Saved
             </MenuButton>
         {/if}
