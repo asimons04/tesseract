@@ -152,6 +152,7 @@
                 selected={data.sort}
                 on:select={(e) => searchParam($page.url, 'sort', e.detail, 'page')}
                 headless={true}
+                items={0}
             />
       
             <MultiSelect
@@ -160,6 +161,7 @@
                 selected={data.type}
                 on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
                 headless={true}
+                items={0}
             />
 
             <MultiSelect
@@ -172,6 +174,7 @@
                         $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                     }}
                     headless={true}
+                    items={0}
                 />
         </div>
 

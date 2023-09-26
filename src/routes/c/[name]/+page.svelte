@@ -93,6 +93,7 @@
                         $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                     }}
                     headless={true}
+                    items={0}
                 />
             </div>
         </div>
