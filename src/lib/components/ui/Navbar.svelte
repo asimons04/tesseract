@@ -218,7 +218,7 @@
                     <Icon src={UserCircle} mini width={16} /> Profile
             </MenuButton>
         
-            <MenuButton link href="/inbox" >
+            <MenuButton link href="/profile/inbox" >
                 <Icon src={Inbox} mini width={16} />
                 Inbox
 

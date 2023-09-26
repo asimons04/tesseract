@@ -12,12 +12,13 @@
 <div class="flex flex-col gap-4 h-full p-2">
     <MultiSelect
         headless
-        options={['/profile/user', '/profile/settings', '/profile/blocks', '/profile/saved']}
-        optionNames={['User', 'Settings', 'Blocks', 'Saved']}
+        options={['/profile/user', '/profile/inbox', '/profile/settings', '/profile/blocks', '/profile/saved']}
+        optionNames={['User', 'Inbox', 'Settings', 'Blocks', 'Saved']}
         selected={$page.url.pathname}
         on:select={(e) => {
             goto(e.detail)
         }}
+        items={5}
     />
     <slot />
 </div>
