@@ -13,7 +13,11 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Fixed bug where sometimes community sidebar is hidden on mobile and is unable to be restored
 - Changed all the multi-select buttons to dropdowns to save some space on mobile
-- 
+
+### Sidebar Refinements
+Still not sure this is how I want it, but it's a step in the right direction.
+- Made admin and moderator lists collapsible (collapsed by default).
+
 
 ## 1.2.64
 ### Bugfixes
