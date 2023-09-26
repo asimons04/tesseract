@@ -16,6 +16,7 @@
         Icon,
         Newspaper,
         PencilSquare,
+        ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
     import { userSettings } from '$lib/settings.js'
@@ -23,6 +24,8 @@
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
     export let admins: PersonView[] = []
+
+    let expandAdmins:boolean = false
 
 </script>
 
@@ -129,13 +132,28 @@
 
     {#if admins.length > 0}
         <div class="flex flex-col gap-1 mt-2 mb-4">
-            <h1 class="font-bold text-xl">Admins</h1>
+            <Button
+                color="tertiary"
+                alignment="left"
+                on:click={ ()=> { expandAdmins = !expandAdmins}}
+            >
+                
+                <Icon src={ShieldCheck} mini size="18" />
+
+                <span class="w-full flex flex-row justify-between">
+                    Admins
+                    <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
+                        {admins.length}
+                    </span>
+                </span>
+            </Button>
             
-            {#each admins as admin}
+            <div class="flex flex-col gap-2 pl-4" class:hidden={!expandAdmins}>
+                {#each admins as admin}
                 <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
             {/each}
+            </div>
         </div>
-        <hr class="border-slate-300 dark:border-zinc-800 my-1" />
     {/if}
     
     <Markdown source={site.site.sidebar} />

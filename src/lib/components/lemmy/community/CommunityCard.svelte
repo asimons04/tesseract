@@ -100,7 +100,7 @@
     <div class="mx-auto">
 
         {#if moderators.length > 0}
-            <div class="flex flex-col gap-2 mt-2 mb-4">
+            <div class="flex flex-col gap-1 mt-2 mb-4">
                 <Button
                     color="tertiary"
                     alignment="left"
@@ -117,8 +117,7 @@
                     </span>
                 </Button>
                 
-                <div class="flex flex-col gap-1 pl-4" class:hidden={!expandModerators}>
-                    <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+                <div class="flex flex-col gap-2 pl-4" class:hidden={!expandModerators}>
                     {#each moderators as moderator}
                         <UserLink user={moderator.moderator} avatar={true} />
                     {/each}
@@ -437,7 +436,6 @@
                 </Button>
                 
                 <div class="flex flex-col gap-2 pl-4" class:hidden={!expandModerators}>
-                    <hr class="border-slate-300 dark:border-zinc-800 my-1" />
                     {#each moderators as moderator}
                         <UserLink user={moderator.moderator} avatar={true} />
                     {/each}
