@@ -150,7 +150,7 @@
 
 
 <!--- Hideable div to contain the main part of the community sidebar --->
-<StickyCard class="p-3 mb-3 {!$userSettings.uiState.expandCommunitySidebar ? 'hidden' : ''}" >
+<StickyCard class="p-3 mb-3 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
     <Card>
         <!--- Commuinity Avatar, display name, and federation name--->
         <div class="flex flex-row gap-3 items-center p-3">
