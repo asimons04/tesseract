@@ -51,47 +51,7 @@
 
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        <div class="flex flex-row gap-4 justify-between flex-wrap">
-            <MultiSelect
-                options={['New', 'TopAll', 'Old']}
-                optionNames={['New', 'Top', 'Old']}
-                selected={data.sort}
-                on:select={(e) => searchParam($page.url, 'sort', e.detail, 'page')}
-                headless={true}
-                items={0}
-            >
-                <Icon src={ChartBar} mini width={16} slot="icon"/>
-                <span slot="label">Sort Direction</span>
-            </MultiSelect>
-      
-            <MultiSelect
-                options={['all', 'posts', 'comments']}
-                optionNames={['All', 'Posts', 'Comments']}
-                selected={data.type}
-                on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-                headless={true}
-                items={0}
-            >
-                <Icon src={Bars3} mini width={16} slot="icon"/>
-                <span slot="label">List Type</span>
-            </MultiSelect>
 
-            <MultiSelect
-                    options={['Cards', 'Compact']}
-                    selected={$userSettings.showCompactPosts
-                        ? 'Compact'
-                        : 'Cards'
-                    }
-                    on:select={(e) => {
-                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                    }}
-                    headless={true}
-                    items={0}
-                >
-                    <Icon src={QueueList} mini width={16} slot="icon"/>
-                    <span slot="label">Type</span>    
-            </MultiSelect>
-        </div>
 
 
         {#if data.items.length == 0}
@@ -101,6 +61,47 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
+            <div class="flex flex-row gap-4 justify-between flex-wrap">
+                <MultiSelect
+                    options={['New', 'TopAll', 'Old']}
+                    optionNames={['New', 'Top', 'Old']}
+                    selected={data.sort}
+                    on:select={(e) => searchParam($page.url, 'sort', e.detail, 'page')}
+                    headless={true}
+                    items={0}
+                >
+                    <Icon src={ChartBar} mini width={16} slot="icon"/>
+                    <span slot="label">Sort Direction</span>
+                </MultiSelect>
+        
+                <MultiSelect
+                    options={['all', 'posts', 'comments']}
+                    optionNames={['All', 'Posts', 'Comments']}
+                    selected={data.type}
+                    on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+                    headless={true}
+                    items={0}
+                >
+                    <Icon src={Bars3} mini width={16} slot="icon"/>
+                    <span slot="label">List Type</span>
+                </MultiSelect>
+
+                <MultiSelect
+                        options={['Cards', 'Compact']}
+                        selected={$userSettings.showCompactPosts
+                            ? 'Compact'
+                            : 'Cards'
+                        }
+                        on:select={(e) => {
+                            $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                        }}
+                        headless={true}
+                        items={0}
+                    >
+                        <Icon src={QueueList} mini width={16} slot="icon"/>
+                        <span slot="label">Display Type</span>    
+                </MultiSelect>
+            </div>
             <div class="w-full sm:w-full md:w-[80%] lg:w-[80%] xl:w-[80%] flex flex-col gap-5 ml-auto mr-auto">
                 {#each data.items as item (item.counts.id)}
                     {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}

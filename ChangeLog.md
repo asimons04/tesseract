@@ -13,6 +13,8 @@ This release would have been more significant, but I wasted like 3 hours fightin
 - Standardized headings in `/profile` section
 - Rearranged `/profile/settings` page to make better use of space
 - Made `select` menus properly light/dark mode, gave them icons and labels, and set them to full width of container.
+- Hid option dropdowns on user profile pages when there are no submissions
+
 
 ### Community Explorer
 - Added site sidebar to community page
