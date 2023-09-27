@@ -12,6 +12,11 @@ All major/minor changes between releases will be documented here.
 - Standardized headings in `/profile` section
 - Rearranged `/profile/settings` page to make better use of space
 
+### Community Explorer
+- Communities are now alphabetized
+- Added site sidebar
+
+
 
 ## 1.2.65
 This release focus mostly on refactoring, cleanup, and organizing the profile section.
