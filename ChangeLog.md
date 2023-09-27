@@ -6,6 +6,12 @@ All major/minor changes between releases will be documented here.
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
     
+## 1.2.66
+
+### Polish/Refinements
+- Standardized headings in `/profile` section
+- Rearranged `/profile/settings` page to make better use of space
+
 
 ## 1.2.65
 This release focus mostly on refactoring, cleanup, and organizing the profile section.

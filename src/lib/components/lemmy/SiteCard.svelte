@@ -150,8 +150,8 @@
             
             <div class="flex flex-col gap-2 pl-4" class:hidden={!expandAdmins}>
                 {#each admins as admin}
-                <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
-            {/each}
+                    <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
+                {/each}
             </div>
         </div>
     {/if}
