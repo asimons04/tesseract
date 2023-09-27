@@ -79,7 +79,7 @@
                 headless={true}
             >
                 <Icon src={QueueList} mini width={16} slot="icon"/>
-                <span slot="label">Post Type</span>
+                <span slot="label">Display Type</span>
             </MultiSelect>
 
 
