@@ -3,7 +3,9 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import { createEventDispatcher } from 'svelte'
+    
     type T = $$Generic
+    
     export let options: T[]
     export let disabled: boolean[] = []
     export let optionNames: string[] = []
@@ -15,8 +17,9 @@
 
   $: { dispatcher('select', selected)}
 
+  //flex flex-row items-center w-max max-w-full overflow-auto
   let containerClass = `
-    flex flex-row items-center w-max max-w-full overflow-auto
+    flex flex-row items-center w-full overflow-auto
     ${
       headless
         ? 'pb-1'
@@ -27,7 +30,7 @@
   `
 
   const buttonClass = (selected: boolean) => `
-    px-3 py-1.5 text-sm
+    px-1.5 py-1.5 text-sm
     ${!selected ? 'hover:bg-slate-100 hover:dark:bg-zinc-800' : ''}
      transition-colors rounded-md
     ${
@@ -41,41 +44,50 @@
     relative
   `
 </script>
+<div class="flex flex-col">
+    
+    <span class="flex flex-row gap-1">
+        <span><slot name="icon"/></span>
+        <span class="text-sm font-bold"><slot name="label"/></span>
+    </span>
 
-<div class={containerClass}>
-    {#each options.slice(0, items) as option, index}
-        <button
-            class={buttonClass(selected == option)}
-            on:click|preventDefault={() => (selected = option)}
-            disabled={disabled[index] ?? false}
-            type="button"
-        >
-            {optionNames[index] || option}
-            {#if headless && option == selected}
-                <div class="absolute -bottom-1 left-0 w-full border-b-2 rounded-t-sm border-black dark:border-white"/>
-            {/if}
-        </button>
-    {/each}
-
-    {#if options.length > items}
-    <select
-        bind:value={selected}
-        class="bg-inherit text-sm mr-2 p-1.5 rounded-md cursor-pointer 
-        {options
-            .slice(items)
-            .includes(selected)
-                ? 'bg-slate-900 text-slate-50 dark:bg-zinc-100 dark:text-black w-max'
-                : 'w-4'
-        }"
-    >
-        <Button color="tertiary">
-            <Icon src={ChevronDown} size="16" mini />
-        </Button>
-        {#each options.slice(items) as option, index}
-            <option class="dark:bg-zinc-900 dark:text-slate-100 bg-slate-100  text-zinc-900" value={option}>{optionNames[index + items] || option}</option>
+    <div class={containerClass}>
+        {#each options.slice(0, items) as option, index}
+            <button
+                class={buttonClass(selected == option)}
+                on:click|preventDefault={() => (selected = option)}
+                disabled={disabled[index] ?? false}
+                type="button"
+            >
+                {optionNames[index] || option}
+                
+                {#if headless && option == selected}
+                    <div class="absolute -bottom-1 left-0 w-full border-b-2 rounded-t-sm border-black dark:border-white"/>
+                {/if}
+            </button>
         {/each}
-    </select>
-    {/if}
+
+        {#if options.length > items}
+        <select
+            bind:value={selected}
+            class="dark:bg-zinc-900 dark:text-slate-100 bg-slate-100 text-zinc-900
+            text-sm mr-2 p-1 rounded-md cursor-pointer w-full
+            {options
+                .slice(items)
+                .includes(selected)
+                    ? ''
+                    : 'w-4'
+            }"
+        >
+            <Button color="tertiary">
+                <Icon src={ChevronDown} size="16" mini />
+            </Button>
+            {#each options.slice(items) as option, index}
+                <option class="dark:bg-zinc-900 dark:text-slate-100 bg-slate-100  text-zinc-900" value={option}>{optionNames[index + items] || option}</option>
+            {/each}
+        </select>
+        {/if}
+    </div>
 </div>
 
 <slot {selected} />

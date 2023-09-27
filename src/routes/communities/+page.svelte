@@ -6,26 +6,32 @@
     import { searchParam } from '$lib/util.js'
     import { LINKED_INSTANCE_URL } from '$lib/instance.js'
     
+    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Subscribe from './Subscribe.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     import {
+        Bars3,
+        CalendarDays,
+        ChartBar,
         ChatBubbleOvalLeftEllipsis,
         Icon,
+        LockClosed,
         PencilSquare,
         QuestionMarkCircle,
         UserGroup,
     } from 'svelte-hero-icons'
+    import { isCommunityView } from '../../lib/lemmy/item';
 
     export let data
-    console.log(data)
-
+    
     let search = ''
 </script>
 
@@ -49,35 +55,55 @@
             </p>
 
 
-            <div class="flex flex-col sm:flex-row gap-4 mt-4">
+            <div class="flex flex-row flex-wrap justify-between mt-4">
                 <MultiSelect
                     options={['Subscribed', 'Local', 'All']}
-                    selected={$page.url.searchParams.get('type') ??(LINKED_INSTANCE_URL ? 'Local' : 'All')}
+                    selected={$page.url.searchParams.get('type') ?? 'Local'}
                     on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+                    label="Type"
+                    items={0}
+                    headless={true}
+                >
+                    <Icon src={Bars3} mini width={16} slot="icon"/>
+                    <span slot="label">List Type</span>
+                </MultiSelect>
+                
+                <MultiSelect
+                    options={["asc", "desc", "posts_desc", "subscribers_desc"]}
+                    optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
+                    selected={$page.url.searchParams.get('sort') ?? 'asc'}
+                    on:select={(e) => { searchParam($page.url, 'sort', e.detail, 'page')} }
+                    items={0}
+                    headless={true}
+                >
+                    <Icon src={ChartBar} mini width={16} slot="icon"/>
+                    <span slot="label">Sort Direction</span>
+                </MultiSelect>
+            </div>
+
+            <div class="flex flex-row my-2 gap-2 w-full items-center">
+                <TextInput
+                    class="w-full"
+                    bind:value={search}
+                    on:change={() => {
+                        $page.url.searchParams.set('q', search)
+                        goto($page.url.toString(), {
+                            invalidateAll: true,
+                        })
+                    }}
                 />
-                <div class="flex flex-col sm:flex-row gap-2 sm:ml-auto items-center">
-                    <TextInput
-                        bind:value={search}
-                        on:change={() => {
-                            $page.url.searchParams.set('q', search)
-                            goto($page.url.toString(), {
-                                invalidateAll: true,
-                            })
-                        }}
-                    />
-                    <Button
-                        on:click={() => {
-                            $page.url.searchParams.set('q', search)
-                            goto($page.url.toString(), {
-                                invalidateAll: true,
-                            })
-                        }}
-                        color="ghost"
-                        class="h-max"
-                    >
-                        Search
-                    </Button>
-                </div>
+                <Button
+                    on:click={() => {
+                        $page.url.searchParams.set('q', search)
+                        goto($page.url.toString(), {
+                            invalidateAll: true,
+                        })
+                    }}
+                    color="ghost"
+                    class="h-max"
+                >
+                    Search
+                </Button>
             </div>
 
 
@@ -95,15 +121,22 @@
                 {#each data.communities as community}
                     <li class="py-3">
                         <div class="flex flex-col gap-1 text-sm max-w-full">
+                            
                             <div class="flex flex-row items-center">
-                                <span class="break-words max-w-full w-max text-base font-bold text-sky-400 hover:underline">
-                                    <CommunityLink
-                                        showInstance={false}
-                                        avatar
-                                        community={community.community}
-                                    />
-                                </span>
-
+                                <div class="flex flex-col">
+                                    <span class="break-words max-w-full w-max text-base font-bold text-sky-400 hover:underline">
+                                        <CommunityLink
+                                            showInstance={false}
+                                            avatar
+                                            community={community.community}
+                                        />
+                                    </span>
+                                    
+                                    <span class="opacity-80 text-xs ml-[2.1rem]">
+                                        !{community.community.name}@{new URL(community.community.actor_id).hostname}
+                                    </span>
+                                </div>
+                                
                                 <div class="ml-auto">
                                     <Subscribe {community} let:subscribe let:subscribing>
                                         <Button
@@ -138,11 +171,18 @@
                                 </div>
                             </div>
 
-                            <span class="opacity-80 mb-2">
-                                {new URL(community.community.actor_id).hostname}
-                            </span>
+                            <!--- Icons/Counts Row --->
+                            <div class="flex flex-row gap-3 mt-2 items-center ml-[2.1rem]">
+                                
+                                <!---Community Created Date (Relative) --->
+                                <div class="flex flex-row gap-1 items-center">
+                                    <Icon src={CalendarDays} width={16} mini/>
+                                    <span>
+                                        <RelativeDate date={new Date(community.community.published)} />
+                                    </span>
+                                </div>
 
-                            <div class="flex flex-row gap-3 items-center">
+                                <!--- Subscriber Count --->
                                 <div class="flex flex-row gap-1 items-center">
                                     <Icon src={UserGroup} width={16} mini />
                                     <span>
@@ -152,6 +192,7 @@
                                     </span>
                                 </div>
 
+                                <!---Post Count--->
                                 <div class="flex flex-row gap-1 items-center">
                                     <Icon src={PencilSquare} mini width={16} />
                                     <span>
@@ -161,6 +202,7 @@
                                     </span>
                                 </div>
 
+                                <!---Comment Count--->
                                 <div class="flex flex-row gap-1 items-center">
                                     <Icon src={ChatBubbleOvalLeftEllipsis} mini width={16} />
                                     <span>
@@ -169,12 +211,26 @@
                                         )}
                                     </span>
                                 </div>
+                                
+                                <!--- Posting Restricted to Mods Indicator--->
+                                {#if community.community.posting_restricted_to_mods}
+                                    <div class="flex flex-row gap-1 items-center" title="Posting is Restricted to Mods Only">
+                                        <Icon src={LockClosed} mini width={16} />
+                                    </div>
+                                {/if}
+
+                                <!--- NSFW Indicator Badge --->
+                                {#if community.community.nsfw}
+                                    <div class="flex flex-row gap-1 items-center">
+                                        <Badge color="red">NSFW</Badge>
+                                    </div>
+                                {/if}
+
                             </div>
                         </div>
                     </li>
                 {/each}
             </ul>
-
             {#if data.communities.length > 0}
                 <div class="mt-2 w-full">
                     <Pageination

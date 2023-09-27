@@ -10,38 +10,33 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
+    //import Avatar from '$lib/components/ui/Avatar.svelte'
+    //import Button from '$lib/components/input/Button.svelte'
+    //import Card from '$lib/components/ui/Card.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Menu from '$lib/components/ui/menu/Menu.svelte'
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
+    //import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    //import Markdown from '$lib/components/markdown/Markdown.svelte'
+    //import Menu from '$lib/components/ui/menu/Menu.svelte'
+    //import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    //import Modal from '$lib/components/ui/modal/Modal.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    import StickyCard from '$lib/components/ui/StickyCard.svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
+    //import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    //import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
+    //import StickyCard from '$lib/components/ui/StickyCard.svelte'
+    //import TextArea from '$lib/components/input/TextArea.svelte'
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    //import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
-        Cake,
-        Calendar,
-        ChatBubbleOvalLeftEllipsis,
-        Envelope,
+        Bars3,
+        ChartBar,
         Icon,
-        NoSymbol,
         PencilSquare,
         ShieldCheck,
-        ShieldExclamation,
-        Trophy,
-        UserPlus,
+        QueueList
     } from 'svelte-hero-icons'
     
 
@@ -64,7 +59,10 @@
                 on:select={(e) => searchParam($page.url, 'sort', e.detail, 'page')}
                 headless={true}
                 items={0}
-            />
+            >
+                <Icon src={ChartBar} mini width={16} slot="icon"/>
+                <span slot="label">Sort Direction</span>
+            </MultiSelect>
       
             <MultiSelect
                 options={['all', 'posts', 'comments']}
@@ -73,7 +71,10 @@
                 on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
                 headless={true}
                 items={0}
-            />
+            >
+                <Icon src={Bars3} mini width={16} slot="icon"/>
+                <span slot="label">List Type</span>
+            </MultiSelect>
 
             <MultiSelect
                     options={['Cards', 'Compact']}
@@ -86,7 +87,10 @@
                     }}
                     headless={true}
                     items={0}
-                />
+                >
+                    <Icon src={QueueList} mini width={16} slot="icon"/>
+                    <span slot="label">Type</span>    
+            </MultiSelect>
         </div>
 
 

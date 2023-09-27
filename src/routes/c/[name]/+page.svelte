@@ -1,28 +1,34 @@
 <script lang="ts">
-    import { page } from '$app/stores'
-    import { goto } from '$app/navigation'
-    import { userSettings } from '$lib/settings.js'
-    import Badge from '$lib/components/ui/Badge.svelte'
-    import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
-    import Post from '$lib/components/lemmy/post/Post.svelte'
-
-    import Link from '$lib/components/input/Link.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Card from '$lib/components/ui/StickyCard.svelte'
-    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-
-    import Button from '$lib/components/input/Button.svelte'
-    import { Color } from '$lib/ui/colors'
-    import { fly } from 'svelte/transition'
-
-    import Pageination from '$lib/components/ui/Pageination.svelte'
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Sort from '$lib/components/lemmy/Sort.svelte'
+    
     import { fullCommunityName, searchParam } from '$lib/util.js'
+    //import { goto } from '$app/navigation'
     import { onDestroy, onMount } from 'svelte'
+    import { page } from '$app/stores'
     import { setSessionStorage } from '$lib/session.js'
+    import { userSettings } from '$lib/settings.js'
+    
+    import Avatar from '$lib/components/ui/Avatar.svelte'
+    import Badge from '$lib/components/ui/Badge.svelte'
+    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import Pageination from '$lib/components/ui/Pageination.svelte'
+    import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+    import Sort from '$lib/components/lemmy/Sort.svelte'
+    
+    //import Post from '$lib/components/lemmy/post/Post.svelte'
+    //import Link from '$lib/components/input/Link.svelte'
+    //import Markdown from '$lib/components/markdown/Markdown.svelte'
+    //import Card from '$lib/components/ui/StickyCard.svelte'
+    //import Button from '$lib/components/input/Button.svelte'
+    //import { Color } from '$lib/ui/colors'
+    //import { fly } from 'svelte/transition'
 
+    import {
+        Bars3,
+        ChartBar,
+        Icon,
+        QueueList
+    } from 'svelte-hero-icons'
 
     export let data
     
@@ -81,8 +87,14 @@
     
         <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
             <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
-                <Sort selected={data.sort} headless={true} items={0}/>
 
+                <!--Sort Direction-->
+                <Sort selected={data.sort} headless={true} items={0}>
+                    <Icon src={ChartBar} mini width={16} slot="icon"/>
+                    <span slot="label">Sort Direction</span>
+                </Sort>
+                
+                <!--Card/Compact View-->
                 <MultiSelect
                     options={['Cards', 'Compact']}
                     selected={$userSettings.showCompactPosts
@@ -94,7 +106,10 @@
                     }}
                     headless={true}
                     items={0}
-                />
+                >
+                    <Icon src={QueueList} mini width={16} slot="icon"/>
+                    <span slot="label">Post Type</span>
+                </MultiSelect>
             </div>
         </div>
 

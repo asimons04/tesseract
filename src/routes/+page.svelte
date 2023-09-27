@@ -23,6 +23,12 @@
     //import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     //import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
     
+    import {
+        Bars3,
+        ChartBar,
+        Icon,
+        QueueList
+    } from 'svelte-hero-icons'
     export let data
     let sidebar = false
 
@@ -55,7 +61,10 @@
                 on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
                 headless={true}
                 items={0}
-            />
+            >
+                <Icon src={Bars3} mini width={16} slot="icon"/>
+                <span slot="label">List Type</span>
+            </MultiSelect>
       
             <MultiSelect
                 options={['Cards', 'Compact']}
@@ -68,10 +77,16 @@
                 }}
                 items={0}
                 headless={true}
-            />
+            >
+                <Icon src={QueueList} mini width={16} slot="icon"/>
+                <span slot="label">Post Type</span>
+            </MultiSelect>
 
 
-            <Sort selected={data.sort} headless={true}  items={0}/>
+            <Sort selected={data.sort} headless={true}  items={0}>
+                <Icon src={ChartBar} mini width={16} slot="icon"/>
+                <span slot="label">Sort Direction</span>
+            </Sort>
         </div>
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">

@@ -53,4 +53,7 @@
   }}
   class="w-full"
   headless={headless}
-/>
+>
+  <slot name="icon" slot="icon"/>
+  <slot name="label" slot="label"/>
+</MultiSelect>

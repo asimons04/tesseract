@@ -7,14 +7,30 @@ All major/minor changes between releases will be documented here.
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
     
 ## 1.2.66
+This release would have been more significant, but I wasted like 3 hours fighting Lemmy's stupid API.
 
 ### Polish/Refinements
 - Standardized headings in `/profile` section
 - Rearranged `/profile/settings` page to make better use of space
+- Made `select` menus properly light/dark mode, gave them icons and labels, and set them to full width of container.
 
 ### Community Explorer
-- Communities are now alphabetized
-- Added site sidebar
+- Added site sidebar to community page
+- Added additional community info to list items (creation date, NSFW tag, indicator if community is mod-post only).
+- Re-aligned selectors and search bar
+- Communities are now sortable*
+- Default view is now "local"
+
+\* _Sort of_.  Lemmy's API is fucking stupid in so many ways.  One such way is when listing communities, the sort types are the same as for Posts (new, old, hot, active, etc) instead of _contextually useful_ sort types like alphabetically  ascending/descending, number of posts/comments/subscribers, etc. 
+
+I tried to work around that and just pull a full list and sort/cache it client-side.  Well, their dumbass API says "nope, fuck you".  Listing communities has a hard limit of 50, so you have to pull them in batches and paginate.  The end result is that each _page_ of 50 results is alphabetized or sorted as selected.
+
+ I also _tried_ to hack around that by calling the community list endpoint recursively, and it worked until scaled to Lemmy World size.  It's not feasible to recursively pull 560-some pages of 50 communities each, sort them, and then render.  Half of those are just communities people have created to squat on and have no content, but I digress.
+ 
+ Any further enhancements will have to wait until Lemmy's community list API is less fucking stupid and when I'm less grouchy.
+
+
+
 
 
 
