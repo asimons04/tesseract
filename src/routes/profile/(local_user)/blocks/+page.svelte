@@ -55,68 +55,71 @@
         })
     }
 </script>
+<h1 class="flex flex-row justify-between">
+    <span class="font-bold text-2xl">Blocks</span>
+</h1>
 
 {#if data.community_blocks.length > 0 || data.person_blocks.length > 0}
-{#if data.person_blocks.length > 0}
-    <div>
-        <SectionTitle>Users</SectionTitle>
-        <EditableList let:action on:action={(i) => unblockUser(i.detail)}>
-            {#each data.person_blocks as block (block.target.id)}
-                <div
-                    class="flex flex-row gap-4 items-center py-4 justify-between"
-                    animate:flip={{ duration: 250 }}
-                    out:slide|local={{ axis: 'y' }}
-                >
-                    <UserLink user={block.target} avatar badges />
-                    <Button size="square-md" on:click={() => action(block)}>
-                        <Icon src={Trash} mini size="16" slot="icon" />
-                    </Button>
-                </div>
-            {/each}
-        </EditableList>
-    </div>
-{:else}
-    <Placeholder
-        description="Go to a user's profile and click 'block' to stop seeing posts and comments from them."
-        title="No user blocks"
-        icon={Check}
-    />
-{/if}
+    {#if data.person_blocks.length > 0}
+        <div>
+            <SectionTitle>Users</SectionTitle>
+            <EditableList let:action on:action={(i) => unblockUser(i.detail)}>
+                {#each data.person_blocks as block (block.target.id)}
+                    <div
+                        class="flex flex-row gap-4 items-center py-4 justify-between"
+                        animate:flip={{ duration: 250 }}
+                        out:slide|local={{ axis: 'y' }}
+                    >
+                        <UserLink user={block.target} avatar badges />
+                        <Button size="square-md" on:click={() => action(block)}>
+                            <Icon src={Trash} mini size="16" slot="icon" />
+                        </Button>
+                    </div>
+                {/each}
+            </EditableList>
+        </div>
+    {:else}
+        <Placeholder
+            description="Go to a user's profile and click 'block' to stop seeing posts and comments from them."
+            title="No user blocks"
+            icon={Check}
+        />
+    {/if}
 
-{#if data.community_blocks.length > 0}
-    <div>
-        <SectionTitle>Communities</SectionTitle>
-        <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
-            {#each data.community_blocks as block (block.community.id)}
-                <div
-                    class="flex flex-row gap-4 items-center py-4 justify-between"
-                    animate:flip={{ duration: 250 }}
-                    out:slide|local={{ axis: 'y' }}
-                >
-                    <CommunityLink community={block.community} avatar />
-                    <Button size="square-md" on:click={() => action(block)}>
-                        <Icon src={Trash} mini size="16" slot="icon" />
-                    </Button>
-                </div>
-            {/each}
-        </EditableList>
-    </div>
-{:else}
-    <Placeholder
-        description="Go to a community's page and click 'block' to stop seeing posts and comments from it."
-        title="No community blocks"
-        icon={Check}
-    />
-{/if}
+    {#if data.community_blocks.length > 0}
+        <div>
+            <SectionTitle>Communities</SectionTitle>
+            <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
+                {#each data.community_blocks as block (block.community.id)}
+                    <div
+                        class="flex flex-row gap-4 items-center py-4 justify-between"
+                        animate:flip={{ duration: 250 }}
+                        out:slide|local={{ axis: 'y' }}
+                    >
+                        <CommunityLink community={block.community} avatar />
+                        <Button size="square-md" on:click={() => action(block)}>
+                            <Icon src={Trash} mini size="16" slot="icon" />
+                        </Button>
+                    </div>
+                {/each}
+            </EditableList>
+        </div>
+    {:else}
+        <Placeholder
+            description="Go to a community's page and click 'block' to stop seeing posts and comments from it."
+            title="No community blocks"
+            icon={Check}
+        />
+    {/if}
 
 {:else}
-<div class="my-auto">
-    <Placeholder
-        description="Go to a community or user's page to stop seeing submissions from it."
-        title="No blocks"
-        icon={Check}
-    />
-</div>
+    <div class="my-auto">
+        <Placeholder
+            description="Go to a community or user's page to stop seeing submissions from it."
+            title="No blocks"
+            icon={Check}
+        />
+    </div>
 {/if}
 
 

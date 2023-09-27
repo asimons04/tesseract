@@ -24,8 +24,7 @@
 </svelte:head>
 
 <h1 class="flex flex-row justify-between">
-    <span class="p-2 text-2xl font-bold ">Saved</span>
-
+    <span class="font-bold text-2xl">Saved</span>
     <div>
         <MultiSelect
             options={['Cards', 'Compact']}

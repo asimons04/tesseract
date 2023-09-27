@@ -161,32 +161,8 @@
 
 
 <form class="flex flex-col gap-4 h-full" on:submit|preventDefault={save}>
-    <h1 class="font-bold text-2xl">User settings</h1>
-    {#if data.local_user_view?.local_user && formData}
-        <TextInput
-            label="Display name"
-            bind:value={formData.display_name}
-            placeholder="Optional"
-        />
-        <MarkdownEditor
-            images={false}
-            bind:value={formData.bio}
-            label="Bio"
-            previewButton
-        />
-        <FileInput label="Profile image" image bind:files={profileImage} />
-        <TextInput label="Email" bind:value={formData.email} />
-        <TextInput
-            label="Matrix User"
-            bind:value={formData.matrix_user_id}
-            placeholder="@user:example.com"
-        />
-        <Checkbox bind:checked={formData.show_nsfw}>Show NSFW content</Checkbox>
-        <Checkbox bind:checked={formData.show_scores}>Show Scores</Checkbox>
-        <Checkbox bind:checked={formData.bot_account}>Bot Account</Checkbox>
-        <Checkbox bind:checked={formData.show_bot_accounts}>Show Bot Accounts</Checkbox>
-        <Checkbox bind:checked={formData.show_read_posts}>Show Read Posts</Checkbox>
-
+    <h1 class="flex flex-row justify-between">
+        <span class="font-bold text-2xl">User settings</span>
         <Button
             submit
             size="lg"
@@ -197,6 +173,54 @@
         >
             Save
         </Button>
+    </h1>
+    {#if data.local_user_view?.local_user && formData}
+        <div class="flexrow">
+            <div class="flexcol flexcol-66">
+                <TextInput
+                    label="Display name"
+                    bind:value={formData.display_name}
+                    placeholder="Optional"
+                />
+                <TextInput label="Email" bind:value={formData.email} />
+                
+                <TextInput
+                    label="Matrix User"
+                    bind:value={formData.matrix_user_id}
+                    placeholder="@user:example.com"
+                />
+            </div>
+
+            <div class="flexcol flexcol-33">
+                <FileInput class="h-full" label="Profile image" image bind:files={profileImage} />
+            </div>
+        </div>
+        
+        <div class="flexrow">
+            <div class="flexcol flexcol-66">
+                <MarkdownEditor
+                    images={false}
+                    bind:value={formData.bio}
+                    label="Bio"
+                    rows={10}
+                    previewButton
+                />
+            </div>
+            <div class="flexcol flexcol-33">
+                <div class="mt-2">
+                    <Checkbox bind:checked={formData.show_nsfw}>Show NSFW content</Checkbox>
+                    <Checkbox bind:checked={formData.show_scores}>Show Scores</Checkbox>
+                    <Checkbox bind:checked={formData.bot_account}>Bot Account</Checkbox>
+                    <Checkbox bind:checked={formData.show_bot_accounts}>Show Bot Accounts</Checkbox>
+                    <Checkbox bind:checked={formData.show_read_posts}>Show Read Posts</Checkbox>
+                </div>
+
+            </div>
+        </div>
+        
+        
+
+        
     {:else}
         <Card cardColor="warning" class="p-5">
             The API didn't return your user settings.

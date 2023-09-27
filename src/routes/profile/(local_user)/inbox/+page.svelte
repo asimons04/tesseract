@@ -54,8 +54,9 @@
 <svelte:head>
     <title>Inbox</title>
 </svelte:head>
-<div class="flex flex-row justify-between">
-    <h1 class="font-bold text-3xl">Inbox</h1>
+<h1 class="flex flex-row justify-between">
+    <span class="font-bold text-2xl">Inbox</span>
+    
     <Button
         on:click={markAllAsRead}
         loading={markingAsRead}
@@ -65,9 +66,7 @@
         <Icon src={Check} width={16} mini slot="icon" />
             Mark all as read
     </Button>
-</div>
-
-<div class="mt-4" />
+</h1>
 
 <div class="flex flex-row gap-4 flex-wrap">
     <MultiSelect
