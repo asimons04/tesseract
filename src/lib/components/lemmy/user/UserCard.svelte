@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { LocalUserView } from 'lemmy-js-client'
+    import type { LocalUserView, PersonView } from 'lemmy-js-client'
 
     import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { isBlocked } from '$lib/lemmy/user.js'
@@ -38,7 +38,7 @@
     
     
 
-    export let person:LocalUserView
+    export let person:LocalUserView | PersonView
 
     let blocking = false
     let loadingMessage = false
