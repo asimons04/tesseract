@@ -18,7 +18,7 @@
 <a class="items-center flex flex-row gap-2 hover:underline" href={linkFromCommunity(community)}>
     {#if avatar}
         <Avatar
-            url={community.icon ?? '/img/lemmy.svg'}
+            url={community.icon}
             alt={community.name}
             width={avatarSize}
         />
