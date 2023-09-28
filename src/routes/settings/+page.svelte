@@ -10,10 +10,15 @@
     import Sort from '$lib/components/lemmy/Sort.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
-    import { ArrowPath, Icon } from 'svelte-hero-icons'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
     
+    import {
+        ArrowPath,
+        Icon,
+        Bars3,
+        ChartBar
+    } from 'svelte-hero-icons'
 
     let data = {
         loading: false,
@@ -55,24 +60,30 @@
 
         <div class="flexrow">
             <div class="flexcol flexcol-33 mt-2">
-                <span class="block my-1 font-bold">Default Feed</span>
                 <MultiSelect
                     options={['Subscribed', 'Local', 'All']}
                     bind:selected={$userSettings.defaultSort.feed}
-                />
+                >
+                    <Icon src={Bars3} mini width={16} slot="icon"/>
+                    <span slot="label">Default Feed</span>
+                </MultiSelect>
             </div>
 
             <div class="flexcol flexcol-33 mt-2">
-                <span class="block my-1 font-bold">Feed Sort</span>
-                <Sort bind:selected={$userSettings.defaultSort.sort} navigate={false} />
+                <Sort bind:selected={$userSettings.defaultSort.sort} navigate={false}>
+                    <Icon src={ChartBar} mini width={16} slot="icon"/>
+                    <span slot="label">Feed Sort Direction</span>
+                </Sort>
             </div>
 
             <div class="flexcol flexcol-33 mt-2">
-                <span class="block my-1 font-bold">Comment Sort</span>
                 <MultiSelect
                     options={['Hot', 'Top', 'New']}
                     bind:selected={$userSettings.defaultSort.comments}
-                />
+                >
+                    <Icon src={ChartBar} mini width={16} slot="icon"/>
+                    <span slot="label">Comment Sort Direction</span>
+                </MultiSelect>
             </div>
         </div>
     </Setting>

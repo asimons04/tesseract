@@ -12,6 +12,7 @@
     export let selected: T
     export let headless: boolean = false
     export let items: number = 4
+    export let fullWidth: boolean = false 
 
   const dispatcher = createEventDispatcher<{ select: T }>()
 
@@ -19,7 +20,7 @@
 
   //flex flex-row items-center w-max max-w-full overflow-auto
   let containerClass = `
-    flex flex-row items-center w-full overflow-auto
+    flex flex-row items-center ${fullWidth ? '' : 'w-max'} max-w-full overflow-auto
     ${
       headless
         ? 'pb-1'
@@ -46,7 +47,7 @@
 </script>
 <div class="flex flex-col">
     
-    <span class="flex flex-row gap-1">
+    <span class="flex flex-row gap-1 my-1">
         <span><slot name="icon"/></span>
         <span class="text-sm font-bold"><slot name="label"/></span>
     </span>
@@ -70,8 +71,8 @@
         {#if options.length > items}
         <select
             bind:value={selected}
-            class="dark:bg-zinc-900 dark:text-slate-100 bg-slate-100 text-zinc-900
-            text-sm mr-2 p-1 rounded-md cursor-pointer w-full
+            class="bg-slate-200 text-zinc-900 dark:bg-zinc-800 dark:text-slate-200
+            text-sm mr-2 p-1 rounded-md cursor-pointer w-full form-select
             {options
                 .slice(items)
                 .includes(selected)

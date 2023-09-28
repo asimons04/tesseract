@@ -127,9 +127,12 @@
 
         {:else}
             <!--Toolbar-->
-            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-auto p-1.5 gap-1.5 {$$props.disabled
-                ? 'opacity-60 pointer-events-none'
-                : ''}"
+            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 
+                {$$props.disabled
+                    ? 'opacity-60 pointer-events-none'
+                    : ''
+                }
+            "
             >
                 <Button
                     on:click={() => wrapSelection('**', '**')}
@@ -237,7 +240,7 @@
 
             <!--Actual text area-->
             <TextArea
-                class="bg-inherit border-0 rounded-none h-full"
+                class="border-0 rounded-none h-full focus-within:border-none"
                 bind:value
                 bind:item={textArea}
                 on:keydown={(e) => {

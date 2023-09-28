@@ -6,11 +6,22 @@ All major/minor changes between releases will be documented here.
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 - Implement a "scrollToComments" feature when clicking comment button in feed. Title/thumbnail will take you to post, comment button scrolls to comments and suppresses autoplay on videos if enabled.
-- Now proper MultiSelects are ugly (1.2.66). Fix/redesign those.
+
 
 
 ## 1.2.67
+
+### Bugfixes
 - Rolled back default communities list from Local to All
+- Removed 3rd party API call to Dicebear for initials avatars on communities and using internal JS library
+    - Not really a bug, but I _hate_ relying on 3rd party APIs for things that should be handled internally.
+- Fixed full-width multiselect widget that got borked in 1.2.65
+    - Added `fullWidth` parameter to make them full-width where desired.
+- Fixed bug where searching for a community would not take you back to page 1 and left you stranded until clearing the `page=` URL parameter.
+
+### Polish/Refinements
+- Added `tailwindcss/forms` to the project and removed some explicit form element classes in favor of using Tailwind native
+- 
 
 
 ## 1.2.66

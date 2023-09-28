@@ -68,6 +68,7 @@
                     selected={data.sort}
                     on:select={(e) => searchParam($page.url, 'sort', e.detail, 'page')}
                     headless={true}
+                    fullWidth={true}
                     items={0}
                 >
                     <Icon src={ChartBar} mini width={16} slot="icon"/>
@@ -80,6 +81,7 @@
                     selected={data.type}
                     on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
                     headless={true}
+                    fullWidth={true}
                     items={0}
                 >
                     <Icon src={Bars3} mini width={16} slot="icon"/>
@@ -96,6 +98,7 @@
                             $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                         }}
                         headless={true}
+                        fullWidth={true}
                         items={0}
                     >
                         <Icon src={QueueList} mini width={16} slot="icon"/>

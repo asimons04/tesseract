@@ -338,12 +338,12 @@
                 mini
                 size="16"
             />
-            <div class="flex flex-row flex-wrap justify-between w-full">
+            <div class="flex flex-row gap-2 justify-between w-full">
                 <span>Theme</span>
                 <select
                     bind:value={$theme}
                     on:click|stopPropagation
-                    class="ml-auto w-max px-1 rounded-sm cursor-pointer bg-slate-200 dark:bg-zinc-900 border dark:border-zinc-700"
+                    class="ml-auto w-full text-sm py-0 px-1 rounded-sm cursor-pointer bg-slate-200 dark:bg-zinc-900 border dark:border-zinc-700"
                 >
                     <option value="system">System</option>
                     <option value="light">Light</option>

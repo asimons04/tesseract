@@ -63,6 +63,7 @@
                     label="Type"
                     items={0}
                     headless={true}
+                    fullWidth={true}
                 >
                     <Icon src={Bars3} mini width={16} slot="icon"/>
                     <span slot="label">List Type</span>
@@ -75,6 +76,7 @@
                     on:select={(e) => { searchParam($page.url, 'sort', e.detail, 'page')} }
                     items={0}
                     headless={true}
+                    fullWidth={true}
                 >
                     <Icon src={ChartBar} mini width={16} slot="icon"/>
                     <span slot="label">Sort Direction</span>
@@ -87,6 +89,7 @@
                     bind:value={search}
                     on:change={() => {
                         $page.url.searchParams.set('q', search)
+                        $page.url.searchParams.set('page', '1')
                         goto($page.url.toString(), {
                             invalidateAll: true,
                         })
@@ -95,6 +98,7 @@
                 <Button
                     on:click={() => {
                         $page.url.searchParams.set('q', search)
+                        $page.url.searchParams.set('page', '1')
                         goto($page.url.toString(), {
                             invalidateAll: true,
                         })

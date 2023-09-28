@@ -7,10 +7,12 @@
     export let navigate: boolean = true
     export let headless:boolean = false
     export let items:number = 3
+    export let fullWidth: boolean = false
 </script>
 
 <MultiSelect
   items={items}
+  fullWidth={fullWidth}
   options={[
     'Active',
     'Hot',

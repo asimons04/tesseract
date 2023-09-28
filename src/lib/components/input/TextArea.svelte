@@ -45,9 +45,17 @@
     {maxlength}
     {rows}
     spellcheck="{spellcheck}"
-    class="w-full px-3 text-sm py-2.5 bg-white dark:bg-black
-        border border-slate-300 dark:border-zinc-700 dark:focus:border-white
-        focus:outline-none focus:border-black transition-colors rounded-md {clazz}"
+    class="form-textarea text-sm w-full px-3 py-2.5 rounded-md shadow-sm 
+        bg-slate-200 text-zinc-900
+        dark:bg-zinc-800 dark:text-slate-200
+        {clazz}
+    "
     {...$$restProps}
   />
 </label>
+
+<!--
+    "w-full px-3 text-sm py-2.5 bg-white dark:bg-black
+    border border-slate-300 dark:border-zinc-700 dark:focus:border-white
+    focus:outline-none focus:border-black transition-colors rounded-md
+-->

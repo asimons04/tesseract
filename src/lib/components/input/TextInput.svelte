@@ -13,13 +13,22 @@
     }
 
     const dispatcher = createEventDispatcher()
-
+    
+    /*
     let className = `
         ${value.length != 0 ? 'invalid:border-red-400' : ''}
-        w-full px-3 text-sm py-2.5 bg-white dark:bg-zinc-950
+        input-text w-full px-3 text-sm py-2.5 bg-white dark:bg-zinc-950
         border border-slate-300 dark:border-zinc-700 dark:focus:border-white
         focus:outline-none focus:border-black transition-colors rounded-md disabled:bg-slate-200 disabled:border-slate-300 dark:disabled:border-zinc-600 
         dark:disabled:bg-zinc-700 disabled:opacity-70
+        ${$$props.class}
+    `
+    */
+    let className =`
+        ${value.length != 0 ? 'invalid:border-red-400' : ''}
+        form-text text-sm rounded-md shadow-sm px-3 h-8 w-full
+        bg-slate-200 text-zinc-900
+        dark:bg-zinc-800 dark:text-slate-200
         ${$$props.class}
     `
 </script>

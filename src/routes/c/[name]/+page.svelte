@@ -89,7 +89,7 @@
             <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
 
                 <!--Sort Direction-->
-                <Sort selected={data.sort} headless={true} items={0}>
+                <Sort selected={data.sort} headless={true} fullWidth={true} items={0}>
                     <Icon src={ChartBar} mini width={16} slot="icon"/>
                     <span slot="label">Sort Direction</span>
                 </Sort>
@@ -105,6 +105,7 @@
                         $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                     }}
                     headless={true}
+                    fullWidth={true}
                     items={0}
                 >
                     <Icon src={QueueList} mini width={16} slot="icon"/>

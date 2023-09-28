@@ -60,6 +60,7 @@
                 selected={data.listingType}
                 on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
                 headless={true}
+                fullWidth={true}
                 items={0}
             >
                 <Icon src={Bars3} mini width={16} slot="icon"/>
@@ -77,13 +78,14 @@
                 }}
                 items={0}
                 headless={true}
+                fullWidth={true}
             >
                 <Icon src={QueueList} mini width={16} slot="icon"/>
                 <span slot="label">Display Type</span>
             </MultiSelect>
 
 
-            <Sort selected={data.sort} headless={true}  items={0}>
+            <Sort selected={data.sort} headless={true}  fullWidth={true} items={0}>
                 <Icon src={ChartBar} mini width={16} slot="icon"/>
                 <span slot="label">Sort Direction</span>
             </Sort>
