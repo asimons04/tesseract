@@ -134,10 +134,7 @@ export async function setUser(jwt: string, inst: string, username: string) {
     return user
 }
 
-async function userFromJwt(
-  jwt: string,
-  instance: string
-): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
+async function userFromJwt(jwt: string, instance: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
   const site = await getClient(instance).getSite({ auth: jwt })
   const myUser = site.my_user
   if (!myUser) return undefined
