@@ -5,7 +5,12 @@ All major/minor changes between releases will be documented here.
 ## Roadmap: 1.2.64 - 1.2.69
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
-    
+- Implement a "scrollToComments" feature when clicking comment button in feed. Title/thumbnail will take you to post, comment button scrolls to comments and suppresses autoplay on videos if enabled.
+
+## 1.2.67
+- Rolled back default communities list from Local to All
+
+
 ## 1.2.66
 This release would have been more significant, but I wasted like 3 hours fighting Lemmy's stupid API.
 

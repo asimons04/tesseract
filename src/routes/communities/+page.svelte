@@ -58,7 +58,7 @@
             <div class="flex flex-row flex-wrap justify-between mt-4">
                 <MultiSelect
                     options={['Subscribed', 'Local', 'All']}
-                    selected={$page.url.searchParams.get('type') ?? 'Local'}
+                    selected={$page.url.searchParams.get('type') ?? 'All'}
                     on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
                     label="Type"
                     items={0}

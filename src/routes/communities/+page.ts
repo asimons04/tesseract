@@ -55,7 +55,7 @@ function dedupe(arr:Array<CommunityView>) {
 
 
 export async function load({ url, fetch }) {
-    const type = url.searchParams.get('type') as ListingType  || 'Local'
+    const type = url.searchParams.get('type') as ListingType  || 'All'
     const page = Number(url.searchParams.get('page')) || 1
     const query = url.searchParams.get('q')
     const sort = url.searchParams.get('sort') || 'asc'
