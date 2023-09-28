@@ -6,6 +6,8 @@ All major/minor changes between releases will be documented here.
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 - Implement a "scrollToComments" feature when clicking comment button in feed. Title/thumbnail will take you to post, comment button scrolls to comments and suppresses autoplay on videos if enabled.
+- Now proper MultiSelects are ugly (1.2.66). Fix/redesign those.
+
 
 ## 1.2.67
 - Rolled back default communities list from Local to All
