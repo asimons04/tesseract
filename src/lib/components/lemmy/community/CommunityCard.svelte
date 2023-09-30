@@ -309,7 +309,7 @@
             <div class="text-sm flex flex-row flex-wrap gap-3">
                 <span class="flex flex-row items-center gap-2 mx-auto">
                     <Icon src={Calendar} width={16} height={16} mini />
-                    <RelativeDate date={new Date(community_view.community.published + 'Z')} />
+                    <RelativeDate date={community_view.community.published} />
                 </span>
 
                 <span class="flex flex-row items-center gap-2 mx-auto">

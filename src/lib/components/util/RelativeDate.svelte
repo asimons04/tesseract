@@ -1,11 +1,18 @@
 <script lang="ts">
-    export let date: Date
+    export let date:  string
     export let relativeTo: Date | undefined = undefined
     export let options: Intl.RelativeTimeFormatOptions = {
         numeric: 'always',
         style: 'narrow',
     }
-  
+
+    const stringToDate = (date: string): Date => {
+        if (!date.endsWith('Z')) {
+            date += 'Z';
+        }
+        return (new Date(date))
+    }
+
     const toLocaleDateString = (date: Date): string => {
         try {
             return date.toLocaleString()
@@ -14,7 +21,7 @@
         }
     }
   
-    $: dateTime = toLocaleDateString(date)
+    $: dateTime = toLocaleDateString(stringToDate(date))
   
     function formatRelativeDate(date: Date) {
         try {
@@ -54,5 +61,5 @@
 </script>
   
 <time datetime={dateTime} title={dateTime}>
-    {formatRelativeDate(date)}
+    {formatRelativeDate(stringToDate(date))}
 </time>

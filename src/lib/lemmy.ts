@@ -17,21 +17,27 @@ async function customFetch(
     return res
 }
 
-export function getClient(
-    instanceURL?: string,
+export function getClient(instanceURL?: string,
     func?: (
         input: RequestInfo | URL,
         init?: RequestInit | undefined
     ) => Promise<Response>
+    
+    ,jwt?:string
 ): LemmyHttp {
-    if (!instanceURL) {
-        instanceURL = get(instance)
-    }
-    return new LemmyHttp(`https://${instanceURL}`, {
-        fetchFunction: func
-        ? (input, init) => customFetch(func, input, init)
-        : undefined,
-    })
+    if (!instanceURL) instanceURL = get(instance)
+        
+    if (!jwt) jwt = get(profile)?.jwt
+        
+
+    return new LemmyHttp(`https://${instanceURL}`, 
+        {
+            fetchFunction: func
+                ? (input: RequestInfo | URL, init: RequestInit | undefined) => customFetch(func, input, init)
+                : undefined,
+            headers: { 'Authorization': `Bearer ${jwt}`}
+        }
+    )
 }
 
 export const getInstance = () => get(instance)
@@ -57,16 +63,16 @@ export async function validateInstance(instance: string): Promise<boolean> {
 
 export async function uploadImage(image: File | null | undefined): Promise<string | undefined> {
     if (!image || !get(profile)?.jwt) return
+    
     const formData = new FormData()
     formData.append('images[]', image)
 
     const response = await fetch(
-        `${window.location.origin}/cors/${getInstance()}/pictrs/image?${new URLSearchParams({
-            auth: get(profile)!.jwt!,
-        })}`,
+        `${window.location.origin}/cors/${getInstance()}/pictrs/image?`,
         {
             method: 'POST',
             body: formData,
+            headers: { 'Authorization': `Bearer ${get(profile)?.jwt}`}
         }
     )
 

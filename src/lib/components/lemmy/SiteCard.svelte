@@ -81,7 +81,7 @@
                     <div class="ml-auto">
                         <span class="flex flex-row items-center gap-2 text-sm">
                             <Icon src={Calendar} width={16} height={16} mini />
-                            <RelativeDate date={new Date(site.site.published)} />
+                            <RelativeDate date={site.site.published} />
                         </span>
                     </div>
                 </div>

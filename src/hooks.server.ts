@@ -32,9 +32,12 @@ export async function handle({ event, resolve }) {
             if (
                 event.request.method == 'POST' &&
                 url.pathname == '/pictrs/image' &&
-                url.searchParams.get('auth')
+                ( url.searchParams.get('auth') || headers.get('authorization') )
             ) {
-                headers.set('cookie', `jwt=${url.searchParams.get('auth')}`)
+                let jwt = url.searchParams.get('auth') ?? headers.get('authorization')?.replace("Bearer ", "")
+
+                headers.set('cookie', `jwt=${jwt}`)
+                headers.set('authorization', `Bearer ${jwt}`)
             } else {
                 return new Response(
                     JSON.stringify({message: 'Only CORS allowed is through /pictrs/image',}),

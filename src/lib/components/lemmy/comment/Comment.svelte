@@ -100,7 +100,7 @@
                     </div>
                 {/if}
 
-                <RelativeDate date={new Date(node.comment_view.comment.published + 'Z')}/>
+                <RelativeDate date={node.comment_view.comment.published}/>
                 <span>•</span>
                 <span>
                     {

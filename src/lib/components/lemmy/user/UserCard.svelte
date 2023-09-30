@@ -165,7 +165,7 @@
             <div class="flex flex-row items-center gap-2">
                 <Icon src={Cake} width={16} height={16} mini />
                 <span class="capitalize">
-                    <RelativeDate date={new Date(person.person.published + 'Z')}/>
+                    <RelativeDate date={person.person.published}/>
                 </span>
             </div>
             

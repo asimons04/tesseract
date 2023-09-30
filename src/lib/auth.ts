@@ -97,6 +97,7 @@ export async function setUser(jwt: string, inst: string, username: string) {
     } catch (err) {
         return
     }
+    
 
     const user = await userFromJwt(jwt, inst)
     if (!user) {
@@ -135,18 +136,20 @@ export async function setUser(jwt: string, inst: string, username: string) {
 }
 
 async function userFromJwt(jwt: string, instance: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
-  const site = await getClient(instance).getSite({ auth: jwt })
-  const myUser = site.my_user
-  if (!myUser) return undefined
-
-  return {
-    user: {
-      unreads: 0,
-      reports: 0,
-      ...myUser,
-    },
-    site: site,
-  }
+    const site = await getClient(instance, undefined, jwt).getSite({ auth: jwt })
+    
+    const myUser = site.my_user
+    
+    if (!myUser) return undefined
+    
+    return {
+        user: {
+            unreads: 0,
+            reports: 0,
+            ...myUser,
+        },
+        site: site,
+    }
 }
 
 function getProfile() {
@@ -185,8 +188,8 @@ export function deleteProfile(id: number) {
 }
 
 const serializeUser = (user: Profile): Profile => ({
-  ...user,
-  user: undefined,
+    ...user,
+    user: undefined,
 })
 
 export async function setUserID(id: number) {

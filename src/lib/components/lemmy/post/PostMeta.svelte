@@ -33,7 +33,7 @@
     let community: Community | undefined    = post.community ?? undefined
     let user: Person | undefined            = post.creator ?? undefined
     let id: number | undefined              = post.post.id ?? undefined
-    let published: Date                     = new Date(post.post.published + 'Z')
+    let published: String                   = post.post.published
 
     // These values are mutable so define them and bind them reactively
     let title: string | undefined
@@ -63,7 +63,6 @@
     }
     
     let userIsModerator:boolean = (moderators.filter((index) => index.moderator.id == user.id).length > 0)
-    
 
 </script>
 

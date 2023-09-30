@@ -42,7 +42,7 @@
   "dependencies": {
     "@dicebear/core": "^7.0.1",
     "@dicebear/initials": "^7.0.1",
-    "lemmy-js-client": "^0.19.0-rc.13",
+    "lemmy-js-client": "^0.18.3-rc.3",
     "markdown-it": "^13.0.1"
   },
   "type": "module"
