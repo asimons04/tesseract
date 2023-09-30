@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let date:  string
+    export let date: string
     export let relativeTo: Date | undefined = undefined
     export let options: Intl.RelativeTimeFormatOptions = {
         numeric: 'always',
