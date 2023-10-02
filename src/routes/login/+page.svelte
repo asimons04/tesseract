@@ -44,6 +44,7 @@
               on:input={() => {
                   instance = instance.toLowerCase().replaceAll(' ', '')
               }}
+              focus={true}
           />
               <Button
                   submit

@@ -25,22 +25,37 @@ All major/minor changes between releases will be documented here.
 
 So, while it works for both 0.18.x and 0.19.x, none of the new 0.19.x API calls/features are available.
 
+Please note that the plan is to still have separate versions of Tesseract for 0.18.x and 0.19.x.  Thus far, I'm not thrilled with the extra baggage it would entail to provide backwards compatibility and selectively disable 0.19-specific features. 
+
+The basic 0.19.x support in this (and future Tesseract 1.2.x releases) will only be to provide a transition period until instances are widely on 0.19+.
 
 
-### Enhancements: Community Card
+### Enhancements
+#### Application
+First form element now auto-focuses where applicable.
+- Instance selector input for `/login`, `/forgot_password`, and `/signup`
+- Search box for `/communities`
+- Username field on `/login/[instance]` and `/signup/[instance]`
+- Email field on `/forgot_password/[instance]`
+- Title on `/create/post`
+
+
+
+#### Community Card
 - Added remove/restore community actions to the community card 
 - Action menu now visible at all screen widths
 - Removed buttons for sub/unsub, block, community settings, and modlog in favor of moving those to the action menu
 
-### Enhancements: User Cards
+#### User Cards
 - Added modlog button to filter modlog for just actions against that user.  Uses include:
     - See why they were banned
     - Look for other actions against them to determine appropriate future mod actions
 - Removed admin menu (shield button under 'block') and moved admin options (currently just 'ban') to user action menu.
 - Removed buttons to message/block user and folded those into the user menu.
 
-### Enhancements: Modlog
+#### Modlog
 - Can now specify `other_person_id` URL parameter to filter for a specific user.
+
 
 ### Bugfixes
 - Fixed condition where if community block call fails, community won't erroneously be marked as blocked in the UI

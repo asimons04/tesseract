@@ -73,6 +73,7 @@
                 bind:value={query}
                 placeholder="!community@instance.com"
                 on:change={() => searchParam($page.url, 'q', query, 'page')}
+                focus={true}
             />
             <Button
                 on:click={() => searchParam($page.url, 'q', query, 'page')}

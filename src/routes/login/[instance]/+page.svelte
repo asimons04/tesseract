@@ -75,6 +75,7 @@
                 label="Username"
                 placeholder="Example"
                 class="flex-1"
+                focus={true}
                 required
             />
         </div>

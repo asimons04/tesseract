@@ -69,6 +69,7 @@
         label="Email"
         required={true}
         type="email"
+        focus={true}
     />
     
     <Button

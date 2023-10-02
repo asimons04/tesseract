@@ -372,6 +372,7 @@
             required
             label="Title"
             bind:value={data.name}
+            focus={true}
         />
         
         <!--- Post URL --->

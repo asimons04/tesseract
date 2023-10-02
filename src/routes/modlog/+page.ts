@@ -203,11 +203,11 @@ export const _toModLog = (item: ModAction): ModLog => {
 }
 
 export async function load({ url }) {
-    let community = Number(url.searchParams.get('community')) || undefined
-    let personId = Number(url.searchParams.get('other_person_id')) || undefined
-
-    let modId = Number(url.searchParams.get('mod_id')) || undefined
-    const page = Number(url.searchParams.get('page')) || 1
+    let community   = Number(url.searchParams.get('community')) || undefined
+    let personId    = Number(url.searchParams.get('other_person_id')) || undefined
+    let modId       = Number(url.searchParams.get('mod_id')) || undefined
+    
+    const page      = Number(url.searchParams.get('page')) || 1
     
     let type: ModlogActionType = (url.searchParams.get('type') as ModlogActionType) || 'All'
 

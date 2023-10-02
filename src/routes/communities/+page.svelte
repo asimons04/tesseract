@@ -94,6 +94,7 @@
                             invalidateAll: true,
                         })
                     }}
+                    focus={true}
                 />
                 <Button
                     on:click={() => {

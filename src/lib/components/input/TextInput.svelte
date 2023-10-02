@@ -1,29 +1,24 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte'
+    import { onMount } from 'svelte';
 
     export let label: string | number | undefined = ''
     export let type: 'text' | 'password' | 'email' | 'number' | 'search' | null | undefined = 'text'
     export let value: string = ''
     export let required = false
     export let placeholder:string = ''
-
+    export let focus:boolean = false;
+    
     function typeAction(node: Node) {
         // @ts-ignore
         node.type = type
     }
 
-    const dispatcher = createEventDispatcher()
     
-    /*
-    let className = `
-        ${value.length != 0 ? 'invalid:border-red-400' : ''}
-        input-text w-full px-3 text-sm py-2.5 bg-white dark:bg-zinc-950
-        border border-slate-300 dark:border-zinc-700 dark:focus:border-white
-        focus:outline-none focus:border-black transition-colors rounded-md disabled:bg-slate-200 disabled:border-slate-300 dark:disabled:border-zinc-600 
-        dark:disabled:bg-zinc-700 disabled:opacity-70
-        ${$$props.class}
-    `
-    */
+    
+
+    const dispatcher = createEventDispatcher()
+
     let className =`
         ${value.length != 0 ? 'invalid:border-red-400' : ''}
         form-text text-sm rounded-md shadow-sm px-3 h-8 w-full
@@ -31,6 +26,15 @@
         dark:bg-zinc-800 dark:text-slate-200
         ${$$props.class}
     `
+    
+    let element: any;
+    onMount(function() {
+        if (focus) {
+            setTimeout(() => {
+                element.focus();
+            },10)
+        }
+    })
 </script>
 
 <label class="flex flex-col items-center {$$props.class}">
@@ -46,6 +50,7 @@
     <input
         use:typeAction
         bind:value
+        bind:this={element}
         on:keydown={(e) => dispatcher('keydown', e)}
         on:keyup={(e) => dispatcher('keyup', e)}
         on:input={(e) => dispatcher('input', e)}
