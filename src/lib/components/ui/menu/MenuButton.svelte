@@ -24,8 +24,10 @@
     export let loading:boolean = false
     export let disabled:boolean = false
     export let title:string = '';
-    export let toggleOpen
-
+    export let newTab:boolean = false;
+    
+    export let toggleOpen:Function
+    
     const click = createEventDispatcher()
 </script>
 
@@ -33,11 +35,14 @@
     {#if link}
         <a
             {href}
+            target="{newTab ? '_blank' : '_self'}"
+            
             on:click={(e) => click('click', e)}
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm transition-colors 
                 {buttonColors[color]} 
                 {disabled ? 'opacity-50 pointer-events-none' : ''}
             "
+
         >
             <slot {toggleOpen}/>
         </a>

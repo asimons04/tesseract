@@ -11,26 +11,34 @@
 
     export let data
 
-
     // If community URL param is present, set the title to reflect the modlog is filtered for that community.
-    let communityName:string = ''
+    let filterTitle:string = ''
+
     let communityFiltered:boolean = new URLSearchParams(window.location.search).has('community');
+    let moderateeFiltered:boolean = new URLSearchParams(window.location.search).has('other_person_id');
 
     if (communityFiltered && data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
-        communityName += "for ";
-        communityName += data.modlog[0].community.title + " (";
-        communityName += data.modlog[0].community.name + "@";
-        communityName += new URL(data.modlog[0].community.actor_id).host + ")";
+        filterTitle += "for ";
+        filterTitle += data.modlog[0].community.title + " (";
+        filterTitle += data.modlog[0].community.name + "@";
+        filterTitle += new URL(data.modlog[0].community.actor_id).host + ")";
     }
+    
+    if (moderateeFiltered && data.modlog && data.modlog.length > 0 && data.modlog[0].moderatee) {
+        filterTitle += " for ";
+        filterTitle += data.modlog[0].moderatee.name + "@";
+        filterTitle += new URL(data.modlog[0].moderatee.actor_id).host;
+    }
+
 
 </script>
 
 <svelte:head>
-    <title>Modlog {communityName}</title>
+    <title>Modlog {filterTitle}</title>
 </svelte:head>
 
 <div class="flex flex-col gap-4 p-2">
-    <h1 class="font-bold text-2xl">Modlog {communityName}</h1>
+    <h1 class="font-bold text-2xl">Modlog {filterTitle}</h1>
     <div class="flex flex-col gap-2">
         <MultiSelect
             options={[

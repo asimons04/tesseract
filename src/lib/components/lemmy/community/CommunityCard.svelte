@@ -217,7 +217,6 @@
             </div>
 
             <!---Community Action Menu --->
-            
             <div class="ml-auto">
                 <!--- Community Info Modal--->                
                 <Menu
@@ -272,51 +271,39 @@
                         <MenuButton
                             disabled={loading.subscribing || community_view.community.removed }
                             loading={loading.subscribing}
+                            on:click={ (e) => {
+                                e.stopPropagation();
+                                subscribe();
+                            }}
                         >
-                            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
-                                on:click={ (e) => {
-                                    e.stopPropagation();
-                                    subscribe();
-                                }}
-                                title="{
-                                    community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
-                                    ? 'Unsubscribe'
-                                    : 'Subscribe'
-                                }"
-                            >
-                                <Icon
-                                    src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
-                                    mini
-                                    size="16"
-                                />
-                                {
-                                    community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
-                                    ? 'Unsubscribe'
-                                    : 'Subscribe'
-                                }
-                            </div>
-
+                            <Icon
+                                src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
+                                mini
+                                size="16"
+                            />
+                            {
+                                community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
+                                ? 'Unsubscribe'
+                                : 'Subscribe'
+                            }
                         </MenuButton>
                         
                         <!--- Block/Unblock Community --->
                         <MenuButton
                             disabled={loading.blocking || community_view.community.removed}
                             loading={loading.blocking}
+                            color="dangerSecondary"
+                            on:click={(e) => { 
+                                e.stopPropagation(); 
+                                block(); 
+                            }}
                         >
-                            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
-                                on:click={(e) => { 
-                                    e.stopPropagation(); 
-                                    block(); 
-                                }}
-                                title="{community_view.blocked ? 'Unblock' : 'Block'} Community"
-                            >
-                                <Icon
-                                    src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
-                                    mini
-                                    size="16"
-                                />
-                                {community_view.blocked ? 'Unblock' : 'Block'} Community
-                            </div>
+                            <Icon
+                                src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
+                                mini
+                                size="16"
+                            />
+                            {community_view.blocked ? 'Unblock' : 'Block'} Community
                         </MenuButton>
                     {/if}
                     
@@ -325,13 +312,11 @@
                         <MenuButton
                             disabled={loading.removing}
                             loading={loading.removing}
-                        >
-                            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
+                            color="dangerSecondary"
                             on:click={(e) => { 
                                 e.stopPropagation(); 
                                 remove(); 
                             }}
-                            title="{community_view.community.removed ? 'Restore' : 'Remove'} Community"
                         >
                             <Icon
                                 src={community_view.community.removed  ? PlusCircle : MinusCircle}
@@ -339,9 +324,6 @@
                                 size="16"
                             />
                             {community_view.community.removed ? 'Restore' : 'Remove'} Community
-                        </div>
-
-                    
                         </MenuButton>
                     {/if}
                     

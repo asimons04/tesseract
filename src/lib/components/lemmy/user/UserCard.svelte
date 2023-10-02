@@ -26,9 +26,13 @@
     import {
         Cake,
         ChatBubbleOvalLeftEllipsis,
+        EllipsisVertical,
         Envelope,
+        Hashtag,
         Icon,
+        InformationCircle,
         NoSymbol,
+        Newspaper,
         PencilSquare,
         ShieldCheck,
         ShieldExclamation,
@@ -41,9 +45,11 @@
     export let person:LocalUserView | PersonView
 
     let blocking = false
+    let userBioModal = false;
     let loadingMessage = false
     let messaging = false
     let message = ''
+
 
     async function blockUser(block: number) {
         if (!$profile?.user || !$profile?.jwt) throw new Error('Unauthenticated')
@@ -81,8 +87,6 @@
         }
         blocking = false
     }
-
-    
 
     async function sendMessage() {
         if (!$profile?.jwt || message == '') return
@@ -139,12 +143,22 @@
 {/if}
 
 
+<Modal bind:open ={userBioModal} >
+    <h1 class="font-bold text-lg">About Me</h1>
+    
+    {#if person.person.bio}
+        <Markdown source={person.person.bio} />
+    {/if}
+</Modal>
+
+
+
 <StickyCard class="p-3">
     <Card>
-        <div class="flex flex-row gap-3 items-center p-3">
+        <div class="flex flex-row gap-3 items-start p-3">
             <div class="flex-shrink-k">
                 <Avatar
-                    width={64}
+                    width={48}
                     url={person.person.avatar}
                     alt={person.person.name}
                 />
@@ -158,10 +172,103 @@
                     <span>@{person.person.name}@{new URL(person.person.actor_id).hostname}</span>
                 </div>
             </div>
+
+            <!--- Person Action Menu --->
+            <div class="ml-auto">
+                <Menu
+                    alignment="bottom-right"
+                    itemsClass="h-8 md:h-8"
+                    containerClass="!max-h-[90vh]"
+                >
+                    <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
+                        <Icon src={EllipsisVertical} mini size="16" slot="icon" />
+                    </Button>
+                    
+                    <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
+                        User Actions
+                    </span>
+                    
+                    <!--- User Bio --->
+                    <span class="xl:hidden">
+                        <MenuButton
+                            on:click={() => (userBioModal = !userBioModal)} 
+                            title="About User"
+                        >
+                            <Icon src={InformationCircle} mini width={16}/>
+                            About User
+                        </MenuButton>
+                    </span>
+
+                    <!--- User Modlog--->
+                    <MenuButton link
+                        href="/modlog?other_person_id={person.person.id}"
+                        title="Modlog for {person.person.display_name ?? person.person.name}"
+                    >
+                        <Icon src={Newspaper} mini size="16" />
+                        User Modlog
+                    </MenuButton>
+                    
+                    <!--- Actions for Logged-in <Users--->
+                    {#if $profile?.user && $profile.jwt && person.person.id != $profile.user.local_user_view.person.id}
+                        <!--- Message in Lemmy--->
+                        <MenuButton
+                            on:click={() => (messaging = true)}
+                        >
+                            <Icon solid size="16" src={Envelope} />
+                            Message in Lemmy
+                        </MenuButton>
+                
+                        <!---Message in Matrix--->
+                        {#if person.person.matrix_user_id}
+                        <MenuButton link
+                            href="https://matrix.to/#/{person.person.matrix_user_id}"
+                            newTab = {true}
+                        >
+                            <Icon solid size="16" src={Hashtag} />
+                            Message on Matrix
+                        </MenuButton>
+                        {/if}
+                            
+                        <!--- Block--->
+                        <MenuButton
+                            color="dangerSecondary"
+                            loading={blocking}
+                            disabled={blocking}
+                            on:click={() => blockUser(person.person.id)}
+                        >
+                            <Icon mini size="16" src={NoSymbol} />
+                            {isBlocked($profile.user, person.person.id)
+                                ? 'Unblock'
+                                : 'Block'
+                            }
+                        </MenuButton>
+                    {/if}
+                
+                    
+                    
+                    
+                    <!--- Admin Options--->
+                    {#if $profile?.user && isAdmin($profile?.user)}
+                        <MenuButton
+                            color="dangerSecondary"
+                            on:click={() =>
+                                ban(person.person.banned, person.person)
+                            }
+                        >
+                            <Icon slot="icon" mini size="16" src={ShieldExclamation} />
+                            {person.person.banned ? 'Unban' : 'Ban'}
+                        </MenuButton>
+                    {/if}
+                
+                </Menu>
+            </div>
+            <!---End Person Action Menu--->
+
         </div>
 
+        
+
         <div class="mt-4 text-sm flex flex-row justify-between gap-3 p-3 w-[95%] ml-auto mr-auto">
-            
             <div class="flex flex-row items-center gap-2">
                 <Icon src={Cake} width={16} height={16} mini />
                 <span class="capitalize">
@@ -187,72 +294,12 @@
         </div>
     </Card>
 
-    
-
-    {#if $profile?.user && $profile.jwt && person.person.id != $profile.user.local_user_view.person.id}
-        <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2 w-full">
-                <Button
-                    size="lg"
-                    color="secondary"
-                    on:click={() => (messaging = true)}
-                    class="flex-1"
-                >
-                    <Icon slot="icon" solid size="16" src={Envelope} />
-                    Message
-                </Button>
-
-                {#if person.person.matrix_user_id}
-                <Button
-                    size="lg"
-                    color="secondary"
-                    href="https://matrix.to/#/{person.person.matrix_user_id}"
-                    class="flex-1"
-                >
-                    <Icon slot="icon" solid size="16" src={ShieldCheck} />
-                    Matrix User
-                </Button>
-                {/if}
-            </div>
-
-            <Button
-                size="lg"
-                color="danger"
-                loading={blocking}
-                disabled={blocking}
-                on:click={() => blockUser(person.person.id)}
-            >
-                <Icon slot="icon" mini size="16" src={NoSymbol} />
-                {isBlocked($profile.user, person.person.id)
-                    ? 'Unblock'
-                    : 'Block'
-                }
-            </Button>
-        </div>
-
-        {#if isAdmin($profile?.user)}
-        <Menu class="ml-auto" alignment="top-right">
-            <Button size="square-md" let:toggleOpen on:click={toggleOpen} slot="button">
-                <ShieldIcon width={16} filled />
-            </Button>
-        
-            <MenuButton
-                color="dangerSecondary"
-                on:click={() =>
-                    ban(person.person.banned, person.person)
-                }
-            >
-                <Icon slot="icon" mini size="16" src={ShieldExclamation} />
-                {person.person.banned ? 'Unban' : 'Ban'}
-            </MenuButton>
-        </Menu>
-        {/if}
-    {/if}
 
     
     {#if person.person.bio}
-        <h1 class="font-bold text-lg">About Me</h1>
-    
-        <Markdown source={person.person.bio} />
+        <div class="hidden xl:block">
+            <h1 class="font-bold text-lg">About Me</h1>
+            <Markdown source={person.person.bio} />
+        </div>
     {/if}
 </StickyCard>
