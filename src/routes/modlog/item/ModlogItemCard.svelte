@@ -19,7 +19,7 @@
             <CommunityLink community={item.community} avatar showInstance />
         {/if}
         <SectionTitle class="font-normal">
-            <RelativeDate date={new Date(item.timestamp)} />
+            <RelativeDate date={item.timestamp} />
         </SectionTitle>
     </div>
     

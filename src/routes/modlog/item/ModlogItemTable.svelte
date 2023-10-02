@@ -13,7 +13,7 @@
 <tr class="">
     <td>
         <span>
-            <RelativeDate date={new Date(item.timestamp)} />
+            <RelativeDate date={item.timestamp} />
         </span>
     </td>
 

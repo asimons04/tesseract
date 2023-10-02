@@ -182,7 +182,7 @@
                                 <div class="flex flex-row gap-1 items-center">
                                     <Icon src={CalendarDays} width={16} mini/>
                                     <span>
-                                        <RelativeDate date={new Date(community.community.published)} />
+                                        <RelativeDate date={community.community.published} />
                                     </span>
                                 </div>
 

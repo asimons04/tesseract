@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
     import { profile } from '$lib/auth.js'
-    import { amMod } from '$lib/components/lemmy/moderation/moderation.js'
+    import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy.js'
     import { addSubscription } from '$lib/lemmy/user.js'
     import { fullCommunityName } from '$lib/util.js'
@@ -27,13 +27,17 @@
         ChevronDoubleRight,
         Cog6Tooth,
         EllipsisHorizontal,
+        EllipsisVertical,
         HandRaised,
         Icon,
         InformationCircle,
         Minus,
+        MinusCircle,
         Newspaper,
         PencilSquare,
         Plus,
+        PlusCircle,
+        Rss,
         ShieldCheck,
         ShieldExclamation,
         UserGroup,
@@ -51,6 +55,7 @@
     let loading = {
         blocking: false,
         subscribing: false,
+        removing: false,
     }
 
     async function subscribe() {
@@ -75,6 +80,25 @@
         loading.subscribing = false
     }
 
+    async function remove() {
+        if (!$profile?.jwt) return
+        loading.removing = true
+        
+        const removed = community_view.community.removed
+
+        try {
+            await getClient().removeCommunity({
+                auth: $profile.jwt,
+                community_id: community_view.community.id,
+                removed: !removed,
+            })
+            community_view.community.removed = !removed
+        } catch (error) {
+            toast({ content: error as any, type: 'error' })
+        }
+        loading.removing = false
+    }
+
     async function block() {
         if (!$profile?.jwt) return
         loading.blocking = true
@@ -86,13 +110,14 @@
                 community_id: community_view.community.id,
                 block: !blocked,
             })
+            community_view.blocked = !blocked
         } catch (error) {
             toast({ content: error as any, type: 'error' })
         }
-
-        community_view.blocked = !blocked
+      
         loading.blocking = false
     }
+
 </script>
 
 <Modal bind:open={sidebar}>
@@ -172,7 +197,7 @@
 <StickyCard class="p-3 mb-3 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
     <Card>
         <!--- Commuinity Avatar, display name, and federation name--->
-        <div class="flex flex-row gap-3 items-center p-3">
+        <div class="flex flex-row gap-3 items-start p-3">
             <div class="flex-shrink-0">
                 <Avatar
                     width={48}
@@ -191,26 +216,47 @@
                 </a>
             </div>
 
-            <!---Community Action Menu for Mobile View --->
-            <div class="ml-auto xl:hidden">
+            <!---Community Action Menu --->
+            
+            <div class="ml-auto">
                 <!--- Community Info Modal--->                
                 <Menu
                     alignment="bottom-right"
                     itemsClass="h-8 md:h-8"
                     containerClass="!max-h-[90vh]"
                 >
-                    <Button color="primary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
-                        <Icon src={EllipsisHorizontal} mini size="16" slot="icon" />
+                    <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
+                        <Icon src={EllipsisVertical} mini size="16" slot="icon" />
                     </Button>
+                    
+                    <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
+                        Community Actions
+                    </span>
 
-
-                    <MenuButton
-                        on:click={() => (sidebar = !sidebar)} 
-                        title="Community Info"
+                    {#if $profile?.jwt}
+                    <!---Create Post --->
+                    <MenuButton link href="/create/post"
+                        disabled={
+                            (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
+                            community_view.community.removed
+                        }
+                        title="Create post"
                     >
-                        <Icon src={InformationCircle} mini width={16}/>
-                        Community Info
+                        <Icon src={PencilSquare} mini size="16" />
+                        Create Post
                     </MenuButton>
+                    {/if}
+
+                    <!---Community Info Modal--->
+                    <span class="xl:hidden">
+                        <MenuButton
+                            on:click={() => (sidebar = !sidebar)} 
+                            title="Community Info"
+                        >
+                            <Icon src={InformationCircle} mini width={16}/>
+                            Community Info
+                        </MenuButton>
+                    </span>
 
                     <!---Modlog--->
                     <MenuButton link
@@ -218,22 +264,13 @@
                         title="Modlog for {community_view.community.title}"
                     >
                         <Icon src={Newspaper} mini size="16" />
-                        Modlog for {community_view.community.title}
+                        Community Modlog
                     </MenuButton>
                     
                     {#if $profile?.jwt}
-                        <!---Create Post --->
-                        <MenuButton link href="/create/post"
-                            disabled={community_view.community.posting_restricted_to_mods}
-                            title="Create post"
-                        >
-                            <Icon src={PencilSquare} mini size="16" />
-                            Create Post
-                        </MenuButton>
-
                         <!--- Subscribe/Unsubscribe--->
                         <MenuButton
-                            disabled={loading.subscribing}
+                            disabled={loading.subscribing || community_view.community.removed }
                             loading={loading.subscribing}
                         >
                             <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
@@ -248,7 +285,7 @@
                                 }"
                             >
                                 <Icon
-                                    src={community_view.subscribed == 'Subscribed' ? Minus : Plus}
+                                    src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
                                     mini
                                     size="16"
                                 />
@@ -263,7 +300,7 @@
                         
                         <!--- Block/Unblock Community --->
                         <MenuButton
-                            disabled={loading.blocking}
+                            disabled={loading.blocking || community_view.community.removed}
                             loading={loading.blocking}
                         >
                             <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
@@ -280,6 +317,31 @@
                                 />
                                 {community_view.blocked ? 'Unblock' : 'Block'} Community
                             </div>
+                        </MenuButton>
+                    {/if}
+                    
+                    <!--- Admin-Remove-Community--->
+                    {#if $profile.user && isAdmin($profile.user)}
+                        <MenuButton
+                            disabled={loading.removing}
+                            loading={loading.removing}
+                        >
+                            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
+                            on:click={(e) => { 
+                                e.stopPropagation(); 
+                                remove(); 
+                            }}
+                            title="{community_view.community.removed ? 'Restore' : 'Remove'} Community"
+                        >
+                            <Icon
+                                src={community_view.community.removed  ? PlusCircle : MinusCircle}
+                                mini
+                                size="16"
+                            />
+                            {community_view.community.removed ? 'Restore' : 'Remove'} Community
+                        </div>
+
+                    
                         </MenuButton>
                     {/if}
                     
@@ -332,88 +394,23 @@
         
     </Card>
         
-    <!--- Full sizeCreate post, sub/unsubscribe, block buttons --->
+    <!--- Convenience button to create post --->
     <div class="w-full mt-2 mb-2 flex flex-col gap-2 hidden xl:flex">
         {#if $profile?.jwt}
             <Button
                 href="/create/post"
                 color="primary"
                 size="lg"
-                disabled={community_view.community.posting_restricted_to_mods}
+                disabled={
+                    (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
+                    community_view.community.removed
+                }
+                
             >
                 <Icon src={PencilSquare} mini size="16" slot="icon" />
                 Create Post
             </Button>
-
-            <div class="flex flex-row gap-2">
-                <Button
-                    disabled={loading.subscribing}
-                    loading={loading.subscribing}
-                    color="primary"
-                    size="lg"
-                    class="w-full"
-                    on:click={subscribe}
-                >
-                    <Icon
-                        src={community_view.subscribed == 'Subscribed' ? Minus : Plus}
-                        mini
-                        size="16"
-                        slot="icon"
-                    />
-                        {
-                        community_view.subscribed == 'Subscribed' ||
-                            community_view.subscribed == 'Pending'
-                            ? 'Unsubscribe'
-                            : 'Subscribe'
-                        }
-                </Button>
-
-                <Button
-                    disabled={loading.blocking}
-                    loading={loading.blocking}
-                    color="primary"
-                    size="lg"
-                    class="w-full"
-                    on:click={block}
-                >
-                    <Icon
-                        src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
-                        mini
-                        size="16"
-                        slot="icon"
-                    />
-                    {community_view.blocked ? 'Unblock' : 'Block'}
-                </Button>
-            </div>
-            <div class="flex flex-row gap-2">
-                {#if $profile.user && amMod($profile.user, community_view.community)}
-                        <Button
-                            href="/c/{fullCommunityName(
-                                community_view.community.name,
-                                community_view.community.actor_id
-                            )}/settings"
-                            color="primary"
-                            class="w-full"
-                            title="Edit Community"
-                        >
-                            <Icon src={Cog6Tooth} mini size="16" slot="icon" />
-                            Settings
-                        </Button>
-                {/if}
-                
-                <Button
-                    href="/modlog?community={community_view.community.id}"
-                    color="primary"
-                    title="Modlog for {community_view.community.title}"
-                    class="w-full"
-                >
-                    <Icon src={Newspaper} mini size="16" slot="icon" />
-                    Modlog
-                </Button>
-            </div>
         {/if}
-        
-        
     </div>
 
     <div class="hidden  xl:block">

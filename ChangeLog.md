@@ -6,7 +6,29 @@ All major/minor changes between releases will be documented here.
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 - Implement a "scrollToComments" feature when clicking comment button in feed. Title/thumbnail will take you to post, comment button scrolls to comments and suppresses autoplay on videos if enabled.
+- (0.19.x) Switch pagination param from `page={n+1}` to `page_cursor={x}`
+- (0.19.x) Add 'scaled' sort option to dropdowns
 
+
+## 1.2.68
+
+
+### Added initial support for 0.19.0
+Right now, support is in a non-backwards compatible way and must be built using the correct lemmy-js-client for the version.  So while the backing code right now is the same, I'll still need to build/release separate images for 0.18.x and 0.19.x.
+- No new 0.19.x features have been implemented yet, just the necessary auth patches required to function.
+
+
+### Enhancements: Community Card
+- Added remove/restore community actions to the community card 
+- Action menu now visible at all screen widths
+- Removed buttons for sub/unsub, block, community settings, and modlog in favor of moving those to the action menu
+
+
+### Bugfixes
+- Fixed condition where if community block call fails, community won't erroneously be marked as blocked in the UI
+- Disabled "create post", "block community", and "subscribe" buttons in community action menu when community is removed.
+  - Really only affects admins since regular users can't see the removed communities, but still a bug needing fixed
+  - Apparently blocking a removed community, at least as an admin, still blocks the community even though the API returns 404 (0.18.5, anyway)
 
 
 ## 1.2.67
@@ -21,7 +43,7 @@ All major/minor changes between releases will be documented here.
 
 ### Polish/Refinements
 - Added `tailwindcss/forms` to the project and removed some explicit form element classes in favor of using Tailwind native
-- 
+
 
 
 ## 1.2.66
