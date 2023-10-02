@@ -401,7 +401,7 @@
                 href="/create/post"
                 color="primary"
                 size="lg"
-                disabled={
+                hidden={
                     (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
                     community_view.community.removed
                 }
