@@ -427,6 +427,10 @@
                 <Markdown source={community_view.community.description} />
             </div>
         {/if}
+        
+        <!-- Spacer block to give community action menu room to expand --->
+        <div class="hidden xl:block h-[150px]" />
+
     </div>
 
 </StickyCard>

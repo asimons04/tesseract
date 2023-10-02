@@ -306,4 +306,9 @@
             <Markdown source={person.person.bio} />
         </div>
     {/if}
+    
+    <!-- Spacer block to give user action menu room to expand --->
+    <div class="hidden xl:block h-[150px]" />
+    
+
 </StickyCard>
