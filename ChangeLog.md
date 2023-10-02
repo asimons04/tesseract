@@ -31,14 +31,13 @@ The basic 0.19.x support in this (and future Tesseract 1.2.x releases) will only
 
 
 ### Enhancements
-#### Application
+#### Form Fields
 First form element now auto-focuses where applicable.
 - Instance selector input for `/login`, `/forgot_password`, and `/signup`
 - Search box for `/communities`
 - Username field on `/login/[instance]` and `/signup/[instance]`
 - Email field on `/forgot_password/[instance]`
 - Title on `/create/post`
-
 
 
 #### Community Card
