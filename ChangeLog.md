@@ -25,9 +25,12 @@ All major/minor changes between releases will be documented here.
 
 So, while it works for both 0.18.x and 0.19.x, none of the new 0.19.x API calls/features are available.
 
+#### Future Releases
 Please note that the plan is to still have separate versions of Tesseract for 0.18.x and 0.19.x.  Thus far, I'm not thrilled with the extra baggage it would entail to provide backwards compatibility and selectively disable 0.19-specific features. 
 
 The basic 0.19.x support in this (and future Tesseract 1.2.x releases) will only be to provide a transition period until instances are widely on 0.19+.
+
+The 1.3.x releases of Tesseract will only support 0.19.0+ versions of the Lemmy API.
 
 
 ### Enhancements
