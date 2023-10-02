@@ -26,6 +26,7 @@ export function getClient(instanceURL?: string,
     ,jwt?:string
 ): LemmyHttp {
     if (!instanceURL)   instanceURL = get(instance)
+    
     try {
         if (!jwt) jwt = get(profile)?.jwt 
     } catch {
