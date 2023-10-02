@@ -249,15 +249,19 @@
                     
                     <!--- Admin Options--->
                     {#if $profile?.user && isAdmin($profile?.user)}
-                        <MenuButton
-                            color="dangerSecondary"
-                            on:click={() =>
-                                ban(person.person.banned, person.person)
-                            }
-                        >
-                            <Icon slot="icon" mini size="16" src={ShieldExclamation} />
-                            {person.person.banned ? 'Unban' : 'Ban'}
-                        </MenuButton>
+                        
+                        <!--Hide ban button if viewing own profile--->
+                        {#if person.person.id != $profile.user.local_user_view.person.id}
+                            <MenuButton
+                                color="dangerSecondary"
+                                on:click={() =>
+                                    ban(person.person.banned, person.person)
+                                }
+                            >
+                                <Icon slot="icon" mini size="16" src={ShieldExclamation} />
+                                {person.person.banned ? 'Unban' : 'Ban'}
+                            </MenuButton>
+                        {/if}
                     {/if}
                 
                 </Menu>

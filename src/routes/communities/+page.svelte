@@ -103,7 +103,7 @@
                             invalidateAll: true,
                         })
                     }}
-                    color="ghost"
+                    color="primary"
                     class="h-max"
                 >
                     Search

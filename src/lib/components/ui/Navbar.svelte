@@ -99,7 +99,6 @@
                 href="/moderation"
                 aria-label="Moderation"
                 class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
-                on:click={()=>toggleOpen()}
             >
                 {#if $profile?.user?.reports ?? 0 > 0}
                     <div class="rounded-full w-2 h-2 bg-red-500 absolute -top-1 -left-1"/>

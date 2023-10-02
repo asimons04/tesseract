@@ -7,7 +7,12 @@ All major/minor changes between releases will be documented here.
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 - Implement a "scrollToComments" feature when clicking comment button in feed. Title/thumbnail will take you to post, comment button scrolls to comments and suppresses autoplay on videos if enabled.
 - (0.19.x) Switch pagination param from `page={n+1}` to `page_cursor={x}`
+    - Has `next_page` but not cursor for current page.  Probably need to track these to enable returning to previous page.
 - (0.19.x) Add `scaled` sort option to dropdowns
+
+- (0.18x and 0.19.x) Add ability to directly block user or community from `/profile/blocks`
+    - (0.19.0) Add ability to directly lock instance
+
 - (0.18.x and 0.19.x) Add Instances list
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
@@ -15,12 +20,12 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.68
 
-### Added initial support for 0.19.0
-1.2.68 is compatible with both 0.18.x and 0.19.0.  The current support has limitations, though.  It is still using the 0.18.x lemmy-js-client with patches to corrrectly authenticate against the 0.19.0 API as well as handle both date formats (with and without timezones).  So, while it works for both 0.18.x and 0.19.x, none of the new 0.19.x API calls/features are available.
+### Added preliminary support for 0.19.0
+1.2.68 is compatible with both 0.18.x and 0.19.0.  The current support has limitations, though.  It is still using the 0.18.x lemmy-js-client with patches to corrrectly authenticate against the 0.19.0 API as well as handle both date formats (with and without timezones).  
 
-- Will continue to work on proper 0.19.0 support and attempt to maintain backwards compatbility without incurring too much tech debt.
+So, while it works for both 0.18.x and 0.19.x, none of the new 0.19.x API calls/features are available.
 
-- 
+
 
 ### Enhancements: Community Card
 - Added remove/restore community actions to the community card 
@@ -42,7 +47,7 @@ All major/minor changes between releases will be documented here.
 - Disabled "create post", "block community", and "subscribe" buttons in community action menu when community is removed.
   - Really only affects admins since regular users can't see the removed communities, but still a bug needing fixed
   - Apparently blocking a removed community, at least as an admin, still blocks the community even though the API returns 404 (0.18.5, anyway)
-
+- Removed unneeded menu toggle click event from "Reports" button in navbar. 
 
 
 ## 1.2.67
