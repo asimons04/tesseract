@@ -131,7 +131,6 @@
                 'ModAddCommunity',
                 'ModTransferCommunity',
                 'ModAdd',
-                'ModBan',
                 'ModHideCommunity',
                 'AdminPurgePerson',
                 'AdminPurgeCommunity',

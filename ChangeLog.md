@@ -17,6 +17,12 @@ All major/minor changes between releases will be documented here.
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
 
+## 1.2.69
+
+### Modlog Enhancements
+You can now apply moderator, moderatee, and community filters in the modlog.  Just click the plus/minus to add/remove them to the filter query.
+
+
 
 ## 1.2.68
 
