@@ -20,8 +20,12 @@ All major/minor changes between releases will be documented here.
 ## 1.2.69
 
 ### Modlog Enhancements
-You can now apply moderator, moderatee, and community filters in the modlog.  Just click the plus/minus to add/remove them to the filter query.
+- You can now apply moderator, moderatee, and community filters in the modlog.  Just click the plus/minus to add/remove them to the filter query.
+    - Table view only for now (so only really works on desktop)
+- Added autocomplete searches for moderator and moderatee
 
+### Components
+- Expanded `ObjectAutoComplete` to support person searches
 
 
 ## 1.2.68

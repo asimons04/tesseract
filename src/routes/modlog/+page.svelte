@@ -76,7 +76,11 @@
                     {#if filter.community.set}
                         <div class="flex flex-row gap-2">
                             <span>
-                                <strong>Community ID</strong>: {new URLSearchParams(window.location.search).get('community')}
+                                <strong>Community ID</strong>: {
+                                    filter.community.community
+                                        ? filter.community.community.name + '@' + new URL(filter.community.community.actor_id).host
+                                        : new URLSearchParams(window.location.search).get('community')
+                                    }
                             </span>
                             
                             <span class="cursor-pointer" on:click={() => {
@@ -90,7 +94,11 @@
                     {#if filter.moderator.set}
                         <div class="flex flex-row gap-2">
                             <span>
-                                <strong>Moderator ID</strong>: {new URLSearchParams(window.location.search).get('mod_id')}
+                                <strong>Moderator ID</strong>: {
+                                    filter.moderator.person 
+                                        ? filter.moderator.person.name + '@' + new URL(filter.moderator.person.actor_id).host
+                                        : new URLSearchParams(window.location.search).get('mod_id')
+                                    }
                             </span>
 
                             <span class="cursor-pointer" on:click={() => {
@@ -104,7 +112,12 @@
                     {#if filter.moderatee.set}
                         <div class="flex flex-row gap-2">
                             <span>    
-                                <strong>Moderatee ID</strong>: {new URLSearchParams(window.location.search).get('other_person_id')}
+                                <strong>Moderatee ID</strong>: {
+                                    filter.moderatee.person 
+                                        ? filter.moderatee.person.name + '@' + new URL(filter.moderatee.person.actor_id).host
+                                        : new URLSearchParams(window.location.search).get('other_person_id')
+                                    }
+                                
                             </span>
                         
                             <span class="cursor-pointer" on:click={() => {
@@ -162,7 +175,6 @@
     </div>
         
     <div class="flex flex-row w-full flex-wrap items-center justify-between">
-          
 
         <div class="max-w-sm" class:hidden={filter.community.set}>
             <div class="block my-1 font-bold text-sm">Community</div>
@@ -174,8 +186,36 @@
                 on:select={(e) =>
                     searchParam($page.url, 'community', e.detail?.id.toString(), 'page')}
             />
+
+            
+        </div>
+        
+        <div class="max-w-sm" class:hidden={filter.moderator.set}>
+            <div class="block my-1 font-bold text-sm">Moderator</div>
+            <ObjectAutocomplete
+                placeholder="Filter by Moderator"
+                jwt={$profile?.jwt}
+                showWhenEmpty={false}
+                type="person"
+                on:select={(e) =>
+                    searchParam($page.url, 'mod_id', e.detail?.id.toString(), 'page')}
+            />
         </div>
 
+        <div class="max-w-sm" class:hidden={filter.moderatee.set}>
+            <div class="block my-1 font-bold text-sm">Moderatee</div>
+            <ObjectAutocomplete
+                placeholder="Filter by Moderatee"
+                jwt={$profile?.jwt}
+                showWhenEmpty={false}
+                type="person"
+                on:select={(e) =>
+                    searchParam($page.url, 'other_person_id', e.detail?.id.toString(), 'page')}
+            />
+        </div>
+    </div>
+    
+    <div class="flex flex-row w-full flex-wrap items-center justify-between">
         <MultiSelect
             options={[false, true, undefined]}
             optionNames={['Table', 'Cards', 'Default']}
