@@ -18,10 +18,18 @@ All major/minor changes between releases will be documented here.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
 
 ## 1.2.69
+### Bugfixes
+- Fixed nonstandard width/margins of post feed in `/u/[name]` and `/profile/user` routes.
+
+### UI
+- Ever so slightly increased `xs`, `sm`, and `base` font sizes to accommodate my old people eyes on high DPI displays.
 
 ### Modlog Enhancements
 - You can now apply moderator, moderatee, and community filters in the modlog.  Just click the plus/minus to add/remove them to the filter query.
     - Table view only for now (so only really works on desktop)
+    - Can still filter by action type/community/moderator/moderatee in card view, though
+    - May not be practical to add +/- filter buttons to cards anyway
+
 - Added autocomplete searches for moderator and moderatee
 
 ### Components
