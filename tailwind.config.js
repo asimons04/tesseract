@@ -8,6 +8,18 @@ export default {
             'system': ['system-ui'], 
             'serif': ['serif']
         },
+        fontSize: {
+            xs: '0.8rem',
+            sm: '0.9rem',
+            base: '1.1rem',
+            lg: '1.125rem',
+            xl: '1.5rem',
+            '2xl': '1.563rem',
+            '3xl': '1.953rem',
+            '4xl': '2.441rem',
+            '5xl': '3.052rem',
+        },
+        
         extend: {
             animation: {
                 'pop-in': 'pop-in 0.25s ease-out forwards'

@@ -8,6 +8,7 @@
     export let name: boolean = true
     export let avatarSize: number = 24
     export let showInstance: boolean | undefined = undefined
+    export let href: string | undefined = undefined
 
     function linkFromCommunity(community: Community) {
         const domain = new URL(community.actor_id).hostname
@@ -15,7 +16,7 @@
     }
 </script>
 
-<a class="items-center flex flex-row gap-2 hover:underline" href={linkFromCommunity(community)}>
+<a class="items-center flex flex-row gap-2 hover:underline" href={href ?? linkFromCommunity(community)}>
     {#if avatar}
         <Avatar
             url={community.icon}
@@ -24,16 +25,16 @@
         />
     {/if}
 
-  {#if name}
-    <span class="flex gap-0">
-      {#if showInstance != undefined ? showInstance : $userSettings.showInstances.community}
-        {community.title.replace('&amp;', '&')}
-        <span class="text-slate-500 dark:text-zinc-500 font-normal">
-          @{new URL(community.actor_id).hostname}
+    {#if name}
+        <span class="flex gap-0">
+            {#if showInstance != undefined ? showInstance : $userSettings.showInstances.community}
+                {community.title.replace('&amp;', '&')}
+                <span class="text-slate-500 dark:text-zinc-500 font-normal">
+                    @{new URL(community.actor_id).hostname}
+                </span>
+            {:else}
+                {community.title}
+            {/if}
         </span>
-      {:else}
-        {community.title}
-      {/if}
-    </span>
-  {/if}
+    {/if}
 </a>

@@ -68,6 +68,26 @@ export interface ModLog {
     expires?:number
 }
 
+export interface Filters {
+    title?: string,
+    moderator: {
+        set: boolean,
+        person?: Person | undefined
+    },
+    moderatee: {
+        set: boolean,
+        person?: Person | undefined
+    },
+    community: {
+        set: boolean,
+        community?: Community | undefined
+    },
+    action: {
+        set: boolean,
+        action?: ModlogActionType | undefined
+    }
+}
+
 const fullUserName = (user: Person) => `${user.name}@${new URL(user.actor_id).hostname}`
 
 const timestamp = (when: string) => Date.parse(`${when}Z`)
@@ -203,9 +223,9 @@ export const _toModLog = (item: ModAction): ModLog => {
 }
 
 export async function load({ url }) {
-    let community   = Number(url.searchParams.get('community')) || undefined
-    let personId    = Number(url.searchParams.get('other_person_id')) || undefined
-    let modId       = Number(url.searchParams.get('mod_id')) || undefined
+    const community   = Number(url.searchParams.get('community')) || undefined
+    const personId    = Number(url.searchParams.get('other_person_id')) || undefined
+    const modId       = Number(url.searchParams.get('mod_id')) || undefined
     
     const page      = Number(url.searchParams.get('page')) || 1
     
@@ -214,7 +234,7 @@ export async function load({ url }) {
     const results = await getClient().getModlog({
         auth: get(profile)?.jwt,
         community_id: community,
-        limit: 40,
+        limit: 50,
         type_: type,
         page: page,
         mod_person_id: modId,

@@ -1,54 +1,133 @@
 <script lang="ts">
-    import Pageination from '$lib/components/ui/Pageination.svelte'
-    import { searchParam } from '$lib/util.js'
+    import type { Filters} from './page.js'
+    
+    import { goto } from '$app/navigation'
     import { page } from '$app/stores'
-    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
     import { profile } from '$lib/auth.js'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import { searchParam } from '$lib/util.js'
     import { userSettings } from '$lib/settings.js'
+    
+    import Button from '$lib/components/input/Button.svelte'
     import ModlogItemCard from './item/ModlogItemCard.svelte'
     import ModlogItemTable from './item/ModlogItemTable.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
+    import Pageination from '$lib/components/ui/Pageination.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import { Icon, ArrowPathRoundedSquare, ExclamationTriangle, XCircle } from 'svelte-hero-icons'
 
     export let data
 
-    // If community URL param is present, set the title to reflect the modlog is filtered for that community.
-    let filterTitle:string = ''
 
-    let communityFiltered:boolean = new URLSearchParams(window.location.search).has('community');
-    let moderateeFiltered:boolean = new URLSearchParams(window.location.search).has('other_person_id');
-
-    if (communityFiltered && data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
-        filterTitle += "for ";
-        filterTitle += data.modlog[0].community.title + " (";
-        filterTitle += data.modlog[0].community.name + "@";
-        filterTitle += new URL(data.modlog[0].community.actor_id).host + ")";
+    
+    // Setup Filter object    
+    let filter: Filters = {
+        title:      '',
+        moderator:  {set: false},
+        moderatee:  {set: false},
+        community:  {set: false},
+        action:     {set: false}
     }
     
-    if (moderateeFiltered && data.modlog && data.modlog.length > 0 && data.modlog[0].moderatee) {
-        filterTitle += " for ";
-        filterTitle += data.modlog[0].moderatee.name + "@";
-        filterTitle += new URL(data.modlog[0].moderatee.actor_id).host;
+    // Make Filter object reactive
+    $: {
+        filter.title = '';
+        filter.community.set = new URLSearchParams(window.location.search).has('community');
+        filter.moderatee.set = new URLSearchParams(window.location.search).has('other_person_id');
+        filter.moderator.set = new URLSearchParams(window.location.search).has('mod_id');
+        
+        // Community Filter
+        if (filter.community.set && data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
+             filter.community.community = data.modlog[0].community;
+        } else {
+            delete filter.community.community
+        }
+        //Moderatee Filter
+        if (filter.moderatee.set && data.modlog && data.modlog.length > 0 && data.modlog[0].moderatee) {
+            filter.moderatee.person = data.modlog[0].moderatee;
+        } else {
+            delete filter.moderatee.person
+        }
+
+        //Moderator Filter
+        if (filter.moderator.set && data.modlog && data.modlog.length > 0 && data.modlog[0].moderator) {
+            filter.moderator.person = data.modlog[0].moderator;
+        }
+        else {
+            delete filter.moderator.person
+        }
     }
 
 
 </script>
 
 <svelte:head>
-    <title>Modlog {filterTitle}</title>
+    <title>Modlog</title>
 </svelte:head>
 
 <div class="flex flex-col gap-4 p-2">
-    <h1 class="font-bold text-2xl">Modlog {filterTitle}</h1>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-row w-full flex-wrap justify-between">
+        <div class="flex flex-col">
+            <h1 class="font-bold text-2xl">Modlog</h1>
+            {#if filter.community.set || filter.moderator.set || filter.moderatee.set}
+                <h2 class="font-bold text-lg">Filters</h2>    
+                
+                <div class="text-xs ml-4 flex flex-col gap-2">
+                    {#if filter.community.set}
+                        <div class="flex flex-row gap-2">
+                            <span>
+                                <strong>Community ID</strong>: {new URLSearchParams(window.location.search).get('community')}
+                            </span>
+                            
+                            <span class="cursor-pointer" on:click={() => {
+                                searchParam($page.url, 'community', '', 'community');
+                            }}>
+                                <Icon src={XCircle} mini size="16"/>
+                            </span>
+                        </div>
+                    {/if}
+
+                    {#if filter.moderator.set}
+                        <div class="flex flex-row gap-2">
+                            <span>
+                                <strong>Moderator ID</strong>: {new URLSearchParams(window.location.search).get('mod_id')}
+                            </span>
+
+                            <span class="cursor-pointer" on:click={() => {
+                                searchParam($page.url, 'mod_id', '', 'mod_id');
+                            }}>
+                                <Icon src={XCircle} mini size="16"/>
+                            </span>
+                        </div>
+                    {/if}
+
+                    {#if filter.moderatee.set}
+                        <div class="flex flex-row gap-2">
+                            <span>    
+                                <strong>Moderatee ID</strong>: {new URLSearchParams(window.location.search).get('other_person_id')}
+                            </span>
+                        
+                            <span class="cursor-pointer" on:click={() => {
+                                searchParam($page.url, 'other_person_id', '', 'other_person_id');
+                            }}>
+                                <Icon src={XCircle} mini size="16"/>
+                            </span>
+                        </div>
+                    {/if}
+                </div>
+            {/if}
+        </div>
+        
         <MultiSelect
             options={[
                 'All',
                 'ModRemovePost',
+                'ModRemoveComment',
+                'ModBan',
+                'ModBanFromCommunity',
                 'ModLockPost',
                 'ModFeaturePost',
-                'ModRemoveComment',
                 'ModRemoveCommunity',
-                'ModBanFromCommunity',
                 'ModAddCommunity',
                 'ModTransferCommunity',
                 'ModAdd',
@@ -63,15 +142,15 @@
             optionNames={[
                 'All',
                 'Remove Post',
+                'Remove Comment',
+                'Ban',
+                'Ban From Community',
                 'Lock Post',
                 'Feature Post',
-                'Remove Comment',
                 'Remove Community',
-                'Ban From Community',
                 'Add Community',
                 'Transfer Community',
                 'Add',
-                'Ban',
                 'Hide Community',
                 'Purge Person',
                 'Purge Community',
@@ -81,8 +160,12 @@
             selected={data.type}
             on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
         />
+    </div>
+        
+    <div class="flex flex-row w-full flex-wrap items-center justify-between">
+          
 
-        <div class="max-w-sm" class:hidden={communityFiltered}>
+        <div class="max-w-sm" class:hidden={filter.community.set}>
             <div class="block my-1 font-bold text-sm">Community</div>
             <ObjectAutocomplete
                 placeholder="Filter by community"
@@ -105,9 +188,15 @@
                 (e) => { $userSettings.modlogCardView = e.detail; }
             }
         />
+
+        <Button color="primary" on:click={() => goto('/modlog') }>
+            <Icon src={ArrowPathRoundedSquare} class="h-8" mini size="16"/>
+            Reset Modlog Filters
+        </Button>
+        
     </div>
 
-    {#if data.modlog}
+    {#if data.modlog && data.modlog.length > 0}
         {#if $userSettings.modlogCardView ?? !window.matchMedia('(min-width: 1600px)').matches}
             <div class="flex flex-col gap-4">
                 {#each data.modlog as modlog}
@@ -144,19 +233,31 @@
 
                 <tbody class="text-sm">
                     {#each data.modlog as modlog}
-                        <ModlogItemTable item={modlog} />
+                        <ModlogItemTable item={modlog} filter={filter} />
                     {/each}
                 </tbody>
             </table>
         </div>
         {/if}
+
+        <Pageination
+            page={data.page}
+            on:change={(e) => searchParam($page.url, 'page', e.detail.toString())}
+        />
+    {:else}
+        <div class="my-auto">
+            <Placeholder
+                title="No Results"    
+                description="There are no modlog results for the provided query."
+                icon={ExclamationTriangle}
+            />
+        </div>
+    
     {/if}
 
 
-    <Pageination
-        page={data.page}
-        on:change={(e) => searchParam($page.url, 'page', e.detail.toString())}
-    />
+
+    
 </div>
 
 <style lang="postcss">

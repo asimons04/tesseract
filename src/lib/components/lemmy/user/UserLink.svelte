@@ -12,6 +12,7 @@
     export let inComment: boolean = false
     export let showInstance: boolean = true
     export let mod:boolean = false
+    export let href:string | undefined = undefined
 
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
@@ -21,7 +22,7 @@
 
 <a
     class="items-center inline-flex flex-row gap-1 hover:underline"
-    href={linkFromCommunity(user)}
+    href={href ?? linkFromCommunity(user)}
 >
     {#if avatar}
         <Avatar url={user.avatar} alt={user.name} width={avatarSize} />
