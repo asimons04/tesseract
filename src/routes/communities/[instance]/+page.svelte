@@ -198,19 +198,20 @@
                                     </span>
                                 </div>
                                 
-                                <div class="ml-auto">
-                                    <Button
-                                        on:click={ () => {
-                                            selectedCommunity = community;
-                                            communityInfoModal = true
-                                        }}
-                                        color="primary"
-                                    >
-                                        About
-                                    </Button>
-
-                                    
-                                </div>
+                                <!-- If community has a description, show an 'About' button-->
+                                {#if community.community.description}
+                                    <div class="ml-auto">
+                                        <Button
+                                            on:click={ () => {
+                                                selectedCommunity = community;
+                                                communityInfoModal = true
+                                            }}
+                                            color="primary"
+                                        >
+                                            About
+                                        </Button>
+                                    </div>
+                                {/if}
                             </div>
 
                             <!--- Icons/Counts Row --->

@@ -32,6 +32,7 @@ All major/minor changes between releases will be documented here.
 
 ### Enhancements
 - Added "About" community modal to remote instance community lists. 
+- Modal close button is now `primary` color making it easier to see
 
 ## 1.2.69.1
 ### Bugfixes

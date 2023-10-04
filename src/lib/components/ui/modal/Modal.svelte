@@ -44,6 +44,7 @@
                         <Button
                             size="square-md"
                             class="ml-auto"
+                            color="primary"
                             on:click={() => (open = false)}
                         >
                             <Icon src={XMark} mini size="16" />
