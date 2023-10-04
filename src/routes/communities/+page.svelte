@@ -1,4 +1,6 @@
 <script lang="ts">
+    import type { Community} from 'lemmy-js-client'
+
     import { addSubscription } from '$lib/lemmy/user.js'
     import { goto } from '$app/navigation'
     import { DEFAULT_INSTANCE_URL } from '$lib/instance.js'
@@ -12,6 +14,8 @@
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Link from '$lib/components/input/Link.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
@@ -25,6 +29,7 @@
         ChartBar,
         ChatBubbleOvalLeftEllipsis,
         Icon,
+        InformationCircle,
         LockClosed,
         PencilSquare,
         QuestionMarkCircle,
@@ -38,12 +43,34 @@
     let instance: string = ''
     let validating: boolean = false
 
+    let communityInfoModal:boolean = false
+    let selectedCommunity:Community
+
 </script>
 
 <svelte:head>
     <title>Communities</title>
 </svelte:head>
+<Modal bind:open={communityInfoModal}>
+    <div class="flex flex-col gap-2 mx-auto">
+        {#if selectedCommunity.community}
+            <CommunityLink
+                showInstance={true}
+                avatar
+                avatarSize={96}
+                heading={true}
+                community={selectedCommunity.community}
+            />
+           
+            {#if selectedCommunity.community?.description}
+                <h1 class="font-bold text-xl">About Community</h1>
+                <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+                <Markdown source={selectedCommunity.community?.description} />
+            {/if}
+        {/if}
+    </div>
 
+</Modal>
 
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
@@ -188,8 +215,22 @@
                                         !{community.community.name}@{new URL(community.community.actor_id).hostname}
                                     </span>
                                 </div>
-                                
-                                <div class="ml-auto">
+
+                                <!--- Action Buttons for Community Entry --->
+                                <div class="ml-auto flex flex-row gap-2">
+                                    <!-- If community has a description, show an 'About' button-->
+                                    {#if community.community.description}
+                                        <Button
+                                            on:click={ () => {
+                                                selectedCommunity = community;
+                                                communityInfoModal = true
+                                            }}
+                                            color="primary"
+                                        >
+                                            <Icon src={InformationCircle} mini size="14"/>
+                                        </Button>
+                                    {/if}
+
                                     <Subscribe {community} let:subscribe let:subscribing>
                                         <Button
                                             disabled={subscribing || !$profile?.jwt}
