@@ -20,6 +20,8 @@ All major/minor changes between releases will be documented here.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
 - Fix bug in markdown when rendering nested bullet lists
 
+- To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
+
 
 ## 1.2.69.2
 ### Bugfixes
