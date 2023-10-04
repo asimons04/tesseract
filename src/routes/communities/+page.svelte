@@ -54,7 +54,7 @@
             <p class="text-slate-600 dark:text-zinc-400 mt-2">
                 The communities shown here are known to your instance. If you don't see what you're looking for, enter another instance to browse the communities
                 there.  You can also look for specific communities using the 
-                <Link href="https://lemmyverse.net/communities" title="Lemmy Community Explorer" newtab={true}>
+                <Link href="https://lemmyverse.net/communities" title="Lemmy Community Explorer" highlight newtab={true}>
                     Lemmy Community Explorer
                 </Link>
                 .

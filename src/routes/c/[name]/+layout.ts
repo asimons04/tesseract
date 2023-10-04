@@ -32,8 +32,9 @@ export async function load(req: any) {
         toast({
             content: `This community is not known to your instance. Fetching community from its home instance. This may take a moment...`,
             type: 'success',
+            duration: 10000
         })
-        
+
         await getClient(undefined, fetch).resolveObject({
             auth: get(profile)!.jwt!,
             q: '!' + req.params.name,

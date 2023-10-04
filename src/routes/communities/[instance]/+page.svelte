@@ -4,8 +4,9 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { searchParam } from '$lib/util.js'
-    import { LINKED_INSTANCE_URL } from '$lib/instance.js'
-    
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { validateInstance } from '$lib/lemmy.js'
+
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
@@ -34,6 +35,9 @@
     export let data
     
     let search = ''
+    let instance: string = ''
+    let validating: boolean = false
+
 </script>
 
 <svelte:head>
@@ -50,6 +54,43 @@
             <p class="text-slate-600 dark:text-zinc-400 mt-2">
                 
             </p>
+            
+            <form class="flex flex-row my-2 gap-2 w-full items-center"
+                on:submit|preventDefault={async () => {
+                    if (instance != '') {
+                        validating = true
+                        if (await validateInstance(instance.trim())) {
+                            goto(`/communities/${instance}`)
+                        } else {
+                            toast({
+                                content: 'Could not contact that instance URL',
+                                type: 'error',
+                            })
+                        }
+                        validating = false
+                    }
+                }}
+            >
+                <TextInput
+                    bind:value={instance}
+                    label="Instance URL to Browse"
+                    placeholder={data.instance}
+                    on:input={() => {
+                        instance = instance.toLowerCase().replaceAll(' ', '')
+                    }}
+                    focus={false}
+                    class="w-full"
+                />
+                <Button
+                    submit
+                    color="primary"
+                    loading={validating}
+                    disabled={validating}
+                    class="h-max mt-[1.5rem]"
+                >
+                    Browse
+                </Button>
+            </form>
 
 
             <div class="flex flex-row flex-wrap justify-between my-4">

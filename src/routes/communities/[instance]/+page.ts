@@ -124,7 +124,8 @@ export async function load( req: any) {
 
         return {
             communities: communities.communities,
-            site: site
+            site: site,
+            instance: instance
         }
     } 
     catch {
