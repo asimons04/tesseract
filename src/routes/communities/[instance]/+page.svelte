@@ -28,6 +28,7 @@
         ChartBar,
         ChatBubbleOvalLeftEllipsis,
         Icon,
+        InformationCircle,
         LockClosed,
         PencilSquare,
         QuestionMarkCircle,
@@ -208,7 +209,7 @@
                                             }}
                                             color="primary"
                                         >
-                                            About
+                                            <Icon src={InformationCircle} mini size="14"/>
                                         </Button>
                                     </div>
                                 {/if}
