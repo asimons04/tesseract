@@ -21,7 +21,7 @@ All major/minor changes between releases will be documented here.
 ## 1.2.69.2
 ### Bugfixes
 - Disabled `data-sveltekit-preload-data="hover"` globally as it was causing too many unnecessary API calls with too little benefit.
-    - Removed individual overrides that were suppressing that
+    - Removed individual overrides that were suppressing that.
 
 
 ## 1.2.69.1
