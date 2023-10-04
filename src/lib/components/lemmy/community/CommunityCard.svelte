@@ -272,7 +272,7 @@
                             disabled={loading.subscribing || community_view.community.removed }
                             loading={loading.subscribing}
                         >
-                            <span class="flex flex-row gap-2" on:click={ (e) => {
+                            <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
                                 e.stopPropagation();
                                 subscribe();
                             }}>
@@ -295,7 +295,7 @@
                             loading={loading.blocking}
                             color="dangerSecondary"
                         >
-                            <span class="flex flex-row gap-2" on:click={(e) => { 
+                            <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
                                 e.stopPropagation(); 
                                 block(); 
                             }}>
@@ -316,7 +316,7 @@
                             loading={loading.removing}
                             color="dangerSecondary"
                         >
-                            <span class="flex flex-row gap-2" on:click={(e) => { 
+                            <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
                                 e.stopPropagation(); 
                                 remove(); 
                             }}>
