@@ -17,6 +17,13 @@ All major/minor changes between releases will be documented here.
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
 
+## 1.2.69.1
+### Bugfixes
+- Accidentally had `text-xl` at too large a font size.
+- Added missing `5xl` through `9xl` font sizes (weren't in use, but would have thrown an error if they ever were since I'm overriding the Tailwind defaults).
+- Throw warning if trying to auto resolve unknown community when not logged in.
+
+
 ## 1.2.69
 This release has three _big_ quality of life enhancements:
 - Can browse communities of other instances
