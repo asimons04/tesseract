@@ -2,10 +2,12 @@
 All major/minor changes between releases will be documented here.  
 
 
-## Roadmap: 1.2.64 - 1.2.69
+## Roadmap: 1.2.7 - 1.2.9
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
+
 - Implement a "scrollToComments" feature when clicking comment button in feed. Title/thumbnail will take you to post, comment button scrolls to comments and suppresses autoplay on videos if enabled.
+
 - (0.19.x) Switch pagination param from `page={n+1}` to `page_cursor={x}`
     - Has `next_page` but not cursor for current page.  Probably need to track these to enable returning to previous page.
 - (0.19.x) Add `scaled` sort option to dropdowns
@@ -24,7 +26,7 @@ All major/minor changes between releases will be documented here.
     - Removed individual overrides that were suppressing that.
 - Moved user and community action menus up to the community/user display name div
     - Long usernames, especially with long instance domains, were pushing the action menu outside of the card
-    
+
 
 ## 1.2.69.1
 ### Bugfixes
