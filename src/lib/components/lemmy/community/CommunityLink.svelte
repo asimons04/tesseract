@@ -13,14 +13,17 @@
     export let avatarSize: number = 24
     export let showInstance: boolean | undefined = undefined
     export let href: string | undefined = undefined
-
+    export let heading:boolean = false
+    
     function linkFromCommunity(community: Community) {
         const domain = new URL(community.actor_id).hostname
         return `/c/${community.name}@${domain}`
     }
 </script>
 
-<a class="items-center flex flex-row gap-2 hover:underline" 
+<a class="items-center flex flex-row gap-2 hover:underline
+    {heading ? 'font-bold text-2xl' : ''}
+    " 
     href={href ?? linkFromCommunity(community)} 
 >
     {#if avatar}

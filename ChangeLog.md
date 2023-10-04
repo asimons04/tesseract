@@ -24,9 +24,14 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Disabled `data-sveltekit-preload-data="hover"` globally as it was causing too many unnecessary API calls with too little benefit.
     - Removed individual overrides that were suppressing that.
+
 - Moved user and community action menus up to the community/user display name div
     - Long usernames, especially with long instance domains, were pushing the action menu outside of the card
 
+- Clicking "theme" in profile menu will keep menu from closing (for quick toggling)
+
+### Enhancements
+- Added "About" community modal to remote instance community lists. 
 
 ## 1.2.69.1
 ### Bugfixes

@@ -318,37 +318,38 @@
             About
         </MenuButton>
 
-        <MenuButton 
+        <MenuButton>
+            <span class="flex flex-row w-full gap-2"
             on:click={ (e) => {
                 e.stopPropagation();
                 $theme = dark() ? 'light' : 'dark'
             }}
-        >
-            
-            <Icon
-                src={$theme == 'system'
-                    ? ComputerDesktop
-                    : $theme == 'light'
-                    ? Sun
-                    : $theme == 'dark'
-                    ? Moon
-                    : Moon
-                }
-                mini
-                size="16"
-            />
-            <div class="flex flex-row gap-2 justify-between w-full">
-                <span class="mr-4">Theme</span>
-                <select
-                    bind:value={$theme}
-                    on:click|stopPropagation
-                    class="ml-auto w-full text-sm py-0 px-1 rounded-sm cursor-pointer bg-slate-200 dark:bg-zinc-900 border dark:border-zinc-700"
-                >
-                    <option value="system">System</option>
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                </select>
-            </div>
+            >
+                <Icon
+                    src={$theme == 'system'
+                        ? ComputerDesktop
+                        : $theme == 'light'
+                            ? Sun
+                            : $theme == 'dark'
+                                ? Moon
+                                : Moon
+                    }
+                    mini
+                    size="16"
+                    />
+                <div class="flex flex-row gap-2 justify-between w-full">
+                    <span class="mr-4">Theme</span>
+                    <select
+                        bind:value={$theme}
+                        on:click|stopPropagation
+                        class="ml-auto w-full text-sm py-0 px-1 rounded-sm cursor-pointer bg-slate-200 dark:bg-zinc-900 border dark:border-zinc-700"
+                    >
+                        <option value="system">System</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+            </span>
         </MenuButton>
 
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import type { Community} from 'lemmy-js-client'
+
     import { addSubscription } from '$lib/lemmy/user.js'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
@@ -11,6 +13,8 @@
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Link from '$lib/components/input/Link.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
@@ -37,6 +41,9 @@
     let search = ''
     let instance: string = ''
     let validating: boolean = false
+    
+    let communityInfoModal:boolean = false
+    let selectedCommunity:Community
 
 </script>
 
@@ -44,6 +51,26 @@
     <title>Communities at {data.site.site_view.site.name}</title>
 </svelte:head>
 
+<Modal bind:open={communityInfoModal}>
+    <div class="flex flex-col gap-2 mx-auto">
+        {#if selectedCommunity.community}
+            <CommunityLink
+                showInstance={true}
+                avatar
+                avatarSize={96}
+                heading={true}
+                community={selectedCommunity.community}
+            />
+           
+            {#if selectedCommunity.community?.description}
+                <h1 class="font-bold text-xl">About Community</h1>
+                <hr class="border-slate-300 dark:border-zinc-800 my-1" />
+                <Markdown source={selectedCommunity.community?.description} />
+            {/if}
+        {/if}
+    </div>
+
+</Modal>
 
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
@@ -171,40 +198,19 @@
                                     </span>
                                 </div>
                                 
-                                <!-- Remove disable subscribe button for now since it's not yet compatible with direct action against remote instances
                                 <div class="ml-auto">
-                                    <Subscribe {community} let:subscribe let:subscribing>
-                                        <Button
-                                            disabled={subscribing || !$profile?.jwt}
-                                            loading={subscribing}
-                                            on:click={async () => {
-                                                const res = await subscribe()
+                                    <Button
+                                        on:click={ () => {
+                                            selectedCommunity = community;
+                                            communityInfoModal = true
+                                        }}
+                                        color="primary"
+                                    >
+                                        About
+                                    </Button>
 
-                                                if (res) {
-                                                    community.subscribed =
-                                                    res.community_view.subscribed != 'NotSubscribed'
-                                                        ? 'Subscribed'
-                                                        : 'NotSubscribed'
-
-                                                    addSubscription(
-                                                        community.community,
-                                                        res.community_view.subscribed == 'Subscribed' ||
-                                                        res.community_view.subscribed == 'Pending'
-                                                    )
-                                                }
-                                            }}
-                                            color={community.subscribed == 'Subscribed'
-                                                ? 'primary'
-                                                : 'ghost'}
-                                        >
-                                            {community.subscribed == 'Subscribed'
-                                            ? 'Subscribed'
-                                            : 'Subscribe'
-                                            }
-                                        </Button>
-                                    </Subscribe>
+                                    
                                 </div>
-                                -->
                             </div>
 
                             <!--- Icons/Counts Row --->
