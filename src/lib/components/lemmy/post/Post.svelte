@@ -36,9 +36,7 @@
 
     export let post: PostView
     export let actions: boolean = true
-    export let hideCommunity = false
     export let autoplay:boolean|undefined = undefined;
-
     export let displayType: PostDisplayType = "feed"
     
     let expandCompact: boolean;

@@ -1,12 +1,10 @@
 <script lang="ts">
     import { addSubscription } from '$lib/lemmy/user.js'
     import { goto } from '$app/navigation'
-    import { DEFAULT_INSTANCE_URL } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { searchParam } from '$lib/util.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { validateInstance } from '$lib/lemmy.js'
+    import { LINKED_INSTANCE_URL } from '$lib/instance.js'
     
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -16,7 +14,7 @@
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
-    import Subscribe from './Subscribe.svelte'
+    import Subscribe from '../Subscribe.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     import {
@@ -30,18 +28,16 @@
         QuestionMarkCircle,
         UserGroup,
     } from 'svelte-hero-icons'
-    import { isCommunityView } from '../../lib/lemmy/item';
+    
+    import { isCommunityView } from '../../../lib/lemmy/item';
 
     export let data
     
     let search = ''
-    let instance: string = ''
-    let validating: boolean = false
-
 </script>
 
 <svelte:head>
-    <title>Communities</title>
+    <title>Communities at {data.site.site_view.site.name}</title>
 </svelte:head>
 
 
@@ -49,70 +45,14 @@
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
     
         <div class="p-2">
-            <h1 class="text-2xl font-bold">Communities</h1>
+            <h1 class="text-2xl font-bold">Communities at {data.site.site_view.site.name}</h1>
             
             <p class="text-slate-600 dark:text-zinc-400 mt-2">
-                The communities shown here are known to your instance. If you don't see what you're looking for, enter another instance to browse the communities
-                there.  You can also look for specific communities using the 
-                <Link href="https://lemmyverse.net/communities" title="Lemmy Community Explorer" newtab={true}>
-                    Lemmy Community Explorer
-                </Link>
-                .
+                
             </p>
-            
-            <form class="flex flex-row my-2 gap-2 w-full items-center"
-                on:submit|preventDefault={async () => {
-                    if (instance != '') {
-                        validating = true
-                        if (await validateInstance(instance.trim())) {
-                            goto(`/communities/${instance}`)
-                        } else {
-                            toast({
-                                content: 'Could not contact that instance URL',
-                                type: 'error',
-                            })
-                        }
-                        validating = false
-                    }
-                }}
-            >
-                <TextInput
-                    bind:value={instance}
-                    label="Instance URL to Browse"
-                    placeholder={DEFAULT_INSTANCE_URL}
-                    on:input={() => {
-                        instance = instance.toLowerCase().replaceAll(' ', '')
-                    }}
-                    focus={false}
-                    class="w-full"
-                />
-                <Button
-                    submit
-                    color="primary"
-                    loading={validating}
-                    disabled={validating}
-                    class="h-max mt-[1.5rem]"
-                >
-                    Browse
-                </Button>
-            </form>
-
 
 
             <div class="flex flex-row flex-wrap justify-between my-4">
-                <MultiSelect
-                    options={['Subscribed', 'Local', 'All']}
-                    selected={$page.url.searchParams.get('type') ?? 'All'}
-                    on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-                    label="Type"
-                    items={0}
-                    headless={true}
-                    fullWidth={true}
-                >
-                    <Icon src={Bars3} mini width={16} slot="icon"/>
-                    <span slot="label">List Type</span>
-                </MultiSelect>
-                
                 <MultiSelect
                     options={["asc", "desc", "posts_desc", "subscribers_desc"]}
                     optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
@@ -154,6 +94,7 @@
                     </Button>
                 </div>
 
+
             </div>
 
             
@@ -189,6 +130,7 @@
                                     </span>
                                 </div>
                                 
+                                <!-- Remove disable subscribe button for now since it's not yet compatible with direct action against remote instances
                                 <div class="ml-auto">
                                     <Subscribe {community} let:subscribe let:subscribing>
                                         <Button
@@ -221,6 +163,7 @@
                                         </Button>
                                     </Subscribe>
                                 </div>
+                                -->
                             </div>
 
                             <!--- Icons/Counts Row --->

@@ -338,7 +338,7 @@
                 size="16"
             />
             <div class="flex flex-row gap-2 justify-between w-full">
-                <span>Theme</span>
+                <span class="mr-4">Theme</span>
                 <select
                     bind:value={$theme}
                     on:click|stopPropagation

@@ -1,7 +1,11 @@
 <script lang="ts">
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import { userSettings } from '$lib/settings.js'
     import type { Community } from 'lemmy-js-client'
+    
+    import { userSettings } from '$lib/settings.js'
+    
+    import Avatar from '$lib/components/ui/Avatar.svelte'
+    
+    
 
     export let community: Community
     export let avatar: boolean = false
@@ -16,7 +20,12 @@
     }
 </script>
 
-<a class="items-center flex flex-row gap-2 hover:underline" href={href ?? linkFromCommunity(community)}>
+<a class="items-center flex flex-row gap-2 hover:underline" 
+    href={href ?? linkFromCommunity(community)} 
+    on:mousemove={(e) => { e.stopPropagation() }} 
+    on:touchstart={(e) => { e.stopPropagation() }} 
+    on:touchmove={(e) => { e.stopPropagation() }} 
+>
     {#if avatar}
         <Avatar
             url={community.icon}

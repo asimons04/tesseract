@@ -1,7 +1,6 @@
 <script lang="ts">
     
     import { fullCommunityName, searchParam } from '$lib/util.js'
-    //import { goto } from '$app/navigation'
     import { onDestroy, onMount } from 'svelte'
     import { page } from '$app/stores'
     import { setSessionStorage } from '$lib/session.js'
@@ -14,14 +13,6 @@
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
-    
-    //import Post from '$lib/components/lemmy/post/Post.svelte'
-    //import Link from '$lib/components/input/Link.svelte'
-    //import Markdown from '$lib/components/markdown/Markdown.svelte'
-    //import Card from '$lib/components/ui/StickyCard.svelte'
-    //import Button from '$lib/components/input/Button.svelte'
-    //import { Color } from '$lib/ui/colors'
-    //import { fly } from 'svelte/transition'
 
     import {
         Bars3,

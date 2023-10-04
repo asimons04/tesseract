@@ -271,21 +271,22 @@
                         <MenuButton
                             disabled={loading.subscribing || community_view.community.removed }
                             loading={loading.subscribing}
-                            on:click={ (e) => {
+                        >
+                            <span class="flex flex-row gap-2" on:click={ (e) => {
                                 e.stopPropagation();
                                 subscribe();
-                            }}
-                        >
-                            <Icon
-                                src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
-                                mini
-                                size="16"
-                            />
-                            {
-                                community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
-                                ? 'Unsubscribe'
-                                : 'Subscribe'
-                            }
+                            }}>
+                                <Icon
+                                    src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
+                                    mini
+                                    size="16"
+                                />
+                                {
+                                    community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
+                                    ? 'Unsubscribe'
+                                    : 'Subscribe'
+                                }
+                            </span>
                         </MenuButton>
                         
                         <!--- Block/Unblock Community --->
@@ -293,17 +294,18 @@
                             disabled={loading.blocking || community_view.community.removed}
                             loading={loading.blocking}
                             color="dangerSecondary"
-                            on:click={(e) => { 
+                        >
+                            <span class="flex flex-row gap-2" on:click={(e) => { 
                                 e.stopPropagation(); 
                                 block(); 
-                            }}
-                        >
-                            <Icon
-                                src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
-                                mini
-                                size="16"
-                            />
-                            {community_view.blocked ? 'Unblock' : 'Block'} Community
+                            }}>
+                                <Icon
+                                    src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
+                                    mini
+                                    size="16"
+                                />
+                                {community_view.blocked ? 'Unblock' : 'Block'} Community
+                            </span>
                         </MenuButton>
                     {/if}
                     
@@ -313,17 +315,19 @@
                             disabled={loading.removing}
                             loading={loading.removing}
                             color="dangerSecondary"
-                            on:click={(e) => { 
+                        >
+                            <span class="flex flex-row gap-2" on:click={(e) => { 
                                 e.stopPropagation(); 
                                 remove(); 
-                            }}
-                        >
-                            <Icon
-                                src={community_view.community.removed  ? PlusCircle : MinusCircle}
-                                mini
-                                size="16"
-                            />
-                            {community_view.community.removed ? 'Restore' : 'Remove'} Community
+                            }}>
+
+                                <Icon
+                                    src={community_view.community.removed  ? PlusCircle : MinusCircle}
+                                    mini
+                                    size="16"
+                                />
+                                {community_view.community.removed ? 'Restore' : 'Remove'} Community
+                            </span>
                         </MenuButton>
                     {/if}
                     
