@@ -18,6 +18,7 @@ All major/minor changes between releases will be documented here.
 - (0.18.x and 0.19.x) Add Instances list
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
+- Fix bug in markdown when rendering nested bullet lists
 
 
 ## 1.2.69.2
