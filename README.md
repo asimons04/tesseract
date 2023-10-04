@@ -26,6 +26,8 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 
 - Code syntax highlighting in code and inline code blocks.
 
+- Browse communities from any instance and load them without having to manually search.
+
 - Installable as a PWA
 
 - Multiple Hosting Options
