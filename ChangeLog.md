@@ -18,48 +18,36 @@ All major/minor changes between releases will be documented here.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
 
 ## 1.2.69
-This release has three big quality of life enhancements:
+This release has three _big_ quality of life enhancements:
 - Can browse communities of other instances
 - Automatically resolve unknown communities
 - Dynamic modlog filtering
 
 
-### Bugfixes
-- Fixed nonstandard width/margins of post feed in `/u/[name]` and `/profile/user` routes.
-- Overrode `on:mousemove`, `on:touchmove`, and `on:touchstart` event handlers on `UserLink` and `CommunityLink` components.  Those were causing background fetches for user and community info
-    - Particularly problematic now that auto-resolve communities has been implemented. Was background-resolving any community you moused over.
-- Removed overzealous auto focus on `/communities` search input (annoying on mobile)
-- Fixed bug where subscribe to community closed menu and blocked thread with no indication of activity.
-
 ### Community Discovery
-
 #### Browse Communities by Instance
 Initial support for community browsing by instance!  This is a feature I've wanted to add for some time, and I've finally added preliminary support for it. There is now a sub-path under `/communities` that will show the communities of any instance. 
 
 From the Explore / Communities page, enter the base domain of the instance you want to browse and hit the "browse" button. 
 
-Clicking a community will automatically resolve it from its home instance (if not already known to yours) and show you a preview.  This is basically a shortcut to searching for it and works the same way.  From the community page, you can then subscribe if it interests you.
+Clicking a community will automatically resolve it from its home instance (if not already known to yours) and show you a preview.  This is basically a shortcut to searching for it and works the same way.  From the community page, you can then subscribe if it interests you.  No more copy/pasting community links and doing manual searches!  Yay!
+
 
 **Limitations**:
 
-These are pretty much all API-related and are limited by the way the API works.  I don't think I can reasonably work around this without some kind of backend component for Tesseract, and that's outside the scope of the project for the time being.
-- You cannot one-click subscribe, at least not yet.  You have to click into the community to resolve it and then subscribe from the community page. 
+Of course every new feature can't come without _some_ limitations.  These are pretty much all API-related and are limited by the way the API works.  I don't think I can reasonably work around this without some kind of backend component for Tesseract, and that's outside the scope of the project for the time being.
 
-- There is no way to mark/omit communities on that instance you are already subscribed to.  I _may_ be able to work around that, but right now, it's just a raw list of local communities on the target instance.
+- You cannot one-click subscribe, at least not yet.  You have to click into the community to resolve it and _then_ subscribe from the community page. Still, better than the old copy, paste, search, resolve, subscribe method.
+
+- There is no way to mark/omit communities on that instance you are already subscribed to.  I _may_ be able to work around that within the limitations of the API, but right now, it's just a raw list of local communities on the target instance.
 
 - Sometimes no posts are returned.  This also happens when searching for a new community and no initial batch of posts are returned, so it's some issue with Lemmy API (it also happens in Lemmy-UI which means it's not a frontend bug).
 
-**To Do**:
-
-- Add an autocomplete search box on `/communities` to query/filter the local site's linked instances which will take you to `/communities/{instance}` when selected.
-
-- Add an `/instances` route to list the local site's blocked, allowed, and linked instances.  
-    - Add a button for each non-blocked instance to browse its communities
 
 #### Communities Now Automatically Resolve
 Previously, if you clicked a community link, such as `!food@beehaw.org` or `https://{instance}/c/{community}` but the community is not already known, Tesseract would show an error saying the community is not found. You would then have to manually search for the community to view it.  We can do better than that.
 
-Now, if a community is not known to your instance and you try to view it at `/c/community@instance`, it will automatically search/resolve in the background and load the initial batch of posts.  It will take a bit longer to load the community page, and a toast message should pop up to inform you of such.
+Now, if a community is not known to your instance and you try to view it at `/c/community@instance`, it will automatically search/resolve in the background and load the initial batch of posts.  It will obviously take a bit longer to load the community page, and a toast message should pop up to inform you of such.
 
 
 ### UI
@@ -78,6 +66,12 @@ Now, if a community is not known to your instance and you try to view it at `/c/
 ### Components
 - Expanded `ObjectAutoComplete` to support person searches.
 
+### Bugfixes
+- Fixed nonstandard width/margins of post feed in `/u/[name]` and `/profile/user` routes.
+- Overrode `on:mousemove`, `on:touchmove`, and `on:touchstart` event handlers on `UserLink` and `CommunityLink` components.  Those were causing background fetches for user and community info
+    - Particularly problematic now that auto-resolve communities has been implemented. Was background-resolving any community you moused over.
+- Removed overzealous auto focus on `/communities` search input (annoying on mobile)
+- Fixed bug where subscribe to community closed menu and blocked thread with no indication of activity.
 
 ## 1.2.68
 
