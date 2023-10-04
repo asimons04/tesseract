@@ -17,6 +17,13 @@ All major/minor changes between releases will be documented here.
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
 
+
+## 1.2.69.2
+### Bugfixes
+- Disabled `data-sveltekit-preload-data="hover"` globally as it was causing too many unnecessary API calls with too little benefit.
+    - Removed individual overrides that were suppressing that
+
+
 ## 1.2.69.1
 ### Bugfixes
 - Accidentally had `text-xl` at too large a font size.
