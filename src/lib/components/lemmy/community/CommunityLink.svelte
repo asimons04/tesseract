@@ -22,9 +22,6 @@
 
 <a class="items-center flex flex-row gap-2 hover:underline" 
     href={href ?? linkFromCommunity(community)} 
-    on:mousemove={(e) => { e.stopPropagation() }} 
-    on:touchstart={(e) => { e.stopPropagation() }} 
-    on:touchmove={(e) => { e.stopPropagation() }} 
 >
     {#if avatar}
         <Avatar

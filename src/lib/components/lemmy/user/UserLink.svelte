@@ -23,9 +23,6 @@
 <a
     class="items-center inline-flex flex-row gap-1 hover:underline"
     href={href ?? linkFromCommunity(user)}
-    on:mousemove={(e) => { e.stopPropagation() }}
-    on:touchstart={(e) => { e.stopPropagation() }} 
-    on:touchmove={(e) => { e.stopPropagation() }} 
 >
     {#if avatar}
         <Avatar url={user.avatar} alt={user.name} width={avatarSize} />
