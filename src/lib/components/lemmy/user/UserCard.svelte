@@ -156,7 +156,7 @@
 <StickyCard class="p-3">
     <Card>
         <div class="flex flex-row gap-3 items-start p-3">
-            <div class="flex-shrink-k">
+            <div class="flex-shrink-0">
                 <Avatar
                     width={48}
                     url={person.person.avatar}
@@ -164,109 +164,113 @@
                 />
             </div>
 
-            <div class="flex flex-col gap-0">
+            <div class="flex flex-col gap-0 w-full">
                 <div>
-                    <h1 class="font-bold text-lg">
-                        <UserLink badges user={person.person} showInstance={false} />
+                    <h1 class="flex flex-row">
+                        <span class="font-bold text-lg">
+                            <UserLink badges user={person.person} showInstance={false} />
+                        </span>
+                        
+                        <!--- Person Action Menu --->
+                        <div class="ml-auto">
+                            <Menu
+                                alignment="bottom-right"
+                                itemsClass="h-8 md:h-8"
+                                containerClass="!max-h-[90vh]"
+                            >
+                                <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
+                                    <Icon src={EllipsisVertical} mini size="16" slot="icon" />
+                                </Button>
+                                
+                                <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
+                                    User Actions
+                                </span>
+                                
+                                <!--- User Bio --->
+                                <span class="xl:hidden">
+                                    <MenuButton
+                                        on:click={() => (userBioModal = !userBioModal)} 
+                                        title="About User"
+                                    >
+                                        <Icon src={InformationCircle} mini width={16}/>
+                                        About User
+                                    </MenuButton>
+                                </span>
+
+                                <!--- User Modlog--->
+                                <MenuButton link
+                                    href="/modlog?other_person_id={person.person.id}"
+                                    title="Modlog for {person.person.display_name ?? person.person.name}"
+                                >
+                                    <Icon src={Newspaper} mini size="16" />
+                                    User Modlog
+                                </MenuButton>
+                                
+                                <!--- Actions for Logged-in <Users--->
+                                {#if $profile?.user && $profile.jwt && person.person.id != $profile.user.local_user_view.person.id}
+                                    <!--- Message in Lemmy--->
+                                    <MenuButton
+                                        on:click={() => (messaging = true)}
+                                    >
+                                        <Icon solid size="16" src={Envelope} />
+                                        Message in Lemmy
+                                    </MenuButton>
+                            
+                                    <!---Message in Matrix--->
+                                    {#if person.person.matrix_user_id}
+                                    <MenuButton link
+                                        href="https://matrix.to/#/{person.person.matrix_user_id}"
+                                        newTab = {true}
+                                    >
+                                        <Icon solid size="16" src={Hashtag} />
+                                        Message on Matrix
+                                    </MenuButton>
+                                    {/if}
+                                        
+                                    <!--- Block--->
+                                    <MenuButton
+                                        color="dangerSecondary"
+                                        loading={blocking}
+                                        disabled={blocking}
+                                        on:click={() => blockUser(person.person.id)}
+                                    >
+                                        <Icon mini size="16" src={NoSymbol} />
+                                        {isBlocked($profile.user, person.person.id)
+                                            ? 'Unblock'
+                                            : 'Block'
+                                        }
+                                    </MenuButton>
+                                {/if}
+                            
+                                
+                                
+                                
+                                <!--- Admin Options--->
+                                {#if $profile?.user && isAdmin($profile?.user)}
+                                    
+                                    <!--Hide ban button if viewing own profile--->
+                                    {#if person.person.id != $profile.user.local_user_view.person.id}
+                                        <MenuButton
+                                            color="dangerSecondary"
+                                            on:click={() =>
+                                                ban(person.person.banned, person.person)
+                                            }
+                                        >
+                                            <Icon slot="icon" mini size="16" src={ShieldExclamation} />
+                                            {person.person.banned ? 'Unban' : 'Ban'}
+                                        </MenuButton>
+                                    {/if}
+                                {/if}
+                            
+                            </Menu>
+                        </div>
+                        <!---End Person Action Menu--->
                     </h1>
-                    <span>@{person.person.name}@{new URL(person.person.actor_id).hostname}</span>
+                    <span class="text-xs">@{person.person.name}@{new URL(person.person.actor_id).hostname}</span>
                 </div>
             </div>
 
-            <!--- Person Action Menu --->
-            <div class="ml-auto">
-                <Menu
-                    alignment="bottom-right"
-                    itemsClass="h-8 md:h-8"
-                    containerClass="!max-h-[90vh]"
-                >
-                    <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
-                        <Icon src={EllipsisVertical} mini size="16" slot="icon" />
-                    </Button>
-                    
-                    <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-                        User Actions
-                    </span>
-                    
-                    <!--- User Bio --->
-                    <span class="xl:hidden">
-                        <MenuButton
-                            on:click={() => (userBioModal = !userBioModal)} 
-                            title="About User"
-                        >
-                            <Icon src={InformationCircle} mini width={16}/>
-                            About User
-                        </MenuButton>
-                    </span>
-
-                    <!--- User Modlog--->
-                    <MenuButton link
-                        href="/modlog?other_person_id={person.person.id}"
-                        title="Modlog for {person.person.display_name ?? person.person.name}"
-                    >
-                        <Icon src={Newspaper} mini size="16" />
-                        User Modlog
-                    </MenuButton>
-                    
-                    <!--- Actions for Logged-in <Users--->
-                    {#if $profile?.user && $profile.jwt && person.person.id != $profile.user.local_user_view.person.id}
-                        <!--- Message in Lemmy--->
-                        <MenuButton
-                            on:click={() => (messaging = true)}
-                        >
-                            <Icon solid size="16" src={Envelope} />
-                            Message in Lemmy
-                        </MenuButton>
-                
-                        <!---Message in Matrix--->
-                        {#if person.person.matrix_user_id}
-                        <MenuButton link
-                            href="https://matrix.to/#/{person.person.matrix_user_id}"
-                            newTab = {true}
-                        >
-                            <Icon solid size="16" src={Hashtag} />
-                            Message on Matrix
-                        </MenuButton>
-                        {/if}
-                            
-                        <!--- Block--->
-                        <MenuButton
-                            color="dangerSecondary"
-                            loading={blocking}
-                            disabled={blocking}
-                            on:click={() => blockUser(person.person.id)}
-                        >
-                            <Icon mini size="16" src={NoSymbol} />
-                            {isBlocked($profile.user, person.person.id)
-                                ? 'Unblock'
-                                : 'Block'
-                            }
-                        </MenuButton>
-                    {/if}
-                
-                    
-                    
-                    
-                    <!--- Admin Options--->
-                    {#if $profile?.user && isAdmin($profile?.user)}
-                        
-                        <!--Hide ban button if viewing own profile--->
-                        {#if person.person.id != $profile.user.local_user_view.person.id}
-                            <MenuButton
-                                color="dangerSecondary"
-                                on:click={() =>
-                                    ban(person.person.banned, person.person)
-                                }
-                            >
-                                <Icon slot="icon" mini size="16" src={ShieldExclamation} />
-                                {person.person.banned ? 'Unban' : 'Ban'}
-                            </MenuButton>
-                        {/if}
-                    {/if}
-                
-                </Menu>
-            </div>
-            <!---End Person Action Menu--->
+            
 
         </div>
 

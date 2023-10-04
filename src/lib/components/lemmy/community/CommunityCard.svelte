@@ -207,146 +207,140 @@
             </div>
             
             
-            <div class="flex flex-col gap-0">
-                <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
-                    <h1 class="font-bold text-xl">{community_view.community.title.replace('&amp;', '&')}</h1>
-                    <span class="dark:text-zinc-400 text-slate-600 text-sm">
-                        !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
-                    </span>
-                </a>
-            </div>
+            <div class="flex flex-col gap-0 w-full">
+                <div class="flex flex-row">
+                    <h1 class="font-bold text-xl">
+                        <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
+                            {community_view.community.title.replace('&amp;', '&')}
+                        </a>
+                    </h1>
 
-            <!---Community Action Menu --->
-            <div class="ml-auto">
-                <!--- Community Info Modal--->                
-                <Menu
-                    alignment="bottom-right"
-                    itemsClass="h-8 md:h-8"
-                    containerClass="!max-h-[90vh]"
-                >
-                    <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
-                        <Icon src={EllipsisVertical} mini size="16" slot="icon" />
-                    </Button>
-                    
-                    <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-                        Community Actions
-                    </span>
-
-                    {#if $profile?.jwt}
-                    <!---Create Post --->
-                    <MenuButton link href="/create/post"
-                        disabled={
-                            (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
-                            community_view.community.removed
-                        }
-                        title="Create post"
-                    >
-                        <Icon src={PencilSquare} mini size="16" />
-                        Create Post
-                    </MenuButton>
-                    {/if}
-
-                    <!---Community Info Modal--->
-                    <span class="xl:hidden">
-                        <MenuButton
-                            on:click={() => (sidebar = !sidebar)} 
-                            title="Community Info"
+                    <!---Community Action Menu --->
+                    <div class="ml-auto">
+                        <!--- Community Info Modal--->                
+                        <Menu
+                            alignment="bottom-right"
+                            itemsClass="h-8 md:h-8"
+                            containerClass="!max-h-[90vh]"
                         >
-                            <Icon src={InformationCircle} mini width={16}/>
-                            Community Info
-                        </MenuButton>
-                    </span>
+                            <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
+                                <Icon src={EllipsisVertical} mini size="16" slot="icon" />
+                            </Button>
+                            
+                            <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
+                                Community Actions
+                            </span>
 
-                    <!---Modlog--->
-                    <MenuButton link
-                        href="/modlog?community={community_view.community.id}"
-                        title="Modlog for {community_view.community.title}"
-                    >
-                        <Icon src={Newspaper} mini size="16" />
-                        Community Modlog
-                    </MenuButton>
-                    
-                    {#if $profile?.jwt}
-                        <!--- Subscribe/Unsubscribe--->
-                        <MenuButton
-                            disabled={loading.subscribing || community_view.community.removed }
-                            loading={loading.subscribing}
-                        >
-                            <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
-                                e.stopPropagation();
-                                subscribe();
-                            }}>
-                                <Icon
-                                    src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
-                                    mini
-                                    size="16"
-                                />
-                                {
-                                    community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
-                                    ? 'Unsubscribe'
-                                    : 'Subscribe'
+                            {#if $profile?.jwt}
+                            <!---Create Post --->
+                            <MenuButton link href="/create/post"
+                                disabled={
+                                    (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
+                                    community_view.community.removed
                                 }
-                            </span>
-                        </MenuButton>
-                        
-                        <!--- Block/Unblock Community --->
-                        <MenuButton
-                            disabled={loading.blocking || community_view.community.removed}
-                            loading={loading.blocking}
-                            color="dangerSecondary"
-                        >
-                            <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
-                                e.stopPropagation(); 
-                                block(); 
-                            }}>
-                                <Icon
-                                    src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
-                                    mini
-                                    size="16"
-                                />
-                                {community_view.blocked ? 'Unblock' : 'Block'} Community
-                            </span>
-                        </MenuButton>
-                    {/if}
-                    
-                    <!--- Admin-Remove-Community--->
-                    {#if $profile.user && isAdmin($profile.user)}
-                        <MenuButton
-                            disabled={loading.removing}
-                            loading={loading.removing}
-                            color="dangerSecondary"
-                        >
-                            <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
-                                e.stopPropagation(); 
-                                remove(); 
-                            }}>
+                                title="Create post"
+                            >
+                                <Icon src={PencilSquare} mini size="16" />
+                                Create Post
+                            </MenuButton>
+                            {/if}
 
-                                <Icon
-                                    src={community_view.community.removed  ? PlusCircle : MinusCircle}
-                                    mini
-                                    size="16"
-                                />
-                                {community_view.community.removed ? 'Restore' : 'Remove'} Community
+                            <!---Community Info Modal--->
+                            <span class="xl:hidden">
+                                <MenuButton
+                                    on:click={() => (sidebar = !sidebar)} 
+                                    title="Community Info"
+                                >
+                                    <Icon src={InformationCircle} mini width={16}/>
+                                    Community Info
+                                </MenuButton>
                             </span>
-                        </MenuButton>
-                    {/if}
+
+                            <!---Modlog--->
+                            <MenuButton link
+                                href="/modlog?community={community_view.community.id}"
+                                title="Modlog for {community_view.community.title}"
+                            >
+                                <Icon src={Newspaper} mini size="16" />
+                                Community Modlog
+                            </MenuButton>
+                            
+                            {#if $profile?.jwt}
+                                <!--- Subscribe/Unsubscribe--->
+                                <MenuButton disabled={loading.subscribing || community_view.community.removed } loading={loading.subscribing}>
+                                    <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+                                        e.stopPropagation();
+                                        subscribe();
+                                    }}>
+                                        <Icon
+                                            src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
+                                            mini
+                                            size="16"
+                                        />
+                                        {
+                                            community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
+                                            ? 'Unsubscribe'
+                                            : 'Subscribe'
+                                        }
+                                    </span>
+                                </MenuButton>
+                                
+                                <!--- Block/Unblock Community --->
+                                <MenuButton disabled={loading.blocking || community_view.community.removed} loading={loading.blocking} color="dangerSecondary">
+                                    <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
+                                        e.stopPropagation(); 
+                                        block(); 
+                                    }}>
+                                        <Icon
+                                            src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
+                                            mini
+                                            size="16"
+                                        />
+                                        {community_view.blocked ? 'Unblock' : 'Block'} Community
+                                    </span>
+                                </MenuButton>
+                            {/if}
+                            
+                            <!--- Admin-Remove-Community--->
+                            {#if $profile.user && isAdmin($profile.user)}
+                                <MenuButton disabled={loading.removing} loading={loading.removing} color="dangerSecondary">
+                                    <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
+                                        e.stopPropagation(); 
+                                        remove(); 
+                                    }}>
+
+                                        <Icon
+                                            src={community_view.community.removed  ? PlusCircle : MinusCircle}
+                                            mini
+                                            size="16"
+                                        />
+                                        {community_view.community.removed ? 'Restore' : 'Remove'} Community
+                                    </span>
+                                </MenuButton>
+                            {/if}
+                            
+                            <!--- Settings --->
+                            {#if $profile.user && amMod($profile.user, community_view.community)}
+                                <MenuButton link
+                                    href="/c/{fullCommunityName(
+                                        community_view.community.name,
+                                        community_view.community.actor_id
+                                    )}/settings"
+                                    title="Edit Community"
+                                >
+                                    <Icon src={Cog6Tooth} mini size="16" />
+                                    Community Settings
+                                </MenuButton>
+                            {/if}                
+                        </Menu>
+                    </div>
+                    <!--- End Community Action Menu --->
+                </div>
                     
-                    <!--- Settings --->
-                    {#if $profile.user && amMod($profile.user, community_view.community)}
-                        <MenuButton link
-                            href="/c/{fullCommunityName(
-                                community_view.community.name,
-                                community_view.community.actor_id
-                            )}/settings"
-                            title="Edit Community"
-                        >
-                            <Icon src={Cog6Tooth} mini size="16" />
-                            Community Settings
-                        </MenuButton>
-                    {/if}                
-                </Menu>
+                <span class="dark:text-zinc-400 text-slate-600 text-xs">
+                    !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
+                </span>
             </div>
-
         </div>
 
 

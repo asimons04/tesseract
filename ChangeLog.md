@@ -22,7 +22,9 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Disabled `data-sveltekit-preload-data="hover"` globally as it was causing too many unnecessary API calls with too little benefit.
     - Removed individual overrides that were suppressing that.
-
+- Moved user and community action menus up to the community/user display name div
+    - Long usernames, especially with long instance domains, were pushing the action menu outside of the card
+    
 
 ## 1.2.69.1
 ### Bugfixes
