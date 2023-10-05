@@ -16,6 +16,7 @@
         Eye,
         EyeSlash,
         Flag,
+        GlobeAlt,
         Icon,
         Newspaper,
         PencilSquare,
@@ -225,7 +226,20 @@
             <Icon src={Newspaper} width={16} mini />
             <span>{post.community.title}</span>
         </MenuButton>
-    
+
+        <!---Actions for the instance the post was submitted to--->
+        <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
+        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>
+        <MenuButton
+            link
+            href="/communities/{new URL(post.community.actor_id).hostname}"
+            title="Browse communities at {new URL(post.community.actor_id).hostname}"
+        >
+            <Icon src={GlobeAlt} width={16} mini />
+            <span>Browse Communities</span>
+        </MenuButton>
+
+        
         <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
         <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">Actions</li>
         {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}

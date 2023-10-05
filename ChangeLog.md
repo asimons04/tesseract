@@ -26,6 +26,10 @@ All major/minor changes between releases will be documented here.
 ### Modlog Tweaks
 - Combined mod action, content, and reason into one column.
 
+### Misc Enhancements
+- Added "Browse communities" and instance-specific menu section to post actions
+
+
 ## 1.2.69.2
 ### Bugfixes
 - Disabled `data-sveltekit-preload-data="hover"` globally as it was causing too many unnecessary API calls with too little benefit.
