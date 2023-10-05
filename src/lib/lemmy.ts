@@ -64,6 +64,52 @@ export async function validateInstance(instance: string): Promise<boolean> {
     }
 }
 
+export async function hideCommunity(communityID:number, hidden:boolean, reason:string = '') {
+    if (!communityID || !get(profile)?.jwt) return
+
+    try {
+        const body = {
+            community_id: communityID,
+            auth: get(profile).jwt,
+            hidden: hidden,
+            reason: reason
+        }
+        const response = await fetch(`https://${get(instance)}/api/v3/community/hide`,
+            {
+                method: 'PUT',
+                headers: { 
+                    'Authorization': `Bearer ${get(profile)?.jwt}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            }
+        )
+
+        const json = await response.json();
+        
+        if (response.status != 200) {
+            throw new Error(
+                `${
+                    (await response.text().catch((_) => undefined)) ??
+                    'Failed to hide community'
+                }: ${response.status}: ${response.statusText}`
+            )
+        }
+
+        return
+    } 
+    catch {
+        throw new Error(
+            `API call failed`
+        )
+    }
+
+    
+
+
+}
+
+
 export async function uploadImage(image: File | null | undefined): Promise<string | undefined> {
     if (!image || !get(profile)?.jwt) return
     

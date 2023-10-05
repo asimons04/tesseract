@@ -1,12 +1,15 @@
 <script lang="ts">
     import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
-    import { profile } from '$lib/auth.js'
-    import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
-    import { getClient } from '$lib/lemmy.js'
+    
     import { addSubscription } from '$lib/lemmy/user.js'
+    import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fullCommunityName } from '$lib/util.js'
+    import { getClient, hideCommunity } from '$lib/lemmy.js'
+    import { goto } from '$app/navigation';
+    import { page } from '$app/stores'
+    import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
-
+    
     import Button from '$lib/components/input/Button.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
@@ -28,6 +31,8 @@
         Cog6Tooth,
         EllipsisHorizontal,
         EllipsisVertical,
+        Eye,
+        EyeSlash,
         HandRaised,
         Icon,
         InformationCircle,
@@ -54,16 +59,16 @@
 
     let loading = {
         blocking: false,
-        subscribing: false,
+        hiding: false,
         removing: false,
+        subscribing: false,
+        
     }
 
     async function subscribe() {
         if (!$profile?.jwt) return
         loading.subscribing = true
-        const subscribed = 
-            community_view.subscribed == 'Subscribed' ||
-            community_view.subscribed == 'Pending'
+        const subscribed = community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
         try {
             await getClient().followCommunity({
                 auth: $profile.jwt,
@@ -116,6 +121,29 @@
         }
       
         loading.blocking = false
+        
+        goto($page.url.toString(), {
+            invalidateAll: true,
+        })
+    }
+
+    async function hide() {
+        if (!$profile?.jwt) return
+        loading.hiding = true
+        
+        const hidden = community_view.community.hidden;
+        try {
+            await hideCommunity(community_view.community.id, !hidden); 
+            community_view.community.hidden = !hidden
+
+        } catch (error) {
+            toast({content: error as any, type: 'error'})
+        }
+        loading.hiding = false;
+
+        goto($page.url.toString(), {
+            invalidateAll: true,
+        })
     }
 
 </script>
@@ -315,6 +343,21 @@
                                             size="16"
                                         />
                                         {community_view.community.removed ? 'Restore' : 'Remove'} Community
+                                    </span>
+                                </MenuButton>
+
+                                <!--- Hide/Unhide Community --->
+                                <MenuButton disabled={loading.hiding} loading={loading.hiding} color="dangerSecondary">
+                                    <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
+                                        e.stopPropagation(); 
+                                        hide();
+                                    }}>
+                                        <Icon
+                                            src={community_view.community.hidden  ? Eye : EyeSlash}
+                                            mini
+                                            size="16"
+                                        />
+                                        {community_view.community.hidden ? 'Unhide' : 'Hide'} Community
                                     </span>
                                 </MenuButton>
                             {/if}

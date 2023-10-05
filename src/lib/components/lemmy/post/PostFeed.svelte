@@ -17,10 +17,6 @@
             title="No posts"
             description="There are no posts that match this filter."
         >
-            <Button href="/communities">
-                <Icon src={Plus} size="16" mini slot="icon" />
-                <span>Follow some communities</span>
-            </Button>
         </Placeholder>
     </div>
 

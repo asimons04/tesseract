@@ -46,7 +46,7 @@ All major/minor changes between releases will be documented here.
 - Removed unnecessary heading in post moderation menu
 - Added "ban" function to post moderation menu
 - Reorganized moderation and post action menus
-
+- Added admin function to hide/unhide communities
 
 ## 1.2.69.2
 ### Bugfixes
