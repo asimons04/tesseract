@@ -45,6 +45,8 @@ All major/minor changes between releases will be documented here.
 - Removed max height class on post action menu to accommodate incoming features.
 - Removed unnecessary heading in post moderation menu
 - Added "ban" function to post moderation menu
+- Reorganized moderation and post action menus
+
 
 ## 1.2.69.2
 ### Bugfixes

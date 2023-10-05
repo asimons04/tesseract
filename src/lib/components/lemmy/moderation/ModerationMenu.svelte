@@ -12,6 +12,7 @@
         LockClosed,
         LockOpen,
         Megaphone,
+        Newspaper,
         ShieldExclamation,
         Trash,
     } from 'svelte-hero-icons'
@@ -111,24 +112,20 @@
 
     {#if ($profile?.user && amMod($profile.user, item.community)) || ($profile?.user && isAdmin($profile.user))}
         <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            Moderation {#if !item.community.local && !amMod($profile.user, item.community)} (Instance Only) {/if}
+            Moderation
         </span>
-
-        <MenuButton
-            color="warning"
-            on:click={() => lock(!item.post.locked)}
-            loading={locking}
-            disabled={locking}
+        
+        <!--- Modlog filtered for this user--->
+        <MenuButton link
+            href="/modlog?other_person_id={item.creator.id}"
+            title="Modlog for {item.creator.display_name ?? item.creator.name}"
         >
-            <Icon
-                src={item.post.locked ? LockOpen : LockClosed}
-                size="16"
-                mini
-                slot="icon"
-            />
-            {item.post.locked ? 'Unlock' : 'Lock'}
+            <Icon src={Newspaper} mini size="16" />
+            User Modlog
         </MenuButton>
 
+
+        <!--- Mod Feature Post Community--->
         <MenuButton
             color="success"
             on:click={() =>
@@ -140,22 +137,53 @@
             <Icon src={Megaphone} size="16" mini />
             <div class="flex flex-row gap-2 text-left items-center justify-between w-full">
                 <span>{item.post.featured_community ? 'Unfeature' : 'Feature'}</span>
-
-                {#if isAdmin($profile.user)}
-                    <span class="text-xs opacity-80">Community</span>
-                {/if}
+                <span class="text-xs opacity-80">Community</span>
             </div>
         </MenuButton>
+        
+        <!--- Admin Feature Post on Instance--->
+        {#if isAdmin($profile.user)}
+            <MenuButton
+                color="success"
+                on:click={() =>
+                    pin(isPostView(item) ? !item.post.featured_local : false, true)
+                }
+            >
+                <Icon src={Megaphone} size="16" mini />
+                <div class="flex flex-row gap-2 text-left items-center justify-between w-full">
+                    <span>{item.post.featured_local ? 'Unfeature' : 'Feature'}</span>
+                    <span class="text-xs opacity-80">Instance</span>
+                </div>
+            </MenuButton>
+        {/if}
 
+        <!--- Lock Post--->
+        <MenuButton
+            color="warning"
+            on:click={() => lock(!item.post.locked)}
+            loading={locking}
+            disabled={locking}
+            >
+            <Icon
+                src={item.post.locked ? LockOpen : LockClosed}
+                size="16"
+                mini
+                slot="icon"
+            />
+            {item.post.locked ? 'Unlock Post' : 'Lock Post'}
+        </MenuButton>
+
+        <!--- Mod/Admin Restore/Remove Post --->
         <MenuButton color="dangerSecondary" on:click={() => remove(item)}>
             <Icon src={Trash} size="16" mini />
             {#if isCommentView(item)}
-                {item.comment.removed ? 'Restore' : 'Remove'}
+                {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}
             {:else}
-                {item.post.removed ? 'Restore' : 'Remove'}
+                {item.post.removed ? 'Restore Post' : 'Remove Post'}
             {/if}
         </MenuButton>
     
+        <!---Hide ban option for own posts--->
         {#if $profile?.user && $profile.user.local_user_view.person.id != item.creator.id}
             <MenuButton
                 color="dangerSecondary"
@@ -166,47 +194,32 @@
                 <Icon src={ShieldExclamation} size="16" mini />
                 {
                     item.creator_banned_from_community
-                    ? 'Unban from community'
-                    : 'Ban from community'
+                    ? 'Unban from Community'
+                    : 'Ban from Community'
                 }
             </MenuButton>
         {/if}
-    {/if}
-  
-    {#if $profile?.user && isAdmin($profile.user)}
-        <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />    
-        <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            Admin
-        </span>
-        <MenuButton
-            color="success"
-            on:click={() =>
-                pin(isPostView(item) ? !item.post.featured_local : false, true)
-            }
-        >
-            <Icon src={Megaphone} size="16" mini />
-            <div class="flex flex-row gap-2 text-left items-center justify-between w-full">
-                <span>{item.post.featured_local ? 'Unfeature' : 'Feature'}</span>
-                <span class="text-xs opacity-80">Instance</span>
-            </div>
-        </MenuButton>
-    
-        <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
-            <Icon src={Fire} size="16" mini />
-            Purge
-        </MenuButton>
 
-        <!--Hide ban button if viewing own profile--->
-        {#if item.creator.id != $profile.user.local_user_view.person.id}
-            <MenuButton
-                color="dangerSecondary"
-                on:click={() =>
-                    ban(item.creator.banned, item.creator)
-                }
-            >
-                <Icon slot="icon" mini size="16" src={ShieldExclamation} />
-                {item.creator.banned ? 'Unban' : 'Ban'}
+        <!--- Admin Only Options--->
+        {#if isAdmin($profile.user)}
+            <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
+                <Icon src={Fire} size="16" mini />
+                Purge Post
             </MenuButton>
+
+            <!--Hide ban button if viewing own profile--->
+            {#if item.creator.id != $profile.user.local_user_view.person.id}
+                <MenuButton
+                    color="dangerSecondary"
+                    on:click={() =>
+                        ban(item.creator.banned, item.creator)
+                    }
+                >
+                    <Icon slot="icon" mini size="16" src={ShieldExclamation} />
+                    {item.creator.banned ? 'Unban from Instance' : 'Ban from Instance'}
+                </MenuButton>
+            {/if}
         {/if}
+
     {/if}
 </Menu>

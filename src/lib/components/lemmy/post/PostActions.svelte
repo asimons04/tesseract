@@ -211,6 +211,7 @@
         </Button>
 
         <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">Creator</li>
+        <!--- User Profile Link--->
         <MenuButton
             link
             href="/u/{post.creator.name}@{new URL(post.creator.actor_id).hostname}"
@@ -219,6 +220,7 @@
             <span>{post.creator.name}</span>
         </MenuButton>
 
+        <!--- Community Link Button--->
         <MenuButton
             link
             href="/c/{post.community.name}@{new URL(post.community.actor_id).hostname}"
@@ -226,6 +228,14 @@
             <Icon src={Newspaper} width={16} mini />
             <span>{post.community.title}</span>
         </MenuButton>
+
+        <!--- Report Button -- Hide for self--->
+        {#if $profile.user?.local_user_view.person.id != post.creator.id}
+            <MenuButton on:click={() => report(post)} color="dangerSecondary">
+                <Icon src={Flag} width={16} mini />
+                Report Post
+            </MenuButton>
+        {/if}
 
         <!---Actions for the instance the post was submitted to--->
         <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
@@ -242,6 +252,8 @@
         
         <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
         <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">Actions</li>
+        
+        <!---Edit if owned by self--->
         {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}
             <MenuButton on:click={() => (editing = true)}>
                 <Icon src={PencilSquare} width={16} mini />
@@ -331,12 +343,7 @@
                 </MenuButton>
             {/if}
 
-            {#if $profile.user?.local_user_view.person.id != post.creator.id}
-                <MenuButton on:click={() => report(post)} color="dangerSecondary">
-                    <Icon src={Flag} width={16} mini />
-                    Report
-                </MenuButton>
-            {/if}
+            
         {/if}
     </Menu>
 </div>

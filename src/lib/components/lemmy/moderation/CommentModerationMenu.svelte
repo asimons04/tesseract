@@ -35,44 +35,53 @@
 
     {#if ($profile?.user && amMod($profile.user, item.community)) || ($profile?.user && isAdmin($profile.user))}
         <li class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            Moderation {#if (!item.community.local && !amMod($profile.user, item.community)) } (Instance Only) {/if}
+            Moderation
         </li>
-
-        <MenuButton color="success" on:click={() => remove(item)}>
+        
+        <!---Remove/Restore Post--->
+        <MenuButton color={item.comment.removed ? 'success' : 'dangerSecondary'} on:click={() => remove(item)}>
             <Icon src={Trash} size="16" mini />
             {#if isCommentView(item)}
-                {item.comment.removed ? 'Restore' : 'Remove'}
+                {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}
             {:else}
-                {item.post.removed ? 'Restore' : 'Remove'}
+                {item.post.removed ? 'Restore Comment' : 'Remove Comment'}
             {/if}
         </MenuButton>
     
+        <!--- Ban User--->
         {#if $profile?.user && $profile.user?.local_user_view.person.id != item.creator.id}
-            <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-                User {#if (!item.community.local && !amMod($profile.user, item.community)) } (Instance Only) {/if}
-            </span>
             <MenuButton
-                color="dangerSecondary"
+                color={item.creator_banned_from_community ? 'success' : 'dangerSecondary'}
                 on:click={() =>
                     ban(item.creator_banned_from_community, item.creator, item.community)
                 }
             >
                 <Icon src={ShieldExclamation} size="16" mini />
                 {item.creator_banned_from_community
-                    ? 'Unban from community'
-                    : 'Ban from community'
+                    ? 'Unban from Community'
+                    : 'Ban from Community'
                 }
             </MenuButton>
         {/if}
     {/if}
 
     {#if $profile?.user && isAdmin($profile.user)}
-        <li class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            Admin
-        </li>
         <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
             <Icon src={Fire} size="16" mini slot="icon" />
-            Purge
+            Purge Comment
         </MenuButton>
+
+        <!--Hide ban button if viewing own profile--->
+        {#if item.creator.id != $profile.user.local_user_view.person.id}
+            <MenuButton
+                color={item.creator.banned ? 'success' : 'dangerSecondary'}
+                on:click={() =>
+                    ban(item.creator.banned, item.creator)
+                }
+            >
+                <Icon slot="icon" mini size="16" src={ShieldExclamation} />
+                {item.creator.banned ? 'Unban from Instance' : 'Ban from Instance'}
+            </MenuButton>
+    {   /if}
     {/if}
 </Menu>
