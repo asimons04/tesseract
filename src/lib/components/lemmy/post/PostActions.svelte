@@ -196,7 +196,7 @@
     <!--- Post Actions Menu --->
     <Menu
         alignment="side-left"
-        containerClass="overflow-auto max-h-[400px]"
+        containerClass="overflow-auto"
     >
         <Button
             slot="button"

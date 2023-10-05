@@ -22,13 +22,29 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+### Fediseer Integration
+
+#### Unauthenticated/Lookup
+- **Censures for Instance**: fediseer.com/api/v1/censures/{instance}
+- **Endorsements**: fediseer.com/api/v1/endorsements/{instance}
+- **Endorsement Badge**: fediseer.com/api/v1/badges/endorsements/{instance}.svg
+- **Guarantees**:  fediseer.com/api/v1/guarantees/{instance}
+- **Guarantee Badge**: fediseer.com/api/v1/badges/guarantees/{instance}.svg
+
+
+
+
+
+
 ## 1.2.69.3
 ### Modlog Tweaks
 - Combined mod action, content, and reason into one column.
 
 ### Misc Enhancements
 - Added "Browse communities" and instance-specific menu section to post actions
-
+- Removed max height class on post action menu to accommodate incoming features.
+- Removed unnecessary heading in post moderation menu
+- Added "ban" function to post moderation menu
 
 ## 1.2.69.2
 ### Bugfixes

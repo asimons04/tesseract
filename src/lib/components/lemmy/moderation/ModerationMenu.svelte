@@ -157,9 +157,6 @@
         </MenuButton>
     
         {#if $profile?.user && $profile.user.local_user_view.person.id != item.creator.id}
-            <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-                User {#if !item.community.local && !amMod($profile.user, item.community)} (Instance Only) {/if}
-            </span>
             <MenuButton
                 color="dangerSecondary"
                 on:click={() =>
@@ -177,6 +174,7 @@
     {/if}
   
     {#if $profile?.user && isAdmin($profile.user)}
+        <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />    
         <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
             Admin
         </span>
@@ -197,5 +195,18 @@
             <Icon src={Fire} size="16" mini />
             Purge
         </MenuButton>
+
+        <!--Hide ban button if viewing own profile--->
+        {#if item.creator.id != $profile.user.local_user_view.person.id}
+            <MenuButton
+                color="dangerSecondary"
+                on:click={() =>
+                    ban(item.creator.banned, item.creator)
+                }
+            >
+                <Icon slot="icon" mini size="16" src={ShieldExclamation} />
+                {item.creator.banned ? 'Unban' : 'Ban'}
+            </MenuButton>
+        {/if}
     {/if}
 </Menu>
