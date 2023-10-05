@@ -251,22 +251,18 @@
                 <colgroup class="table-fixed">
                     <col width="5%" />
                     <col width="15%" />
-                    <col width="18%" class="overflow-x-auto" />
-                    <col width="8%" />
-                    <col width="10%" />
-                    <col width="18%" />
-                    <col width="26%" />
+                    <col width="15%" />
+                    <col width="15%" />
+                    <col width="50%" />
                 </colgroup>
 
                 <thead class="text-left sticky top-0">
                     <tr class="rounded-t-lg overflow-hidden">
                         <th>Time</th>
-                        <th>Moderator</th>
-                        <th>Action</th>
-                        <th>User</th>
                         <th>Community</th>
-                        <th>Content</th>
-                        <th>Reason</th>
+                        <th>Moderator</th>
+                        <th>User</th>
+                        <th>Details</th>
                     </tr>
                 </thead>
 
