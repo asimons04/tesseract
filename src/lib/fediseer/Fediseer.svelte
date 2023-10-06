@@ -26,15 +26,15 @@
     
     export let data: FediseerInfo
     export let open:boolean = false;
-
 </script>
 
 <Modal bind:open={open}>
     <h1 class="font-bold text-3xl mt-[-50px] w-fit">Fediseer</h1>
     
+    <!---Site logo, name, and instance domain--->
     {#if data?.site?.site_view}
         <div class="flex flex-row gap-3 items-center p-3">
-            {#if data?.site?.site_view?.site?.icon}
+            {#if data.site.site_view.site?.icon}
                 <Avatar width={42} url={data.site.site_view.site.icon} alt={data.site.site_view.site.name} />
             {/if}
                     
@@ -51,18 +51,24 @@
                 </div>
                 
                 <span class="text-sm opacity-60">
-                    {new URL(data.site.site_view.site.actor_id).hostname}
+                    {data.instance}
                 </span>
             </div>
         </div>
-
-        <div class="flex flex-row gap-2 justify-between">
-            <img src="https://fediseer.com/api/v1/badges/guarantees/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Guarantees for {data.site.site_view.site.name}" />
-            <img src="https://fediseer.com/api/v1/badges/endorsements/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Ensorsements for {data.site.site_view.site.name}" />
-            <img src="https://uptime.lemmings.world/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Uptime for {data.site.site_view.site.name}" />
-
+    <!---Fallback in case the call to getSite fails for this instance--->
+    {:else}
+        <div class="flex flex-col w-full">
+            <div class="flex flex-row">
+                <h2 class="font-bold text-2xl">{data.instance}</h2>
+            </div>
         </div>
     {/if}
+        <div class="flex flex-row gap-2 justify-between">
+            <img src="https://fediseer.com/api/v1/badges/guarantees/{data.instance}.svg" alt="Guarantees for {data.instance}" />
+            <img src="https://fediseer.com/api/v1/badges/endorsements/{data.instance}.svg" alt="Ensorsements for {data.instance}" />
+            <img src="https://uptime.lemmings.world/{data.instance}.svg" alt="Uptime for {data.instance}" />
+        </div>
+    
     
     
     {#if data}
@@ -86,7 +92,7 @@
                 </Button>
                 
                 <div class="flex flex-col gap-2 pl-8 max-h-[45vh] overflow-y-scroll" class:hidden={!fediseer.expanded.endorsements}>
-                    {#if data.endorsements}
+                    {#if data.endorsements?.length > 0}
                         <ol class="font-bold text-sm list-decimal">
                             {#each data.endorsements as endorsement}
                                 <li>
@@ -104,7 +110,7 @@
                             {/each}
                         </ol>
                     {:else}
-                        <span class="text-sm">No endorsements have been issued for {data.site.site_view.site.name}</span>
+                        <span class="text-sm">No endorsements have been issued for {data.site?.site_view?.site?.name ?? 'this instance'}</span>
                     {/if}
                 </div>
             </div>
@@ -146,7 +152,7 @@
                             {/each}
                         </ol>
                     {:else}
-                        <span class="text-sm">No censures have been issued for {data.site.site_view.site.name}</span>
+                        <span class="text-sm">No censures have been issued for {data.site?.site_view?.site?.name ?? 'this instance'}</span>
                     {/if}
                 </div>
             </div>
@@ -187,7 +193,7 @@
                             {/each}
                         </ol>
                     {:else}
-                        <span class="text-sm">No hesitations have been issued for {data.site.site_view.site.name}</span>
+                        <span class="text-sm">No hesitations have been issued for {data.site?.site_view?.site?.name ?? 'this instance'}</span>
                     {/if}
                 </div>
             </div>

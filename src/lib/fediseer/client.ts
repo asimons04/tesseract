@@ -38,6 +38,7 @@ interface FediseerInfo {
     censures?: Array<Censures>,
     endorsements?: Array<Endorsements>
     hesitations?: Array<Hesitations>
+    instance: string
 }
 
 
@@ -48,11 +49,21 @@ import type { SiteView } from 'lemmy-js-client'
 const fediseerAPI:string = 'https://fediseer.com/api/v1'
 
 export async function getFediseerInfo(instance:string) {
+    let siteInfo
+    
+    try {
+        siteInfo = await getClient(instance, undefined).getSite({})
+    } catch {
+        siteInfo = undefined
+    }
+
+    
     const data:FediseerInfo = {
         censures:       await getCensures(instance),
         hesitations:    await getHesitations(instance),
         endorsements:   await getEndorsements(instance),
-        site:           await getClient(instance, undefined).getSite({})
+        site:           siteInfo,
+        instance:       instance
     }
 
     if (data.endorsements) {
@@ -97,8 +108,11 @@ export async function getCensures(instance:string) {
             return instances.instances as Array<Censures>
         }
         catch {
-            throw new Error ("Failed to pull censures from Fediseer API");
+            return [] as Array<Censures>;
         }
+    }
+    else {
+        return [] as Array<Censures>;
     }
 }
 
@@ -110,8 +124,11 @@ export async function getHesitations(instance:string) {
             return instances.instances as Array<Hesitations>
         }
         catch {
-            throw new Error ("Failed to pull censures from Fediseer API");
+            return [] as Array<Hesitations>;
         }
+    }
+    else {
+        return [] as Array<Hesitations>;
     }
 }
 
@@ -123,7 +140,10 @@ export async function getEndorsements(instance:string) {
             return instances.instances as Array<Endorsements>
         }
         catch {
-            throw new Error ("Failed to pull censures from Fediseer API");
+            return [] as Array<Endorsements>;
         }
+    }
+    else {
+        return [] as Array<Endorsements>;
     }
 }
