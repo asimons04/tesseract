@@ -22,28 +22,15 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
-### Fediseer Integration
-
-#### Unauthenticated/Lookup
-- **Censures for Instance**: fediseer.com/api/v1/censures/{instance}
-- **Endorsements**: fediseer.com/api/v1/endorsements/{instance}
-- **Endorsement Badge**: fediseer.com/api/v1/badges/endorsements/{instance}.svg
-- **Guarantees**:  fediseer.com/api/v1/guarantees/{instance}
-- **Guarantee Badge**: fediseer.com/api/v1/badges/guarantees/{instance}.svg
-
-
-
-
-
 
 ## 1.2.7
 ### Fediseer Integration
-There is now a section within the post actions menu for the instance the post belongs to.  Currently, there are two functions:
+There is now a section within the post and comment actions menu contextually relevant for the instance the post belongs to.  
 
-
+Currently, there are two functions:
 
 #### Fediseer
-This has been on the backburner for a while, but finally glad to have initial support.  Fediseer is a chain of trust and reputation management system.  You can learn more about Fediseer on [its website](https://dbzer0.com/blog/overseer-a-fediverse-chain-of-trust/).
+This has been on the backburner for a while, but finally glad to have initial support.  Fediseer is a chain of trust and reputation management system for the Fediverse.  You can learn more about Fediseer on [its website](https://dbzer0.com/blog/overseer-a-fediverse-chain-of-trust/).
 
 In a nutshell, verified instance administrators can "endorse" other instances to show that they're known and trusted.  In addition to endorsements, instance admins can issue "censures" and "hesitations" along with reasons and supporting evidence.  
 
