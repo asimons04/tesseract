@@ -63,7 +63,7 @@
             </div>
         </div>
     {/if}
-        <div class="flex flex-row gap-2 justify-between">
+        <div class="flex flex-row flex-wrap gap-2 justify-between">
             <img src="https://fediseer.com/api/v1/badges/guarantees/{data.instance}.svg" alt="Guarantees for {data.instance}" />
             <img src="https://fediseer.com/api/v1/badges/endorsements/{data.instance}.svg" alt="Ensorsements for {data.instance}" />
             <img src="https://uptime.lemmings.world/{data.instance}.svg" alt="Uptime for {data.instance}" />
