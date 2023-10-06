@@ -177,6 +177,8 @@
                     fediseer.data = await getFediseerInfo(new URL(comment.creator.actor_id).hostname);
                     fediseer.loading = false;
                     fediseer.modal = true;
+                    //@ts-ignore -- Once loaded, pass click event to menu button to close it.
+                    e.target?.parentElement?.dispatchEvent(e);
                 }}
             >
                 <Icon src={Eye} width={16} mini />
