@@ -36,7 +36,28 @@ All major/minor changes between releases will be documented here.
 
 
 
-## 1.2.69.3
+## 1.2.7
+### Fediseer Integration
+There is now a section within the post actions menu for the instance the post belongs to.  Currently, there are two functions:
+
+
+
+#### Fediseer
+This has been on the backburner for a while, but finally glad to have initial support.  Fediseer is a chain of trust and reputation management system.  You can learn more about Fediseer on [its website](https://dbzer0.com/blog/overseer-a-fediverse-chain-of-trust/).
+
+In a nutshell, verified instance administrators can "endorse" other instances to show that they're known and trusted.  In addition to endorsements, instance admins can issue "censures" and "hesitations" along with reasons and supporting evidence.  
+
+For example, if an instance is known to harbour hate speech, trolls, spammers, bigotry, or other undesirable content, instance admins can "censure" that instance.  A censure is basically a notice; it's there to inform you and nothing more.  A "hesitation" is similar to a censure but less severe.
+
+These tools can help instance adminsitrators take preventative action and give a heads up to any unsavory instances.  
+
+I know I've explained Fediseer poorly, but that's the gist of it.  Please read their website for more details on how it works.
+
+Currently, support is limited to public endpoints only.  Eventually, I would like for admins to be able to endorse, censure, or guarantee other instances all from within Tesseract, but that is still a ways off.
+
+#### Browse Communities
+This will take you to `/communities/{instance}` and show you the communities belonging to that instance.  From there, you can browse their communities and subscribe to them if you like.
+
 ### Modlog Tweaks
 - Combined mod action, content, and reason into one column.
 
@@ -47,6 +68,8 @@ All major/minor changes between releases will be documented here.
 - Added "ban" function to post moderation menu
 - Reorganized moderation and post action menus
 - Added admin function to hide/unhide communities
+
+---
 
 ## 1.2.69.2
 ### Bugfixes

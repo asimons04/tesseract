@@ -1,14 +1,18 @@
 <script lang="ts">
-    import Button from '$lib/components/input/Button.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
-    import StickyCard from '$lib/components/ui/StickyCard.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
-    import { getClient } from '$lib/lemmy.js'
+    
     import type { SiteView, PersonView, Tagline } from 'lemmy-js-client'
+    import { getClient } from '$lib/lemmy.js'
+    import { userSettings } from '$lib/settings.js'
+    
+    import Avatar from '$lib/components/ui/Avatar.svelte'
+    import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import StickyCard from '$lib/components/ui/StickyCard.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+
     import {
         Calendar,
         ChatBubbleOvalLeftEllipsis,
@@ -19,7 +23,7 @@
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
-    import { userSettings } from '$lib/settings.js'
+    
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined

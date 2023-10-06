@@ -1,9 +1,29 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
-
-    import PostVote from './PostVote.svelte'
+    
+    import { getFediseerInfo } from '$lib/fediseer/client.js'
+    
+    import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { createEventDispatcher } from 'svelte'
+    import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
     import { getInstance } from '$lib/lemmy.js'
+    import { goto } from '$app/navigation'
+    import { profile } from '$lib/auth.js'
+    import { setSessionStorage } from '$lib/session.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings.js'
+
+    import Button from '$lib/components/input/Button.svelte'
+    import Fediseer from '$lib/fediseer/Fediseer.svelte'
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import Menu from '$lib/components/ui/menu/Menu.svelte'
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import ModerationMenu from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
+    import PostVote from './PostVote.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+
     import {
         ArrowTopRightOnSquare,
         ArrowsPointingIn,
@@ -25,26 +45,7 @@
         Trash,
         UserCircle,
     } from 'svelte-hero-icons'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import Menu from '$lib/components/ui/menu/Menu.svelte'
-    import Button from '$lib/components/input/Button.svelte'
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import { createEventDispatcher } from 'svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import {
-        amMod,
-        isAdmin,
-        report,
-    } from '$lib/components/lemmy/moderation/moderation.js'
-    import ModerationMenu from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
-    import { profile } from '$lib/auth.js'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
-    import { setSessionStorage } from '$lib/session.js'
-    import { goto } from '$app/navigation'
-    import { userSettings } from '$lib/settings.js'
-
+    
     export let post: PostView
     export let postType: PostType
     export let displayType: PostDisplayType
@@ -54,8 +55,15 @@
     let theaterMode = false;
     let editing = false
     
-    const dispatcher = createEventDispatcher<{ edit: PostView }>()
+    let fediseer = {
+        loading: false,
+        modal: false,
+        data: undefined
+    }
+    
+    
 
+    const dispatcher = createEventDispatcher<{ edit: PostView }>()
     function delay(millisec:number) {
         return new Promise(resolve => {
             setTimeout(() => { resolve('') }, millisec);
@@ -90,6 +98,9 @@
         {/await}
     </Modal>
 {/if}
+
+
+<Fediseer bind:open={fediseer.modal} data={fediseer.data} />
 
 <div class="flex flex-row mt-4 gap-2 items-center h-8">
     <PostVote
@@ -210,14 +221,116 @@
             <Icon slot="icon" src={EllipsisHorizontal} width={16} mini />
         </Button>
 
-        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">Creator</li>
-        <!--- User Profile Link--->
+        <!---Post Actions --->
+        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">Actions</li>
+
+        <!---Edit if owned by self--->
+        {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}
+            <MenuButton on:click={() => (editing = true)}>
+                <Icon src={PencilSquare} width={16} mini />
+                Edit
+            </MenuButton>
+        {/if}
+
+        <!--- Mark as Read/Unread --->
+        {#if $profile?.jwt}
+            <MenuButton
+                on:click={async () => {
+                    if ($profile?.jwt)
+                    post.read = await markAsRead(post.post, !post.read, $profile.jwt)
+                    toast({
+                        type: 'success',
+                        content: `Post marked as ${post.read ? 'read' : 'unread'}`,
+                    })
+                }}
+            >
+                <Icon src={post.read ? EyeSlash : Eye} width={16} mini />
+                Mark as {post.read ? 'Unread' : 'Read'}
+            </MenuButton>
+        {/if}
+        
+        <!--- Share/Copy Post Link to Clipboard --->
+        <MenuButton
+            on:click={() => {
+                navigator.share?.({
+                    url: post.post.ap_id,
+                }) ?? navigator.clipboard.writeText(post.post.ap_id)
+                toast({
+                    type: 'success',
+                    content: `Copied post URL to clipboard!`,
+                })
+                
+            }}
+        >
+            <Icon src={Share} width={16} mini />
+            Share
+        </MenuButton>
+
+        {#if $profile?.jwt}
+            <!--- Save/Unsave Post --->
+            <MenuButton
+                on:click={async () => {
+                    if ($profile?.jwt)
+                        post.saved = await save(post, !post.saved, $profile.jwt)
+                }}
+            >
+                <Icon src={post.saved ? BookmarkSlash : Bookmark} width={16} mini />
+                {post.saved ? 'Unsave' : 'Save'}
+            </MenuButton>
+      
+            <!---Crosspost--->
+            <MenuButton
+                on:click={() => {
+                    setSessionStorage('postDraft', {
+                        body: `cross-posted from: ${post.post.ap_id}\n\n${
+                            post.post.body
+                        }`,
+                        url: post.post.url,
+                        name: post.post.name,
+                        loading: false,
+                        nsfw: post.post.nsfw,
+                        community: null,
+                        image: null,
+                    })
+                    goto('/create/post?crosspost=true')
+                }}
+            >
+                <Icon src={ArrowTopRightOnSquare} width={16} mini />
+                Crosspost
+            </MenuButton>
+      
+            <!---Delete Post--->
+            {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
+                <MenuButton
+                    on:click={async () => {
+                        if ($profile?.jwt) {
+                            post.post.deleted = await deleteItem(
+                                post,
+                                !post.post.deleted,
+                                $profile.jwt
+                            )
+                            post=post
+                        }
+                    }}
+                    color="dangerSecondary"
+                >
+                    <Icon src={Trash} width={16} mini />
+                    {post.post.deleted ? 'Restore' : 'Delete'}
+                </MenuButton>
+            {/if}
+
+            
+        {/if}
+
+        <!--- Creator Profile Button--->
+        <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
+        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{post.creator.display_name ?? post.creator.name}</li>
         <MenuButton
             link
             href="/u/{post.creator.name}@{new URL(post.creator.actor_id).hostname}"
         >
             <Icon src={UserCircle} width={16} mini />
-            <span>{post.creator.name}</span>
+            <span>Profile</span>
         </MenuButton>
 
         <!--- Community Link Button--->
@@ -249,101 +362,22 @@
             <span>Browse Communities</span>
         </MenuButton>
 
-        
-        <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
-        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">Actions</li>
-        
-        <!---Edit if owned by self--->
-        {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}
-            <MenuButton on:click={() => (editing = true)}>
-                <Icon src={PencilSquare} width={16} mini />
-                Edit
-            </MenuButton>
-        {/if}
-
-        {#if $profile?.jwt}
-            <MenuButton
-                on:click={async () => {
-                    if ($profile?.jwt)
-                    post.read = await markAsRead(post.post, !post.read, $profile.jwt)
-                    toast({
-                        type: 'success',
-                        content: `Post marked as ${post.read ? 'read' : 'unread'}`,
-                    })
+        <MenuButton loading={fediseer.loading} disabled={fediseer.loading}>
+            <span 
+                class="flex flex-row gap-2 items-center w-full text-sm"
+                title="Get Fediseer info for  {new URL(post.community.actor_id).hostname}"
+                on:click={async (e) => {
+                    e.stopPropagation();
+                    fediseer.loading = true;
+                    fediseer.data = await getFediseerInfo(new URL(post.community.actor_id).hostname);
+                    fediseer.loading = false;
+                    fediseer.modal = true;
                 }}
             >
-                <Icon src={post.read ? EyeSlash : Eye} width={16} mini />
-                Mark as {post.read ? 'Unread' : 'Read'}
-            </MenuButton>
-        {/if}
-
-        <MenuButton
-            on:click={() => {
-                navigator.share?.({
-                    url: post.post.ap_id,
-                }) ?? navigator.clipboard.writeText(post.post.ap_id)
-                toast({
-                    type: 'success',
-                    content: `Copied post URL to clipboard!`,
-                })
-                
-            }}
-        >
-            <Icon src={Share} width={16} mini />
-            Share
+                <Icon src={Eye} width={16} mini />
+                <span>Fediseer</span>
+            </span>
         </MenuButton>
 
-        {#if $profile?.jwt}
-            <MenuButton
-                on:click={async () => {
-                    if ($profile?.jwt)
-                        post.saved = await save(post, !post.saved, $profile.jwt)
-                }}
-            >
-                <Icon src={post.saved ? BookmarkSlash : Bookmark} width={16} mini />
-                {post.saved ? 'Unsave' : 'Save'}
-            </MenuButton>
-      
-            <MenuButton
-                on:click={() => {
-                    setSessionStorage('postDraft', {
-                        body: `cross-posted from: ${post.post.ap_id}\n\n${
-                            post.post.body
-                        }`,
-                        url: post.post.url,
-                        name: post.post.name,
-                        loading: false,
-                        nsfw: post.post.nsfw,
-                        community: null,
-                        image: null,
-                    })
-                    goto('/create/post?crosspost=true')
-                }}
-            >
-                <Icon src={ArrowTopRightOnSquare} width={16} mini />
-                Crosspost
-            </MenuButton>
-      
-            {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
-                <MenuButton
-                    on:click={async () => {
-                        if ($profile?.jwt) {
-                            post.post.deleted = await deleteItem(
-                                post,
-                                !post.post.deleted,
-                                $profile.jwt
-                            )
-                            post=post
-                        }
-                    }}
-                    color="dangerSecondary"
-                >
-                    <Icon src={Trash} width={16} mini />
-                    {post.post.deleted ? 'Restore' : 'Delete'}
-                </MenuButton>
-            {/if}
-
-            
-        {/if}
     </Menu>
 </div>
