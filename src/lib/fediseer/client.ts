@@ -50,7 +50,6 @@ const fediseerAPI:string = 'https://fediseer.com/api/v1'
 
 export async function getFediseerInfo(instance:string) {
     let siteInfo
-    
     try {
         siteInfo = await getClient(instance, undefined).getSite({})
     } catch {
