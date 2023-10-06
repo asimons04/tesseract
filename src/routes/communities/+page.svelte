@@ -340,7 +340,7 @@
         </div>
     </div>
 
-    <div class="hidden xl:block mt-[-8px]">
+    <div class="hidden xl:block mt-[8px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>

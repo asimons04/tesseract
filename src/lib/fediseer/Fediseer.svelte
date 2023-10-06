@@ -31,38 +31,38 @@
 
 <Modal bind:open={open}>
     <h1 class="font-bold text-3xl mt-[-50px] w-fit">Fediseer</h1>
-
-    <div class="flex flex-row gap-3 items-center p-3">
-        
-        {#if data?.site?.site_view?.site?.icon}
-            <Avatar width={42} url={data.site.site_view.site.icon} alt={data.site.site_view.site.name} />
-        {/if}
-        
-        
-        <div class="flex flex-col w-full">
-            <div class="flex flex-row">
-                <h2 class="font-bold text-2xl">{data.site.site_view.site.name}</h2>
-                
-                <div class="ml-auto">
-                    <span class="flex flex-row items-center gap-2 text-sm">
-                        <Icon src={Calendar} width={16} height={16} mini />
-                        <RelativeDate date={data.site.site_view.site.published} />
-                    </span>
+    
+    {#if data?.site?.site_view}
+        <div class="flex flex-row gap-3 items-center p-3">
+            {#if data?.site?.site_view?.site?.icon}
+                <Avatar width={42} url={data.site.site_view.site.icon} alt={data.site.site_view.site.name} />
+            {/if}
+                    
+            <div class="flex flex-col w-full">
+                <div class="flex flex-row">
+                    <h2 class="font-bold text-2xl">{data.site.site_view.site.name}</h2>
+                    
+                    <div class="ml-auto">
+                        <span class="flex flex-row items-center gap-2 text-sm">
+                            <Icon src={Calendar} width={16} height={16} mini />
+                            <RelativeDate date={data.site.site_view.site.published} />
+                        </span>
+                    </div>
                 </div>
+                
+                <span class="text-sm opacity-60">
+                    {new URL(data.site.site_view.site.actor_id).hostname}
+                </span>
             </div>
-            
-            <span class="text-sm opacity-60">
-                {new URL(data.site.site_view.site.actor_id).hostname}
-            </span>
         </div>
-    </div>
 
-    <div class="flex flex-row gap-2 justify-between">
-        <img src="https://fediseer.com/api/v1/badges/guarantees/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Guarantees for {data.site.site_view.site.name}" />
-        <img src="https://fediseer.com/api/v1/badges/endorsements/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Ensorsements for {data.site.site_view.site.name}" />
-        <img src="https://uptime.lemmings.world/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Uptime for {data.site.site_view.site.name}" />
+        <div class="flex flex-row gap-2 justify-between">
+            <img src="https://fediseer.com/api/v1/badges/guarantees/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Guarantees for {data.site.site_view.site.name}" />
+            <img src="https://fediseer.com/api/v1/badges/endorsements/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Ensorsements for {data.site.site_view.site.name}" />
+            <img src="https://uptime.lemmings.world/{new URL(data.site.site_view.site.actor_id).hostname}.svg" alt="Uptime for {data.site.site_view.site.name}" />
 
-    </div>
+        </div>
+    {/if}
     
     
     {#if data}
