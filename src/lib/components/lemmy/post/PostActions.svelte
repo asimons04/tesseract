@@ -372,7 +372,6 @@
                     fediseer.data = await getFediseerInfo(new URL(post.community.actor_id).hostname);
                     fediseer.loading = false;
                     fediseer.modal = true;
-                    console.log(e)
                     //@ts-ignore -- Once loaded, pass click event to menu button to close it.
                     e.target?.parentElement?.dispatchEvent(e);
                 }}
