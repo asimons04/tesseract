@@ -72,6 +72,8 @@ interface Settings {
     highlightInlineCode: boolean
     inlineImages: boolean
     experimentalFeatures: boolean
+    proxyMedia:boolean
+
 
 }
 
@@ -144,6 +146,7 @@ export const defaultSettings: Settings = {
         customInvidious:                                                    'yewtu.be',
         autoplay:                                                           false,
     },
+    proxyMedia:                                                         false
 
     
 }

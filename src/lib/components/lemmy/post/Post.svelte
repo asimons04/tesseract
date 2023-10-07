@@ -132,7 +132,11 @@
                         <!--- Thumbnail for Link Post--->
                         {#if post.post.thumbnail_url}
                             <img
-                                src="{post.post.thumbnail_url}?thumbnail=256&format=webp"
+                                src="{
+                                    $userSettings.proxyMedia
+                                        ? post.post.thumbnail_url.replace('https://', '/image_proxy/')
+                                        : post.post.thumbnail_url
+                                }?thumbnail=256&format=webp"
                                 loading="lazy"
                                 class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                                 class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
@@ -140,7 +144,12 @@
                         <!---Thumbnail for Image Post--->
                         {:else}
                             <img
-                                src="{post.post.url}?thumbnail=256&format=webp"
+                                src="{
+                                    $userSettings.proxyMedia
+                                        ? post.post.url.replace('https://', '/image_proxy')
+                                        : post.post.url
+                                
+                                }?thumbnail=256&format=webp"
                                 loading="lazy"
                                 class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
                                 class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}

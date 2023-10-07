@@ -1,27 +1,23 @@
 <script lang="ts">
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
-    import Link from '$lib/components/input/Link.svelte'
-    import { userSettings } from '$lib/settings.js'
+    
     import { imageSize} from './helpers.js'
+    import { userSettings } from '$lib/settings.js'
+
+    import Link from '$lib/components/input/Link.svelte'
 
     export let post:PostView | undefined
     export let displayType: PostDisplayType
-
     export let url:string | undefined       = post.post.url ?? undefined;
+
     let thumbnail_url:string | undefined    = post.post.thumbnail_url ?? undefined;
     let nsfw:boolean | undefined            = post.post.nsfw ?? false;
     let title:string | undefined            = post.post.name ?? ''
-
     let loaded                              = false;
     let size: string                        = imageSize(displayType);
-    
-   
-    // Proxy images through the UI
-    if (thumbnail_url) {
-        thumbnail_url = thumbnail_url.replace('https://', '/image_proxy/');
-    }
-    
+ 
+
     // Show lower-res thumbnails in feed, full-res in posts. Convert both to webp
     if (displayType == 'feed' && thumbnail_url) {
         thumbnail_url += "?format=webp&thumbnail=768"
@@ -44,7 +40,11 @@
             <div class="m-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <img
-                        src="{thumbnail_url}"
+                        src="{
+                            $userSettings.proxyMedia
+                            ? thumbnail_url.replace('https://', '/image_proxy/')
+                            : thumbnail_url
+                        }"
                         loading="lazy"
                         class="max-w-full ml-auto mr-auto object-cover rounded-md  z-30 opacity-0 transition-opacity duration-300"
                         

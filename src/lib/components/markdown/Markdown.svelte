@@ -14,6 +14,14 @@
             if (photonified) l.href = photonified
             if ($userSettings.openInNewTab.postLinks) l.target = '_blank'
         })
+
+        // If media proxying is enabled, rewrite image urls
+        if ($userSettings.proxyMedia) {
+            const images = node.querySelectorAll('img');
+            images.forEach((i) => {
+                i.src = i.src.replace('https://', '/image_proxy/');
+            })
+        }
     }
 
     // Highlight code syntax if user option set

@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
+    
     import { getInstance } from '$lib/lemmy.js'
     import { userSettings } from '$lib/settings.js'
 
@@ -25,11 +26,11 @@
     }
 
     // Proxy images through the UI
-    if (thumbnail_url) {
+    if ($userSettings.proxyMedia && thumbnail_url) {
         thumbnail_url = thumbnail_url.replace('https://', '/image_proxy/');
     }
 
-    if (url) {
+    if ($userSettings.proxyMedia && url) {
         url = url.replace('https://', '/image_proxy/');
     }
 

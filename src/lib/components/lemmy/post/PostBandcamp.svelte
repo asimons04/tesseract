@@ -11,8 +11,8 @@
     export let post: PostView
     export let displayType: PostDisplayType
     
-    let trackID:    String = ""
-    let embedURL:   String = ""
+    let trackID:    string = ""
+    let embedURL:   string = ""
 
     // Generate the embed URL for the given post URL
     if (post.post && post.post.embed_video_url) {
@@ -66,7 +66,11 @@
                 <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <img
-                        src="{post.post.thumbnail_url}"
+                        src="{
+                            $userSettings.proxyMedia
+                            ? post.post.thumbnail_url.replace('https://', '/image_proxy/')
+                            : post.post.thumbnail_url
+                        }"
                         alt="{post.post.name}"
                         loading="lazy"
                         class="object-cover rounded-md h-auto z-30"

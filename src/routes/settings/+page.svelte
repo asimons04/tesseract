@@ -171,6 +171,7 @@
 
 
                 <h1 class="font-bold mt-4 mb-4">Misc Settings</h1>
+                <Checkbox bind:checked={$userSettings.proxyMedia}>Proxy images through Tesseract</Checkbox>
                 <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
                 <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
                 <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>

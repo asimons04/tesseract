@@ -1,6 +1,8 @@
 <script lang="ts">
     import { findClosestNumber } from '$lib/util.js'
     import { createAvatar } from '@dicebear/core'
+    import { userSettings } from '$lib/settings'
+
     import * as initials from '@dicebear/initials'
 
     const sizes = [48, 64, 128, 256, 512]
@@ -12,16 +14,15 @@
 
     export let width: number
     export let res: number | undefined = undefined
-
-    if (url) {
-        url = url.replace('https://', '/image_proxy/');
-    }
-
 </script>
 
 {#if url}
     <img
-        src="{url}?format=webp&thumbnail={findClosestNumber(sizes, res || width*2)}"
+        src="{
+        $userSettings.proxyMedia
+            ? url.replace('https://', '/image_proxy/')
+            : url
+        }?format=webp&thumbnail={findClosestNumber(sizes, res || width*2)}"
         {alt}
         {width}
         {title}
