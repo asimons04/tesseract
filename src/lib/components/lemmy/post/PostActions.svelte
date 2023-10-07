@@ -2,7 +2,7 @@
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
     
-    import { getFediseerInfo } from '$lib/fediseer/client.js'
+    import { getFediseerInfo, fediseerLookup } from '$lib/fediseer/client.js'
     
     import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { createEventDispatcher } from 'svelte'
@@ -369,11 +369,11 @@
                 on:click={async (e) => {
                     e.stopPropagation();
                     fediseer.loading = true;
-                    fediseer.data = await getFediseerInfo(new URL(post.community.actor_id).hostname);
+                    fediseer.data = await fediseerLookup(new URL(post.community.actor_id).hostname);
                     fediseer.loading = false;
                     fediseer.modal = true;
-                    //@ts-ignore -- Once loaded, pass click event to menu button to close it.
-                    e.target?.parentElement?.dispatchEvent(e);
+                    //@ts-ignore -- Once loaded, pass click event to body to close menu
+                    document.querySelector('body').dispatchEvent(e);
                 }}
             >
                 <span class:hidden={fediseer.loading}>

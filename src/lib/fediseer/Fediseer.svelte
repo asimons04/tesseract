@@ -64,11 +64,17 @@
         </div>
     {/if}
     
-    <div class="flex flex-row flex-wrap gap-2 justify-between">
-        <img src="https://fediseer.com/api/v1/badges/guarantees/{data.instance}.svg" alt="Guarantees for {data.instance}" />
-        <img src="https://fediseer.com/api/v1/badges/endorsements/{data.instance}.svg" alt="Ensorsements for {data.instance}" />
-        <img class="hidden lg:block" src="https://uptime.lemmings.world/{data.instance}.svg" alt="Uptime for {data.instance}" />
-    </div>
+    {#if data.badges?.guarantor || data.badges?.endorsements}
+        <div class="flex flex-row flex-wrap gap-2 justify-between">
+            {#if data.badges?.guarantor}
+                {@html data.badges.guarantor}
+            {/if}
+
+            {#if data.badges?.endorsements}
+                {@html data.badges.endorsements}
+            {/if}
+        </div>
+    {/if}
     
     
     

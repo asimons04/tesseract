@@ -12,6 +12,11 @@
 
     export let width: number
     export let res: number | undefined = undefined
+
+    if (url) {
+        url = url.replace('https://', '/image_proxy/');
+    }
+
 </script>
 
 {#if url}

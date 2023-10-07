@@ -9,7 +9,7 @@ interface CookieOptions {
 }  
 
 export async function router(event:any, resolve:any, routes:any) {
-    // Create a request object    
+    // Create an Express-like request object    
     if(!event.req) { 
         event.req = {
             route: '',
@@ -24,9 +24,11 @@ export async function router(event:any, resolve:any, routes:any) {
         path: event.url.pathname,
         method: event.request.method,
         params: event.url.searchParams,
+        headers: event.request.headers,
+        url: event.url,
     };
 
-    // Create response object if it doesn't exist on the event yet
+    // Create Express-like response object if it doesn't exist on the event yet
     if (!event.res) {
         event.res = {
             headers: new Headers(),
@@ -48,6 +50,11 @@ export async function router(event:any, resolve:any, routes:any) {
                 return event.res;
             },
             
+            length: function(length:number) {
+                event.res.headers.set('Content-Length', length);
+                return event.res;
+            },
+
             send: function(data:string | undefined = undefined) {
                 return new Response(
                     data ?? event.res.body,
@@ -58,6 +65,11 @@ export async function router(event:any, resolve:any, routes:any) {
                 )
             },
             
+            type: function(contentType:string) {
+                event.res.headers.set('Content-Type', contentType);
+                return event.res;
+            },
+
             setCookie: function(key:string, value:string, options:CookieOptions={}) {
                 let cookieOptions = '';
                 
@@ -69,13 +81,13 @@ export async function router(event:any, resolve:any, routes:any) {
                 if (options.secure) cookieOptions +=    `; Secure`
                 if (options.samesite) cookieOptions +=  `; SameSite=${options.samesite}`
 
-                event.res.setHeader('Set-Cookie', `${key}=${value}${cookieOptions}`);
+                event.res.headers.append('Set-Cookie', `${key}=${value}${cookieOptions}`);
                 
                 return event.res;
             },
 
             setHeader: function(key:string, value:string) {
-                event.res.headers.append(key, value);
+                event.res.headers.set(key, value);
                 return event .res;
             },
 

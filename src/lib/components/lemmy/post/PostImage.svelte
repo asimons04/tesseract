@@ -20,8 +20,17 @@
     
     
     // Hack to get GIFs to play in the feed.  Lemmy converts them to weird webm at best.
-    if (displayType == 'feed' && url.endsWith('.gif')) {
+    if (displayType == 'feed' && url?.endsWith('.gif')) {
         thumbnail_url = url;
+    }
+
+    // Proxy images through the UI
+    if (thumbnail_url) {
+        thumbnail_url = thumbnail_url.replace('https://', '/image_proxy/');
+    }
+
+    if (url) {
+        url = url.replace('https://', '/image_proxy/');
     }
 
 </script>

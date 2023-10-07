@@ -1,5 +1,5 @@
 import {getFediseerInfo} from './client.js'
-import { cache } from '$lib/redisCache.js'
+import { cache } from '$lib/cache/memory.js'
 
 export async function fediseer_router(event) {
     let res = event.res;

@@ -16,6 +16,12 @@
     let loaded                              = false;
     let size: string                        = imageSize(displayType);
     
+   
+    // Proxy images through the UI
+    if (thumbnail_url) {
+        thumbnail_url = thumbnail_url.replace('https://', '/image_proxy/');
+    }
+    
     // Show lower-res thumbnails in feed, full-res in posts. Convert both to webp
     if (displayType == 'feed' && thumbnail_url) {
         thumbnail_url += "?format=webp&thumbnail=768"

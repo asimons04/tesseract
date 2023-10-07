@@ -38,6 +38,10 @@ interface FediseerInfo {
     censures?: Array<Censures>,
     endorsements?: Array<Endorsements>
     hesitations?: Array<Hesitations>
+    badges?: {
+        guarantor?: string,
+        endorsements?: string,
+    }
     instance: string
 }
 
@@ -47,8 +51,27 @@ import { getClient } from '$lib/lemmy.js'
 
 const fediseerAPI:string = 'https://fediseer.com/api/v1'
 
+// Fetch the Fediseer info from the local API caching proxy 
+export async function fediseerLookup(instance:string){
+    const response  = await fetch(`/tesseract/api/fediseer/lookup?instance=${instance}`);
+    if (response.ok) {
+        try {
+            return await response.json();
+            
+        }
+        catch {
+            return {} as FediseerInfo;
+        }
+    }
+    else {
+        return {} as FediseerInfo;
+    }
+}
+
+// Fetch the Fediseer info directly from the Fediseer API
 export async function getFediseerInfo(instance:string) {
     let siteInfo: SiteView | undefined
+    
     try {
         siteInfo = await getClient(instance, undefined).getSite({})
     } catch {
@@ -61,9 +84,14 @@ export async function getFediseerInfo(instance:string) {
         hesitations:    await getHesitations(instance),
         endorsements:   await getEndorsements(instance),
         site:           siteInfo,
+        badges: {
+            endorsements:   await getEndorsementsBadge(instance),
+            guarantor:      await getGuarantorBadge(instance),
+        },
         instance:       instance
     }
 
+    // Split single-element comma-delmited arrays into proper arrays
     if (data.endorsements) {
         for (let i:number=0; i<data.endorsements.length; i++) {
             //@ts-ignore
@@ -73,7 +101,8 @@ export async function getFediseerInfo(instance:string) {
             }
         }
     }
-
+    
+    // Split single-element comma-delmited arrays into proper arrays
     if (data.censures) {
         for (let i:number=0; i<data.censures.length; i++) {
             //@ts-ignore
@@ -84,6 +113,7 @@ export async function getFediseerInfo(instance:string) {
         }
     }
 
+    // Split single-element comma-delmited arrays into proper arrays
     if (data.hesitations) {
         for (let i:number=0; i<data.hesitations.length; i++) {
             //@ts-ignore
@@ -97,6 +127,27 @@ export async function getFediseerInfo(instance:string) {
     return data;
 
 }
+
+export async function getEndorsementsBadge(instance:string) {
+    const response = await fetch(`${fediseerAPI}/badges/endorsements/${instance}.svg`);
+    if (response.ok) {
+        return await response.text();
+    }
+    else {
+        return ''
+    }
+}
+
+export async function getGuarantorBadge(instance:string) {
+    const response = await fetch(`${fediseerAPI}/badges/guarantees/${instance}.svg`);
+    if (response.ok) {
+        return await response.text();
+    }
+    else {
+        return ''
+    }
+}
+
 
 export async function getCensures(instance:string) {
     const response  = await fetch(`${fediseerAPI}/censures/${instance}`);
