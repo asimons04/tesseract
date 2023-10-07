@@ -34,22 +34,21 @@ interface Hesitations extends FediseerResponse {
 }
 
 interface FediseerInfo {
-    site?: SiteView
+    site?: SiteView | undefined
     censures?: Array<Censures>,
     endorsements?: Array<Endorsements>
     hesitations?: Array<Hesitations>
     instance: string
 }
 
-
-import { getClient } from '$lib/lemmy.js'
 import type { SiteView } from 'lemmy-js-client'
+import { getClient } from '$lib/lemmy.js'
 
 
 const fediseerAPI:string = 'https://fediseer.com/api/v1'
 
 export async function getFediseerInfo(instance:string) {
-    let siteInfo
+    let siteInfo: SiteView | undefined
     try {
         siteInfo = await getClient(instance, undefined).getSite({})
     } catch {
@@ -101,7 +100,7 @@ export async function getFediseerInfo(instance:string) {
 
 export async function getCensures(instance:string) {
     const response  = await fetch(`${fediseerAPI}/censures/${instance}`);
-    if (response.status == 200) {
+    if (response.ok) {
         try {
             const instances = await response.json();
             return instances.instances as Array<Censures>
@@ -117,7 +116,7 @@ export async function getCensures(instance:string) {
 
 export async function getHesitations(instance:string) {
     const response  = await fetch(`${fediseerAPI}/hesitations/${instance}`);
-    if (response.status == 200) {
+    if (response.ok) {
         try {
             const instances = await response.json();
             return instances.instances as Array<Hesitations>
@@ -133,7 +132,7 @@ export async function getHesitations(instance:string) {
 
 export async function getEndorsements(instance:string) {
     const response  = await fetch(`${fediseerAPI}/endorsements/${instance}`);
-    if (response.status == 200) {
+    if (response.ok) {
         try {
             const instances = await response.json();
             return instances.instances as Array<Endorsements>

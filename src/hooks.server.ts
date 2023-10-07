@@ -1,12 +1,39 @@
-function buildUrl(inputUrl: URL): URL {
-    let withoutCors = inputUrl.pathname.replace('/cors/', '')
+// Router
+import { router } from './server/router.js'
 
-    if (!withoutCors.startsWith('https://')) {
-        withoutCors = 'https://' + withoutCors
-    }
+// Handlers
+import { fediseer_router } from './lib/fediseer/server.js'
+import { proxy_pictrs_upload } from './server/upload-image.js'
 
-    return new URL(`${withoutCors}?${inputUrl.searchParams.toString()}`)
+// Routes
+const routes = [
+    {
+        route: '/cors/*',
+        handler: proxy_pictrs_upload
+    },
+
+    {
+        route: '/tesseract/api/fediseer*',
+        handler: fediseer_router
+    },
+    
+]
+
+// Svelte Handler
+export async function handle({event, resolve }) {
+    
+    // Send the defined server-side routes to their handlers 
+    let routed =  await router(event, resolve, routes)
+    if (routed) return routed
+
+
+
+    // Resolve the event if it hasn't already
+    const response = await resolve(event)
+    return response
 }
+
+
 
 export function handleError({ error, event }) {
     console.error(error)
@@ -15,84 +42,12 @@ export function handleError({ error, event }) {
     }
 }
 
-export async function handle({ event, resolve }) {
-    // annoying hack to fix lemmy's CORS
-    if (event.url.pathname.startsWith('/cors')) {
-        event.request.headers.delete('origin')
-        event.request.headers.delete('host')
 
-        try {
-            const url = buildUrl(event.url)
+// Task Scheduler
 
-            let headers: Headers = event.request.headers
+//// Update TTLs in cache once per second
+import { cache } from '$lib/redisCache.js'
 
-            headers.delete('origin')
-            headers.delete('host')
-
-            if (
-                event.request.method == 'POST' &&
-                url.pathname == '/pictrs/image' &&
-                ( url.searchParams.get('auth') || headers.get('authorization') )
-            ) {
-                let jwt = url.searchParams.get('auth') ?? headers.get('authorization')?.replace("Bearer ", "")
-
-                headers.set('cookie', `jwt=${jwt}`)
-                headers.set('authorization', `Bearer ${jwt}`)
-            } else {
-                return new Response(
-                    JSON.stringify({message: 'Only CORS allowed is through /pictrs/image',}),
-                    {
-                        status: 500,
-                    }
-                )
-            }
-
-            const data = await fetch(url, {
-                method: event.request.method,
-                headers: headers,
-                body: event.request.body,
-                // @ts-ignore this works, idk why typescript complains
-                duplex: 'half',
-                signal: AbortSignal.timeout(20 * 1000),
-                })
-                .catch((_) => undefined)
-
-                if (!data) {
-                    return new Response(
-                        JSON.stringify({message: 'proxy failed to fetch',}),
-                        {
-                            status: 500,
-                        }
-                    )
-                }
-
-                if (!data.ok) {
-                    return new Response(
-                        JSON.stringify({
-                            message: await data.text(),
-                        }),
-                        {
-                            status: data.status,
-                        }
-                    )
-                }
-
-                const json = await data.json()
-
-                return new Response(JSON.stringify(json), {
-                    status: data.status,
-                })
-        } catch (error) {
-            console.log(error)
-            return new Response(
-                JSON.stringify({message: 'the proxy failed to fetch from server',}),
-                {
-                    status: 500,
-                }
-            )
-        }
-    }
-
-    const response = await resolve(event)
-    return response
-}
+setInterval(() => {
+    cache.tick();
+}, 1000);

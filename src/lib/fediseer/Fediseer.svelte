@@ -63,11 +63,12 @@
             </div>
         </div>
     {/if}
-        <div class="flex flex-row flex-wrap gap-2 justify-between">
-            <img src="https://fediseer.com/api/v1/badges/guarantees/{data.instance}.svg" alt="Guarantees for {data.instance}" />
-            <img src="https://fediseer.com/api/v1/badges/endorsements/{data.instance}.svg" alt="Ensorsements for {data.instance}" />
-            <img src="https://uptime.lemmings.world/{data.instance}.svg" alt="Uptime for {data.instance}" />
-        </div>
+    
+    <div class="flex flex-row flex-wrap gap-2 justify-between">
+        <img src="https://fediseer.com/api/v1/badges/guarantees/{data.instance}.svg" alt="Guarantees for {data.instance}" />
+        <img src="https://fediseer.com/api/v1/badges/endorsements/{data.instance}.svg" alt="Ensorsements for {data.instance}" />
+        <img class="hidden lg:block" src="https://uptime.lemmings.world/{data.instance}.svg" alt="Uptime for {data.instance}" />
+    </div>
     
     
     
@@ -80,7 +81,6 @@
                     alignment="left"
                     on:click={ ()=> { fediseer.expanded.endorsements = !fediseer.expanded.endorsements}}
                 >
-                    
                     <Icon src={HandThumbUp} mini size="18" />
 
                     <span class="w-full flex flex-row justify-between">

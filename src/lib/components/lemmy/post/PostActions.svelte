@@ -376,7 +376,9 @@
                     e.target?.parentElement?.dispatchEvent(e);
                 }}
             >
-                <Icon src={Eye} width={16} mini />
+                <span class:hidden={fediseer.loading}>
+                    <Icon src={Eye} width={16} mini />
+                </span>
                 <span>Fediseer</span>
             </span>
         </MenuButton>

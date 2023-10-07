@@ -58,7 +58,7 @@
         }
     }
 
-
+    console.log(data);
 </script>
 
 <svelte:head>
@@ -69,6 +69,7 @@
     <div class="flex flex-row w-full flex-wrap justify-between">
         <div class="flex flex-col">
             <h1 class="font-bold text-2xl">Modlog</h1>
+            
             {#if filter.community.set || filter.moderator.set || filter.moderatee.set}
                 <h2 class="font-bold text-lg">Filters</h2>    
                 
