@@ -20,6 +20,7 @@
     "@types/nprogress": "^0.2.0",
     "@vite-pwa/sveltekit": "^0.2.5",
     "autoprefixer": "^10.4.15",
+    "blueimp-md5": "^2.19.0",
     "jsdom": "^22.1.0",
     "markdown-it-container": "^3.0.0",
     "markdown-it-sub": "^1.0.0",

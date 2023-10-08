@@ -30,12 +30,12 @@ const routes = [
 export async function handle({event, resolve }) {
     
     // Send the defined server-side routes to their handlers 
-    let routed =  await router(event, resolve, routes)
+    const routed =  await router(event, resolve, routes)
     if (routed) return routed
 
     // Other server hooks can go here
 
-    
+
     // Resolve the event if it hasn't already
     const response = await resolve(event)
     return response

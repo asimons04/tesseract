@@ -1,4 +1,4 @@
-import {writable, get} from 'svelte/store'
+import { get } from 'svelte/store'
 import { getInstance } from '$lib/lemmy.js'
 import { userSettings, ENABLE_MEDIA_PROXY } from '$lib/settings.js'
 
