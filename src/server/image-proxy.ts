@@ -22,8 +22,10 @@ import {
     access,
     constants,
     open,
+    opendir,
     readFile,
     stat,
+    utimes,
     writeFile,
 
 } from 'node:fs/promises'
@@ -47,6 +49,11 @@ export const cache:FilesystemCache = {
     createKey: function(value:string) {
         return createHash('sha256').update(value).digest('hex') + '.cache';        
     },
+    
+    flush: async function() {
+        
+        return false;
+    },
 
     get: async function(key:string)  {
         let file;
@@ -54,6 +61,7 @@ export const cache:FilesystemCache = {
         try {
             file = await open(`${cacheDir}/${key}`);
             let buffer = await file.readFile();
+            
             let mimetype = await fileTypeFromBuffer(buffer);
             let blob = new Blob([buffer], { type: mimetype.mime });
 
@@ -66,16 +74,49 @@ export const cache:FilesystemCache = {
         }
 
         finally {
+            // Close the file handle
             await file.close();
+            
+            // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration
+            try {
+                let now = new Date();
+                await utimes(`${cacheDir}/${key}`, now, now)
+                console.log(`Updated last access time for ${cacheDir}/${key}`);
+            }
+            catch (err) {
+                console.log(err)
+            }
+            
         }
     },
-    flush: async function() {
-        
-        return false;
-    },
+    
 
     housekeep: async function() {
         //stat(file) -> ctime (2023-10-08T13:36:33.676Z) |ctimeMs (1696772193676.4358)
+        let dir
+        try {
+            dir = await opendir(cacheDir);
+            
+            for await (const entry of dir) {
+                let filestat = await stat(entry.path);
+
+                let lastAccessTime:number = filestat.atimeMs;
+                let now:number = new Date().valueOf();
+                let timeDiff:number = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
+
+
+                // Evict items older than the defined cache duration
+                if (timeDiff > parseInt(MEDIA_CACHE_DURATION)) {
+                    console.log(`Evicting ${entry.path} from cache due to expiration`);
+                    // Note it doesn't actually delete anything just yet
+                }
+
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+
     },
 
     init: async function(path:string) {
@@ -150,6 +191,7 @@ export async function image_proxy(event:any) {
                 let image = await cache.get(cacheKey);
                 return  res
                     .setHeader('X-Tesseract-Image-Cache', 'hit')
+                    .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
                     .setHeader('Cache-Control', 'max-age=3600') 
                     .type(image.type)
                     .send(await image.arrayBuffer());
@@ -169,7 +211,7 @@ export async function image_proxy(event:any) {
                 //@ts-ignore
                 duplex: 'half',
                 //@ts-ignore
-                signal: AbortSignal.timeout(20 * 1000),
+                signal: AbortSignal.timeout(45 * 1000),
             }).catch((error) => console.log(error))
 
 

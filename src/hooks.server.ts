@@ -61,14 +61,16 @@ const task_memoryCache = setInterval(() => {
 
 
 //// Image Proxy Cache
+// Housekeeps every 5 minutes
 import { cache as imageCache } from './server/image-proxy'
 
 if (await imageCache.init()) { 
     console.log("Initialized image proxy cache") 
     
-    const task_imageCache = setInterval(() => {
-
-    }, (60 * 1000))
+    const task_imageCache = setInterval(async () => {
+        console.log("Housekeeping image cache...");
+        await imageCache.housekeep();
+    }, (5 * 60 * 1000))
 }
 else {
     console.log("Failed to initialize image proxy cache.  Caching is disabled")
