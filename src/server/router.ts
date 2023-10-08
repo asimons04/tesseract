@@ -34,6 +34,11 @@ export async function router(event:any, resolve:any, routes:any) {
             headers: new Headers(),
             statusCode: 200,
             body: '',
+            
+            appendHeader: function(key:string, value:string) {
+                event.res.headers.append(key, value);
+                return event .res;
+            },
 
             error: function(message:any, status:number=404) {
                 event.res.headers.set('Content-Type', 'application/json');

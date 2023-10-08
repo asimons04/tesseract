@@ -1,8 +1,6 @@
 // In-memory cache
 import { writable } from "svelte/store";
-
 let store = writable([])
-
 let defaultTTL:number = 3600
 
 export const cache = {

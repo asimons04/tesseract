@@ -1,28 +1,119 @@
-import { ENABLE_MEDIA_PROXY } from '$lib/settings'
+/*
+    To do: 
+    1.  Finish filesystem cache
+    2.  Move image fetch to separate function and put into a retry loop.
+        a. Define config item for retry attempts.   Default: 3
+        b. Define config item for retry interva.    Default: 250ms
+    3.  
+*/
+
+import { 
+    ENABLE_MEDIA_PROXY,
+    ENABLE_MEDIA_CACHE,
+    MEDIA_CACHE_DURATION,
+
+} from '$lib/settings'
+
+import { Buffer } from 'buffer';
 import { createHash } from 'node:crypto'
-import fs from 'fs'
+import {fileTypeFromBuffer} from 'file-type';
+import { writable } from "svelte/store";
+import { 
+    access,
+    constants,
+    open,
+    readFile,
+    stat,
+    writeFile,
+
+} from 'node:fs/promises'
 
 interface FilesystemCache {
+    createKey: Function,
     get: Function,
+    flush: Function,
+    init: Function,
+    put: Function
     query: Function,
-    set: Function
+    housekeep: Function,
 }
 
 const cacheDir:string = "/app/cache";
 
-const cache:FilesystemCache = {
-    
-    get: async function(key:string)  {
-        
+let metadata = writable([])
+let defaultTTL:number = 3600
+
+export const cache:FilesystemCache = {
+    createKey: function(value:string) {
+        return createHash('sha256').update(value).digest('hex') + '.cache';        
     },
-    
-    query: async function(key:string) {
+
+    get: async function(key:string)  {
+        let file;
+
+        try {
+            file = await open(`${cacheDir}/${key}`);
+            let buffer = await file.readFile();
+            let mimetype = await fileTypeFromBuffer(buffer);
+            let blob = new Blob([buffer], { type: mimetype.mime });
+
+            return blob;
+        }
+
+        catch (err) {
+            console.log(err)
+            return false;
+        }
+
+        finally {
+            await file.close();
+        }
+    },
+    flush: async function() {
+        
         return false;
     },
 
-    set: async function(key:string, data:File) {
-        return false
-    }
+    housekeep: async function() {
+        //stat(file) -> ctime (2023-10-08T13:36:33.676Z) |ctimeMs (1696772193676.4358)
+    },
+
+    init: async function(path:string) {
+        try {
+            await access(cacheDir, constants.R_OK | constants.W_OK);
+            return true;
+        }
+        catch {
+            console.log(`Unable to open cache directory (${cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
+            return false;
+        }
+    },
+
+    put: async function(key:string, data:Blob) {
+        try {
+            let buffer = Buffer.from (await data.arrayBuffer() );
+            await writeFile(`${cacheDir}/${key}`, buffer)
+        }
+        catch (err) {
+            console.log(err);
+            return false
+        }
+        
+    },
+
+    query: async function(key:string) {
+        try {
+            await access(`${cacheDir}/${key}`, constants.R_OK)
+            return true;
+        }
+        catch {
+            return false;
+        }
+    },
+
+
+
+    
 }
 
 
@@ -49,17 +140,25 @@ export async function image_proxy(event:any) {
     try {
         if ( req.method == 'GET' && ( isImage(req.url) || isVideo(req.url) ) ) {
             
+            //// Check Filesystem Cache
             // Lookup the image URL in the cache and return that if found
-            let cacheKey = createHash('sha256').update(imageUrl.href).digest('hex');        
-            if (cache.query(cacheKey)) {
-
+            let cacheKey = cache.createKey(imageUrl.href);
+            if (cacheKey && await cache.query(cacheKey)) {
+                
+                console.log(`Key (${cacheKey}) found in cache. Loading and returning cached version of the file.`);
+                
+                let image = await cache.get(cacheKey);
+                return  res
+                    .setHeader('X-Tesseract-Image-Cache', 'hit')
+                    .setHeader('Cache-Control', 'max-age=3600') 
+                    .type(image.type)
+                    .send(await image.arrayBuffer());
             }
-
-            
             
             // Massage the request headers to create a new connection to the target Lemmy instance
-            req.headers.delete('origin')
-            req.headers.delete('host')
+            req.headers.delete('origin');
+            req.headers.delete('host');
+            req.headers.delete('if-modified-since');
             req.headers.set('Host', imageUrl.host);
             
             // Fetch the media
@@ -78,6 +177,8 @@ export async function image_proxy(event:any) {
             if (!data) {
                 // Fallback and redirect the request to the original image URL
                 if (fallback) return res.setHeader('Location', imageUrl).status(302).send();
+                
+                // If fallback redirect is disabled by user, return an error.
                 return res.error('The proxy failed to fetch the media from the server').send();
                 
             }
@@ -97,8 +198,15 @@ export async function image_proxy(event:any) {
             // Let the upstream/proxy server set the content encoding header
             res.headers.delete('content-encoding');
             
+            // Convert the data response into a blob
             const image = await data.blob();
+            
+            // Store image data to cache
+            await cache.put(cacheKey, image);
+            
             return  res
+                .setHeader('X-Tesseract-Image-Cache', 'miss')  
+                .setHeader('Cache-Control', 'max-age=3600') 
                 .type(image.type)
                 .send(await image.arrayBuffer());
         }
@@ -126,4 +234,6 @@ function isVideo (inputUrl: string | undefined) {
 
   return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
 }
+
+
 

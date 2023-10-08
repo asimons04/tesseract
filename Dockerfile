@@ -11,5 +11,5 @@ WORKDIR /app
 USER node
 EXPOSE 3000
 COPY package.json ./
-COPY --from=builder /app /app
+COPY --from=builder --chown=1000:1000 /app /app
 CMD ["npm", "run", "start"]

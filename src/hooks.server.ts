@@ -1,13 +1,12 @@
 // Router
 import { router } from './server/router.js'
 
-// Handlers
+// Route Handlers
 import { fediseer_router }      from './lib/fediseer/server.js'
 import { image_proxy }          from './server/image-proxy.js'
 import { proxy_pictrs_upload }  from './server/upload-image.js'
 
 // Routes
-
 const api = '/tesseract/api'
 const routes = [
     {
@@ -51,11 +50,26 @@ export function handleError({ error, event }) {
 }
 
 
-// Task Scheduler
+// Scheduled Tasks
 
 //// Update TTLs in memory cache once per second
-import { cache } from '$lib/cache/memory.js'
+import { cache as MemoryCache} from '$lib/cache/memory.js'
 
-setInterval(() => {
-    cache.tick();
+const task_memoryCache = setInterval(() => {
+    MemoryCache.tick();
 }, 1000);
+
+
+//// Image Proxy Cache
+import { cache as imageCache } from './server/image-proxy'
+
+if (await imageCache.init()) { 
+    console.log("Initialized image proxy cache") 
+    
+    const task_imageCache = setInterval(() => {
+
+    }, (60 * 1000))
+}
+else {
+    console.log("Failed to initialize image proxy cache.  Caching is disabled")
+}
