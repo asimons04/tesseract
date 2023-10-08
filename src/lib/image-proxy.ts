@@ -1,34 +1,12 @@
 import {writable, get} from 'svelte/store'
 import { getInstance } from '$lib/lemmy.js'
 import { userSettings, ENABLE_MEDIA_PROXY } from '$lib/settings.js'
-import { v4 as uuid4 } from 'uuid'
 
-
-let proxyTokens = writable({})
-
-export let imageProxyTokens = {
-    issue: function(path:string): string {
-        let token = uuid4();
-        proxyTokens[token] = path;
-        return token;
-    },
-
-    redeem: function(token:string, path:string): boolean {
-        if ( proxyTokens[token] && proxyTokens[token] == path) {
-            delete proxyTokens[token];
-            return true
-        }
-        return false;
-    }   
-
-
-}
-
+// Domains which shouldn't be proxied for whatever reason (usually some fuckery on their end to restrict embedding)
 let blacklist = [
     'media.giphy.com',
-
-
 ]
+
 // Accepts an image URL as input and determines whether to convert it into a proxied image URL or keep the original
 export function imageProxyURL(url:string, size:number|undefined = undefined, format:string|undefined = undefined): string|boolean {
     
