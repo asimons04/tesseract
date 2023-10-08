@@ -7,6 +7,7 @@
     3.  
 */
 interface FilesystemCache {
+    full: boolean,
     createKey: Function,
     get: Function,
     flush: Function,
@@ -20,6 +21,7 @@ interface FilesystemCache {
 import { 
     ENABLE_MEDIA_PROXY,
     ENABLE_MEDIA_CACHE,
+    MEDIA_CACHE_KEEP_HOT_ITEMS,
     MEDIA_CACHE_DURATION,
     MEDIA_CACHE_MAX_SIZE,
     
@@ -48,12 +50,15 @@ import {
 const cacheDir:string = "/app/cache";
 
 export const cache:FilesystemCache = {
+    
+    full: false,
+
     createKey: function(value:string) {
         return createHash('sha256').update(value).digest('hex') + '.cache';        
     },
     
     flush: async function() {
-        
+        // Not yet implemented.  Just clear the contents of /app/cache for now.
         return false;
     },
 
@@ -76,14 +81,16 @@ export const cache:FilesystemCache = {
             // Close the file handle
             await file.close();
             
-            // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration
-            try {
-                let now = new Date();
-                await utimes(`${cacheDir}/${key}`, now, now)
-                console.log(`Updated last access time for ${cacheDir}/${key}`);
-            }
-            catch (err) {
-                console.log(err)
+            // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
+            // Don't update atime if cache is full.
+            if (MEDIA_CACHE_KEEP_HOT_ITEMS && !cache.full) {
+                try {
+                    let now = new Date();
+                    await utimes(`${cacheDir}/${key}`, now, now)
+                }
+                catch (err) {
+                    console.log(err)
+                }
             }
             
         }
@@ -94,43 +101,81 @@ export const cache:FilesystemCache = {
         // Evict items older than the defined cache duration
         try {
             let dir = await opendir(cacheDir);
+            let evictCount:number = 0;
+            
             for await (const entry of dir) {
                 let filestat = await stat(entry.path);
 
                 let lastAccessTime:number = filestat.atimeMs;
                 let now:number = new Date().valueOf();
                 let timeDiff:number = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
-                
+
                 if (timeDiff > parseInt(MEDIA_CACHE_DURATION)) {
                     console.log(`Evicting ${entry.path} from cache due to expiration`);
                     try {
                         await rm(entry.path)
+                        evictCount++;
                     }
                     catch (err) {
                         console.log(err);
                     }   
                 }
             }
+            console.log(`Evicted ${evictCount.toString()} expired items from the proxy cache.`);
         }
         catch (err) {
-            console.log("image-proxy:housekeep:evict");
+            console.log("image-proxy:housekeep:evict-expired");
             console.log(err);
         }
 
         // Check cache directory size and evict oldest items
         try {
-            let cacheDirSize:number = await getDirectorySize(cacheDir);
-            let cacheDirSizeMB:number = Math.round(cacheDirSize/1000/1000);
-            let percentFull:number = Math.round((cacheDirSizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
+            let cacheDirSize: number     = await getDirectorySize(cacheDir);
+            let cacheDirSizeMB: number   = Math.round(cacheDirSize/1000/1000);
+            let percentFull: number      = Math.round((cacheDirSizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
             
-            // Start evicting items at 95% full
-            if (percentFull > 95) {
+            // Start evicting items at 98% full
+            if (percentFull > 99) {
+                cache.full = true;
 
+                // Loop through cache directory and evict items older than half of the cache duration
+                try {
+                    let dir = await opendir(cacheDir);
+                    let evictCount: number = 0;
+
+                    for await (const entry of dir) {
+                        let filestat = await stat(entry.path);
+        
+                        let lastAccessTime: number  = filestat.atimeMs;
+                        let now: number             = new Date().valueOf();
+                        let timeDiff: number        = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
+                        
+                        let halfDuration = parseInt(MEDIA_CACHE_DURATION) * 0.5;
+                        
+                        if (timeDiff > halfDuration ) {
+                            console.log(`Evicting ${entry.path} from cache to remain under quota.`);
+                            try {
+                                await rm(entry.path)
+                                evictCount++;
+                            }
+                            catch (err) {
+                                console.log(err);
+                            }   
+                        }
+                    }
+                    console.log(`Evicted ${evictCount.toString()} items from the proxy cache to remain under quota.`);
+                }
+                catch (err) {
+                    console.log("image-proxy:housekeep:evict-quota");
+                    console.log(err);
+                }
             }
-
+            else {
+                cache.full = false;
+            }
             
-            
-            console.log(cacheDirSize.toString() + " --- " + cacheDirSizeMB.toString());
+            // Status to output after each run
+            console.log(`Media proxy cache usage: ${cacheDirSizeMB.toString()} MB / ${MEDIA_CACHE_MAX_SIZE} MB, Full: ${cache.full.toString()}` );
             
 
         }
@@ -152,13 +197,15 @@ export const cache:FilesystemCache = {
     },
 
     put: async function(key:string, data:Blob) {
-        try {
-            let buffer = Buffer.from (await data.arrayBuffer() );
-            await writeFile(`${cacheDir}/${key}`, buffer)
-        }
-        catch (err) {
-            console.log(err);
-            return false
+        if (!cache.full) {
+            try {
+                let buffer = Buffer.from (await data.arrayBuffer() );
+                await writeFile(`${cacheDir}/${key}`, buffer)
+            }
+            catch (err) {
+                console.log(err);
+                return false
+            }
         }
         
     },
@@ -199,27 +246,27 @@ export async function image_proxy(event:any) {
     try {
         if ( req.method == 'GET' && ( isImage(req.url) || isVideo(req.url) ) ) {
             
-            //// Check Filesystem Cache
             // Lookup the image URL in the cache and return that if found
-            let cacheKey = cache.createKey(imageUrl.href);
-            if (cacheKey && await cache.query(cacheKey)) {
+            let cacheKey
+            if (ENABLE_MEDIA_CACHE) {
+                cacheKey = cache.createKey(imageUrl.href);
+                if (cacheKey && await cache.query(cacheKey)) {
+                    //console.log(`Key (${cacheKey}) found in cache. Loading and returning cached version of the file.`);
+                    let image = await cache.get(cacheKey);
+                    return res
+                        .setHeader('X-Tesseract-Image-Cache', 'hit')
+                        .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
+                        .setHeader('Cache-Control', 'max-age=3600') 
+                        .type(image.type)
+                        .send(await image.arrayBuffer());
+                }
                 
-                console.log(`Key (${cacheKey}) found in cache. Loading and returning cached version of the file.`);
-                
-                let image = await cache.get(cacheKey);
-                return  res
-                    .setHeader('X-Tesseract-Image-Cache', 'hit')
-                    .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
-                    .setHeader('Cache-Control', 'max-age=3600') 
-                    .type(image.type)
-                    .send(await image.arrayBuffer());
+                // Massage the request headers to create a new connection to the target Lemmy instance
+                req.headers.delete('origin');
+                req.headers.delete('host');
+                req.headers.delete('if-modified-since');
+                req.headers.set('Host', imageUrl.host);
             }
-            
-            // Massage the request headers to create a new connection to the target Lemmy instance
-            req.headers.delete('origin');
-            req.headers.delete('host');
-            req.headers.delete('if-modified-since');
-            req.headers.set('Host', imageUrl.host);
             
             // Fetch the media
             const data = await fetch(imageUrl, {
@@ -262,7 +309,9 @@ export async function image_proxy(event:any) {
             const image = await data.blob();
             
             // Store image data to cache
-            await cache.put(cacheKey, image);
+            if (ENABLE_MEDIA_CACHE) {
+                await cache.put(cacheKey, image);
+            }
             
             return  res
                 .setHeader('X-Tesseract-Image-Cache', 'miss')  

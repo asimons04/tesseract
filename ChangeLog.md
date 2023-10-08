@@ -29,18 +29,11 @@ Current
 ## 1.2.8
 Lots of under the hood updates this time.
 
-### Media Proxying
-When you're interacting with Lemmy, most images are fetched directly from remote instances (the API just returns a URL to an image which you fetch).  Icons, Avatars, post images are always retrieved directly from their source instnaces.  Thumbnails are hit or miss depending on a number of factors.
+### Media Proxying and Caching
+Tesseract can now, _optionally_, proxy and cache post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied, including those hosted through Imgur, Tenor, ~~Giphy~~, Catbox, etc.
 
-Privacy conscious users have long requested media be proxied through Lemmy.  While I can't add that functionality to the API, I _can_ add it to the UI.  
+[See full documentation for media proxy/cache](docs/MediaProxy.md)
 
-Tesseract can now, _optionally_, proxy post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can be proxied, including those hosted through Imgur, Tenor, Giphy, Catbox, etc.
-
-To utilize this feature, there are two steps:
-1. Tesseract must be started with the `PUBLIC_ENABLE_MEDIA_PROXY` environment variable set to true.  It is disabled by default and must be explicitly enabled by the admin running Tesseract.
-2. Users will need to go into the app settings and check the option, currently under "Misc Settings" to "Proxy images through Tesseract".
-
-If the media proxy is not explicitly enabled by the administrator, the user option will be hidden and ignored.
 
 #### Notes for Administrators
 
