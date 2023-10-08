@@ -6,30 +6,6 @@
         b. Define config item for retry interva.    Default: 250ms
     3.  
 */
-
-import { 
-    ENABLE_MEDIA_PROXY,
-    ENABLE_MEDIA_CACHE,
-    MEDIA_CACHE_DURATION,
-
-} from '$lib/settings'
-
-import { Buffer } from 'buffer';
-import { createHash } from 'node:crypto'
-import {fileTypeFromBuffer} from 'file-type';
-import { writable } from "svelte/store";
-import { 
-    access,
-    constants,
-    open,
-    opendir,
-    readFile,
-    stat,
-    utimes,
-    writeFile,
-
-} from 'node:fs/promises'
-
 interface FilesystemCache {
     createKey: Function,
     get: Function,
@@ -40,10 +16,36 @@ interface FilesystemCache {
     housekeep: Function,
 }
 
-const cacheDir:string = "/app/cache";
 
-let metadata = writable([])
-let defaultTTL:number = 3600
+import { 
+    ENABLE_MEDIA_PROXY,
+    ENABLE_MEDIA_CACHE,
+    MEDIA_CACHE_DURATION,
+    MEDIA_CACHE_MAX_SIZE,
+    
+
+} from '$lib/settings'
+
+import { Buffer } from 'buffer';
+import { createHash } from 'node:crypto'
+import {fileTypeFromBuffer} from 'file-type';
+import { 
+    access,
+    constants,
+    open,
+    opendir,
+    readFile,
+    rm,
+    stat,
+    utimes,
+    writeFile,
+
+} from 'node:fs/promises'
+
+
+
+
+const cacheDir:string = "/app/cache";
 
 export const cache:FilesystemCache = {
     createKey: function(value:string) {
@@ -57,7 +59,6 @@ export const cache:FilesystemCache = {
 
     get: async function(key:string)  {
         let file;
-
         try {
             file = await open(`${cacheDir}/${key}`);
             let buffer = await file.readFile();
@@ -67,12 +68,10 @@ export const cache:FilesystemCache = {
 
             return blob;
         }
-
         catch (err) {
             console.log(err)
             return false;
         }
-
         finally {
             // Close the file handle
             await file.close();
@@ -92,29 +91,51 @@ export const cache:FilesystemCache = {
     
 
     housekeep: async function() {
-        //stat(file) -> ctime (2023-10-08T13:36:33.676Z) |ctimeMs (1696772193676.4358)
-        let dir
+        // Evict items older than the defined cache duration
         try {
-            dir = await opendir(cacheDir);
-            
+            let dir = await opendir(cacheDir);
             for await (const entry of dir) {
                 let filestat = await stat(entry.path);
 
                 let lastAccessTime:number = filestat.atimeMs;
                 let now:number = new Date().valueOf();
                 let timeDiff:number = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
-
-
-                // Evict items older than the defined cache duration
+                
                 if (timeDiff > parseInt(MEDIA_CACHE_DURATION)) {
                     console.log(`Evicting ${entry.path} from cache due to expiration`);
-                    // Note it doesn't actually delete anything just yet
+                    try {
+                        await rm(entry.path)
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }   
                 }
-
             }
         }
         catch (err) {
+            console.log("image-proxy:housekeep:evict");
             console.log(err);
+        }
+
+        // Check cache directory size and evict oldest items
+        try {
+            let cacheDirSize:number = await getDirectorySize(cacheDir);
+            let cacheDirSizeMB:number = Math.round(cacheDirSize/1000/1000);
+            let percentFull:number = Math.round((cacheDirSizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
+            
+            // Start evicting items at 95% full
+            if (percentFull > 95) {
+
+            }
+
+            
+            
+            console.log(cacheDirSize.toString() + " --- " + cacheDirSizeMB.toString());
+            
+
+        }
+        catch (err) {
+            console.log(err)
         }
 
     },
@@ -151,10 +172,7 @@ export const cache:FilesystemCache = {
             return false;
         }
     },
-
-
-
-    
+   
 }
 
 
@@ -277,5 +295,14 @@ function isVideo (inputUrl: string | undefined) {
   return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
 }
 
-
-
+// Calculate directory size
+async function getDirectorySize (dirPath:string) {
+    let totalSize:number = 0;
+    
+    let dir = await opendir(dirPath);
+    for await (const entry of dir) {    
+        let stats = await stat(entry.path);
+        totalSize += stats.size;
+    }
+    return totalSize;
+}

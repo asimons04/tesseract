@@ -1,6 +1,12 @@
 import { get } from 'svelte/store'
 import { getInstance } from '$lib/lemmy.js'
-import { userSettings, ENABLE_MEDIA_PROXY, MEDIA_PROXY_BLACKLIST } from '$lib/settings.js'
+import { 
+    userSettings, 
+    ENABLE_MEDIA_PROXY,
+    ENABLE_MEDIA_PROXY_LOCAL,
+    MEDIA_PROXY_BLACKLIST,
+    MEDIA_PROXY_LEMMY_ONLY
+} from '$lib/settings.js'
 
 // Domains which shouldn't be proxied for whatever reason (usually some fuckery on their end to restrict embedding)
 let blacklist = MEDIA_PROXY_BLACKLIST.split(',')
@@ -9,20 +15,27 @@ let blacklist = MEDIA_PROXY_BLACKLIST.split(',')
 export function imageProxyURL(url:string, size:number|undefined = undefined, format:string|undefined = undefined): string|undefined {
     
     if (!url) return undefined
-    
+
     // Return original URL if one of the following conditions are met:
-    if (!ENABLE_MEDIA_PROXY) return url;                        // Media proxying is globally disabled
     
-    if (!get(userSettings)?.proxyMedia.enabled) return url;     // User preference for media proxing is disabled
+    // Media proxying is globally disabled
+    if (!ENABLE_MEDIA_PROXY) return url;                        
     
-    // Don't proxy domains in the blacklist
+    // User preference for media proxing is disabled
+    if (!get(userSettings)?.proxyMedia.enabled) return url;     
+
+    // Image url matches an entry in the blacklist
     for (let i:number=0; i< blacklist.length; i++) {
         if ( url.includes(blacklist[i].trim()) ) return url;
     }
 
-    //if (!url.includes('/pictrs/image')) return url;             // The media URL is not to another /pict-rs 
-    if (url.includes(getInstance())) return url;                // Media is hosted on home instance
+    // Image is not on another Lemmy instance (identified by /pictrs/image in the url)
+    if (MEDIA_PROXY_LEMMY_ONLY && !url.includes('/pictrs/image')) return url;             
+    
+    // Local media/home instance image proxying is disabled
+    if ( !ENABLE_MEDIA_PROXY_LOCAL && url.includes(getInstance())) return url;
 
+    // Build the image proxy URL to return
     try {
         let image = new URL(url);
         
@@ -44,8 +57,11 @@ export function imageProxyURL(url:string, size:number|undefined = undefined, for
         
         let origin = new URL(window.location.href).origin;
         let imagePath = `${host}${path}`;
+        
         return `${origin}/image_proxy/${imagePath}?${params}`
     }
+    
+    // If building the URL fails, fallback to returning the original
     catch {
         return url;
     }
