@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { userSettings } from '$lib/settings.js'
-    import { getInstance } from '$lib/lemmy.js'
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
+    
+    import { imageProxyURL } from '$lib/image-proxy'
+    import { userSettings  } from '$lib/settings.js'
 
     import Link from '$lib/components/input/Link.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
@@ -66,11 +67,7 @@
                 <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <img
-                        src="{
-                            $userSettings.proxyMedia
-                            ? post.post.thumbnail_url.replace('https://', '/image_proxy/')
-                            : post.post.thumbnail_url
-                        }"
+                        src="{imageProxyURL(post.post.thumbnail_url)}"
                         alt="{post.post.name}"
                         loading="lazy"
                         class="object-cover rounded-md h-auto z-30"

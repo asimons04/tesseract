@@ -72,7 +72,10 @@ interface Settings {
     highlightInlineCode: boolean
     inlineImages: boolean
     experimentalFeatures: boolean
-    proxyMedia:boolean
+    proxyMedia: {
+        enabled: boolean,
+        fallback: boolean
+    }
 
 
 }
@@ -146,12 +149,18 @@ export const defaultSettings: Settings = {
         customInvidious:                                                    'yewtu.be',
         autoplay:                                                           false,
     },
-    proxyMedia:                                                         false
+    proxyMedia: {
+        enabled:                                                        false,
+        fallback:                                                       true,
+    }
 
     
 }
 
 export const userSettings = writable(defaultSettings)
+
+// Global option environment flags
+export const ENABLE_MEDIA_PROXY = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY) ?? false
 
 // Define Invidious and Piped instances to determine if embedded media is a Youtube et al video.
 // Invidious Instance List:  https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest

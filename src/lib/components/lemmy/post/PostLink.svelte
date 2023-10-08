@@ -3,6 +3,7 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { imageSize} from './helpers.js'
+    import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
 
     import Link from '$lib/components/input/Link.svelte'
@@ -40,11 +41,7 @@
             <div class="m-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <img
-                        src="{
-                            $userSettings.proxyMedia
-                            ? thumbnail_url.replace('https://', '/image_proxy/')
-                            : thumbnail_url
-                        }"
+                        src="{imageProxyURL(thumbnail_url)}"
                         loading="lazy"
                         class="max-w-full ml-auto mr-auto object-cover rounded-md  z-30 opacity-0 transition-opacity duration-300"
                         

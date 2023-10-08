@@ -1,7 +1,9 @@
 import { goto } from '$app/navigation'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
+import { crypto} from 'crypto'
+
 import { userSettings } from '$lib/settings.js'
-import { get } from 'svelte/store'
+import { get, writeable } from 'svelte/store'
 
 export const findClosestNumber = (numbers: number[], target: number): number =>
   numbers.reduce((prev, curr) =>
@@ -60,3 +62,5 @@ export const trycatch = <T>(func: () => T): Maybe<T> => {
 export const removeItem = <T>(array: T[], predicate: (item: T) => boolean) => {
   array.splice(array.findIndex(predicate), 1)
 }
+
+

@@ -5,7 +5,7 @@
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     
-    import { defaultSettings, userSettings, YTFrontends } from '$lib/settings'
+    import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY } from '$lib/settings'
     import Setting from './Setting.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -171,7 +171,7 @@
 
 
                 <h1 class="font-bold mt-4 mb-4">Misc Settings</h1>
-                <Checkbox bind:checked={$userSettings.proxyMedia}>Proxy images through Tesseract</Checkbox>
+
                 <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
                 <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
                 <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
@@ -179,12 +179,17 @@
             </div>
 
             <div class="flexcol flexcol-33 mt-4">
-                <h1 class="font-bold mb-4">Embedded Content</h1>
+                <h1 class="font-bold mb-4">Media and Embedded Content</h1>
                     
                 <Checkbox bind:checked={$userSettings.embeddedMedia.feed}>Enable embedded content in feed</Checkbox>
                 <Checkbox bind:checked={$userSettings.embeddedMedia.post}>Enable embedded content in posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.embeddedMedia.autoplay}>Autoplay supported content when opening posts</Checkbox>
                 
+                <span class:hidden={!ENABLE_MEDIA_PROXY}>
+                    <Checkbox bind:checked={$userSettings.proxyMedia.enabled}>Proxy images through Tesseract</Checkbox>
+                    <Checkbox bind:checked={$userSettings.proxyMedia.fallback}>Fallback to direct fetch if proxy fails</Checkbox>
+                </span>
+
                 <h1 class="font-bold mt-4 mb-4">YouTube Frontend</h1>
                 
                 <div class="flex flex-row flex-wrap">

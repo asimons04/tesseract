@@ -3,6 +3,7 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { getInstance } from '$lib/lemmy.js'
+    import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
 
     export let post:PostView | undefined
@@ -24,16 +25,6 @@
     if (displayType == 'feed' && url?.endsWith('.gif')) {
         thumbnail_url = url;
     }
-
-    // Proxy images through the UI
-    if ($userSettings.proxyMedia && thumbnail_url) {
-        thumbnail_url = thumbnail_url.replace('https://', '/image_proxy/');
-    }
-
-    if ($userSettings.proxyMedia && url) {
-        url = url.replace('https://', '/image_proxy/');
-    }
-
 </script>
 
 
@@ -50,17 +41,16 @@
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
             <picture class="rounded-md overflow-hidden w-full max-h-[min(50vh,500px)]  max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
                 <source
-                    srcset="{thumbnail_url ?? url}?thumbnail=768&format=webp"
-                    media="(max-width: 768px)"
+                    srcset="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
                 />
 
                 <source
-                    srcset="{thumbnail_url ?? url}?format=webp"
+                    srcset="{imageProxyURL(thumbnail_url, undefined, 'webp') ?? imageProxyURL(url, undefined, 'webp')}"
                     media="(max-width: 1024px)"
                 />
 
                 <img
-                    src="{thumbnail_url ?? url}?thumbnail=768&format=webp"
+                    src="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
                     loading="lazy"
                     class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
                     class:opacity-100={loaded}
@@ -83,7 +73,7 @@
     <div class="ml-auto mr-auto mt-1 mb-1 {$userSettings.imageSize.post ?? 'max-w-3xl'}">
         <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
             <img
-                src="{url}?format=webp"
+                src="{imageProxyURL(url, undefined, 'webp')}"
                 alt="{name}"
                 loading="lazy"
                 class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"

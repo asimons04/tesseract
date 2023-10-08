@@ -2,7 +2,7 @@
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
-    import { userSettings } from '$lib/settings.js'
+    import { userSettings,  } from '$lib/settings.js'
     import { getInstance } from '$lib/lemmy.js'
     import { imageSize} from './helpers.js'
 

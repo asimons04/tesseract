@@ -1,6 +1,8 @@
 <script lang="ts">
     import { md, mdInline, photonify } from '$lib/components/markdown/markdown'
     import { userSettings } from '$lib/settings.js'
+    import { imageProxyURL } from '$lib/image-proxy'
+
     import markdown_it_highlightjs from 'markdown-it-highlightjs'
     
     export let source: string = ''
@@ -16,12 +18,10 @@
         })
 
         // If media proxying is enabled, rewrite image urls
-        if ($userSettings.proxyMedia) {
-            const images = node.querySelectorAll('img');
-            images.forEach((i) => {
-                i.src = i.src.replace('https://', '/image_proxy/');
-            })
-        }
+        const images = node.querySelectorAll('img');
+        images.forEach((i) => {
+            i.src = imageProxyURL(i.src);
+        })
     }
 
     // Highlight code syntax if user option set
@@ -43,7 +43,7 @@
     }
 
     // Render the markdown in a try/catch since sometimes it randomly fails. I think this is due to truncating it for the feed previews.
-    let rendered:HTML
+    let rendered:string
     
     $: try {
         if (inline) { rendered = mdInline.render(source) }

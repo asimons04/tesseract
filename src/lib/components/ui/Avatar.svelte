@@ -1,7 +1,9 @@
 <script lang="ts">
     import { findClosestNumber } from '$lib/util.js'
     import { createAvatar } from '@dicebear/core'
-    import { userSettings } from '$lib/settings'
+    import { imageProxyURL } from '$lib/image-proxy'
+
+    import { userSettings, ENABLE_MEDIA_PROXY } from '$lib/settings'
 
     import * as initials from '@dicebear/initials'
 
@@ -14,15 +16,12 @@
 
     export let width: number
     export let res: number | undefined = undefined
+    
 </script>
 
 {#if url}
     <img
-        src="{
-        $userSettings.proxyMedia
-            ? url.replace('https://', '/image_proxy/')
-            : url
-        }?format=webp&thumbnail={findClosestNumber(sizes, res || width*2)}"
+        src="{imageProxyURL(url, findClosestNumber(sizes,res||width*2), 'webp')}"
         {alt}
         {width}
         {title}

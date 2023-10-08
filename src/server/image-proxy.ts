@@ -1,12 +1,30 @@
+import { ENABLE_MEDIA_PROXY } from '$lib/settings'
+
 export async function image_proxy(event) {
     const req = event.req;
     const res = event.res;
     
+    // Fallback to redirecting to original image source if proxy request fails
+    let fallback:boolean = true;
+
+    // Refuse further processing if media proxying is disabled or if no token is provided
+    if (!ENABLE_MEDIA_PROXY) return res.error("Media proxying is administratively disabled.").send();
+    
+
+    // Build a URL to the requested image/video
+    let imagePath = `${req.route}`
+    req.params.delete('token');
+    
+    let imageUrl = new URL(`https://${imagePath}?${req.params.toString()}`);
+    
     try {
-        if ( req.method == 'GET' && (isImage(req.url) || isVideo(req.url)) ) {
+        if ( req.method == 'GET' && ( isImage(req.url) || isVideo(req.url) ) ) {
             
-            // Build a URL to the requested image/video
-            let imageUrl = new URL(`https://${req.route}?${req.url.searchParams.toString()}`);
+            // Look for 'fallback' URL param to set fallback action for proxy failure
+            if(req.params.get('fallback')) {
+                fallback=false;
+                req.params.delete('fallback');
+            }
             
             // Massage the request headers to create a new connection to the target Lemmy instance
             req.headers.delete('origin')
@@ -17,6 +35,7 @@ export async function image_proxy(event) {
             const data = await fetch(imageUrl, {
                 method: req.method,
                 headers: req.headers,
+                redirect: "follow",
                 //@ts-ignore
                 duplex: 'half',
                 //@ts-ignore
@@ -24,16 +43,21 @@ export async function image_proxy(event) {
             }).catch((error) => console.log(error))
 
 
-
+            // Check if data was returned and either perform fallback redirect or return an error
             if (!data) {
-                return res.error('Proxy failed to fetch').send();
+                // Fallback and redirect the request to the original image URL
+                if (fallback) return res.setHeader('Location', imageUrl).status(302).send();
+                return res.error('The proxy failed to fetch the media from the server').send();
+                
             }
             
             // HTTP 304 trips up the checks so except it from the failure responses
             if (!data.ok && data.status != 304) {
+                if (fallback) return res.setHeader('Location', imageUrl).status(302).send();
                 return res.error(await data.text(), data.status).send();
             }
             
+
             // Add the response headers from the fetch to the response to the client
             for (const header of data.headers.keys()) {
                 res.setHeader(header, data.headers.get(header))
@@ -49,8 +73,10 @@ export async function image_proxy(event) {
         }
     }
     catch (error) {
+        // Log the error and fallback to redirecting the request to the original image URL
         console.log( error)
-        return res.error('The proxy failed to fetch from server').send();
+        if (fallback)return res.setHeader('Location', imageUrl).status(302).send();
+        return res.error('An non-fetch error occurred during the proxy process').send();
     }
 }
 
