@@ -56,7 +56,7 @@ To enable persistence of the cache, add a Docker volume to the compose file to m
 You will need to make sure the local filesystem directory used for the mount is owned by UID/GID 1000.
 
 ```
-mkdir data/tesseract-cache`
+mkdir data/tesseract-cache
 chown 1000:1000 data/tesseract-cache
 ```
 
@@ -97,7 +97,7 @@ Values: Unquoted string
 Default: media.giphy.com
 Example: PUBLIC_MEDIA_PROXY_BLACKLIST=media.giphy.com,badsite.com,site-that-doesnt-work-with-the-proxy.com
 ```
-Comma-delimited list of domains and/or keywords to check for in image URLs.  Any image URLs that contain anything in the blacklist will be not go through the proxy endpoint and will be linked directly.  Giphy is the only default because it doesn't work with the proxy, but you may wish to add others for content policy reasons or because you've identified others that do not like being proxied.  Note that if you define your own list, you'll need to add `media.giphy.com` to it manually (for now, anyway).
+Comma-delimited list of domains and/or keywords to check for in image URLs.  Any image URLs that contain anything in the blacklist will not go through the proxy endpoint and will be linked directly.  Giphy is the only default because it doesn't work with the proxy, but you may wish to add others for content policy reasons or because you've identified others that do not like being proxied.  Note that if you define your own list, you'll need to add `media.giphy.com` to it manually (for now, anyway).
 
 ---
 
