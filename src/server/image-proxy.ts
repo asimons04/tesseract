@@ -69,6 +69,7 @@ export const cache:FilesystemCache = {
 
     get: async function(key:string)  {
         let file;
+        
         try {
             file = await open(`${cacheDir}/${key}`);
             let buffer = await file.readFile();
@@ -78,17 +79,13 @@ export const cache:FilesystemCache = {
 
             // Close the file handle
             await file.close();
-                        
+            
             // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
             if (MEDIA_CACHE_KEEP_HOT_ITEMS && !cache.full) {
-                try {
-                    let now = new Date();
-                    await utimes(`${cacheDir}/${key}`, now, now)
-                }
-                catch (err) {
-                    console.log(err)
-                }
+                let now = new Date();
+                await utimes(`${cacheDir}/${key}`, now, now)
             }
+            
             return blob;
         }
         // Typical error is when bad/partially written cache item can't have its mime detected. Silently delete the cache item.
@@ -108,8 +105,7 @@ export const cache:FilesystemCache = {
     housekeep: async function() {
         // Evict items older than the defined cache duration
         try {
-            //let files:Array<DirectoryList>  = await getDirContents(cacheDir);
-            let evictCount:number           = await evictExpiredItems(MEDIA_CACHE_DURATION);
+            let evictCount:number = await evictExpiredItems(cacheDir, MEDIA_CACHE_DURATION);
             console.log(`Evicted ${evictCount.toString()} expired items from the proxy cache.`);
         }
         catch (err) {
@@ -118,6 +114,7 @@ export const cache:FilesystemCache = {
         }
 
         // Check cache directory size and evict oldest items
+        // The proc is buggy and needs replaced.
         try {
             let cacheDirSize: number     = await getDirectorySize(cacheDir);
             let cacheDirSizeMB: number   = Math.round(cacheDirSize/1000/1000);
@@ -316,7 +313,6 @@ const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<void|Re
     const data = await fetch(imageUrl, 
         {
             method: req.method,
-            //headers: req.headers,
             redirect: "follow",
             //@ts-ignore
             signal: AbortSignal.timeout(60 * 1000),
@@ -402,8 +398,8 @@ const sortDirectoryContents = function(contents:Array<Stats>, attr:string = 'ati
     return contents;
 }
 
-const evictExpiredItems = async function(minutes:number=MEDIA_CACHE_DURATION): Promise <number> {
-    let directoryList:Array<DirectoryList> = await getDirContents(cacheDir)
+const evictExpiredItems = async function(dir: string, minutes:number=MEDIA_CACHE_DURATION): Promise <number> {
+    let directoryList:Array<DirectoryList> = await getDirContents(dir)
     let evictedItems: number = 0;
 
     for ( let i:number=0; i<directoryList.length; i++) {

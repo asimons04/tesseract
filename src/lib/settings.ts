@@ -163,9 +163,9 @@ export const userSettings = writable(defaultSettings)
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                 ?? false
 export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)             ?? false
 export const MEDIA_PROXY_BLACKLIST          = env.PUBLIC_MEDIA_PROXY_BLACKLIST                      ?? 'media.giphy.com'    // Comma-delimited list of domains not to proxy
+export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)           ?? true
 
 export const ENABLE_MEDIA_CACHE             = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE)                 ?? true
-export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE_LOCAL)           ?? true
 export const MEDIA_CACHE_DURATION           = parseInt(env.PUBLIC_MEDIA_CACHE_DURATION)             || 12*60    // Base unit: Minutes
 export const MEDIA_CACHE_MAX_SIZE           = parseInt(env.PUBLIC_MEDIA_CACHE_MAX_SIZE)             || 1000     // Base unit: MB (Minimum 100 MB will be used if lower than that)
 export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL)   || 5        //Minutes
