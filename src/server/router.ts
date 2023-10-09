@@ -59,6 +59,12 @@ export async function router(event:any, resolve:any, routes:any) {
                 event.res.headers.set('Content-Length', length);
                 return event.res;
             },
+            
+            redirect: function(location:string) {
+                event.res.headers.set('Location', location)
+                event.res.statusCode = 302;
+                return event.res;
+            },
 
             send: function(data:string | undefined = undefined) {
                 return new Response(

@@ -66,7 +66,7 @@ const task_memoryCache = setInterval(() => {
 
 //// Image Proxy Cache
 // Housekeeps every MEDIA_CACHE_HOUSEKEEP_INTERVAL minutes
-import { cache as imageCache } from './server/image-proxy'
+import { cache as imageCache } from './server/filesystem-cache'
 
 if (await imageCache.init()) { 
     console.log("Initialized image proxy cache") 
