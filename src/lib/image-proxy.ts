@@ -47,12 +47,15 @@ export function imageProxyURL(url:string, size:number|undefined = undefined, for
             params.append('fallback', 'true');
         }
 
-        if (size) {
-            params.append('thumbnail', size.toString());
-        }
+        // Only add the thumbnail and format parameters to pictrs URLs (to avoid caching multiple version of a GIF from Giphy, etc where those aren't respected)
+        if (url.includes('/pictrs/image')) {
+            if (size) {
+                params.append('thumbnail', size.toString());
+            }
 
-        if (format) {
-            params.append('format', format)
+            if (format) {
+                params.append('format', format)
+            }
         }
         
         let origin = new URL(window.location.href).origin;
