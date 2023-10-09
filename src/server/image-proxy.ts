@@ -17,6 +17,10 @@ interface FilesystemCache {
     housekeep: Function,
 }
 
+interface DirectoryList {
+    path: string,
+    stats: Stats
+}
 
 import { 
     ENABLE_MEDIA_PROXY,
@@ -32,6 +36,8 @@ import { Buffer } from 'buffer';
 import { createHash } from 'node:crypto'
 import {fileTypeFromBuffer} from 'file-type';
 import { 
+    type Stats,
+
     access,
     constants,
     open,
@@ -52,7 +58,6 @@ const cacheDir:string = "/app/cache";
 export const cache:FilesystemCache = {
     
     full: false,
-
     createKey: function(value:string) {
         return createHash('sha256').update(value).digest('hex') + '.cache';        
     },
@@ -71,18 +76,10 @@ export const cache:FilesystemCache = {
             let mimetype = await fileTypeFromBuffer(buffer);
             let blob = new Blob([buffer], { type: mimetype.mime });
 
-            return blob;
-        }
-        catch (err) {
-            console.log(err)
-            return false;
-        }
-        finally {
             // Close the file handle
             await file.close();
-            
+                        
             // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
-            // Don't update atime if cache is full.
             if (MEDIA_CACHE_KEEP_HOT_ITEMS && !cache.full) {
                 try {
                     let now = new Date();
@@ -92,39 +89,31 @@ export const cache:FilesystemCache = {
                     console.log(err)
                 }
             }
-            
+            return blob;
         }
+        // Typical error is when bad/partially written cache item can't have its mime detected. Silently delete the cache item.
+        catch (err) {
+            try {
+                await rm(`${cacheDir}/${key}`)
+            }
+            catch {
+                return false;
+                
+            }
+        }
+
     },
     
 
     housekeep: async function() {
         // Evict items older than the defined cache duration
         try {
-            let dir = await opendir(cacheDir);
-            let evictCount:number = 0;
-            
-            for await (const entry of dir) {
-                let filestat = await stat(entry.path);
-
-                let lastAccessTime:number = filestat.atimeMs;
-                let now:number = new Date().valueOf();
-                let timeDiff:number = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
-
-                if (timeDiff > parseInt(MEDIA_CACHE_DURATION)) {
-                    console.log(`Evicting ${entry.path} from cache due to expiration`);
-                    try {
-                        await rm(entry.path)
-                        evictCount++;
-                    }
-                    catch (err) {
-                        console.log(err);
-                    }   
-                }
-            }
+            //let files:Array<DirectoryList>  = await getDirContents(cacheDir);
+            let evictCount:number           = await evictExpiredItems(MEDIA_CACHE_DURATION);
             console.log(`Evicted ${evictCount.toString()} expired items from the proxy cache.`);
         }
         catch (err) {
-            console.log("image-proxy:housekeep:evict-expired");
+            console.log("image-proxy.ts:cache:housekeep:evict-expired");
             console.log(err);
         }
 
@@ -222,7 +211,7 @@ export const cache:FilesystemCache = {
    
 }
 
-
+// Web Request Handler
 export async function image_proxy(event:any) {
     const req = event.req;
     const res = event.res;
@@ -236,8 +225,9 @@ export async function image_proxy(event:any) {
     // Look for 'fallback' URL param to set fallback action for proxy failure
     if(!req.params.get('fallback') || req.params.get('fallback') == 'false') {
         fallback=false;
-        req.params.delete('fallback');
+        
     }
+    req.params.delete('fallback');
 
     // Build a URL to the requested image/video
     let imagePath = `${req.route}`
@@ -269,16 +259,7 @@ export async function image_proxy(event:any) {
             }
             
             // Fetch the media
-            const data = await fetch(imageUrl, {
-                method: req.method,
-                headers: req.headers,
-                redirect: "follow",
-                //@ts-ignore
-                duplex: 'half',
-                //@ts-ignore
-                signal: AbortSignal.timeout(45 * 1000),
-            }).catch((error) => console.log(error))
-
+            let data = await fetchMedia(imageUrl, req)
 
             // Check if data was returned and either perform fallback redirect or return an error
             if (!data) {
@@ -290,6 +271,7 @@ export async function image_proxy(event:any) {
                 
             }
             
+
             // HTTP 304 trips up the checks so except it from the failure responses
             if (!data.ok && data.status != 304) {
                 if (fallback) return res.setHeader('Location', imageUrl).status(302).send();
@@ -329,6 +311,26 @@ export async function image_proxy(event:any) {
 }
 
 
+// Fetch an image
+const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<void|Response> {
+    const data = await fetch(imageUrl, 
+        {
+            method: req.method,
+            //headers: req.headers,
+            redirect: "follow",
+            //@ts-ignore
+            signal: AbortSignal.timeout(60 * 1000),
+        }
+    )
+    .catch((error) => {
+        console.log(req.headers);
+        console.log(imageUrl);
+        console.log(error);
+    })
+    
+    return data;
+}
+
 // Check if the provided URL is an image
 function isImage  (url: string | undefined) {
     if (!url) return false
@@ -355,3 +357,100 @@ async function getDirectorySize (dirPath:string) {
     }
     return totalSize;
 }
+
+
+
+// Return a list of files and their stats
+const getDirContents = async function(path:string): Promise<Array<DirectoryList>> {
+    try {
+        let dir = await opendir(path);
+        let contents:Array<DirectoryList> = []
+        
+        for await (const entry of dir) {
+            let item = {
+                path: entry.path,
+                stats: await stat(entry.path)
+            }
+            contents.push(item)
+        }
+        return contents;
+    }
+    catch (err) {
+        console.log(`getDirContents: ${path}`);
+        console.log(err);
+        return [] as Array<DirectoryList>;
+    }
+}
+
+const sortDirectoryContents = function(contents:Array<Stats>, attr:string = 'atimeMs', dir:string='asc' ) {
+    
+    const asc = function (a:Stats, b:Stats) {
+        if (a[attr] > b[attr]) return 1
+        if (a[attr] < b[attr]) return -1
+        return 0
+    }
+
+    const desc = function (a:Stats, b:Stats) {
+        if (a[attr] > b[attr]) return -1
+        if (a[attr] < b[attr]) return 1
+        return 0
+    }
+
+    if (dir=='asc') contents.sort(asc)
+    if (dir=='desc') contents.sort(desc)
+
+    return contents;
+}
+
+const evictExpiredItems = async function(minutes:number=MEDIA_CACHE_DURATION): Promise <number> {
+    let directoryList:Array<DirectoryList> = await getDirContents(cacheDir)
+    let evictedItems: number = 0;
+
+    for ( let i:number=0; i<directoryList.length; i++) {
+        let entry:Stats = directoryList[i];
+
+        let lastAccessTime:number   = entry.atimeMs;
+        let now:number              = new Date().valueOf();
+        let timeDiff:number         = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
+
+        if (timeDiff > minutes) {
+            console.log(`Evicting ${entry.path} from cache due to expiration`);
+            try {
+                await rm(entry.path)
+                evictedItems++;
+            }
+            catch (err) {
+                console.log(err);
+            }   
+        }
+    }
+    return evictedItems
+}
+
+const evictOldestPercentage = async function(percent:number) {
+    //let cacheDirSize: number     = await getDirectorySize(cacheDir);
+    
+    //let cacheDirSizeMB: number   = Math.round(cacheDirSize/1000/1000);
+    //let percentFull: number      = Math.round((cacheDirSizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
+
+    let targetBytes = (MEDIA_CACHE_MAX_SIZE * 1000 * 1000) * (percent/100)
+
+    let files = sortDirectoryContents(await getDirContents(cacheDir), 'atimeMs', 'asc')
+    
+
+
+}
+
+/*
+const { opendir, stat} = require('node:fs/promises');
+const getDirContents = async function(path) {
+    let dir = await opendir(path);
+    let contents = []
+
+    for await (const entry of dir) {
+        contents[entry.path] = await stat(entry.path);
+    }
+    return contents;
+}
+*/
+

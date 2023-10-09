@@ -1,5 +1,13 @@
 # Media Proxying and Caching
 
+# To Do
+Move actual image fetch to function that can be re-called to follow redirects or retry on failure.
+
+If locked to instance, automatically read blocked instances from API and transparently add those to the proxy blacklist
+
+
+
+
 ## Overview
 ### Use Cases / Advantages
 
@@ -163,5 +171,34 @@ Recommended:  true
 ```
 Whether to run the housekeeping function immediately at startup or wait until the first interval.  
 
+
+# FAQ
+## Q:  How can I clear the cache?
+Currently, the only way to clear/flush the cache is to delete all `.cache` objects in the Tesseract data directory.
+
+## Q:  Can I clear individual items from the cache?
+Yes.  The cache folder structure is flat, so every cache item is located directly off the `/app/cache` directory in the container.  
+
+The filenames are a SHA256 checksum of the image path and parameters with the extension `.cache`.  You can generate the filename as such:
+
+`createHash('sha256').update(IMAGE_URL).digest('hex') + '.cache'`
+
+Where `IMAGE_URL` is: `https://${imagePath}?${req.params}`
+
+Example:  https://lemmy.world/pictrs/image/8dca72f6-81fb-4d7d-9cce-c9fd6336205d.png?format=webp&thumbnail=768 -> 9561059954ca77b23b76bf6a10e86e85b639e82981668daf68651e748015b630.cache
+
+If you have the image loaded, you can open dev tools and find the network request for that image.  The cache key/filename is returned in the header `x-tesseract-image-cache-key`
+
+When generating the cache keys manually, omit the `&fallback=true|false` paramater.  It is only used by the proxy handler and is stripped off before hashing the key from the URL.
+
+Once you have the filename, delete that from the `/app/cache` directory: either from the host data directory or by shelling into the container.
+
+## Q: Why does the cache clear when Tesseract updates or is restarted?
+Make sure you mounted the container's `/app/cache` folder to somewhere persistent.  Without a mount, it will store the cache data to its ephemeral writable layer. 
+
+## Q:  What if I don't want to proxy media?
+The option to proxy as well as the handler for the `/image_proxy` route are disabled by defauilt. Tesseract will not proxy any media unless the environment variable `PUBLIC_ENABLE_MEDIA_PROXY` is set to `true.
+
+## 
 
 
