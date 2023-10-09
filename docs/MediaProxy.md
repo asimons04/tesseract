@@ -87,6 +87,13 @@ Default: false
 ```
 Setting this to `true` will enable the media proxy module and is necessary for all other proxy/cache functionlity.
 
+**PUBLIC_ENABLE_USER_MEDIA_PROXY**
+```
+Values: true | false
+Default:  false
+```
+Setting this to `true` will enable media proxying in the default users settings.  Will not have any effect for existing users unless they access Tesseract from a new device, clear their local storage settings, or reset their app settings to default.
+
 
 **PUBLIC_MEDIA_PROXY_LEMMY_ONLY**
 ```

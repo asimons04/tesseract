@@ -150,7 +150,7 @@ export const defaultSettings: Settings = {
         autoplay:                                                           false,
     },
     proxyMedia: {
-        enabled:                                                        false,
+        enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
         fallback:                                                       true,
     }
 
