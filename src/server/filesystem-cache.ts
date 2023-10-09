@@ -16,7 +16,6 @@ interface DirectoryList {
 
 
 import { 
-    ENABLE_MEDIA_CACHE,
     MEDIA_CACHE_KEEP_HOT_ITEMS,
     MEDIA_CACHE_DURATION,
     MEDIA_CACHE_MAX_SIZE,
@@ -29,7 +28,6 @@ import { createHash } from 'node:crypto'
 import {fileTypeFromBuffer} from 'file-type';
 import { 
     type Stats,
-
     access,
     constants,
     open,
@@ -41,6 +39,7 @@ import {
     writeFile,
 
 } from 'node:fs/promises'
+
 
 const cacheDir:string = "/app/cache";
 
@@ -165,6 +164,7 @@ export const cache:FilesystemCache = {
 
         }
         catch (err) {
+            console.log("image-proxy.ts:cache:housekeep:evict-quota");
             console.log(err)
         }
 
@@ -176,6 +176,7 @@ export const cache:FilesystemCache = {
             return true;
         }
         catch {
+            console.log("image-proxy.ts:cache:init");
             console.log(`Unable to open cache directory (${cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
             return false;
         }
@@ -188,6 +189,7 @@ export const cache:FilesystemCache = {
                 await writeFile(`${cacheDir}/${key}`, buffer)
             }
             catch (err) {
+                console.log("image-proxy.ts:cache:put");
                 console.log(err);
                 return false
             }
@@ -200,6 +202,7 @@ export const cache:FilesystemCache = {
             await access(`${cacheDir}/${key}`, constants.R_OK)
             return true;
         }
+        // Since this is a lookup to see if the file exists, silently ignore failures since cache misses will throw useless errors.
         catch {
             return false;
         }
@@ -207,7 +210,7 @@ export const cache:FilesystemCache = {
    
 }
 
-
+//// Utility Functions
 // Calculate directory size
 async function getDirectorySize (dirPath:string) {
     let totalSize:number = 0;

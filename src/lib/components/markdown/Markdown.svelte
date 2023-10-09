@@ -92,11 +92,11 @@
   }
 
   .markdown :global(ul) {
-    @apply list-disc pl-4 leading-3;
+    @apply list-disc pl-4 leading-3 whitespace-normal;
   }
 
   .markdown :global(ol) {
-    @apply list-decimal pl-4 leading-3;
+    @apply list-decimal pl-4 leading-3 whitespace-normal;
   }
 
   .markdown :global(ul > *) {
@@ -108,15 +108,18 @@
   }
 
   .markdown :global(li) {
-    @apply m-0 leading-[1.5] !important;
+    @apply pt-[10px] m-0 leading-[1.5] !important ;
   }
 
   .markdown :global(li > *) {
     @apply m-0 leading-[1.5] !important;
   }
 
+  
+
   .markdown :global(blockquote) {
     @apply leading-[1px] border-l-2 border-slate-400 dark:border-zinc-600 pl-2 my-1 h-max;
+    line-height: unset;
   }
 
   .markdown :global(p) {

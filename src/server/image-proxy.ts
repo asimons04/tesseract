@@ -1,10 +1,12 @@
 import { 
     ENABLE_MEDIA_PROXY,
     ENABLE_MEDIA_CACHE,
+    MEDIA_PROXY_BLACKLIST,
 } from '$lib/settings'
 
 import { cache } from './filesystem-cache'
 
+let blacklist = MEDIA_PROXY_BLACKLIST.split(',')
 
 // Web Request Handler
 export async function image_proxy(event:any) {
@@ -13,14 +15,12 @@ export async function image_proxy(event:any) {
 
     // Refuse further processing if media proxying is disabled or if no token is provided
     if (!ENABLE_MEDIA_PROXY) return res.error("Media proxying is administratively disabled.").send();
-    
-    // Fallback to redirecting to original image source if proxy request fails
-    let fallback:boolean = true;
-    
+
     // Look for 'fallback' URL param to set fallback action for proxy failure
-    if(!req.params.get('fallback') || req.params.get('fallback') == 'false') {
+    // This needs to delete the 'fallback' param _before_ generating the URL that is later used to create the cache key!
+    let fallback:boolean = true;
+    if (!req.params.get('fallback') || req.params.get('fallback') == 'false') {
         fallback=false;
-        
     }
     req.params.delete('fallback');
 
@@ -28,11 +28,21 @@ export async function image_proxy(event:any) {
     let imagePath = `${req.route}`
     let imageUrl = new URL(`https://${imagePath}?${req.params.toString()}`);
 
+    // Refuse request if image url matches an entry in the blacklist
+    for (let i:number=0; i< blacklist.length; i++) {
+        if ( imageUrl.hostname.includes(blacklist[i].trim()) ) {
+            return res
+                .error(`Administrator has disabled proxying to this resource: ${imageUrl.href}`)
+                .send();
+        }
+    }
+
     try {
         if ( req.method == 'GET' && ( isImage(req.url) || isVideo(req.url) ) ) {
             
             // Lookup the image URL in the cache and return that if found
             let cacheKey
+            
             if (ENABLE_MEDIA_CACHE) {
                 cacheKey = cache.createKey(imageUrl.href);
                 if (cacheKey && await cache.query(cacheKey)) {
@@ -99,6 +109,11 @@ export async function image_proxy(event:any) {
                 .type(image.type)
                 .send(await image.arrayBuffer());
         }
+        
+        // Not method GET and/or not an image/video requested 
+        else {
+            return res.error('Attempted to proxy invalid URL').send();
+        }
     }
     catch (error) {
         // Log the error and fallback to redirecting the request to the original image URL
@@ -120,7 +135,6 @@ const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<void|Re
         }
     )
     .catch((error) => {
-        console.log(req.headers);
         console.log(imageUrl);
         console.log(error);
     })

@@ -27,12 +27,17 @@ Current
 - Update tsconfig to use `es2022` module and target `es2017`
 
 ## 1.2.8
-Lots of under the hood updates this time.
+Lots of under the hood updates this time.  Most updates are to the server-side handlers to support media proxying and an associated caching layer.
 
 ### Media Proxying and Caching
 Tesseract can now, _optionally_, proxy and cache post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied, including those hosted through Imgur, Tenor, ~~Giphy~~, Catbox, etc.
 
 [See full documentation for media proxy/cache](docs/MediaProxy.md)
+
+### UI Bugfixes
+- Fixed garbled code block and inline code when inside a block quote
+- Fixed wonky rendering of bullet lists, especially nested lists.
+
 
 
 #### Notes for Administrators
