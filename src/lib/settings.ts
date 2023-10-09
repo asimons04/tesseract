@@ -162,7 +162,7 @@ export const userSettings = writable(defaultSettings)
 // Global option environment flags
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                 ?? false
 export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)             ?? false
-export const MEDIA_PROXY_BLACKLIST          = env.PUBLIC_MEDIA_PROXY_BLACKLIST                      ?? 'media.giphy.com'    // Comma-delimited list of domains not to proxy
+export const MEDIA_PROXY_BLACKLIST          = env.PUBLIC_MEDIA_PROXY_BLACKLIST                      ?? ''    // Comma-delimited list of domains not to proxy
 export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)           ?? true
 
 export const ENABLE_MEDIA_CACHE             = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE)                 ?? true

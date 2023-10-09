@@ -27,35 +27,33 @@ Current
 - Update tsconfig to use `es2022` module and target `es2017`
 
 ## 1.2.8
-Lots of under the hood updates this time.  Most updates are to the server-side handlers to support media proxying and an associated caching layer.
+Most updates are under the hood and to the server-side handlers to support media proxying and an associated caching layer.
 
 ### Media Proxying and Caching
-Tesseract can now, _optionally_, proxy and cache post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied, including those hosted through Imgur, Tenor, ~~Giphy~~, Catbox, etc.
+Tesseract can now proxy and cache post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied/cached, including those hosted through Imgur, Tenor, ~~Giphy~~, Catbox, etc.
 
-[See full documentation for media proxy/cache](docs/MediaProxy.md)
+This feature is disabled by default and must be explicitly enabled both by the administrator and each user.  
+
+
+
+#### Advantages to Proxying/Caching
+- Enhanced user privacy
+- Quicker loading of images
+- Reduces traffic to other Lemmy instances and hosting services
+
+#### Disadvantages
+- Increased bandwidth usage
+- Increased processing by the UI server
+
+For proxy cache documentation and more details, [see the docs page for the media proxy/cache module](docs/MediaProxy.md)
+
+### Fediseer
+- Fediseer queries are now cached for one hour in memory.
 
 ### UI Bugfixes
 - Fixed garbled code block and inline code when inside a block quote
 - Fixed wonky rendering of bullet lists, especially nested lists.
 
-
-
-#### Notes for Administrators
-
-**Advantages**:
-- Users only reveal their IPs to their home Lemmy instance (or, at least, to whomever is hosting the Tesseract instance they're using).  Other Lemmy instances will only see the IP address of the Tesseract server.
-
-- You can cache `GET` requests to the `/image_proxy/` path in your reverse proxy (or, sigh, Cloudflare) to be a good netizen and reduce the load on remote instances.  If you run a large instance, you will only have to fetch a remote image from another instance once time for as long as the cache duration is set.  At least one hour is recommended.
-    
-- Note:  Direct caching is a work-in-progress optional feature so you can do the caching directly within Tesseract.  Plan is to make it optional and allow configuring a max cache size (e.g. 2 GB) and a cache duration (e.g. 1 hour).  
-
-- Faster, more consistent loading.  Since all of the images will be coming from the same origin, connection multiplexing can significantly speed up retrieval for your users.   Combined with image caching, significant performance increases can be expected (haven't done any benchmarks, just basing expectations on one to many HTTPS vs one-to-one.
-
-**Disadvantages**
-- This option has the potential to _drastically_ increase your data egress (ingress is _usually_ unmetered, but not always).  Please be aware of this before enabling proxying.
-
-- Proxying mail fail in some cases where image hosting sites like Imgur block certain VPS IP ranges.  Since the image fetch will be happening from the VPS, it may fail and the user would need to disable the proxying option to view the image.  The proxy request does pass the user's UA info and other headers to try to bypass certain web firewall blocking techniques, but if they block the IP ranges, there's no way around that.
-    - I may try to implement an optional fallback to the direct source if the proxy request fails.  I _think_ an `<img` tag will follow a 302 redirect, but I'll have to double check.
 
 
 ## 1.2.7

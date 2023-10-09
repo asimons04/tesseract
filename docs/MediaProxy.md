@@ -1,6 +1,6 @@
 # Media Proxying and Caching
 
-# To Do
+## To Do
 If locked to instance, automatically read blocked instances from API and transparently add those to the proxy blacklist.  
 
 
@@ -37,7 +37,7 @@ Privacy conscious users have long requested media be proxied through Lemmy.  Whi
 Typically, when you're interacting with Lemmy, most images are fetched directly from remote instances: the API just returns a URL to an image which each user fetches in their clients.  It's up to those clients to do any caching.  Icons, Avatars, post, and inline comment images are always retrieved directly from their source instnaces or remote servers.  Thumbnails are hit or miss depending on a number of factors that I don't want to get into right now.
 
 
-Tesseract can now, _optionally_, proxy post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied, including those hosted through Imgur, Tenor, ~~Giphy~~, Catbox, etc.
+Tesseract can now, _optionally_, proxy post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied, including those hosted through Imgur, Tenor, Giphy, Catbox, etc.
 
 To utilize this feature, there are two steps which need to be taken:
 1. Tesseract must be started with the `PUBLIC_ENABLE_MEDIA_PROXY` environment variable set to `true`.  It is disabled by default and must be explicitly enabled by the admin running Tesseract.
@@ -100,10 +100,10 @@ Determines whether to allow proxying to outside media, such as Imgur, Catbox, Ya
 **PUBLIC_MEDIA_PROXY_BLACKLIST**
 ```
 Values: Unquoted string
-Default: media.giphy.com
+Default: Empty
 Example: PUBLIC_MEDIA_PROXY_BLACKLIST=media.giphy.com,badsite.com,site-that-doesnt-work-with-the-proxy.com
 ```
-Comma-delimited list of domains and/or keywords to check for in image URLs.  Any image URLs that contain anything in the blacklist will not go through the proxy endpoint and will be linked directly.  Giphy is the only default because it doesn't work with the proxy, but you may wish to add others for content policy reasons or because you've identified others that do not like being proxied.  Note that if you define your own list, you'll need to add `media.giphy.com` to it manually (for now, anyway).
+Comma-delimited list of domains and/or keywords to check for in image URLs.  Any image domains that contain anything in the blacklist will not go through the proxy endpoint and will be linked directly.  You may wish to add others for content policy reasons or because you've identified some that do not like being proxied. 
 
 **PUBLIC_ENABLE_MEDIA_PROXY_LOCAL**
 ```

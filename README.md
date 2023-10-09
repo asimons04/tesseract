@@ -1,6 +1,6 @@
 # Tesseract
 
-Tesseract is a fork of Xylight's Photon and is designed for media-rich feeds and content.
+Tesseract is Lemmy client designed for media-rich feeds and content.
 
 It started out as my personal, custom build of Photon, but it got exhausting porting over my bells and whistles each release. To that end, I finally decided to make it an official fork.
 
@@ -21,6 +21,12 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## Features
 - Full media support in feed and posts (Spotify, YouTube/Invidious/Piped, Soundcloud, etc).
+
+- Image/Media proxy
+  - Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.
+  - Note: Embedded content is not proxied, only avatars, logos, banners, images, and direct-link videos.
+  - Can cache any media proxied through it.
+  - Administrators must explicitly enable this module, and users must enable media proxying in their app settings.
 
 - Designed for desktop and mobile. All desktop features are available in mobile.
 
@@ -141,30 +147,7 @@ server {
 
 
   location / {
-    proxy_pass http://127.0.0.1:8081;
-  }
-
-  # This path needs to exist so CORS headers can be relaxed for image uploads to be able to
-  # function; Tesseract will proxy the requests through that to the actual backend.
-  
-  location /cors/ {
-
-    # At a minimum, it is required to pass the Host header since that will need to be further 
-    # passed to the lemmy backend
-
-    proxy_http_version                      1.1;
-    proxy_set_header  Host                  $host;
-
-    # These are the response headers that will be returned on the preflight checks; required to 
-    # allow multiple, arbitrary instances to be used with Tesseract without having to have too 
-    # permissive a CORS policy for all routes.
-    
-    add_header      Access-Control-Allow-Credentials        'true';
-    add_header      Access-Control-Allow-Origin             '*';
-    add_header      Access-Control-Allow-Methods            'GET,OPTIONS,PATCH,DELETE,POST,PUT';
-    add_header      Access-Control-Allow-Headers            'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version';
-    proxy_pass      http://127.0.0.1:8081;
-
+    proxy_pass http://127.0.0.1:8080;
   }
 
 }
@@ -204,6 +187,24 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |
 | PUBLIC_YOUTUBE_FRONTEND         | `YouTube`\|`Invidious` | YouTube                             |
 
+### Configuration Options for Media Proxying and Caching
+Descriptions of the config options and what they do are covered in the [Media Proxy Cache](docs/MediaProxy.md) module documentation.
+
+Variable                            | Value                 | Default                            |
+---                                 | ---                   | ---                                |
+PUBLIC_ENABLE_MEDIA_PROXY           | `bool`                | false                              |
+PUBLIC_MEDIA_PROXY_LEMMY_ONLY       | `bool`                | false                              |
+PUBLIC_MEDIA_PROXY_BLACKLIST        | String                | ''
+PUBLIC_ENABLE_MEDIA_PROXY_LOCAL     | `bool`                | true                               |
+PUBLIC_ENABLE_MEDIA_CACHE           | `bool`                | true                               |
+PUBLIC_MEDIA_CACHE_DURATION         | Integer (minutes)     | 720                                |
+PUBLIC_MEDIA_CACHE_MAX_SIZE         | Integer (MB)          | 1000                               |
+PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL | Integer (minutes)   | 5                                  |
+PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP  | `bool`              | true                               |
+PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS   | `bool`                | true                               |
+
+
+
 The values for `SortType`, `ListingType`, and `CommentSortType` are defined by the lemmy-js-client library.  All of the values are case-sensitive and must match as they are defined in the type definitions of the [lemmy-js-client](https://github.com/LemmyNet/lemmy-js-client)
 
 #### Listing Type
@@ -212,7 +213,7 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/ListingType.ts
 - All
 - Local
 - Subscribed
-- Moderator View (not implemented in Photon)
+- Moderator View (not implemented in Tesseract)
 
 #### Sort Type
 https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/SortType.ts
