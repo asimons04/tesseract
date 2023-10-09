@@ -73,12 +73,25 @@ export const cache:FilesystemCache = {
         try {
             file = await open(`${cacheDir}/${key}`);
             let buffer = await file.readFile();
-            
-            let mimetype = await fileTypeFromBuffer(buffer);
-            let blob = new Blob([buffer], { type: mimetype.mime });
-
-            // Close the file handle
             await file.close();
+            
+            let { mime } = await fileTypeFromBuffer(buffer) ?? { mime: undefined};
+
+            // If MIME type is not detected, check if it's an SVG as those often trip it up.            
+            if (!mime) { 
+                // SVG tends to trip up, so do manual detection of those
+                let head:string = buffer.toString().slice(0,20);
+                if (head.startsWith('<svg xmlns')) {
+                    mime = 'image/svg+xml'
+                }
+                
+                // If not manually detected as SVG, delete cache item since mime type detection failed (often due to aborted fetch and partial download)
+                else {
+                    console.log(`Removing malformed cache item: ${cacheDir}/${key}`);
+                    await rm(`${cacheDir}/${key}`)
+                    return false
+                }
+            }
             
             // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
             if (MEDIA_CACHE_KEEP_HOT_ITEMS && !cache.full) {
@@ -86,17 +99,14 @@ export const cache:FilesystemCache = {
                 await utimes(`${cacheDir}/${key}`, now, now)
             }
             
+            // Create a blob from the array buffer and return it
+            let blob = new Blob([buffer], { type: mime });
             return blob;
         }
         // Typical error is when bad/partially written cache item can't have its mime detected. Silently delete the cache item.
         catch (err) {
-            try {
-                await rm(`${cacheDir}/${key}`)
-            }
-            catch {
-                return false;
-                
-            }
+            console.log("image-proxy.ts:cache:get");
+            console.log(err)
         }
 
     },
@@ -240,12 +250,15 @@ export async function image_proxy(event:any) {
                 if (cacheKey && await cache.query(cacheKey)) {
                     //console.log(`Key (${cacheKey}) found in cache. Loading and returning cached version of the file.`);
                     let image = await cache.get(cacheKey);
-                    return res
-                        .setHeader('X-Tesseract-Image-Cache', 'hit')
-                        .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
-                        .setHeader('Cache-Control', 'max-age=3600') 
-                        .type(image.type)
-                        .send(await image.arrayBuffer());
+                    
+                    if (image && image.type) {
+                        return res
+                            .setHeader('X-Tesseract-Image-Cache', 'hit')
+                            .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
+                            .setHeader('Cache-Control', 'max-age=3600') 
+                            .type(image.type)
+                            .send(await image.arrayBuffer());
+                    }
                 }
                 
                 // Massage the request headers to create a new connection to the target Lemmy instance

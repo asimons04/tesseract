@@ -1,9 +1,7 @@
 # Media Proxying and Caching
 
 # To Do
-Move actual image fetch to function that can be re-called to follow redirects or retry on failure.
-
-If locked to instance, automatically read blocked instances from API and transparently add those to the proxy blacklist
+If locked to instance, automatically read blocked instances from API and transparently add those to the proxy blacklist.  
 
 
 
