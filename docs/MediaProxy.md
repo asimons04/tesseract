@@ -1,7 +1,8 @@
 # Media Proxying and Caching
 
 ## To Do
-If locked to instance, automatically read blocked instances from API and transparently add those to the proxy blacklist.  
+- If locked to instance, automatically read blocked instances from API and transparently add those to the proxy blacklist.  
+- Quota full eviction routine is still buggy AF and quite stupid.  
 
 
 
