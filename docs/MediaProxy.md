@@ -107,6 +107,17 @@ Example: PUBLIC_MEDIA_PROXY_BLACKLIST=media.giphy.com,badsite.com,site-that-does
 ```
 Comma-delimited list of domains and/or keywords to check for in image URLs.  Any image URLs that contain anything in the blacklist will not go through the proxy endpoint and will be linked directly.  Giphy is the only default because it doesn't work with the proxy, but you may wish to add others for content policy reasons or because you've identified others that do not like being proxied.  Note that if you define your own list, you'll need to add `media.giphy.com` to it manually (for now, anyway).
 
+**PUBLIC_ENABLE_MEDIA_PROXY_LOCAL**
+```
+Value: true | false
+Default: true
+```
+Configures whether to proxy images local to the user's instance.  
+
+It is recommended to enable this if you host Tesseract on a different server than your Lemmy API.  This allows the server running Tesseract to act as a CDN for images/media hosted on your Lemmy instance. 
+
+Pretty much useless without also enabling media caching.
+
 ---
 
 ### Caching
@@ -118,14 +129,7 @@ Recommended:  true
 ```
 Whether to enable caching for media that is fetched by the proxy.  While it is "enabled" by default, it will not do anything unless media proxying is also enabled (since nothing will be flowing through the proxy for it to cache).  If you do not wish to cache any proxied media, set this to `false`.
 
-**PUBLIC_ENABLE_MEDIA_CACHE_LOCAL**
-```
-Value: true | false
-Default: true
-```
-Configures whether to proxy images local to the user's instance.  
 
-It is recommended to enable this if you host Tesseract on a different server than your Lemmy API.  This allows the server running Tesseract to act as a CDN for images/media hosted on your Lemmy instance. 
 
 **PUBLIC_MEDIA_CACHE_DURATION**
 ```
