@@ -4,7 +4,6 @@ interface FilesystemCache {
     evictExpiredItems: Function,
     evictOldestItems: Function,
     flush: Function,
-    full: boolean,
     get: Function,
     housekeep: Function,
     init: Function,
@@ -53,7 +52,6 @@ import {
 
 export const cache:FilesystemCache = {
     cacheDir: '/app/cache',
-    full: false,
     stats: {
         items: 0,
         size: 0,
@@ -153,7 +151,7 @@ export const cache:FilesystemCache = {
             }
             
             // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
-            if (MEDIA_CACHE_KEEP_HOT_ITEMS && !cache.full) {
+            if (MEDIA_CACHE_KEEP_HOT_ITEMS) {
                 let now = new Date();
                 await utimes(`${cache.cacheDir}/${key}`, now, now)
             }
@@ -177,9 +175,13 @@ export const cache:FilesystemCache = {
 
         // Evict items older than the defined cache duration
         try {
-            let evictedCount = await cache.evictExpiredItems(MEDIA_CACHE_DURATION);
-            console.log(`Evicted ${evictedCount.toString()} expired items from the proxy cache.`);
-            await cache.updateStats();
+            let evictedCount:number = await cache.evictExpiredItems(MEDIA_CACHE_DURATION);
+            
+            if (evictedCount > 0) {
+                console.log(`Evicted ${evictedCount.toString()} expired items from the proxy cache.`);
+                await cache.updateStats();
+            }
+            
         }
         catch (err) {
             console.log("filesystem-cache.ts:cache:housekeep:evict-expired");
@@ -188,8 +190,14 @@ export const cache:FilesystemCache = {
 
         // Evict oldest items when cache is above 95% full
         if (cache.stats.percentFull > 95) {
-            let purgedCount = await cache.evictOldestItems();
-            console.log(`Purged ${purgedCount.toString()} items from the proxy cache.`);
+            try {
+                let purgedCount = await cache.evictOldestItems();
+                console.log(`Purged ${purgedCount.toString()} items from the proxy cache.`);
+            }
+            catch (err) {
+                console.log("filesystem-cache.ts:cache:housekeep:evict-oldest");
+                console.log(err);
+            }
         }
         
         // Update and report the cache stats
@@ -216,7 +224,7 @@ export const cache:FilesystemCache = {
     },
 
     put: async function(key:string, data:Blob) {
-        if (!cache.full) {
+        if (cache.stats.percentFull < 95) {
             try {
                 let buffer = Buffer.from (await data.arrayBuffer() );
                 await writeFile(`${cache.cacheDir}/${key}`, buffer)
@@ -250,13 +258,6 @@ export const cache:FilesystemCache = {
             cache.stats.sizeMB          = Math.round(cache.stats.size/1000/1000);
             cache.stats.percentFull     = Math.round((cache.stats.sizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
             
-            // Set `full` flag at 95% to give some head room since this is only calculated on an interval
-            if (cache.stats.percentFull > 95) {
-                cache.full = true;
-            } else {
-                cache.full = false;
-            }
-
             if (report) {
                 console.log("Media proxy cache stats:");
                 console.log(`\t Cached Items: ${cache.stats.items.toString()}`);
