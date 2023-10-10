@@ -3,6 +3,7 @@
     import type { PostDisplayType } from './helpers.js'
     
     import { getInstance } from '$lib/lemmy.js'
+    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -50,7 +51,7 @@
     
     // Make these variables reactive
     $: {
-        title                               = post.post.name ?? undefined
+        title                               = fixLemmyEncodings(post.post.name) ?? undefined
         upvotes                             = post.counts.upvotes ?? undefined
         downvotes                           = post.counts.downvotes ?? undefined
         nsfw                                = post.post.nsfw ?? false

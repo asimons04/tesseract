@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2017",
+    "target": "es2021",
     "types": ["vite-plugin-pwa/client"]
   }
   // Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias

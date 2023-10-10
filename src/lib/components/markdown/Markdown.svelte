@@ -2,7 +2,7 @@
     import { md, mdInline, photonify } from '$lib/components/markdown/markdown'
     import { userSettings } from '$lib/settings.js'
     import { imageProxyURL } from '$lib/image-proxy'
-
+    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import markdown_it_highlightjs from 'markdown-it-highlightjs'
     
     export let source: string = ''
@@ -46,6 +46,7 @@
     let rendered:string
     
     $: try {
+        source = fixLemmyEncodings(source);
         if (inline) { rendered = mdInline.render(source) }
         else { rendered = md.render(source) }
     }

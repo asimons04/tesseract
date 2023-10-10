@@ -170,3 +170,14 @@ export const postType = (post: PostView | undefined ) => {
     // If no other type matches, render as a plain text
     return "text"
 }
+
+
+export const fixLemmyEncodings = function (content:string|undefined):string|undefined {
+    if (!content) return undefined
+    
+    content = content
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+    
+    return content;
+}

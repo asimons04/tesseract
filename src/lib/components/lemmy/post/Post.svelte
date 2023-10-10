@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
+    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import {isImage, postType} from './helpers.js'
@@ -77,7 +78,7 @@
                 class:dark:text-zinc-400={post.read && $userSettings.markReadPosts}
                 title="{post.post.name}"
             >
-                <h1 class="text-lg">{post.post.name}</h1>    
+                <h1 class="text-lg">{fixLemmyEncodings(post.post.name)}</h1>    
             
             </a>
             
