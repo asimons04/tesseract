@@ -6,6 +6,7 @@ import { fediseer_router }      from './lib/fediseer/server.js'
 import { image_proxy }          from './server/image-proxy.js'
 import { proxy_pictrs_upload }  from './server/upload-image.js'
 import { 
+    ENABLE_MEDIA_CACHE,
     MEDIA_CACHE_HOUSEKEEP_INTERVAL,
     MEDIA_CACHE_HOUSEKEEP_STARTUP,
 } from '$lib/settings'
@@ -66,20 +67,27 @@ const task_memoryCache = setInterval(() => {
 
 //// Image Proxy Cache
 // Housekeeps every MEDIA_CACHE_HOUSEKEEP_INTERVAL minutes
+
 import { cache as imageCache } from './server/filesystem-cache'
 
-if (await imageCache.init()) { 
-    console.log("Initialized image proxy cache") 
-    
-    // Run housekeeping at startup, if option set, instead of waiting for the first interval run
-    if (MEDIA_CACHE_HOUSEKEEP_STARTUP) await imageCache.housekeep();
+if (ENABLE_MEDIA_CACHE) {
+    const cacheDir = '/app/cache';
 
-    const task_imageCache = setInterval(async () => {
-        console.log("Housekeeping image proxy cache...");
-        await imageCache.housekeep();
+    if (await imageCache.init(cacheDir)) { 
+        console.log(`Initialized image proxy cache at ${cacheDir}`) 
+        
+        // Run housekeeping at startup, if option set, instead of waiting for the first interval run
+        if (MEDIA_CACHE_HOUSEKEEP_STARTUP) await imageCache.housekeep();
 
-    }, (MEDIA_CACHE_HOUSEKEEP_INTERVAL * 60 * 1000))
+        const task_imageCache = setInterval(async () => {
+            console.log("Housekeeping image proxy cache...");
+            await imageCache.housekeep();
+
+        }, (MEDIA_CACHE_HOUSEKEEP_INTERVAL * 60 * 1000))
+    }
+    else {
+        console.log(`Failed to initialize image proxy cache at ${cacheDir}.  Caching is disabled`)
+    }
 }
-else {
-    console.log("Failed to initialize image proxy cache.  Caching is disabled")
-}
+
+console.log("Starting Tesseract server");

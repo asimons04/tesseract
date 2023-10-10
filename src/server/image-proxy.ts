@@ -158,17 +158,3 @@ function isVideo (inputUrl: string | undefined) {
 }
 
 
-
-/*
-const { opendir, stat} = require('node:fs/promises');
-const getDirContents = async function(path) {
-    let dir = await opendir(path);
-    let contents = []
-
-    for await (const entry of dir) {
-        contents[entry.path] = await stat(entry.path);
-    }
-    return contents;
-}
-*/
-

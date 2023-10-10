@@ -1,12 +1,22 @@
 interface FilesystemCache {
-    full: boolean,
+    cacheDir: string,
     createKey: Function,
-    get: Function,
+    evictExpiredItems: Function,
+    evictOldestItems: Function,
     flush: Function,
+    full: boolean,
+    get: Function,
+    housekeep: Function,
     init: Function,
     put: Function
     query: Function,
-    housekeep: Function,
+    stats: {
+        items: number,
+        size: number,
+        sizeMB:number,
+        percentFull: number
+    },
+    updateStats: Function,
 }
 
 interface DirectoryList {
@@ -41,15 +51,76 @@ import {
 } from 'node:fs/promises'
 
 
-const cacheDir:string = "/app/cache";
-
 export const cache:FilesystemCache = {
-    
+    cacheDir: '/app/cache',
     full: false,
+    stats: {
+        items: 0,
+        size: 0,
+        sizeMB: 0,
+        percentFull: 0
+    },
+
     createKey: function(value:string) {
         return createHash('sha256').update(value).digest('hex') + '.cache';        
     },
+
+    evictExpiredItems: async function(minutes:number=MEDIA_CACHE_DURATION):Promise<number> {
+        let directoryList:Array<DirectoryList> = await getDirContents(cache.cacheDir)
+        let evictedItems: number = 0;
     
+        for ( let i:number=0; i<directoryList.length; i++) {
+            let entry:Stats = directoryList[i];
+    
+            let lastAccessTime:number   = entry.stats.atimeMs;
+            let now:number              = new Date().valueOf();
+            let timeDiff:number         = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
+            
+            if (timeDiff > minutes) {
+                console.log(`\t Evicting ${entry.path} from cache due to expiration`);
+                try {
+                    await rm(entry.path)
+                    evictedItems++;
+                }
+                catch (err) {
+                    console.log(err);
+                }   
+            }
+        }
+        return evictedItems;
+    },
+
+    evictOldestItems: async function():Promise<number> {
+        // Purges the oldest 25% of items in the cache
+        console.log(`Cache at ${cache.stats.percentFull.toString()}% - purging oldest 25%`);
+
+        let directoryList:Array<DirectoryList> = await getDirContents(cache.cacheDir)
+        let evictedItems: number = 0;
+        let numItems = Math.round(cache.stats.items * 0.25);
+
+        directoryList = sortDirectoryContents(directoryList, 'atimeMs', 'asc');
+        
+        for ( let i:number=0; i<numItems; i++) {
+            let entry:Stats = directoryList[i];
+            console.log(`\t Evicting ${entry.path} from cache to remain under quota.`);
+                try {
+                    await rm(entry.path)
+                    evictedItems++;
+                }
+                catch (err) {
+                    console.log(err);
+                }  
+        }
+
+        await cache.updateStats();
+        
+        // Call this function recursively until percent full is less than 95%
+        if (cache.stats.percentFull > 95) {
+            await cache.evictOldestItems();
+        }
+        return evictedItems;
+    },
+
     flush: async function() {
         // Not yet implemented.  Just clear the contents of /app/cache for now.
         return false;
@@ -59,7 +130,7 @@ export const cache:FilesystemCache = {
         let file;
         
         try {
-            file = await open(`${cacheDir}/${key}`);
+            file = await open(`${cache.cacheDir}/${key}`);
             let buffer = await file.readFile();
             await file.close();
             
@@ -75,8 +146,8 @@ export const cache:FilesystemCache = {
                 
                 // If not manually detected as SVG, delete cache item since mime type detection failed (often due to aborted fetch and partial download)
                 else {
-                    console.log(`Removing malformed cache item: ${cacheDir}/${key}`);
-                    await rm(`${cacheDir}/${key}`)
+                    console.log(`Removing malformed cache item: ${cache.cacheDir}/${key}`);
+                    await rm(`${cache.cacheDir}/${key}`)
                     return false
                 }
             }
@@ -84,7 +155,7 @@ export const cache:FilesystemCache = {
             // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
             if (MEDIA_CACHE_KEEP_HOT_ITEMS && !cache.full) {
                 let now = new Date();
-                await utimes(`${cacheDir}/${key}`, now, now)
+                await utimes(`${cache.cacheDir}/${key}`, now, now)
             }
             
             // Create a blob from the array buffer and return it
@@ -93,7 +164,7 @@ export const cache:FilesystemCache = {
         }
         // Typical error is when bad/partially written cache item can't have its mime detected. Silently delete the cache item.
         catch (err) {
-            console.log("image-proxy.ts:cache:get");
+            console.log("filesystem-cache.ts:cache:get");
             console.log(err)
         }
 
@@ -101,83 +172,45 @@ export const cache:FilesystemCache = {
     
 
     housekeep: async function() {
+        // Update and report the cache stats
+        await cache.updateStats();
+
         // Evict items older than the defined cache duration
         try {
-            let evictCount:number = await evictExpiredItems(cacheDir, MEDIA_CACHE_DURATION);
-            console.log(`Evicted ${evictCount.toString()} expired items from the proxy cache.`);
+            let evictedCount = await cache.evictExpiredItems(MEDIA_CACHE_DURATION);
+            console.log(`Evicted ${evictedCount.toString()} expired items from the proxy cache.`);
+            await cache.updateStats();
         }
         catch (err) {
-            console.log("image-proxy.ts:cache:housekeep:evict-expired");
+            console.log("filesystem-cache.ts:cache:housekeep:evict-expired");
             console.log(err);
         }
 
-        // Check cache directory size and evict oldest items
-        // The proc is buggy and needs replaced.
-        try {
-            let cacheDirSize: number     = await getDirectorySize(cacheDir);
-            let cacheDirSizeMB: number   = Math.round(cacheDirSize/1000/1000);
-            let percentFull: number      = Math.round((cacheDirSizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
-            
-            // Start evicting items at 98% full
-            if (percentFull > 99) {
-                cache.full = true;
-
-                // Loop through cache directory and evict items older than half of the cache duration
-                try {
-                    let dir = await opendir(cacheDir);
-                    let evictCount: number = 0;
-
-                    for await (const entry of dir) {
-                        let filestat = await stat(entry.path);
+        // Evict oldest items when cache is above 95% full
+        if (cache.stats.percentFull > 95) {
+            let purgedCount = await cache.evictOldestItems();
+            console.log(`Purged ${purgedCount.toString()} items from the proxy cache.`);
+        }
         
-                        let lastAccessTime: number  = filestat.atimeMs;
-                        let now: number             = new Date().valueOf();
-                        let timeDiff: number        = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
-                        
-                        let halfDuration = parseInt(MEDIA_CACHE_DURATION) * 0.5;
-                        
-                        if (timeDiff > halfDuration ) {
-                            console.log(`Evicting ${entry.path} from cache to remain under quota.`);
-                            try {
-                                await rm(entry.path)
-                                evictCount++;
-                            }
-                            catch (err) {
-                                console.log(err);
-                            }   
-                        }
-                    }
-                    console.log(`Evicted ${evictCount.toString()} items from the proxy cache to remain under quota.`);
-                }
-                catch (err) {
-                    console.log("image-proxy:housekeep:evict-quota");
-                    console.log(err);
-                }
-            }
-            else {
-                cache.full = false;
-            }
-            
-            // Status to output after each run
-            console.log(`Media proxy cache usage: ${cacheDirSizeMB.toString()} MB / ${MEDIA_CACHE_MAX_SIZE} MB, Full: ${cache.full.toString()}` );
-            
-
-        }
-        catch (err) {
-            console.log("image-proxy.ts:cache:housekeep:evict-quota");
-            console.log(err)
-        }
-
+        // Update and report the cache stats
+        await cache.updateStats(true);
     },
 
-    init: async function(path:string) {
+    init: async function(path:string|undefined = undefined) {
+        if (path) { 
+            cache.cacheDir = path;
+        }
         try {
-            await access(cacheDir, constants.R_OK | constants.W_OK);
+            await access(cache.cacheDir, constants.R_OK | constants.W_OK);
+            console.log("Cache Options:")
+            console.log(`\tMax Size: ${MEDIA_CACHE_MAX_SIZE} MB`);
+            console.log(`\tKeep hot: ${MEDIA_CACHE_KEEP_HOT_ITEMS.toString()}`);
+            console.log(`\tDuration: ${MEDIA_CACHE_DURATION.toString()} minutes`)
             return true;
         }
         catch {
-            console.log("image-proxy.ts:cache:init");
-            console.log(`Unable to open cache directory (${cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
+            console.log("filesystem-cache.ts:cache:init");
+            console.log(`Unable to open cache directory (${cache.cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
             return false;
         }
     },
@@ -186,10 +219,10 @@ export const cache:FilesystemCache = {
         if (!cache.full) {
             try {
                 let buffer = Buffer.from (await data.arrayBuffer() );
-                await writeFile(`${cacheDir}/${key}`, buffer)
+                await writeFile(`${cache.cacheDir}/${key}`, buffer)
             }
             catch (err) {
-                console.log("image-proxy.ts:cache:put");
+                console.log("filesystem-cache.ts:cache:put");
                 console.log(err);
                 return false
             }
@@ -199,7 +232,7 @@ export const cache:FilesystemCache = {
 
     query: async function(key:string) {
         try {
-            await access(`${cacheDir}/${key}`, constants.R_OK)
+            await access(`${cache.cacheDir}/${key}`, constants.R_OK)
             return true;
         }
         // Since this is a lookup to see if the file exists, silently ignore failures since cache misses will throw useless errors.
@@ -207,6 +240,34 @@ export const cache:FilesystemCache = {
             return false;
         }
     },
+
+    updateStats: async function(report:boolean = false) {
+        try {
+            let contents:Array<DirectoryList> = await getDirContents(cache.cacheDir)
+
+            cache.stats.items           = contents.length
+            cache.stats.size            =  await getDirectorySize(cache.cacheDir);
+            cache.stats.sizeMB          = Math.round(cache.stats.size/1000/1000);
+            cache.stats.percentFull     = Math.round((cache.stats.sizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
+            
+            // Set `full` flag at 95% to give some head room since this is only calculated on an interval
+            if (cache.stats.percentFull > 95) {
+                cache.full = true;
+            } else {
+                cache.full = false;
+            }
+
+            if (report) {
+                console.log("Media proxy cache stats:");
+                console.log(`\t Cached Items: ${cache.stats.items.toString()}`);
+                console.log(`\t Utilization: ${cache.stats.percentFull.toString()}% (${cache.stats.sizeMB.toString()} MB / ${MEDIA_CACHE_MAX_SIZE} MB)`);
+            }
+        }
+        catch (err) {
+            console.log("filesystem-cache.ts:cache:updateStats");
+            console.log(err)
+        }
+    }
    
 }
 
@@ -247,7 +308,7 @@ const getDirContents = async function(path:string): Promise<Array<DirectoryList>
     }
 }
 
-const sortDirectoryContents = function(contents:Array<Stats>, attr:string = 'atimeMs', dir:string='asc' ) {
+const sortDirectoryContents = function(contents:Array<Stats>, attr:string = 'atimeMs', dir:string='asc' ):Array<Stats> {
     
     const asc = function (a:Stats, b:Stats) {
         if (a[attr] > b[attr]) return 1
@@ -267,41 +328,15 @@ const sortDirectoryContents = function(contents:Array<Stats>, attr:string = 'ati
     return contents;
 }
 
-const evictExpiredItems = async function(dir: string, minutes:number=MEDIA_CACHE_DURATION): Promise <number> {
-    let directoryList:Array<DirectoryList> = await getDirContents(dir)
-    let evictedItems: number = 0;
 
-    for ( let i:number=0; i<directoryList.length; i++) {
-        let entry:Stats = directoryList[i];
 
-        let lastAccessTime:number   = entry.atimeMs;
-        let now:number              = new Date().valueOf();
-        let timeDiff:number         = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
-
-        if (timeDiff > minutes) {
-            console.log(`Evicting ${entry.path} from cache due to expiration`);
-            try {
-                await rm(entry.path)
-                evictedItems++;
-            }
-            catch (err) {
-                console.log(err);
-            }   
-        }
-    }
-    return evictedItems
-}
-
-const evictOldestPercentage = async function(percent:number) {
-    //let cacheDirSize: number     = await getDirectorySize(cacheDir);
+const evictOldestPercentage = async function(percent:number):Promise<number> {
     
-    //let cacheDirSizeMB: number   = Math.round(cacheDirSize/1000/1000);
-    //let percentFull: number      = Math.round((cacheDirSizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
 
     let targetBytes = (MEDIA_CACHE_MAX_SIZE * 1000 * 1000) * (percent/100)
 
     let files = sortDirectoryContents(await getDirContents(cacheDir), 'atimeMs', 'asc')
-    
+    return 0;
 
 
 }
