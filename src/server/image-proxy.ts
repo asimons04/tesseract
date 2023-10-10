@@ -53,7 +53,8 @@ export async function image_proxy(event:any) {
                         return res
                             .setHeader('X-Tesseract-Image-Cache', 'hit')
                             .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
-                            .setHeader('Cache-Control', 'max-age=3600') 
+                            .setHeader('Cache-Control', 'max-age=3600')
+                            .length(image.size)
                             .type(image.type)
                             .send(await image.arrayBuffer());
                     }
