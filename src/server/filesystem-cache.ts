@@ -7,6 +7,7 @@ interface FilesystemCache {
     get: Function,
     housekeep: Function,
     init: Function,
+    initialized: boolean,
     put: Function
     query: Function,
     stats: {
@@ -52,6 +53,7 @@ import {
 
 export const cache:FilesystemCache = {
     cacheDir: '/app/cache',
+    initialized: false,
     stats: {
         items: 0,
         size: 0,
@@ -64,6 +66,7 @@ export const cache:FilesystemCache = {
     },
 
     evictExpiredItems: async function(minutes:number=MEDIA_CACHE_DURATION):Promise<number> {
+        if (!cache.initialized) return 0;
         let directoryList:Array<DirectoryList> = await getDirContents(cache.cacheDir)
         let evictedItems: number = 0;
     
@@ -89,6 +92,7 @@ export const cache:FilesystemCache = {
     },
 
     evictOldestItems: async function():Promise<number> {
+        if (!cache.initialized) return 0;
         // Purges the oldest 25% of items in the cache
         console.log(`Cache at ${cache.stats.percentFull.toString()}% - purging oldest 25%`);
 
@@ -125,6 +129,7 @@ export const cache:FilesystemCache = {
     },
 
     get: async function(key:string)  {
+        if (!cache.initialized) return false;
         let file;
         
         try {
@@ -170,6 +175,8 @@ export const cache:FilesystemCache = {
     
 
     housekeep: async function() {
+        if (!cache.initialized) return false;
+
         // Update and report the cache stats
         await cache.updateStats();
 
@@ -214,6 +221,7 @@ export const cache:FilesystemCache = {
             console.log(`\tMax Size: ${MEDIA_CACHE_MAX_SIZE} MB`);
             console.log(`\tKeep hot: ${MEDIA_CACHE_KEEP_HOT_ITEMS.toString()}`);
             console.log(`\tDuration: ${MEDIA_CACHE_DURATION.toString()} minutes`)
+            cache.initialized = true;
             return true;
         }
         catch {
@@ -224,6 +232,8 @@ export const cache:FilesystemCache = {
     },
 
     put: async function(key:string, data:Blob) {
+        if (!cache.initialized) return false;
+
         if (cache.stats.percentFull < 95) {
             try {
                 let buffer = Buffer.from (await data.arrayBuffer() );
@@ -239,6 +249,7 @@ export const cache:FilesystemCache = {
     },
 
     query: async function(key:string) {
+        if (!cache.initialized) return false;
         try {
             await access(`${cache.cacheDir}/${key}`, constants.R_OK)
             return true;
@@ -250,6 +261,7 @@ export const cache:FilesystemCache = {
     },
 
     updateStats: async function(report:boolean = false) {
+        if (!cache.initialized) return false;
         try {
             let contents:Array<DirectoryList> = await getDirContents(cache.cacheDir)
 
