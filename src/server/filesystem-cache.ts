@@ -15,6 +15,9 @@ interface FilesystemCache {
         size: number,
         sizeMB:number,
         percentFull: number
+        hits: number,
+        misses:number,
+        hitRate: number,
     },
     updateStats: Function,
 }
@@ -58,7 +61,10 @@ export const cache:FilesystemCache = {
         items: 0,
         size: 0,
         sizeMB: 0,
-        percentFull: 0
+        percentFull: 0,
+        hitRate: 0,
+        hits: 0,
+        misses: 0,
     },
 
     createKey: function(value:string) {
@@ -160,7 +166,10 @@ export const cache:FilesystemCache = {
                 let now = new Date();
                 await utimes(`${cache.cacheDir}/${key}`, now, now)
             }
-            
+
+            // Update hit count
+            cache.stats.hits++;
+
             // Create a blob from the array buffer and return it
             let blob = new Blob([buffer], { type: mime });
             return blob;
@@ -238,6 +247,8 @@ export const cache:FilesystemCache = {
             try {
                 let buffer = Buffer.from (await data.arrayBuffer() );
                 await writeFile(`${cache.cacheDir}/${key}`, buffer)
+                // Update miss count
+                cache.stats.misses++;
             }
             catch (err) {
                 console.log("filesystem-cache.ts:cache:put");
@@ -269,11 +280,13 @@ export const cache:FilesystemCache = {
             cache.stats.size            =  await getDirectorySize(cache.cacheDir);
             cache.stats.sizeMB          = Math.round(cache.stats.size/1000/1000);
             cache.stats.percentFull     = Math.round((cache.stats.sizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
+            cache.stats.hitRate         = Math.round((cache.stats.hits / cache.stats.misses) * 100) || 0
             
             if (report) {
                 console.log("Media proxy cache stats:");
                 console.log(`\t Cached Items: ${cache.stats.items.toString()}`);
                 console.log(`\t Utilization: ${cache.stats.percentFull.toString()}% (${cache.stats.sizeMB.toString()} MB / ${MEDIA_CACHE_MAX_SIZE} MB)`);
+                console.log(`\t Hit Rate: ${cache.stats.hitRate.toString()}% (Hits: ${cache.stats.hits.toString()} Misses: ${cache.stats.misses.toString()}) `);
             }
         }
         catch (err) {
