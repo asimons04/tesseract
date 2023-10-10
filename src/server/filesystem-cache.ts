@@ -32,8 +32,6 @@ import {
     MEDIA_CACHE_KEEP_HOT_ITEMS,
     MEDIA_CACHE_DURATION,
     MEDIA_CACHE_MAX_SIZE,
-    
-
 } from '$lib/settings'
 
 import { Buffer } from 'buffer';
@@ -220,7 +218,9 @@ export const cache:FilesystemCache = {
         await cache.updateStats(true);
     },
 
-    init: async function(path:string|undefined = undefined) {
+    init: async function(path:string|undefined = undefined):boolean {
+        if (!path) return false;
+        
         if (path) { 
             cache.cacheDir = path;
         }
@@ -310,8 +310,6 @@ async function getDirectorySize (dirPath:string) {
     return totalSize;
 }
 
-
-
 // Return a list of files and their stats
 const getDirContents = async function(path:string): Promise<Array<DirectoryList>> {
     try {
@@ -354,15 +352,3 @@ const sortDirectoryContents = function(contents:Array<Stats>, attr:string = 'ati
     return contents;
 }
 
-
-
-const evictOldestPercentage = async function(percent:number):Promise<number> {
-    
-
-    let targetBytes = (MEDIA_CACHE_MAX_SIZE * 1000 * 1000) * (percent/100)
-
-    let files = sortDirectoryContents(await getDirContents(cacheDir), 'atimeMs', 'asc')
-    return 0;
-
-
-}
