@@ -36,14 +36,14 @@ The `location /cors/ {` section in your reverse proxy config can be safely remov
 
 
 ### Media Proxying and Caching
-Tesseract can now proxy and cache post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied/cached, including those hosted through Imgur, Tenor, ~~Giphy~~, Catbox, etc.
+Tesseract can now proxy and cache post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied/cached, including those hosted through Imgur, Tenor, Giphy, Catbox, etc.
 
 This feature is disabled by default and must be explicitly enabled both by the administrator and each user.  
 
 #### Advantages to Proxying/Caching
 - Enhanced user privacy
 - Quicker loading of images
-- Reduces traffic to other Lemmy instances and hosting services
+- Reduces traffic to other Lemmy instances and hosting services by fetching media once and serving it from cache.
 
 #### Disadvantages
 - Increased bandwidth usage
