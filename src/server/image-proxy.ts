@@ -130,6 +130,10 @@ const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<void|Re
     const data = await fetch(imageUrl, 
         {
             method: req.method,
+            headers: {
+                'accept':   req.headers.get('accept'),
+                'user-agent': req.headers.get('user-agent')
+            },
             redirect: "follow",
             //@ts-ignore
             signal: AbortSignal.timeout(60 * 1000),

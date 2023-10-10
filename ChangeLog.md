@@ -27,14 +27,18 @@ Current
 - Update tsconfig to use `es2022` module and target `es2017`
 
 ## 1.2.8
-Most updates are under the hood and to the server-side handlers to support media proxying and an associated caching layer.
+Most updates are under the hood and to the server-side handlers to support media proxying and an associated caching layer.  Also re-implemented the image upload proxy.
+
+### CORS Location in Reverse Proxy is No Longer Needed
+I did a rewrite of the image upload proxy in this version, and the updates there have made the `/cors/` location and its headers unnecessary.  
+
+The `location /cors/ {` section in your reverse proxy config can be safely removed as of this release.
+
 
 ### Media Proxying and Caching
 Tesseract can now proxy and cache post thumbnails, images, avatars, and inline post/comment images through the server hosting the UI.  Any image or direct-link video (webm, mp4, etc) can also be proxied/cached, including those hosted through Imgur, Tenor, ~~Giphy~~, Catbox, etc.
 
 This feature is disabled by default and must be explicitly enabled both by the administrator and each user.  
-
-
 
 #### Advantages to Proxying/Caching
 - Enhanced user privacy
@@ -53,7 +57,7 @@ For proxy cache documentation and more details, [see the docs page for the media
 ### UI Bugfixes
 - Fixed garbled code block and inline code when inside a block quote
 - Fixed wonky rendering of bullet lists, especially nested lists.
-
+- Not a Tesseract bug, but added a shim to replace `&amp;` and `&lt;` in posts/comments because of Lemmy's overzealous sanitization.
 
 
 ## 1.2.7
