@@ -95,7 +95,7 @@ Values:  true | false
 Default: false
 Recommended: false
 ```
-Determines whether to allow proxying to outside media, such as Imgur, Catbox, Yarn, etc.  If set to `true`, then only images hosted on other Lemmy instances (image URLs with `/pictrs/image` in them for lack of a better way to identify instances) will be allowed to proxy.  When set to `false`, outside media will be loaded directly and not proxied.
+Determines whether to allow proxying to outside media, such as Imgur, Catbox, Yarn, etc.  If set to `true`, then only images hosted on other Lemmy instances (image URLs with `/pictrs/image` in them for lack of a better way to identify instances) will be allowed to proxy.  When set to `false`, outside media will be proxied and optionally cached.  The benefit to this is not overloading services like Catbox which can be hugged to death.
 
 
 **PUBLIC_MEDIA_PROXY_BLACKLIST**
