@@ -1,12 +1,5 @@
 # Media Proxying and Caching
 
-## To Do
-- If locked to instance, automatically read blocked instances from API and transparently add those to the proxy blacklist.  
-- Quota full eviction routine is still buggy AF and quite stupid.  
-
-
-
-
 ## Overview
 ### Use Cases / Advantages
 
@@ -243,6 +236,16 @@ Also in a future release, I'm looking to add API endpoints which can return that
 
 ---
 
+## Q:  What happens if the proxy fails to fetch the image?
+Sometimes, image hosting services may block IP ranges for cloud servers.  In these cases, the fetch from Tesseract will fail if it runs from a VPS that the hosting service blocks.
+
+In these cases, there is a fallback behaviour to return a 302 redirect to the original image URL.  From the user's perspective, the process is seamless.
+
+Users can disable this feature if they want;  in those cases, if the server-side fetch from Tesseract fails, the image will just not load.
+
+Falling back to a redirect to the original media URL is the default behaviour.
+
+---
 
 ## Q:  How can I clear the cache?
 Currently, the only way to clear/flush the cache is to delete all `.cache` objects in the Tesseract data directory.
