@@ -198,9 +198,9 @@ Only requests to images and inline videos.  API calls still go directly from the
 ---
 
 ## Q: Does Tesseract's caching replace any Nginx or Cloudflare caching I'm already doing?
-It can, but it doesn't have to. In fact, you can benefit from using both.
+No.  The caching in Tesseract is only applicable to users interacting through Tesseract. However, it does provide benefits in addition to any other caching you have in place.
 
-The Nginx/Cloudflare/etc cache layer would only cache media already served from your instance.  Tesseract can cache images from remote instances.  Both have their benefits.
+The Nginx/Cloudflare/etc cache layer only caches media served from your instance.  Tesseract can cache images from remote instances.  Both have their benefits.
 
 Once one user on your instance fetches an image from another instance, anyone else using your install of Tesseract would then pull that same image from its cache without having to re-fetch it from the source.  The result is better performance from your users' perspectives as well as reduced load on remote instances.
 

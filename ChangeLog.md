@@ -60,7 +60,7 @@ For proxy cache documentation and more details, [see the docs page for the media
 - Fixed garbled code block and inline code when inside a block quote
 - Fixed wonky rendering of bullet lists, especially nested lists.
 - Not a Tesseract bug, but added a shim to replace `&amp;` and `&lt;` in posts/comments because of Lemmy's overzealous sanitization.
-
+- Fixed bug with inline videos (.webm, .mp4, etc) sometimes not rendering in iOS
 
 ## 1.2.7
 ### Fediseer Integration

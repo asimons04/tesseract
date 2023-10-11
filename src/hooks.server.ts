@@ -61,7 +61,7 @@ const task_memoryCache = setInterval(() => {
 
 
 //// Image Proxy Cache
-import { cache as imageCache } from './server/filesystem-cache'
+import { cache as imageCache} from './server/filesystem-cache'
 import { 
     ENABLE_MEDIA_CACHE,
     MEDIA_CACHE_HOUSEKEEP_INTERVAL,
