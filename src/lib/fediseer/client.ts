@@ -33,6 +33,7 @@ interface Hesitations extends FediseerResponse {
     hesitation_count: number | null
 }
 
+// What gets returned to the client on calls to /lookup
 interface FediseerInfo {
     site?: SiteView | undefined
     censures?: Array<Censures>,
@@ -43,6 +44,7 @@ interface FediseerInfo {
         endorsements?: string,
     }
     instance: string
+    success:boolean
 }
 
 import type { SiteView } from 'lemmy-js-client'
@@ -50,6 +52,10 @@ import { getClient } from '$lib/lemmy.js'
 
 
 const fediseerAPI:string = 'https://fediseer.com/api/v1'
+const fetchOptions = {
+    //@ts-ignore
+    signal: AbortSignal.timeout(5 * 1000),
+}
 
 // Fetch the Fediseer info from the local API caching proxy 
 export async function fediseerLookup(instance:string){
@@ -88,11 +94,12 @@ export async function getFediseerInfo(instance:string) {
             endorsements:   await getEndorsementsBadge(instance),
             guarantor:      await getGuarantorBadge(instance),
         },
-        instance:       instance
+        instance:       instance,
+        success:        true
     }
 
     // Split single-element comma-delmited arrays into proper arrays
-    if (data.endorsements) {
+    if (data.endorsements && data.endorsements.length) {
         for (let i:number=0; i<data.endorsements.length; i++) {
             //@ts-ignore
             if (data.endorsements[i].endorsement_reasons?.length > 0) {
@@ -103,7 +110,7 @@ export async function getFediseerInfo(instance:string) {
     }
     
     // Split single-element comma-delmited arrays into proper arrays
-    if (data.censures) {
+    if (data.censures && data.censures.length) {
         for (let i:number=0; i<data.censures.length; i++) {
             //@ts-ignore
             if (data.censures[i].censures_reasons?.length > 0) {
@@ -114,7 +121,7 @@ export async function getFediseerInfo(instance:string) {
     }
 
     // Split single-element comma-delmited arrays into proper arrays
-    if (data.hesitations) {
+    if (data.hesitations && data.hesitations.length) {
         for (let i:number=0; i<data.hesitations.length; i++) {
             //@ts-ignore
             if (data.hesitations[i].hesitation_reasons?.length > 0) {
@@ -124,75 +131,104 @@ export async function getFediseerInfo(instance:string) {
         }
     }
 
+    if (data.badges?.endorsements == '' || data.badges?.guarantor == '') {
+        data.success = false;
+    }
+
     return data;
 
 }
 
 export async function getEndorsementsBadge(instance:string) {
-    const response = await fetch(`${fediseerAPI}/badges/endorsements/${instance}.svg`);
-    if (response.ok) {
-        return await response.text();
+    try {
+        const response = await fetch(`${fediseerAPI}/badges/endorsements/${instance}.svg`, fetchOptions);
+        if (response.ok) {
+            return await response.text();
+        }
+        else {
+            return ''
+        }
     }
-    else {
+    catch {
         return ''
     }
 }
 
 export async function getGuarantorBadge(instance:string) {
-    const response = await fetch(`${fediseerAPI}/badges/guarantees/${instance}.svg`);
-    if (response.ok) {
-        return await response.text();
+    try {
+        const response = await fetch(`${fediseerAPI}/badges/guarantees/${instance}.svg`, fetchOptions);
+        if (response.ok) {
+            return await response.text();
+        }
+        else {
+            return ''
+        }
     }
-    else {
+    catch {
         return ''
     }
 }
 
 
 export async function getCensures(instance:string) {
-    const response  = await fetch(`${fediseerAPI}/censures/${instance}`);
-    if (response.ok) {
-        try {
-            const instances = await response.json();
-            return instances.instances as Array<Censures>
+    try {
+        const response  = await fetch(`${fediseerAPI}/censures/${instance}`, fetchOptions);
+        if (response.ok) {
+            try {
+                const instances = await response.json();
+                return instances.instances as Array<Censures>
+            }
+            catch {
+                return [] as Array<Censures>;
+            }
         }
-        catch {
+        else {
             return [] as Array<Censures>;
         }
     }
-    else {
+    catch {
         return [] as Array<Censures>;
     }
 }
 
 export async function getHesitations(instance:string) {
-    const response  = await fetch(`${fediseerAPI}/hesitations/${instance}`);
-    if (response.ok) {
-        try {
-            const instances = await response.json();
-            return instances.instances as Array<Hesitations>
+    try {
+        const response  = await fetch(`${fediseerAPI}/hesitations/${instance}`, fetchOptions);
+        if (response.ok) {
+            try {
+                const instances = await response.json();
+                return instances.instances as Array<Hesitations>
+            }
+            catch {
+                return [] as Array<Hesitations>;
+            }
         }
-        catch {
+        else {
             return [] as Array<Hesitations>;
         }
-    }
-    else {
+    } 
+    catch {
         return [] as Array<Hesitations>;
     }
 }
 
 export async function getEndorsements(instance:string) {
-    const response  = await fetch(`${fediseerAPI}/endorsements/${instance}`);
-    if (response.ok) {
-        try {
-            const instances = await response.json();
-            return instances.instances as Array<Endorsements>
+    try {
+        const response  = await fetch(`${fediseerAPI}/endorsements/${instance}`, fetchOptions);
+        if (response.ok) {
+            try {
+                const instances = await response.json();
+                return instances.instances as Array<Endorsements>
+            }
+            catch {
+                return [] as Array<Endorsements>;
+            }
         }
-        catch {
+        else {
             return [] as Array<Endorsements>;
         }
     }
-    else {
+    catch {
         return [] as Array<Endorsements>;
     }
 }

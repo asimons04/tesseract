@@ -52,8 +52,11 @@ For proxy cache documentation and more details, [see the docs page for the media
 
 ### Fediseer
 - Fediseer queries are now cached for one hour in memory.
+- Fixed unhandled error if Fediseer API call fails
+- Added 10s fetch timeout on each Fediseer lookup
+- If Fediseer fetch fails, do not cache unsuccessful lookups
 
-### UI Bugfixes
+### Bugfixes
 - Fixed garbled code block and inline code when inside a block quote
 - Fixed wonky rendering of bullet lists, especially nested lists.
 - Not a Tesseract bug, but added a shim to replace `&amp;` and `&lt;` in posts/comments because of Lemmy's overzealous sanitization.

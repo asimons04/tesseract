@@ -1,5 +1,8 @@
 interface FilesystemCache {
     cacheDir: string,
+    maxSize:number,
+    keepHot:boolean,
+    duration:number,
     createKey: Function,
     evictExpiredItems: Function,
     evictOldestItems: Function,
@@ -28,12 +31,6 @@ interface DirectoryList {
 }
 
 
-import { 
-    MEDIA_CACHE_KEEP_HOT_ITEMS,
-    MEDIA_CACHE_DURATION,
-    MEDIA_CACHE_MAX_SIZE,
-} from '$lib/settings'
-
 import { Buffer } from 'buffer';
 import { createHash } from 'node:crypto'
 import {fileTypeFromBuffer} from 'file-type';
@@ -54,6 +51,9 @@ import {
 
 export const cache:FilesystemCache = {
     cacheDir: '/app/cache',
+    duration: (12*60),
+    keepHot: true,
+    maxSize: 1000,
     initialized: false,
     stats: {
         items: 0,
@@ -69,7 +69,7 @@ export const cache:FilesystemCache = {
         return createHash('sha256').update(value).digest('hex') + '.cache';        
     },
 
-    evictExpiredItems: async function(minutes:number=MEDIA_CACHE_DURATION):Promise<number> {
+    evictExpiredItems: async function():Promise<number> {
         if (!cache.initialized) return 0;
         let directoryList:Array<DirectoryList> = await getDirContents(cache.cacheDir)
         let evictedItems: number = 0;
@@ -81,7 +81,7 @@ export const cache:FilesystemCache = {
             let now:number              = new Date().valueOf();
             let timeDiff:number         = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
             
-            if (timeDiff > minutes) {
+            if (timeDiff > cache.duration) {
                 console.log(`\t Evicting ${entry.path} from cache due to expiration`);
                 try {
                     await rm(entry.path)
@@ -97,6 +97,7 @@ export const cache:FilesystemCache = {
 
     evictOldestItems: async function():Promise<number> {
         if (!cache.initialized) return 0;
+        
         // Purges the oldest 25% of items in the cache
         console.log(`Cache at ${cache.stats.percentFull.toString()}% - purging oldest 25%`);
 
@@ -160,7 +161,7 @@ export const cache:FilesystemCache = {
             }
             
             // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
-            if (MEDIA_CACHE_KEEP_HOT_ITEMS) {
+            if (cache.keepHot) {
                 let now = new Date();
                 await utimes(`${cache.cacheDir}/${key}`, now, now)
             }
@@ -189,7 +190,7 @@ export const cache:FilesystemCache = {
 
         // Evict items older than the defined cache duration
         try {
-            let evictedCount:number = await cache.evictExpiredItems(MEDIA_CACHE_DURATION);
+            let evictedCount:number = await cache.evictExpiredItems();
             
             if (evictedCount > 0) {
                 console.log(`Evicted ${evictedCount.toString()} expired items from the proxy cache.`);
@@ -218,18 +219,25 @@ export const cache:FilesystemCache = {
         await cache.updateStats(true);
     },
 
-    init: async function(path:string|undefined = undefined):boolean {
-        if (!path) return false;
-        
-        if (path) { 
-            cache.cacheDir = path;
-        }
+    init: async function(
+        path:string|undefined       = undefined,
+        maxSize:number | undefined  = undefined,
+        keepHot:boolean|undefined   = undefined,
+        duration:number | undefined = undefined
+    ):Promise<boolean> {
+       
+        if (path) cache.cacheDir = path;
+        if (maxSize) cache.maxSize = maxSize;
+        if (duration) cache.duration = duration;
+        if (keepHot !==undefined) cache.keepHot = keepHot;        
+
+
         try {
             await access(cache.cacheDir, constants.R_OK | constants.W_OK);
             console.log("Cache Options:")
-            console.log(`\tMax Size: ${MEDIA_CACHE_MAX_SIZE} MB`);
-            console.log(`\tKeep hot: ${MEDIA_CACHE_KEEP_HOT_ITEMS.toString()}`);
-            console.log(`\tDuration: ${MEDIA_CACHE_DURATION.toString()} minutes`)
+            console.log(`\tMax Size: ${cache.maxSize} MB`);
+            console.log(`\tKeep hot: ${cache.keepHot.toString()}`);
+            console.log(`\tDuration: ${cache.duration.toString()} minutes`)
             cache.initialized = true;
             return true;
         }
@@ -279,13 +287,13 @@ export const cache:FilesystemCache = {
             cache.stats.items           = contents.length
             cache.stats.size            =  await getDirectorySize(cache.cacheDir);
             cache.stats.sizeMB          = Math.round(cache.stats.size/1000/1000);
-            cache.stats.percentFull     = Math.round((cache.stats.sizeMB / MEDIA_CACHE_MAX_SIZE) * 100);
+            cache.stats.percentFull     = Math.round((cache.stats.sizeMB / cache.maxSize) * 100);
             cache.stats.hitRate         = Math.round((cache.stats.hits / cache.stats.misses) * 100) || 0
             
             if (report) {
                 console.log("Media proxy cache stats:");
                 console.log(`\t Cached Items: ${cache.stats.items.toString()}`);
-                console.log(`\t Utilization: ${cache.stats.percentFull.toString()}% (${cache.stats.sizeMB.toString()} MB / ${MEDIA_CACHE_MAX_SIZE} MB)`);
+                console.log(`\t Utilization: ${cache.stats.percentFull.toString()}% (${cache.stats.sizeMB.toString()} MB / ${cache.maxSize} MB)`);
                 console.log(`\t Hit Rate: ${cache.stats.hitRate.toString()}% (Hits: ${cache.stats.hits.toString()} Misses: ${cache.stats.misses.toString()}) `);
             }
         }

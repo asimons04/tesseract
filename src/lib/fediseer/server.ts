@@ -5,8 +5,6 @@ export async function fediseer_router(event) {
     let res = event.res;
     let req = event.req;
     
-    console.log(cache);
-
     if (req.route == '/lookup') {
         let instance = req.params.get('instance');
 
@@ -23,8 +21,11 @@ export async function fediseer_router(event) {
             
             else {
                 results = await getFediseerInfo(instance);
+
                 if (results) {
-                    cache.set(key, JSON.stringify(results));
+                    if (results.success) { 
+                        cache.set(key, JSON.stringify(results));
+                    }
                     res.setHeader('X-Cache-Status', 'miss');
                 }
             }
