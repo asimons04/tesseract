@@ -183,8 +183,73 @@ Whether to run the housekeeping function immediately at startup or wait until th
 
 
 # FAQ
+## Q: How does image proxying work?
+The image proxying is a shim between what the API returns and what the browser renders.
+
+With proxying enabled by the admin and the user, prior to rendering the posts returned by the API, the image URLs are re-written to go through Tesseract. This is all done client-side.
+
+e.g.  `https://lemmy.world/pictrs/image/3263e249-cfef-40fd-877a-16bee9d62558.png` becomes `/image_proxy/lemmy.world/pictrs/image/3263e249-cfef-40fd-877a-16bee9d62558.png`.  
+
+The `/image_proxy/` route is handled by Tesseract which fetches the image, optionally caches it, and serves it to the user.  
+
+When proxying is disabled, the image URLs are returned as-is and the user fetches them from the original source.
+
+---
+
+## Q: Does Tesseract's caching replace any Nginx or Cloudflare caching I'm already doing?
+It can, but it doesn't have to. In fact, you can benefit from using both.
+
+The Nginx/Cloudflare/etc cache layer would only cache media already served from your instance.  Tesseract can cache images from remote instances.  Both have their benefits.
+
+Once one user on your instance fetches an image from another instance, anyone else using your install of Tesseract would then pull that same image from its cache without having to re-fetch it from the source.  The result is better performance from your users' perspectives as well as reduced load on remote instances.
+
+If you run Tesseract on a different server than your Lemmy+Pictrs backend, then you can have two layers of caching for your instance's media.  Tesseract will fetch media hosted on your instance, which can be served from the Nginx/Cloudflare/et al cache and then cache it within itself for future requests.  
+
+If you run multiple Tesseract frontends, each would have its own cache.  
+
+A use case for this would be having geographically separate frontends.  This would serve the media closer to the user while the API calls would still go directly to the backend.
+
+
+---
+
+## Q: How can I view the cache statistics?
+Right now, that info is only reported through stdout from the Docker container.  Output looks like this:
+
+```
+tesseract-web-1  | Housekeeping image proxy cache...
+tesseract-web-1  | 	 Evicting /app/cache/cf689b05a355dd7aeca6205fe0d3f4743d6913cb4e19850e62c893ffaf888780.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/e4e5cfb83d14563be24fa7a783ecbe990ed5a56bd107581a32560e2470d6bf95.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/88917844117b904e6443e888bb7631657dc97ed5f2c13741f980852229e6d490.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/9e0c9507e3ad5dad40905b9a2b64faa481dfd27a67fc6c610a85a7874d5b613c.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/d99da970ba731e4b4d7c3d4d4d947a55474a6234d97df4d5e404f2b24fbef1b8.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/97b4e9611d52e46fb36d9c5a498b2c16c4b781a81ae540578da618b580165395.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/3bea8097667b5f4166f37ad684bbbf51d04a8a450ecf3a0aec1d271056e142aa.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/c367e71cb5edabdccd4c770863cce532d1e4b637eb06d04e76f5a2a5a271e5a3.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/af2f747e0eca7a6414fca9b52d6cab28679ad3b9304406696d67c633b440f9dd.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/850246d64c46fe8d10abee37f34f08207f4590b3115fca17d5053cb4825b9d32.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/a38b98e4ce42f9669b7dea999d2758070d41207714b0ff35c7df34e6840776fd.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/4da83fe587d10ab265a11993d9e7775e633e376396d365a2b6a6d664b08eaa20.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/b5dcf62607e1c6ccbe7bf1794fa08ac029c7123e551fb96d13c1f9eef96a834e.cache from cache due to expiration
+tesseract-web-1  | 	 Evicting /app/cache/a379725f3ed6297006d69cbf58189c09c18fe645f1f215388384c9077c44220d.cache from cache due to expiration
+tesseract-web-1  | Evicted 14 expired items from the proxy cache.
+tesseract-web-1  | Media proxy cache stats:
+tesseract-web-1  | 	 Cached Items: 1119
+tesseract-web-1  | 	 Utilization: 50% (372 MB / 750 MB)
+tesseract-web-1  | 	 Hit Rate: 499% (Hits: 1308 Misses: 262)
+```
+In the current implementation, those stats reset every time Tesseract is restarted.  I'm hoping to have those persist in a future release.
+
+Also in a future release, I'm looking to add API endpoints which can return that information in JSON format.  However, I need to implement a few prerequisites before I can do that (an authentication layer, mostly).
+
+---
+
+
 ## Q:  How can I clear the cache?
 Currently, the only way to clear/flush the cache is to delete all `.cache` objects in the Tesseract data directory.
+
+Once I have an authentication layer in place, I'm planning to add a UI button to flush the cache.
+
+---
 
 ## Q:  Can I clear individual items from the cache?
 Yes.  The cache folder structure is flat, so every cache item is located directly off the `/app/cache` directory in the container.  
@@ -203,12 +268,18 @@ When generating the cache keys manually, omit the `&fallback=true|false` paramat
 
 Once you have the filename, delete that from the `/app/cache` directory: either from the host data directory or by shelling into the container.
 
+Once I have an authentication layer in place, the plan is to add an extra option on post removals to delete the media from the cache.
+
+---
+
 ## Q: Why does the cache clear when Tesseract updates or is restarted?
-Make sure you mounted the container's `/app/cache` folder to somewhere persistent.  Without a mount, it will store the cache data to its ephemeral writable layer. 
+In order for the cache to persist, the cache directory must be mounted outside the container.  Make sure you mounted the container's `/app/cache` folder to somewhere persistent.  Without a mount, it will store the cache data to its ephemeral writable layer. 
+
+---
 
 ## Q:  What if I don't want to proxy media?
-The option to proxy as well as the handler for the `/image_proxy` route are disabled by defauilt. Tesseract will not proxy any media unless the environment variable `PUBLIC_ENABLE_MEDIA_PROXY` is set to `true.
+The option to proxy as well as the handler for the `/image_proxy` route are disabled by defauilt. Tesseract will not proxy any media unless the environment variable `PUBLIC_ENABLE_MEDIA_PROXY` is set to `true` by the administrator.
 
-## 
+
 
 

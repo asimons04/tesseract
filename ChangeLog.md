@@ -2,7 +2,7 @@
 All major/minor changes between releases will be documented here.  
 
 
-## Roadmap: 1.2.7 - 1.2.9
+## Immediate Roadmap:
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
 
@@ -18,7 +18,6 @@ All major/minor changes between releases will be documented here.
 - (0.18.x and 0.19.x) Add Instances list
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
     - In the community list for the instance, add handler to search the community to view content/subscribe.
-- Fix bug in markdown when rendering nested bullet lists
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
