@@ -136,7 +136,7 @@ Value:  Number (minutes)
 Default: 720 (12 hours)
 Recommended: Between 60 (1 hour) and 1440 (24 hours).  Longer if you think it would help and have the disk space.
 ```
-The amount of time, in minutes, before the system will evict the media from the store. Longer durations will incur more disk space, but will provide more benefit to uses and other instance admins.  Shorter durations can still help, but longer is better if you can afford it.
+The amount of time, in minutes, before the system will evict the media from the store. Longer durations will incur more disk space, but will provide more benefit to users and other instance admins.  Shorter durations can still help, but longer is better if you can afford it.
 
 **PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS**
 ```
