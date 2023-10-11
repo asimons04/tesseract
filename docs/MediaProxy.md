@@ -185,7 +185,7 @@ e.g.  `https://lemmy.world/pictrs/image/3263e249-cfef-40fd-877a-16bee9d62558.png
 
 The `/image_proxy/` route is handled by Tesseract which fetches the image, optionally caches it, and serves it to the user.  
 
-When proxying is disabled, the image URLs are returned as-is and the user fetches them from the original source.
+When proxying is disabled, the image URLs are rendered as returned from the API, and the user fetches them from the original source.
 
 ---
 
