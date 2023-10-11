@@ -189,6 +189,14 @@ When proxying is disabled, the image URLs are returned as-is and the user fetche
 
 ---
 
+## Q:  What goes through the proxy?
+Only requests to images and inline videos.  API calls still go directly from the client (your browser) to your home instance.  Embedded content (Youtube*, Bandcamp, Spotify, Vimeo, etc) is always fetched directly from those sources as proxying it is not feasible.
+
+
+*Including Invidious/Piped
+
+---
+
 ## Q: Does Tesseract's caching replace any Nginx or Cloudflare caching I'm already doing?
 It can, but it doesn't have to. In fact, you can benefit from using both.
 
