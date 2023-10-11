@@ -153,7 +153,7 @@ If enabled, you may consider reducing the cache duration to a smaller value.
 **PUBLIC_MEDIA_CACHE_MAX_SIZE**
 ```
 Value: Number (MB)
-Default: 1 GB
+Default: 1000 (1 GB)
 Recommended:  As much as you can afford to give it.  A minimum of 100 MB is required. Config values lower than this will be ignored.
 ```
 The amount of disk space, in MB,  allocated to the media proxy cache.  Once the cache directory hits 95% of this value, the oldest items will be evicted automatically.
