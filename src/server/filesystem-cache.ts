@@ -1,8 +1,10 @@
 interface FilesystemCache {
-    cacheDir: string,
-    maxSize:number,
-    keepHot:boolean,
-    duration:number,
+    config: {
+        cacheDir: string,
+        maxSize:number,
+        keepHot:boolean,
+        duration:number,
+    }
     createKey: Function,
     evictExpiredItems: Function,
     evictOldestItems: Function,
@@ -50,10 +52,12 @@ import {
 
 
 export const cache:FilesystemCache = {
-    cacheDir: '/app/cache',
-    duration: (12*60),
-    keepHot: true,
-    maxSize: 1000,
+    config: {
+        cacheDir: '/app/cache',
+        duration: (12*60),
+        keepHot: true,
+        maxSize: 1000,
+    },
     initialized: false,
     stats: {
         items: 0,
@@ -71,7 +75,7 @@ export const cache:FilesystemCache = {
 
     evictExpiredItems: async function():Promise<number> {
         if (!cache.initialized) return 0;
-        let directoryList:Array<DirectoryList> = await getDirContents(cache.cacheDir)
+        let directoryList:Array<DirectoryList> = await getDirContents(cache.config.cacheDir)
         let evictedItems: number = 0;
     
         for ( let i:number=0; i<directoryList.length; i++) {
@@ -81,7 +85,7 @@ export const cache:FilesystemCache = {
             let now:number              = new Date().valueOf();
             let timeDiff:number         = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
             
-            if (timeDiff > cache.duration) {
+            if (timeDiff > cache.config.duration) {
                 console.log(`\t Evicting ${entry.path} from cache due to expiration`);
                 try {
                     await rm(entry.path)
@@ -101,7 +105,7 @@ export const cache:FilesystemCache = {
         // Purges the oldest 25% of items in the cache
         console.log(`Cache at ${cache.stats.percentFull.toString()}% - purging oldest 25%`);
 
-        let directoryList:Array<DirectoryList> = await getDirContents(cache.cacheDir)
+        let directoryList:Array<DirectoryList> = await getDirContents(cache.config.cacheDir)
         let evictedItems: number = 0;
         let numItems = Math.round(cache.stats.items * 0.25);
 
@@ -138,7 +142,7 @@ export const cache:FilesystemCache = {
         let file;
         
         try {
-            file = await open(`${cache.cacheDir}/${key}`);
+            file = await open(`${cache.config.cacheDir}/${key}`);
             let buffer = await file.readFile();
             await file.close();
             
@@ -154,16 +158,16 @@ export const cache:FilesystemCache = {
                 
                 // If not manually detected as SVG, delete cache item since mime type detection failed (often due to aborted fetch and partial download)
                 else {
-                    console.log(`Removing malformed cache item: ${cache.cacheDir}/${key}`);
-                    await rm(`${cache.cacheDir}/${key}`)
+                    console.log(`Removing malformed cache item: ${cache.config.cacheDir}/${key}`);
+                    await rm(`${cache.config.cacheDir}/${key}`)
                     return false
                 }
             }
             
             // Update the access time to keep it in the cache until it's not been accessed for more than the cache duration. 
-            if (cache.keepHot) {
+            if (cache.config.keepHot) {
                 let now = new Date();
-                await utimes(`${cache.cacheDir}/${key}`, now, now)
+                await utimes(`${cache.config.cacheDir}/${key}`, now, now)
             }
 
             // Update hit count
@@ -222,28 +226,28 @@ export const cache:FilesystemCache = {
     init: async function(
         path:string|undefined       = undefined,
         maxSize:number | undefined  = undefined,
-        keepHot:boolean|undefined   = undefined,
-        duration:number | undefined = undefined
+        duration:number | undefined = undefined,
+        keepHot:boolean|undefined   = undefined
     ):Promise<boolean> {
        
-        if (path) cache.cacheDir = path;
-        if (maxSize) cache.maxSize = maxSize;
-        if (duration) cache.duration = duration;
-        if (keepHot !==undefined) cache.keepHot = keepHot;        
+        if (path) cache.config.cacheDir     = path;
+        if (maxSize) cache.config.maxSize   = maxSize;
+        if (duration) cache.config.duration = duration;
+        if (keepHot !==undefined) cache.config.keepHot = keepHot;        
 
 
         try {
-            await access(cache.cacheDir, constants.R_OK | constants.W_OK);
+            await access(cache.config.cacheDir, constants.R_OK | constants.W_OK);
             console.log("Cache Options:")
-            console.log(`\tMax Size: ${cache.maxSize} MB`);
-            console.log(`\tKeep hot: ${cache.keepHot.toString()}`);
-            console.log(`\tDuration: ${cache.duration.toString()} minutes`)
+            console.log(`\tMax Size: ${cache.config.maxSize} MB`);
+            console.log(`\tKeep hot: ${cache.config.keepHot.toString()}`);
+            console.log(`\tDuration: ${cache.config.duration.toString()} minutes`)
             cache.initialized = true;
             return true;
         }
         catch {
             console.log("filesystem-cache.ts:cache:init");
-            console.log(`Unable to open cache directory (${cache.cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
+            console.log(`Unable to open cache directory (${cache.config.cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
             return false;
         }
     },
@@ -254,7 +258,7 @@ export const cache:FilesystemCache = {
         if (cache.stats.percentFull < 95) {
             try {
                 let buffer = Buffer.from (await data.arrayBuffer() );
-                await writeFile(`${cache.cacheDir}/${key}`, buffer)
+                await writeFile(`${cache.config.cacheDir}/${key}`, buffer)
                 // Update miss count
                 cache.stats.misses++;
             }
@@ -270,7 +274,7 @@ export const cache:FilesystemCache = {
     query: async function(key:string) {
         if (!cache.initialized) return false;
         try {
-            await access(`${cache.cacheDir}/${key}`, constants.R_OK)
+            await access(`${cache.config.cacheDir}/${key}`, constants.R_OK)
             return true;
         }
         // Since this is a lookup to see if the file exists, silently ignore failures since cache misses will throw useless errors.
@@ -282,18 +286,18 @@ export const cache:FilesystemCache = {
     updateStats: async function(report:boolean = false) {
         if (!cache.initialized) return false;
         try {
-            let contents:Array<DirectoryList> = await getDirContents(cache.cacheDir)
+            let contents:Array<DirectoryList> = await getDirContents(cache.config.cacheDir)
 
             cache.stats.items           = contents.length
-            cache.stats.size            =  await getDirectorySize(cache.cacheDir);
+            cache.stats.size            =  await getDirectorySize(cache.config.cacheDir);
             cache.stats.sizeMB          = Math.round(cache.stats.size/1000/1000);
-            cache.stats.percentFull     = Math.round((cache.stats.sizeMB / cache.maxSize) * 100);
+            cache.stats.percentFull     = Math.round((cache.stats.sizeMB / cache.config.maxSize) * 100);
             cache.stats.hitRate         = Math.round((cache.stats.hits / cache.stats.misses) * 100) || 0
             
             if (report) {
                 console.log("Media proxy cache stats:");
                 console.log(`\t Cached Items: ${cache.stats.items.toString()}`);
-                console.log(`\t Utilization: ${cache.stats.percentFull.toString()}% (${cache.stats.sizeMB.toString()} MB / ${cache.maxSize} MB)`);
+                console.log(`\t Utilization: ${cache.stats.percentFull.toString()}% (${cache.stats.sizeMB.toString()} MB / ${cache.config.maxSize} MB)`);
                 console.log(`\t Hit Rate: ${cache.stats.hitRate.toString()}% (Hits: ${cache.stats.hits.toString()} Misses: ${cache.stats.misses.toString()}) `);
             }
         }

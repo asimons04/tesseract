@@ -61,7 +61,6 @@ const task_memoryCache = setInterval(() => {
 
 
 //// Image Proxy Cache
-// Housekeeps every MEDIA_CACHE_HOUSEKEEP_INTERVAL minutes
 import { cache as imageCache } from './server/filesystem-cache'
 import { 
     ENABLE_MEDIA_CACHE,
@@ -76,7 +75,7 @@ import {
 if (ENABLE_MEDIA_CACHE) {
     const cacheDir = '/app/cache';
     const cacheInit = await imageCache.init(
-        cacheDir, MEDIA_CACHE_MAX_SIZE, MEDIA_CACHE_KEEP_HOT_ITEMS, MEDIA_CACHE_DURATION
+        cacheDir, MEDIA_CACHE_MAX_SIZE, MEDIA_CACHE_DURATION, MEDIA_CACHE_KEEP_HOT_ITEMS
     );
     
     if (cacheInit) { 
