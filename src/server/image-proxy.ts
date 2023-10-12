@@ -43,6 +43,7 @@ export async function image_proxy(event:any) {
             // Lookup the image URL in the cache and return that if found
             let cacheKey
             cacheKey = cache.createKey(imageUrl.href);
+            
             if (ENABLE_MEDIA_CACHE) {
                 if (cacheKey && await cache.query(cacheKey)) {
                     //console.log(`Key (${cacheKey}) found in cache. Loading and returning cached version of the file.`);
