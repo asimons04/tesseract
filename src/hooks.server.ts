@@ -63,6 +63,8 @@ const task_memoryCache = setInterval(() => {
 import { FSCache } from './server/filesystem-cache'
 import { 
     ENABLE_MEDIA_CACHE,
+    ENABLE_MEDIA_PROXY,
+    MEDIA_PROXY_BLACKLIST,
     MEDIA_CACHE_HOUSEKEEP_INTERVAL,
     MEDIA_CACHE_HOUSEKEEP_STARTUP,
     MEDIA_CACHE_KEEP_HOT_ITEMS,
@@ -70,8 +72,14 @@ import {
     MEDIA_CACHE_MAX_SIZE,
 } from '$lib/settings'
 
+
+
 const cacheDir = '/app/cache';
 export const imageCache = new FSCache(cacheDir, MEDIA_CACHE_MAX_SIZE, MEDIA_CACHE_DURATION, MEDIA_CACHE_KEEP_HOT_ITEMS);
+
+console.log(`Image proxying: ${ENABLE_MEDIA_PROXY.toString()}`);
+console.log(`Image proxy caching: ${ENABLE_MEDIA_CACHE.toString()}`);
+console.log(`Media proxy blacklist: ${MEDIA_PROXY_BLACKLIST}`);
 
 if (ENABLE_MEDIA_CACHE) {
     if (await imageCache.init()) { 
@@ -90,6 +98,8 @@ if (ENABLE_MEDIA_CACHE) {
         console.log(`Failed to initialize image proxy cache at ${cacheDir}.  Caching is disabled`)
     }
 }
+
+
 
 
 console.log("Starting Tesseract server");

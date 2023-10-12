@@ -6,8 +6,6 @@ import {
 
 import { imageCache as cache } from '../hooks.server'
 
-let blacklist = MEDIA_PROXY_BLACKLIST.split(',')
-
 // Web Request Handler
 export async function image_proxy(event:any) {
     const req = event.req;
@@ -28,12 +26,14 @@ export async function image_proxy(event:any) {
     let imagePath = `${req.route}`
     let imageUrl = new URL(`https://${imagePath}?${req.params.toString()}`);
 
-    // Refuse request if image url matches an entry in the blacklist
-    for (let i:number=0; i< blacklist.length; i++) {
-        if ( imageUrl.hostname.includes(blacklist[i].trim()) ) {
-            return res
-                .error(`Administrator has disabled proxying to this resource: ${imageUrl.href}`)
-                .send();
+    // Refuse proxy request if image url matches an entry in the blacklist
+    if (MEDIA_PROXY_BLACKLIST.length > 0) {
+        for (let i:number=0; i< MEDIA_PROXY_BLACKLIST.length; i++) {
+            if (imageUrl.hostname.includes(MEDIA_PROXY_BLACKLIST[i]) ) {
+                return res
+                    .error(`Administrator has disabled proxying to this resource: ${imageUrl.href}`)
+                    .send();
+            }
         }
     }
 

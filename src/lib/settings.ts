@@ -12,6 +12,31 @@ const toBool = (str: string | undefined) => {
   return str.toLowerCase() === 'true'
 }
 
+const strToArray = (str:string | undefined) => {
+    if (!str) { return [] }
+
+    // Reject empty strings
+    if (str.trim() == "") { return [] }
+    
+    // Convert non-empty string into array, convert newlines into commas, remove scheme and slashes
+    let arr:Array<String> =  str.split(',');
+    
+    // Deduplicate and sort the array of instances
+    let uniqArr:Array<String> = [...new Set(arr)].sort();
+    
+    // Remove empty string elements and trim whitespace from each domain entry
+    let trimmedArr:Array<String> = [];
+    
+    for (let i=0; i< uniqArr.length; i++) {
+        let item:String = uniqArr[i].trim();
+        if (item.length > 0) {
+            trimmedArr.push(item);
+        }
+    }
+    trimmedArr.sort();
+    return trimmedArr;
+}
+
 interface Settings {
     markReadPosts: boolean
     instance?: string
@@ -162,7 +187,7 @@ export const userSettings = writable(defaultSettings)
 // Global option environment flags
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                 ?? false
 export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)             ?? false
-export const MEDIA_PROXY_BLACKLIST          = env.PUBLIC_MEDIA_PROXY_BLACKLIST                      ?? ''    // Comma-delimited list of domains not to proxy
+export const MEDIA_PROXY_BLACKLIST          = strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
 export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)           ?? true
 
 export const ENABLE_MEDIA_CACHE             = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE)                 ?? true
@@ -171,6 +196,10 @@ export const MEDIA_CACHE_MAX_SIZE           = parseInt(env.PUBLIC_MEDIA_CACHE_MA
 export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL)   || 5        //Minutes
 export const MEDIA_CACHE_HOUSEKEEP_STARTUP  = toBool(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP)      ?? true
 export const MEDIA_CACHE_KEEP_HOT_ITEMS     = toBool(env.PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS)         ?? true
+
+
+
+
 
 // Define Invidious and Piped instances to determine if embedded media is a Youtube et al video.
 // Invidious Instance List:  https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest

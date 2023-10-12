@@ -9,6 +9,9 @@ export async function proxy_pictrs_upload(event) {
     req.headers.delete('host')
     req.headers.set('Host', url.host);
 
+    res.headers.set('Access-Control-Allow-Origin', '*');
+    res.headers.set('Access-Control-Allow-Methods', 'POST');
+
     try {
         // Route:  POST: /pictrs/image (requires Authorization header)
         if ( req.method == 'POST' && url.pathname == '/pictrs/image') {
