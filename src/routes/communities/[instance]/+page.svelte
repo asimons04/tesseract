@@ -275,7 +275,7 @@
                     </li>
                 {/each}
             </ul>
-            {#if data.communities.length > 0}
+            {#if data.communities.length > 0 || parseInt($page.url.searchParams.get('page')) > 1}
                 <div class="mt-2 w-full">
                     <Pageination
                         page={Number($page.url.searchParams.get('page')) || 1}

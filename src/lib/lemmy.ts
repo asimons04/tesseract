@@ -143,7 +143,6 @@ if (LINKED_INSTANCE_URL) {
       .getSite({})
       .then((s) => site.set(s))
 }
-  
 else {
     getClient(getInstance())
     .getSite({})

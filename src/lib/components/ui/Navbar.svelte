@@ -68,8 +68,8 @@
                     class="rounded-md"
                 />
                 <div class="flex flex-row items-center gap-2 max-[500px]:hidden">
-                    <span class="opacity-30 text-xl">/</span>
-                    <div class="text-sm font-bold inline-flex flex-col">
+                    <!--<span class="opacity-30 text-xl">/</span>-->
+                    <div class="text-base font-bold inline-flex flex-col">
                         <span>{$site.site_view.site.name}</span>
                     </div>
                 </div>
