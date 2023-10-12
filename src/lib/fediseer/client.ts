@@ -52,24 +52,25 @@ import { getClient } from '$lib/lemmy.js'
 
 
 const fediseerAPI:string = 'https://fediseer.com/api/v1'
-const fetchOptions = {
-    //@ts-ignore
-    signal: AbortSignal.timeout(5 * 1000),
-}
 
 // Fetch the Fediseer info from the local API caching proxy 
 export async function fediseerLookup(instance:string){
-    const response  = await fetch(`/tesseract/api/fediseer/lookup?instance=${instance}`);
-    if (response.ok) {
-        try {
-            return await response.json();
-            
+    try {
+        const response  = await fetch(`/tesseract/api/fediseer/lookup?instance=${instance}`);
+        if (response.ok) {
+            try {
+                return await response.json();
+                
+            }
+            catch {
+                return {} as FediseerInfo;
+            }
         }
-        catch {
+        else {
             return {} as FediseerInfo;
         }
     }
-    else {
+    catch {
         return {} as FediseerInfo;
     }
 }
@@ -141,7 +142,7 @@ export async function getFediseerInfo(instance:string) {
 
 export async function getEndorsementsBadge(instance:string) {
     try {
-        const response = await fetch(`${fediseerAPI}/badges/endorsements/${instance}.svg`, fetchOptions);
+        const response = await fetch(`${fediseerAPI}/badges/endorsements/${instance}.svg`);
         if (response.ok) {
             return await response.text();
         }
@@ -156,7 +157,7 @@ export async function getEndorsementsBadge(instance:string) {
 
 export async function getGuarantorBadge(instance:string) {
     try {
-        const response = await fetch(`${fediseerAPI}/badges/guarantees/${instance}.svg`, fetchOptions);
+        const response = await fetch(`${fediseerAPI}/badges/guarantees/${instance}.svg`);
         if (response.ok) {
             return await response.text();
         }
@@ -172,7 +173,7 @@ export async function getGuarantorBadge(instance:string) {
 
 export async function getCensures(instance:string) {
     try {
-        const response  = await fetch(`${fediseerAPI}/censures/${instance}`, fetchOptions);
+        const response  = await fetch(`${fediseerAPI}/censures/${instance}`);
         if (response.ok) {
             try {
                 const instances = await response.json();
@@ -193,7 +194,7 @@ export async function getCensures(instance:string) {
 
 export async function getHesitations(instance:string) {
     try {
-        const response  = await fetch(`${fediseerAPI}/hesitations/${instance}`, fetchOptions);
+        const response  = await fetch(`${fediseerAPI}/hesitations/${instance}`);
         if (response.ok) {
             try {
                 const instances = await response.json();
@@ -214,7 +215,8 @@ export async function getHesitations(instance:string) {
 
 export async function getEndorsements(instance:string) {
     try {
-        const response  = await fetch(`${fediseerAPI}/endorsements/${instance}`, fetchOptions);
+        const response  = await fetch(`${fediseerAPI}/endorsements/${instance}`);
+        
         if (response.ok) {
             try {
                 const instances = await response.json();
@@ -228,7 +230,8 @@ export async function getEndorsements(instance:string) {
             return [] as Array<Endorsements>;
         }
     }
-    catch {
+    catch (err) {
+        console.log(err)
         return [] as Array<Endorsements>;
     }
 }

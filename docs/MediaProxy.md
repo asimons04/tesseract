@@ -289,7 +289,7 @@ In order for the cache to persist, the cache directory must be mounted outside t
 ---
 
 ## Q:  What if I don't want to proxy media?
-IF you don't want to proxy any media, then you don't have to do anything.  The option to proxy as well as the handler for the `/image_proxy` route are disabled by defauilt. Tesseract will not proxy any media unless the environment variable `PUBLIC_ENABLE_MEDIA_PROXY` is set to `true` by the administrator.
+If you don't want to proxy any media, then you don't have to do anything.  The option to proxy as well as the handler for the `/image_proxy` route are disabled by defauilt. Tesseract will not proxy any media unless the environment variable `PUBLIC_ENABLE_MEDIA_PROXY` is set to `true` by the administrator.
 
 
 
