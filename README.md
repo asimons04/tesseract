@@ -19,45 +19,56 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
   - [Configuring Default Settings](#Configuring-Default-Settings)
 - [Donate](#Donate)
 
-## Features
-- Full media support in feed and posts (Spotify, YouTube/Invidious/Piped, Soundcloud, etc).
+## Feature Highlights
+The following features are unique to Tesseract:
 
-- Image/Media proxy
-  - Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.
-  - Note: Embedded content is not proxied, only avatars, logos, banners, images, and direct-link videos.
-  - Can cache any media proxied through it.
-  - Administrators must explicitly enable this module, and users must enable media proxying in their app settings.
+### Full Media Support in Feed and Posts 
+  - Spotify
+  - YouTube/Invidious/Piped
+  - Soundcloud
+  - Vimeo
+  - Bandcamp
 
-- Designed for desktop and mobile. All desktop features are available in mobile.
+### Community Browser / Enhanced Discovery
+  - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
+  - Post and comment menus let you browse the communities of the originating instance
 
+
+### Image/Media Proxying and Caching
+- Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.
+- Can cache any media proxied through it.  Tesseract can act as a caching proxy for your instance as well as cache media originating on other instances as well as outside resources (Giphy, Catbox, Imgur, Yarn, etc).
+- Administrators must explicitly enable this module, and users must enable media proxying in their app settings.
+
+### Fediseer Integration
+- See any endorsements, hesitations, and censures given to instances you're interacting with.
 - Code syntax highlighting in code and inline code blocks.
 
-- Browse communities from any instance and load them without having to manually search.
 
-- Installable as a PWA
+## Additional Features
+### Designed for desktop and mobile.
+Install as a PWA on either or just use it through the web.
 
-- Multiple Hosting Options
-  - If you host your own Tesseract instance, you can use it as a frontend for any Lemmy instance.
-  - Instance admins can host Tesseract on a subdomain (there are still a few user-facing features missing before I recommend replacing Lemmy-UI completely. Namely, password resets and changes).
-  - Run on localhost (Image uploads will not work due to CORS)
+### Multiple Account Support
+You can add multiple accounts and easily switch between them.  Accounts can even be on different instances if the administrator chooses not to lock Tesseract to theirs.
 
+### Multiple Hosting Options
+If you host your own Tesseract instance, you can use it as a frontend for any Lemmy instance.
+Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with it.  You can even run it on localhost if you want, though image uploads will not work due to CORS.
+
+
+### Highly Configurable
 - User-configurable image/video sizes in feed and posts
-
-- Full Lemmy server config options. Anything you can configure in Lemmy-UI, you can configure in Tesseract*
-  - Except the following:
-    - Enabling 2FA on your profile (working on QR code support and to see what next Lemmy BE fixes)
-    - Password changes
-    - Forgot password
-
+- Full Lemmy server config options.
 - Most aspects of the UI can be configured by the end user. Server admins can set default preferences via `env` vars.
 
-- Easier moderation than Lemmy-UI
-  - Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI
-  - Local instance admins have full moderation control of the instance as with Lemmy-UI
-  - Modlog support on both desktop and mobile.
-  - Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
+### Better Moderation Tools than Lemmy-UI
+- Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI
+- Local instance admins have full moderation control of the instance as with Lemmy-UI
+- Modlog support on both desktop and mobile.
+- Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
 
-- Maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  
+### Committed Developer
+Tesseract is maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  
 
 
 
@@ -154,7 +165,7 @@ server {
 ```
 **Running Tesseract In Place Of Lemmy-UI**
 
-To do:  I currently have this running on my instance but need to de-tangle the Nginx config into a proper example.  It's not much different than above, and with the addition of the /cors/ path shown above, you can just point the `proxy_pass` for lemmy-ui to Tesseract.
+If you want to run Tesseract in place of Lemmy-UI, just replace the proxy pass that goes to your current Lemmy-UI with the IP/port of Tesseract.
 
 
 
@@ -187,6 +198,7 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |
 | PUBLIC_YOUTUBE_FRONTEND         | `YouTube`\|`Invidious` | YouTube                             |
 | PUBLIC_ENABLE_USER_MEDIA_PROXY  | `bool`              | false                                  |
+
 ### Configuration Options for Media Proxying and Caching
 Descriptions of the config options and what they do are covered in the [Media Proxy Cache](docs/MediaProxy.md) module documentation.
 
@@ -245,7 +257,7 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/CommentSortType.
 - Controversial (not implemented in Tesseract)
 
 ## Screenshots
-These screenshots show some of the enhancements made to the upstream project. 
+These screenshots are quite out of date, but they'll give you an idea (haven't had time to replace them yet).  You can also see it live at https://tesseract.dubvee.org.
 _ | _ 
 ---|---
 ![YouTube videos playing inline](./screenshots/Tesseract-Screenshot-1.png) YouTube videos playing inline | ![Beehaw c/Music as it was meant to be](./screenshots/Tesseract-Screenshot-3.png) Beehaw c/Music as it was meant to be
