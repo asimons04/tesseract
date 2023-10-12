@@ -5,7 +5,7 @@ export async function fediseer_router(event:any) {
     let req = event.req;
     let res = event.res;
 
-    if (req.route == '/lookup') {
+    if (req.method == 'GET' && req.route == '/lookup') {
         let instance = req.params.get('instance');
 
         if (instance) {
@@ -49,17 +49,6 @@ export async function fediseer_router(event:any) {
     if (req.method == 'GET' && req.route == '/test') {
         return res
             .json('The server is correctly handling this from the fediseer library server hook')
-            .send();
-    }
-
-    if (req.method == 'GET' && req.route == '/test2') {
-        return res
-            .status(201)
-            .setCookie('foobar', 'This is a test cookie with options', {secure: true, samesite: 'Lax', httponly: true, path: '/api/fediseer'})
-            .setCookie('asdfasdf', 'thisISANOTHER cookie')
-            .setCookie('COOKIE', "MONSTER")
-            .unsetCookie('asdfasdf')
-            .json('TEST2')
             .send();
     }
 
