@@ -129,10 +129,10 @@ export async function image_proxy(event:any) {
 const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<void|Response> {
     const data = await fetch(imageUrl, 
         {
-            method: req.method,
+            method: 'GET',
             headers: {
-                'accept':   req.headers.get('accept'),
-                'user-agent': req.headers.get('user-agent')
+                'accept':       req.headers.get('accept'),
+                'user-agent':   req.headers.get('user-agent')
             },
             redirect: "follow",
             //@ts-ignore
