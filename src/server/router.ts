@@ -1,3 +1,8 @@
+import { 
+    parse as parseCookie,
+    serialize as serializeCookie
+} from 'cookie'
+
 interface CookieOptions {
     domain?:string,
     expires?:string,
@@ -16,6 +21,7 @@ interface ExpRequest {
     params: URLSearchParams,
     headers: Headers,
     url: URL,
+    cookies: object,
 }
 
 // Express-like Response
@@ -45,6 +51,7 @@ export async function router(event:any, resolve:any, routes:any) {
             method: event.request.method,
             params: event.url.searchParams,
             headers: event.request.headers,
+            cookies: event.request.headers.get('cookie') ? parseCookie(event.request.headers.get('cookie')) : {},
             url: event.url,
         } as ExpRequest
     }
@@ -139,7 +146,6 @@ export async function router(event:any, resolve:any, routes:any) {
     }
 
 
-
     // Parse the routes and call their handlers if any match
     for (let i:number=0; i < routes.length; i++) {
         let route = routes[i];
@@ -165,3 +171,5 @@ export async function router(event:any, resolve:any, routes:any) {
     return false;
 
 }
+
+
