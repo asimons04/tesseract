@@ -35,9 +35,12 @@ The following features are unique to Tesseract:
 
 
 ### Image/Media Proxying and Caching
+Privacy conscious users have long requested media be proxied through Lemmy.  While I can't add that to the API, I can add it to the UI.  Additionally, since the media is already flowing through Tesseract, it made sense to optionally cache the proxied media for re-use.
+
 - Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.
 - Can cache any media proxied through it.  Tesseract can act as a caching proxy for your instance as well as cache media originating on other instances as well as outside resources (Giphy, Catbox, Imgur, Yarn, etc).
 - Administrators must explicitly enable this module, and users must enable media proxying in their app settings.
+
 
 ### Fediseer Integration
 - See any endorsements, hesitations, and censures given to instances you're interacting with.
@@ -65,6 +68,8 @@ Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with 
 - Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI
 - Local instance admins have full moderation control of the instance as with Lemmy-UI
 - Modlog support on both desktop and mobile.
+- Supercharged modlog with enhanced filtering
+- Communities and users have "moglog" links in their action menus.  Those will take you to a pre-filtered modlog for just actions related to them.
 - Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
 
 ### Committed Developer

@@ -46,7 +46,7 @@
     async function changeGuestInstance() {
         loading = true
         try {
-            const valid = await validateInstance(newInstance.trim())
+            const valid = await validateInstance(newInstance.trim(), true)
 
             if (!valid) {
                 throw new Error('invalid instance')

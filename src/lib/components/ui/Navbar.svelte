@@ -51,7 +51,6 @@
     export const DISABLE_MODLOG_USERS = (env.PUBLIC_DISABLE_MODLOG_USERS ?? 'false').toLowerCase() == 'true'
     
     let expandAccountsMenu:boolean = false
-
 </script>
   
 <svelte:window bind:scrollY />
@@ -59,30 +58,24 @@
 <nav class="flex flex-row gap-2 items-center sticky top-0 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl w-full mx-auto px-4 py-2 z-50 box-border h-16">
     <div class="flex flex-row gap-2 items-center mr-auto">
         <a href="/" class="flex flex-row items-center gap-2">
-            {#if LINKED_INSTANCE_URL}
-                {#if $site}
-                    <Avatar
-                        url={$site.site_view.site.icon}
-                        alt={$site.site_view.site.name}
-                        width={32}
-                        res={64}
-                        circle={false}
-                        class="rounded-md"
-                    />
-                    <div class="flex flex-row items-center gap-2 max-[500px]:hidden">
-                        <span class="opacity-30 text-xl">/</span>
-                        <div class="text-sm font-bold inline-flex flex-col">
-                            <span>{$site.site_view.site.name}</span>
-                        </div>
+            {#if $site}
+                <Avatar
+                    url={$site.site_view.site.icon}
+                    alt={$site.site_view.site.name}
+                    width={32}
+                    res={64}
+                    circle={false}
+                    class="rounded-md"
+                />
+                <div class="flex flex-row items-center gap-2 max-[500px]:hidden">
+                    <span class="opacity-30 text-xl">/</span>
+                    <div class="text-sm font-bold inline-flex flex-col">
+                        <span>{$site.site_view.site.name}</span>
                     </div>
-                {:else}
-                    <Spinner width={32} />
-                {/if}
-
+                </div>
             {:else}
                 <Logo width={40} />
                 <div class="flex flex-row items-center gap-2 max-[1000px]:hidden">
-                    <span class="opacity-30 text-xl">/</span>
                     <span class="text-sm font-bold">
                         {$instance}
                     </span>

@@ -151,10 +151,8 @@
                 })
 
                 if (!post) throw new Error('Failed to edit post')
-
-                console.log(`Edited post ${post?.post_view.post.id}`)
-
                 dispatcher('submit', post.post_view)
+                
             } else {
                 let image = data.image ? await uploadImage(data.image[0]) : undefined
                 data.url = image || data.url || undefined
@@ -168,8 +166,6 @@
                 })
 
                 if (!post) throw new Error('Failed to upload post')
-
-                console.log(`Uploaded post ${post?.post_view.post.id}`)
 
                 saveDraft = false
                 dispatcher('submit', post.post_view)

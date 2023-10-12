@@ -56,11 +56,14 @@ For proxy cache documentation and more details, [see the docs page for the media
 - Added 10s fetch timeout on each Fediseer lookup
 - If Fediseer fetch fails, do not cache unsuccessful lookups
 
-### Bugfixes
-- Fixed garbled code block and inline code when inside a block quote
-- Fixed wonky rendering of bullet lists, especially nested lists.
-- Not a Tesseract bug, but added a shim to replace `&amp;` and `&lt;` in posts/comments because of Lemmy's overzealous sanitization.
-- Fixed bug with inline videos (.webm, .mp4, etc) sometimes not rendering in iOS
+### Bugfixes and Enhancements
+- [Bugfix] Fixed garbled code block and inline code when inside a block quote
+- [Bugfix] Fixed wonky rendering of bullet lists, especially nested lists.
+- [Bugfix] Not a Tesseract bug, but added a shim to replace `&amp;` and `&lt;` in posts/comments because of Lemmy's overzealous sanitization.
+- [Bugfix] Fixed bug with inline videos (.webm, .mp4, etc) sometimes not rendering in iOS
+- [Enhancement] Site icon and name now load in navbar when not locked to an instance (formerly was the app icon and instance domain only)
+  - Now works for guest instances and switches when you change
+  
 
 ## 1.2.7
 ### Fediseer Integration

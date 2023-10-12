@@ -1,6 +1,6 @@
 import { type GetSiteResponse, LemmyHttp } from 'lemmy-js-client'
 import { get, writable } from 'svelte/store'
-import { profile } from '$lib/auth.js'
+import { profile, profileData } from '$lib/auth.js'
 import { error } from '@sveltejs/kit'
 import { LINKED_INSTANCE_URL, instance } from '$lib/instance.js'
 
@@ -47,17 +47,14 @@ export const getInstance = () => get(instance)
 
 export const site = writable<GetSiteResponse | undefined>(undefined)
 
-if (LINKED_INSTANCE_URL) {
-  getClient(LINKED_INSTANCE_URL)
-    .getSite({})
-    .then((s) => site.set(s))
-}
-
-
-export async function validateInstance(instance: string): Promise<boolean> {
+export async function validateInstance(instance: string, setSite:boolean=false): Promise<boolean> {
     if (instance == '') return false
     try {
-        await getClient(instance).getSite({})
+        let siteData = await getClient(instance).getSite({})
+        // Optionally 
+        if (setSite) {
+            site.set(siteData);
+        }
         return true
     } catch (err) {
         return false
@@ -139,4 +136,16 @@ export async function uploadImage(image: File | null | undefined): Promise<strin
             'Failed to upload image'
         }: ${response.status}: ${response.statusText}`
     )
+}
+
+if (LINKED_INSTANCE_URL) {
+    getClient(LINKED_INSTANCE_URL)
+      .getSite({})
+      .then((s) => site.set(s))
+}
+  
+else {
+    getClient(getInstance())
+    .getSite({})
+    .then((s) => site.set(s))
 }

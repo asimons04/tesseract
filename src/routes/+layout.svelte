@@ -1,42 +1,47 @@
 <script lang="ts">
-  import Navbar from '$lib/components/ui/Navbar.svelte'
-  import '../style/app.css'
-  import '../style/highlight.js.css'
-  import { navigating } from '$app/stores'
-  import nProgress from 'nprogress'
-  import 'nprogress/nprogress.css'
-  import ToastContainer from '$lib/components/ui/toasts/ToastContainer.svelte'
-  import Moderation from '$lib/components/lemmy/moderation/Moderation.svelte'
-  import Sidebar from '$lib/components/ui/sidebar/Sidebar.svelte'
-  import { onMount } from 'svelte'
-  // @ts-ignore
-  import { pwaInfo } from 'virtual:pwa-info'
-  import PwaReload from '$lib/PwaReload.svelte'
-  import { inDarkTheme } from '$lib/ui/colors.js'
-  import { userSettings } from '$lib/settings.js'
+    import Navbar from '$lib/components/ui/Navbar.svelte'
+    import '../style/app.css'
+    import '../style/highlight.js.css'
+    import { navigating } from '$app/stores'
+    import nProgress from 'nprogress'
+    import 'nprogress/nprogress.css'
+    import ToastContainer from '$lib/components/ui/toasts/ToastContainer.svelte'
+    import Moderation from '$lib/components/lemmy/moderation/Moderation.svelte'
+    import Sidebar from '$lib/components/ui/sidebar/Sidebar.svelte'
+    import { onMount } from 'svelte'
+    
+    // @ts-ignore
+    import { pwaInfo } from 'virtual:pwa-info'
+    import PwaReload from '$lib/PwaReload.svelte'
+    import { inDarkTheme } from '$lib/ui/colors.js'
+    import { userSettings } from '$lib/settings.js'
 
-  nProgress.configure({
-    minimum: 0.4,
-    trickleSpeed: 200,
-    showSpinner: false,
-  })
+    nProgress.configure({
+        minimum: 0.4,
+        trickleSpeed: 200,
+        showSpinner: false,
+    })
 
-  $: {
-    if ($navigating) {
-      if (typeof document != 'undefined') {
-        nProgress.start()
-        document?.documentElement?.classList?.toggle('wait', true)
-      }
+    $: {
+        if ($navigating) {
+            if (typeof document != 'undefined') {
+                nProgress.start()
+                document?.documentElement?.classList?.toggle('wait', true)
+            }
+        }
+
+        if (!$navigating) {
+            if (typeof document != 'undefined') {
+                nProgress.done()
+                document?.documentElement?.classList?.toggle('wait', false)
+            }
+        }
     }
-    if (!$navigating) {
-      if (typeof document != 'undefined') {
-        nProgress.done()
-        document?.documentElement?.classList?.toggle('wait', false)
-      }
-    }
-  }
 
-  $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
+    $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
+  
+  export let data;
+  console.log(data);
 
 </script>
 
