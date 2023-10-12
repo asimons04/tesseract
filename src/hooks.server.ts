@@ -78,8 +78,8 @@ const cacheDir = '/app/cache';
 export const imageCache = new FSCache(cacheDir, MEDIA_CACHE_MAX_SIZE, MEDIA_CACHE_DURATION, MEDIA_CACHE_KEEP_HOT_ITEMS);
 
 console.log(`Image proxying: ${ENABLE_MEDIA_PROXY.toString()}`);
-console.log(`Image proxy caching: ${ENABLE_MEDIA_CACHE.toString()}`);
-console.log(`Media proxy blacklist: ${MEDIA_PROXY_BLACKLIST}`);
+if (ENABLE_MEDIA_PROXY) console.log(`Image proxy caching: ${ENABLE_MEDIA_CACHE.toString()}`);
+if (ENABLE_MEDIA_PROXY) console.log(`Media proxy blacklist: ${MEDIA_PROXY_BLACKLIST}`);
 
 if (ENABLE_MEDIA_CACHE) {
     if (await imageCache.init()) { 

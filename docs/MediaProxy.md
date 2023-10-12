@@ -106,6 +106,31 @@ Example: PUBLIC_MEDIA_PROXY_BLACKLIST=media.giphy.com,badsite.com,site-that-does
 ```
 Comma-delimited list of domains and/or keywords to check for in image URLs.  Any image domains that contain anything in the blacklist will not go through the proxy endpoint and will be linked directly.  You may wish to add others for content policy reasons or because you've identified some that do not like being proxied. 
 
+If you're using `docker-compose`, you can use the multi-line syntax to make managing the list cleaner:
+```
+  tesseract:
+    image:  ghcr.io/asimons04/tesseract:latest
+    ports:
+      - 8080:3000
+    volumes:
+      - ./data/tesseract-cache:/app/cache
+    environment:
+      ...
+      - PUBLIC_ENABLE_MEDIA_PROXY=true
+      - PUBLIC_ENABLE_MEDIA_CACHE=true
+      - PUBLIC_ENABLE_MEDIA_PROXY_LOCAL=true
+      - PUBLIC_MEDIA_CACHE_MAX_SIZE=250
+      - PUBLIC_MEDIA_CACHE_DURATION=750
+      - |-
+        PUBLIC_MEDIA_PROXY_BLACKLIST=
+          badsite1.com,
+          badsite2.com,
+          badsite3.com,
+          ...,
+          badsiteN.com
+```
+Be sure to use `|-` rather than just a pipe so that the newlines are omitted.  Also, do not forget to add the trailing commas.  The extra indentation on each domain is optional; the domains will be trimmed when they're loaded in.
+
 **PUBLIC_ENABLE_MEDIA_PROXY_LOCAL**
 ```
 Value: true | false
