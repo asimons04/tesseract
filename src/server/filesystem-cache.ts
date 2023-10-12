@@ -1,9 +1,3 @@
-interface DirectoryList {
-    path: string,
-    stats: Stats
-}
-
-
 import { Buffer } from 'buffer';
 import { createHash } from 'node:crypto'
 import {fileTypeFromBuffer} from 'file-type';
@@ -20,6 +14,11 @@ import {
     writeFile,
 
 } from 'node:fs/promises'
+
+interface DirectoryList {
+    path: string,
+    stats: Stats
+}
 
 
 export class FSCache {
@@ -360,7 +359,7 @@ export class FSCache {
             this.stats.size            = await this.getDirectorySize();
             this.stats.sizeMB          = Math.round(this.stats.size/1000/1000);
             this.stats.percentFull     = Math.round((this.stats.sizeMB / this.config.maxSize) * 100);
-            this.stats.hitRate         = Math.round((this.stats.hits / this.stats.misses) * 100) || 0
+            this.stats.hitRate         = Math.round((this.stats.hits / (this.stats.hits + this.stats.misses)) * 100) || 0
             
             if (report) {
                 console.log("Cache stats:");

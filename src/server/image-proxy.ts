@@ -4,7 +4,6 @@ import {
     MEDIA_PROXY_BLACKLIST,
 } from '$lib/settings'
 
-//import { cache } from './filesystem-cache'
 import { imageCache as cache } from '../hooks.server'
 
 let blacklist = MEDIA_PROXY_BLACKLIST.split(',')
@@ -43,14 +42,13 @@ export async function image_proxy(event:any) {
             
             // Lookup the image URL in the cache and return that if found
             let cacheKey
-            
+            cacheKey = cache.createKey(imageUrl.href);
             if (ENABLE_MEDIA_CACHE) {
-                cacheKey = cache.createKey(imageUrl.href);
                 if (cacheKey && await cache.query(cacheKey)) {
                     //console.log(`Key (${cacheKey}) found in cache. Loading and returning cached version of the file.`);
                     let image = await cache.get(cacheKey);
                     
-                    if (image && image.type) {
+                    if (image && typeof(image) != 'boolean' && image.type) {
                         return res
                             .setHeader('X-Tesseract-Image-Cache', 'hit')
                             .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
@@ -74,7 +72,7 @@ export async function image_proxy(event:any) {
             // Check if data was returned and either perform fallback redirect or return an error
             if (!data) {
                 // Fallback and redirect the request to the original image URL
-                if (fallback) return res.setHeader('Location', imageUrl).status(302).send();
+                if (fallback) return res.redirect(imageUrl).send();
                 
                 // If fallback redirect is disabled by user, return an error.
                 return res.error('The proxy failed to fetch the media from the server').send();
@@ -84,7 +82,7 @@ export async function image_proxy(event:any) {
 
             // HTTP 304 trips up the checks so except it from the failure responses
             if (!data.ok && data.status != 304) {
-                if (fallback) return res.setHeader('Location', imageUrl).status(302).send();
+                if (fallback) return res.redirect(imageUrl).send();
                 return res.error(await data.text(), data.status).send();
             }
             
@@ -120,7 +118,7 @@ export async function image_proxy(event:any) {
     catch (error) {
         // Log the error and fallback to redirecting the request to the original image URL
         console.log( error)
-        if (fallback)return res.setHeader('Location', imageUrl).status(302).send();
+        if (fallback)return res.redirect(imageUrl).send();
         return res.error('An non-fetch error occurred during the proxy process').send();
     }
 }

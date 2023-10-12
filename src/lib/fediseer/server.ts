@@ -1,10 +1,10 @@
 import {getFediseerInfo} from './client.js'
 import { cache } from '$lib/cache/memory.js'
 
-export async function fediseer_router(event) {
-    let res = event.res;
+export async function fediseer_router(event:any) {
     let req = event.req;
-    
+    let res = event.res;
+
     if (req.route == '/lookup') {
         let instance = req.params.get('instance');
 
