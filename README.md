@@ -6,18 +6,8 @@ It started out as my personal, custom build of Photon, but it got exhausting por
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
-## Table of Contents
-- [Features](#Features)
-- [Supported Media](#Supported-Media)
-- [Get Support](#Support)
-- [Roadmap](#Roadmap)
-- [Demo Server: Try Tesseract](#Public-Hosted-Demo-Instance)
-- [Self-Hosting Tesseract](#Self-Hosting)
-  - [Deploying from Docker Image](#Deploying-The-Image)
-  - [Building from the Repo](#Building-From-The-Repo)
-  - [Reverse Proxy Configuration](#Reverse-Proxy-Configuration)
-  - [Configuring Default Settings](#Configuring-Default-Settings)
-- [Donate](#Donate)
+As of current release, support for 0.19.0 is present and functional.  However, no new 0.19.0 features are implemented in this release as it is still in the backwards compatible channel.
+
 
 ## Feature Highlights
 The following features are unique to Tesseract:
