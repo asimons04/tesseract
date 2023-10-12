@@ -4,7 +4,8 @@ import {
     MEDIA_PROXY_BLACKLIST,
 } from '$lib/settings'
 
-import { cache } from './filesystem-cache'
+//import { cache } from './filesystem-cache'
+import { imageCache as cache } from '../hooks.server'
 
 let blacklist = MEDIA_PROXY_BLACKLIST.split(',')
 

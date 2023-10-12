@@ -54,14 +54,13 @@ export function handleError({ error, event }) {
 
 //// Update TTLs in memory cache once per second
 import { cache as MemoryCache} from '$lib/cache/memory.js'
-
 const task_memoryCache = setInterval(() => {
     MemoryCache.tick();
 }, 1000);
 
 
 //// Image Proxy Cache
-import { cache as imageCache} from './server/filesystem-cache'
+import { FSCache } from './server/filesystem-cache'
 import { 
     ENABLE_MEDIA_CACHE,
     MEDIA_CACHE_HOUSEKEEP_INTERVAL,
@@ -71,21 +70,18 @@ import {
     MEDIA_CACHE_MAX_SIZE,
 } from '$lib/settings'
 
+const cacheDir = '/app/cache';
+export const imageCache = new FSCache(cacheDir, MEDIA_CACHE_MAX_SIZE, MEDIA_CACHE_DURATION, MEDIA_CACHE_KEEP_HOT_ITEMS);
 
 if (ENABLE_MEDIA_CACHE) {
-    const cacheDir = '/app/cache';
-    const cacheInit = await imageCache.init(
-        cacheDir, MEDIA_CACHE_MAX_SIZE, MEDIA_CACHE_DURATION, MEDIA_CACHE_KEEP_HOT_ITEMS
-    );
-    
-    if (cacheInit) { 
+    if (await imageCache.init()) { 
         console.log(`Initialized image proxy cache at ${cacheDir}`) 
         
         // Run housekeeping at startup, if option set, instead of waiting for the first interval run
         if (MEDIA_CACHE_HOUSEKEEP_STARTUP) await imageCache.housekeep();
 
         const task_imageCache = setInterval(async () => {
-            console.log("Housekeeping image proxy cache...");
+            console.log("Housekeeping proxy cache...");
             await imageCache.housekeep();
 
         }, (MEDIA_CACHE_HOUSEKEEP_INTERVAL * 60 * 1000))
@@ -94,5 +90,6 @@ if (ENABLE_MEDIA_CACHE) {
         console.log(`Failed to initialize image proxy cache at ${cacheDir}.  Caching is disabled`)
     }
 }
+
 
 console.log("Starting Tesseract server");
