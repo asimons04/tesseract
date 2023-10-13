@@ -10,6 +10,7 @@
     import { getInstance } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { profile } from '$lib/auth.js'
+    import { scrollToTop } from './helpers.js'
     import { setSessionStorage } from '$lib/session.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
@@ -151,12 +152,8 @@
             on:click={() => {  
                 expandCompact = !expandCompact; 
                 const element = document.getElementById(post.post.id);
-                if (element) {
-                    element.scrollIntoView({
-                        behavior: 'smooth',
-                        block: "start"
-                    });
-                }
+                if (element) scrollToTop(element);
+                
 
             }}
         >

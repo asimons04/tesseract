@@ -202,3 +202,13 @@ export const fixLemmyEncodings = function (content:string|undefined):string|unde
     
     return content;
 }
+
+export const scrollToTop = function(element:HTMLElement|undefined):void {
+    if (!element) return;
+    try {
+        let offset = -64;
+        let y = element.getBoundingClientRect().top + window.pageYOffset + offset;
+        window.scrollTo({top: y, behavior:'smooth'});
+    }
+    catch {}
+}

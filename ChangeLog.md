@@ -21,8 +21,16 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.3
+### Enhancements
+- Added "Return to Top" button to pagination bar
+- Added user option to set the number of posts shown per page
+- Refined scroll into view when expanding/collapsing posts and post body contents. Much less "jumpy" now.
+
+
 
 ## 1.2.8.2
+Emergency release to fix bug that went undiscovered during beta testing.
 ### Bugfix
 - Fixed case where cache module was counting its base directory as an item and doubling the reported size.  
 - Fixed case where cache module was including its base directory in the eviction method.

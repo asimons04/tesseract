@@ -6,6 +6,7 @@
     import { getInstance } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import {isImage, postType} from './helpers.js'
+    import { scrollToTop } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
     
@@ -124,12 +125,7 @@
                     on:click={() => {  
                         expandCompact = !expandCompact; 
                         const element = document.getElementById(post.post.id);
-                        if (element) {
-                            element.scrollIntoView({
-                                behavior: 'smooth',
-                                block: "start"
-                            });
-                        }
+                        if (element) scrollToTop(element);
 
                     }}
                 >
@@ -246,19 +242,12 @@
                     {#if post.post.body.length > 250}
                     <Button
                         color="secondary"
-                        class="w-full"
+                        class="w-full mt-4"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-                        on:click={async () => {
+                        on:click={() => {
                             expandPreviewText = !expandPreviewText
-                            
-                            await delay(10);
                             const element = document.getElementById(post.post.id);
-                            if (element) {
-                                element.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: "start"
-                                });
-                            }
+                            if (element) scrollToTop(element);
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
