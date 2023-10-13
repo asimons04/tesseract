@@ -209,8 +209,10 @@ export class FSCache {
         try {
             let dir = await opendir(this.config.cacheDir);
             for await (const entry of dir) {    
-                let stats = await stat(entry.path);
-                totalSize += stats.size;
+                if (entry.path != '/app/cache') {
+                    let stats = await stat(entry.path);
+                    totalSize += stats.size;
+                }
             }
         }
         catch (err) {
@@ -227,11 +229,13 @@ export class FSCache {
             let contents:Array<DirectoryList> = []
             
             for await (const entry of dir) {
-                let item = {
-                    path: entry.path,
-                    stats: await stat(entry.path)
+                if (entry.path != '/app/cache') {
+                    let item = {
+                        path: entry.path,
+                        stats: await stat(entry.path)
+                    }
+                    contents.push(item)
                 }
-                contents.push(item)
             }
             return contents;
         }
