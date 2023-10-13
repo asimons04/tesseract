@@ -17,7 +17,8 @@
         ArrowPath,
         Icon,
         Bars3,
-        ChartBar
+        ChartBar,
+        TableCells
     } from 'svelte-hero-icons'
 
     let data = {
@@ -59,7 +60,7 @@
         </span>
 
         <div class="flexrow">
-            <div class="flexcol flexcol-33 mt-2">
+            <div class="flexcol flexcol-25 mt-2">
                 <MultiSelect
                     options={['Subscribed', 'Local', 'All']}
                     bind:selected={$userSettings.defaultSort.feed}
@@ -69,20 +70,30 @@
                 </MultiSelect>
             </div>
 
-            <div class="flexcol flexcol-33 mt-2">
+            <div class="flexcol flexcol-25 mt-2">
                 <Sort bind:selected={$userSettings.defaultSort.sort} navigate={false}>
                     <Icon src={ChartBar} mini width={16} slot="icon"/>
                     <span slot="label">Feed Sort Direction</span>
                 </Sort>
             </div>
 
-            <div class="flexcol flexcol-33 mt-2">
+            <div class="flexcol flexcol-25 mt-2">
                 <MultiSelect
                     options={['Hot', 'Top', 'New']}
                     bind:selected={$userSettings.defaultSort.comments}
                 >
                     <Icon src={ChartBar} mini width={16} slot="icon"/>
                     <span slot="label">Comment Sort Direction</span>
+                </MultiSelect>
+            </div>
+
+            <div class="flexcol flexcol-25 mt-2">
+                <MultiSelect
+                    options={[20, 30, 40, 50]}
+                    bind:selected={$userSettings.uiState.postsPerPage}
+                >
+                    <Icon src={TableCells} mini width={16} slot="icon"/>
+                    <span slot="label">Posts per Page</span>
                 </MultiSelect>
             </div>
         </div>
@@ -99,7 +110,7 @@
             
             <div class="flexcol flexcol-33 mt-4">
                 
-                <h1 class="font-bold mb-4">Post Display Options</h1>
+                <h1 class="font-bold mb-2">Post Display Options</h1>
 
                 <Checkbox bind:checked={$userSettings.hidePosts.deleted}>   Hide Deleted Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.hidePosts.removed}>   Hide Removed Posts</Checkbox>
@@ -162,7 +173,7 @@
             
             
             <div class="flexcol flexcol-33 mt-4">
-                <h1 class="font-bold mb-4">User/Community Display</h1>
+                <h1 class="font-bold mb-2">User/Community Display</h1>
                     
                 <Checkbox bind:checked={$userSettings.displayNames}>Show a user's display name instead of their account username.</Checkbox>
                 <Checkbox bind:checked={$userSettings.showInstances.user}>Show user's instances</Checkbox>
@@ -170,7 +181,7 @@
                 <Checkbox bind:checked={$userSettings.showInstances.community}>Show the instance communities belong to.</Checkbox>
 
 
-                <h1 class="font-bold mt-4 mb-4">Misc Settings</h1>
+                <h1 class="font-bold mt-4 mb-2">Misc Settings</h1>
 
                 <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
                 <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
@@ -179,19 +190,18 @@
             </div>
 
             <div class="flexcol flexcol-33 mt-4">
-                <h1 class="font-bold mb-4">Media and Embedded Content</h1>
-                    
+                <h1 class="font-bold mb-2">Media and Embedded Content</h1>
                 <Checkbox bind:checked={$userSettings.embeddedMedia.feed}>Enable embedded content in feed</Checkbox>
                 <Checkbox bind:checked={$userSettings.embeddedMedia.post}>Enable embedded content in posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.embeddedMedia.autoplay}>Autoplay supported content when opening posts</Checkbox>
                 
-                <span class:hidden={!ENABLE_MEDIA_PROXY}>
+                <span class:hidden={!ENABLE_MEDIA_PROXY} class="mt-4">
+                    <h1 class="font-bold mb-2">Image Proxying</h1>
                     <Checkbox bind:checked={$userSettings.proxyMedia.enabled}>Proxy images through Tesseract</Checkbox>
                     <Checkbox bind:checked={$userSettings.proxyMedia.fallback}>Fallback to direct fetch if proxy fails</Checkbox>
                 </span>
 
-                <h1 class="font-bold mt-4 mb-4">YouTube Frontend</h1>
-                
+                <h1 class="font-bold mt-4 mb-2">YouTube Frontend</h1>
                 <div class="flex flex-row flex-wrap">
                     <MultiSelect
                         options={['YouTube', 'Invidious']}

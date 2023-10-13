@@ -1,9 +1,10 @@
-import { getClient, site } from '$lib/lemmy.js'
-import { userSettings } from '$lib/settings.js'
 import type { ListingType, SortType } from 'lemmy-js-client'
+
+import { getClient, site } from '$lib/lemmy.js'
 import { get } from 'svelte/store'
 import { error } from '@sveltejs/kit'
 import { profile } from '$lib/auth.js'
+import { userSettings } from '$lib/settings.js'
 
 export async function load({ url, fetch }) {
     const page = Number(url.searchParams.get('page') || 1) || 1
@@ -15,7 +16,7 @@ export async function load({ url, fetch }) {
    
     try {
         let posts = await getClient(undefined, fetch).getPosts({
-            limit: 20,
+            limit: get(userSettings)?.uiState.postsPerPage || 20,
             page: page,
             sort: sort,
             type_: listingType,

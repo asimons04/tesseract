@@ -92,6 +92,7 @@ interface Settings {
         expandSubscribedList: boolean
         expandAccountsList: boolean
         showPWAButtons: boolean
+        postsPerPage: number
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -132,6 +133,7 @@ export const defaultSettings: Settings = {
         expandSubscribedList: true,
         expandAccountsList: true,
         showPWAButtons: false,
+        postsPerPage:                                                   20,
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
