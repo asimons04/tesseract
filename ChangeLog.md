@@ -63,6 +63,7 @@ For proxy cache documentation and more details, [see the docs page for the media
 - [Bugfix] Fixed bug with inline videos (.webm, .mp4, etc) sometimes not rendering in iOS
 - [Enhancement] Site icon and name now load in navbar when not locked to an instance (formerly was the app icon and instance domain only)
   - Now works for guest instances and switches when you change
+- [Enhancement] Admins can now [supplement the internal list of Piped and Invidious instances](docs/CustomYoutubeFrontends.md). Useful if you run into Invidious/Piped links that are not being detected or want to supply a custom Invidious instance to use as the YouTube frontend.
   
 
 ## 1.2.7

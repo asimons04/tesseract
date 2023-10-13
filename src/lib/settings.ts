@@ -197,6 +197,9 @@ export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HO
 export const MEDIA_CACHE_HOUSEKEEP_STARTUP  = toBool(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP)      ?? true
 export const MEDIA_CACHE_KEEP_HOT_ITEMS     = toBool(env.PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS)         ?? true
 
+// Import custom Invidious/Piped instances
+let custom_invidious_instances = strToArray(env.PUBLIC_CUSTOM_INVIDIOUS) as Array<string>
+let custom_piped_instances = strToArray(env.PUBLIC_CUSTOM_PIPED) as Array<string>
 
 
 
@@ -268,6 +271,17 @@ export const YTFrontends = {
 
     ]
 }
+
+// Import custom Invidious/Piped instances
+if (custom_invidious_instances.length > 0) {
+    YTFrontends.invidious.push(...custom_invidious_instances);
+}
+
+if (custom_piped_instances.length > 0) {
+    YTFrontends.piped.push(...custom_piped_instances);
+}
+
+
 
 
 if (typeof window != 'undefined') {

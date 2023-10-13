@@ -30,7 +30,9 @@ Privacy conscious users have long requested media be proxied through Lemmy.  Whi
 - Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.
 - Can cache any media proxied through it.  Tesseract can act as a caching proxy for your instance as well as cache media originating on other instances as well as outside resources (Giphy, Catbox, Imgur, Yarn, etc).
 - Administrators must explicitly enable this module, and users must enable media proxying in their app settings.
+- Acts like a CDN in a box. You can even set up regional instances of Tesseract to move the heavy data closer to your users.
 
+Read more: [Media Proxy/Cache Docs](docs/MediaProxy.md)
 
 ### Fediseer Integration
 - See any endorsements, hesitations, and censures given to instances you're interacting with.
@@ -76,7 +78,7 @@ For Youtube (and Invidious/Piped), Spotify, Bandcamp, and Soundcloud, you don't 
 - YouTube and all known 
 [Invidious](https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest) and 
 [Piped](https://github.com/TeamPiped/Piped/wiki/Instances) 
-links are detected as "Youtube-like" embeddable videos.  These will embed using the user's preferred YouTube frontend which can be configured in settings. Currently, YouTube and Invidious are supported frontends, and the Invidious instance used can be chosen from your settings.
+links are detected as "Youtube-like" embeddable videos.  These will embed using the user's preferred YouTube frontend which can be configured in settings. Currently, YouTube and Invidious are supported frontends, and the Invidious instance used can be chosen from your settings.  You can even define custom Invididious and Piped instances.
 
 - Vimeo videos are supported with their native URLs (e.g. vimeo.com/{videoID})
 
@@ -85,6 +87,8 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 - Spotify tracks, albums, and playlists will embed a player right in the feed or post.
   - (Optional) To enable full track playback rather than previews, you will need to either allow 3rd party cookies for the Tesseract domain or whitelist cookies for `open.spotify.com`. This is to allow the Spotify iframe to detect your login.
     - On mobile browsers, Spotify will only allow track previews regardless of login state so don't bother allowing 3rd party cookies.
+
+
 
 - Bandcamp tracks and albums.  
 
@@ -192,6 +196,8 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | false                                  |
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |
 | PUBLIC_YOUTUBE_FRONTEND         | `YouTube`\|`Invidious` | YouTube                             |
+| PUBLIC_CUSTOM_INVIDIOUS         | Comma-separated string | ''                                  |
+| PUBLIC_CUSTOM_PIPED             | Comma-separated string | ''                                  |
 | PUBLIC_ENABLE_USER_MEDIA_PROXY  | `bool`              | false                                  |
 
 ### Configuration Options for Media Proxying and Caching
