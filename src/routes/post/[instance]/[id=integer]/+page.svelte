@@ -252,10 +252,15 @@
 
 
             <!--- Post Body --->
-            
             <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">
-                {#if post.post_view.post.body}    
-                    <Markdown source={post.post_view.post.body} />
+                {#if post.post_view.post.body || post.post_view.post.embed_description}    
+                    {#if post.post_view.post.body}                
+                        <Markdown source={post.post_view.post.body} />
+                    
+                    {:else if post.post_view.post.embed_description}
+                        <Markdown source={post.post_view.post.embed_description} />
+
+                    {/if}
                 {/if}
                 
                 <!--- Post Action Buttons --->

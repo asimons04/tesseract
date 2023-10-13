@@ -33,6 +33,8 @@ All major/minor changes between releases will be documented here.
   - Will default to a YouTube embed if available.  Otherwise, album art and a list of sources.
   - Because the Youtube embed is provided by their API, Tesseract cannot route it through your preferred YouTube frontend.
 
+### Enhancements
+- If there is an embed description for a post and no post body, show the embed description instead. 
 
 
 

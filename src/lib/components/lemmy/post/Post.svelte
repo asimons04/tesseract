@@ -232,42 +232,45 @@
 
             
         <!--- Show first 250 characters of post body as a preview in the feed (if not NSFW)--->
-        {#if post.post.body && !post.post.nsfw && displayType=='feed'}
+        {#if (post.post.body || post.post.embed_description) && !post.post.nsfw && displayType=='feed'}
             <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
-                
-                <Markdown source={
-                        ( !expandPreviewText && post.post.body.length > 250)
-                            ? `${post.post.body.slice(0, 250)}...`
-                            : post.post.body
-                    }
-                />
-                
-                {#if post.post.body.length > 250}
-                <Button
-                    color="secondary"
-                    class="w-full"
-                    title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-                    on:click={async () => {
-                        expandPreviewText = !expandPreviewText
-                        
-                        await delay(10);
-                        const element = document.getElementById(post.post.id);
-                        if (element) {
-                            element.scrollIntoView({
-                                behavior: 'smooth',
-                                block: "start"
-                            });
+
+                {#if post.post.body}    
+                    <Markdown source={
+                            ( !expandPreviewText && post.post.body.length > 250)
+                                ? `${post.post.body.slice(0, 250)}...`
+                                : post.post.body
                         }
-                    }}
-                >
-                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                    {expandPreviewText ? 'Collapse' : 'Expand'}
-                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
-                </Button>
-                {/if}
+                    />
                 
-
-
+                    {#if post.post.body.length > 250}
+                    <Button
+                        color="secondary"
+                        class="w-full"
+                        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+                        on:click={async () => {
+                            expandPreviewText = !expandPreviewText
+                            
+                            await delay(10);
+                            const element = document.getElementById(post.post.id);
+                            if (element) {
+                                element.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: "start"
+                                });
+                            }
+                        }}
+                    >
+                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
+                        {expandPreviewText ? 'Collapse' : 'Expand'}
+                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
+                    </Button>
+                    {/if}
+                
+                <!--- If no post body but there's an embed description avaialble, display that--->
+                {:else if post.post.embed_description}
+                    <Markdown source={post.post.embed_description} />
+                {/if}
             </div>
         {/if}
 
