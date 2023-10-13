@@ -44,6 +44,7 @@
         Share,
         Trash,
         UserCircle,
+        UserGroup
     } from 'svelte-hero-icons'
     
     export let post: PostView
@@ -57,6 +58,7 @@
     
     let fediseer = {
         loading: false,
+        loading2: false,
         modal: false,
         data: undefined
     }
@@ -226,7 +228,7 @@
 
         <!---Edit if owned by self--->
         {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}
-            <MenuButton on:click={() => (editing = true)}>
+            <MenuButton on:click={() => (editing = true)} title="Edit Post">
                 <Icon src={PencilSquare} width={16} mini />
                 Edit
             </MenuButton>
@@ -235,6 +237,7 @@
         <!--- Mark as Read/Unread --->
         {#if $profile?.jwt}
             <MenuButton
+                title="Mark as {post.read ? 'Unread' : 'Read'}"
                 on:click={async () => {
                     if ($profile?.jwt)
                     post.read = await markAsRead(post.post, !post.read, $profile.jwt)
@@ -251,6 +254,7 @@
         
         <!--- Share/Copy Post Link to Clipboard --->
         <MenuButton
+            title="Share"
             on:click={() => {
                 navigator.share?.({
                     url: post.post.ap_id,
@@ -266,9 +270,21 @@
             Share
         </MenuButton>
 
+        <!--- Community Link Button--->
+        <MenuButton
+            link
+            href="/c/{post.community.name}@{new URL(post.community.actor_id).hostname}"
+            title="Go to {post.community.name}@{new URL(post.community.actor_id).hostname}"
+        >
+            <Icon src={UserGroup} width={16} mini />
+            <span>{post.community.title}@{new URL(post.community.actor_id).hostname}</span>
+        </MenuButton>
+
+
         {#if $profile?.jwt}
             <!--- Save/Unsave Post --->
             <MenuButton
+            title="{post.saved ? 'Unsave' : 'Save'} Post"
                 on:click={async () => {
                     if ($profile?.jwt)
                         post.saved = await save(post, !post.saved, $profile.jwt)
@@ -280,6 +296,7 @@
       
             <!---Crosspost--->
             <MenuButton
+                title="Crosspost"
                 on:click={() => {
                     setSessionStorage('postDraft', {
                         body: `cross-posted from: ${post.post.ap_id}\n\n${
@@ -298,6 +315,15 @@
                 <Icon src={ArrowTopRightOnSquare} width={16} mini />
                 Crosspost
             </MenuButton>
+
+
+            <!--- Report Button -- Hide for self--->
+            {#if $profile.user?.local_user_view.person.id != post.creator.id}
+                <MenuButton on:click={() => report(post)} color="dangerSecondary" title="Report Post">
+                    <Icon src={Flag} width={16} mini />
+                    Report Post
+                </MenuButton>
+            {/if}
       
             <!---Delete Post--->
             {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
@@ -313,6 +339,7 @@
                         }
                     }}
                     color="dangerSecondary"
+                    title="{post.post.deleted ? 'Restore' : 'Delete'} Post"
                 >
                     <Icon src={Trash} width={16} mini />
                     {post.post.deleted ? 'Restore' : 'Delete'}
@@ -324,31 +351,65 @@
 
         <!--- Creator Profile Button--->
         <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
-        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{post.creator.display_name ?? post.creator.name}</li>
+        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{post.creator.display_name ?? post.creator.name}@{new URL(post.creator.actor_id).hostname} </li>
         <MenuButton
             link
             href="/u/{post.creator.name}@{new URL(post.creator.actor_id).hostname}"
+            title="View profile for {post.creator.display_name ?? post.creator.name}@{new URL(post.creator.actor_id).hostname}"
         >
             <Icon src={UserCircle} width={16} mini />
             <span>Profile</span>
         </MenuButton>
 
-        <!--- Community Link Button--->
-        <MenuButton
-            link
-            href="/c/{post.community.name}@{new URL(post.community.actor_id).hostname}"
+        
+        
+        <!--- User Modlog--->
+        <MenuButton link
+            href="/modlog?other_person_id={post.creator.id}"
+            title="Modlog for {post.creator.display_name ?? post.creator.name}@{new URL(post.creator.actor_id).hostname}"
         >
-            <Icon src={Newspaper} width={16} mini />
-            <span>{post.community.title}</span>
+            <Icon src={Newspaper} mini size="16" />
+            User Modlog
         </MenuButton>
 
-        <!--- Report Button -- Hide for self--->
-        {#if $profile.user?.local_user_view.person.id != post.creator.id}
-            <MenuButton on:click={() => report(post)} color="dangerSecondary">
-                <Icon src={Flag} width={16} mini />
-                Report Post
+
+        <!---Browse communities / fediseer of the post creator if different from community's home instance-->
+        {#if new URL(post.creator.actor_id).hostname != new URL(post.community.actor_id).hostname}
+            
+            <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
+            <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{(new URL(post.creator.actor_id).hostname)}</li>    
+            <MenuButton
+                link
+                href="/communities/{new URL(post.creator.actor_id).hostname}"
+                title="Browse communities at {new URL(post.creator.actor_id).hostname}"
+            >
+                <Icon src={GlobeAlt} width={16} mini />
+                <span>Browse Communities</span>
+            </MenuButton>
+
+            <MenuButton loading={fediseer.loading2} disabled={fediseer.loading2}>
+                <span 
+                    class="flex flex-row gap-2 items-center w-full text-sm"
+                    title="Get Fediseer info for  {new URL(post.creator.actor_id).hostname}"
+                    on:click={async (e) => {
+                        e.stopPropagation();
+                        fediseer.loading2 = true;
+                        fediseer.data = await fediseerLookup(new URL(post.creator.actor_id).hostname);
+                        fediseer.loading2 = false;
+                        fediseer.modal = true;
+                        //@ts-ignore -- Once loaded, pass click event to body to close menu
+                        document.querySelector('body').dispatchEvent(e);
+                    }}
+                >
+                    <span class:hidden={fediseer.loading2}>
+                        <Icon src={Eye} width={16} mini />
+                    </span>
+                    <span>Fediseer</span>
+                </span>
             </MenuButton>
         {/if}
+
+        
 
         <!---Actions for the instance the post was submitted to--->
         <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />

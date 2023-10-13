@@ -10,6 +10,7 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { validateInstance } from '$lib/lemmy.js'
     
+    import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
@@ -76,7 +77,14 @@
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
     
         <div class="p-2">
-            <h1 class="text-2xl font-bold">Communities</h1>
+            <span class="flex flex-row gap-4 items-center font-bold text-xl text-center mx-auto pl-3 pt-4">
+                {#if data.site.site_view.site.icon}
+                    <Avatar circle={false} width={48} url={data.site.site_view.site.icon} />
+                {/if}
+                <h1 class="text-2xl font-bold">Communities</h1>
+            </span>
+
+            
             
             <p class="text-slate-600 dark:text-zinc-400 mt-2">
                 The communities shown here are known to your instance. If you don't see what you're looking for, enter another instance to browse the communities

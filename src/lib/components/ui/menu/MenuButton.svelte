@@ -36,7 +36,7 @@
         <a
             {href}
             target="{newTab ? '_blank' : '_self'}"
-            
+            title="{title}"
             on:click={(e) => click('click', e)}
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm transition-colors 
                 {buttonColors[color]} 
@@ -49,6 +49,7 @@
     {:else}
         <button
             on:click={(e) => click('click', e)}
+            title="{title}"
             type="button"
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm
                 transition-colors {buttonColors[color]} 
