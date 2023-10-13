@@ -34,7 +34,7 @@ All major/minor changes between releases will be documented here.
   - Because the Youtube embed is provided by their API, Tesseract cannot route it through your preferred YouTube frontend.
 
 ### Enhancements
-- If there is an embed description for a post and no post body, show the embed description instead. 
+- If there is an embed description for a post and no post body text, show the embed description instead. 
 
 
 
