@@ -10,8 +10,8 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' |
-    'soundcloud' | 'link' |  'thumbLink' | 'text';
+    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' |
+    'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
 // Note:  These appear to be no longer referenced anywhere.  Marking as deprecated.
@@ -121,7 +121,19 @@ export const isSoundCloud = (url:string):boolean => {
     )
 }
 
+// Odysee
+export const isOdysee = (url:string):boolean => {
+    return (
+        url.startsWith('https://odysee.com') 
+    )
+}
 
+export const isSongLink = (url:string):boolean => {
+    return (
+        url.startsWith('https://album.link') ||
+        url.startsWith('https://song.link')
+    )
+}
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
@@ -157,6 +169,15 @@ export const postType = (post: PostView | undefined ) => {
         return "bandcamp"
     }
 
+    if (post.post.url && isOdysee(post.post.url)) {
+        return "odysee"
+    }
+
+    if (post.post.url && isSongLink(post.post.url)) {
+        return "songlink"
+    }
+
+    // These need to be last
     if (
         post.post.url && !post.post.thumbnail_url) {
         return "link"

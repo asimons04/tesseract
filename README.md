@@ -18,6 +18,8 @@ The following features are unique to Tesseract:
   - Soundcloud
   - Vimeo
   - Bandcamp
+  - Odysee
+  - [Song Link](https://odesli.co/)
 
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
@@ -72,6 +74,8 @@ Tesseract is maintained by someone who is simultaneously a Lemmy user, administr
 
 ## Supported Media
 For Youtube (and Invidious/Piped), Spotify, Bandcamp, and Soundcloud, you don't need to use any special embed links; just the regular URL from your browser.  Tesseract will take care of generating the embed URLs based on your preferences.
+
+- Odysee videos
 
 - Direct video links (e.g .webm, mp4, etc) will embed a player in the feed/post. Right now, these are not toggleable as most do not have thumbnails and the bare links are ugly AF; they're treated basically like fancy image posts.  However, they only downoad enough to show the first few frames, which is acceptable from a performance/bandwidth perspective.
 

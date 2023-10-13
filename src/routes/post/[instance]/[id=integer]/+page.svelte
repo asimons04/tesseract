@@ -29,13 +29,19 @@
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
 
-    import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
-    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
-    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
-    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
+    
+
+    
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
+    import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
+    import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
+    import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
+    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
+    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
+    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
+    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
+
 
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import type { CommentSortType } from 'lemmy-js-client'
@@ -231,6 +237,18 @@
             {#if pType == "vimeo"}
                 <PostVimeo post={post.post_view} displayType={pDisplayType} />
             {/if}
+
+            <!--- Odysee Embed --->
+            {#if pType == "odysee"}
+                <PostOdysee post={post.post_view} displayType={pDisplayType} />
+            {/if}
+
+            <!--- SongLink Embed --->
+            {#if pType == "songlink"}
+                <PostSongLink post={post.post_view} displayType={pDisplayType} />
+            {/if}
+
+
 
 
             <!--- Post Body --->

@@ -8,6 +8,7 @@
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import { imageSize} from './helpers.js'
+    import { inDarkTheme } from '../../../ui/colors.js';
 
     export let post: PostView
     export let displayType: PostDisplayType
@@ -15,52 +16,21 @@
     
     let videoID:    string | null | undefined
     let embedURL:   string = ""
-    let extraParams:string = ""
+    let extraParams:string = "autopause=0"
     let size: string = imageSize(displayType);
 
     
-    if (post?.post?.url) {
+    if (post.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
-        videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
-        
-        if (!videoID) {
-            videoID = new URL(post.post.url).searchParams.get('v');
-        }
-        
-        // Create the embed URL based on the user's preferred YouTube frontend
-        if ($userSettings.embeddedMedia.YTFrontend == "YouTube") {
-            embedURL = "https://www.youtube-nocookie.com/embed";
-        }
-
-        if ($userSettings.embeddedMedia.YTFrontend == "Invidious" && $userSettings.embeddedMedia.customInvidious !='') {
-            embedURL = `https://${$userSettings.embeddedMedia.customInvidious}/embed`;
-        }
+        let mediaID = encodeURIComponent(post.post.url);
+        embedURL = "https://odesli.co/embed/?url=";
         
         // Append the video ID to the embed URL
-        embedURL += `/${videoID}`
-    
-        // Search for valid extra parameters
-        if (videoID) {
-            // Enable autoplay videos in post if setting is enabled
-            
-            if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
-                extraParams += "&autoplay=1";
-            }
-            else {
-                extraParams += "&autoplay=0";
-            }
-
-            // Start time: Can be either t (legacy) or start
-            let startTime = new URL(post.post.url).searchParams.get('t') ?? new URL(post.post.url).searchParams.get('start');
-            if (startTime) {
-                extraParams += `&start=${startTime}`
-            }
-
-            // End time: 
-            let endTime = new URL(post.post.url).searchParams.get('end');
-            if (startTime) {
-                extraParams += `&end=${endTime}`
-            }
+        embedURL += mediaID;
+        
+        // If UI theme is in dark mode, request dark mode embed.
+        if (dark()) {
+            embedURL += '&theme=dark'
         }
     }
 
@@ -93,15 +63,7 @@
 
 
 {#if showAsEmbed()}
-    <Link 
-        href={
-            embedURL
-            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-            : post.post.url
-        }
-        newtab={$userSettings.openInNewTab.postLinks}  
-        highlight nowrap 
-    />
+    <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks}  highlight nowrap />
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
         
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
@@ -111,11 +73,11 @@
                     <iframe 
                         id="video-{post.post.id}"
                         class="flexiframe"
-                        src="{embedURL}?{extraParams}" 
+                        src="{embedURL}" 
                         allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                         loading="lazy"
                         allowfullscreen
-                        title="YouTube: {post.post.name}"
+                        title="Odysee: {post.post.name}"
                     >
                     </iframe>
                 </div>
@@ -123,15 +85,11 @@
         </div>
     </div>
 
-{:else if post.post.thumbnail_url}
+{:else if post?.post?.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
     {#if $userSettings.embeddedMedia.post}
         <Link
-            href={
-                embedURL
-                ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-                : post.post.url
-            }
+            href={post.post.url}
             title={post.post.name}
             newtab={$userSettings.openInNewTab.postLinks}
             highlight nowrap
@@ -143,13 +101,9 @@
         <PostLink post={post} displayType={displayType}/>
     {/if}
 
-{:else if !post.post.thumbnail_url}
+{:else if !post?.post?.thumbnail_url}
     <Link
-        href={
-            embedURL
-            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-            : post.post.url
-        }
+        href={post.post.url}
         title={post.post.name}
         highlight nowrap
     />

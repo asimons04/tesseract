@@ -1,33 +1,36 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
+    
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import {isImage, postType} from './helpers.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
     
-
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import Button from '$lib/components/input/Button.svelte'
-
-    
+    import Card from '$lib/components/ui/Card.svelte'
+    import Link from '$lib/components/input/Link.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
+    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+
+
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
-    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
-    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
+    import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
+    import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
+    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
+    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
+    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
     
-    import Link from '$lib/components/input/Link.svelte'
 
-    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+    
     import { 
         Icon, 
         Link as LinkIcon,
@@ -215,6 +218,16 @@
         <!--- Vimeo Embed --->
         {#if pType == "vimeo"}
             <PostVimeo post={post} displayType={displayType} />
+        {/if}
+
+        <!--- Odysee Embed --->
+        {#if pType == "odysee"}
+            <PostOdysee post={post} displayType={displayType} />
+        {/if}
+
+        <!--- SongLink Embed --->
+        {#if pType == "songlink"}
+            <PostSongLink post={post} displayType={displayType} />
         {/if}
 
             

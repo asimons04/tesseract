@@ -22,8 +22,19 @@ All major/minor changes between releases will be documented here.
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
 
-Current
-- Update tsconfig to use `es2022` module and target `es2017`
+## 1.2.8.1
+### Additional Media Support
+- **[Odysee]** Addded support for Odysee embeds. Odysee is a YouTube-like video platform with blockchain or something.  I dunno.  I've seen video links for those, and they have an embed API.  Tesseract now supports it. 
+- **[YouTube]** Youtube-style post links are now re-written to use your preferred frontend.  For example:
+  - If a post is a YouTube video link, and your YT frontend is Invidious, the post's YouTube link will be re-written to match your selected Invidious instance.
+  - If a post is an Invidious/Piped link, and your YT frontend is YouTube, you'll see a YouTube link
+  - Comment links to YouTube (etc) are not currently re-written.  Will implement that at some point.
+- **[SongLink]** Song and Album links by `odesli.co`.  Provides links to media from various sources (Apple Music, Spotify, YT, Pandora, Deezer, etc).
+  - Will default to a YouTube embed if available.  Otherwise, album art and a list of sources.
+  - Because the Youtube embed is provided by their API, Tesseract cannot route it through your preferred YouTube frontend.
+
+
+
 
 ## 1.2.8
 Most updates are under the hood and to the server-side handlers to support media proxying and an associated caching layer.  Also re-implemented the image upload proxy.
