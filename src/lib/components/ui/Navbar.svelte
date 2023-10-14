@@ -244,7 +244,7 @@
         </MenuButton>
         
         <!--- Accounts List --->
-        <div class="flex flex-col w-full pl-3" class:hidden={!expandAccountsMenu}>
+        <div class="flex flex-col w-full" class:hidden={!expandAccountsMenu}>
             <div class="flex flex-col items-start w-full">
                 {#each $profileData.profiles as prof, index (prof.id)}
                     <ProfileButton {index} {prof}/>

@@ -13,7 +13,8 @@
     import { isCommentMutable } from '$lib/components/lemmy/post/helpers.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    
+    import { userSettings } from '$lib/settings.js'
+
     //import { Color } from '$lib/ui/colors.js'
     //import { getClient, getInstance } from '$lib/lemmy.js'
     //import { page } from '$app/stores'
@@ -33,6 +34,7 @@
         ArrowUturnLeft,
         Bookmark,
         BookmarkSlash,
+        BugAnt,
         ChatBubbleOvalLeft,
         EllipsisHorizontal,
         Eye,
@@ -46,6 +48,7 @@
 
     export let comment: CommentView
     export let replying: boolean = false
+    export let debug: boolean = false
 
     const dispatcher = createEventDispatcher<{ edit: CommentView }>()
 
@@ -57,14 +60,16 @@
 </script>
 
 <Fediseer bind:open={fediseer.modal} data={fediseer.data} />
-
-<div class="flex flex-row gap-2 items-center mt-1 h-7 relative">
+        
+<div class="flex flex-row gap-2 items-center mt-1 h-7 w-full">
+    <!---Comment Vote Buttons--->
     <CommentVote
         bind:score={comment.counts.score}
         bind:vote={comment.my_vote}
         commentId={comment.comment.id}
     />
-
+    
+    <!---Comment Reply Button--->
     <Button
         size="sm"
         color="tertiary"
@@ -74,12 +79,30 @@
         <Icon src={ArrowUturnLeft} width={14} height={14} mini />
         <span class="text-xs">Reply</span>
     </Button>
+    
+    <!---Spacer to put the rest of the buttons at the right --->
+    <div class="ml-auto" />
+    
+    <!---Debug Info Button--->
+    {#if $userSettings.debugInfo}
+        {#if debug}
+            {#await import('$lib/components/util/debug/DebugObject.svelte') then { default: DebugObject }}
+                <DebugObject object={comment} bind:open={debug} />
+            {/await}
+        {/if}
 
+        <Button on:click={() => (debug = true)} size="sm" color="tertiary" title="Debug Info">
+            <Icon src={BugAnt} mini  width={14} height={14} slot="icon" />
+        </Button>
+    {/if}
+
+    <!--- Comment Moderation Menu--->
     {#if $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
         <CommentModerationMenu bind:item={comment} />
     {/if}
   
-    <Menu class="top-0 leading-3" alignment="top-center">
+    <!---Comment Action Menu --->
+    <Menu class="top-0 leading-3" alignment="top-right">
         <Button
             slot="button"
             on:click={toggleOpen}
