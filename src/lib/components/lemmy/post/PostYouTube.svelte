@@ -58,7 +58,7 @@
 
             // End time: 
             let endTime = new URL(post.post.url).searchParams.get('end');
-            if (startTime) {
+            if (endTime) {
                 extraParams += `&end=${endTime}`
             }
         }
@@ -96,7 +96,7 @@
     <Link 
         href={
             embedURL
-            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
             : post.post.url
         }
         newtab={$userSettings.openInNewTab.postLinks}  
@@ -129,7 +129,7 @@
         <Link
             href={
                 embedURL
-                ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+                ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
                 : post.post.url
             }
             title={post.post.name}
@@ -147,7 +147,7 @@
     <Link
         href={
             embedURL
-            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
             : post.post.url
         }
         title={post.post.name}

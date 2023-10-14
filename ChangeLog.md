@@ -25,7 +25,12 @@ All major/minor changes between releases will be documented here.
 ### Enhancements
 - Added "Return to Top" button to pagination bar
 - Added user option to set the number of posts shown per page
+  - Note that more posts may take longer to be retrieved from your home instance.
 - Refined scroll into view when expanding/collapsing posts and post body contents. Much less "jumpy" now.
+
+### Bugfixes
+- Youtube component now shows parameters in link
+- Fixed bug with `end` parameter not detecting 
 
 
 
