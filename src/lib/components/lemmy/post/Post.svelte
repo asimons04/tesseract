@@ -67,29 +67,16 @@
 <!--- Compact Posts --->
 {#if  ($userSettings.showCompactPosts && !expandCompact && displayType=='feed') }
 <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
-    <div class="w-full">
-        <PostMeta post={post} displayType={displayType} showTitle={false}/>
-    </div>
 
+    <!--- Post Metadata, Title, and Thumbnail  --->
     <div class="flex flex-row w-full">
-        <!--- Post Header and Title --->
         <div class="flex flex-col gap-2.5
             { (post.post.thumbnail_url || isImage(post.post.url))
                 ? 'w-[80%]'
                 : 'w-full'
             }
         ">
-            <a
-                href="/post/{getInstance()}/{post.post.id}"
-                class="font-medium max-w-full w-full break-words"
-                style="word-break: break-word;"
-                class:text-slate-500={post.read && $userSettings.markReadPosts}
-                class:dark:text-zinc-400={post.read && $userSettings.markReadPosts}
-                title="{post.post.name}"
-            >
-                <h1 class="text-lg">{fixLemmyEncodings(post.post.name)}</h1>    
-            
-            </a>
+            <PostMeta post={post} displayType={displayType} showTitle={true}/>
             
             {#if post.post.url && !isImage(post.post.url)}
                 <Link
@@ -98,70 +85,71 @@
                     newtab={$userSettings.openInNewTab.postLinks}
                     highlight
                 >
-                    {new URL(post.post.url).host}
+                    <span class="text-sm">{new URL(post.post.url).host}</span>
                 </Link>
             {/if}
 
-            {#if actions}
-                <div class="w-full h-full grid items-end">
-                    <PostActions 
-                        bind:post 
-                        bind:expandCompact
-                        displayType={displayType}
-                        on:edit={(e) => {
-                            toast({
-                                content: 'The post was edited successfully.',
-                                type: 'success',
-                            })
-                        }}
-                    />
-                </div>
-            {/if}
         </div>
         
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
-            <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
-                <div class="grid justify-items-center">
-                    <!--- Expand the post in place when clicking thumbnail--->
-                    <div 
-                        role="button"
-                        title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                        class="cursor-pointer"
-                        on:click={() => {  
-                            expandCompact = !expandCompact; 
-                            const element = document.getElementById(post.post.id);
-                            if (element) scrollToTop(element);
+        <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
+            <div class="grid justify-items-center">
+                <!--- Expand the post in place when clicking thumbnail--->
+                <div 
+                    role="button"
+                    title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                    class="cursor-pointer"
+                    on:click={() => {  
+                        expandCompact = !expandCompact; 
+                        const element = document.getElementById(post.post.id);
+                        if (element) scrollToTop(element);
 
-                        }}
-                    >
-                        <!--- Thumbnail for Link Post--->
-                        {#if post.post.thumbnail_url}
-                            <img
-                                src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
-                                loading="lazy"
-                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                            />
-                        <!---Thumbnail for Image Post--->
-                        {:else}
-                            <img
-                                src="{imageProxyURL(post.post.url, 256, 'webp')}"
-                                loading="lazy"
-                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                            />
-                        {/if}
-                   
-                    
-                    </div>
+                    }}
+                >
+                    <!--- Thumbnail for Link Post--->
+                    {#if post.post.thumbnail_url}
+                        <img
+                            src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
+                            loading="lazy"
+                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                        />
+                    <!---Thumbnail for Image Post--->
+                    {:else}
+                        <img
+                            src="{imageProxyURL(post.post.url, 256, 'webp')}"
+                            loading="lazy"
+                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                        />
+                    {/if}
+            
+                
                 </div>
             </div>
+        </div>
         {/if}
     </div>
 
-
-    
+    <!--- Post Action Bar--->
+    <div class="flex flex-row w-full">
+        {#if actions}
+            <div class="w-full h-full grid items-end">
+                <PostActions 
+                    bind:post 
+                    bind:expandCompact
+                    displayType={displayType}
+                    on:edit={(e) => {
+                        toast({
+                            content: 'The post was edited successfully.',
+                            type: 'success',
+                        })
+                    }}
+                />
+            </div>
+        {/if}
+    </div>
 </Card>
 
 

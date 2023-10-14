@@ -72,21 +72,23 @@
     <div class="flex flex-col gap-1">
         <span class="flex flex-row gap-2 text-sm items-center">
             {#if community}
-                <Avatar url={community.icon} width={24} alt={community.name} />
+                <Avatar url={community.icon} width={36} alt={community.name} />
             {/if}
 
             <div class="flex flex-col text-xs">
                 {#if community}
                     <CommunityLink {community} />
                 {/if}
+                
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-1 flex-wrap items-center">
                     {#if user}
-                    <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
-                        <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
-                    </div>
+                        <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
+                            <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
+                        </div>
                     {/if}
 
                     <RelativeDate date={published} />
+                    
                     {#if upvotes != undefined && downvotes != undefined}
                         <span>•</span>
                         <span>

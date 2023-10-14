@@ -29,6 +29,8 @@ All major/minor changes between releases will be documented here.
 - Refined scroll into view when expanding/collapsing posts and post body contents. Much less "jumpy" now.
 - Comment action and moderation buttons are to the right similar to posts
 - Added debug info button to comments.
+- Tweaked compact post layout
+- Increased community avatar size from 24 to 36px in post headers
 
 ### Bugfixes
 - Youtube component now shows parameters in link

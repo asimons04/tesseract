@@ -35,7 +35,7 @@
     {/if}
 
     {#if name}
-        <span class="flex gap-0">
+        <span class="flex flex-wrap gap-0">
             {#if showInstance != undefined ? showInstance : $userSettings.showInstances.community}
                 {community.title.replace('&amp;', '&')}
                 <span class="text-slate-500 dark:text-zinc-500 font-normal">
