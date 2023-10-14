@@ -73,7 +73,12 @@
 
     <div class="flex flex-row w-full">
         <!--- Post Header and Title --->
-        <div class="flex flex-col w-[80%] gap-2.5">
+        <div class="flex flex-col gap-2.5
+            { (post.post.thumbnail_url || isImage(post.post.url))
+                ? 'w-[80%]'
+                : 'w-full'
+            }
+        ">
             <a
                 href="/post/{getInstance()}/{post.post.id}"
                 class="font-medium max-w-full w-full break-words"
@@ -115,22 +120,21 @@
         </div>
         
         <!--- Thumbnail --->
-        <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
-            <div class="grid justify-items-center">
-                <!--- Expand the post in place when clicking thumbnail--->
-                <div 
-                    role="button"
-                    title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                    class="cursor-pointer"
-                    on:click={() => {  
-                        expandCompact = !expandCompact; 
-                        const element = document.getElementById(post.post.id);
-                        if (element) scrollToTop(element);
+        {#if post.post.thumbnail_url || isImage(post.post.url)}
+            <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
+                <div class="grid justify-items-center">
+                    <!--- Expand the post in place when clicking thumbnail--->
+                    <div 
+                        role="button"
+                        title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                        class="cursor-pointer"
+                        on:click={() => {  
+                            expandCompact = !expandCompact; 
+                            const element = document.getElementById(post.post.id);
+                            if (element) scrollToTop(element);
 
-                    }}
-                >
-                    
-                    {#if post.post.thumbnail_url || isImage(post.post.url)}
+                        }}
+                    >
                         <!--- Thumbnail for Link Post--->
                         {#if post.post.thumbnail_url}
                             <img
@@ -148,18 +152,12 @@
                                 class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
                             />
                         {/if}
-                    <!--- Placeholder Image--->
-                    {:else}
-                        <img
-                            src="/img/placeholder.png"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 dark:bg-zinc-600 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                        />
+                   
                     
-                    {/if}
+                    </div>
                 </div>
             </div>
-        </div>
+        {/if}
     </div>
 
 
