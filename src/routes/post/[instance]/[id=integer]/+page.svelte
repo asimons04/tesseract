@@ -1,17 +1,34 @@
 <script lang="ts">
+    import type { CommentSortType } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
-    import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
+    
+    
+    import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
-    import Comments from '$lib/components/lemmy/comment/Comments.svelte'
-    //
+    import { fly } from 'svelte/transition'
     import { getClient, getInstance } from '$lib/lemmy.js'
+    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
+    import { instance } from '$lib/instance.js'
+    import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
+    import { onMount } from 'svelte'
+    import { page } from '$app/stores'
+    import { profile } from '$lib/auth.js'
+    import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings.js'
+
+    import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
+    import Comments from '$lib/components/lemmy/comment/Comments.svelte'
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import { onMount } from 'svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import Link from '$lib/components/input/Link.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Button from '$lib/components/input/Button.svelte'
-    import { page } from '$app/stores'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
+    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    import StickyCard from '$lib/components/ui/StickyCard.svelte'
 
     import { 
         ArrowPath,
@@ -23,17 +40,11 @@
         Icon 
     } from 'svelte-hero-icons'
 
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
-    import StickyCard from '$lib/components/ui/StickyCard.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
-    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-
-    
-
     
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
+    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
+    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
     import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
@@ -41,20 +52,6 @@
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
-
-
-    import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
-    import type { CommentSortType } from 'lemmy-js-client'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import { profile } from '$lib/auth.js'
-    import { instance } from '$lib/instance.js'
-    import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
-    import { userSettings } from '$lib/settings.js'
-    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
-    import { fly } from 'svelte/transition'
 
     export let data
     

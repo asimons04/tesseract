@@ -21,6 +21,19 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.5
+### Enhancements
+#### Crosspost Rollups in Feed
+See less duplicate posts in the feed.  Now when someone obnoxiously posts the same thing to multiple communities, ignoring the fact that people usually subscribe to both of them, duplicate posts will roll up into a single post with a "Crossposts" list at the bottom. The older post will be the one shown with the newer one being shown as a cross post link.  
+
+Since the API doesn't provide any cross-post information when listing posts (only when viewing a single post), only posts on the same page will be rolled up.  So if there's a duplicate set of posts, but they're on different pages, you'll potentially see both individually - one on each page.  There's no way around that until/unless the API provides cross post information in the post list response.
+
+Yay for having to implement a technical solution to fix a stupid human problem. /s
+
+
+
+
+
 ## 1.2.8.4
 ### Enhancements
 - When showing embedded description when there is no post body, run it through the same truncation/expansion process as the post body preview.

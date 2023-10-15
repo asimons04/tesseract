@@ -12,10 +12,13 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
 
@@ -34,6 +37,7 @@
     
     import { 
         Icon, 
+        ChatBubbleOvalLeftEllipsis,
         Link as LinkIcon,
         ChevronDown,
         ChevronUp
@@ -272,6 +276,45 @@
 
                 {/if}
             </div>
+        {/if}
+
+        <!--- Crosspost Bar --->
+        {#if post.cross_posts?.length > 0}
+            <details open={post.cross_posts?.length <= 2} >
+                <summary class="inline-block w-full">
+                    <SectionTitle class="text-sm font-bold mt-2 w-full cursor-pointer">
+                        Crossposts 
+                        <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
+                            {post.cross_posts.length}
+                        </span>
+                    </SectionTitle>
+                </summary>
+                    
+                <div class="flex flex-col mt-1 pl-2">
+                    {#each post.cross_posts as crosspost}
+                        <div class="flex flex-row text-sm" >
+                            <CommunityLink
+                                community={crosspost.community}
+                                avatarSize={22}
+                                avatar={true}
+                                href="/post/{getInstance()}/{crosspost.post.id}"
+                            />
+                            
+                            <div class="ml-auto"/>
+
+                            <a class="flex flex-row gap-2 text-sm items-center cursor-pointer" href="/post/{getInstance()}/{crosspost.post.id}">
+                                <Icon
+                                    src={ChatBubbleOvalLeftEllipsis}
+                                    mini
+                                    width={14}
+                                    height={14}
+                                />
+                                <FormattedNumber number={crosspost.counts.comments} />
+                            </a>
+                        </div>
+                    {/each}
+                </div>
+            </details>
         {/if}
 
         <!--- Show full pody body if displaying in post--->
