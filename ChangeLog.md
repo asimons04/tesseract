@@ -21,6 +21,14 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.4
+### Bugfixes
+- When showing embedded description when there is no post body, run it through the same truncation/expansion process as the post body preview.
+- Non-HTTPS YouTube links are now detected.  Converted to HTTPS upon render.
+
+### Additional Media Support
+Sources that provide an embed video URL, such as Imgur, Streamable, etc will now render that inline as a video. 
+
 ## 1.2.8.3
 ### Enhancements
 - Added "Return to Top" button to pagination bar

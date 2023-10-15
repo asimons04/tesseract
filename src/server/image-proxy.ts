@@ -41,8 +41,7 @@ export async function image_proxy(event:any) {
         if ( req.method == 'GET' && ( isImage(req.url) || isVideo(req.url) ) ) {
             
             // Lookup the image URL in the cache and return that if found
-            let cacheKey
-            cacheKey = cache.createKey(imageUrl.href);
+            let cacheKey = cache.createKey(imageUrl.href);
             
             if (ENABLE_MEDIA_CACHE) {
                 if (cacheKey && await cache.query(cacheKey)) {

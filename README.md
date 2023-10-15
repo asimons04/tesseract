@@ -20,6 +20,7 @@ The following features are unique to Tesseract:
   - Bandcamp
   - Odysee
   - [Song Link](https://odesli.co/)
+  - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
 
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.

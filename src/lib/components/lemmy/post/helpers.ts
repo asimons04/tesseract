@@ -74,9 +74,13 @@ export const isInvidious = (url: string):boolean => {
 export const isYouTube = (url:string):boolean => {
     return (
         url.startsWith('https://youtu.be') || 
+        url.startsWith('http://youtu.be') || 
         url.startsWith('https://m.youtube.com') || 
+        url.startsWith('http://m.youtube.com') || 
         url.startsWith('https://www.youtube.com') || 
-        url.startsWith('https://youtube.com')
+        url.startsWith('http://www.youtube.com') || 
+        url.startsWith('https://youtube.com') || 
+        url.startsWith('http://youtube.com')
     )
 }
 
@@ -128,12 +132,16 @@ export const isOdysee = (url:string):boolean => {
     )
 }
 
+// SongLink
 export const isSongLink = (url:string):boolean => {
     return (
         url.startsWith('https://album.link') ||
         url.startsWith('https://song.link')
     )
 }
+
+
+
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
@@ -145,7 +153,9 @@ export const postType = (post: PostView | undefined ) => {
         return "image"
     }
 
-    if (post.post.url && isVideo(post.post.url)) {
+    if (
+        (post.post.url && isVideo(post.post.url)) || (post.post.embed_video_url && isVideo(post.post.embed_video_url))
+    ) {
         return "video"
     }
 
@@ -176,6 +186,8 @@ export const postType = (post: PostView | undefined ) => {
     if (post.post.url && isSongLink(post.post.url)) {
         return "songlink"
     }
+
+
 
     // These need to be last
     if (

@@ -244,7 +244,32 @@
                 
                 <!--- If no post body but there's an embed description avaialble, display that--->
                 {:else if post.post.embed_description}
-                    <Markdown source={post.post.embed_description} />
+                    <Markdown source={
+                        ( !expandPreviewText && post.post.embed_description.length > 250)
+                            ? `${post.post.embed_description.slice(0, 250)}...`
+                            : post.post.embed_description
+                        }
+                    />
+                    
+                    {#if post.post.embed_description.length > 250}
+                    <Button
+                        color="secondary"
+                        class="w-full mt-4"
+                        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+                        on:click={() => {
+                            expandPreviewText = !expandPreviewText
+                            const element = document.getElementById(post.post.id);
+                            if (element) scrollToTop(element);
+                        }}
+                    >
+                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
+                        {expandPreviewText ? 'Collapse' : 'Expand'}
+                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
+                    </Button>
+                    {/if}
+
+
+
                 {/if}
             </div>
         {/if}
