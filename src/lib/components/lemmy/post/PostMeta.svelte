@@ -3,15 +3,19 @@
     import type { PostDisplayType } from './helpers.js'
     
     import { getInstance } from '$lib/lemmy.js'
+    import { fediseerLookup } from '$lib/fediseer/client.js'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
+    import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+
     import {
         Bookmark,
         Icon,
@@ -64,9 +68,16 @@
     }
     
     let userIsModerator:boolean = (moderators.filter((index) => index.moderator.id == user.id).length > 0)
-
+    
+    let fediseer = {
+        loading: false,
+        loading2: false,
+        modal: false,
+        data: undefined
+    }
 </script>
 
+<Fediseer bind:open={fediseer.modal} data={fediseer.data} />
 
 <div class="flex flex-col gap-1.5 grow">
     <div class="flex flex-col gap-1">
@@ -80,26 +91,50 @@
                     <CommunityLink {community} />
                 {/if}
                 
-                <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-1 flex-wrap items-center">
+                <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row gap-1 flex-wrap">
+                    
                     {#if user}
                         <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
                             <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
                         </div>
                     {/if}
-
-                    <RelativeDate date={published} />
+                
+                    <span>
+                        <RelativeDate date={published} />
                     
-                    {#if upvotes != undefined && downvotes != undefined}
-                        <span>•</span>
-                        <span>
-                            {Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%
-                        </span>
-                    {/if}
+                        {#if upvotes != undefined && downvotes != undefined}
+                            <span>•</span>
+                            <span>
+                                {Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%
+                            </span>
+                        {/if}
+                    </span>
                 </span>
             </div>
             
             <!--- Post Badges --->
             <div class="flex flex-row ml-auto gap-2 flex-wrap">
+                
+                <!--- Fediseer Endorsement Badge--->
+                {#if $userSettings.uiState.fediseerBadges}
+                    <span class="hidden sm:flex flex-row gap-2 items-center">
+                        <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
+                        
+                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?fallback=true`)} 
+                            class="cursor-pointer"
+                            loading = "lazy"
+                            alt = "{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
+                            title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
+                            on:click={async (e) => {
+                                fediseer.loading = true;
+                                fediseer.data = await fediseerLookup(new URL(community.actor_id).hostname);
+                                fediseer.loading = false;
+                                fediseer.modal = true;
+                            }}
+                        />
+                    </span>
+                {/if}
+
                 {#if nsfw}
                     <Badge color="red">NSFW</Badge>
                 {/if}
@@ -107,35 +142,35 @@
                 {#if saved}
                     <Badge label="Saved" color="yellow">
                         <Icon src={Bookmark} mini size="12" />
-                        Saved
+                        <span class="hidden md:block">Saved</span>
                     </Badge>
                 {/if}
                 
                 {#if locked}
                     <Badge label="Locked" color="yellow">
                         <Icon src={LockClosed} mini size="14" />
-                        Locked
+                        <span class="hidden md:block">Locked</span>
                     </Badge>
                 {/if}
                 
                 {#if removed}
                     <Badge label="Removed" color="red">
                         <Icon src={Trash} mini size="14" />
-                        Removed
+                        <span class="hidden md:block">Removed</span>
                     </Badge>
                 {/if}
                 
                 {#if deleted}
                     <Badge label="Deleted" color="red">
                         <Icon src={Trash} mini size="14" />
-                        Deleted
+                        <span class="hidden md:block">Deleted</span>
                     </Badge>
                 {/if}
                 
                 {#if featured}
                     <Badge label="Featured" color="green">
                         <Icon src={Megaphone} mini size="14" />
-                        Featured
+                        <span class="hidden md:block">Featured</span>
                     </Badge>
                 {/if}
             </div>

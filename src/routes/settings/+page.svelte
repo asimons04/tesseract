@@ -144,7 +144,7 @@
                     <div>
                         <SelectMenu
                             label="Feed Image Size"
-                            alignment="top-left"
+                            alignment="top-center"
                             optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
                             options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
                             selected={$userSettings.imageSize.feed}
@@ -158,7 +158,7 @@
                     <div>
                         <SelectMenu
                             label="Post Image Size"
-                            alignment="top-left"
+                            alignment="top-right"
                             optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
                             options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
                             selected={$userSettings.imageSize.post}
@@ -176,16 +176,14 @@
                 <h1 class="font-bold mb-2">User/Community Display</h1>
                     
                 <Checkbox bind:checked={$userSettings.displayNames}>Show a user's display name instead of their account username.</Checkbox>
-                <Checkbox bind:checked={$userSettings.showInstances.user}>Show user's instances</Checkbox>
-                <Checkbox bind:checked={$userSettings.showInstances.comments}>Show user's instances in the comments.</Checkbox>
-                <Checkbox bind:checked={$userSettings.showInstances.community}>Show the instance communities belong to.</Checkbox>
-
+                <Checkbox bind:checked={$userSettings.uiState.showInstances}>Show instances for users/communities</Checkbox>
 
                 <h1 class="font-bold mt-4 mb-2">Misc Settings</h1>
 
                 <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
                 <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
                 <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
+                <Checkbox bind:checked={$userSettings.uiState.fediseerBadges}> Show Fediseer badges on posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.experimentalFeatures}>Enable experimental features</Checkbox>
             </div>
 

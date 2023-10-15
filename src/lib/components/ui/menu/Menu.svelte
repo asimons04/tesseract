@@ -25,10 +25,12 @@
                 return 'bottom-[100%] left-0 origin-bottom-left'
             case 'bottom-right':
                 return 'top-[100%] right-0 origin-top-right'
+            
             case 'top-center':
-                return 'bottom-[100%] -left-[450%] origin-bottom'
+                return 'bottom-[100%] -left-[50%] origin-bottom'
+
             case 'bottom-center':
-                return 'top-[100%] -left-[450%] origin-top'
+                return 'top-[100%] -left-[50%] origin-top'
 
             case 'side-left':
                 return 'bottom-[-500%] right-[120%]'

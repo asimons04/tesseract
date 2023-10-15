@@ -278,11 +278,11 @@
             </div>
         {/if}
 
-        <!--- Crosspost Bar --->
+        <!--- Crossposts --->
         {#if post.cross_posts?.length > 0}
             <details open={post.cross_posts?.length <= 2} >
                 <summary class="inline-block w-full">
-                    <SectionTitle class="text-sm font-bold mt-2 w-full cursor-pointer">
+                    <SectionTitle class="text-xs font-bold mt-2 w-full cursor-pointer">
                         Crossposts 
                         <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
                             {post.cross_posts.length}
@@ -292,22 +292,22 @@
                     
                 <div class="flex flex-col mt-1 pl-2">
                     {#each post.cross_posts as crosspost}
-                        <div class="flex flex-row text-sm" >
+                        <div class="flex flex-row text-xs" >
                             <CommunityLink
                                 community={crosspost.community}
-                                avatarSize={22}
+                                avatarSize={18}
                                 avatar={true}
                                 href="/post/{getInstance()}/{crosspost.post.id}"
                             />
                             
                             <div class="ml-auto"/>
 
-                            <a class="flex flex-row gap-2 text-sm items-center cursor-pointer" href="/post/{getInstance()}/{crosspost.post.id}">
+                            <a class="flex flex-row gap-2 text-xs items-center cursor-pointer" href="/post/{getInstance()}/{crosspost.post.id}">
                                 <Icon
                                     src={ChatBubbleOvalLeftEllipsis}
                                     mini
-                                    width={14}
-                                    height={14}
+                                    width={12}
+                                    height={12}
                                 />
                                 <FormattedNumber number={crosspost.counts.comments} />
                             </a>

@@ -9,8 +9,6 @@ import { userSettings } from '$lib/settings.js'
 function findCrossposts(posts:PostView[]):PostView[] {
 
     let uniquePosts: PostView[] = [];
-    console.log("findCrossPosts-->posts")
-    console.log(posts);
 
     // Check for duplicate posts.post.url and generate a cross_posts object to attach to the older post
     for (let i:number=0; i<posts.length; i++) {
@@ -46,10 +44,7 @@ function findCrossposts(posts:PostView[]):PostView[] {
         }
         uniquePosts.push(post)
     }
-
-
-    console.log("findCrossPosts-->uniquePosts");
-    console.log(uniquePosts);
+    
     return uniquePosts;
 }
 

@@ -105,6 +105,7 @@
                                     {endorsement.domain}
 
                                     {#if endorsement.endorsement_reasons?.length > 0}
+                                        <p class="text-xs font-bold">Endorsement Reasons:</p>
                                         <ul class="pl-6 text-xs list-disc">
                                             {#each endorsement.endorsement_reasons as reason}
                                                 <li>{reason}</li>
@@ -145,8 +146,18 @@
                             {#each data.censures as censure}
                                 <li>
                                     {censure.domain}
+                                    
+                                    {#if censure.censure_evidence?.length > 0}
+                                        <p class="text-xs font-bold">Hesitation Evidence:</p>
+                                        {#each censure.censure_evidence as evidence}
+                                        <p class="font-normal text-xs">
+                                            {evidence}
+                                        </p>
+                                        {/each}
+                                    {/if}
 
                                     {#if censure.censure_reasons?.length > 0}
+                                        <p class="text-xs font-bold">Censure Reasons:</p>
                                         <ul class="pl-6 text-xs list-disc">
                                             {#each censure.censure_reasons as reason}
                                                 <li>{reason}</li>
@@ -186,9 +197,19 @@
                             {#each data.hesitations as hesitation}
                                 <li>
                                     {hesitation.domain}
-
+                                    
+                                    {#if hesitation.hesitation_evidence?.length > 0}
+                                        <p class="text-xs font-bold">Hesitation Evidence:</p>
+                                        {#each hesitation.hesitation_evidence as evidence}
+                                        <p class="font-normal text-xs">
+                                            {evidence}
+                                        </p>
+                                        {/each}
+                                    {/if}
+                                    
                                     {#if hesitation.hesitation_reasons?.length > 0}
-                                        <ul class="pl-6 text-xs list-disc">
+                                        <p class="text-xs font-bold">Hesitation Reasons:</p>
+                                        <ul class="pl-6 font-normal text-xs list-disc">
                                             {#each hesitation.hesitation_reasons as reason}
                                                 <li>{reason}</li>
                                             {/each}

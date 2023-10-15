@@ -36,7 +36,7 @@
 
     {#if name}
         <span class="flex flex-wrap gap-0">
-            {#if showInstance != undefined ? showInstance : $userSettings.showInstances.community}
+            {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}
                 {community.title.replace('&amp;', '&')}
                 <span class="text-slate-500 dark:text-zinc-500 font-normal">
                     @{new URL(community.actor_id).hostname}

@@ -35,7 +35,7 @@
     >
         {$userSettings.displayNames ? user.display_name ?? user.name : user.name}
 
-        {#if ($userSettings.showInstances.user || ($userSettings.showInstances.comments && inComment)) && showInstance}
+        {#if $userSettings.uiState.showInstances && showInstance}
             <span class="text-slate-500 dark:text-zinc-500 font-normal">
                 @{new URL(user.actor_id).hostname}
             </span>

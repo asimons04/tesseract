@@ -40,11 +40,6 @@ const strToArray = (str:string | undefined) => {
 interface Settings {
     markReadPosts: boolean
     instance?: string
-    showInstances: {
-        user: boolean
-        community: boolean
-        comments: boolean
-    }
     showCompactPosts: boolean
     defaultSort: {
         sort: SortType
@@ -93,6 +88,8 @@ interface Settings {
         expandAccountsList: boolean
         showPWAButtons: boolean
         postsPerPage: number
+        fediseerBadges: boolean
+        showInstances: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -134,15 +131,11 @@ export const defaultSettings: Settings = {
         expandAccountsList: true,
         showPWAButtons: false,
         postsPerPage:                                                   20,
+        fediseerBadges: false,
+        showInstances: true,
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
-    
-    showInstances: {
-        user:           toBool(env.PUBLIC_SHOW_INSTANCES_USER)          ??  false,
-        community:      toBool(env.PUBLIC_SHOW_INSTANCES_COMMUNITY)     ??  true,
-        comments:       toBool(env.PUBLIC_SHOW_INSTANCES_COMMENTS)      ??  false,
-    },
     
     showCompactPosts:   toBool(env.PUBLIC_SHOW_COMPACT_POSTS)           ??  false,
     
@@ -296,6 +289,11 @@ if (typeof window != 'undefined') {
     if (typeof oldUserSettings.imageSize == 'string') {
         delete oldUserSettings.imageSize;
         oldUserSettings.imageSize = defaultSettings.imageSize;
+    }
+
+    if (oldUserSettings.showInstances?.user || oldUserSettings.showInstances?.community || oldUserSettings.showInstances?.comments) {
+        oldUserSettings.uiState.showInstances = true;
+        delete oldUserSettings.showInstances;
     }
 
     userSettings.set({ ...defaultSettings, ...oldUserSettings })
