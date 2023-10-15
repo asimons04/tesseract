@@ -24,8 +24,11 @@ export async function load({ url, fetch }) {
         });
     
         let siteData = await getClient(undefined, fetch).getSite({});
-        
         site.set(siteData)
+
+        // Check for duplicate posts.post.url and generate a cross_posts object to attach to the older post
+        
+
 
         return {
             sort: sort,

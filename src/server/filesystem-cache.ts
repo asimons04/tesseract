@@ -87,7 +87,7 @@ export class FSCache {
             let timeDiff:number         = Math.floor ( ( (now - lastAccessTime) /1000 / 60 ) );  // floor(ms to minutes)
             
             if (timeDiff > this.config.duration) {
-                console.log(`\t Evicting ${entry.path} from cache due to expiration`);
+                console.log(`\t Evicting ${entry.path} due to expiration`);
                 try {
                     await rm(entry.path)
                     evictedItems++;
@@ -114,7 +114,7 @@ export class FSCache {
         
         for ( let i:number=0; i<numItems; i++) {
             let entry:Stats = directoryList[i];
-            console.log(`\t Evicting ${entry.path} from cache to remain under quota.`);
+            console.log(`\t Evicting ${entry.path} to remain under quota.`);
                 try {
                     await rm(entry.path)
                     evictedItems++;
