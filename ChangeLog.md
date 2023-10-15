@@ -28,6 +28,7 @@ All major/minor changes between releases will be documented here.
 
 ### Enhancements
 - Users now have the option to display Fediseer badges on posts. Defaults to off.  
+- Added censure and hesitation evidence to data shown in Fediseer popup
 
 - Removed granular options to show the instances for communities/users/posts.  It's now one toggle:  on or off.
 

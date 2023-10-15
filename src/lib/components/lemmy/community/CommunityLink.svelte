@@ -21,10 +21,12 @@
     }
 </script>
 
-<a class="items-center flex flex-row gap-2 hover:underline
-    {heading ? 'font-bold text-2xl' : ''}
+<a 
+    class="items-center flex flex-row gap-2 hover:underline
+        {heading ? 'font-bold text-2xl' : ''}
     " 
     href={href ?? linkFromCommunity(community)} 
+    title={community.title.replace('&amp;', '&')}
 >
     {#if avatar}
         <Avatar

@@ -18,6 +18,7 @@
 
     import {
         Bookmark,
+        BuildingOffice,
         Icon,
         InformationCircle,
         LockClosed,
@@ -113,17 +114,18 @@
             </div>
             
             <!--- Post Badges --->
-            <div class="flex flex-row ml-auto gap-2 flex-wrap">
+            <div class="flex flex-row ml-auto mb-auto gap-2">
                 
                 <!--- Fediseer Endorsement Badge--->
                 {#if $userSettings.uiState.fediseerBadges}
-                    <span class="hidden sm:flex flex-row gap-2 items-center">
+                    <span class="flex flex-row gap-2 items-center mr-2">
                         <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
                         
                         <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?fallback=true`)} 
                             class="cursor-pointer"
-                            loading = "lazy"
-                            alt = "{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
+                            class:hidden={fediseer.loading}
+                            loading="lazy"
+                            alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
                             title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
                             on:click={async (e) => {
                                 fediseer.loading = true;
@@ -136,7 +138,10 @@
                 {/if}
 
                 {#if nsfw}
-                    <Badge color="red">NSFW</Badge>
+                    <Badge color="red">
+                        <Icon src={BuildingOffice} mini size="12"/>
+                        <span class="hidden md:block">NSFW</span>
+                    </Badge>
                 {/if}
 
                 {#if saved}
