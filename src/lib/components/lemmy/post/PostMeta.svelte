@@ -102,7 +102,6 @@
                 
                     <span>
                         <RelativeDate date={published} />
-                    
                         {#if upvotes != undefined && downvotes != undefined}
                             <span>•</span>
                             <span>
@@ -121,7 +120,7 @@
                     <span class="flex flex-row gap-2 items-center mr-2">
                         <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
                         
-                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?fallback=true`)} 
+                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg`)} 
                             class="cursor-pointer"
                             class:hidden={fediseer.loading}
                             loading="lazy"

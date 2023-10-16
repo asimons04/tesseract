@@ -211,7 +211,7 @@
                             
                             <div class="flex flex-row items-center">
                                 <div class="flex flex-col">
-                                    <span class="break-words max-w-full w-max text-base font-bold text-sky-400 hover:underline">
+                                    <span class="break-words text-base font-bold text-sky-400 hover:underline">
                                         <CommunityLink
                                             showInstance={false}
                                             avatar

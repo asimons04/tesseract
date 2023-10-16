@@ -26,9 +26,11 @@ All major/minor changes between releases will be documented here.
 - Fix x-overflow in markdown render divs
 
 
-### Enhancements
+### Enhancements and Bugfixex
 - Users now have the option to display Fediseer badges on posts. Defaults to off.  
 - Added censure and hesitation evidence to data shown in Fediseer popup
+- Fixed overflow for community names in community browser.
+- Hide theater mode button when screen width makes it useless
 
 - Removed granular options to show the instances for communities/users/posts.  It's now one toggle:  on or off.
 

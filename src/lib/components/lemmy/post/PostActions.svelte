@@ -169,33 +169,35 @@
             ($userSettings.embeddedMedia.feed && displayType == 'feed') 
         )
     }
-        <Button 
-            title="{theaterMode ? 'Exit' : ''} Theater Mode"
-            on:click={
-                async () => {
-                    if (!theaterMode) {
-                        $userSettings.uiState.expandCommunitySidebar=false;
-                        $userSettings.uiState.expandSidebar = false;
-                        theaterMode=true;
-                    }
-                    else {
-                        $userSettings.uiState.expandCommunitySidebar=true;
-                        $userSettings.uiState.expandSidebar = true;
-                        theaterMode=false;
-                    }
-                    await delay(10);
-                    const element = document.getElementById("video-" + post.post.id);
-                    if (element) {
-                        element.scrollIntoView({
-                            behavior: 'smooth',
-                            block: "center"
-                        });
+        <span class="hidden md:block">
+            <Button 
+                title="{theaterMode ? 'Exit' : ''} Theater Mode"
+                on:click={
+                    async () => {
+                        if (!theaterMode) {
+                            $userSettings.uiState.expandCommunitySidebar=false;
+                            $userSettings.uiState.expandSidebar = false;
+                            theaterMode=true;
+                        }
+                        else {
+                            $userSettings.uiState.expandCommunitySidebar=true;
+                            $userSettings.uiState.expandSidebar = true;
+                            theaterMode=false;
+                        }
+                        await delay(10);
+                        const element = document.getElementById("video-" + post.post.id);
+                        if (element) {
+                            element.scrollIntoView({
+                                behavior: 'smooth',
+                                block: "center"
+                            });
+                        }
                     }
                 }
-            }
-        >
-            <Icon src={Tv} mini size="16" slot="icon" />
-        </Button>
+            >
+                <Icon src={Tv} mini size="16" slot="icon" />
+            </Button>
+        </span>
     {/if}
     
     <!--- Moderation Menu--->
