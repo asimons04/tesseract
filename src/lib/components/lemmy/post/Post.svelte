@@ -290,7 +290,7 @@
                     </SectionTitle>
                 </summary>
                     
-                <div class="flex flex-col mt-1 pl-2">
+                <div class="flex flex-col mt-1 pl-2 gap-1">
                     {#each post.cross_posts as crosspost}
                         <div class="flex flex-row text-xs" >
                             <CommunityLink

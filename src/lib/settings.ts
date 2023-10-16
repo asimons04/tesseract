@@ -131,7 +131,7 @@ export const defaultSettings: Settings = {
         expandAccountsList: true,
         showPWAButtons: false,
         postsPerPage:                                                   20,
-        fediseerBadges: false,
+        fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
         showInstances: true,
     },
 
