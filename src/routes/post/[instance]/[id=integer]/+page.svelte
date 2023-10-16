@@ -33,6 +33,8 @@
 
     import { 
         ArrowPath,
+        ArrowUp,
+        ArrowDown,
         ArrowSmallLeft,
         ChatBubbleOvalLeftEllipsis,
         ChevronDoubleRight,
@@ -290,7 +292,7 @@
                         
                     <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex flex-col">
                         {#each post.cross_posts as crosspost}
-                            <div class="py-2.5 flex flex-row gap-1 items-center">
+                            <a class="py-2.5 flex flex-row gap-4 items-center" href="/post/{getInstance()}/{crosspost.post.id}">
                                 
                                 <span class="text-sm flex flex-col">
                                     <CommunityLink
@@ -303,19 +305,27 @@
                                 
                                 <span class="ml-auto"/>
                                 
-                                <span>
-                                    <a class="flex flex-row gap-2 font-normal text-sm items-center cursor-pointer" href="/post/{getInstance()}/{crosspost.post.id}">
-                                        <Icon
-                                            src={ChatBubbleOvalLeftEllipsis}
-                                            mini
-                                            width={22}
-                                            height={22}
-                                        />
-                                        <FormattedNumber number={crosspost.counts.comments} />
-                                    </a>
+                                <span class="flex flex-row gap-2 font-normal text-sm items-center">
+                                    <Icon
+                                        src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown}
+                                        mini
+                                        width={22}
+                                        height={22}
+                                    />
+                                    <FormattedNumber number={crosspost.counts.score} />
                                 </span>
 
-                            </div>
+                                
+                                <span class="flex flex-row gap-2 font-normal text-sm items-center" >
+                                    <Icon
+                                        src={ChatBubbleOvalLeftEllipsis}
+                                        mini
+                                        width={22}
+                                        height={22}
+                                    />
+                                    <FormattedNumber number={crosspost.counts.comments} />
+                                </span>
+                            </a>
                         {/each}
                     </div>
                 </details>

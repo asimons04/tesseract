@@ -36,6 +36,8 @@
     
     import { 
         Icon, 
+        ArrowUp,
+        ArrowDown,
         ChatBubbleOvalLeftEllipsis,
         Link as LinkIcon,
         ChevronDown,
@@ -291,7 +293,7 @@
                     
                 <div class="flex flex-col mt-1 pl-2 gap-1">
                     {#each post.cross_posts as crosspost}
-                        <div class="flex flex-row text-xs" >
+                        <a class="flex flex-row text-xs gap-4" href="/post/{getInstance()}/{crosspost.post.id}">
                             <CommunityLink
                                 community={crosspost.community}
                                 avatarSize={18}
@@ -300,8 +302,18 @@
                             />
                             
                             <div class="ml-auto"/>
+                            
+                            <span class="flex flex-row gap-2 items-center">
+                                <Icon
+                                    src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown}
+                                    mini
+                                    width={12}
+                                    height={12}
+                                />
+                                <FormattedNumber number={crosspost.counts.score} />
+                            </span>
 
-                            <a class="flex flex-row gap-2 text-xs items-center cursor-pointer" href="/post/{getInstance()}/{crosspost.post.id}">
+                            <span class="flex flex-row gap-2 text-xs items-center cursor-pointer" >
                                 <Icon
                                     src={ChatBubbleOvalLeftEllipsis}
                                     mini
@@ -309,8 +321,8 @@
                                     height={12}
                                 />
                                 <FormattedNumber number={crosspost.counts.comments} />
-                            </a>
-                        </div>
+                            </span>
+                        </a>
                     {/each}
                 </div>
             </details>

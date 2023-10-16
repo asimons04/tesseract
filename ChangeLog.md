@@ -28,10 +28,15 @@ All major/minor changes between releases will be documented here.
 #### Crosspost Detection
 Fixed crosspost rollup algorithm.  Was only fuctional for one crosspost; any more would be treated as unique.  
 
-Crosspost detection also compares the post title in addition to the URL. Lemmy-UI only compares the URL.  Adding the post title to the comparison catches more spam and is apparently necessary because some people are attention whores. 
+Crosspost detection also compares the post title in addition to the URL. Lemmy-UI only compares the URL.  Adding the post title to the comparison catches more spam.  Yes, spam.
+
 
 #### Crosspost Loading / PostMeta Reactivity
 There were a few variables that weren't reactive in the PostMeta component. This caused the community and post creator to not change when clicking a crosspost link when viewing a post.
+
+
+
+
 
 ## 1.2.8.5
 ### Bugfixes
