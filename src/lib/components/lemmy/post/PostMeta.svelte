@@ -121,7 +121,7 @@
                     <span class="flex flex-row gap-2 items-center mr-2">
                         <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
                         
-                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg`)} 
+                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
                             class="cursor-pointer"
                             class:hidden={fediseer.loading}
                             loading="lazy"
