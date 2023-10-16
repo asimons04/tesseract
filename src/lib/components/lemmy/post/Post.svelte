@@ -282,7 +282,7 @@
         {#if post.cross_posts?.length > 0}
             <details open={post.cross_posts?.length <= 2} >
                 <summary class="inline-block w-full">
-                    <SectionTitle class="text-xs font-bold mt-2 w-full cursor-pointer">
+                    <SectionTitle class="flex flex-row text-xs font-bold mt-2 cursor-pointer">
                         Crossposts 
                         <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
                             {post.cross_posts.length}
