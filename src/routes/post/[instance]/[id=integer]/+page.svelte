@@ -1,10 +1,7 @@
 <script lang="ts">
-    import type { CommentSortType } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
     
-    
     import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
-    import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import { getClient } from '$lib/lemmy.js'
     import { setSessionStorage } from '$lib/session.js'
     import { instance } from '$lib/instance.js'
@@ -17,38 +14,23 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
-    import Comments from '$lib/components/lemmy/comment/Comments.svelte'
-    import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    
+    // Post Components
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-
+    import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
+    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
+    import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
+    
     import { 
-        ArrowPath,
         ArrowSmallLeft,
         ChevronDoubleUp,
         ChevronDoubleDown,
         ExclamationTriangle, 
         Icon 
     } from 'svelte-hero-icons'
-
     
-    import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
-    import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
-    import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
-    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
-    import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
-    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
-    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
-    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
-    import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
-    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
-
     export let data
     let post = data.post;
     let community = data.post.community_view.community;
@@ -105,27 +87,6 @@
         } catch (err) {
             removeToast(id)
         }
-    }
-
-    let commentsPage = 1
-    let commentSort: CommentSortType = data.commentSort
-    let loading = false
-    let moreComments = true
-    let loaded = false
-
-    async function reloadComments() {
-        data.singleThread = false
-        commentsPage = 1
-
-        data.streamed.comments = getClient().getComments({
-            auth: $profile?.jwt,
-            page: 1,
-            limit: 25,
-            type_: 'All',
-            post_id: post.post_view.post.id,
-            sort: commentSort,
-            max_depth: 3,
-        })
     }
 
 </script>
@@ -197,47 +158,67 @@
             <PostMeta post={post.post_view} moderators={post.moderators} displayType={pDisplayType}/>
             
             {#if pType == "link" || pType == "thumbLink"}
-                <PostLink post={post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostLink.svelte') then { default: PostLink }}    
+                    <PostLink post={post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
             
             {#if pType == "image"}
-                <PostImage post={post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostImage.svelte') then { default: PostImage }}
+                    <PostImage post={post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             {#if pType == "video"}
-                <PostVideo post = {post.post_view} />
+                {#await import('$lib/components/lemmy/post/PostVideo.svelte') then { default: PostVideo }}
+                    <PostVideo post = {post.post_view} />
+                {/await}
             {/if}
         
             {#if pType == "youtube"}
-                <PostYouTube post = {post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostYouTube.svelte') then { default: PostYouTube }}
+                    <PostYouTube post = {post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             {#if pType == "spotify"}
-                <PostSpotify post = {post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostSpotify.svelte') then { default: PostSpotify }}
+                    <PostSpotify post = {post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             <!--- Bandcamp Embed --->
             {#if pType == "bandcamp"}
-                <PostBandcamp post = {post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostBandcamp.svelte') then {default: PostBandcamp }}
+                    <PostBandcamp post = {post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             {#if pType == "soundcloud"}
-                <PostSoundCloud post = {post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostSoundCloud.svelte') then { default: PostSoundCloud }}
+                    <PostSoundCloud post = {post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             <!--- Vimeo Embed --->
             {#if pType == "vimeo"}
-                <PostVimeo post={post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostVimeo.svelte') then { default: PostVimeo }}
+                    <PostVimeo post={post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             <!--- Odysee Embed --->
             {#if pType == "odysee"}
-                <PostOdysee post={post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostOdysee.svelte') then { default: PostOdysee }}
+                    <PostOdysee post={post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             <!--- SongLink Embed --->
             {#if pType == "songlink"}
-                <PostSongLink post={post.post_view} displayType={pDisplayType} />
+                {#await import('$lib/components/lemmy/post/PostSongLink.svelte') then { default: PostSongLink }}
+                    <PostSongLink post={post.post_view} displayType={pDisplayType} />
+                {/await}
             {/if}
 
             <!--- Post Body --->
@@ -258,68 +239,8 @@
             <Crossposts post={post} size="sm"/>
             
             <!--- Comments --->
-            <div id="comments" class="mt-4 flex flex-col gap-2 w-full">
-                <div class="font-bold text-lg">
-                    Comments 
-                    <span class="text-sm font-normal ml-2 opacity-80">
-                        {post.post_view.counts.comments}
-                    </span>
-                </div>
+            <CommentSection bind:data={data} />
 
-                <div class="flex flex-row justify-between">
-                    <MultiSelect
-                        options={['Hot', 'Top', 'New']}
-                        bind:selected={commentSort}
-                        on:select={reloadComments}
-                    />
-
-                    <Button class="font-normal" title="Reload comments"
-                        on:click={() => {
-                            reloadComments();
-                        }}
-                    >
-                        <Icon src={ArrowPath} mini size="16" slot="icon" />
-                        <span class="hidden md:inline">Reload Comments</span>
-                    </Button>
-                </div>
-
-                {#if data.singleThread}
-                    <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap gap-4">
-                        <p>You're viewing a single thread.</p>
-                        <Button on:click={reloadComments}>View full thread</Button>
-                    </Card>
-                {/if}
-
-                {#await data.streamed.comments}
-                    <div class="h-16 mx-auto grid place-items-center">
-                        <Spinner width={24} />
-                    </div>
-                    {:then comments}
-                    {#if $profile?.user}
-                        <CommentForm
-                            postId={post.post_view.post.id}
-                            on:comment={(comment) =>
-                            (comments.comments = [
-                                comment.detail.comment_view,
-                                ...comments.comments,
-                            ])}
-                            locked={post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
-                        />
-                    {/if}
-                
-                    {#await buildCommentsTreeAsync(comments.comments)}
-                        <div class="h-16 mx-auto grid place-items-center">
-                            <Spinner width={36} />
-                        </div>
-                        {:then comments}
-                        <Comments post={post.post_view.post} moderators={post.moderators} nodes={comments} isParent={true} />
-                    {/await}
-                    {:catch}
-                        <div class="bg-red-500/10 border border-red-500 rounded-md p-4">
-                            Failed to load comments.
-                        </div>
-                {/await}
-            </div>
 
             <!--- Menu bar below post/comments content --->
             <div class="flex flex-row gap-2 w-full mb-2 justify-between" class:hidden={!$userSettings.uiState.showPWAButtons}>

@@ -12,34 +12,14 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-
-    import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
-    import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
-    import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
-    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
-    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
-    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
-    import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
-    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
-    
-
     
     import { 
         Icon, 
-        ArrowUp,
-        ArrowDown,
-        ChatBubbleOvalLeftEllipsis,
         Link as LinkIcon,
         ChevronDown,
         ChevronUp
@@ -170,52 +150,72 @@
     
         <!--- Link-style post without thumbnail URL--->
         {#if pType == "link" || pType == "thumbLink"}
-            <PostLink post={post} displayType={displayType} />
+            {#await import('$lib/components/lemmy/post/PostLink.svelte') then { default: PostLink }}        
+                <PostLink post={post} displayType={displayType} />
+            {/await}
         {/if}
 
         <!--- Direct Image Post --->
         {#if pType == "image"}
-            <PostImage post={post} displayType={displayType}/>
+            {#await import('$lib/components/lemmy/post/PostImage.svelte') then { default: PostImage }}
+                <PostImage post={post} displayType={displayType}/>
+            {/await}
         {/if}
             
         <!--- Direct Video Post --->
         {#if pType == "video"}
-            <PostVideo post={post} />
+            {#await import('$lib/components/lemmy/post/PostVideo.svelte') then { default: PostVideo }}
+                <PostVideo post={post} />
+            {/await}
         {/if}
 
         <!--- Bandcamp Embed --->
         {#if pType == "bandcamp"}
-            <PostBandcamp post={post} displayType={displayType}/>
+            {#await import('$lib/components/lemmy/post/PostBandcamp.svelte') then {default: PostBandcamp }}
+                <PostBandcamp post={post} displayType={displayType}/>
+            {/await}
         {/if}
 
         <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
         {#if pType == "youtube"}
-            <PostYouTube post={post} displayType={displayType} autoplay={autoplay}/>
+            {#await import('$lib/components/lemmy/post/PostYouTube.svelte') then { default: PostYouTube }}
+                <PostYouTube post={post} displayType={displayType} autoplay={autoplay}/>
+            {/await}
         {/if}
 
         <!--- Spotify Embed --->
         {#if pType == "spotify"}
-            <PostSpotify post={post} displayType={displayType} />
+            {#await import('$lib/components/lemmy/post/PostSpotify.svelte') then { default: PostSpotify }}
+                <PostSpotify post={post} displayType={displayType} />
+            {/await}
         {/if}
 
         <!--- Soundcloud Embed --->
         {#if pType == "soundcloud"}
-            <PostSoundCloud post={post} displayType={displayType} />
+            {#await import('$lib/components/lemmy/post/PostSoundCloud.svelte') then { default: PostSoundCloud }}
+                <PostSoundCloud post={post} displayType={displayType} />
+            {/await}
         {/if}
 
         <!--- Vimeo Embed --->
         {#if pType == "vimeo"}
-            <PostVimeo post={post} displayType={displayType} />
+            {#await import('$lib/components/lemmy/post/PostVimeo.svelte') then { default: PostVimeo }}
+                <PostVimeo post={post} displayType={displayType} />
+            {/await}
         {/if}
 
         <!--- Odysee Embed --->
         {#if pType == "odysee"}
-            <PostOdysee post={post} displayType={displayType} />
+            {#await import('$lib/components/lemmy/post/PostOdysee.svelte') then { default: PostOdysee }}
+                <PostOdysee post={post} displayType={displayType} />
+            {/await}
         {/if}
 
         <!--- SongLink Embed --->
         {#if pType == "songlink"}
-            <PostSongLink post={post} displayType={displayType} />
+            {#await import('$lib/components/lemmy/post/PostSongLink.svelte') then { default: PostSongLink }}
+                <PostSongLink post={post} displayType={displayType} />
+            {/await}
         {/if}
 
             
