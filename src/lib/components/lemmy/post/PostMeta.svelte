@@ -84,7 +84,7 @@
     <div class="flex flex-col gap-1">
         <span class="flex flex-row gap-2 text-sm items-center">
             {#if community}
-                <Avatar url={community.icon} width={36} alt={community.name} />
+                <Avatar url={community.icon} width={32} alt={community.name} />
             {/if}
 
             <div class="flex flex-col text-xs">
@@ -96,6 +96,7 @@
                     
                     {#if user}
                         <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
+                            <span>Posted by&nbsp;</span>
                             <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
                         </div>
                     {/if}

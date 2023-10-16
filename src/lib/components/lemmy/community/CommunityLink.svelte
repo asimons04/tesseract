@@ -37,14 +37,17 @@
     {/if}
 
     {#if name}
-        <span class="flex flex-wrap gap-0">
+        <span class="flex flex-wrap gap-0 font-bold">
+            
             {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}
-                {community.title.replace('&amp;', '&')}
+                
+                {$userSettings.displayNames ? community.title.replace('&amp;', '&') : `/c/${community.name}`}
+                
                 <span class="text-slate-500 dark:text-zinc-500 font-normal">
                     @{new URL(community.actor_id).hostname}
                 </span>
             {:else}
-                {community.title}
+                {$userSettings.displayNames ? community.title.replace('&amp;', '&') : `/c/${community.name}`}
             {/if}
         </span>
     {/if}
