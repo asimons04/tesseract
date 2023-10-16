@@ -45,21 +45,25 @@ function findCrossposts(posts:PostView[]):PostView[] {
         if (post.cross_posts.length >0) {
 
             // Build a new PostView object to append after massaging the cross posts
-            let oldestCrossPost:PostView
+            let oldestCrossPost:PostView = {...post}
             
             // Loop over the cross posts, find the oldest one, and set that as the parent.
             for (let j:number=0; j<post.cross_posts.length; j++) {
                 if (new Date(post.post.published) > new Date(post.cross_posts[j].post.published)) {
                     oldestCrossPost = {...post.cross_posts[j]}
+                    
                     oldestCrossPost.cross_posts = [...post.cross_posts]
+                    
                     oldestCrossPost.cross_posts.push({...post})
                 }
             }
 
             // Finally, remove the cross post entry that matches the parent.
-            for (let j:number=0; j<oldestCrossPost.cross_posts.length; j++) {
-                if (oldestCrossPost.post.id == oldestCrossPost.cross_posts[j].post.id) {
-                    oldestCrossPost.cross_posts.splice(j,1);
+            if (oldestCrossPost.cross_posts) {
+                for (let j:number=0; j<oldestCrossPost.cross_posts.length; j++) {
+                    if (oldestCrossPost.post.id == oldestCrossPost.cross_posts[j].post.id) {
+                        oldestCrossPost.cross_posts.splice(j,1);
+                    }
                 }
             }
             // Add our custom Post object to the return array

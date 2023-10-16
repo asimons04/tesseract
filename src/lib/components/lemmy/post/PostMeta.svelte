@@ -33,15 +33,13 @@
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
 
-    
+                      
     // Extract data from post object for easier reference
-    // These values don't change, so assign them once
-    let community: Community | undefined    = post.community ?? undefined
-    let user: Person | undefined            = post.creator ?? undefined
-    let id: number | undefined              = post.post.id ?? undefined
-    let published: String                   = post.post.published
-
     // These values are mutable so define them and bind them reactively
+    let id: number |undefined
+    let community: Community | undefined
+    let user: Person | undefined
+    let published:string
     let title: string | undefined
     let upvotes: number | undefined
     let downvotes: number | undefined
@@ -52,10 +50,14 @@
     let removed: boolean
     let locked: boolean
     let read: boolean
-
+    let userIsModerator:boolean
     
     // Make these variables reactive
     $: {
+        community                           = post.community ?? undefined
+        user                                = post.creator ?? undefined
+        id                                  = post.post.id ?? undefined
+        published                           = post.post.published
         title                               = fixLemmyEncodings(post.post.name) ?? undefined
         upvotes                             = post.counts.upvotes ?? undefined
         downvotes                           = post.counts.downvotes ?? undefined
@@ -66,9 +68,10 @@
         removed                             = post.post.removed ?? false
         locked                              = post.post.locked ?? false
         read                                = post.read ?? false
+        userIsModerator                     = (moderators.filter((index) => index.moderator.id == user.id).length > 0)
     }
     
-    let userIsModerator:boolean = (moderators.filter((index) => index.moderator.id == user.id).length > 0)
+     
     
     let fediseer = {
         loading: false,

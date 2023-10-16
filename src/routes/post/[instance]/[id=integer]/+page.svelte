@@ -22,6 +22,7 @@
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
@@ -33,6 +34,7 @@
     import { 
         ArrowPath,
         ArrowSmallLeft,
+        ChatBubbleOvalLeftEllipsis,
         ChevronDoubleRight,
         ChevronDoubleUp,
         ChevronDoubleDown,
@@ -54,8 +56,7 @@
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
 
     export let data
-    
-    let post = data.post
+    let post = data.post;
     let community = data.post.community_view.community;
     
     let pType:PostType = postType(post.post_view)
@@ -180,7 +181,7 @@
         
         <!--- Post and Comments-->
         <div class="flex flex-col gap-2 sm:gap-2 
-            w-full sm:w-full md:w-[90%]
+            w-full sm:w-full md:w-[85%]
             ml-auto mr-auto
         ">
             {#if $page.params.instance.toLowerCase() != $instance.toLowerCase()}
@@ -277,10 +278,7 @@
             
             <!--- Crosspost Bar --->
             {#if post.cross_posts?.length > 0}
-                <details
-                    class="text-sm font-bold mt-2 w-full cursor-pointer"
-                    open={post.cross_posts?.length <= 3}
-                >
+                <details class="text-sm font-bold mt-2 w-full cursor-pointer" open={post.cross_posts?.length <= 3}>
                     <summary class="inline-block w-full">
                         <SectionTitle class="text-inherit dark:text-inherit">
                             Crossposts 
@@ -292,21 +290,32 @@
                         
                     <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex flex-col">
                         {#each post.cross_posts as crosspost}
-                        <div class="py-2.5 flex flex-col gap-1">
-                            <span class="text-xs flex flex-col pointer-events-none">
-                                <CommunityLink
-                                    community={crosspost.community}
-                                    avatarSize={22}
-                                    avatar={true}
-                                />
-                            </span>
-                            <Link
-                                class="text-sm"
-                                href="/post/{$page.params.instance}/{crosspost.post.id}"
-                            >
-                                {crosspost.post.name}
-                            </Link>
-                        </div>
+                            <div class="py-2.5 flex flex-row gap-1 items-center">
+                                
+                                <span class="text-sm flex flex-col">
+                                    <CommunityLink
+                                        community={crosspost.community}
+                                        avatarSize={22}
+                                        avatar={true}
+                                        href="/post/{$page.params.instance}/{crosspost.post.id}"
+                                    />
+                                </span>
+                                
+                                <span class="ml-auto"/>
+                                
+                                <span>
+                                    <a class="flex flex-row gap-2 font-normal text-sm items-center cursor-pointer" href="/post/{getInstance()}/{crosspost.post.id}">
+                                        <Icon
+                                            src={ChatBubbleOvalLeftEllipsis}
+                                            mini
+                                            width={22}
+                                            height={22}
+                                        />
+                                        <FormattedNumber number={crosspost.counts.comments} />
+                                    </a>
+                                </span>
+
+                            </div>
                         {/each}
                     </div>
                 </details>
