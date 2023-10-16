@@ -12,9 +12,9 @@
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
         Bookmark,

@@ -9,7 +9,6 @@ import { userSettings } from '$lib/settings.js'
 
 function findCrossposts(posts:PostView[]):PostView[] {
     let uniquePosts: PostView[] = [];
-    let crossPosts: PostView[] = [];
 
     const isCrosspost = function(post:PostView, otherPost:PostView):boolean {    
         if ( 
@@ -17,7 +16,7 @@ function findCrossposts(posts:PostView[]):PostView[] {
                 !post.post.deleted && !otherPost.post.deleted &&
                 !post.post.removed && !otherPost.post.removed &&
                 ( 
-                    (post.post.url && post.post.url == otherPost.post.url) || 
+                    (post.post.url && otherPost.post.url && post.post.url == otherPost.post.url) || 
                     post.post.name.toLowerCase().trim() == otherPost.post.name.toLowerCase().trim()
                 ) 
         ){
@@ -28,7 +27,7 @@ function findCrossposts(posts:PostView[]):PostView[] {
         
     // Loop over each post
     for (let i:number=0; i<posts.length; i++) {
-        let post = posts[i];
+        let post = {...posts[i]};
         post.cross_posts = [] as PostView[];
         
         // Loop over each post again to find cross posts.
@@ -36,7 +35,7 @@ function findCrossposts(posts:PostView[]):PostView[] {
             let otherPost = posts[j];
 
             if (isCrosspost(post, otherPost)) {
-                post.cross_posts.push(posts.splice(i, 1)[0]);
+                post.cross_posts.push(posts.splice(j, 1)[0]);
                 // Repeat the loop until no more cross posts are found.
                 j=0;
             }
@@ -44,28 +43,32 @@ function findCrossposts(posts:PostView[]):PostView[] {
         
         // Set oldest cross post as parent and remove the defined parent from the list of cross posts.
         if (post.cross_posts.length >0) {
-            let oldestCrossPost:PostView = post;
-            let crossPosts = [...post.cross_posts]
+
+            // Build a new PostView object to append after massaging the cross posts
+            let oldestCrossPost:PostView
             
             // Loop over the cross posts, find the oldest one, and set that as the parent.
             for (let j:number=0; j<post.cross_posts.length; j++) {
                 if (new Date(post.post.published) > new Date(post.cross_posts[j].post.published)) {
-                    oldestCrossPost = post.cross_posts[j]
+                    oldestCrossPost = {...post.cross_posts[j]}
+                    oldestCrossPost.cross_posts = [...post.cross_posts]
+                    oldestCrossPost.cross_posts.push({...post})
                 }
             }
 
-            post = oldestCrossPost;
-            post.cross_posts = crossPosts;
-            
             // Finally, remove the cross post entry that matches the parent.
-            for (let j:number=0; j<post.cross_posts.length; j++) {
-                if (post.post.id == post.cross_posts[j].post.id) {
-                    post.cross_posts.splice(j,1);
+            for (let j:number=0; j<oldestCrossPost.cross_posts.length; j++) {
+                if (oldestCrossPost.post.id == oldestCrossPost.cross_posts[j].post.id) {
+                    oldestCrossPost.cross_posts.splice(j,1);
                 }
             }
+            // Add our custom Post object to the return array
+            uniquePosts.push(oldestCrossPost);
         }
-        
-        uniquePosts.push(post)
+        // If no cross posts were found for this post, add it as a unique post.
+        else {
+            uniquePosts.push(post)
+        }
     }
 
     return uniquePosts;

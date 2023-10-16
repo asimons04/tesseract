@@ -21,7 +21,6 @@
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
-
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
@@ -280,7 +279,7 @@
 
         <!--- Crossposts --->
         {#if post.cross_posts?.length > 0}
-            <details open={post.cross_posts?.length <= 2} >
+            <details open={post.cross_posts?.length <= 3} >
                 <summary class="inline-block w-full">
                     <SectionTitle class="flex flex-row text-xs font-bold mt-2 cursor-pointer">
                         Crossposts 

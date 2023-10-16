@@ -21,12 +21,24 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+
+## 1.2.8.6
+### Bugfixes
+Fixed crosspost rollup algorithm.  Was only fuctional for one crosspost; any more would be treated as unique.  
+
+Developer's note:  I _hated_ implementing this almost as much as I hate when people spam stuff to multiple communities back to back.  Which is to say, _a lot_.
+
+Crosspost detection also compares the post title in addition to the URL. Lemmy-UI only compares the URL.  Adding the post title to the comparison catches more spam and is apparently necessary because some people are attention whores.  Seriously, people, pick a lane.
+
+
+
+
+
 ## 1.2.8.5
 ### Bugfixes
 - Fix x-overflow in markdown render divs
 
-
-### Enhancements and Bugfixex
+### Enhancements and Bugfixes
 - Users now have the option to display Fediseer badges on posts. Defaults to off.  
 - Added censure and hesitation evidence to data shown in Fediseer popup
 - Fixed overflow for community names in community browser.
