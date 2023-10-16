@@ -247,7 +247,7 @@
                     {/if}
                 
                 <!--- If no post body but there's an embed description avaialble, display that--->
-                {:else if post.post.embed_description}
+                {:else if post.post.embed_description }
                     <Markdown source={
                         ( !expandPreviewText && post.post.embed_description.length > 250)
                             ? `${post.post.embed_description.slice(0, 250)}...`
