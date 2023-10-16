@@ -38,7 +38,7 @@ All major/minor changes between releases will be documented here.
 
 - Post time and score reflow below post author when viewing on small width displays.
 
-- See less duplicate posts in the feed!  Now when someone with terrible fediquitte obnoxiously posts the same thing to multiple communities back-to-back, posts will roll up into a single post with a "Crossposts" list at the bottom.  The older post will be the one shown with the newer one being shown as a cross post link.  This is similar to how Lemmy-UI does this in the feed except Tesseract also shows the comment count for the crosspost.
+- See less duplicate posts in the feed!  Posts in the feed with the name title and/or URL will roll up into a single post with a "Crossposts" list at the bottom.  The older post will be the one shown with the newer one being shown as a cross post link.  This is similar to how Lemmy-UI does this in the feed except Tesseract also shows the comment count for the crosspost.
   - Since the API doesn't provide any cross-post information when listing posts (only when viewing a single post), only posts on the same page will be rolled up.  So if there's a duplicate set of posts, but they're on different pages, you'll potentially see both individually - one on each page.  There's no way around that until/unless the API provides cross post information in the post list response.
 
 
