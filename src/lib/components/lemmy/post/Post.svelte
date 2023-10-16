@@ -13,6 +13,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
@@ -280,53 +281,7 @@
         {/if}
 
         <!--- Crossposts --->
-        {#if post.cross_posts?.length > 0}
-            <details open={post.cross_posts?.length <= 3} >
-                <summary class="inline-block w-full">
-                    <SectionTitle class="flex flex-row text-xs font-bold mt-2 cursor-pointer">
-                        Crossposts 
-                        <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
-                            {post.cross_posts.length}
-                        </span>
-                    </SectionTitle>
-                </summary>
-                    
-                <div class="flex flex-col mt-1 pl-2 gap-1">
-                    {#each post.cross_posts as crosspost}
-                        <a class="flex flex-row text-xs gap-4" href="/post/{getInstance()}/{crosspost.post.id}">
-                            <CommunityLink
-                                community={crosspost.community}
-                                avatarSize={18}
-                                avatar={true}
-                                href="/post/{getInstance()}/{crosspost.post.id}"
-                            />
-                            
-                            <div class="ml-auto"/>
-                            
-                            <span class="flex flex-row gap-2 items-center">
-                                <Icon
-                                    src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown}
-                                    mini
-                                    width={12}
-                                    height={12}
-                                />
-                                <FormattedNumber number={crosspost.counts.score} />
-                            </span>
-
-                            <span class="flex flex-row gap-2 text-xs items-center cursor-pointer" >
-                                <Icon
-                                    src={ChatBubbleOvalLeftEllipsis}
-                                    mini
-                                    width={12}
-                                    height={12}
-                                />
-                                <FormattedNumber number={crosspost.counts.comments} />
-                            </span>
-                        </a>
-                    {/each}
-                </div>
-            </details>
-        {/if}
+        <Crossposts post={post} size="xs"/>
 
         <!--- Show full pody body if displaying in post--->
         {#if post.post.body && displayType=='post'}

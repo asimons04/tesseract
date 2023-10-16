@@ -1,0 +1,49 @@
+<script lang="ts">
+    import type { PostView } from 'lemmy-js-client'
+
+    import CrosspostItem from '$lib/components/lemmy/post/CrosspostItem.svelte'
+    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
+
+    export let post:PostView
+    export let size:string = "xs"
+    
+    let textSize:string
+    let iconSize:number
+
+    switch(size) {
+        case 'xs':
+            textSize = "text-xs";
+            iconSize = 18;
+            break;
+        case 'sm':
+            textSize = "text-sm";
+            iconSize = 22;
+            break;
+        case 'base':
+            textSize = "text-base";
+            iconSize = 24
+            break;
+        default:
+            textSize = "text-xs";
+            iconSize = 18;
+    }
+</script>
+
+{#if post?.cross_posts?.length > 0}
+    <details class="{textSize} font-bold mt-2 w-full cursor-pointer" open={post.cross_posts?.length <= 3}>
+        <summary class="inline-block w-full">
+            <SectionTitle class="{textSize} text-inherit dark:text-inherit">
+                Crossposts 
+                <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
+                    {post.cross_posts.length}
+                </span>
+            </SectionTitle>
+        </summary>
+            
+        <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex flex-col">
+            {#each post.cross_posts as crosspost}
+                <CrosspostItem crosspost={crosspost} textSize={textSize} iconSize={iconSize}/>
+            {/each}
+        </div>
+    </details>
+{/if}

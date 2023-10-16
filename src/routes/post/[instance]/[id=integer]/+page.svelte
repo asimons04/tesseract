@@ -5,9 +5,8 @@
     
     import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
-    import { fly } from 'svelte/transition'
-    import { getClient, getInstance } from '$lib/lemmy.js'
-    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
+    import { getClient } from '$lib/lemmy.js'
+    import { setSessionStorage } from '$lib/session.js'
     import { instance } from '$lib/instance.js'
     import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
     import { onMount } from 'svelte'
@@ -21,23 +20,15 @@
     import Comments from '$lib/components/lemmy/comment/Comments.svelte'
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import Link from '$lib/components/input/Link.svelte'
+    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
-    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    import StickyCard from '$lib/components/ui/StickyCard.svelte'
 
     import { 
         ArrowPath,
-        ArrowUp,
-        ArrowDown,
         ArrowSmallLeft,
-        ChatBubbleOvalLeftEllipsis,
-        ChevronDoubleRight,
         ChevronDoubleUp,
         ChevronDoubleDown,
         ExclamationTriangle, 
@@ -46,6 +37,7 @@
 
     
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
+    import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
@@ -248,88 +240,22 @@
                 <PostSongLink post={post.post_view} displayType={pDisplayType} />
             {/if}
 
-
-
-
             <!--- Post Body --->
-            <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">
-                {#if post.post_view.post.body || post.post_view.post.embed_description}    
-                    {#if post.post_view.post.body}                
-                        <Markdown source={post.post_view.post.body} />
-                    
-                    {:else if post.post_view.post.embed_description}
-                        <Markdown source={post.post_view.post.embed_description} />
-
-                    {/if}
-                {/if}
+            <PostBody post={post.post_view}>
                 
                 <!--- Post Action Buttons --->
-                <div class="w-full relative">
-                    <PostActions
-                        bind:post={post.post_view}
-                        postType={pType}
-                        displayType={pDisplayType}
-                        on:edit={() =>
-                            toast({
+                <PostActions bind:post={post.post_view} postType={pType} displayType={pDisplayType}
+                    on:edit={() =>
+                        toast({
                             content: 'The post was edited successfully.',
                             type: 'success',
-                        })}
-                    />
-                </div>
-            </div>
+                    })}
+                />
+                
+            </PostBody>
             
             <!--- Crosspost Bar --->
-            {#if post.cross_posts?.length > 0}
-                <details class="text-sm font-bold mt-2 w-full cursor-pointer" open={post.cross_posts?.length <= 3}>
-                    <summary class="inline-block w-full">
-                        <SectionTitle class="text-inherit dark:text-inherit">
-                            Crossposts 
-                            <span class="text-slate-600 dark:text-zinc-400 text-xs ml-1">
-                                {post.cross_posts.length}
-                            </span>
-                        </SectionTitle>
-                    </summary>
-                        
-                    <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex flex-col">
-                        {#each post.cross_posts as crosspost}
-                            <a class="py-2.5 flex flex-row gap-4 items-center" href="/post/{getInstance()}/{crosspost.post.id}">
-                                
-                                <span class="text-sm flex flex-col">
-                                    <CommunityLink
-                                        community={crosspost.community}
-                                        avatarSize={22}
-                                        avatar={true}
-                                        href="/post/{$page.params.instance}/{crosspost.post.id}"
-                                    />
-                                </span>
-                                
-                                <span class="ml-auto"/>
-                                
-                                <span class="flex flex-row gap-2 font-normal text-sm items-center">
-                                    <Icon
-                                        src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown}
-                                        mini
-                                        width={22}
-                                        height={22}
-                                    />
-                                    <FormattedNumber number={crosspost.counts.score} />
-                                </span>
-
-                                
-                                <span class="flex flex-row gap-2 font-normal text-sm items-center" >
-                                    <Icon
-                                        src={ChatBubbleOvalLeftEllipsis}
-                                        mini
-                                        width={22}
-                                        height={22}
-                                    />
-                                    <FormattedNumber number={crosspost.counts.comments} />
-                                </span>
-                            </a>
-                        {/each}
-                    </div>
-                </details>
-            {/if}
+            <Crossposts post={post} size="sm"/>
             
             <!--- Comments --->
             <div id="comments" class="mt-4 flex flex-col gap-2 w-full">
