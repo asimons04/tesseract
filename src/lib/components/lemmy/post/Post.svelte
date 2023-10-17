@@ -2,28 +2,21 @@
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
     
-    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
-    import { getInstance } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
-    import {isImage, postType} from './helpers.js'
+    import {isImage, postType as identifyPostType} from './helpers.js'
     import { scrollToTop } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
     
-    import Button from '$lib/components/input/Button.svelte'
+    
     import Card from '$lib/components/ui/Card.svelte'
-    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
+    
     import Link from '$lib/components/input/Link.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    
+    
+    import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    
-    import { 
-        Icon, 
-        Link as LinkIcon,
-        ChevronDown,
-        ChevronUp
-    } from 'svelte-hero-icons'
     
 
 
@@ -33,19 +26,7 @@
     export let displayType: PostDisplayType = "feed"
     
     let expandCompact: boolean;
-    let expandPreviewText:boolean = false;
-    
-    
-    // Determe post type based on its attributes
-    let pType:PostType  = postType(post)
-    let instance        = getInstance();
-    
-    function delay(millisec:number) {
-        return new Promise(resolve => {
-            setTimeout(() => { resolve('') }, millisec);
-        })
-    }
-    
+   
 </script>
 
 
@@ -143,169 +124,7 @@
 <!--- Card Posts --->
 <!---{#if (!$userSettings.showCompactPosts) || ($userSettings.showCompactPosts && expandCompact)  }--->
 {:else}
-    <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
-        <div class="flex flex-row w-full gap-2.5">
-            <PostMeta post={post} />
-        </div>
-    
-        <!--- Link-style post without thumbnail URL--->
-        {#if pType == "link" || pType == "thumbLink"}
-            {#await import('$lib/components/lemmy/post/PostLink.svelte') then { default: PostLink }}        
-                <PostLink post={post} displayType={displayType} />
-            {/await}
-        {/if}
-
-        <!--- Direct Image Post --->
-        {#if pType == "image"}
-            {#await import('$lib/components/lemmy/post/PostImage.svelte') then { default: PostImage }}
-                <PostImage post={post} displayType={displayType}/>
-            {/await}
-        {/if}
-            
-        <!--- Direct Video Post --->
-        {#if pType == "video"}
-            {#await import('$lib/components/lemmy/post/PostVideo.svelte') then { default: PostVideo }}
-                <PostVideo post={post} />
-            {/await}
-        {/if}
-
-        <!--- Bandcamp Embed --->
-        {#if pType == "bandcamp"}
-            {#await import('$lib/components/lemmy/post/PostBandcamp.svelte') then {default: PostBandcamp }}
-                <PostBandcamp post={post} displayType={displayType}/>
-            {/await}
-        {/if}
-
-        <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
-        {#if pType == "youtube"}
-            {#await import('$lib/components/lemmy/post/PostYouTube.svelte') then { default: PostYouTube }}
-                <PostYouTube post={post} displayType={displayType} autoplay={autoplay}/>
-            {/await}
-        {/if}
-
-        <!--- Spotify Embed --->
-        {#if pType == "spotify"}
-            {#await import('$lib/components/lemmy/post/PostSpotify.svelte') then { default: PostSpotify }}
-                <PostSpotify post={post} displayType={displayType} />
-            {/await}
-        {/if}
-
-        <!--- Soundcloud Embed --->
-        {#if pType == "soundcloud"}
-            {#await import('$lib/components/lemmy/post/PostSoundCloud.svelte') then { default: PostSoundCloud }}
-                <PostSoundCloud post={post} displayType={displayType} />
-            {/await}
-        {/if}
-
-        <!--- Vimeo Embed --->
-        {#if pType == "vimeo"}
-            {#await import('$lib/components/lemmy/post/PostVimeo.svelte') then { default: PostVimeo }}
-                <PostVimeo post={post} displayType={displayType} />
-            {/await}
-        {/if}
-
-        <!--- Odysee Embed --->
-        {#if pType == "odysee"}
-            {#await import('$lib/components/lemmy/post/PostOdysee.svelte') then { default: PostOdysee }}
-                <PostOdysee post={post} displayType={displayType} />
-            {/await}
-        {/if}
-
-        <!--- SongLink Embed --->
-        {#if pType == "songlink"}
-            {#await import('$lib/components/lemmy/post/PostSongLink.svelte') then { default: PostSongLink }}
-                <PostSongLink post={post} displayType={displayType} />
-            {/await}
-        {/if}
-
-            
-        <!--- Show first 250 characters of post body as a preview in the feed (if not NSFW)--->
-        {#if (post.post.body || post.post.embed_description) && !post.post.nsfw && displayType=='feed'}
-            <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
-
-                {#if post.post.body}    
-                    <Markdown source={
-                            ( !expandPreviewText && post.post.body.length > 250)
-                                ? `${post.post.body.slice(0, 250)}...`
-                                : post.post.body
-                        }
-                    />
-                
-                    {#if post.post.body.length > 250}
-                    <Button
-                        color="secondary"
-                        class="w-full mt-4"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-                        on:click={() => {
-                            expandPreviewText = !expandPreviewText
-                            const element = document.getElementById(post.post.id);
-                            if (element) scrollToTop(element);
-                        }}
-                    >
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'}
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
-                    </Button>
-                    {/if}
-                
-                <!--- If no post body but there's an embed description avaialble, display that--->
-                {:else if post.post.embed_description }
-                    <Markdown source={
-                        ( !expandPreviewText && post.post.embed_description.length > 250)
-                            ? `${post.post.embed_description.slice(0, 250)}...`
-                            : post.post.embed_description
-                        }
-                    />
-                    
-                    {#if post.post.embed_description.length > 250}
-                    <Button
-                        color="secondary"
-                        class="w-full mt-4"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-                        on:click={() => {
-                            expandPreviewText = !expandPreviewText
-                            const element = document.getElementById(post.post.id);
-                            if (element) scrollToTop(element);
-                        }}
-                    >
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'}
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
-                    </Button>
-                    {/if}
-
-
-
-                {/if}
-            </div>
-        {/if}
-
-        <!--- Crossposts --->
-        <Crossposts post={post} size="xs"/>
-
-        <!--- Show full pody body if displaying in post--->
-        {#if post.post.body && displayType=='post'}
-            <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">
-                <Markdown source={post.post.body} />
-            </div>
-        {/if}
-            
-        {#if actions}
-            <PostActions 
-                bind:post
-                bind:expandCompact
-                bind:expandPreviewText
-                displayType={displayType}
-                postType={pType}
-                on:edit={(e) => {
-                    toast({
-                        content: 'The post was edited successfully.',
-                        type: 'success',
-                    })
-                }}
-            />
-        {/if}
-    </Card>
+    <PostCardStyle post={post} actions={actions} bind:expandCompact={expandCompact} displayType={displayType} autoplay={autoplay}/>
 {/if}
 
 

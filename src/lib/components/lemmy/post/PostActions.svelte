@@ -117,6 +117,7 @@
         href="/post/{getInstance()}/{post.post.id}"
         class="!text-inherit h-8 px-3 border-none"
         title="Comments"
+        color="ghost"
     >
         <Icon
             slot="icon"
@@ -137,7 +138,7 @@
             {/await}
         {/if}
 
-        <Button on:click={() => (debug = true)} size="square-md" title="Debug Info">
+        <Button on:click={() => (debug = true)} size="square-md" title="Debug Info" color="ghost">
             <Icon src={BugAnt} mini size="16" slot="icon" />
         </Button>
     {/if}
@@ -148,6 +149,7 @@
     <!--- Hide in theater mode since it's confusing and often closes the card--->
     {#if displayType == 'feed' && $userSettings.showCompactPosts && !theaterMode}
         <Button 
+            color="ghost"
             title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
                 expandCompact = !expandCompact; 
@@ -172,6 +174,8 @@
         <span class="hidden md:block">
             <Button 
                 title="{theaterMode ? 'Exit' : ''} Theater Mode"
+                color="ghost"
+                size="square-md"
                 on:click={
                     async () => {
                         if (!theaterMode) {
@@ -202,7 +206,7 @@
     
     <!--- Moderation Menu--->
     {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <ModerationMenu bind:item={post} community={post.community} />
+        <ModerationMenu bind:item={post} community={post.community} color="ghost"/>
     {/if}
     
     <!--- Post Actions Menu --->
@@ -218,6 +222,7 @@
             class="hover:text-inherit"
             size="square-md"
             title="Post actions"
+            color="ghost"
         >
             <Icon slot="icon" src={EllipsisHorizontal} width={16} mini />
         </Button>

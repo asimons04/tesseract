@@ -22,6 +22,7 @@
     import { profile } from '$lib/auth.js'
 
     export let item: PostView | CommentView
+    export let color:string = "tertiary"
 
     let locking = false
     let pinning = false
@@ -84,11 +85,11 @@
 
 <Menu alignment="side-left">
     <Button
-        class="hover:text-green-500 dark:text-zinc-400 text-slate-500"
         on:click={toggleOpen}
         slot="button"
         title="Moderation Menu"
         size="square-md"
+        color={color}
         loading={acting}
         let:toggleOpen
         {...$$restProps}
