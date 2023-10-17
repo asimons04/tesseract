@@ -32,7 +32,7 @@
     export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
-
+    export let showFediseer:boolean             = true;
                       
     // Extract data from post object for easier reference
     // These values are mutable so define them and bind them reactively
@@ -120,7 +120,7 @@
             <div class="flex flex-row ml-auto mb-auto gap-2">
                 
                 <!--- Fediseer Endorsement Badge--->
-                {#if $userSettings.uiState.fediseerBadges}
+                {#if showFediseer && $userSettings.uiState.fediseerBadges}
                     <span class="flex flex-row gap-2 items-center mr-2">
                         <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
                         

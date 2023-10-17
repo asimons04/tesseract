@@ -9,7 +9,6 @@
     
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'

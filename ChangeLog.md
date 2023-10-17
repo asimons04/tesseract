@@ -23,8 +23,22 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.2.8.6
-### Bugfixes
+### Enhancements
+Most are under the hood, but put more pieces into discrete components and re-implemented the post renderers using the new components.  
 
+Polished a few areas of the UI:
+- The comment counts, reload, and sort buttons above the comment reply text field are now more streamlined.
+- Post views (`/post/{instance}/id`) are standardized to just be a bigger version of the card view you see in the feed.  Less custom code to worry about.
+  - Increased margin in post view by 5%
+- Crosspost links are standarized between feed and post view.
+- Card view in feed is now all components rather than custom coding.  
+  - Compact view is up for a refresh next.
+  - Known "bug":  Compact view does not show crossposts, and any cross-posts are hidden.  Will address somehow when compact view gets a refresh.
+  - With those refactors in place, a new view type such as "list" can be easily implemented
+- "Jump to comment" button in profile view is now an icon
+
+
+### Bugfixes
 #### Crosspost Detection
 Fixed crosspost rollup algorithm.  Was only fuctional for one crosspost; any more would be treated as unique.  
 

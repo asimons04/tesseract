@@ -21,10 +21,6 @@
     export let expandPreviewText:boolean = false
 </script>
 
-<!---Post feed style body text container
-    
-        <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">
---->
 {#if (post.post.body || post.post.embed_description)}
     <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">    
         {#if displayType == 'post' }

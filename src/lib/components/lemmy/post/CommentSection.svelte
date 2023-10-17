@@ -13,6 +13,7 @@
     import Card from '$lib/components/ui/Card.svelte'
     import Comments from '$lib/components/lemmy/comment/Comments.svelte'
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
@@ -25,12 +26,11 @@
     export let data:PageData
 
     let post:PostView
-    let commentSort: CommentSortType
+    let commentSort: CommentSortType = data.commentSort;
     let commentsPage:number
 
     $: {
         post = data.post;
-        commentSort = data.commentSort;
         commentsPage = commentsPage || 1
     }
 
@@ -51,18 +51,22 @@
 </script>
 
 <div id="comments" class="mt-4 flex flex-col gap-2 w-full">
-    <div class="font-bold text-lg">
-        Comments 
-        <span class="text-sm font-normal ml-2 opacity-80">
-            {post.post_view.counts.comments}
-        </span>
-    </div>
+    
 
-    <div class="flex flex-row justify-between">
+    <div class="flex flex-row justify-between items-center">
+        
+        <div class="font-bold text-lg">
+            Comments 
+            <span class="text-sm font-normal ml-2 opacity-80">
+                <FormattedNumber number={post.post_view.counts.comments} />
+            </span>
+        </div>
+
         <MultiSelect
             options={['Hot', 'Top', 'New']}
             bind:selected={commentSort}
             on:select={reloadComments}
+            headless={true}
         />
 
         <Button class="font-normal" title="Reload comments"
