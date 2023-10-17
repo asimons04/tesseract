@@ -21,6 +21,7 @@
     import { 
         Fire, 
         Icon, 
+        Newspaper,
         ShieldExclamation, 
         Sparkles, 
         Trash 
@@ -80,6 +81,15 @@
             {:else}
                 {item.post.distinguished ? 'Un-Distinguish' : 'Distinguish'}
             {/if}
+        </MenuButton>
+
+        <!--- User Modlog--->
+        <MenuButton link
+            href="/modlog?other_person_id={item.creator.id}"
+            title="Modlog for {item.creator.display_name ?? item.creator.name}@{new URL(item.creator.actor_id).hostname}"
+        >
+            <Icon src={Newspaper} mini size="16" />
+            User Modlog
         </MenuButton>
 
         <!---Remove/Restore Post--->
