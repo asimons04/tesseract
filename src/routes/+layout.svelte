@@ -40,9 +40,7 @@
 
     $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
   
-  export let data;
-  console.log(data);
-
+  
 </script>
 
 <svelte:head>

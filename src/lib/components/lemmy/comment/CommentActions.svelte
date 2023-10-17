@@ -15,10 +15,6 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
-    //import { Color } from '$lib/ui/colors.js'
-    //import { getClient, getInstance } from '$lib/lemmy.js'
-    //import { page } from '$app/stores'
-    //import { userSettings } from '$lib/settings.js'
     
     
     import Button from '$lib/components/input/Button.svelte'
@@ -26,7 +22,6 @@
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    //import ModerationMenu from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
     import CommentModerationMenu from '$lib/components/lemmy/moderation/CommentModerationMenu.svelte'
 
     import {

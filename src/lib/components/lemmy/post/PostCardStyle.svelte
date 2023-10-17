@@ -102,8 +102,6 @@
         {/await}
     {/if}
 
-        
-    <!--- Show first 250 characters of post body as a preview in the feed (if not NSFW)--->
     <PostBody post={post} displayType={displayType} />
 
     <!--- Crossposts --->

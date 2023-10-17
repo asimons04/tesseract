@@ -10,7 +10,6 @@
     
     
     import Card from '$lib/components/ui/Card.svelte'
-    
     import Link from '$lib/components/input/Link.svelte'
     
     

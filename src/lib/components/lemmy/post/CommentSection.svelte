@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {PageData} from '$types'
-    import type { CommentSortType } from 'lemmy-js-client'
+    import type { PostView, CommentSortType } from 'lemmy-js-client'
 
 
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
@@ -24,9 +24,15 @@
 
     export let data:PageData
 
-    let post = data.post;
-    let commentSort: CommentSortType = data.commentSort
-    let commentsPage:number = 1
+    let post:PostView
+    let commentSort: CommentSortType
+    let commentsPage:number
+
+    $: {
+        post = data.post;
+        commentSort = data.commentSort;
+        commentsPage = commentsPage || 1
+    }
 
     async function reloadComments() {
         data.singleThread = false
