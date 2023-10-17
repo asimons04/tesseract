@@ -45,7 +45,7 @@
                 />
                 {#if post.post.body.length > 250}
                     <Button
-                        color="secondary"
+                        color="tertiary"
                         class="w-full mt-4"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
                         on:click={() => {
