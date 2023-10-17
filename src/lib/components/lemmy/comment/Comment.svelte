@@ -34,6 +34,8 @@
 
     let editing = false
     let newComment = node.comment_view.comment.content
+    let distinguishedClassSummary = 'border-l border-r border-t border-green-500/50 bg-green-500/5 p-1'
+    let distinguishedClassContent = 'border-l border-r border-b border-green-500/50 bg-green-500/5 p-1'
 </script>
 
 {#if editing}
@@ -77,7 +79,11 @@
 
 <li class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}">
     <details bind:open class="flex flex-col gap-1">
-        <summary class="flex flex-row cursor-pointer gap-2 items-center group text-xs flex-wrap">
+        <summary class="
+            {node.comment_view.comment.distinguished ? distinguishedClassSummary : ''} 
+            {node.comment_view.comment.distinguished && !open ? 'border-b': ''} 
+            flex flex-row cursor-pointer gap-2 items-center group text-xs flex-wrap
+        ">
             <span class:font-bold={op} class="flex flex-row gap-1 items-center">
                 <UserLink
                     inComment
@@ -157,10 +163,11 @@
         </summary>
 
         <!--whitespace-pre-wrap-->
-        <div class="flex flex-col gap-1">
+        <div class="{node.comment_view.comment.distinguished ? distinguishedClassContent : ''} flex flex-col gap-1">
             <div class="max-w-full mt-0.5 break-words text-sm">
                 <Markdown source={node.comment_view.comment.content} />
             </div>
+            
             {#if actions}
                 <div class="flex flex-row gap-2 items-center">
                     <CommentActions

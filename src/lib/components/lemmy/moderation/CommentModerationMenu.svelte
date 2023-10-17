@@ -1,23 +1,50 @@
 <script lang="ts">
-    import { getClient } from '$lib/lemmy'
+    
     import type {
         CommentView,
         Community,
         CommunityView,
         PostView,
     } from 'lemmy-js-client'
-    
     import { amMod, ban, isAdmin, remove } from './moderation'
+    import { Color } from '$lib/ui/colors.js'
+    import { getClient } from '$lib/lemmy'
+    import { isCommentView } from '$lib/lemmy/item.js'
+    import { profile } from '$lib/auth.js'
+    
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import { Fire, Icon, ShieldExclamation, Trash } from 'svelte-hero-icons'
-    import { Color } from '$lib/ui/colors.js'
-    import { isCommentView } from '$lib/lemmy/item.js'
-    import { profile } from '$lib/auth.js'
     import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
 
+    import { 
+        Fire, 
+        Icon, 
+        ShieldExclamation, 
+        Sparkles, 
+        Trash 
+    } from 'svelte-hero-icons'
+
     export let item: PostView | CommentView
+
+
+    const distinguish = async function(comment:CommentView) {
+        let distinguished: boolean = comment.comment.distinguished;
+        if (!$profile?.jwt) return
+
+        try {
+            await getClient(undefined, fetch).distinguishComment({
+                auth: $profile?.jwt,
+                comment_id: comment.comment.id,
+                distinguished: !distinguished
+            });
+            
+            item.comment.distinguished = !distinguished;
+        }
+        catch {
+            console.log("Failed call to distinguish comment");
+        }
+    }
   </script>
 
 <Menu alignment="top-right" class="top-0 h-[26px] w-[26px] ">
@@ -37,7 +64,16 @@
         <li class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
             Moderation
         </li>
-        
+        <!--- Distinguish Comment --->
+        <MenuButton  on:click={async () => distinguish(item)}>
+            <Icon src={Sparkles} size="16" mini />
+            {#if isCommentView(item)}
+                {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
+            {:else}
+                {item.post.distinguished ? 'Un-Distinguish' : 'Distinguish'}
+            {/if}
+        </MenuButton>
+
         <!---Remove/Restore Post--->
         <MenuButton color={item.comment.removed ? 'success' : 'dangerSecondary'} on:click={() => remove(item)}>
             <Icon src={Trash} size="16" mini />

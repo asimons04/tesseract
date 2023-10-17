@@ -26,6 +26,7 @@ export function buildCommentsTree(comments: CommentView[], baseDepth: number = 0
     const map = new Map<number, CommentNodeI>()
 
     let min_depth = Number.MAX_VALUE
+    
     for (const comment_view of comments) {
         const depthI = getDepthFromComment(comment_view.comment) ?? 0
         const depth = depthI + baseDepth

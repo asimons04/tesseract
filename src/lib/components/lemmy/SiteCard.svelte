@@ -74,7 +74,7 @@
     <Card>
         <div class="flex flex-row gap-3 items-center p-3">
             {#if site.site.icon}
-                <Avatar width={42} url={site.site.icon} alt={site.site.name} />
+                <Avatar width={42} url={site.site.icon} alt={site.site.name} circle={false} />
             {/if}
             
             

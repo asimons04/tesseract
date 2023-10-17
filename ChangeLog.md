@@ -23,17 +23,28 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.2.8.7
+
+### New Features
+#### Distinguish Comments
+Mods/Admins can now distinguish comments.  
+
+In Tesseract, they will be given a green background and border.  In Lemmy-UI, they'll sadly just have an "admin" badge next to them.  Tesseract's implementation in better :)  Also, in Lemmy-UI, only admin/mod comments can be distinguished with the "Speak as moderator" option.  In Tesseract, an admin/mod can distinguish comments from anyone.
+
+
+Currently working out how to force distinguished comments to the top of the tree regardless of sort order.  Effectively, this would allow "sticky" comments.
+
+
 ### Bugfixes
 - Missed a width setting in Spotify renderer when I refactored the user settings a while back.
 - Previewing empty comment text area no longer soft errors saying it failed to render the markdown.
 - Removed `Cache-Control` response header from image proxy response. Was having random problems with images from some instances. 
-
 
 ### Misc Enhancements
 - Moved more elements into discrete Svelte components
   - PWA button bars in posts
 - More post components loaded on demand. Reduces overhead by not loading post components (video player, etc) that aren't needed for particular posts.
 - "Expand" button on post text preview in feed is now same color as card.
+- Site logo in site cards are no longer "circle"-ified 
 
 ## 1.2.8.6
 ### Enhancements

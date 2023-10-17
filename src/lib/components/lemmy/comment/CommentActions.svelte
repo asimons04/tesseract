@@ -110,6 +110,7 @@
         </Button>
         
         <span class="text-xs opacity-80 py-1 my-1 px-4">Comment actions</span>
+        <!--- Share Comment / Copy URL to Clipboard--->
         <MenuButton
             on:click={() => {
                 navigator.share?.({
@@ -127,12 +128,14 @@
 
         {#if $profile?.jwt}
             {#if comment.creator.id == $profile.user?.local_user_view.person.id}
+            <!--- Edit Comment--->
             <MenuButton on:click={() => dispatcher('edit', comment)}>
                 <Icon src={PencilSquare} mini size="16" />
                 <span>Edit</span>
             </MenuButton>
             {/if}
         
+            <!--- Save Comment--->
             <MenuButton
                 on:click={async () => {
                     if ($profile?.jwt) {
@@ -147,8 +150,11 @@
                 <Icon src={comment.saved ? BookmarkSlash : Bookmark} mini size="16" />
                 <span>{comment.saved ? 'Unsave' : 'Save'}</span>
             </MenuButton>
-        
+
+            
+
             {#if $profile?.user && $profile.jwt && isCommentMutable(comment, $profile.user.local_user_view)}
+            <!---Delete Comment--->
             <MenuButton
                 color="dangerSecondary"
                 on:click={async () => {
