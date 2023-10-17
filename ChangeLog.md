@@ -22,6 +22,11 @@ All major/minor changes between releases will be documented here.
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
 
+## 1.2.8.7
+### Bugfixes
+- Missed a width setting in Spotify renderer when I refactored the user settings a while back.
+
+
 ## 1.2.8.6
 ### Enhancements
 Most are under the hood, but put more pieces into discrete components and re-implemented the post renderers using the new components.  

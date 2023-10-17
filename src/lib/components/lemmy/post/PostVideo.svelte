@@ -20,8 +20,8 @@
         highlight nowrap 
 />
 
-<div class="ml-auto mr-auto mt-1 mb-1 max-w-4xl">
-    <video controls playsinline class="rounded-md max-w-full max-h-[80svh] mx-auto" >
+<div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
+    <video controls playsinline class="rounded-md max-w-full max-w-[88vw] mx-auto" >
         <source src="{source}" />
     </video>
 </div>

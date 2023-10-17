@@ -7,7 +7,7 @@
     import Link from '$lib/components/input/Link.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import { imageSize} from './helpers.js'
+
 
     export let post: PostView
     export let displayType: PostDisplayType
@@ -16,7 +16,6 @@
     let videoID:    string | null | undefined
     let embedURL:   string = ""
     let extraParams:string = ""
-    let size: string = imageSize(displayType);
 
     
     if (post?.post?.url) {
@@ -106,7 +105,7 @@
         
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
             
-            <div class="ml-auto mr-auto max-w-[88vw] {size}">
+            <div class="ml-auto mr-auto max-w-[88vw] w-full">
                 <div class="flexiframe-container rounded-md max-w-screen mx-auto">
                     <iframe 
                         id="video-{post.post.id}"

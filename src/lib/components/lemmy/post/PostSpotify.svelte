@@ -70,7 +70,7 @@
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-[352px]">
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
-            <div class="ml-auto mr-auto {$userSettings.videoSize ?? 'max-w-3xl'}">
+            <div class="ml-auto mr-auto w-full">
                 <div class="flexiframe-container rounded-md max-w-screen h-[352px] mx-auto">
                     <iframe 
                         class="flexiframe"
