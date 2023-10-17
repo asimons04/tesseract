@@ -13,19 +13,13 @@
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
-    import Button from '$lib/components/input/Button.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     
     // Post Components
     import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
+    import PWAButtonBar from '$lib/components/lemmy/post/PWAButtonBar.svelte'
 
-    import { 
-        ArrowSmallLeft,
-        ChevronDoubleUp,
-        ChevronDoubleDown,
-        Icon 
-    } from 'svelte-hero-icons'
     
     export let data
 
@@ -110,31 +104,7 @@
 <div class="flex flex-col md:flex-row gap-4 w-full py-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
-        <!--- Menu bar above post content --->
-        <div class="flex flex-row gap-2 w-full mb-2 justify-between" class:hidden={!$userSettings.uiState.showPWAButtons}>
-            
-            <!--- Button to Return to Feed --->
-            <Button class="font-normal w-full" title="Go back to feed"
-                on:click={() => {
-                    history.back();
-                }}
-                hidden={history.length<2}
-            >
-                <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
-                <span class="hidden md:inline">Return to Feed</span>
-            </Button>
-            
-            <!--- Button to Scroll to the Bottom --->
-            <Button class="font-normal w-full" title="Scroll to Top"
-                on:click={() => {
-                    window.scrollTo(0,document.body.scrollHeight);
-                }}
-            >
-                <Icon src={ChevronDoubleDown} mini size="16" slot="icon" />
-                <span class="hidden md:inline">Scroll to Bottom</span>
-            </Button>
-            
-        </div>
+        <PWAButtonBar position="top"/>
         
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
             <!---Post--->
@@ -142,32 +112,9 @@
 
             <!--- Comments --->
             <CommentSection bind:data={data} />
-
-            <!--- Menu bar below post/comments content --->
-            <div class="flex flex-row gap-2 w-full mb-2 justify-between" class:hidden={!$userSettings.uiState.showPWAButtons}>
-                <!--- Button to Return to Feed --->
-                <Button class="font-normal w-full" title="Go back to feed"
-                    on:click={() => {
-                        history.back();
-                    }}
-                    hidden={history.length<2}
-                >
-                    <Icon src={ArrowSmallLeft} mini size="16" slot="icon" />
-                    <span class="hidden md:inline">Return to Feed</span>
-                </Button>
-
-                <!--- Button to Scroll to the Top --->
-                <Button class="font-normal w-full" title="Scroll to Top"
-                    on:click={() => {
-                        window.scrollTo(0,0);
-                    }}
-                >
-                    <Icon src={ChevronDoubleUp} mini size="16" slot="icon" />
-                    <span class="hidden md:inline">Scroll to Top</span>
-                </Button>
-
-            </div>
         </div>
+
+        <PWAButtonBar position="bottom"/>
 
     </div>
     

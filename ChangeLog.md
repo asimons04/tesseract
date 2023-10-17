@@ -25,7 +25,12 @@ All major/minor changes between releases will be documented here.
 ## 1.2.8.7
 ### Bugfixes
 - Missed a width setting in Spotify renderer when I refactored the user settings a while back.
+- Previewing empty comment text area no longer soft errors saying it failed to render the markdown.
 
+### Misc Enhancements
+- Moved more elements into discrete Svelte components
+  - PWA button bars in posts
+- More post components loaded on demand. Reduces overhead by not loading post components (video player, etc) that aren't needed for particular posts.
 
 ## 1.2.8.6
 ### Enhancements

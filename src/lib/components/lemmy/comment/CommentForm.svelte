@@ -61,7 +61,7 @@
 <div class="flex flex-col gap-2 relative">
     {#if preview}
         <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm resize-y" style="height: {rows*24}px">
-            <Markdown source={value} />
+            <Markdown source={value ? value : ' '} />
         </div>
     {:else}
         <MarkdownEditor

@@ -94,11 +94,9 @@
         {#if $profile?.user}
             <CommentForm
                 postId={post.post_view.post.id}
-                on:comment={(comment) =>
-                (comments.comments = [
-                    comment.detail.comment_view,
-                    ...comments.comments,
-                ])}
+                on:comment={ (comment) =>
+                    ( comments.comments = [comment.detail.comment_view, ...comments.comments,] )
+                }
                 locked={post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
             />
         {/if}
@@ -108,7 +106,7 @@
                 <Spinner width={36} />
             </div>
             {:then comments}
-            <Comments post={post.post_view.post} moderators={post.moderators} nodes={comments} isParent={true} />
+                <Comments post={post.post_view.post} moderators={post.moderators} nodes={comments} isParent={true} />
         {/await}
         {:catch}
             <div class="bg-red-500/10 border border-red-500 rounded-md p-4">
