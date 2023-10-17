@@ -1,6 +1,6 @@
 # Tesseract
 
-Tesseract is Lemmy client designed for media-rich feeds and content.
+Tesseract is Lemmy client designed for media-rich feeds and content.  It's probably the best Lemmy client no one is using :-P
 
 It started out as my personal, custom build of Photon, but it got exhausting porting over my bells and whistles each release. To that end, I finally decided to make it an official fork.
 

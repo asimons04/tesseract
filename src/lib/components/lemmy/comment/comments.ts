@@ -41,11 +41,20 @@ export function buildCommentsTree(comments: CommentView[], baseDepth: number = 0
 
     const tree: CommentNodeI[] = []
 
-    // push all nodes at the minimum depth to the top of the tree
+    // Push distinguished comments to top of tree
     for (const comment_view of comments) {
         const cNode = map.get(comment_view.comment.id)
         
-        if (cNode && cNode.depth == min_depth) {
+        if (cNode && comment_view.comment.distinguished) {
+            tree.push(cNode)
+        }
+    }
+
+    // push all nodes at the minimum depth to the top of the tree
+    for (const comment_view of comments) {
+        const cNode = map.get(comment_view.comment.id)
+        // Ignore parent/min-depth comments that are distinguished (they're rendered above)
+        if (cNode && cNode.depth == min_depth && !comment_view.comment.distinguished) {
             tree.push(cNode)
         }
     }

@@ -25,13 +25,20 @@ All major/minor changes between releases will be documented here.
 ## 1.2.8.7
 
 ### New Features
-#### Distinguish Comments
-Mods/Admins can now distinguish comments.  
+#### Distinguished and Sticky Comments
+Mods/Admins can now distinguish comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.
 
 In Tesseract, they will be given a green background and border.  In Lemmy-UI, they'll sadly just have an "admin" badge next to them.  Tesseract's implementation in better :)  Also, in Lemmy-UI, only admin/mod comments can be distinguished with the "Speak as moderator" option.  In Tesseract, an admin/mod can distinguish comments from anyone.
 
 
-Currently working out how to force distinguished comments to the top of the tree regardless of sort order.  Effectively, this would allow "sticky" comments.
+
+Note that this only applies to Tesseract.  The comments will be marked as distinguished at the API level, but it's up to individual clients/UIs to handle how to render comments with the `distinguished` flag set.
+
+**Limitations**
+
+Comments that aren't loaded on initial fetch will not be stickied at the top.  This has to do with the max comment depth that is fetched; loading too many layers up front, when there are lots of comments (>100), causes noticeable delay in page loading.  As such, if you want to sticky a comment, make sure it is a top-level comment.  Otherwise, the comment will be shown as distinguished when that part of the tree is loaded
+
+
 
 
 ### Bugfixes

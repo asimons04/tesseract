@@ -11,7 +11,7 @@ export async function load({ params, url, fetch }) {
         auth: get(profile)?.jwt,
     })
 
-    let max_depth = post.post_view.counts.comments > 100 ? 1 : 3
+    let max_depth = post.post_view.counts.comments > 100 ? 2 : 5
 
     const thread = url.searchParams.get('thread')
     let parentId: number | undefined

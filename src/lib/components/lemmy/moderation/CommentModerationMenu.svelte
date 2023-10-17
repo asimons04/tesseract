@@ -11,7 +11,8 @@
     import { getClient } from '$lib/lemmy'
     import { isCommentView } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
-    
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -40,9 +41,16 @@
             });
             
             item.comment.distinguished = !distinguished;
+            toast({
+                    type: 'success',
+                    content: `${item.comment.distinguished ? 'Distinguished' : 'Un-distinguished'} this comment.`,
+                })
         }
-        catch {
-            console.log("Failed call to distinguish comment");
+        catch (err:any){
+            toast({
+                    type: 'error',
+                    content: `Unable to distinguish comment: ${JSON.stringify(err)}`,
+                })
         }
     }
   </script>
