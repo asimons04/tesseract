@@ -28,18 +28,22 @@ All major/minor changes between releases will be documented here.
 #### Distinguished and Sticky Comments
 Mods/Admins can now distinguish comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.
 
-In Tesseract, they will be given a green background and border.  In Lemmy-UI, they'll sadly just have an "admin" badge next to them.  Tesseract's implementation in better :)  Also, in Lemmy-UI, only admin/mod comments can be distinguished with the "Speak as moderator" option.  In Tesseract, an admin/mod can distinguish comments from anyone.
+The handling of the `distinguished` flag is different in Tesseract than in Lemmy-UI:
 
+**Tesseract**
+- Distinguished comments will be given a green background and border
+- Distinguished comments are pinned at the top of the comments list.
+- Any comment can be distinguished by a mod/admin.
 
+**Lemmy-UI**
+- Distinguished comments just have an "admin" badge next to them.   
+- Only admin/mod comments can be distinguished with the "Speak as moderator" option. (which is redundant because mod accounts already have moderator badges).  
 
-Note that this only applies to Tesseract.  The comments will be marked as distinguished at the API level, but it's up to individual clients/UIs to handle how to render comments with the `distinguished` flag set.
+Note that the way distinguished comments are handled only applies to Tesseract.  The comments will be marked as distinguished at the API level, but it's up to individual clients/UIs to handle how to render comments with the `distinguished` flag set.
 
-**Limitations**
+**Limitations for Sticky Behavior**
 
-Comments that aren't loaded on initial fetch will not be stickied at the top.  This has to do with the max comment depth that is fetched; loading too many layers up front, when there are lots of comments (>100), causes noticeable delay in page loading.  As such, if you want to sticky a comment, make sure it is a top-level comment.  Otherwise, the comment will be shown as distinguished when that part of the tree is loaded
-
-
-
+Comments that aren't loaded on initial fetch will not be stickied at the top.  This has to do with the max comment depth that is fetched; loading too many layers up front, when there are lots of comments (>100), causes noticeable delay in page loading.  As such, if you want to sticky a comment, make sure it is a top-level comment.  Otherwise, the comment will be shown as distinguished when that part of the tree is loaded, but it won't be stickied at the top.
 
 ### Bugfixes
 - Missed a width setting in Spotify renderer when I refactored the user settings a while back.
@@ -48,8 +52,7 @@ Comments that aren't loaded on initial fetch will not be stickied at the top.  T
 
 ### Misc Enhancements
 - Moved more elements into discrete Svelte components
-  - PWA button bars in posts
-- More post components loaded on demand. Reduces overhead by not loading post components (video player, etc) that aren't needed for particular posts.
+- More post components are now loaded on demand. Reduces overhead by not loading post components (video player, etc) that aren't needed for particular posts.
 - "Expand" button on post text preview in feed is now same color as card.
 - Site logo in site cards are no longer "circle"-ified 
 
