@@ -1,5 +1,4 @@
 <script lang="ts">
-
     import { userSettings } from '$lib/settings.js'
     import Button from '$lib/components/input/Button.svelte'
 
@@ -11,6 +10,7 @@
     } from 'svelte-hero-icons'
 
     export let position: 'top' | 'bottom' = 'top'
+
 </script>
 
 {#if position=="top"}
