@@ -4,7 +4,7 @@
 
     import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
     import { getClient } from '$lib/lemmy.js'
-    import { setSessionStorage } from '$lib/session.js'
+    import {  setSessionStorage } from '$lib/session.js'
     import { instance } from '$lib/instance.js'
     import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
     import { onMount } from 'svelte'
@@ -25,14 +25,15 @@
 
     let post:PostView;
     let community:CommunityView
+        
     
-    
-    // Add the crossposts to the post_view object for use in the PostCardStyle component since we're passing post_view to it.
     $: {
         post = data.post;
+        // Add the crossposts to the post_view object for use in the PostCardStyle component since we're passing post_view to it.
         post.post_view.cross_posts = data.post.cross_posts;
         community = data.post.community_view.community;
         setSessionStorage('lastSeenCommunity', { id: community.id, name: `${community.name}@${new URL(community.actor_id).hostname}` })
+        setSessionStorage('lastClickedPost', { postID: post.post_view.post.id} );
     }
     
     
@@ -108,7 +109,7 @@
         
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
             <!---Post--->
-            <PostCardStyle post={post.post_view} displayType="post" action={true} />      
+            <PostCardStyle post={post.post_view} displayType="post" action={true} moderators={post.moderators}/>      
 
             <!--- Comments --->
             <CommentSection bind:data={data} />

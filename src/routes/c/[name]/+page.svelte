@@ -1,9 +1,11 @@
 <script lang="ts">
     
+    import { afterNavigate, disableScrollHandling } from '$app/navigation';
     import { fullCommunityName, searchParam } from '$lib/util.js'
+    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
     import { onDestroy, onMount } from 'svelte'
     import { page } from '$app/stores'
-    import { setSessionStorage } from '$lib/session.js'
+    import { scrollToTop } from '$lib/components/lemmy/post/helpers'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -33,6 +35,19 @@
             ),
         })
     })
+
+    // Hack to deal with Svelte not returning to the correct spot when returning to the post.
+    afterNavigate(async () => {
+        let postID:number|undefined = getSessionStorage('lastClickedPost')?.postID
+        if (postID) {
+            let postDiv = document.getElementById(postID.toString())
+            if (postDiv) {
+                disableScrollHandling();
+                scrollToTop(postDiv, false);
+                setSessionStorage('lastClickedPost', undefined);
+            }
+        }
+    });
 </script>
 
 <svelte:head>

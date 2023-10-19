@@ -24,7 +24,17 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.8.8
 ### Bugfixes
-- Reverted async load of post components.  While that was more efficient, it broke the back button behaviour when returning to the feed causing it to not restore to the proper original position.  Rather than shoe-horning in various fixes, it was easier to just return to the original method of loading all post component styles and letting the browser cache handle not re-fetching it.
+- The Svelte native restore of scroll position wasn't always returning to the correct position in the feed when returning from viewing a post.  Overrode Svelte behavior and am now handling this manually in some cases and with the default Svelte behavior in others.
+
+- Mod badges weren't showing in post views as after the component breakout/refactor, moderator object wasn't passed through intermediary component.
+
+
+
+
+
+
+
+
 
 
 

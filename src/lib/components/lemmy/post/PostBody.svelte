@@ -22,7 +22,7 @@
 </script>
 
 {#if (post.post.body || post.post.embed_description)}
-    <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2">    
+    <div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2" class:hidden={displayType=='feed' && post.post.nsfw}>    
         {#if displayType == 'post' }
             {#if post.post.body}                
                 <Markdown source={post.post.body} />
