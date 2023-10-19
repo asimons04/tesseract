@@ -269,24 +269,37 @@
         </span>
     </Setting>
 
-    <Setting>
-        <span slot="title">Keyword Filters</span>
-        <span slot="description">
-            <p>Add keywords to filter posts you don't want to see.</p>
-            <p>
-                For example, if you're as sick of hearing about Elon Musk as I am, you can add "Musk", "Elon", and/or "Elon Musk" as filters. Any posts containing those key words will be 
-                filtered from the results and not rendered.
-            </p>
-        </span>
-        <EditableList
-            on:action={(id) => {
-                //deleteProfile(id.detail)
-            }}
-            export let:action
-        >
+    <div class="flexrow">
+        <div class="flexcol">
+            <Setting>
+                <span slot="title">Keyword Filters</span>
+                <span slot="description">
+                    <p>Add keywords to filter posts you don't want to see.</p>
+                    <p>
+                        For example, if you're as sick of hearing about Elon Musk as I am, you can add "Musk", "Elon", and/or "Elon Musk" as filters. Any posts containing those key words will be 
+                        filtered from the results and not rendered.
+                    </p>
+                </span>
+                
+                    <EditableList
+                        on:action={(e) => {
+                            //deleteProfile(id.detail)
+                        }}
+                        export let:action
+                    >
+                        {#each $userSettings.hidePosts.keywordList as keyword}
 
+                        {/each}
 
-        </EditableList>
-    </Setting>
+                    </EditableList>
+                
+
+            </Setting>
+        </div>
+
+        <div class="flexcol">
+
+        </div>
+    </div>
  
 </div>

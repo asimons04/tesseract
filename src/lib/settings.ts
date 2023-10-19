@@ -49,6 +49,8 @@ interface Settings {
     hidePosts: {
         deleted: boolean
         removed: boolean
+        keywords: boolean,
+        keywordList: string[]
     }
     notifications: {
         enabled: boolean
@@ -99,7 +101,7 @@ interface Settings {
         enabled: boolean,
         fallback: boolean
     }
-    keywordFilters: string[]
+    
 
 
 }
@@ -148,6 +150,9 @@ export const defaultSettings: Settings = {
     hidePosts: {
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,
+        keywords:                                                       true,
+        keywordList:                                                    []
+
     },
    
     
@@ -174,9 +179,7 @@ export const defaultSettings: Settings = {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
         fallback:                                                       true,
     },
-    keywordFilters:                                                     []
-
-    
+   
 }
 
 export const userSettings = writable(defaultSettings)

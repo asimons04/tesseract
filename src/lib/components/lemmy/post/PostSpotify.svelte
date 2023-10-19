@@ -11,8 +11,8 @@
     export let post: PostView
     export let displayType: PostDisplayType
     
-    let trackID:    String = ""
-    let embedURL:   String = ""
+    let trackID:    string = ""
+    let embedURL:   string = ""
     let extraParams:string = ""
 
     // Generate the embed URL for the given post URL
@@ -38,7 +38,6 @@
         }
     }
 
-   
 
     function showAsEmbed() {
         if (!embedURL) { return false;}
@@ -70,10 +69,10 @@
 
 {#if showAsEmbed()}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-[500px]">
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'}">
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
             <div class="ml-auto mr-auto w-full">
-                <div class="flexiframe-container rounded-md max-w-screen h-[500px] mx-auto">
+                <div class="flexiframe-container rounded-md max-w-screen {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'} mx-auto">
                     <iframe 
                         class="flexiframe"
                         src="{embedURL}?{extraParams}" 
