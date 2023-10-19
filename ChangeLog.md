@@ -23,12 +23,13 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.2.8.8
+Small bugfix release to address some annoyances I've been noticing.
 ### Bugfixes
 - The Svelte native restore of scroll position wasn't always returning to the correct position in the feed when returning from viewing a post.  Overrode Svelte behavior and am now handling this manually in some cases and with the default Svelte behavior in others.
 
 - Mod badges weren't showing in post views as after the component breakout/refactor, moderator object wasn't passed through intermediary component.
 
-
+- Added some missing error handling to a few post fetches.
 
 
 
