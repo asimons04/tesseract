@@ -47,6 +47,9 @@
                 setSessionStorage('lastClickedPost', undefined);
             }
         }
+        else {
+            window.scrollTo(0,0);
+        }
     });
 </script>
 
