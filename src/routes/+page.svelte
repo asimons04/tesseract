@@ -5,33 +5,22 @@
     import { searchParam } from '$lib/util.js'
     import { userSettings } from '$lib/settings.js'
    
-    
-    
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
-    
-    //import { fly } from 'svelte/transition'
-    //import { goto } from '$app/navigation'    
-    //import Button from '$lib/components/input/Button.svelte'
-    //import Modal from '$lib/components/ui/modal/Modal.svelte'
-    //import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    //import Post from '$lib/components/lemmy/post/Post.svelte'
-    //import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    //import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
-    
+   
     import {
         Bars3,
         ChartBar,
         Icon,
         QueueList
     } from 'svelte-hero-icons'
+    
+    
     export let data
-    let sidebar = false
-
 </script>
 
 <svelte:head>
