@@ -1,15 +1,18 @@
 <script lang="ts">
-    import Switch from '$lib/components/input/Switch.svelte'
+    import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY } from '$lib/settings'
+    
     import Button from '$lib/components/input/Button.svelte'
     import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import EditableList from '$lib/components/ui/list/EditableList.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    
-    import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY } from '$lib/settings'
     import Setting from './Setting.svelte'
+    import Switch from '$lib/components/input/Switch.svelte'
+
+    
+    
     import Sort from '$lib/components/lemmy/Sort.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
     
@@ -264,8 +267,26 @@
                 </div>
             </div>
         </span>
-        
-        
+    </Setting>
+
+    <Setting>
+        <span slot="title">Keyword Filters</span>
+        <span slot="description">
+            <p>Add keywords to filter posts you don't want to see.</p>
+            <p>
+                For example, if you're as sick of hearing about Elon Musk as I am, you can add "Musk", "Elon", and/or "Elon Musk" as filters. Any posts containing those key words will be 
+                filtered from the results and not rendered.
+            </p>
+        </span>
+        <EditableList
+            on:action={(id) => {
+                //deleteProfile(id.detail)
+            }}
+            export let:action
+        >
+
+
+        </EditableList>
     </Setting>
  
 </div>

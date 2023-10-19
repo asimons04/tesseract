@@ -24,19 +24,21 @@
 
         if (post.post.url.startsWith('https://open.spotify.com/track')) {
             trackID = new URL(post.post.url).pathname.replace('/track/','');
-            embedURL = `https://open.spotify.com/embed/track/${trackID}?theme=0`
+            embedURL = `https://open.spotify.com/embed/track/${trackID}?theme=0&height=100%`
         }
 
         if (post.post.url.startsWith('https://open.spotify.com/playlist')) {
             trackID = new URL(post.post.url).pathname.replace('/playlist/','');
-            embedURL = `https://open.spotify.com/embed/playlist/${trackID}?theme=0`
+            embedURL = `https://open.spotify.com/embed/playlist/${trackID}?theme=0&height=100%`
         }
 
         if (post.post.url.startsWith('https://open.spotify.com/album')) {
             trackID = new URL(post.post.url).pathname.replace('/album/','');
-            embedURL = `https://open.spotify.com/embed/album/${trackID}?theme=0`
+            embedURL = `https://open.spotify.com/embed/album/${trackID}?theme=0&height=100%`
         }
     }
+
+   
 
     function showAsEmbed() {
         if (!embedURL) { return false;}
@@ -58,7 +60,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        height: 352px;
+        height: 500px;
         width: 100%;
         border:0;
     }
@@ -68,17 +70,17 @@
 
 {#if showAsEmbed()}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} highlight nowrap />
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-[352px]">
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full h-[500px]">
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
             <div class="ml-auto mr-auto w-full">
-                <div class="flexiframe-container rounded-md max-w-screen h-[352px] mx-auto">
+                <div class="flexiframe-container rounded-md max-w-screen h-[500px] mx-auto">
                     <iframe 
                         class="flexiframe"
                         src="{embedURL}?{extraParams}" 
                         allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                         loading="lazy"
                         allowfullscreen
-                        height="352"
+                        height="500"
                         title="Spotify: {post.post.name}"
                     >
                     </iframe>

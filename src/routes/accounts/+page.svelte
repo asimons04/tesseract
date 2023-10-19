@@ -9,6 +9,7 @@
         type Profile,
         profile,
     } from '$lib/auth.js'
+    
     import Button from '$lib/components/input/Button.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     import EditableList from '$lib/components/ui/list/EditableList.svelte'

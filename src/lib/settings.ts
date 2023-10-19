@@ -99,6 +99,7 @@ interface Settings {
         enabled: boolean,
         fallback: boolean
     }
+    keywordFilters: string[]
 
 
 }
@@ -172,7 +173,8 @@ export const defaultSettings: Settings = {
     proxyMedia: {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
         fallback:                                                       true,
-    }
+    },
+    keywordFilters:                                                     []
 
     
 }

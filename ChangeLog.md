@@ -5,15 +5,16 @@ All major/minor changes between releases will be documented here.
 ## Immediate Roadmap:
 
 - Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
-
-- Implement a "scrollToComments" feature when clicking comment button in feed. Title/thumbnail will take you to post, comment button scrolls to comments and suppresses autoplay on videos if enabled.
-
 - (0.19.x) Switch pagination param from `page={n+1}` to `page_cursor={x}`
     - Has `next_page` but not cursor for current page.  Probably need to track these to enable returning to previous page.
+    - Waiting on 0.19.0 to stabilize a bit more before starting this
+    - _May_ wait until after 0.19 is released since the current `page={n}` will be supported.  This will allow better testing against my own instance.
+
 - (0.19.x) Add `scaled` sort option to dropdowns
+    - Will add in first 0.19.0-specific release.  
 
 - (0.18x and 0.19.x) Add ability to directly block user or community from `/profile/blocks`
-    - (0.19.0) Add ability to directly lock instance
+    - (0.19.0) Add ability to directly block instance
 
 - (0.18.x and 0.19.x) Add Instances list
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
@@ -30,12 +31,6 @@ Small bugfix release to address some annoyances I've been noticing.
 - Mod badges weren't showing in post views as after the component breakout/refactor, moderator object wasn't passed through intermediary component.
 
 - Added some missing error handling to a few post fetches.
-
-
-
-
-
-
 
 
 
