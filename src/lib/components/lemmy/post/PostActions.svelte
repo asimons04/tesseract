@@ -114,10 +114,7 @@
 
     <Button
         size="sm"
-        href={displayType == 'feed'
-            ? `/post/${getInstance()}/${post.post.id}#comments`
-            : `/post/${getInstance()}/${post.post.id}#comments`
-        }
+        href={`/post/${getInstance()}/${post.post.id}`}
         class="!text-inherit h-8 px-3 border-none"
         title="Comments"
         color="ghost"
