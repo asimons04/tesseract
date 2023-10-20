@@ -30,7 +30,7 @@
 </script>
 
 {#if url}
-    <Link class="mt-[-0.25rem] text-xs" href={url} newtab={$userSettings.openInNewTab.postLinks} title={url} highlight nowrap domainOnly={!$userSettings.uiState.showFullURL}/>
+    <Link class="text-xs" href={url} newtab={$userSettings.openInNewTab.postLinks} title={url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
 
 {/if}
 
