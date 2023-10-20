@@ -894,8 +894,8 @@
                                             bodies, and embed descriptions will be evaluated for the keywords.
                                         </p>
                                         
-                                        <details>
-                                            <summary class="font-bold">Special Control Characters</summary>
+                                        <details open={true}>
+                                            <summary class="font-bold cursor-pointer">Special Control Characters</summary>
                                             <ul>
                                                 <li class="flex flex-row gap-4 pl-4">
                                                     <span class="font-bold text-sm">^</span>
@@ -920,22 +920,25 @@
                                 <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full lg:w-2/3 overflow-y-scroll px-4">
                                     {#if $userSettings?.hidePosts?.keywordList.length > 0}
                                         {#each $userSettings.hidePosts.keywordList as keyword}
-                                            <div class="w-full border rounded-md bg:slate-300 dark:bg-zinc-900 flex flex-row gap-2 items-center divide-y">
-                                                <p class="pl-4 text-xs font-bold">{keyword}</p>
+                                            
+                                            <div class="w-full rounded-md bg-slate-200 dark:bg-zinc-700 flex flex-row gap-2 items-center">
+                                                <p class="pl-4 py-2 text-sm font-bold">{keyword}</p>
 
                                                 <div class="mx-auto"/>
                                                 
                                                 <Button
-                                                    color="tertiary"
+                                                    color="ghost"
+                                                    class="mr-4 border-none"
                                                     on:click={() => {
                                                         delKeyword(keyword);
 
                                                     }}
                                                 >
                                                     
-                                                    <Icon src={XCircle} mini width={20}/>
+                                                    <Icon src={XCircle} mini width={22}/>
                                                 </Button>
                                             </div>
+                                            
                                         {/each}
                                     {:else}
                                         <Placeholder
@@ -955,15 +958,9 @@
 
                         <Switch bind:enabled={$userSettings.hidePosts.keywords} />
                     </div>
-
-                    
-                    
-
-
                 </div>
             </Setting>
         </div>
-
 
     </div>
 
