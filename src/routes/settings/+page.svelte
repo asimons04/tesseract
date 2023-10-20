@@ -492,21 +492,6 @@
                         <Switch bind:enabled={$userSettings.markReadPosts} />
                     </div>
 
-                    <!---Fediseer Badges--->
-                    <div class="flex flex-row w-full gap-2 py-2">
-                        <div class="flex flex-col">
-                            <p class="text-sm font-bold flex flex-row gap-2">
-                                <Icon src={Eye} mini width={16}/>
-                                Fediseer Badges
-                            </p>
-                            <p class="text-xs font-normal">Show Fediseer badges on post cards.</p>
-                        </div>
-                        
-                        <div class="mx-auto"/>
-                        
-                        <Switch bind:enabled={$userSettings.uiState.fediseerBadges} />
-                    </div>
-
                     <!---Blur NSFW Images--->
                     <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
@@ -627,6 +612,21 @@
                         <div class="mx-auto"/>
                         
                         <Switch bind:enabled={$userSettings.uiState.expandCrossPosts} />
+                    </div>
+
+                    <!---Fediseer Badges--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Eye} mini width={16}/>
+                                Fediseer Badges
+                            </p>
+                            <p class="text-xs font-normal">Show Fediseer badges on post cards.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.fediseerBadges} />
                     </div>
 
                 
