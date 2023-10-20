@@ -27,7 +27,7 @@
 
 </script>
 
-<Card class="flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
+<Card class="flex flex-col w-full p-5 gap-1" id={post.post.id}>
     <div class="flex flex-row w-full gap-2.5">
         <PostMeta post={post} moderators={moderators}/>
     </div>

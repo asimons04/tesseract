@@ -46,7 +46,7 @@
                 {#if post.post.body.length > 250}
                     <Button
                         color="tertiary"
-                        class="w-full mt-4"
+                        class="w-full"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText

@@ -24,15 +24,38 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.2.8.8
-Small bugfix release to address some annoyances I've been noticing.
+
+### New Features
+#### Keyword Filtering
+Sick of hearing about a particular topic?  Add keyword filters to keep posts containg those terms from appearing in your feed.  By default, keywords are compared case-insensitively, checked as whole-words, and only checked for presence within the post title, body, or embed description.  
+
+You can add modifiers to fine tune this somewhat:
+- `!term`: Prefixing a keyword with an exclamation mark will compare it as case-sensitve.  Useful for filtering acronyms.
+- `^term`: A carat tells the filter to check that the post elements start with the provided term.
+- `*term`: An asterisk disabled whole word checking will filter a post if the keyword is contained within other words.
+
+At this time, modifiers cannot be combined. Perhaps that is something that will be implemented later.
+
+### Enhancements
+#### UI Refinements
+- Removed excess margin between "expand" button and bottom of preview text in feed.
+- Spotify embeds for albums and playlists are now taller and easier to navigate
+- Reduced gap between post metadata, URL, and body.
+- Added user setting to truncate post URLs down to just the domain for rendering. Can change this behavior in settings.
+- Added user setting to collapse/expand cross post list by default
+
+
+#### Settings Control Panel
+The settings control panel has had a complete overhaul and is no longer a total fustercluck.  
+- Looks much more sleek and modern
+- Easier to use on mobile
+- Much more organized
+- More options now hide when unavailable due to a dependency being disabled or unavailable.
+
 ### Bugfixes
 - The Svelte native restore of scroll position wasn't always returning to the correct position in the feed when returning from viewing a post.  Overrode Svelte behavior and am now handling this manually in some cases and with the default Svelte behavior in others.
-
-- Mod badges weren't showing in post views as after the component breakout/refactor, moderator object wasn't passed through intermediary component.
-
+- Fixed where Mod badges weren't showing in post views as after the component breakout/refactor; moderator object wasn't passed through intermediary component.
 - Added some missing error handling to a few post fetches.
-
-
 
 ## 1.2.8.7
 

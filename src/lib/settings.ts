@@ -92,6 +92,8 @@ interface Settings {
         postsPerPage: number
         fediseerBadges: boolean
         showInstances: boolean
+        showFullURL: boolean
+        expandCrossPosts: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -135,7 +137,10 @@ export const defaultSettings: Settings = {
         showPWAButtons: false,
         postsPerPage:                                                   20,
         fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
-        showInstances: true,
+        showInstances:                                                  true,
+        showFullURL:                                                    false,
+        expandCrossPosts:                                               true,
+
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
@@ -150,7 +155,7 @@ export const defaultSettings: Settings = {
     hidePosts: {
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,
-        keywords:                                                       true,
+        keywords:                                                       false,
         keywordList:                                                    []
 
     },

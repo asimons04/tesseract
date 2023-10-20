@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
+    import {userSettings} from '$lib/settings'
+
 
     import CrosspostItem from '$lib/components/lemmy/post/CrosspostItem.svelte'
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
@@ -30,7 +32,7 @@
 </script>
 
 {#if post?.cross_posts?.length > 0}
-    <details class="{textSize} font-bold mt-2 w-full cursor-pointer" open={post.cross_posts?.length <= 3}>
+    <details class="{textSize} font-bold mt-2 w-full cursor-pointer" open={$userSettings.uiState.expandCrossPosts && post.cross_posts?.length <= 3}>
         <summary class="inline-block w-full">
             <SectionTitle class="{textSize} text-inherit dark:text-inherit">
                 Crossposts 

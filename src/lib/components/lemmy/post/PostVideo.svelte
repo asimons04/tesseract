@@ -16,8 +16,11 @@
 
 <Link 
         href={post.post.url}
+        title={post.post.url}
         newtab={$userSettings.openInNewTab.postLinks}  
+        domainOnly={!$userSettings.uiState.showFullURL}
         highlight nowrap 
+        
 />
 
 <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">

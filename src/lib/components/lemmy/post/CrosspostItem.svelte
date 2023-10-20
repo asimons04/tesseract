@@ -25,7 +25,7 @@
         hover:dark:bg-zinc-800 hover:bg-slate-200
         py-2.5 px-4 flex flex-row gap-4 items-center
     " 
-
+    id="{crosspost.post.id}"
     href="/post/{getInstance()}/{crosspost.post.id}" title="{crosspost.post.name}">
     <span class="{textSize} flex flex-col">
         <CommunityLink

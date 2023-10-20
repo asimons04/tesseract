@@ -21,12 +21,14 @@
         ArrowUturnDown,
         Icon,
         Bars3,
+        BarsArrowDown,
         Beaker,
         BugAnt,
         ArrowTopRightOnSquare,
         ChartBar,
         CodeBracketSquare,
         CodeBracket,
+        Cog6Tooth,
         CursorArrowRays,
         EnvelopeOpen,
         ExclamationTriangle,
@@ -41,6 +43,7 @@
         Identification,
         InformationCircle,
         Language,
+        Link as LinkIcon,
         NoSymbol,
         Photo,
         Play,
@@ -64,6 +67,8 @@
         if (!$userSettings.hidePosts.keywordList) {
             $userSettings.hidePosts.keywordList = [];
         }
+        
+        if (input.trim() == '') return;
 
         let words = input.split(',');
         let ignored:boolean = false;
@@ -89,6 +94,13 @@
 
             })
         }
+        else {
+            toast( {
+                content: "Keywords added to personal filter.",
+                type: "success"
+
+            })
+        }
     }
 
     const delKeyword = function(input:string):void {
@@ -111,31 +123,23 @@
 </svelte:head>
 
 <h1 class="text-3xl font-bold flex justify-between">
-    Settings 
-    <Button
-        on:click={() => {
-            toast({
-                content: 'Are you sure you want to reset your settings to the default?',
-                action: () => ($userSettings = defaultSettings),
-            })
-        }}
-        class="font-normal"
-    >
-        <Icon src={ArrowPath} mini size="16" slot="icon" />
-            Reset to default
-    </Button>
+    <span class="flex flex-row gap-2">
+        <Icon src={Cog6Tooth} mini width={36}/>
+        Settings 
+    </span>
 </h1>
 
-<h2 class="font-bold mt-2">Configure Tesseract</h2>
+<h2 class="font-bold mt-2">
+    Configure Tesseract
+</h2>
 <p class="text-sm text-slate-700 dark:text-zinc-300 mb-2">
-    Use the settings here to control your Tesseract experience.  Changes will be saved automatically to LocalStorage.  If you want to restore the default
-    settings (as set by the server admin), use the "Reset to default" button in the upper right corner.
+    Use the settings here to control your Tesseract experience.  Changes will be saved automatically.
 </p>
 
 
 <div class="flex flex-col md:flex-row gap-2">
     <!---Settings Section Menu--->
-    <div class="flex flex-row w-full md:flex-col md:max-w-[15%] gap-2">
+    <div class="flex flex-row justify-center w-full md:flex-col md:max-w-[15%] md:justify-start gap-2">
         <Button
             color="tertiary"
             title="General"
@@ -314,6 +318,31 @@
                         </div>
                         <div class="mx-auto"/>
                         <Switch bind:enabled={$userSettings.systemUI} />
+                    </div>
+
+                    <!---Reset to Default Settings--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowPath} mini width={16}/>
+                                Reset to Default
+                            </p>
+                            <p class="text-xs font-normal">Reset all of your settings to the default values.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        
+                        <Button
+                            on:click={() => {
+                                toast({
+                                    content: 'Are you sure you want to reset your settings to the default?',
+                                    action: () => ($userSettings = defaultSettings),
+                                })
+                            }}
+                            class="font-normal"
+                        >
+                            <Icon src={ArrowPath} mini size="16" slot="icon" />
+                                Reset Settings
+                        </Button>
                     </div>
 
 
@@ -540,7 +569,7 @@
                                 <Icon src={Photo} mini width={16}/>
                                 Inline Images
                             </p>
-                            <p class="text-xs font-normal">Enable inline images in posts and comments.</p>
+                            <p class="text-xs font-normal">Enable inline images in posts and comments. If disabled, inline images will be shown as a link.</p>
                         </div>
                         <div class="mx-auto"/>
                         <Switch bind:enabled={$userSettings.inlineImages} />
@@ -571,6 +600,35 @@
                         <div class="mx-auto"/>
                         <Switch bind:enabled={$userSettings.highlightInlineCode} />
                     </div>
+
+                    <!--Show Full or Truncated URLs--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={LinkIcon} mini width={16}/>
+                                Show Full URLs
+                            </p>
+                            <p class="text-xs font-normal">Show full URLs in posts. Disable to only show the domain of the link.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.uiState.showFullURL} />
+                    </div>
+
+                    <!---Expand Crosspost List--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={BarsArrowDown} mini width={16}/>
+                                Expand Crosspost List
+                            </p>
+                            <p class="text-xs font-normal">Expand the crosspost list automatically. Disable to collapse it by default. Will be collapsed regardless of settings if there are more than 3.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.expandCrossPosts} />
+                    </div>
+
                 
                 
                 </div>
@@ -616,7 +674,7 @@
                     </div>
 
                     <!--- Enable Autoplay--->
-                    <div class="flex flex-row w-full gap-2 py-2">
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.embeddedMedia.post}>
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={Play} mini width={16}/>Autoplay
@@ -630,7 +688,7 @@
                     </div>
 
                     <!--- YouTube Frontend--->
-                    <div class="flex flex-row w-full gap-2 py-2">
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.embeddedMedia.post && !$userSettings.embeddedMedia.feed}>
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={Tv} mini width={16}/>YouTube Frontend
@@ -806,7 +864,17 @@
                                 
                                 <div class="flex flex-col w-full gap-2 lg:w-1/3">
                                     <div class="flex flex-row gap-2 mt-2 w-full">
-                                        <TextInput bind:value={keywordInput} type="text" class="w-full" placeholder="Keyword(s) to filter"/>
+                                        <TextInput 
+                                            bind:value={keywordInput} 
+                                            type="text" class="w-full" placeholder="Keyword(s) to filter"
+                                            
+                                            on:keydown={(e) => {
+                                                if (e.detail?.key == "Enter") {
+                                                    e.preventDefault();
+                                                    addKeyword(keywordInput);
+                                                }
+                                            }}
+                                            />
                                         
                                         <Button color="primary"
                                             class="h-8"
@@ -819,8 +887,31 @@
                                         </Button>
                                     </div>
                                     
-                                    <div>
-                                        <p class="text-xs font-normal">Enter a keyword you wish you filter. You can specify multiple keywords by separating them with a comma.</p>
+                                    <div class="flex flex-col gap-2">
+                                        <p class="text-xs font-normal">Enter a keyword you wish you filter. You can specify multiple keywords by separating them with a comma. Post titles,
+                                            bodies, and embed descriptions will be evaluated for the keywords.
+                                        </p>
+                                        
+                                        <details>
+                                            <summary class="font-bold">Special Control Characters</summary>
+                                            <ul>
+                                                <li class="flex flex-row gap-4 pl-4">
+                                                    <span class="font-bold text-sm">^</span>
+                                                    <span class="text-xs font-normal">Content must start with this keyword.</span>
+                                                </li>
+                                                
+                                                <li class="flex flex-row gap-4 pl-4">
+                                                    <span class="font-bold text-sm">!</span>
+                                                    <span class="text-xs font-normal">Evaluate the keyword as case-sensitive.</span>
+                                                </li>
+
+                                                <li class="flex flex-row gap-4 pl-4">
+                                                    <span class="font-bold text-sm">*</span>
+                                                    <span class="text-xs font-normal">Disable whole-word matching for the keyword.</span>
+                                                </li>
+                                            </ul>
+                                        </details>
+
                                     </div>
                                 </div>
                             

@@ -98,8 +98,14 @@
             ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
             : post.post.url
         }
+        title={
+            embedURL
+            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
+            : post.post.url
+        }
+        highlight nowrap domainOnly={!$userSettings.uiState.showFullURL}
         newtab={$userSettings.openInNewTab.postLinks}  
-        highlight nowrap 
+        
     />
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
         

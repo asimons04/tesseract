@@ -41,8 +41,37 @@ Read more: [Media Proxy/Cache Docs](docs/MediaProxy.md)
 - See any endorsements, hesitations, and censures given to instances you're interacting with.
 - Code syntax highlighting in code and inline code blocks.
 
+### Distinguished and Sticky Comments
+Mods/Admins can distinguish and sticky comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.
+
+The handling of the `distinguished` flag is different in Tesseract than in Lemmy-UI:
+
+**Tesseract**
+- Distinguished comments will be given a green background and border
+- Distinguished comments are pinned at the top of the comments list.
+- Any comment can be distinguished by a mod/admin.
+
+**Lemmy-UI**
+- Distinguished comments just have an "admin" badge next to them.   
+- Only admin/mod comments can be distinguished with the "Speak as moderator" option. (which is redundant because mod accounts already have moderator badges).  
+
+Note that the way distinguished comments are handled only applies to Tesseract.  The comments will be marked as distinguished at the API level, but it's up to individual clients/UIs to handle how to render comments with the `distinguished` flag set.
+
 
 ## Additional Features
+### Keyword Filtering
+Sick of hearing about a particular topic?  Add keyword filters to keep posts containg those terms from appearing in your feed.  By default, keywords are compared case-insensitively, checked as whole-words, and only checked for presence within the post title, body, or embed description.  
+
+You can add modifiers to fine tune this somewhat:
+- `!term`: Prefixing a keyword with an exclamation mark will compare it as case-sensitve.  Useful for filtering acronyms.
+- `^term`: A carat tells the filter to check that the post elements start with the provided term.
+- `*term`: An asterisk disabled whole word checking will filter a post if the keyword is contained within other words.
+
+At this time, modifiers cannot be combined. Perhaps that is something that will be implemented later.
+
+
+
+
 ### Designed for desktop and mobile.
 Install as a PWA on either or just use it through the web.
 

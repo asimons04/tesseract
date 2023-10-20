@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { userSettings } from '$lib/settings'
 
   export let href: string
   export let highlight: boolean = false
@@ -7,6 +6,7 @@
   export let newtab: boolean = false
   export let title: string = ""
   export let id: string = ""
+  export let domainOnly:boolean = false;
 
 </script>
 
@@ -19,14 +19,19 @@
     }"
     title = "{title}"
 >
-  <slot name="icon" />
-  <slot>
-    <span
-      class="flex gap-0 {nowrap
-        ? 'w-full whitespace-nowrap overflow-hidden text-ellipsis text-xs'
-        : ''} {$$props.class}"
-    >
-    {href}
-    </span>
-  </slot>
+    <slot name="icon" />
+    <slot>
+        <span
+            class="flex gap-0 
+                {nowrap
+                    ? 'w-full whitespace-nowrap overflow-hidden text-ellipsis text-xs'
+                    : ''
+                } 
+                {$$props.class}
+            "
+        >
+            {domainOnly ? new URL(href).hostname : href}
+        </span>
+    </slot>
+  
 </a>
