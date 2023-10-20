@@ -32,9 +32,11 @@ Sick of hearing about a particular topic?  Add keyword filters to keep posts con
 You can add modifiers to fine tune this somewhat:
 - `!term`: Prefixing a keyword with an exclamation mark will compare it as case-sensitve.  Useful for filtering acronyms.
 - `^term`: A carat tells the filter to check that the post elements start with the provided term.
-- `*term`: An asterisk disabled whole word checking will filter a post if the keyword is contained within other words.
+- `*term`: An asterisk disables whole word checking will filter a post if the keyword is contained within other words.
 
 At this time, modifiers cannot be combined. Perhaps that is something that will be implemented later.
+
+Post filtering is available for the main feed and within communities.
 
 ### Enhancements
 #### UI Refinements

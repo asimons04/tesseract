@@ -1,5 +1,6 @@
 import type { ListingType, SortType } from 'lemmy-js-client'
 
+import { findCrossposts, filterKeywords } from '$lib/components/lemmy/post/helpers'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
@@ -11,17 +12,24 @@ export async function load(req: any) {
     const page = Number(req.url.searchParams.get('page') || 1) || 1
 
     const sort: SortType = (req.url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
+    
+    
     try {
+        let posts = await getClient(undefined, req.fetch).getPosts({
+            limit: 40,
+            community_name: req.params.name,
+            page: page,
+            sort: sort,
+            auth: get(profile)?.jwt,
+        });
+        
+        // Filter the posts for keywords
+        posts = filterKeywords(posts.posts);
+
         return {
             sort: sort,
             page: page,
-            posts: await getClient(undefined, req.fetch).getPosts({
-                limit: 40,
-                community_name: req.params.name,
-                page: page,
-                sort: sort,
-                auth: get(profile)?.jwt,
-            }),
+            posts: posts,
             community: await getClient(undefined, req.fetch).getCommunity({
                 name: req.params.name,
                 auth: get(profile)?.jwt,
@@ -50,17 +58,23 @@ export async function load(req: any) {
             auth: get(profile)!.jwt!,
             q: '!' + req.params.name,
         })
+        
+        let posts = await getClient(undefined, req.fetch).getPosts({
+            limit: 40,
+            community_name: req.params.name,
+            page: page,
+            sort: sort,
+            auth: get(profile)?.jwt,
+        })
+        
+        // Filter the posts for keywords
+        posts = filterKeywords(posts.posts);
+
 
         return {
             sort: sort,
             page: page,
-            posts: await getClient(undefined, req.fetch).getPosts({
-                limit: 40,
-                community_name: req.params.name,
-                page: page,
-                sort: sort,
-                auth: get(profile)?.jwt,
-            }),
+            posts: posts,
             community: await getClient(undefined, req.fetch).getCommunity({
                 name: req.params.name,
                 auth: get(profile)?.jwt,
