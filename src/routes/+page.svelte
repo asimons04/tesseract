@@ -71,22 +71,24 @@
                 <span slot="label">List Type</span>
             </MultiSelect>
       
-            <MultiSelect
-                options={['Cards', 'Compact']}
-                selected={$userSettings.showCompactPosts
-                    ? 'Compact'
-                    : 'Cards'
-                }
-                on:select={(e) => {
-                    $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                }}
-                items={0}
-                headless={true}
-                fullWidth={true}
-            >
-                <Icon src={QueueList} mini width={16} slot="icon"/>
-                <span slot="label">Display Type</span>
-            </MultiSelect>
+            <div class="flex flex-col hidden md:block">
+                <MultiSelect
+                    options={['Cards', 'Compact']}
+                    selected={$userSettings.showCompactPosts
+                        ? 'Compact'
+                        : 'Cards'
+                    }
+                    on:select={(e) => {
+                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                    }}
+                    items={0}
+                    headless={true}
+                    fullWidth={true}
+                >
+                    <Icon src={QueueList} mini width={16} slot="icon"/>
+                    <span slot="label">Display Type</span>
+                </MultiSelect>
+            </div>
 
 
             <Sort selected={data.sort} headless={true}  fullWidth={true} items={0}>

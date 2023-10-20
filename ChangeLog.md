@@ -45,7 +45,7 @@ Post filtering is available for the main feed and within communities.
 - Reduced gap between post metadata, URL, and body.
 - Added user setting to truncate post URLs down to just the domain for rendering. Can change this behavior in settings.
 - Added user setting to collapse/expand cross post list by default
-
+- Hide "card/compact" switcher in small width to keep from overflowing. The fact it stayed inline was mostly just my testing device being unique.
 
 #### Settings Control Panel
 The settings control panel has had a complete overhaul and is no longer a total fustercluck.  
