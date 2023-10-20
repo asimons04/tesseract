@@ -234,7 +234,8 @@ export const YTFrontends = {
         'invidious.private.coffee',
         'iv.nboeck.de',
         'yt.oelrichsgarcia.de',
-        'yt.artemislena.eu'
+        'yt.artemislena.eu',
+        'yt.whateveritworks.org'
     ],
 
     piped: [

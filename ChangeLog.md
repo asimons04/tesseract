@@ -59,6 +59,10 @@ The settings control panel has had a complete overhaul and is no longer a total 
 - Fixed where Mod badges weren't showing in post views as after the component breakout/refactor; moderator object wasn't passed through intermediary component.
 - Added some missing error handling to a few post fetches.
 
+### Misc
+- Added additional Invidious instance: `yt.whateveritworks.org`
+
+
 ## 1.2.8.7
 
 ### New Features
