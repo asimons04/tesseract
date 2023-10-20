@@ -20,7 +20,7 @@
 
   //flex flex-row items-center w-max max-w-full overflow-auto
   let containerClass = `
-    flex flex-row items-center ${fullWidth ? '' : 'w-max'} max-w-full overflow-auto
+    flex flex-row items-center min-w-[120px] ${fullWidth ? '' : 'w-max'} max-w-full overflow-auto
     ${
       headless
         ? 'pb-1'

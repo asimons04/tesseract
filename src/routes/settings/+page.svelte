@@ -18,11 +18,38 @@
     
     import {
         ArrowPath,
+        ArrowUturnDown,
         Icon,
         Bars3,
+        Beaker,
+        BugAnt,
+        ArrowTopRightOnSquare,
         ChartBar,
+        CodeBracketSquare,
+        CodeBracket,
+        CursorArrowRays,
+        EnvelopeOpen,
+        ExclamationTriangle,
+        Eye,
+        EyeSlash,
+        FaceFrown,
+        Film,
+        Funnel,
+        Gif,
+        GlobeAlt,
+        HandRaised,
+        Identification,
+        InformationCircle,
+        Language,
+        NoSymbol,
+        Photo,
+        Play,
         PlusCircle,
+        QueueList,
+        Server,
         TableCells,
+        Trash,
+        Tv,
         XCircle
     } from 'svelte-hero-icons'
 
@@ -75,6 +102,7 @@
 
     }
 
+    let selected: 'general' | 'feed' | 'posts' | 'media' | 'moderation' | 'filters'  = 'general';
 
 </script>
 
@@ -82,307 +110,762 @@
     <title>Settings</title>
 </svelte:head>
 
-<div class="flex flex-col p-2">
-    <h1 class="text-3xl font-bold flex justify-between">
-        Settings 
+<h1 class="text-3xl font-bold flex justify-between">
+    Settings 
+    <Button
+        on:click={() => {
+            toast({
+                content: 'Are you sure you want to reset your settings to the default?',
+                action: () => ($userSettings = defaultSettings),
+            })
+        }}
+        class="font-normal"
+    >
+        <Icon src={ArrowPath} mini size="16" slot="icon" />
+            Reset to default
+    </Button>
+</h1>
+
+<h2 class="font-bold mt-2">Configure Tesseract</h2>
+<p class="text-sm text-slate-700 dark:text-zinc-300 mb-2">
+    Use the settings here to control your Tesseract experience.  Changes will be saved automatically to LocalStorage.  If you want to restore the default
+    settings (as set by the server admin), use the "Reset to default" button in the upper right corner.
+</p>
+
+
+<div class="flex flex-col md:flex-row gap-2">
+    <!---Settings Section Menu--->
+    <div class="flex flex-row w-full md:flex-col md:max-w-[15%] gap-2">
         <Button
-            on:click={() => {
-                toast({
-                    content: 'Are you sure you want to reset your settings to the default?',
-                    action: () => ($userSettings = defaultSettings),
-                })
-            }}
-            class="font-normal"
+            color="tertiary"
+            title="General"
+            alignment="left"
+            on:click={()=> { selected = 'general' }}
         >
-            <Icon src={ArrowPath} mini size="16" slot="icon" />
-                Reset to default
+            <Icon src={InformationCircle} mini width={16} slot="icon"/>
+            <span class="hidden sm:block">General</span>
         </Button>
-    </h1>
-  
-    <h1 class="font-bold mt-2">Configure Tesseract</h1>
-    <p class="text-sm text-slate-700 dark:text-zinc-300 mb-2">
-        Use the settings here to control your Tesseract experience.  Changes will be saved automatically to LocalStorage.  If you want to restore the default
-        settings (as set by the server admin), use the "Reset to default" button in the upper right corner.
-    </p>
-
-    <Setting>
-        <span slot="title">Default Sorting Options</span>
-        <span slot="description">
-            Select which feed is your default, what order it is sorted in, and in which directions comments should be sorted.
-        </span>
-
-        <div class="flexrow">
-            <div class="flexcol flexcol-25 mt-2">
-                <MultiSelect
-                    options={['Subscribed', 'Local', 'All']}
-                    bind:selected={$userSettings.defaultSort.feed}
-                >
-                    <Icon src={Bars3} mini width={16} slot="icon"/>
-                    <span slot="label">Default Feed</span>
-                </MultiSelect>
-            </div>
-
-            <div class="flexcol flexcol-25 mt-2">
-                <Sort bind:selected={$userSettings.defaultSort.sort} navigate={false}>
-                    <Icon src={ChartBar} mini width={16} slot="icon"/>
-                    <span slot="label">Feed Sort Direction</span>
-                </Sort>
-            </div>
-
-            <div class="flexcol flexcol-25 mt-2">
-                <MultiSelect
-                    options={['Hot', 'Top', 'New']}
-                    bind:selected={$userSettings.defaultSort.comments}
-                >
-                    <Icon src={ChartBar} mini width={16} slot="icon"/>
-                    <span slot="label">Comment Sort Direction</span>
-                </MultiSelect>
-            </div>
-
-            <div class="flexcol flexcol-25 mt-2">
-                <MultiSelect
-                    options={[20, 30, 40, 50]}
-                    bind:selected={$userSettings.uiState.postsPerPage}
-                >
-                    <Icon src={TableCells} mini width={16} slot="icon"/>
-                    <span slot="label">Posts per Page</span>
-                </MultiSelect>
-            </div>
-        </div>
-    </Setting>
-            
-            
-            
-            
-    <Setting>
-        <span slot="title">Post and User Display</span>
-        <span slot="description">Toggle various options for how posts, comments, and usernames are displayed.</span>
         
-        <div class="flexrow">
-            
-            <div class="flexcol flexcol-33 mt-4">
-                
-                <h1 class="font-bold mb-2">Post Display Options</h1>
-                <Checkbox bind:checked={$userSettings.markReadPosts}>       Fade Title of Read Posts</Checkbox>
-                <Checkbox bind:checked={$userSettings.nsfwBlur}>            Blur NSFW Images in Feed</Checkbox>
-                <Checkbox bind:checked={$userSettings.tagNSFWCommunities}>  Show NSFW badges on Communities</Checkbox>
-                <Checkbox bind:checked={$userSettings.highlightCode}>       Use syntax highlighting in code blocks.</Checkbox>
-                <Checkbox bind:checked={$userSettings.highlightInlineCode}> Use syntax highlighting in inline code.</Checkbox>
-                <Checkbox bind:checked={$userSettings.inlineImages}>        Enable inline images in posts/comments</Checkbox>
-                <Checkbox bind:checked={$userSettings.openInNewTab.postLinks}>Open links in a new tab.</Checkbox>
-                <Checkbox bind:checked={$userSettings.uiState.showPWAButtons}>Enable navigation buttons in posts.</Checkbox>
+        <Button
+            color="tertiary"
+            title="Feed"
+            alignment="left"
+            on:click={()=> { selected = 'feed' }}
+        >
+            <Icon src={Bars3} mini width={16} slot="icon"/>
+            <span class="hidden sm:block">Feed</span>
+        </Button>
 
+        <Button
+            color="tertiary"
+            title="Posts"
+            alignment="left"
+            on:click={()=> { selected = 'posts' }}
+        >
+            <Icon src={Photo} mini width={16} slot="icon"/>
+            <span class="hidden sm:block">Posts</span>
+        </Button>
+
+        <Button
+            color="tertiary"
+            title="Media"
+            alignment="left"
+            on:click={()=> { selected = 'media' }}
+        >
+            <Icon src={Gif} mini width={16} slot="icon"/>
+            <span class="hidden sm:block">Media</span>
+        </Button>
+
+        <Button
+            color="tertiary"
+            title="Moderation"
+            alignment="left"
+            on:click={()=> { selected = 'moderation' }}
+        >
+            <Icon src={HandRaised} mini width={16} slot="icon"/>
+            <span class="hidden sm:block">Moderation</span>
+        </Button>
+
+        <Button
+            color="tertiary"
+            title="Filters"
+            alignment="left"
+            on:click={()=> { selected = 'filters' }}
+        >
+            <Icon src={Funnel} mini width={16} slot="icon"/>
+            <span class="hidden sm:block">Filters</span> 
+        </Button>
+    </div>
+
+    <div class="flex flex-col w-full md:w-[85%]">
+        <!---General Options--->
+        <div class:hidden={selected!='general'}>
+            <Setting>
+                <span class="flex flex-row gap-2" slot="title">
+                    <Icon src={InformationCircle} mini width={24} slot="icon"/>General Options
+                </span>
+                <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
                     
-                <div class="flex justify-between mt-4">
-                    <div>
-                        <SelectMenu
-                            label="Post Style"
-                            alignment="top-left"
-                            options={[false, true]}
-                            optionNames={['Cards', 'Compact']}
-                            selected={$userSettings.showCompactPosts
-                                ? 'Compact'
-                                : 'Cards'
-                            }
-                            on:select={(e) => {
-                                $userSettings.showCompactPosts = e.detail;
-                            }}
+                    <!---Navigation Buttons--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={CursorArrowRays} mini width={16}/>
+                                Navigation Buttons
+                            </p>
+                            <p class="text-xs font-normal">Show on-screen navigation buttons.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.showPWAButtons} />
+                    </div>
+
+                    <!---Community NSFW Badges--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ExclamationTriangle} mini width={16}/>
+                                Community NSFW Badges
+                            </p>
+                            <p class="text-xs font-normal">Show NSFW badges on communities that are marked NSFW.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.tagNSFWCommunities} />
+                    </div>
+
+                    <!---Open in New Tab--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowTopRightOnSquare} mini width={16}/>
+                                Open in New Tab
+                            </p>
+                            <p class="text-xs font-normal">Open external links in a new tab.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.openInNewTab.postLinks} />
+                    </div>
+
+                    <!---Use Display Names--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Identification} mini width={16}/>
+                                Use Display Names
+                            </p>
+                            <p class="text-xs font-normal">Show user and community display names instead of their actor ID names.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.displayNames} />
+                    </div>
+
+                    <!---Show Instances--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Server} mini width={16}/>
+                                Show Instance Names
+                            </p>
+                            <p class="text-xs font-normal">Show the instance/domain for users and communities.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.uiState.showInstances} />
+                    </div>
+
+                    <!---Enable Debug Buttons--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={BugAnt} mini width={16}/>
+                                Debug Buttons
+                            </p>
+                            <p class="text-xs font-normal">Show debug buttons in the UI</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.debugInfo} />
+                    </div>
+
+                    <!---Enable Experimental Features--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Beaker} mini width={16}/>
+                                Experimental Features
+                            </p>
+                            <p class="text-xs font-normal">Enable experimental features. Note that these may be buggy.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.experimentalFeatures} />
+                    </div>
+
+                    <!---Use Browser Font Instead of Theme Font--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Language} mini width={16}/>
+                                Use Browser Font
+                            </p>
+                            <p class="text-xs font-normal">Use the system/browser's font instead of the theme font.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.systemUI} />
+                    </div>
+
+
+
+                </div>
+            </Setting>
+
+
+        </div>
+
+        <!---Feed Options--->
+        <div class:hidden={selected!='feed'}>
+            <Setting>
+                <span class="flex flex-row gap-2" slot="title">
+                    <Icon src={Bars3} mini width={24} slot="icon"/>
+                    Feed Options
+                </span>
+                
+                <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                    
+                    <!--- Default Feed Selection--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Bars3} mini width={16}/>Default Feed
+                            </p>
+                            <p class="text-xs font-normal">Show only posts your're suscribed to, show all from your local instance, or show all posts known to your instance</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <MultiSelect
+                            options={['Subscribed', 'Local', 'All']}
+                            bind:selected={$userSettings.defaultSort.feed}
+                            headless={true}
+                            items={0}
                         />
                     </div>
 
-                    <div>
-                        <SelectMenu
-                            label="Feed Image Size"
-                            alignment="top-center"
+                    <!---Feed Sort Direction--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ChartBar} mini width={16}/>
+                                Feed Sort Direction
+                            </p>
+                            <p class="text-xs font-normal">Choose how your posts are sorted by default.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Sort bind:selected={$userSettings.defaultSort.sort} navigate={false} items={0} headless={true} />
+                    </div>
+                    
+                    <!---Comment Sort Order--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ChartBar} mini width={16}/>
+                                Comment Sort Direction
+                            </p>
+                            <p class="text-xs font-normal">Choose the default sorting method for comments.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <MultiSelect
+                            options={['Hot', 'Top', 'New']}
+                            bind:selected={$userSettings.defaultSort.comments}
+                            headless={true}
+                            items={0}
+                        />
+                    </div>
+
+                    <!---Posts Per Page--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={TableCells} mini width={16}/>
+                                Posts per Page
+                            </p>
+                            <p class="text-xs font-normal">The number of posts to reaquest on each page of the feed.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <MultiSelect
+                            options={[20, 30, 40, 50]}
+                            bind:selected={$userSettings.uiState.postsPerPage}
+                            items={0}
+                            headless={true}
+                        />
+                    </div>
+
+
+                    <!---Post Style--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={QueueList} mini width={16}/>
+                                Post Style
+                            </p>
+                            <p class="text-xs font-normal">What style of posts to display in the feed by default.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        
+                        <MultiSelect
+                            options={[false, true]}
+                            optionNames={['Cards', 'Compact']}
+                            bind:selected={$userSettings.showCompactPosts}
+                            headless={true}
+                            items={0}
+                        />
+                    </div>
+
+                    <!---Feed Image Size--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Photo} mini width={16}/>
+                                Image Size
+                            </p>
+                            <p class="text-xs font-normal">Set the size for post images in the feed.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        
+                        <MultiSelect
                             optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
                             options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
                             selected={$userSettings.imageSize.feed}
+                            items={0}
+                            headless={true}
                             on:select={(e) => {
                                 // @ts-ignore
                                 $userSettings.imageSize.feed = e.detail
                             }}
                         />
                     </div>
+                
 
-                    <div>
-                        <SelectMenu
-                            label="Post Image Size"
-                            alignment="top-right"
+                    <!---Fade Title of Read Posts--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={EnvelopeOpen} mini width={16}/>
+                                Fade Read Posts
+                            </p>
+                            <p class="text-xs font-normal">Fade the titles of read posts in the feed.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.markReadPosts} />
+                    </div>
+
+                    <!---Fediseer Badges--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Eye} mini width={16}/>
+                                Fediseer Badges
+                            </p>
+                            <p class="text-xs font-normal">Show Fediseer badges on post cards.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.fediseerBadges} />
+                    </div>
+
+                    <!---Blur NSFW Images--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={EyeSlash} mini width={16}/>
+                                Blur NSFW Images
+                            </p>
+                            <p class="text-xs font-normal">Blur images in posts that are marked NSFW.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.nsfwBlur} />
+                    </div>
+                    
+                </div>
+                
+
+            </Setting>
+               
+        </div>
+
+        <!---Post Options--->
+        <div class:hidden={selected!='posts'}>
+            <Setting>
+                <span class="flex flex-row gap-2" slot="title">
+                    <Icon src={Photo} mini width={24} slot="icon"/>
+                    Post Options
+                </span>
+                <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                    
+                    <!---Post Image Size--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Photo} mini width={16}/>
+                                Image Size
+                            </p>
+                            <p class="text-xs font-normal">Set the size of the images when viewing posts.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        
+                        <MultiSelect
                             optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
                             options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
                             selected={$userSettings.imageSize.post}
+                            headless={true}
+                            items={0}
                             on:select={(e) => {
                                 // @ts-ignore
                                 $userSettings.imageSize.post = e.detail
                             }}
                         />
                     </div>
-                </div>
-            </div>
-            
-            
-            <div class="flexcol flexcol-33 mt-4">
-                <h1 class="font-bold mb-2">User/Community Display</h1>
-                    
-                <Checkbox bind:checked={$userSettings.displayNames}>Show a user's display name instead of their account username.</Checkbox>
-                <Checkbox bind:checked={$userSettings.uiState.showInstances}>Show instances for users/communities</Checkbox>
 
-                <h1 class="font-bold mt-4 mb-2">Misc Settings</h1>
+                    <!---Inline Images--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Photo} mini width={16}/>
+                                Inline Images
+                            </p>
+                            <p class="text-xs font-normal">Enable inline images in posts and comments.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.inlineImages} />
+                    </div>
 
-                <Checkbox bind:checked={$userSettings.modlogCardView}>Use Card view in modlog.</Checkbox>
-                <Checkbox bind:checked={$userSettings.systemUI}>Use app's font (uncheck to use browser default)</Checkbox>
-                <Checkbox bind:checked={$userSettings.debugInfo}>           Show Debug Info on Posts</Checkbox>
-                <Checkbox bind:checked={$userSettings.uiState.fediseerBadges}> Show Fediseer badges on posts</Checkbox>
-                <Checkbox bind:checked={$userSettings.experimentalFeatures}>Enable experimental features</Checkbox>
-            </div>
+                    <!---Code Syntax Highlighting--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={CodeBracketSquare} mini width={16}/>
+                                Code Highlighting
+                            </p>
+                            <p class="text-xs font-normal">Enable syntax highlighting in code blocks.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.highlightCode} />
+                    </div>
 
-            <div class="flexcol flexcol-33 mt-4">
-                <h1 class="font-bold mb-2">Media and Embedded Content</h1>
-                <Checkbox bind:checked={$userSettings.embeddedMedia.feed}>Enable embedded content in feed</Checkbox>
-                <Checkbox bind:checked={$userSettings.embeddedMedia.post}>Enable embedded content in posts</Checkbox>
-                <Checkbox bind:checked={$userSettings.embeddedMedia.autoplay}>Autoplay supported content when opening posts</Checkbox>
+                    <!---Inline Code Syntax Highlighting--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={CodeBracket} mini width={16}/>
+                                Inline Code Highlighting
+                            </p>
+                            <p class="text-xs font-normal">Enable syntax highlighting for inline code.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.highlightInlineCode} />
+                    </div>
                 
-                <span class:hidden={!ENABLE_MEDIA_PROXY} class="mt-4">
-                    <h1 class="font-bold mb-2">Image Proxying</h1>
-                    <Checkbox bind:checked={$userSettings.proxyMedia.enabled}>Proxy images through Tesseract</Checkbox>
-                    <Checkbox bind:checked={$userSettings.proxyMedia.fallback}>Fallback to direct fetch if proxy fails</Checkbox>
-                </span>
-
-                <h1 class="font-bold mt-4 mb-2">YouTube Frontend</h1>
-                <div class="flex flex-row flex-wrap">
-                    <MultiSelect
-                        options={['YouTube', 'Invidious']}
-                        bind:selected={$userSettings.embeddedMedia.YTFrontend}
-                    />
-
-                    <span class:hidden={!($userSettings.embeddedMedia.YTFrontend == 'Invidious')} >
-                        <MultiSelect
-                            options={YTFrontends.invidious}
-                            items=0
-                            bind:selected={$userSettings.embeddedMedia.customInvidious}
-                        />
-                    </span>
+                
                 </div>
-            </div>
+            </Setting>
         </div>
 
-    </Setting>
-
-    
-    <Setting>
-        <span slot="title">Moderation Removal Reply Template</span>
-        <span slot="description">
-            <p>The preset to use for "Reply reason" in a submission removal.</p>
-            
-            <div class="flexrow">
-                <div class="flexcol flexcol-33">
-                    <ul class="leading-6 mt-4">
-                        <li class="font-bold">Syntax:</li>
-                        <li>
-                            <code>{'{{reason}}'}</code>: The provided reason
-                        </li>
-
-                        <li>
-                            <code>{'{{post}}'}</code>: The title of the post
-                        </li>
-
-                        <li>
-                            <code>{'{{community}}'}</code>: The community the submission was removed in.
-                        </li>
-
-                        <li>
-                            <code>{'{{username}}'}</code>: The username of the creator of the submission.
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="flexcol flexcol-66">
-                    <MarkdownEditor
-                        bind:value={$userSettings.moderation.removalReasonPreset}
-                        images={false}
-                        previewButton
-                        beforePreview={(input) =>
-                            removalTemplate(input, {
-                                postTitle: '<Example post>',
-                                communityLink: '[!community@example.com]()',
-                                reason: '<Being a meanie>',
-                                username: '@Bob',
-                            })
-                        }
-                    />
-                </div>
-            </div>
-        </span>
-    </Setting>
-
-
-        <Setting>
-            <span slot="title">Post Filtering</span>
-            <span slot="description">
-                <p>Filter which posts are shown or hidden.</p>
-            </span>
-            
-            <div class="flexrow">
-                <div class="flexcol flexcol-66">
-                    <h1 class="font-bold mb-2">Keyword Filters</h1>
-                    <p class="text-sm text-slate-700 dark:text-zinc-300">
-                        Hide posts that contain any keywords defined here. Keywords will be searched in the post title and body.
-                    </p>
+        <!--Media Opinions--->
+        <div class:hidden={selected!='media'}>
+            <Setting>
+                <span class="flex flex-row gap-2" slot="title">
+                    <Icon src={Gif} mini width={24} slot="icon"/>
+                    Media Options
+                </span>
+                
+                <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
                     
-                    
+                    <!--- Enable Embedded Content In Feed--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Film} mini width={16}/>Enable Embeds in Feed
+                            </p>
+                            <p class="text-xs font-normal">Enable embedded content in the feed. When disabled, a thumbnail will be shown instead.</p>
+                        </div>
                         
-                        <div class="flex flex-row gap-2 w-full">
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.embeddedMedia.feed} />
+                    </div>
+
+                    <!--- Enable Embedded Content In Posts--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Film} mini width={16}/>Enable Embeds in Posts
+                            </p>
+                            <p class="text-xs font-normal">Enable embedded content in the posts. When disabled, a thumbnail will be shown instead.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.embeddedMedia.post} />
+                    </div>
+
+                    <!--- Enable Autoplay--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Play} mini width={16}/>Autoplay
+                            </p>
+                            <p class="text-xs font-normal">Autoplay supported content when opening posts.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.embeddedMedia.autoplay} />
+                    </div>
+
+                    <!--- YouTube Frontend--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Tv} mini width={16}/>YouTube Frontend
+                            </p>
+                            <p class="text-xs font-normal">Choose whether to use YouTube or Invidious for YouTube links.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <MultiSelect
+                            options={['YouTube', 'Invidious']}
+                            bind:selected={$userSettings.embeddedMedia.YTFrontend}
+                            items={0}
+                            headless={true}
+                        />
+                    </div>
+
+                    <!--- Invidious Instance--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!($userSettings.embeddedMedia.YTFrontend == 'Invidious')}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Film} mini width={16}/>Invidious Instance
+                            </p>
+                            <p class="text-xs font-normal">Select the Invidious instance you wish to use as your YouTube frontend.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <MultiSelect
+                            options={YTFrontends.invidious}
+                            items={0}
+                            headless={true}
+                            bind:selected={$userSettings.embeddedMedia.customInvidious}
+                        />
+                    </div>
+
+                    <!--- Image Proxying --->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!ENABLE_MEDIA_PROXY}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={GlobeAlt} mini width={16}/>Proxy Images
+                            </p>
+                            <p class="text-xs font-normal">When enabled, images will be proxied through the Tesseract UI rather than fetched directly.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.proxyMedia.enabled} />
+                    </div>
+
+                    <!--- Image Proxying Fallback --->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!ENABLE_MEDIA_PROXY || !$userSettings.proxyMedia.enabled}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowUturnDown} mini width={16}/>Fallback to Direct Fetch
+                            </p>
+                            <p class="text-xs font-normal">If the image proxy fails to fetch the image, try to fetch it directly instead.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.proxyMedia.fallback} />
+                    </div>
+
+                </div>
+
+
+            </Setting>
+        </div>
+
+        <!---Moderation Options--->
+        <div class:hidden={selected!='moderation'}>
+            <Setting>
+                <span class="flex flex-row gap-2" slot="title">
+                    <Icon src={HandRaised} mini width={24} slot="icon"/>
+                    Moderation Removal Reply Template
+                </span>
+                <span slot="description">
+                    <p>The preset to use for "Reply reason" in a submission removal.</p>
+                    
+                    <div class="flexrow">
+                        <div class="flexcol flexcol-33">
+                            <ul class="leading-6 mt-4">
+                                <li class="font-bold">Syntax:</li>
+                                <li>
+                                    <code>{'{{reason}}'}</code>: The provided reason
+                                </li>
+        
+                                <li>
+                                    <code>{'{{post}}'}</code>: The title of the post
+                                </li>
+        
+                                <li>
+                                    <code>{'{{community}}'}</code>: The community the submission was removed in.
+                                </li>
+        
+                                <li>
+                                    <code>{'{{username}}'}</code>: The username of the creator of the submission.
+                                </li>
+                            </ul>
+                        </div>
+        
+                        <div class="flexcol flexcol-66">
+                            <MarkdownEditor
+                                bind:value={$userSettings.moderation.removalReasonPreset}
+                                images={false}
+                                previewButton
+                                beforePreview={(input) =>
+                                    removalTemplate(input, {
+                                        postTitle: '<Example post>',
+                                        communityLink: '[!community@example.com]()',
+                                        reason: '<Being a meanie>',
+                                        username: '@Bob',
+                                    })
+                                }
+                            />
+                        </div>
+                    </div>
+                </span>
+            </Setting>
+        </div>
+
+        <!---Filtering--->
+        <div class:hidden={selected!='filters'}>
+            <Setting>
+                <span class="flex flex-row gap-2" slot="title">
+                    <Icon src={Funnel} mini width={24} slot="icon"/>
+                    Post Filtering
+                </span>
+                <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                   
+                    <!--- Hide Deleted Posts --->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Trash} mini width={16}/>
+                                Hide Deleted Posts
+                            </p>
+                            <p class="text-xs font-normal">Hide posts that have been deleted.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.hidePosts.deleted} />
+                    </div>
+
+                    <!--- Hide Removed Posts --->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={NoSymbol} mini width={16}/>
+                                Hide Removed Posts
+                            </p>
+                            <p class="text-xs font-normal">Hide posts that have been removed by a moderator.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.hidePosts.removed} />
+                    </div>
+
+                    <!--- Enable Keyword Filters --->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={FaceFrown} mini width={16}/>
+                                Keyword Filtering
+                            </p>
+                            <p class="text-xs font-normal">Enable hiding posts based on keywords you've configured.</p>
                             
-                            <div class="flex flex-col mt-2">
-                                <TextInput bind:value={keywordInput} type="text" class="w-full"/>
-                        
-                                <div class="mx-auto"/>
+                            <!---Keyword Filter Editor --->
+                            <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4" class:hidden={!$userSettings.hidePosts.keywords}>
                                 
-                                <Button color="primary"
-                                    on:click={() => {
-                                    addKeyword(keywordInput);
-                                    }}
-                                >
-                                    <Icon src={PlusCircle} mini width={16}/>
-                                    Add
-                                </Button>
-                            </div>
-                        
-                            <div class="flex flex-col mt-2 gap-2 items-center px-[10%]">
-                                {#each $userSettings.hidePosts.keywordList as keyword}
-                                    <div class="w-full border rounded-md bg:slate-300 dark:bg-zinc-900 flex flex-row gap-2 items-center divide-y">
-                                        <p class="pl-4 text-xs font-bold">{keyword}</p>
-
-                                        <div class="mx-auto"/>
+                                <div class="flex flex-col w-full gap-2 lg:w-1/3">
+                                    <div class="flex flex-row gap-2 mt-2 w-full">
+                                        <TextInput bind:value={keywordInput} type="text" class="w-full" placeholder="Keyword(s) to filter"/>
                                         
-                                        <Button
-                                            color="tertiary"
+                                        <Button color="primary"
+                                            class="h-8"
                                             on:click={() => {
-                                                delKeyword(keyword);
-
+                                            addKeyword(keywordInput);
                                             }}
                                         >
-                                            
-                                            <Icon src={XCircle} mini width={16}/>
+                                            <Icon src={PlusCircle} mini width={18}/>
+                                            Add
                                         </Button>
                                     </div>
-                                {/each}
+                                    
+                                    <div>
+                                        <p class="text-xs font-normal">Enter a keyword you wish you filter. You can specify multiple keywords by separating them with a comma.</p>
+                                    </div>
+                                </div>
+                            
+                                <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full lg:w-2/3 overflow-y-scroll px-4">
+                                    {#each $userSettings.hidePosts.keywordList as keyword}
+                                        <div class="w-full border rounded-md bg:slate-300 dark:bg-zinc-900 flex flex-row gap-2 items-center divide-y">
+                                            <p class="pl-4 text-xs font-bold">{keyword}</p>
+
+                                            <div class="mx-auto"/>
+                                            
+                                            <Button
+                                                color="tertiary"
+                                                on:click={() => {
+                                                    delKeyword(keyword);
+
+                                                }}
+                                            >
+                                                
+                                                <Icon src={XCircle} mini width={20}/>
+                                            </Button>
+                                        </div>
+                                    {/each}
+                                </div>
                             </div>
+                            
+                            
 
+                        </div>
                         
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.hidePosts.keywords} />
+                    </div>
+
                     
-                </div>
-                
-                <div class="flexcol flexcol-33">
-                    <Checkbox bind:checked={$userSettings.hidePosts.keywords} class="text-xs">  Enable Keyword Filtering</Checkbox>
-                    <Checkbox bind:checked={$userSettings.hidePosts.deleted} class="text-xs">   Hide Deleted Posts</Checkbox>
-                    <Checkbox bind:checked={$userSettings.hidePosts.removed} class="text-xs">   Hide Removed Posts</Checkbox>
-                </div>
-            </div>        
+                    
 
-        </Setting>
-        
 
-        
- 
+                </div>
+            </Setting>
+        </div>
+
+
+    </div>
+
 </div>
+
+ 
