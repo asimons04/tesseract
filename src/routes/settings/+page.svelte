@@ -6,6 +6,7 @@
     import EditableList from '$lib/components/ui/list/EditableList.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Setting from './Setting.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -17,6 +18,7 @@
     import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
     
     import {
+        ArchiveBox,
         ArrowPath,
         ArrowUturnDown,
         Icon,
@@ -916,24 +918,32 @@
                                 </div>
                             
                                 <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full lg:w-2/3 overflow-y-scroll px-4">
-                                    {#each $userSettings.hidePosts.keywordList as keyword}
-                                        <div class="w-full border rounded-md bg:slate-300 dark:bg-zinc-900 flex flex-row gap-2 items-center divide-y">
-                                            <p class="pl-4 text-xs font-bold">{keyword}</p>
+                                    {#if $userSettings?.hidePosts?.keywordList.length > 0}
+                                        {#each $userSettings.hidePosts.keywordList as keyword}
+                                            <div class="w-full border rounded-md bg:slate-300 dark:bg-zinc-900 flex flex-row gap-2 items-center divide-y">
+                                                <p class="pl-4 text-xs font-bold">{keyword}</p>
 
-                                            <div class="mx-auto"/>
-                                            
-                                            <Button
-                                                color="tertiary"
-                                                on:click={() => {
-                                                    delKeyword(keyword);
-
-                                                }}
-                                            >
+                                                <div class="mx-auto"/>
                                                 
-                                                <Icon src={XCircle} mini width={20}/>
-                                            </Button>
-                                        </div>
-                                    {/each}
+                                                <Button
+                                                    color="tertiary"
+                                                    on:click={() => {
+                                                        delKeyword(keyword);
+
+                                                    }}
+                                                >
+                                                    
+                                                    <Icon src={XCircle} mini width={20}/>
+                                                </Button>
+                                            </div>
+                                        {/each}
+                                    {:else}
+                                        <Placeholder
+                                            icon={ArchiveBox}
+                                            title="No keywords"
+                                            description="You have not set any keywords to filter."
+                                        />
+                                    {/if}
                                 </div>
                             </div>
                             
