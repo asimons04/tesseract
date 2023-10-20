@@ -300,6 +300,11 @@ if (typeof window != 'undefined') {
         oldUserSettings.uiState.showInstances = true;
         delete oldUserSettings.showInstances;
     }
+    
+    // Make sure the keyword filter list gets initialized
+    if (!oldUserSettings.hidePosts.keywordList) {
+        oldUserSettings.hidePosts.keywordList = []
+    }
 
     userSettings.set({ ...defaultSettings, ...oldUserSettings })
 }

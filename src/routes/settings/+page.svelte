@@ -8,7 +8,7 @@
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Setting from './Setting.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
-
+    import TextInput from '$lib/components/input/TextInput.svelte'
     
     
     import Sort from '$lib/components/lemmy/Sort.svelte'
@@ -21,12 +21,61 @@
         Icon,
         Bars3,
         ChartBar,
-        TableCells
+        PlusCircle,
+        TableCells,
+        XCircle
     } from 'svelte-hero-icons'
 
     let data = {
         loading: false,
     }
+
+    // Keyword filtering helpers
+    let keywordInput:string
+    const addKeyword = function(input:string):void {
+        // Initialize an empty keyword list if it doesn't exist
+        if (!$userSettings.hidePosts.keywordList) {
+            $userSettings.hidePosts.keywordList = [];
+        }
+
+        let words = input.split(',');
+        let ignored:boolean = false;
+
+        words.forEach((item) => {
+            let word = item.trim();
+            if ($userSettings.hidePosts.keywordList.includes(word)) {
+                ignored = true;
+            }
+            else {
+                $userSettings.hidePosts.keywordList.push(word);
+            }
+        })
+        
+        $userSettings.hidePosts.keywordList.sort();
+        $userSettings.hidePosts.keywordList = $userSettings.hidePosts.keywordList
+        keywordInput = '';
+
+        if (ignored) {
+            toast( {
+                content: "Some words were ignored because they are already in the filter list.",
+                type: "warning"
+
+            })
+        }
+    }
+
+    const delKeyword = function(input:string):void {
+        if ($userSettings.hidePosts.keywordList.includes(input)) {
+            let index = $userSettings.hidePosts.keywordList.indexOf(input);
+            
+            $userSettings.hidePosts.keywordList.splice(index,1);
+            $userSettings.hidePosts.keywordList = $userSettings.hidePosts.keywordList;
+        }
+
+
+    }
+
+
 </script>
 
 <svelte:head>
@@ -114,9 +163,6 @@
             <div class="flexcol flexcol-33 mt-4">
                 
                 <h1 class="font-bold mb-2">Post Display Options</h1>
-
-                <Checkbox bind:checked={$userSettings.hidePosts.deleted}>   Hide Deleted Posts</Checkbox>
-                <Checkbox bind:checked={$userSettings.hidePosts.removed}>   Hide Removed Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.markReadPosts}>       Fade Title of Read Posts</Checkbox>
                 <Checkbox bind:checked={$userSettings.nsfwBlur}>            Blur NSFW Images in Feed</Checkbox>
                 <Checkbox bind:checked={$userSettings.tagNSFWCommunities}>  Show NSFW badges on Communities</Checkbox>
@@ -269,37 +315,74 @@
         </span>
     </Setting>
 
-    <div class="flexrow">
-        <div class="flexcol">
-            <Setting>
-                <span slot="title">Keyword Filters</span>
-                <span slot="description">
-                    <p>Add keywords to filter posts you don't want to see.</p>
-                    <p>
-                        For example, if you're as sick of hearing about Elon Musk as I am, you can add "Musk", "Elon", and/or "Elon Musk" as filters. Any posts containing those key words will be 
-                        filtered from the results and not rendered.
+
+        <Setting>
+            <span slot="title">Post Filtering</span>
+            <span slot="description">
+                <p>Filter which posts are shown or hidden.</p>
+            </span>
+            
+            <div class="flexrow">
+                <div class="flexcol flexcol-66">
+                    <h1 class="font-bold mb-2">Keyword Filters</h1>
+                    <p class="text-sm text-slate-700 dark:text-zinc-300">
+                        Hide posts that contain any keywords defined here. Keywords will be searched in the post title and body.
                     </p>
-                </span>
+                    
+                    
+                        
+                        <div class="flex flex-row gap-2 w-full">
+                            
+                            <div class="flex flex-col mt-2">
+                                <TextInput bind:value={keywordInput} type="text" class="w-full"/>
+                        
+                                <div class="mx-auto"/>
+                                
+                                <Button color="primary"
+                                    on:click={() => {
+                                    addKeyword(keywordInput);
+                                    }}
+                                >
+                                    <Icon src={PlusCircle} mini width={16}/>
+                                    Add
+                                </Button>
+                            </div>
+                        
+                            <div class="flex flex-col mt-2 gap-2 items-center px-[10%]">
+                                {#each $userSettings.hidePosts.keywordList as keyword}
+                                    <div class="w-full border rounded-md bg:slate-300 dark:bg-zinc-900 flex flex-row gap-2 items-center divide-y">
+                                        <p class="pl-4 text-xs font-bold">{keyword}</p>
+
+                                        <div class="mx-auto"/>
+                                        
+                                        <Button
+                                            color="tertiary"
+                                            on:click={() => {
+                                                delKeyword(keyword);
+
+                                            }}
+                                        >
+                                            
+                                            <Icon src={XCircle} mini width={16}/>
+                                        </Button>
+                                    </div>
+                                {/each}
+                            </div>
+
+                        
+                    
+                </div>
                 
-                    <EditableList
-                        on:action={(e) => {
-                            //deleteProfile(id.detail)
-                        }}
-                        export let:action
-                    >
-                        {#each $userSettings.hidePosts.keywordList as keyword}
+                <div class="flexcol flexcol-33">
+                    <Checkbox bind:checked={$userSettings.hidePosts.keywords} class="text-xs">  Enable Keyword Filtering</Checkbox>
+                    <Checkbox bind:checked={$userSettings.hidePosts.deleted} class="text-xs">   Hide Deleted Posts</Checkbox>
+                    <Checkbox bind:checked={$userSettings.hidePosts.removed} class="text-xs">   Hide Removed Posts</Checkbox>
+                </div>
+            </div>        
 
-                        {/each}
+        </Setting>
+        
 
-                    </EditableList>
-                
-
-            </Setting>
-        </div>
-
-        <div class="flexcol">
-
-        </div>
-    </div>
+        
  
 </div>

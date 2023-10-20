@@ -6,7 +6,7 @@
     const dispatcher = createEventDispatcher<{ change: boolean }>()
 </script>
 
-<label class="flex flex-row gap-2 cursor-pointer text-sm my-1">
+<label class="flex flex-row gap-2 cursor-pointer text-sm my-1 {$$props.class}">
     <input
         type="checkbox"
         bind:checked
