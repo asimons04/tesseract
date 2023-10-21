@@ -13,10 +13,15 @@
     export let headless: boolean = false
     export let items: number = 4
     export let fullWidth: boolean = false 
+    export let selectedFunc: Function;
 
-  const dispatcher = createEventDispatcher<{ select: T }>()
 
-  $: { dispatcher('select', selected)}
+    if (!selected && selectedFunc) {
+        selected = selectedFunc();
+    }
+    const dispatcher = createEventDispatcher<{ select: T }>()
+
+    $: { dispatcher('select', selected)}
 
   //flex flex-row items-center w-max max-w-full overflow-auto
   let containerClass = `

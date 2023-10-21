@@ -8,7 +8,8 @@
     export let required = false
     export let placeholder:string = ''
     export let focus:boolean = false;
-    
+    export let maxlength:number|undefined = undefined
+
     function typeAction(node: Node) {
         // @ts-ignore
         node.type = type
@@ -60,5 +61,6 @@
         class={className}
         {required}
         placeholder={placeholder}
+        {maxlength}
     />
 </label>
