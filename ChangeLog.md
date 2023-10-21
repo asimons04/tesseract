@@ -24,13 +24,27 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.2.8.9
-### Misc
+### 0.19.0 Support Update
+Have tested against the latest 0.19.0-rc.3 and everything still seems to be working.  The only breaking change of concern is the way the auth token is sent.  As before, Tesseract is still using the 0.18.x `lemmy-js-client` patched to send the auth via header and does not have access to any of the new API features.  
+
+I'll likely keep Tesseract in "backwards-compatible" mode until 0.19.0 is officially released, has a proper shakedown, and I upgrade my own instance to it.  That will allow me to do deeper testing and work on the admin tools side of things as well.
+
+Life happenings have not allowed me time to stand up a 0.19 test instance as of yet, so I'm relying on Voyager to be my testing server.
+
+#### Release Plan
+Once 0.19 is released, for safety purposes, I will temporarily stop tagging images with `:latest`.
+
+Versions working in backwards-compatible mode will be tagged `:latest-18` and versions that only support 0.19.0+ will be tagged `:latest-19`
+
+Once 0.19.0+ hits critical mass, I will resume tagging `:latest` which will point to the 0.19-only version.  For those still on 0.18.x, you'll need to use the `:latest-18` tag.
+
+### Misc Changes
 - [Settings] Moved "Comment Sort Direction" option from "Feed" section to "Posts" section in Settings.
-- [Settings] Uniquie icons for a few settings
+- [Settings] Unique icons for a few settings
 - [Markdown] Left-aligned text in markdown table headers and added bottom border
 - [Settings] Fix typo in feed settings
 - [Settings] Hide "Moderation" settings if not a mod or admin
-- [Settings] Hide "hide removed / hide deleted" if not a mod or admin (regular users can't see those anyway)
+- [Settings] Hide "hide removed / hide deleted" options if not a mod or admin (regular users can't see deleted/removed content anyway)
 
 
 
