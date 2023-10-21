@@ -82,7 +82,7 @@
     }
 
     let saving = false
-    let selected: 'general' | 'registration' | 'sidebar' | 'legal' | 'slurs' = 'general';
+    let selected: 'general' | 'registration' | 'federation' | 'sidebar' | 'legal' | 'slurs' = 'general';
 
 </script>
 
@@ -117,7 +117,7 @@
 
             <Button
                 color="tertiary"
-                title="General"
+                title="Registration"
                 alignment="left"
                 on:click={()=> { selected = 'registration' }}
             >
@@ -127,7 +127,17 @@
 
             <Button
                 color="tertiary"
-                title="General"
+                title="Federation"
+                alignment="left"
+                on:click={()=> { selected = 'federation' }}
+            >
+                <Icon src={Cloud} mini width={16} slot="icon"/>
+                <span class="hidden sm:block">Federation</span>
+            </Button>
+
+            <Button
+                color="tertiary"
+                title="Slur Filters"
                 alignment="left"
                 on:click={()=> { selected = 'slurs' }}
             >
@@ -137,7 +147,7 @@
 
             <Button
                 color="tertiary"
-                title="General"
+                title="Sidebar"
                 alignment="left"
                 on:click={()=> { selected = 'sidebar' }}
             >
@@ -147,7 +157,7 @@
 
             <Button
                 color="tertiary"
-                title="General"
+                title="Legal"
                 alignment="left"
                 on:click={()=> { selected = 'legal' }}
             >
