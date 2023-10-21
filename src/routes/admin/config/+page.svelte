@@ -281,7 +281,7 @@
                                     <Icon src={LockClosed} mini width={16}/>
                                     Private Instance
                                 </p>
-                                <p class="text-xs font-normal">If private instance is enabled, then visitors will have to be logged in to see any posts.</p>
+                                <p class="text-xs font-normal">If private instance is enabled, visitors will have to be logged in to see any posts.</p>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -325,7 +325,7 @@
                         }
                         <div class="flex flex-col p-2 gap-4 bg-red-700/30 text-zinc-950 dark:text-slate-200 rounded-md">
                             <span class="text-sm font-normal">
-                                <span class="flex flex-row items-center">
+                                <span class="flex flex-row gap-2 items-center">
                                     <Icon src={ExclamationTriangle} mini width={28}/>
                                     <p class="font-bold">Warning:  This configuration is insecure!</p>
                                 </span>
