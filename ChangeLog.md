@@ -23,6 +23,18 @@ All major/minor changes between releases will be documented here.
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
 
+## 1.2.8.9
+### Misc
+- [Settings] Moved "Comment Sort Direction" option from "Feed" section to "Posts" section in Settings.
+- [Settings] Uniquie icons for a few settings
+- [Markdown] Left-aligned text in markdown table headers and added bottom border
+- [Settings] Fix typo in feed settings
+- [Settings] Hide "Moderation" settings if not a mod or admin
+- [Settings] Hide "hide removed / hide deleted" if not a mod or admin (regular users can't see those anyway)
+
+
+
+
 ## 1.2.8.8
 
 ### New Features

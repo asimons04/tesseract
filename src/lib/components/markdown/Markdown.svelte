@@ -62,70 +62,76 @@
 </div>
 
 <style lang="postcss">
-  .markdown :global(h1) {
-    @apply text-3xl font-bold;
-  }
-  .markdown :global(h2) {
-    @apply text-2xl font-bold;
-  }
-  .markdown :global(h3) {
-    @apply text-xl font-bold;
-  }
-  
-  .markdown :global(h4) {
-    @apply text-lg font-bold;
-  }
+    .markdown :global(h1) {
+        @apply text-3xl font-bold;
+    }
+    .markdown :global(h2) {
+        @apply text-2xl font-bold;
+    }
+    .markdown :global(h3) {
+        @apply text-xl font-bold;
+    }
 
-  .markdown :global(details) {
-    @apply cursor-pointer;
-  }
+    .markdown :global(h4) {
+        @apply text-lg font-bold;
+    }
 
-  .markdown :global(hr) {
-    @apply w-full mx-auto my-2 border-slate-300 dark:border-zinc-800;
-  }
+    .markdown :global(details) {
+        @apply cursor-pointer;
+    }
 
-  .markdown :global(img) {
-    @apply max-h-[40vh] border rounded-md border-slate-200 dark:border-zinc-800;
-  }
+    .markdown :global(hr) {
+        @apply w-full mx-auto my-2 border-slate-300 dark:border-zinc-800;
+    }
 
-  .markdown :global(a) {
-    @apply text-sky-500 hover:underline;
-  }
+    .markdown :global(img) {
+        @apply max-h-[40vh] border rounded-md border-slate-200 dark:border-zinc-800;
+    }
 
-  .markdown :global(ul) {
-    @apply list-disc pl-4 leading-3 whitespace-normal;
-  }
+    .markdown :global(a) {
+        @apply text-sky-500 hover:underline;
+    }
 
-  .markdown :global(ol) {
-    @apply list-decimal pl-4 leading-3 whitespace-normal;
-  }
+    .markdown :global(ul) {
+        @apply list-disc pl-4 leading-3 whitespace-normal;
+    }
 
-  .markdown :global(ul > *) {
-    @apply leading-[20px];
-  }
+    .markdown :global(ol) {
+        @apply list-decimal pl-4 leading-3 whitespace-normal;
+    }
 
-  .markdown :global(ol > *) {
-    @apply leading-[20px];
-  }
+    .markdown :global(ul > *) {
+        @apply leading-[20px];
+    }
 
-  .markdown :global(li) {
-    @apply pt-[10px] m-0 leading-[1.5] !important ;
-  }
+    .markdown :global(ol > *) {
+        @apply leading-[20px];
+    }
 
-  .markdown :global(li > *) {
-    @apply m-0 leading-[1.5] !important;
-  }
+    .markdown :global(li) {
+        @apply pt-[10px] m-0 leading-[1.5] !important ;
+    }
 
-  
+    .markdown :global(li > *) {
+        @apply m-0 leading-[1.5] !important;
+    }
 
-  .markdown :global(blockquote) {
-    @apply leading-[1px] border-l-2 border-slate-400 dark:border-zinc-600 pl-2 my-1 h-max;
-    line-height: unset;
-  }
+    .markdown :global(th) {
+        text-align: left;
+    }
 
-  .markdown :global(p) {
-    @apply leading-6 mb-2 max-w-full;
-  }
+    .markdown :global(tr > th) {
+        @apply border-b border-slate-400 dark:border-zinc-600;
+    }
+
+    .markdown :global(blockquote) {
+        @apply leading-[1px] border-l-2 border-slate-400 dark:border-zinc-600 pl-2 my-1 h-max;
+        line-height: unset;
+    }
+
+    .markdown :global(p) {
+        @apply leading-6 mb-2 max-w-full;
+    }
 
 
 

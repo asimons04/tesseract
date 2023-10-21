@@ -75,25 +75,22 @@ export const amMod = (me: MyUserInfo, community: Community) =>
   me.moderates.map((c) => c.community.id).includes(community.id) ||
   (community.local && isAdmin(me))
 
-export const amModOfAny = (me?: MyUserInfo) =>
-  me && (me.moderates.length > 0 || isAdmin(me))
+export const amModOfAny = (me?: MyUserInfo) => me && (me.moderates.length > 0 || isAdmin(me))
 
-export const isAdmin = (me: MyUserInfo) => me.local_user_view.person.admin
+export const isAdmin = (me: MyUserInfo) => me?.local_user_view?.person?.admin
 
 export const removalTemplate = (
-  input: string,
-  content: {
-    postTitle?: string
-    communityLink?: string
-    username?: string
-    reason?: string
-  }
+    input: string,
+    content: {
+        postTitle?: string
+        communityLink?: string
+        username?: string
+        reason?: string
+    }
 ) => {
-  if (content.postTitle) input = input.replaceAll('{{post}}', content.postTitle)
-  if (content.communityLink)
-    input = input.replaceAll('{{community}}', content.communityLink)
-  if (content.username)
-    input = input.replaceAll('{{username}}', content.username)
-  if (content.reason) input = input.replaceAll('{{reason}}', content.reason)
-  return input
+    if (content.postTitle) input = input.replaceAll('{{post}}', content.postTitle)
+    if (content.communityLink) input = input.replaceAll('{{community}}', content.communityLink)
+    if (content.username) input = input.replaceAll('{{username}}', content.username)
+    if (content.reason) input = input.replaceAll('{{reason}}', content.reason)
+    return input
 }

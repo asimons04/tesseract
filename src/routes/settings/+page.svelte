@@ -1,24 +1,21 @@
 <script lang="ts">
     import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY } from '$lib/settings'
-    
+    import {isAdmin, amModOfAny } from '$lib/components/lemmy/moderation/moderation'
+    import { profile } from '$lib/auth.js'
+    import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
-    import EditableList from '$lib/components/ui/list/EditableList.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Setting from './Setting.svelte'
+    import Sort from '$lib/components/lemmy/Sort.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
-    
-    import Sort from '$lib/components/lemmy/Sort.svelte'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
-    
     import {
-        ArchiveBox,
+        ArchiveBoxXMark,
         ArrowPath,
         ArrowUturnDown,
         Icon,
@@ -55,6 +52,7 @@
         TableCells,
         Trash,
         Tv,
+        Window,
         XCircle
     } from 'svelte-hero-icons'
 
@@ -168,7 +166,7 @@
             alignment="left"
             on:click={()=> { selected = 'posts' }}
         >
-            <Icon src={Photo} mini width={16} slot="icon"/>
+            <Icon src={Window} mini width={16} slot="icon"/>
             <span class="hidden sm:block">Posts</span>
         </Button>
 
@@ -182,15 +180,17 @@
             <span class="hidden sm:block">Media</span>
         </Button>
 
-        <Button
-            color="tertiary"
-            title="Moderation"
-            alignment="left"
-            on:click={()=> { selected = 'moderation' }}
-        >
-            <Icon src={HandRaised} mini width={16} slot="icon"/>
-            <span class="hidden sm:block">Moderation</span>
-        </Button>
+        {#if amModOfAny($profile?.user)}
+            <Button
+                color="tertiary"
+                title="Moderation"
+                alignment="left"
+                on:click={()=> { selected = 'moderation' }}
+            >
+                <Icon src={HandRaised} mini width={16} slot="icon"/>
+                <span class="hidden sm:block">Moderation</span>
+            </Button>
+        {/if}
 
         <Button
             color="tertiary"
@@ -371,7 +371,7 @@
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={Bars3} mini width={16}/>Default Feed
                             </p>
-                            <p class="text-xs font-normal">Show only posts your're suscribed to, show all from your local instance, or show all posts known to your instance</p>
+                            <p class="text-xs font-normal">Show only posts you're suscribed to, show all from your local instance, or show all posts known to your instance</p>
                         </div>
                         
                         <div class="mx-auto"/>
@@ -397,23 +397,7 @@
                         <Sort bind:selected={$userSettings.defaultSort.sort} navigate={false} items={0} headless={true} />
                     </div>
                     
-                    <!---Comment Sort Order--->
-                    <div class="flex flex-row w-full gap-2 py-2">
-                        <div class="flex flex-col">
-                            <p class="text-sm font-bold flex flex-row gap-2">
-                                <Icon src={ChartBar} mini width={16}/>
-                                Comment Sort Direction
-                            </p>
-                            <p class="text-xs font-normal">Choose the default sorting method for comments.</p>
-                        </div>
-                        <div class="mx-auto"/>
-                        <MultiSelect
-                            options={['Hot', 'Top', 'New']}
-                            bind:selected={$userSettings.defaultSort.comments}
-                            headless={true}
-                            items={0}
-                        />
-                    </div>
+                    
 
                     <!---Posts Per Page--->
                     <div class="flex flex-row w-full gap-2 py-2">
@@ -422,7 +406,7 @@
                                 <Icon src={TableCells} mini width={16}/>
                                 Posts per Page
                             </p>
-                            <p class="text-xs font-normal">The number of posts to reaquest on each page of the feed.</p>
+                            <p class="text-xs font-normal">The number of posts to request on each page of the feed.</p>
                         </div>
                         <div class="mx-auto"/>
                         <MultiSelect
@@ -520,11 +504,29 @@
         <div class:hidden={selected!='posts'}>
             <Setting>
                 <span class="flex flex-row gap-2" slot="title">
-                    <Icon src={Photo} mini width={24} slot="icon"/>
+                    <Icon src={Window} mini width={24} slot="icon"/>
                     Post Options
                 </span>
                 <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
                     
+                    <!---Comment Sort Order--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ChartBar} mini width={16}/>
+                                Comment Sort Direction
+                            </p>
+                            <p class="text-xs font-normal">Choose the default sorting method for comments.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <MultiSelect
+                            options={['Hot', 'Top', 'New']}
+                            bind:selected={$userSettings.defaultSort.comments}
+                            headless={true}
+                            items={0}
+                        />
+                    </div>
+
                     <!---Post Image Size--->
                     <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
@@ -762,7 +764,7 @@
         </div>
 
         <!---Moderation Options--->
-        <div class:hidden={selected!='moderation'}>
+        <div class:hidden={selected!='moderation' || !amModOfAny($profile?.user)}>
             <Setting>
                 <span class="flex flex-row gap-2" slot="title">
                     <Icon src={HandRaised} mini width={24} slot="icon"/>
@@ -823,7 +825,7 @@
                 <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
                    
                     <!--- Hide Deleted Posts --->
-                    <div class="flex flex-row w-full gap-2 py-2">
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={(!amModOfAny($profile?.user) || !isAdmin($profile?.user))}>
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={Trash} mini width={16}/>
@@ -838,7 +840,7 @@
                     </div>
 
                     <!--- Hide Removed Posts --->
-                    <div class="flex flex-row w-full gap-2 py-2">
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={(!amModOfAny($profile?.user) || !isAdmin($profile?.user))}>
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={NoSymbol} mini width={16}/>
@@ -942,7 +944,7 @@
                                         {/each}
                                     {:else}
                                         <Placeholder
-                                            icon={ArchiveBox}
+                                            icon={ArchiveBoxXMark}
                                             title="No keywords"
                                             description="You have not set any keywords to filter."
                                         />
