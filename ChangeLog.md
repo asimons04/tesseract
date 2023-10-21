@@ -42,9 +42,6 @@ Once 0.19.0+ hits critical mass, I will resume tagging `:latest` which will poin
 #### Admin Panel
 The admin panel has had a similar rewrite similar to the application settings panel.  Much more organized, options are more descriptive, and the entire interface is easier to use on mobile.
 
-The slur filter is no longer a text box that accepts a regex.  That has proven to be too fragile and easy to break requiring clearing the field in the DB to fix.  It is now a managed list where you can add/remove individual terms (similar to the keyword filter management in app settings).
-
-
 
 
 ### Misc Changes

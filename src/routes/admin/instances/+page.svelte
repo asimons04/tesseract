@@ -6,8 +6,6 @@
     import { getClient } from '$lib/lemmy.js'
 
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import Setting from '$lib/components/ui/Setting.svelte'
     

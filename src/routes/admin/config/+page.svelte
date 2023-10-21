@@ -34,6 +34,7 @@
         InformationCircle,
         Key,
         LockClosed,
+        PuzzlePiece,
         ShieldExclamation,
         UserGroup
 
@@ -318,6 +319,25 @@
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
                         
+                        {#if 
+                            formData.registration_mode == 'Open' &&
+                            (!formData.captcha_enabled || formData.captcha_difficulty != 'hard' || !formData.require_email_verification)
+                        }
+                        <div class="flex flex-col p-2 gap-4 bg-red-700/30 text-zinc-950 dark:text-slate-200 rounded-md">
+                            <span class="text-sm font-normal">
+                                <span class="flex flex-row items-center">
+                                    <Icon src={ExclamationTriangle} mini width={28}/>
+                                    <p class="font-bold">Warning:  This configuration is insecure!</p>
+                                </span>
+                                <p>
+                                    Open registration with no or weak captchas and/or no email verification is an invitation to spammers.  Instances using this configuration are quickly
+                                    discovered and overrun with spam accounts. To avoid that, and the resultant de-federation that typically follows such events, please
+                                    consider stronger signup requirements.
+                                </p>
+                            </span>
+                        </div>
+                        {/if}
+
                         <!---Registration Mode--->
                         <div class="flex flex-row w-full gap-2 py-2">
                             <div class="flex flex-col">
@@ -351,11 +371,11 @@
                         <div class="flex flex-row w-full gap-2 py-2">
                             <div class="flex flex-col">
                                 <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={FingerPrint} mini width={16}/>
+                                    <Icon src={PuzzlePiece} mini width={16}/>
                                     Captcha
                                 </p>
                                 <p class="text-xs font-normal">
-                                    Set the requirements for user sign-ups or disable them by closing registrations.
+                                    Enable/disable CAPTCHAs and set their difficulty level.
                                 </p>
                             </div>
                             
@@ -393,7 +413,11 @@
                                     <Icon src={Envelope} mini width={16}/>
                                     Require Email Verification
                                 </p>
-                                <p class="text-xs font-normal">Require users to verify their email addresses during signup.</p>
+                                <p class="text-xs font-normal">
+                                    Require users to verify their email addresses during signup. This also makes providing an email address
+                                    mandatory during signup. Please consider enabling this for both spam prevention as well as ensuring users are able to reset
+                                    their passwords.
+                                </p>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -434,6 +458,7 @@
                             
                             <MarkdownEditor
                                 previewButton
+                                placeholder="Briefly describe why you want to join this instance"
                                 bind:value={formData.application_question}
                             />
                         </div>
