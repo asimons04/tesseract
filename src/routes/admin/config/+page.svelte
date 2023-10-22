@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { EditSite, Instance } from 'lemmy-js-client'
+    import type { EditSite, Instance, Tagline } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     
     
@@ -83,7 +83,7 @@
                 }
             ).sort(),
 
-            taglines: [...(data.site?.taglines.map((t) => t.content) ?? [])]
+            taglines: [...(data.site?.taglines.map((t:Tagline) => t.content) ?? [])]
         }
         : undefined
 
@@ -845,6 +845,7 @@
                                     
                                     <!---Blocklist Editor --->
                                     <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4">
+                                        
                                         <!--- Left 1/3 column--->
                                         <div class="flex flex-col w-full gap-2 lg:w-1/3">
                                             <!--- Domain Input Form--->
@@ -874,7 +875,6 @@
                                                     Add
                                                 </Button>
                                             </div>
-                                            
                                         </div>
                                         
                                         <!-- Right 2/3 column--->
@@ -941,6 +941,7 @@
                                                     />
                                                 {/if}
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -1302,7 +1303,7 @@
                                     Legal Page Contents
                                 </p>
                                 <p class="text-xs font-normal">
-                                    The contents provided here will be used to generate what is shown on the `/legal` page of your instance.
+                                    The contents provided here will be used to generate what is shown on the /legal page of your instance.
                                 </p>
 
                                 <p class="text-xs font-normal">
