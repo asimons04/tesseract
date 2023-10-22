@@ -343,7 +343,7 @@
                             class="font-normal"
                         >
                             <Icon src={ArrowPath} mini size="16" slot="icon" />
-                                Reset Settings
+                                Reset
                         </Button>
                     </div>
 

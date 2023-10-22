@@ -33,6 +33,7 @@
     // Support components for the community filter
     let communityFilterTerm:string = '';
     let communityFiltervalue:string = '';
+    
     let debounceTimer: ReturnType<typeof setTimeout>;
     function debounce(value:string,  timeout=300) {
         clearTimeout(debounceTimer);

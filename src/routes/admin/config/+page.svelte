@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { EditSite } from 'lemmy-js-client'
+    import type { EditSite, Instance } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     
     import { getClient } from '$lib/lemmy.js'
@@ -7,10 +7,9 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Setting from '$lib/components/ui/Setting.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
@@ -18,13 +17,18 @@
 
     import {
         Icon,
+        ArchiveBoxXMark,
         ArrowDown,
         BellAlert,
+        BugAnt,
         BuildingOffice,
+        ChatBubbleLeft,
+        Check,
         ClipboardDocumentCheck,
         ClipboardDocumentList,
         Cloud,
         Cog6Tooth,
+        CommandLine,
         DocumentText,
         Envelope,
         ExclamationTriangle,
@@ -34,9 +38,12 @@
         InformationCircle,
         Key,
         LockClosed,
+        NoSymbol,
+        PlusCircle,
         PuzzlePiece,
         ShieldExclamation,
-        UserGroup
+        UserGroup,
+        XCircle
 
     } from 'svelte-hero-icons'
 
@@ -46,9 +53,135 @@
         ? {
             ...data.site.site_view.local_site,
             ...data.site.site_view.site,
+            
+            allowed_instances: data.site.federated_instances.allowed.map(
+                (i:Instance) => {
+                    return i.domain;
+                }
+            ).sort(),
+
+            blocked_instances: data.site.federated_instances.blocked.map(
+                (i:Instance) => {
+                    return i.domain;
+                }
+            ).sort(),
         }
         : undefined
 
+    // Domain block/allow helpers
+    let domainInput:string;
+    let filterInput: string;
+    
+    let debounceTimer: ReturnType<typeof setTimeout>;
+    function debounce(value:string,  timeout=300) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(
+            () => {
+                filterInput = value.toLowerCase();
+                clearTimeout(debounceTimer);
+            }, timeout
+        )
+    }
+
+    const addBlockedDomain = function(input:string):void {
+        if (input.trim() == '') return;
+        if (!formData) return;
+
+        let domains = input.split(',');
+        let ignored:boolean = false;
+
+        domains.forEach((item) => {
+            let domain = item.trim();
+            
+            if (formData.blocked_instances.includes(domain)) {
+                ignored = true;
+            }
+            else {
+                formData.blocked_instances.push(domain);
+            }
+        })
+        
+        formData.blocked_instances.sort();
+        formData.blocked_instances = formData.blocked_instances;
+        
+
+        if (ignored) {
+            toast( {
+                content: "One or more domains were ignored because they are already in the list.",
+                type: "warning"
+
+            })
+        }
+        else {
+            toast( {
+                content: "Domain(s) successfully added to the block list.",
+                type: "success"
+
+            })
+        }
+    }
+
+    const delBlockedDomain = function(input:string):void {
+        if (!formData) return;
+
+        if (formData.blocked_instances.includes(input)) {
+            let index = formData.blocked_instances.indexOf(input);
+            
+            formData.blocked_instances.splice(index,1);
+            formData.blocked_instances = formData.blocked_instances;
+        }
+    }
+
+    const addAllowedDomain = function(input:string):void {
+        if (input.trim() == '') return;
+        if (!formData) return;
+
+        let domains = input.split(',');
+        let ignored:boolean = false;
+
+        domains.forEach((item) => {
+            let domain = item.trim();
+            
+            if (formData.allowed_instances.includes(domain)) {
+                ignored = true;
+            }
+            else {
+                formData.allowed_instances.push(domain);
+            }
+        })
+        
+        formData.allowed_instances.sort();
+        formData.allowed_instances = formData.allowed_instances;
+        
+
+        if (ignored) {
+            toast( {
+                content: "One or more domains were ignored because they are already in the list.",
+                type: "warning"
+
+            })
+        }
+        else {
+            toast( {
+                content: "Domain(s) successfully added to the allow list.",
+                type: "success"
+
+            })
+        }
+    }
+
+    const delAllowedDomain = function(input:string):void {
+        if (!formData) return;
+
+        if (formData.allowed_instances.includes(input)) {
+            let index = formData.allowed_instances.indexOf(input);
+            
+            formData.allowed_instances.splice(index,1);
+            formData.allowed_instances = formData.allowed_instances;
+        }
+    }
+
+    // Submit the formData object
     async function save() {
         if (!$profile?.jwt){
             toast({
@@ -59,9 +192,24 @@
         }
         
         saving = true
-        
         const { jwt } = $profile
         try {
+            
+            // Configure federation mode data and status
+            if (formData) {
+                // Clear allowed instances if federation mode selector is set to 'block' mode.
+                if (federation_mode == 'block') {
+                    formData.allowed_instances = [];
+                }
+
+                // If there are no domaisn in the allowed list, set federation mode to 'block' mode.
+                if (formData.allowed_instances.length < 1) {
+                    federation_mode = 'block';
+                }
+
+            }
+           
+
             await getClient().editSite({
                 auth: jwt,
                 ...formData,
@@ -82,7 +230,13 @@
     }
 
     let saving = false
-    let selected: 'general' | 'registration' | 'federation' | 'sidebar' | 'legal' | 'slurs' = 'general';
+    let selected: 'general' | 'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
+    let federation_mode:string = 'block';
+    if (data?.site?.federated_instances?.allowed?.length > 0) {
+        federation_mode = 'allow';
+    }
+
+
 
 </script>
 
@@ -91,20 +245,24 @@
 </svelte:head>
 
 <form class="flex flex-col gap-4 p-2" on:submit|preventDefault={save}>
-    <h1 class="flex flex-row justify-between">
-        <span class="font-bold text-2xl">Site Configuration</span>
-        
+    <h1 class="text-3xl font-bold flex justify-between">
+        <span class="flex flex-row gap-2">
+            <Icon src={CommandLine} mini width={36}/>
+            {formData?.name ?? 'Instance'} Configuration 
+        </span>
+
         <Button color="primary" loading={saving} disabled={saving} submit>
             Save
         </Button>
     </h1>
-    
+
+  
     
     {#if formData}
     
     <div class="flex flex-col lg:flex-row gap-2">
         <!---Section Selection Menu--->
-        <div class="flex flex-row justify-center w-full lg:flex-col lg:max-w-[15%] lg:justify-start gap-2">
+        <div class="flex flex-row justify-center w-full overflow-x-scroll lg:flex-col lg:max-w-[15%] lg:justify-start gap-2">
             <Button
                 color="tertiary"
                 title="General"
@@ -135,6 +293,18 @@
                 <span class="hidden sm:block">Federation</span>
             </Button>
 
+            
+            <Button
+                color="tertiary"
+                title="Admins"
+                alignment="left"
+                on:click={()=> { selected = 'admins' }}
+            >
+                <Icon src={UserGroup} mini width={16} slot="icon"/>
+                <span class="hidden sm:block">Admins</span>
+            </Button>
+            
+            
             <Button
                 color="tertiary"
                 title="Slur Filters"
@@ -143,6 +313,16 @@
             >
                 <Icon src={Funnel} mini width={16} slot="icon"/>
                 <span class="hidden sm:block">Slur Filters</span>
+            </Button>
+            
+            <Button
+                color="tertiary"
+                title="Taglines"
+                alignment="left"
+                on:click={()=> { selected = 'taglines' }}
+            >
+                <Icon src={ChatBubbleLeft} mini width={16} slot="icon"/>
+                <span class="hidden sm:block">Taglines</span>
             </Button>
 
             <Button
@@ -299,22 +479,7 @@
                             <Switch bind:enabled={formData.private_instance}  defaultValue={true}/>
                         </div>
 
-                        <!---Federation Enabled--->
-                        <div class="flex flex-row w-full gap-2 py-2">
-                            <div class="flex flex-col">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Cloud} mini width={16}/>
-                                    Federation Enabled
-                                </p>
-                                <p class="text-xs font-normal">
-                                    If federation is disabled, your instance will not interact with any others; only users of your instance will be able to interact with it.
-                                </p>
-                            </div>
-                            
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={formData.federation_enabled}  defaultValue={true}/>
-                        </div>
+                        
                     </div>
 
                 </Setting>
@@ -333,16 +498,15 @@
                             formData.registration_mode == 'Open' &&
                             (!formData.captcha_enabled || formData.captcha_difficulty != 'hard' || !formData.require_email_verification)
                         }
-                        <div class="flex flex-col p-2 gap-4 bg-red-700/30 text-zinc-950 dark:text-slate-200 rounded-md">
+                        <div class="flex flex-col p-2 gap-4 bg-yellow-400/30 text-zinc-950 dark:text-slate-100 rounded-md">
                             <span class="text-sm font-normal">
                                 <span class="flex flex-row gap-2 items-center">
                                     <Icon src={ExclamationTriangle} mini width={28}/>
                                     <p class="font-bold">Warning:  This configuration is insecure!</p>
                                 </span>
-                                <p>
+                                <p class="pl-[2.3rem]">
                                     Open registration with no or weak captchas and/or no email verification is an invitation to spammers.  Instances using this configuration are quickly
-                                    discovered and overrun with spam accounts. To avoid that, and the resultant de-federation that typically follows such events, please
-                                    consider stronger signup requirements.
+                                    discovered and overrun with spam accounts. To avoid that, please consider stronger signup requirements.
                                 </p>
                             </span>
                         </div>
@@ -477,6 +641,322 @@
                     </div>
                 </Setting>
             </div>
+
+             <!---Federation Options--->
+             <div class:hidden={selected!='federation'}>
+                <Setting>
+                    <span class="flex flex-row gap-2" slot="title">
+                        <Icon src={Cloud} mini width={24} />
+                        Federation
+                    </span>
+                    
+                    <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+
+                        <!---Federation Enabled--->
+                        <div class="flex flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Cloud} mini width={16}/>
+                                    Enable Federation
+                                </p>
+                                <p class="text-xs font-normal">
+                                    If federation is disabled, your instance will not interact with any others; only users of your instance will be able to interact with it.
+                                </p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            
+                            <Switch bind:enabled={formData.federation_enabled}  defaultValue={true}/>
+                        </div>
+
+                        <!---Federation Debug Mode--->
+                        <div class="flex flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={BugAnt} mini width={16}/>
+                                    Federation Debug Mode
+                                </p>
+                                <p class="text-xs font-normal">
+                                    Enable federation debug to show content of ActivityPub messages in the Lemmy server logs.
+                                </p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            
+                            <Switch bind:enabled={formData.federation_debug}  defaultValue={false}/>
+                        </div>
+                        
+                        <!---Federation Mode--->
+                        <div class="flex flex-row w-full gap-2 py-2">
+                            
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Identification} mini width={16}/>
+                                    Federation Mode
+                                </p>
+                                <p class="text-xs font-normal">
+                                    <span class="font-bold">Block List Mode</span>: Federate with any instances <em>except</em> the ones on the block list
+                                </p>
+                                
+                                <p class="text-xs font-normal">
+                                    <span class="font-bold">Allow List Mode</span>: Federate <em>only</em> with the instances on the allow list.
+                                </p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            
+                            <MultiSelect
+                                options={['allow', 'block']}
+                                optionNames={['Allow List', 'Block List']}
+                                selected={federation_mode}
+                                items={0}
+                                headless={true}
+                                class="min-w-[180px]"
+                                on:select={(e) => {
+                                    // @ts-ignore
+                                    federation_mode = e.detail
+                                    federation_mode = federation_mode;
+                                }}
+                            />
+                        </div>
+
+                        <!--- Federation Blocklists --->
+                        <div class="flex flex-row w-full gap-2 py-2"  class:hidden={federation_mode != 'block'}>
+                            <div class="flex flex-col w-full">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={NoSymbol} mini width={16}/>
+                                    Blocked Instances
+                                </p>
+                                <p class="text-xs font-normal">
+                                    Block the following instances from interacting with yours.   You can enter multiple domains by separating them with a comma.
+                                    You can also paste in a comma-delimited list of domains to block. Any duplicates will be ignored.
+                                </p>
+                                
+                                <!---Blocklist Editor --->
+                                <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4">
+                                    <!--- Left 1/3 column--->
+                                    <div class="flex flex-col w-full gap-2 lg:w-1/3">
+                                        <!--- Domain Input Form--->
+                                        <div class="flex flex-row gap-2 mt-2 w-full">
+                                            <TextInput 
+                                                bind:value={domainInput} 
+                                                type="text" class="w-full" placeholder="Domain to block"
+                                                
+                                                on:keydown={(e) => {
+                                                    if (e.detail?.key == "Enter") {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        addBlockedDomain(domainInput);
+                                                        domainInput = '';
+                                                    }
+                                                }}
+                                                />
+                                            
+                                            <Button color="primary"
+                                                class="h-8"
+                                                on:click={() => {
+                                                    addBlockedDomain(domainInput);
+                                                    domainInput = '';
+                                                }}
+                                            >
+                                                <Icon src={PlusCircle} mini width={18}/>
+                                                Add
+                                            </Button>
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                    <!-- Right 2/3 column--->
+                                    <div class="flex flex-col mt-2 gap-2 items-center w-full lg:w-2/3 px-4">
+                                        
+                                        <!---Filter form to filter blocked domains--->
+                                        <div class="flex flex-row gap-2 mt-2 w-full px-4"  class:hidden={formData?.blocked_instances?.length < 1}>
+                                            <TextInput 
+                                                bind:value={filterInput} 
+                                                type="text" class="w-full" placeholder="Filter block list"
+                                                on:keyup={(e) => { 
+                                                    debounce(e.detail.srcElement.value);
+                                                }}
+                                                
+                                                />
+                                            <!---Clear the filter text box--->
+                                            <Button 
+                                                color="ghost"
+                                                class="border-none mr-4"
+                                                title="Clear filter"
+                                                on:click={() => {
+                                                    filterInput = '';
+                                                }}
+                                            >
+                                                <Icon src={XCircle} mini width={22}/>
+                                            </Button>
+                                        </div>
+                                    
+                                    
+                                        <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full overflow-y-scroll px-4">
+                                            
+                                            <!--- If block list contains items, loop over it and render them --->
+                                            {#if formData.blocked_instances?.length > 0}
+                                                {#each formData.blocked_instances as domain}
+                                                    
+                                                    <div class="w-full rounded-md bg-slate-200 dark:bg-zinc-700 flex flex-row gap-2 items-center"
+                                                        class:hidden={ filterInput && !domain.toLowerCase().trim().includes(filterInput.toLowerCase().trim()) }
+                                                    >
+                                                        <p class="pl-4 py-2 text-sm font-bold">
+                                                            {domain}
+                                                        </p>
+
+                                                        <div class="mx-auto"/>
+                                                        
+                                                        <Button
+                                                            color="ghost"
+                                                            class="mr-4 border-none"
+                                                            on:click={() => {
+                                                                delBlockedDomain(domain);
+                                                                filterInput = '';
+                                                            }}
+                                                        >
+                                                            
+                                                            <Icon src={XCircle} mini width={22}/>
+                                                        </Button>
+                                                    </div>
+                                                    
+                                                {/each}
+                                            {:else}
+                                                <Placeholder
+                                                    icon={ArchiveBoxXMark}
+                                                    title="No domains"
+                                                    description="You have not blocked any domains."
+                                                />
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--- Federation Allow Lists --->
+                        <div class="flex flex-row w-full gap-2 py-2"  class:hidden={federation_mode != 'allow'}>
+                            <div class="flex flex-col w-full">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Check} mini width={16}/>
+                                    Allowed Instances
+                                </p>
+                                <p class="text-xs font-normal">
+                                    Allow the following instances to interact with yours.   You can enter multiple domains by separating them with a comma.
+                                    You can also paste in a comma-delimited list of domains to allow. Any duplicates will be ignored.
+                                </p>
+                                <p class="text-xs font-normal mt-2">
+                                    Note that at least one domain has to be allowed before federation mode can be set to 'allow' mode.  If you do not want to federate with anyone,
+                                    you should disable federation instead.
+                                </p>
+                                
+                                <!---Allow List Editor --->
+                                <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4">
+                                    <!--- Left 1/3 column--->
+                                    <div class="flex flex-col w-full gap-2 lg:w-1/3">
+                                        <!--- Domain Input Form--->
+                                        <div class="flex flex-row gap-2 mt-2 w-full">
+                                            <TextInput 
+                                                bind:value={domainInput} 
+                                                type="text" class="w-full" placeholder="Domain to allow"
+                                                on:keydown={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                    if (e.detail?.key == "Enter") {
+                                                        addAllowedDomain(domainInput);
+                                                        domainInput = '';
+                                                    }
+                                                }}
+                                                />
+                                            
+                                            <Button color="primary"
+                                                class="h-8"
+                                                on:click={() => {
+                                                addAllowedDomain(domainInput);
+                                                domainInput = '';
+                                                }}
+                                            >
+                                                <Icon src={PlusCircle} mini width={18}/>
+                                                Add
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Right 2/3 column--->
+                                    <div class="flex flex-col mt-2 gap-2 items-center w-full lg:w-2/3 px-4">
+                                        
+                                        <!---Filter form to filter blocked domains--->
+                                        <div class="flex flex-row gap-2 mt-2 w-full px-4" class:hidden={formData?.allowed_instances?.length < 1}>
+                                            <TextInput 
+                                                bind:value={filterInput} 
+                                                type="text" class="w-full" placeholder="Filter allow list"
+                                                on:keyup={(e) => { 
+                                                    debounce(e.detail.srcElement.value);
+                                                }}
+                                                
+                                                />
+                                            <!---Clear the filter text box--->
+                                            <Button 
+                                                color="ghost"
+                                                class="border-none mr-4"
+                                                title="Clear filter"
+                                                on:click={() => {
+                                                    filterInput = '';
+                                                }}
+                                            >
+                                                <Icon src={XCircle} mini width={22}/>
+                                            </Button>
+                                        </div>
+                                    
+                                    
+                                        <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full overflow-y-scroll px-4">
+                                            <!--- If block list contains items, loop over it and render them --->
+                                            {#if formData.allowed_instances?.length > 0}
+                                                {#each formData.allowed_instances as domain}
+                                                    
+                                                    <div class="w-full rounded-md bg-slate-200 dark:bg-zinc-700 flex flex-row gap-2 items-center"
+                                                        class:hidden={ filterInput && !domain.toLowerCase().trim().includes(filterInput.toLowerCase().trim()) }
+                                                    >
+                                                        <p class="pl-4 py-2 text-sm font-bold">
+                                                            {domain}
+                                                        </p>
+
+                                                        <div class="mx-auto"/>
+                                                        
+                                                        <Button
+                                                            color="ghost"
+                                                            class="mr-4 border-none"
+                                                            on:click={() => {
+                                                                delAllowedDomain(domain);
+                                                                filterInput = '';
+                                                            }}
+                                                        >
+                                                            
+                                                            <Icon src={XCircle} mini width={22}/>
+                                                        </Button>
+                                                    </div>
+                                                    
+                                                {/each}
+                                            {:else}
+                                                <Placeholder
+                                                    icon={ArchiveBoxXMark}
+                                                    title="No domains"
+                                                    description="You have not allowed any domains or you are in block list mode."
+                                                />
+                                            {/if}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </Setting>
+            </div>
+
 
             <!---Slur Filters--->
             <div class:hidden={selected!='slurs'}>
