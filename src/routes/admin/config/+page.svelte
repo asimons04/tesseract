@@ -26,6 +26,7 @@
         Icon,
         ArchiveBoxXMark,
         ArrowDown,
+        ArrowsRightLeft,
         ArrowUpTray,
         BellAlert,
         BugAnt,
@@ -51,9 +52,12 @@
         PlusCircle,
         PuzzlePiece,
         QuestionMarkCircle,
+        Rss,
+        ShieldCheck,
         ShieldExclamation,
         Trash,
         UserGroup,
+        UserPlus,
         XCircle
 
     } from 'svelte-hero-icons'
@@ -291,8 +295,8 @@
     }
 
     async function addNewAdmin(): Promise<any> {
-        
         if (!$profile?.jwt || newAdmin == '') return
+
         try {
             addingAdmin = true
             const r = await addAdmin(`${newAdmin}@${$instance}`, true, $profile.jwt)
@@ -375,7 +379,7 @@
                 alignment="left"
                 on:click={()=> { selected = 'federation' }}
             >
-                <Icon src={Cloud} mini width={16} slot="icon"/>
+                <Icon src={Rss} mini width={16} slot="icon"/>
                 <span class="hidden sm:block">Federation</span>
             </Button>
 
@@ -738,7 +742,7 @@
              <div class:hidden={selected!='federation'}>
                 <Setting>
                     <span class="flex flex-row gap-2" slot="title">
-                        <Icon src={Cloud} mini width={24} />
+                        <Icon src={Rss} mini width={24} />
                         Federation
                     </span>
                     <span slot="description" class="text-xs font-normal">
@@ -751,7 +755,7 @@
                         <div class="flex flex-row w-full gap-2 py-2">
                             <div class="flex flex-col">
                                 <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Cloud} mini width={16}/>
+                                    <Icon src={ArrowsRightLeft} mini width={16}/>
                                     Enable Federation
                                 </p>
                                 <p class="text-xs font-normal">
@@ -786,7 +790,7 @@
                             
                             <div class="flex flex-col">
                                 <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Identification} mini width={16}/>
+                                    <Icon src={ShieldCheck} mini width={16}/>
                                     Federation Mode
                                 </p>
                                 <p class="text-xs font-normal">
@@ -868,7 +872,7 @@
                                         <div class="flex flex-row gap-2 mt-2 w-full px-4"  class:hidden={formData?.blocked_instances?.length < 1}>
                                             <TextInput 
                                                 bind:value={filterInput} 
-                                                type="text" class="w-full" placeholder="Filter block list"
+                                                type="text" class="w-full" placeholder="Search block list"
                                                 on:keyup={(e) => { 
                                                     debounce(e.detail.srcElement.value);
                                                 }}
@@ -985,7 +989,7 @@
                                         <div class="flex flex-row gap-2 mt-2 w-full px-4" class:hidden={formData?.allowed_instances?.length < 1}>
                                             <TextInput 
                                                 bind:value={filterInput} 
-                                                type="text" class="w-full" placeholder="Filter allow list"
+                                                type="text" class="w-full" placeholder="Search allow list"
                                                 on:keyup={(e) => { 
                                                     debounce(e.detail.srcElement.value);
                                                 }}
@@ -1037,7 +1041,7 @@
                                                 <Placeholder
                                                     icon={ArchiveBoxXMark}
                                                     title="No domains"
-                                                    description="You have not allowed any domains or you are in block list mode."
+                                                    description="You have not allowed any domains."
                                                 />
                                             {/if}
                                         </div>
@@ -1056,60 +1060,70 @@
             <div class:hidden={selected!='admins'}>
                 <Setting>
                     <span class="flex flex-row gap-2" slot="title">
-                        <Icon src={Cloud} mini width={24} />
+                        <Icon src={UserGroup} mini width={24} />
                         Instance Administrators
                     </span>
 
                     <span slot="description" class="text-xs font-normal">
-                        Add or remove administrators to the instance.  Note that only local users can be added as admins.
+                        Only local users can be added as admins.
                     </span>
                     
-                    <div class="flex flex-col gap-4 w-full">
+                    <!---Admin Team--->
+                    <div class="flex flex-col lg:flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col w-full lg:w-1/3">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={UserPlus} mini width={16}/>
+                                Admin Team
+                            </p>
+                            <p class="text-xs font-normal">
+                                The users shown here are administrators of this instance.
+                            </p>
+                        </div>
                         
+                       
                         {#if data.site}
-                        <EditableList let:action on:action={(e) => removeAdmin(e.detail, false)}>
-                            {#if data.site.admins.length <= 0}
-                                <Placeholder
-                                    icon={QuestionMarkCircle}
-                                    title="No admins"
-                                    description="Somehow there's no admins of this site. How?!"
-                                />
-                            {:else}
-                                {#each data.site?.admins ?? [] as admin}
-                                    <div class="py-3 flex items-center justify-between">
-                                        <UserLink avatar showInstance={false} user={admin.person} distinguishAdminsMods={false}/>
-                                        <Button icon={Trash} size="square-md" 
-                                            on:click={() => action(admin.person.id)}
-                                        />
-                                    </div>
-                                {/each}
-                            {/if}
-                        </EditableList>
-                
-                        <form class="flex flex-row items-center gap-2 mt-auto w-full"
-                            on:submit|preventDefault={addNewAdmin}
-                        >
-                            <TextInput
-                                bind:value={newAdmin}
-                                placeholder="@user"
-                                class="flex-1"
-                                pattern={'@[^ |]{1,}'}
-                            />
-                            <Button
-                                loading={addingAdmin}
-                                disabled={addingAdmin}
-                                icon={Plus}
-                                size="md"
-                                class="h-full"
-                                submit
+                        <div class="flex flex-col gap-4 w-full lg:w-2/3">
+                            <EditableList let:action on:action={(e) => removeAdmin(e.detail, false)}>
+                                {#if data.site.admins.length <= 0}
+                                    <Placeholder
+                                        icon={QuestionMarkCircle}
+                                        title="No admins"
+                                        description="Somehow there's no admins of this site. How?!"
+                                    />
+                                {:else}
+                                    {#each data.site?.admins ?? [] as admin}
+                                        <div class="py-3 flex items-center justify-between">
+                                            <UserLink avatar showInstance={false} user={admin.person} distinguishAdminsMods={false}/>
+                                            <Button icon={Trash} size="square-md" 
+                                                on:click={() => action(admin.person.id)}
+                                            />
+                                        </div>
+                                    {/each}
+                                {/if}
+                            </EditableList>
+                    
+                            <form class="flex flex-row items-center gap-2 mt-auto w-full"
+                                on:submit|preventDefault={addNewAdmin}
                             >
-                                Add Admin
-                            </Button>
-                        </form>
-                    {/if}
-
-
-
+                                <TextInput
+                                    bind:value={newAdmin}
+                                    placeholder="@user"
+                                    class="flex-1"
+                                    pattern={'@[^ |]{1,}'}
+                                />
+                                <Button
+                                    loading={addingAdmin}
+                                    disabled={addingAdmin}
+                                    icon={Plus}
+                                    size="md"
+                                    class="h-full"
+                                    submit
+                                >
+                                    Add Admin
+                                </Button>
+                            </form>
+                        </div>
+                        {/if}
                     </div>
                 </Setting>
             </div>
