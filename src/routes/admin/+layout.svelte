@@ -12,9 +12,8 @@
       '/admin/config',
       '/admin/applications',
       '/admin/taglines',
-      '/admin/team',
     ]}
-    optionNames={['Configuration', 'Applications', 'Taglines', 'Team']}
+    optionNames={['Configuration', 'Applications', 'Taglines']}
     selected={$page.url.pathname}
     on:select={(e) => {
       goto(e.detail)

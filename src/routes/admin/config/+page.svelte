@@ -2,23 +2,31 @@
     import type { EditSite, Instance } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     
+    
+    import { addAdmin } from '$lib/lemmy/user.js'
     import { getClient } from '$lib/lemmy.js'
+    import { instance } from '$lib/instance.js'
     import { profile } from '$lib/auth.js'
+    import { removeItem, trycatch } from '$lib/util.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
     import Button from '$lib/components/input/Button.svelte'
+    import EditableList from '$lib/components/ui/list/EditableList.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Setting from '$lib/components/ui/Setting.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
         Icon,
         ArchiveBoxXMark,
         ArrowDown,
+        ArrowUpTray,
         BellAlert,
         BugAnt,
         BuildingOffice,
@@ -39,9 +47,12 @@
         Key,
         LockClosed,
         NoSymbol,
+        Plus,
         PlusCircle,
         PuzzlePiece,
+        QuestionMarkCircle,
         ShieldExclamation,
+        Trash,
         UserGroup,
         XCircle
 
@@ -68,10 +79,24 @@
         }
         : undefined
 
+
+
+
+    let saving = false
+    
+    let selected: 'general' | 'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
+    let federation_mode:string = 'block';
+    
+    if (data?.site?.federated_instances?.allowed?.length > 0) {
+        federation_mode = 'allow';
+    }
+    
+    
     // Domain block/allow helpers
     let domainInput:string;
     let filterInput: string;
-    
+
+    // Debounce function
     let debounceTimer: ReturnType<typeof setTimeout>;
     function debounce(value:string,  timeout=300) {
         clearTimeout(debounceTimer);
@@ -83,6 +108,7 @@
         )
     }
 
+    //Add domain to block list
     const addBlockedDomain = function(input:string):void {
         if (input.trim() == '') return;
         if (!formData) return;
@@ -121,6 +147,7 @@
         }
     }
 
+    // Remove domain from block list
     const delBlockedDomain = function(input:string):void {
         if (!formData) return;
 
@@ -132,6 +159,7 @@
         }
     }
 
+    //Add domain to allow list
     const addAllowedDomain = function(input:string):void {
         if (input.trim() == '') return;
         if (!formData) return;
@@ -169,7 +197,7 @@
             })
         }
     }
-
+    // Remove domain from allow list
     const delAllowedDomain = function(input:string):void {
         if (!formData) return;
 
@@ -229,14 +257,72 @@
         saving = false
     }
 
-    let saving = false
-    let selected: 'general' | 'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
-    let federation_mode:string = 'block';
-    if (data?.site?.federated_instances?.allowed?.length > 0) {
-        federation_mode = 'allow';
+    // Add/Remove Admin Helper Functions
+    let newAdmin: string = ''
+    let addingAdmin: boolean = false
+
+    async function removeAdmin(id: number, confirm: boolean): Promise<any> {
+        if (!confirm) {
+            return toast({
+                content: 'Are you sure you want to remove that admin?',
+                action: () => removeAdmin(id, true),
+            })
+        }
+
+        if (!$profile?.jwt) return
+        
+        addingAdmin = true;
+        
+        const result = await trycatch(() => getClient().addAdmin({
+            added: false,
+            auth: $profile!.jwt!,
+            person_id: id,
+        }))
+
+        addingAdmin = false;
+        
+        if (result) {
+            data.site!.admins = result.admins
+            toast({
+                content: 'Removed that admin.',
+                type: 'success',
+            })
+        }
     }
 
+    async function addNewAdmin(): Promise<any> {
+        
+        if (!$profile?.jwt || newAdmin == '') return
+        try {
+            addingAdmin = true
+            const r = await addAdmin(`${newAdmin}@${$instance}`, true, $profile.jwt)
+        
+            if (!r) {
+                toast({
+                    content: `Unable to add ${newAdmin} as an administrator.`,
+                    type: 'error',
+                })
+                return;
+            }
+                
+            toast({
+                content: 'Successfully added that admin.',
+                type: 'success',
+            })
+                
+            if (data.site) {  data.site.admins = r.admins }
+                
+            newAdmin = ''
+            addingAdmin = false
+        }
+        catch (err) {
+            toast({
+                    content: `Unable to add ${newAdmin} as an administrator.`,
+                    type: 'error',
+            })
+        }
 
+    }
 
 </script>
 
@@ -244,14 +330,14 @@
   <title>Administration</title>
 </svelte:head>
 
-<form class="flex flex-col gap-4 p-2" on:submit|preventDefault={save}>
+<form class="flex flex-col gap-4 p-2" >
     <h1 class="text-3xl font-bold flex justify-between">
         <span class="flex flex-row gap-2">
             <Icon src={CommandLine} mini width={36}/>
             {formData?.name ?? 'Instance'} Configuration 
         </span>
 
-        <Button color="primary" loading={saving} disabled={saving} submit>
+        <Button color="primary" icon={ArrowUpTray} loading={saving} disabled={saving} on:click={save}>
             Save
         </Button>
     </h1>
@@ -296,12 +382,12 @@
             
             <Button
                 color="tertiary"
-                title="Admins"
+                title="Admin Team"
                 alignment="left"
                 on:click={()=> { selected = 'admins' }}
             >
                 <Icon src={UserGroup} mini width={16} slot="icon"/>
-                <span class="hidden sm:block">Admins</span>
+                <span class="hidden sm:block">Admin Team</span>
             </Button>
             
             
@@ -355,6 +441,9 @@
                 <Setting>
                     <span class="flex flex-row gap-2" slot="title">
                         <Icon src={Cog6Tooth} mini width={24} />General Options
+                    </span>
+                    <span slot="description" class="text-xs font-normal">
+                        Configure the primary attributes of your site.
                     </span>
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
@@ -490,6 +579,9 @@
                 <Setting>
                     <span class="flex flex-row gap-2" slot="title">
                         <Icon src={ClipboardDocumentCheck} mini width={24} />Registration Options
+                    </span>
+                    <span slot="description" class="text-xs font-normal">
+                        Configure the requirements for the signup process.
                     </span>
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
@@ -648,6 +740,9 @@
                     <span class="flex flex-row gap-2" slot="title">
                         <Icon src={Cloud} mini width={24} />
                         Federation
+                    </span>
+                    <span slot="description" class="text-xs font-normal">
+                        Enable or disable federation and control what instances to federate with.
                     </span>
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
@@ -957,6 +1052,68 @@
                 </Setting>
             </div>
 
+            <!---Manage Instance Admins--->
+            <div class:hidden={selected!='admins'}>
+                <Setting>
+                    <span class="flex flex-row gap-2" slot="title">
+                        <Icon src={Cloud} mini width={24} />
+                        Instance Administrators
+                    </span>
+
+                    <span slot="description" class="text-xs font-normal">
+                        Add or remove administrators to the instance.  Note that only local users can be added as admins.
+                    </span>
+                    
+                    <div class="flex flex-col gap-4 w-full">
+                        
+                        {#if data.site}
+                        <EditableList let:action on:action={(e) => removeAdmin(e.detail, false)}>
+                            {#if data.site.admins.length <= 0}
+                                <Placeholder
+                                    icon={QuestionMarkCircle}
+                                    title="No admins"
+                                    description="Somehow there's no admins of this site. How?!"
+                                />
+                            {:else}
+                                {#each data.site?.admins ?? [] as admin}
+                                    <div class="py-3 flex items-center justify-between">
+                                        <UserLink avatar showInstance={false} user={admin.person} distinguishAdminsMods={false}/>
+                                        <Button icon={Trash} size="square-md" 
+                                            on:click={() => action(admin.person.id)}
+                                        />
+                                    </div>
+                                {/each}
+                            {/if}
+                        </EditableList>
+                
+                        <form class="flex flex-row items-center gap-2 mt-auto w-full"
+                            on:submit|preventDefault={addNewAdmin}
+                        >
+                            <TextInput
+                                bind:value={newAdmin}
+                                placeholder="@user"
+                                class="flex-1"
+                                pattern={'@[^ |]{1,}'}
+                            />
+                            <Button
+                                loading={addingAdmin}
+                                disabled={addingAdmin}
+                                icon={Plus}
+                                size="md"
+                                class="h-full"
+                                submit
+                            >
+                                Add Admin
+                            </Button>
+                        </form>
+                    {/if}
+
+
+
+                    </div>
+                </Setting>
+            </div>
+
 
             <!---Slur Filters--->
             <div class:hidden={selected!='slurs'}>
@@ -965,9 +1122,8 @@
                         <Icon src={Funnel} mini width={24} />
                         Slur Filters
                     </span>
-
                     
-                    <span title="description">
+                    <span slot="description" class="text-xs font-normal">
                         A regex containing the slurs you want to prohibit in content. Be careful since a malformed regex will prevent the site from working,
                         and you will have to clear the value from the database directly to resolve.
                     </span>
@@ -987,6 +1143,9 @@
                     <span class="flex flex-row gap-2" slot="title">
                         <Icon src={InformationCircle} mini width={24} />
                         Sidebar
+                    </span>
+                    <span slot="description" class="text-xs font-normal">
+                        Configure the contents of your site sidebar.
                     </span>
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
@@ -1023,6 +1182,9 @@
                     <span class="flex flex-row gap-2" slot="title">
                         <Icon src={BuildingOffice} mini width={24} />
                         Legal
+                    </span>
+                    <span slot="description" class="text-xs font-normal">
+                        Configure the contents of your Legal page.
                     </span>
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">

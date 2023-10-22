@@ -13,7 +13,7 @@
     export let showInstance: boolean = true
     export let mod:boolean = false
     export let href:string | undefined = undefined
-
+    export let distinguishAdminsMods:boolean = true
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
         return `/u/${user.name}@${domain}`
@@ -30,8 +30,8 @@
     <span
         class="flex flex-wrap gap-0"
         class:ml-0.5={avatar}
-        class:text-red-500={user.admin}
-        class:font-bold={user.admin}
+        class:text-red-500={distinguishAdminsMods && user.admin}
+        class:font-bold={distinguishAdminsMods && user.admin}
     >
         {$userSettings.displayNames ? user.display_name ?? user.name : user.name}
 
@@ -44,13 +44,13 @@
   
     {#if badges && (user.admin || user.banned || user.bot_account || mod)}
         <span class="flex flex-row gap-1">
-            {#if user.admin}
+            {#if distinguishAdminsMods && user.admin}
                 <div class="text-red-500" title="Admin">
                     <ShieldIcon width={12} filled />
                 </div>
             {/if}
             
-            {#if mod}
+            {#if distinguishAdminsMods && mod}
                 <div class="text-green-500" title="Moderator">
                     <ShieldIcon width={12} filled />
                 </div>

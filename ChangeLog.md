@@ -41,6 +41,8 @@ Once 0.19.0+ hits critical mass, I will resume tagging `:latest` which will poin
 ### Enhancements
 #### Admin Panel
 The admin panel has had a similar rewrite similar to the application settings panel.  Much more organized, options are more descriptive, and the entire interface is easier to use on mobile.
+- Moved instance management (add/block) from `/admin/instance` into `/admin/config/` in the Federation section.
+- Moved admin team management from `/admin/team` into `/admin/config` in the "Admin Team" section.
 
 
 
