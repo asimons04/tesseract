@@ -342,13 +342,13 @@
 </svelte:head>
 
 <form class="flex flex-col gap-4 p-2" >
-    <h1 class="text-3xl font-bold flex justify-between">
-        <span class="flex flex-row gap-2">
+    <h1 class="text-xl font-bold flex justify-between">
+        <span class="flex flex-row items-center gap-2">
             <Icon src={CommandLine} mini width={36}/>
-            {formData?.name ?? 'Instance'} Configuration 
+            {data?.site?.site_view?.site?.name ?? 'Instance'} Configuration 
         </span>
 
-        <Button color="primary" icon={ArrowUpTray} loading={saving} disabled={saving} on:click={save}>
+        <Button color="primary" class="h-8" icon={ArrowUpTray} loading={saving} disabled={saving} on:click={save}>
             Save
         </Button>
     </h1>
@@ -468,7 +468,7 @@
                                     Site Name
                                 </p>
                                 <p class="text-xs font-normal">The name of your Lemmy instance.</p>
-                                <p class="text-xs font-normal"><span class="font-bold">Maximum length</span>: 20 characters..</p>
+                                <p class="text-xs font-normal"><span class="font-bold">Maximum length</span>: 20 characters.</p>
                             </div>
                             
                             <div class="mx-auto"/>

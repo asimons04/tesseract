@@ -122,8 +122,8 @@
     <title>Settings</title>
 </svelte:head>
 
-<h1 class="text-3xl font-bold flex justify-between">
-    <span class="flex flex-row gap-2">
+<h1 class="text-xl font-bold flex justify-between">
+    <span class="flex flex-row items-center gap-2">
         <Icon src={Cog6Tooth} mini width={36}/>
         Settings 
     </span>
