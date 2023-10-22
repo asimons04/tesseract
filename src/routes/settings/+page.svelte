@@ -823,7 +823,7 @@
                     Post Filtering
                 </span>
                 <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
-                   
+
                     <!--- Hide Deleted Posts --->
                     <div class="flex flex-row w-full gap-2 py-2" class:hidden={!amModOfAny($profile?.user)}>
                         <div class="flex flex-col">
@@ -955,7 +955,7 @@
                             
 
                         </div>
-                        
+                    
                         <div class="mx-auto"/>
 
                         <Switch bind:enabled={$userSettings.hidePosts.keywords} />

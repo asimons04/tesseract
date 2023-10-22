@@ -12,6 +12,7 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import EditableList from '$lib/components/ui/list/EditableList.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
@@ -47,6 +48,7 @@
         InformationCircle,
         Key,
         LockClosed,
+        Megaphone,
         NoSymbol,
         Plus,
         PlusCircle,
@@ -80,6 +82,8 @@
                     return i.domain;
                 }
             ).sort(),
+
+            taglines: [...(data.site?.taglines.map((t) => t.content) ?? [])]
         }
         : undefined
 
@@ -328,6 +332,9 @@
 
     }
 
+    // Tagline Helpers
+    let newTagline = ''
+
 </script>
 
 <svelte:head>
@@ -411,7 +418,7 @@
                 alignment="left"
                 on:click={()=> { selected = 'taglines' }}
             >
-                <Icon src={ChatBubbleLeft} mini width={16} slot="icon"/>
+                <Icon src={Megaphone} mini width={16} slot="icon"/>
                 <span class="hidden sm:block">Taglines</span>
             </Button>
 
@@ -444,7 +451,8 @@
             <div class:hidden={selected!='general'}>
                 <Setting>
                     <span class="flex flex-row gap-2" slot="title">
-                        <Icon src={Cog6Tooth} mini width={24} />General Options
+                        <Icon src={Cog6Tooth} mini width={24} />
+                        General Options
                     </span>
                     <span slot="description" class="text-xs font-normal">
                         Configure the primary attributes of your site.
@@ -459,7 +467,8 @@
                                     <Icon src={Identification} mini width={16}/>
                                     Site Name
                                 </p>
-                                <p class="text-xs font-normal">The name of your Lemmy instance. Maximum length: 20 characters.</p>
+                                <p class="text-xs font-normal">The name of your Lemmy instance.</p>
+                                <p class="text-xs font-normal"><span class="font-bold">Maximum length</span>: 20 characters..</p>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -474,12 +483,13 @@
                                     <Icon src={DocumentText} mini width={16}/>
                                     Site Description
                                 </p>
-                                <p class="text-xs font-normal">A short description of your site, motto, or other tagline to show with the site name. Maximum length: 150 characters.</p>
+                                <p class="text-xs font-normal">A short description of your site, motto, or other tagline to show with the site name.</p>
+                                <p class="text-xs font-normal"><span class="font-bold">Maximum length</span>: 150 characters.</p>
                             </div>
                             
                             <div class="mx-auto"/>
                             
-                            <TextInput bind:value={formData.description} maxlength={150} class="w-full md:w-[250px]"/>
+                            <TextArea bind:value={formData.description} maxlength={150} class="w-full md:w-[250px]"/>
                         </div>
 
                         <!---Enable Downvotes--->
@@ -582,7 +592,8 @@
             <div class:hidden={selected!='registration'}>
                 <Setting>
                     <span class="flex flex-row gap-2" slot="title">
-                        <Icon src={ClipboardDocumentCheck} mini width={24} />Registration Options
+                        <Icon src={ClipboardDocumentCheck} mini width={24} />
+                        Registration Options
                     </span>
                     <span slot="description" class="text-xs font-normal">
                         Configure the requirements for the signup process.
@@ -916,7 +927,7 @@
                                                             }}
                                                         >
                                                             
-                                                            <Icon src={XCircle} mini width={22}/>
+                                                            <Icon src={Trash} mini width={18}/>
                                                         </Button>
                                                     </div>
                                                     
@@ -1032,7 +1043,7 @@
                                                             }}
                                                         >
                                                             
-                                                            <Icon src={XCircle} mini width={22}/>
+                                                            <Icon src={Trash} mini width={18}/>
                                                         </Button>
                                                     </div>
                                                     
@@ -1147,6 +1158,86 @@
                         label="Slur Filter Regex"
                         placeholder="(word1|word2)"
                     />
+                </Setting>
+
+            </div>
+
+            <!---Taglines--->
+            <div class:hidden={selected!='taglines'}>
+                <Setting>
+                    <span class="flex flex-row gap-2" slot="title">
+                        <Icon src={Megaphone} mini width={24} />
+                        Taglines
+                    </span>
+                    
+                    <span slot="description" class="text-xs font-normal">
+                        Taglines are rotating text values that appear in your side card or at the top of the site in Lemmy-UI. You can define any number of taglines,
+                        and a random one will be shown on each load.
+                    </span>
+                    <div class="flex flex-col lg:flex-row gap-4">                    
+                        
+                        <div class="w-full lg:w-1/2">
+                            <form class="flex flex-col mt-auto gap-2 w-full"
+                                on:submit|preventDefault={() => {
+                                    if (newTagline == '' || !data.site) return
+                                    formData.taglines = [...formData.taglines, newTagline]
+                                    newTagline = ''
+                                }}
+                            >
+                                <MarkdownEditor
+                                    bind:value={newTagline}
+                                    placeholder="Add a tagline"
+                                    images={false}
+                                />
+
+                                <Button size="lg" color="primary" submit>
+                                    <Icon src={Plus} size="16" mini slot="icon" />
+                                    Add
+                                </Button>
+                            </form>
+                        </div>
+
+                        <div class="w-full lg:w-1/2">
+                            
+                            {#if formData.taglines?.length > 0}
+                                <EditableList
+                                    divider={false}
+                                    let:action
+                                    on:action={(e) => {
+                                        formData.taglines.splice(
+                                            formData.taglines.findIndex((i) => i == e.detail),
+                                            1
+                                        )
+                                        formData.taglines = formData.taglines
+                                    }}
+                                >
+                                    <!--Loop over each tagline and render it-->
+                                    <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full overflow-y-scroll px-4">
+                                        {#each formData.taglines as tagline}
+                                            <div class="flex px-4 py-2 w-full rounded-md bg-slate-200 dark:bg-zinc-700">
+                                                <Markdown source={tagline} inline />
+                                                
+                                                <div class="flex gap-2 ml-auto">
+                                                    <Button on:click={() => action(tagline)} color="ghost" class="border-none">
+                                                        <Icon src={Trash} mini size="16" />
+                                                    </Button>
+                                                </div>
+
+                                            </div>
+                                        {/each}
+                                    </div>
+                                </EditableList>
+                            {:else}
+                            
+                                <Placeholder
+                                    icon={Plus}
+                                    title="No taglines"
+                                    description="A random tagline will appear when users visit your instance."
+                                />
+                            {/if}
+                        </div>
+                    </div>
+                    
                 </Setting>
 
             </div>
