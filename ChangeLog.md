@@ -13,8 +13,6 @@ All major/minor changes between releases will be documented here.
 - (0.19.x) Add `scaled` sort option to dropdowns
     - Will add in first 0.19.0-specific release.  
 
-- (0.18x and 0.19.x) Add ability to directly block user or community from `/profile/blocks`
-    - (0.19.0) Add ability to directly block instance
 
 - (0.18.x and 0.19.x) Add Instances list
     - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
@@ -25,13 +23,18 @@ All major/minor changes between releases will be documented here.
 ## 1.2.8.92
 Note:  1.2.8.91 was not released as a standalone version and was only used internally.
 
+All updates in this release are enhancements to the admin control panel.
+
 ### Admin Panel
 - Added panel to adjust rate limits
 - Provided inline documentation for rate limit buckets
 - Added panel to set, replace, and clear the site logo and banner
+- Can now remove site icons and/or banners if you want.
 
 
-
+### Bugfixes
+- Added filter to image proxy URL rewriter to exempt local `blob:` URLs from being re-written.
+- Fixed dark mode divider color in `EditableList` component.
 ## 1.2.8.9
 ### 0.19.0 Support Update
 Have tested against the latest 0.19.0-rc.3 and everything still seems to be working.  The only breaking change of concern is the way the auth token is sent.  As before, Tesseract is still using the 0.18.x `lemmy-js-client` patched to send the auth via header and does not have access to any of the new API features.  

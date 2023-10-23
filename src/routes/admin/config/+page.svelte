@@ -37,6 +37,7 @@
         BellAlert,
         BugAnt,
         BuildingOffice,
+        Camera,
         ChatBubbleLeft,
         Check,
         ClipboardDocumentCheck,
@@ -76,58 +77,66 @@
     export let data: PageData;
     
     let formData: Omit<EditSite, 'auth'> | undefined = data.site
-        ? {
-            ...data.site.site_view.local_site,
-            ...data.site.site_view.site,
-            
-            rate_limit_comment:             data.site.site_view.local_site_rate_limit.comment,
-            rate_limit_comment_per_second:  data.site.site_view.local_site_rate_limit.comment_per_second,
+    ? {
+        ...data.site.site_view.local_site,
+        ...data.site.site_view.site,
+        
+        rate_limit_comment:             data.site.site_view.local_site_rate_limit.comment,
+        rate_limit_comment_per_second:  data.site.site_view.local_site_rate_limit.comment_per_second,
 
-            rate_limit_image:               data.site.site_view.local_site_rate_limit.image,
-            rate_limit_image_per_second:    data.site.site_view.local_site_rate_limit.image_per_second,
+        rate_limit_image:               data.site.site_view.local_site_rate_limit.image,
+        rate_limit_image_per_second:    data.site.site_view.local_site_rate_limit.image_per_second,
 
-            rate_limit_message:             data.site.site_view.local_site_rate_limit.message,
-            rate_limit_message_per_second:  data.site.site_view.local_site_rate_limit.message_per_second,
+        rate_limit_message:             data.site.site_view.local_site_rate_limit.message,
+        rate_limit_message_per_second:  data.site.site_view.local_site_rate_limit.message_per_second,
 
-            rate_limit_post:                data.site.site_view.local_site_rate_limit.post,
-            rate_limit_post_per_second:     data.site.site_view.local_site_rate_limit.post_per_second,
+        rate_limit_post:                data.site.site_view.local_site_rate_limit.post,
+        rate_limit_post_per_second:     data.site.site_view.local_site_rate_limit.post_per_second,
 
-            rate_limit_register:            data.site.site_view.local_site_rate_limit.register,
-            rate_limit_register_per_second: data.site.site_view.local_site_rate_limit.register_per_second,
+        rate_limit_register:            data.site.site_view.local_site_rate_limit.register,
+        rate_limit_register_per_second: data.site.site_view.local_site_rate_limit.register_per_second,
 
-            rate_limit_search:              data.site.site_view.local_site_rate_limit.search,
-            rate_limit_search_per_second:   data.site.site_view.local_site_rate_limit.search_per_second,
-            
-            allowed_instances: data.site.federated_instances.allowed.map(
-                (i:Instance) => {
-                    return i.domain;
-                }
-            ).sort(),
+        rate_limit_search:              data.site.site_view.local_site_rate_limit.search,
+        rate_limit_search_per_second:   data.site.site_view.local_site_rate_limit.search_per_second,
+        
+        allowed_instances: data.site.federated_instances.allowed.map(
+            (i:Instance) => {
+                return i.domain;
+            }
+        ) ?? [].sort(),
 
-            blocked_instances: data.site.federated_instances.blocked.map(
-                (i:Instance) => {
-                    return i.domain;
-                }
-            ).sort(),
+        blocked_instances: data.site.federated_instances.blocked.map(
+            (i:Instance) => {
+                return i.domain;
+            }
+        ) ?? [].sort(),
 
-            taglines: [...(data.site?.taglines.map((t:Tagline) => t.content) ?? [])]
-        }
-        : undefined
-
-
-
-
-    
-    let formDataUnchanged = {...formData};
+        taglines: [...(data.site?.taglines.map((t:Tagline) => t.content) ?? [])]
+    }
+    : undefined
+       
     
     let saving = false
-    
     let selected: 'general' | 'logo' | 'limits' |  'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
+
+    // Federation mode helper variable
     let federation_mode:string = 'block';
-    
     if (data?.site?.federated_instances?.allowed?.length > 0) {
         federation_mode = 'allow';
     }
+
+    // Domain block/allow helpers
+    let domainInput:string;
+    let filterInput: string;
+    
+    // Tagline Helpers
+    let newTagline = ''
+
+    // Site logo and banner
+    let siteIcon: FileList | undefined
+    let siteBanner: FileList | undefined
+    let siteIconPreviewURL:string
+    let siteBannerPreviewURL:string
 
     // Submit the formData object
     async function save() {
@@ -200,16 +209,14 @@
                 type: 'success',
             })
             
-            // Update the unchanged form data object to reflect the new state
-            formDataUnchanged = {...formData};
-            
-            // Reload the admin page with the new values pulled from the server.
-            goto('/admin/config',{ invalidateAll: true });
-
+            // Reset the icon and banner helper variables
             siteIcon = undefined;
             siteBanner = undefined;
             siteIconPreviewURL = '';
             siteBannerPreviewURL = '';
+            
+            // Reload the admin page with the new values pulled from the server.
+            goto('/admin/config',{ invalidateAll: true });
 
         } catch (err) {
             toast({
@@ -220,11 +227,6 @@
 
         saving = false
     }
-    
-    
-    // Domain block/allow helpers
-    let domainInput:string;
-    let filterInput: string;
 
     // Debounce function
     let debounceTimer: ReturnType<typeof setTimeout>;
@@ -408,14 +410,7 @@
 
     }
     
-    // Tagline Helpers
-    let newTagline = ''
-
-    // Site logo and banner
-    let siteIcon: FileList | undefined
-    let siteBanner: FileList | undefined
-    let siteIconPreviewURL:string
-    let siteBannerPreviewURL:string
+    
 </script>
 
 <svelte:head>
@@ -428,20 +423,11 @@
             <Icon src={CommandLine} mini width={36}/>
             {data?.site?.site_view?.site?.name ?? 'Instance'} Configuration 
         </span>
-        
-        <div class="flex flex-row gap-3">        
-            <Button color="primary" class="h-8" icon={ArrowUturnDown} disabled={JSON.stringify(formData) == JSON.stringify(formDataUnchanged)} 
-                on:click={() => {
-                    formData = { ...formDataUnchanged};
-                }}>
-                Revert
-            </Button>
-            
 
-            <Button color="primary" class="h-8" icon={ArrowUpTray} loading={saving} disabled={saving} on:click={save}>
-                Save
-            </Button>
-        </div>
+        <Button color="primary" class="h-8" icon={ArrowUpTray} loading={saving} disabled={saving} on:click={save}>
+            Save
+        </Button>
+        
     </h1>
 
   
@@ -703,7 +689,7 @@
             <div class:hidden={selected!='logo'}>
                 <Setting>
                     <span class="flex flex-row gap-2" slot="title">
-                        <Icon src={Cog6Tooth} mini width={24} />
+                        <Icon src={Photo} mini width={24} />
                         Site Logo and Banner
                     </span>
                     <span slot="description" class="text-xs font-normal">
@@ -718,7 +704,7 @@
                         <div class="flex flex-col w-full gap-2 py-2">
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Photo} mini width={16}/>
+                                    <Icon src={Camera} mini width={16}/>
                                     Site Logo
                                 </p>
                                 <p class="text-xs font-normal">
@@ -739,7 +725,7 @@
                                             <Avatar url={formData?.icon} width={96} circle={false} />
                                             
                                             <div class="mt-2 px-4">
-                                                <Button class="!px-1 absolute top-0 right-0" color="danger" on:click={() => { formData.icon = ''; siteIcon = undefined; }}>
+                                                <Button class="!px-1 absolute top-[18px] right-0" color="danger" on:click={() => { formData.icon = ''; siteIcon = undefined; }}>
                                                     <Icon src={Trash} mini width={16} />
                                                 </Button>
                                             </div>
@@ -755,7 +741,7 @@
                                             <Avatar url={siteIconPreviewURL} width={96} circle={false} />
                                             
                                             <div class="mt-2 px-4">
-                                                <Button class="!px-1 absolute top-0 right-0" color="danger" on:click={() => { siteIconPreviewURL = ''; siteIcon = undefined; }}>
+                                                <Button class="!px-1 absolute top-[18px] right-0" color="danger" on:click={() => { siteIconPreviewURL = ''; siteIcon = undefined; }}>
                                                     <Icon src={Trash} mini width={16} /> 
                                                 </Button>
                                             </div>
@@ -769,7 +755,7 @@
                                     {/if}
                                 </div>
 
-                                <div class="mt-2 flex flex-col gap-2 w-full lg:w-1/3 lg:ml-auto  mt-auto mb-auto">
+                                <div class="mt-2 flex flex-col gap-2 w-full lg:w-auto lg:ml-auto  mt-auto mb-auto">
                                     <FileInput class="flex items-center" image bind:files={siteIcon} bind:previewURL={siteIconPreviewURL} preview={false}/>
                                 </div>
                             </div>
@@ -780,7 +766,7 @@
                         <div class="flex flex-col w-full gap-2 py-2">
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Photo} mini width={16}/>
+                                    <Icon src={Camera} mini width={16}/>
                                     Site Banner
                                 </p>
                                 <p class="text-xs font-normal">Select the banner shown for your instance (when acccessed by a frontend that utilizes the banner).</p>
@@ -828,7 +814,7 @@
                                     {/if}
                                 </div>
 
-                                <div class="mt-2 flex flex-col gap-2 w-full lg:w-1/3 lg:ml-auto mt-auto mb-auto">
+                                <div class="mt-2 flex flex-col gap-2 w-full lg:w-auto lg:ml-auto mt-auto mb-auto">
                                     <FileInput class="flex items-center" image bind:files={siteBanner} bind:previewURL={siteBannerPreviewURL} preview={false}/>
                                 </div>
                             </div>
