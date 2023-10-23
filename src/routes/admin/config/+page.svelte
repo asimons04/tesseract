@@ -1231,7 +1231,14 @@
                         Rate Limits
                     </span>
                     <span slot="description" class="text-xs font-normal">
-                        Configure rate limiting for your instance. The value for the limit refers to the number of submissions per interval. The interval is defined in seconds.
+                        <p>
+                            Configure rate limiting for your instance. 
+                        </p>
+                        <p class="mt-2">
+                            The value for the limit refers to the number of submissions per interval. The interval is defined in seconds. 
+                            Rate limtis are applied for client to API requests and are per IP address of the client. Make sure you are correctly setting your X-Forwarded-For header in
+                            your reverse proxy so that Lemmy limits the correct client IP and not the IP of your load balancer.
+                        </p>
                     </span>
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
@@ -1243,7 +1250,18 @@
                                     <Icon src={Window} mini width={16}/>
                                     Posts
                                 </p>
-                                <p class="text-xs font-normal">The number of post submissions to allow per interval.</p>
+                                <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "post" bucket per client IP, per interval.</p>
+                                
+                                <details class="mt-2">
+                                    <summary class="cursor-pointer">
+                                        <span class="text-xs font-bold">API Endpoints</span>
+                                    </summary>
+                                    <ul class="list-disc pl-8 text-xs">
+                                        <li>/api/v3/post/create_post</li>
+                                        <li>/api/v3/user/get_captcha</li>
+                                    </ul>
+                                    
+                                </details>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -1261,7 +1279,17 @@
                                     <Icon src={ChatBubbleLeft} mini width={16}/>
                                     Comments
                                 </p>
-                                <p class="text-xs font-normal">The number of comment submissions to allow per interval.</p>
+                                <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "comment" bucket per client IP, per interval.</p>
+
+                                <details class="mt-2">
+                                    <summary class="cursor-pointer">
+                                        <span class="text-xs font-bold">API Endpoints</span>
+                                    </summary>
+                                    <ul class="list-disc pl-8 text-xs">
+                                        <li>/api/v3/comment/create_comment</li>
+                                    </ul>
+                                    
+                                </details>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -1278,7 +1306,16 @@
                                     <Icon src={Photo} mini width={16}/>
                                     Images
                                 </p>
-                                <p class="text-xs font-normal">The number of image upload submissions to allow per interval.</p>
+                                <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "image" bucket per client IP, per interval.</p>
+                                <details class="mt-2">
+                                    <summary class="cursor-pointer">
+                                        <span class="text-xs font-bold">API Endpoints</span>
+                                    </summary>
+                                    <ul class="list-disc pl-8 text-xs">
+                                        <li>/api/v3/pictrs/image</li>
+                                    </ul>
+                                    
+                                </details>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -1295,7 +1332,27 @@
                                     <Icon src={AtSymbol} mini width={16}/>
                                     Messages
                                 </p>
-                                <p class="text-xs font-normal">The number of direct messages to allow per interval.</p>
+                                <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "message" bucket per client IP, per interval.</p>
+                                <details class="mt-2">
+                                    <summary class="cursor-pointer">
+                                        <span class="text-xs font-bold">API Endpoints</span>
+                                    </summary>
+                                    <ul class="list-disc pl-8 text-xs">
+                                        <li>/api/v3/site</li>
+                                        <li>/api/v3/modlog</li>
+                                        <li>/api/v3/resolve_object</li>
+                                        <li>/api/v3/community/* (except create_community)</li>
+                                        <li>/api/v3/federated_instances</li>
+                                        <li>/api/v3/post/* (except create_post)</li>
+                                        <li>/api/v3/comment/* (except create_comment)</li>
+                                        <li>/api/v3/private_message</li>
+                                        <li>/api/v3/user (except export_/import_settings)</li>
+                                        <li>/api/v3/admin/*</li>
+                                        <li>/api/v3/custom_emoji/*</li>
+                                        <li>/sitemap.xml</li>
+                                    </ul>
+                                    
+                                </details>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -1312,7 +1369,15 @@
                                     <Icon src={MagnifyingGlass} mini width={16}/>
                                     Search
                                 </p>
-                                <p class="text-xs font-normal">The number of search requests to allow per interval.</p>
+                                <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "search" bucket per client IP, per interval.</p>
+                                <details class="mt-2">
+                                    <summary class="cursor-pointer">
+                                        <span class="text-xs font-bold">API Endpoints</span>
+                                    </summary>
+                                    <ul class="list-disc pl-8 text-xs">
+                                        <li>/api/v3/search</li>
+                                    </ul>
+                                </details>
                             </div>
                             
                             <div class="mx-auto"/>
@@ -1329,7 +1394,17 @@
                                     <Icon src={UserPlus} mini width={16}/>
                                     Register
                                 </p>
-                                <p class="text-xs font-normal">The number of registrations to allow per interval.</p>
+                                <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "register" bucket per client IP, per interval.</p>
+                                <details class="mt-2">
+                                    <summary class="cursor-pointer">
+                                        <span class="text-xs font-bold">API Endpoints</span>
+                                    </summary>
+                                    <ul class="list-disc pl-8 text-xs">
+                                        <li>/api/v3/community/create_community</li>
+                                        <li>/api/v3/user/register</li>
+                                    </ul>
+                                    
+                                </details>
                             </div>
                             
                             <div class="mx-auto"/>
