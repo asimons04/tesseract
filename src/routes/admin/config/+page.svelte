@@ -1333,6 +1333,9 @@
                                     Messages
                                 </p>
                                 <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "message" bucket per client IP, per interval.</p>
+                                <p class="mt-2 text-xs font-normal">
+                                    The "message" bucket is used for the general limit that applies to all endpoints which dont have a more specific limit.
+                                </p>
                                 <details class="mt-2">
                                     <summary class="cursor-pointer">
                                         <span class="text-xs font-bold">API Endpoints</span>
@@ -1346,7 +1349,7 @@
                                         <li>/api/v3/post/* (except create_post)</li>
                                         <li>/api/v3/comment/* (except create_comment)</li>
                                         <li>/api/v3/private_message</li>
-                                        <li>/api/v3/user (except export_/import_settings)</li>
+                                        <li>/api/v3/user (except export_/import_settings and register)</li>
                                         <li>/api/v3/admin/*</li>
                                         <li>/api/v3/custom_emoji/*</li>
                                         <li>/sitemap.xml</li>
@@ -1413,6 +1416,14 @@
                                 <TextInput type="number" bind:value={formData.rate_limit_register_per_second} min={1} max={9999} class="w-full" label="Interval"/>
                             </div>
                         </div>
+
+                        <!---Import/Export--->
+                        <!--- 
+                            Add for 0.19.x
+                            import_user_settings bucket
+                            /api/v3/user/export_settings
+                            /api/v3/user/import_settings
+                        --->
                     </div>
                 </Setting>
             </div>
