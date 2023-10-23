@@ -29,6 +29,7 @@
         ArrowDown,
         ArrowsRightLeft,
         ArrowUpTray,
+        AtSymbol,
         BellAlert,
         BugAnt,
         BuildingOffice,
@@ -48,8 +49,11 @@
         InformationCircle,
         Key,
         LockClosed,
+        MagnifyingGlass,
         Megaphone,
         NoSymbol,
+        PauseCircle,
+        Photo,
         Plus,
         PlusCircle,
         PuzzlePiece,
@@ -60,6 +64,7 @@
         Trash,
         UserGroup,
         UserPlus,
+        Window,
         XCircle
 
     } from 'svelte-hero-icons'
@@ -70,6 +75,24 @@
         ? {
             ...data.site.site_view.local_site,
             ...data.site.site_view.site,
+            
+            rate_limit_comment:             data.site.site_view.local_site_rate_limit.comment,
+            rate_limit_comment_per_second:  data.site.site_view.local_site_rate_limit.comment_per_second,
+
+            rate_limit_image:               data.site.site_view.local_site_rate_limit.image,
+            rate_limit_image_per_second:    data.site.site_view.local_site_rate_limit.image_per_second,
+
+            rate_limit_message:             data.site.site_view.local_site_rate_limit.message,
+            rate_limit_message_per_second:  data.site.site_view.local_site_rate_limit.message_per_second,
+
+            rate_limit_post:                data.site.site_view.local_site_rate_limit.post,
+            rate_limit_post_per_second:     data.site.site_view.local_site_rate_limit.post_per_second,
+
+            rate_limit_register:            data.site.site_view.local_site_rate_limit.register,
+            rate_limit_register_per_second: data.site.site_view.local_site_rate_limit.register_per_second,
+
+            rate_limit_search:              data.site.site_view.local_site_rate_limit.search,
+            rate_limit_search_per_second:   data.site.site_view.local_site_rate_limit.search_per_second,
             
             allowed_instances: data.site.federated_instances.allowed.map(
                 (i:Instance) => {
@@ -92,11 +115,69 @@
 
     let saving = false
     
-    let selected: 'general' | 'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
+    let selected: 'general' | 'logo' | 'limits' |  'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
     let federation_mode:string = 'block';
     
     if (data?.site?.federated_instances?.allowed?.length > 0) {
         federation_mode = 'allow';
+    }
+
+    // Submit the formData object
+    async function save() {
+        if (!$profile?.jwt){
+            toast({
+                content: "Not authorized",
+                type: 'error',
+            })   
+            return
+        }
+
+        if (!formData) return;
+        
+        // Parse all of the rate_limit_ keys as integers
+        let keys = Object.keys(formData);
+        for (let key of keys) {
+            if (key.startsWith('rate_limit_')) {
+                formData[key] = parseInt(formData[key]);
+            }
+        }
+        
+        saving = true
+        const { jwt } = $profile
+        try {
+            
+            // Configure federation mode data and status
+            if (formData) {
+                // Clear allowed instances if federation mode selector is set to 'block' mode.
+                if (federation_mode == 'block') {
+                    formData.allowed_instances = [];
+                }
+
+                // If there are no domaisn in the allowed list, set federation mode to 'block' mode.
+                if (formData.allowed_instances.length < 1) {
+                    federation_mode = 'block';
+                }
+
+            }
+           
+
+            await getClient().editSite({
+                auth: jwt,
+                ...formData,
+            })
+            
+            toast({
+                content: 'Updated your site.',
+                type: 'success',
+            })
+        } catch (err) {
+            toast({
+                content: err as any,
+                type: 'error',
+            })
+        }
+
+        saving = false
     }
     
     
@@ -217,53 +298,7 @@
         }
     }
 
-    // Submit the formData object
-    async function save() {
-        if (!$profile?.jwt){
-            toast({
-                content: "Not authorized",
-                type: 'error',
-            })   
-            return
-        }
-        
-        saving = true
-        const { jwt } = $profile
-        try {
-            
-            // Configure federation mode data and status
-            if (formData) {
-                // Clear allowed instances if federation mode selector is set to 'block' mode.
-                if (federation_mode == 'block') {
-                    formData.allowed_instances = [];
-                }
-
-                // If there are no domaisn in the allowed list, set federation mode to 'block' mode.
-                if (formData.allowed_instances.length < 1) {
-                    federation_mode = 'block';
-                }
-
-            }
-           
-
-            await getClient().editSite({
-                auth: jwt,
-                ...formData,
-            })
-            
-            toast({
-                content: 'Updated your site.',
-                type: 'success',
-            })
-        } catch (err) {
-            toast({
-                content: err as any,
-                type: 'error',
-            })
-        }
-
-        saving = false
-    }
+    
 
     // Add/Remove Admin Helper Functions
     let newAdmin: string = ''
@@ -332,6 +367,9 @@
 
     }
 
+    console.log(data);
+    console.log(formData);
+    
     // Tagline Helpers
     let newTagline = ''
 
@@ -368,6 +406,16 @@
             >
                 <Icon src={Cog6Tooth} mini width={16} slot="icon"/>
                 <span class="hidden lg:block">General</span>
+            </Button>
+
+            <Button
+                color="tertiary"
+                title="Logo and Banner"
+                alignment="left"
+                on:click={()=> { selected = 'logo' }}
+            >
+                <Icon src={Photo} mini width={16} slot="icon"/>
+                <span class="hidden lg:block">Logo/Banner</span>
             </Button>
 
             <Button
@@ -410,6 +458,16 @@
             >
                 <Icon src={Funnel} mini width={16} slot="icon"/>
                 <span class="hidden lg:block">Slur Filters</span>
+            </Button>
+
+            <Button
+                color="tertiary"
+                title="Rate Limits"
+                alignment="left"
+                on:click={()=> { selected = 'limits' }}
+            >
+                <Icon src={PauseCircle} mini width={16} slot="icon"/>
+                <span class="hidden lg:block">Rate Limits</span>
             </Button>
             
             <Button
@@ -1164,6 +1222,126 @@
                 </Setting>
 
             </div>
+
+            <!---Rate Limits--->
+            <div class:hidden={selected!='limits'}>
+                <Setting>
+                    <span class="flex flex-row gap-2" slot="title">
+                        <Icon src={PauseCircle} mini width={24} />
+                        Rate Limits
+                    </span>
+                    <span slot="description" class="text-xs font-normal">
+                        Configure rate limiting for your instance. The value for the limit refers to the number of submissions per interval. The interval is defined in seconds.
+                    </span>
+                    
+                    <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+
+                        <!---Posts--->
+                        <div class="flex flex-col md:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Window} mini width={16}/>
+                                    Posts
+                                </p>
+                                <p class="text-xs font-normal">The number of post submissions to allow per interval.</p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            
+                            <div class="flex flex-row gap-2">
+                                <TextInput type="number" bind:value={formData.rate_limit_post} min={1} max={9999} class="w-full" label="Limit"/>
+                                <TextInput type="number" bind:value={formData.rate_limit_post_per_second} min={1} max={9999} class="w-full" label="Interval"/>
+                            </div>
+                        </div>
+
+                        <!---Comments--->
+                        <div class="flex flex-col md:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={ChatBubbleLeft} mini width={16}/>
+                                    Comments
+                                </p>
+                                <p class="text-xs font-normal">The number of comment submissions to allow per interval.</p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            <div class="flex flex-row gap-2">
+                                <TextInput type="number" bind:value={formData.rate_limit_comment} min={1} max={9999} class="w-full" label="Limit"/>
+                                <TextInput type="number" bind:value={formData.rate_limit_comment_per_second} min={1} max={9999} class="w-full" label="Interval"/>
+                            </div>
+                        </div>
+
+                        <!---Images--->
+                        <div class="flex flex-col md:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Photo} mini width={16}/>
+                                    Images
+                                </p>
+                                <p class="text-xs font-normal">The number of image upload submissions to allow per interval.</p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            <div class="flex flex-row gap-2">
+                                <TextInput type="number" bind:value={formData.rate_limit_image} min={1} max={9999} class="w-full" label="Limit"/>
+                                <TextInput type="number" bind:value={formData.rate_limit_image_per_second} min={1} max={9999} class="w-full" label="Interval"/>
+                            </div>
+                        </div>
+
+                        <!---Messages--->
+                        <div class="flex flex-col md:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={AtSymbol} mini width={16}/>
+                                    Messages
+                                </p>
+                                <p class="text-xs font-normal">The number of direct messages to allow per interval.</p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            <div class="flex flex-row gap-2">
+                                <TextInput type="number" bind:value={formData.rate_limit_message} min={1} max={9999} class="w-full" label="Limit"/>
+                                <TextInput type="number" bind:value={formData.rate_limit_message_per_second} min={1} max={9999} class="w-full" label="Interval"/>
+                            </div>
+                        </div>
+
+                        <!---Search--->
+                        <div class="flex flex-col md:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={MagnifyingGlass} mini width={16}/>
+                                    Search
+                                </p>
+                                <p class="text-xs font-normal">The number of search requests to allow per interval.</p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            <div class="flex flex-row gap-2">
+                                <TextInput type="number" bind:value={formData.rate_limit_search} min={1} max={9999} class="w-full" label="Limit"/>
+                                <TextInput type="number" bind:value={formData.rate_limit_search_per_second} min={1} max={9999} class="w-full" label="Interval"/>
+                            </div>
+                        </div>
+
+                        <!---Register--->
+                        <div class="flex flex-col md:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={UserPlus} mini width={16}/>
+                                    Register
+                                </p>
+                                <p class="text-xs font-normal">The number of registrations to allow per interval.</p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            <div class="flex flex-row gap-2">
+                                <TextInput type="number" bind:value={formData.rate_limit_register} min={1} max={9999} class="w-full" label="Limit"/>
+                                <TextInput type="number" bind:value={formData.rate_limit_register_per_second} min={1} max={9999} class="w-full" label="Interval"/>
+                            </div>
+                        </div>
+                    </div>
+                </Setting>
+            </div>
+
 
             <!---Taglines--->
             <div class:hidden={selected!='taglines'}>

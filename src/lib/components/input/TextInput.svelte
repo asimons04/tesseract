@@ -9,6 +9,8 @@
     export let placeholder:string = ''
     export let focus:boolean = false;
     export let maxlength:number|undefined = undefined
+    export let min:number|undefined = undefined
+    export let max:number|undefined = undefined
 
     function typeAction(node: Node) {
         // @ts-ignore
@@ -62,5 +64,7 @@
         {required}
         placeholder={placeholder}
         {maxlength}
+        {min}
+        {max}
     />
 </label>
