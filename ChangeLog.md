@@ -32,11 +32,13 @@ Note:  1.2.8.91 was not released as a standalone version and was only used inter
 ### Site, Community, and User Cards
 If instances, communities, or users have banners configured, they will be used as the semi-transparent background image in site/community/user cards.
 
-**Note**:  You will need to enable this in Settings
+**Note**:  You will need to enable this in Settings.
 
 ### Bugfixes
 - Added filter to image proxy URL rewriter to exempt local `blob:` URLs from being re-written.
 - Fixed dark mode divider color in `EditableList` component.
+
+
 ## 1.2.8.9
 ### 0.19.0 Support Update
 Have tested against the latest 0.19.0-rc.3 and everything still seems to be working.  The only breaking change of concern is the way the auth token is sent.  As before, Tesseract is still using the 0.18.x `lemmy-js-client` patched to send the auth via header and does not have access to any of the new API features.  
