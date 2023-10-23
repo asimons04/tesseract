@@ -283,6 +283,19 @@
                         <Switch bind:enabled={$userSettings.uiState.showInstances} />
                     </div>
 
+                    <!---Show Banners--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Photo} mini width={16}/>
+                                Show Banners
+                            </p>
+                            <p class="text-xs font-normal">Show the site/community/user banners in their respective cards.</p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <Switch bind:enabled={$userSettings.uiState.showBannersInCards} />
+                    </div>
+
                     <!---Enable Debug Buttons--->
                     <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
                         <div class="flex flex-col">

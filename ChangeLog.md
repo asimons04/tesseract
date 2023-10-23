@@ -31,6 +31,10 @@ All updates in this release are enhancements to the admin control panel.
 - Added panel to set, replace, and clear the site logo and banner
 - Can now remove site icons and/or banners if you want.
 
+### Site, Community, and User Cards
+If instances, communities, or users have banners configured, they will be used as the background image in site/community/user cards.
+
+Note:  You will need to enable this in Settings
 
 ### Bugfixes
 - Added filter to image proxy URL rewriter to exempt local `blob:` URLs from being re-written.

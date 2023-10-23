@@ -1,8 +1,8 @@
 <script lang="ts">
-  type CardColor = 'default' | 'warning' | 'error'
-  export let cardColor: CardColor = 'default'
-
-  export let elevation: 0 | 1 = 1
+    type CardColor = 'default' | 'warning' | 'error'
+    export let cardColor: CardColor = 'default'
+    export let backgroundImage:string = ''
+    export let elevation: 0 | 1 = 1
 
   const getColor = (color: CardColor) => {
     switch (color) {
@@ -19,10 +19,14 @@
   export { clazz as class }
 </script>
 
-<div
-  class="break-words
-    {getColor(cardColor)} rounded-lg {clazz}"
-  {...$$restProps}
->
-  <slot />
-</div>
+{#if backgroundImage}
+    <div class="flex items-stretch rounded-lg min-h-[160px]" style="background-image: url('{backgroundImage}'); background-size: 100% 100%; background-repeat: no-repeat;">
+        <div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 rounded-lg {clazz}" {...$$restProps}>
+            <slot />
+        </div>
+    </div>
+{:else}
+    <div class="break-words {getColor(cardColor)} rounded-lg {clazz}" {...$$restProps}>
+        <slot />
+    </div>
+{/if}

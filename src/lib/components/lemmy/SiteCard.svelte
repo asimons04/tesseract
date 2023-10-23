@@ -2,6 +2,7 @@
     
     import type { SiteView, PersonView, Tagline } from 'lemmy-js-client'
     import { getClient } from '$lib/lemmy.js'
+    import {imageProxyURL} from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -71,7 +72,7 @@
         : 'hidden'}
     "
 >
-    <Card>
+    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, '384', 'webp') : ''}>
         <div class="flex flex-row gap-3 items-center p-3">
             {#if site.site.icon}
                 <Avatar width={42} url={site.site.icon} alt={site.site.name} circle={false} />

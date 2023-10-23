@@ -94,6 +94,7 @@ interface Settings {
         showInstances: boolean
         showFullURL: boolean
         expandCrossPosts: boolean
+        showBannersInCards: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -140,6 +141,7 @@ export const defaultSettings: Settings = {
         showInstances:                                                  true,
         showFullURL:                                                    false,
         expandCrossPosts:                                               true,
+        showBannersInCards:                                             true,
 
     },
 

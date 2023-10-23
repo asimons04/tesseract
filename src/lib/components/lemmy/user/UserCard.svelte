@@ -5,9 +5,11 @@
     import { isBlocked } from '$lib/lemmy/user.js'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
+    import {imageProxyURL} from '$lib/image-proxy'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -154,7 +156,7 @@
 
 
 <StickyCard class="p-3">
-    <Card>
+    <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, '384', 'webp') : ''}>
         <div class="flex flex-row gap-3 items-start p-3">
             <div class="flex-shrink-0">
                 <Avatar
