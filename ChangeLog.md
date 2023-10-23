@@ -23,8 +23,6 @@ All major/minor changes between releases will be documented here.
 ## 1.2.8.92
 Note:  1.2.8.91 was not released as a standalone version and was only used internally.
 
-All updates in this release are enhancements to the admin control panel.
-
 ### Admin Panel
 - Added panel to adjust rate limits
 - Provided inline documentation for rate limit buckets
@@ -32,9 +30,9 @@ All updates in this release are enhancements to the admin control panel.
 - Can now remove site icons and/or banners if you want.
 
 ### Site, Community, and User Cards
-If instances, communities, or users have banners configured, they will be used as the background image in site/community/user cards.
+If instances, communities, or users have banners configured, they will be used as the semi-transparent background image in site/community/user cards.
 
-Note:  You will need to enable this in Settings
+**Note**:  You will need to enable this in Settings
 
 ### Bugfixes
 - Added filter to image proxy URL rewriter to exempt local `blob:` URLs from being re-written.
