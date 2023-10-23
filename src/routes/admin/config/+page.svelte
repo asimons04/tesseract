@@ -1334,7 +1334,7 @@
                                 </p>
                                 <p class="text-xs font-normal">The number of requests to allow to API endpoints covered by the "message" bucket per client IP, per interval.</p>
                                 <p class="mt-2 text-xs font-normal">
-                                    The "message" bucket is used for the general limit that applies to all endpoints which dont have a more specific limit.
+                                    The "message" bucket is used for the general limit that applies to all endpoints which don't have a more specific limit.
                                 </p>
                                 <details class="mt-2">
                                     <summary class="cursor-pointer">
