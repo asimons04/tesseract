@@ -4,14 +4,17 @@
     
     
     import { addAdmin } from '$lib/lemmy/user.js'
-    import { getClient } from '$lib/lemmy.js'
+    import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { goto } from '$app/navigation'
     import { instance } from '$lib/instance.js'
     import { profile } from '$lib/auth.js'
     import { removeItem, trycatch } from '$lib/util.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    
+
+    import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import EditableList from '$lib/components/ui/list/EditableList.svelte'
+    import FileInput from '$lib/components/input/FileInput.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
@@ -29,6 +32,7 @@
         ArrowDown,
         ArrowsRightLeft,
         ArrowUpTray,
+        ArrowUturnDown,
         AtSymbol,
         BellAlert,
         BugAnt,
@@ -71,7 +75,7 @@
 
     export let data: PageData;
     
-    const formData: Omit<EditSite, 'auth'> | undefined = data.site
+    let formData: Omit<EditSite, 'auth'> | undefined = data.site
         ? {
             ...data.site.site_view.local_site,
             ...data.site.site_view.site,
@@ -113,6 +117,9 @@
 
 
 
+    
+    let formDataUnchanged = {...formData};
+    
     let saving = false
     
     let selected: 'general' | 'logo' | 'limits' |  'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
@@ -134,6 +141,10 @@
 
         if (!formData) return;
         
+        saving = true
+        const { jwt } = $profile
+        
+        
         // Parse all of the rate_limit_ keys as integers
         let keys = Object.keys(formData);
         for (let key of keys) {
@@ -141,11 +152,29 @@
                 formData[key] = parseInt(formData[key]);
             }
         }
-        
-        saving = true
-        const { jwt } = $profile
+
+        // Upload icon and banner
         try {
+            // Upload the site icon and banner if defined
+            if (siteIcon) {
+                formData.icon   =  await uploadImage(siteIcon[0]);
+            }
             
+            if (siteBanner) {
+                formData.banner = await uploadImage(siteBanner[0])
+            }
+        }
+        catch {
+            toast({
+                content: "There was an error uploading the icon/banner image(s).",
+                type: 'error'
+            });
+            
+            return;
+        }
+        
+        // Submit the formData object to the editSite API endpoint        
+        try {
             // Configure federation mode data and status
             if (formData) {
                 // Clear allowed instances if federation mode selector is set to 'block' mode.
@@ -153,7 +182,7 @@
                     formData.allowed_instances = [];
                 }
 
-                // If there are no domaisn in the allowed list, set federation mode to 'block' mode.
+                // If there are no domains in the allowed list, set federation mode to 'block' mode.
                 if (formData.allowed_instances.length < 1) {
                     federation_mode = 'block';
                 }
@@ -170,6 +199,18 @@
                 content: 'Updated your site.',
                 type: 'success',
             })
+            
+            // Update the unchanged form data object to reflect the new state
+            formDataUnchanged = {...formData};
+            
+            // Reload the admin page with the new values pulled from the server.
+            goto('/admin/config',{ invalidateAll: true });
+
+            siteIcon = undefined;
+            siteBanner = undefined;
+            siteIconPreviewURL = '';
+            siteBannerPreviewURL = '';
+
         } catch (err) {
             toast({
                 content: err as any,
@@ -366,13 +407,15 @@
         }
 
     }
-
-    console.log(data);
-    console.log(formData);
     
     // Tagline Helpers
     let newTagline = ''
 
+    // Site logo and banner
+    let siteIcon: FileList | undefined
+    let siteBanner: FileList | undefined
+    let siteIconPreviewURL:string
+    let siteBannerPreviewURL:string
 </script>
 
 <svelte:head>
@@ -385,10 +428,20 @@
             <Icon src={CommandLine} mini width={36}/>
             {data?.site?.site_view?.site?.name ?? 'Instance'} Configuration 
         </span>
+        
+        <div class="flex flex-row gap-3">        
+            <Button color="primary" class="h-8" icon={ArrowUturnDown} disabled={JSON.stringify(formData) == JSON.stringify(formDataUnchanged)} 
+                on:click={() => {
+                    formData = { ...formDataUnchanged};
+                }}>
+                Revert
+            </Button>
+            
 
-        <Button color="primary" class="h-8" icon={ArrowUpTray} loading={saving} disabled={saving} on:click={save}>
-            Save
-        </Button>
+            <Button color="primary" class="h-8" icon={ArrowUpTray} loading={saving} disabled={saving} on:click={save}>
+                Save
+            </Button>
+        </div>
     </h1>
 
   
@@ -643,6 +696,145 @@
                         
                     </div>
 
+                </Setting>
+            </div>
+
+            <!---Logo/Banner--->
+            <div class:hidden={selected!='logo'}>
+                <Setting>
+                    <span class="flex flex-row gap-2" slot="title">
+                        <Icon src={Cog6Tooth} mini width={24} />
+                        Site Logo and Banner
+                    </span>
+                    <span slot="description" class="text-xs font-normal">
+                        <p>Configure your instance logo and banner images.</p>
+                        <p class="mt-2">
+                            <strong>Note</strong>: Tesseract and many other 3rd party Lemmy UIs do not use the banner images.  
+                    </span>
+                    
+                    <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+
+                        <!---Logo--->
+                        <div class="flex flex-col w-full gap-2 py-2">
+                            <div class="flex flex-col w-full">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Photo} mini width={16}/>
+                                    Site Logo
+                                </p>
+                                <p class="text-xs font-normal">
+                                    The logo shown for your Lemmy instance. 
+                                </p>
+                            </div>
+                            
+                            <!--- Old and New Logo Displays and upload button--->
+                            <div class="flex flex-col lg:flex-row w-full gap-2 justify-between">
+                                
+                                <div class="flex flex-row justify-between w-full lg:w-2/3">                                    
+                                    {#if formData?.icon}
+                                        <div class="mt-2 gap-2 mx-auto lg:mx-0 w-[130px] inline-block relative">
+                                        
+                                            <p class="text-sm font-bold">
+                                                Current
+                                            </p>
+                                            <Avatar url={formData?.icon} width={96} circle={false} />
+                                            
+                                            <div class="mt-2 px-4">
+                                                <Button class="!px-1 absolute top-0 right-0" color="danger" on:click={() => { formData.icon = ''; siteIcon = undefined; }}>
+                                                    <Icon src={Trash} mini width={16} />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    
+                                    
+                                    {#if siteIconPreviewURL}
+                                        <div class="mt-2 gap-2 mx-auto lg:mx-0 w-[130px] inline-block relative">
+                                            <p class="text-sm font-bold">
+                                                New
+                                            </p>
+                                            <Avatar url={siteIconPreviewURL} width={96} circle={false} />
+                                            
+                                            <div class="mt-2 px-4">
+                                                <Button class="!px-1 absolute top-0 right-0" color="danger" on:click={() => { siteIconPreviewURL = ''; siteIcon = undefined; }}>
+                                                    <Icon src={Trash} mini width={16} /> 
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        
+                                    {/if}
+
+                                    <!--Placeholder for spacing--->
+                                    {#if formData?.icon && siteIconPreviewURL}
+                                        <div class="hidden lg:block"/>
+                                    {/if}
+                                </div>
+
+                                <div class="mt-2 flex flex-col gap-2 w-full lg:w-1/3 lg:ml-auto  mt-auto mb-auto">
+                                    <FileInput class="flex items-center" image bind:files={siteIcon} bind:previewURL={siteIconPreviewURL} preview={false}/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!---Banner--->
+                        <div class="flex flex-col w-full gap-2 py-2">
+                            <div class="flex flex-col w-full">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Photo} mini width={16}/>
+                                    Site Banner
+                                </p>
+                                <p class="text-xs font-normal">Select the banner shown for your instance (when acccessed by a frontend that utilizes the banner).</p>
+                            </div>
+                            
+                            <!--- Old and New Banner Displays and upload button--->
+                            <div class="flex flex-col lg:flex-row w-full gap-2 justify-between">
+                                
+                                <div class="flex flex-row gap-4 w-full lg:w-2/3">                                    
+                                    {#if formData?.banner}
+                                    <div class="mt-2 gap-2 mx-auto lg:mx-0 inline-block relative">
+                                        
+                                            <p class="text-sm font-bold">
+                                                Current
+                                            </p>
+                                            <div class="w-full">
+                                                <img src="{formData.banner}" class="w-full h-auto" alt="Site banner"/>
+                                                
+                                                <div class="mt-2 px-4">
+                                                    <Button class="!px-1 absolute top-[22px] right-0" color="danger" on:click={() => { formData.banner = ''; siteBanner = undefined; }}>
+                                                        <Icon src={Trash} mini width={16} /> 
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    {/if}
+                                    
+                                    
+                                    {#if siteBannerPreviewURL}
+                                    <div class="mt-2 gap-2 mx-auto lg:mx-0 inline-block relative">
+                                            <p class="text-sm font-bold">
+                                                New
+                                            </p>
+                                            <div class="w-full">
+                                                <img src="{siteBannerPreviewURL}" class="w-full h-auto" alt="Site banner"/>
+                                                
+                                                <div class="mt-2 px-4">
+                                                    <Button class="!px-1 absolute top-[22px] right-0" color="danger" on:click={() => { siteBannerPreviewURL = ''; siteBanner = undefined; }}> 
+                                                        <Icon src={Trash} mini width={16} />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                </div>
+
+                                <div class="mt-2 flex flex-col gap-2 w-full lg:w-1/3 lg:ml-auto mt-auto mb-auto">
+                                    <FileInput class="flex items-center" image bind:files={siteBanner} bind:previewURL={siteBannerPreviewURL} preview={false}/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </Setting>
             </div>
 

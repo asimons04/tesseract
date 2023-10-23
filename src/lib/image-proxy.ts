@@ -32,7 +32,8 @@ export function imageProxyURL(url:string, size:number|undefined = undefined, for
     // Return original URL if local media/home instance image proxying is disabled
     if ( !ENABLE_MEDIA_PROXY_LOCAL && url.includes(getInstance())) return url;
 
-
+    // Don't proxy local blobs
+    if (url.startsWith('blob:')) return url;
 
     // Build the image proxy URL to return
     try {

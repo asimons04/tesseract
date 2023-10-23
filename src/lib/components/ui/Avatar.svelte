@@ -2,9 +2,6 @@
     import { findClosestNumber } from '$lib/util.js'
     import { createAvatar } from '@dicebear/core'
     import { imageProxyURL } from '$lib/image-proxy'
-
-    import { userSettings, ENABLE_MEDIA_PROXY } from '$lib/settings'
-
     import * as initials from '@dicebear/initials'
 
     const sizes = [48, 64, 128, 256, 512]

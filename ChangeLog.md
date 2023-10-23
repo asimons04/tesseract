@@ -22,6 +22,15 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.92
+Note:  1.2.8.91 was not released as a standalone version and was only used internally.
+
+### Admin Panel
+- Added panel to adjust rate limits
+- Provided inline documentation for rate limit buckets
+- Added panel to set, replace, and clear the site logo and banner
+
+
 
 ## 1.2.8.9
 ### 0.19.0 Support Update
