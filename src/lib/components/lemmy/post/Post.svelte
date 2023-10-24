@@ -11,8 +11,6 @@
     
     import Card from '$lib/components/ui/Card.svelte'
     import Link from '$lib/components/input/Link.svelte'
-    
-    
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
@@ -23,7 +21,7 @@
     export let actions: boolean = true
     export let autoplay:boolean|undefined = undefined;
     export let displayType: PostDisplayType = "feed"
-    
+
     let expandCompact: boolean;
    
 </script>

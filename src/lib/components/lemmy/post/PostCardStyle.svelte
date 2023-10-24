@@ -22,7 +22,7 @@
     export let post: PostView
     export let moderators: Array<CommunityModeratorView> = [];
     export let showCommentForm:boolean = false;
-    
+
     // Determe post type based on its attributes
     let postType:PostType  = identifyPostType(post)
 

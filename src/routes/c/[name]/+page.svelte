@@ -123,7 +123,7 @@
             </div>
         </div>
 
-        <PostFeed posts={data.posts.posts} />
+        <PostFeed posts={data.posts.posts}/>
         
         <Pageination
             page={data.page}
