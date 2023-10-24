@@ -22,7 +22,9 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.8.94
 - Added a bit of bottom padding to crosspost container
-
+- Removed logo and "Frontpage" header from main page
+- On main page, site card now reflows to the top like the community pages do
+- 
 
 ## 1.2.8.93
 ### Bugfixes

@@ -35,7 +35,7 @@
 </script>
 
 <!--- Button to expand/collapse the site-info sidebar --->
-<aside class="sticky top-[4.7rem] flex flex-col pr-4">
+<aside class="hidden xl:block sticky top-[4.7rem] flex flex-col pr-4">
     <div class="grid justify-items-end w-full mr-2">
         <Button
             alignment="right"
@@ -68,7 +68,7 @@
 
 <StickyCard class="p-3 mb-3
     {$userSettings.uiState.expandCommunitySidebar
-        ? 'hidden lg:block xl:block'
+        ? 'block'
         : 'hidden'}
     "
 >
@@ -84,7 +84,7 @@
                     <h1 class="font-bold text-base">{site.site.name}</h1>
                     
                     <div class="ml-auto">
-                        <span class="flex flex-row items-center gap-2 text-sm">
+                        <span class="flex flex-row items-center gap-2 text-sm" title="Created">
                             <Icon src={Calendar} width={16} height={16} mini />
                             <RelativeDate date={site.site.published} />
                         </span>
@@ -103,24 +103,24 @@
             <Markdown source={site.site.description} />
         </div>
        
-        <div class="p-3 ml-auto mr-auto">
-            <div class="text-sm flex flex-row flex-wrap gap-3 justify-between">
-                <span class="flex flex-row items-center gap-2">
+        <div class="flex flex-row p-3 mx-auto">
+            <div class="text-sm flex flex-row flex-wrap gap-8 mx-auto">
+                <span class="flex flex-row items-center gap-2" title="Users">
                     <Icon src={UserGroup} width={16} height={16} mini />
                     <FormattedNumber number={site.counts.users} />
                 </span>
 
-                <span class="flex flex-row items-center gap-2">
+                <span class="flex flex-row items-center gap-2" title="Posts">
                     <Icon src={PencilSquare} width={16} height={16} mini />
                     <FormattedNumber number={site.counts.posts} />
                 </span>
 
-                <span class="flex flex-row items-center gap-2">
+                <span class="flex flex-row items-center gap-2" title="Comments">
                     <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
                     <FormattedNumber number={site.counts.comments} />
                 </span>
 
-                <span class="flex flex-row items-center gap-2">
+                <span class="flex flex-row items-center gap-2" title="Communities">
                     <Icon src={Newspaper} width={16} height={16} mini />
                     <FormattedNumber number={site.counts.communities} />
                 </span>
@@ -128,38 +128,40 @@
         </div>
     </Card>
     
-    <div class="mt-2"></div>
+    <div class="mt-2"/>
     
     {#if taglines && taglines.length > 0}
         <Markdown source={taglines[Math.floor(Math.random() * taglines.length)].content} />
         <hr class="border-slate-300 dark:border-zinc-700" />
     {/if}
 
-    {#if admins.length > 0}
-        <div class="flex flex-col gap-1 mt-2 mb-4">
-            <Button
-                color="tertiary"
-                alignment="left"
-                on:click={ ()=> { expandAdmins = !expandAdmins}}
-            >
-                
-                <Icon src={ShieldCheck} mini size="18" />
+    <div class="hidden xl:block">
+        {#if admins.length > 0}
+            <div class="flex flex-col gap-1 mt-2 mb-4">
+                <Button
+                    color="tertiary"
+                    alignment="left"
+                    on:click={ ()=> { expandAdmins = !expandAdmins}}
+                >
+                    
+                    <Icon src={ShieldCheck} mini size="18" />
 
-                <span class="w-full flex flex-row justify-between">
-                    Admins
-                    <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
-                        {admins.length}
+                    <span class="w-full flex flex-row justify-between">
+                        Admins
+                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
+                            {admins.length}
+                        </span>
                     </span>
-                </span>
-            </Button>
-            
-            <div class="flex flex-col gap-2 pl-4" class:hidden={!expandAdmins}>
-                {#each admins as admin}
-                    <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
-                {/each}
+                </Button>
+                
+                <div class="flex flex-col gap-2 pl-4" class:hidden={!expandAdmins}>
+                    {#each admins as admin}
+                        <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
+                    {/each}
+                </div>
             </div>
-        </div>
-    {/if}
-    
-    <Markdown source={site.site.sidebar} />
+        {/if}
+        
+        <Markdown source={site.site.sidebar} />
+    </div>
 </StickyCard>

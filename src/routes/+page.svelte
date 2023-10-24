@@ -45,17 +45,8 @@
     <title>{data.site.site_view.site.name}</title>
 </svelte:head>
 
-<div class="flex flex-row gap-4 w-full h-full">
+<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        
-        <header>
-            <span class="flex flex-row gap-4 items-center font-bold text-xl text-center mx-auto pl-3 pt-4">
-                {#if data.site.site_view.site.icon}
-                    <Avatar circle={false} width={48} url={data.site.site_view.site.icon} />
-                {/if}
-                Frontpage
-            </span>
-        </header>
         
         <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap px-2">
             <MultiSelect
@@ -109,7 +100,7 @@
         </div>
     </div>
 
-    <div class="hidden xl:block mt-[-8px]">
+    <div class="mt-[-8px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>
