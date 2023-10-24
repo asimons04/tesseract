@@ -70,29 +70,6 @@
 
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
-        
-        <!--- Community Metadata -- Hide when sidebar reflows as it would be redundant--->
-        <div class="flex flex-row gap-3 items-center hidden xl:block">
-            <Avatar
-                width={48}
-                url={data.community.community_view.community.icon}
-                alt={data.community.community_view.community.name}
-            />
-            <div class="flex flex-col gap-0 w-full">
-                <h1 class="font-bold text-xl flex flex-row justify-between">
-                    {data.community.community_view.community.title.replace('&amp;', '&')}
-
-                    {#if data.community.community_view.community.nsfw && $userSettings.tagNSFWCommunities}
-                        <Badge color="red">NSFW</Badge>
-                    {/if}
-                </h1>
-                <span class="dark:text-zinc-400 text-slate-600 text-sm">
-                    !{data.community.community_view.community.name}@{new URL(
-                        data.community.community_view.community.actor_id
-                    ).hostname}
-                </span>
-            </div>
-        </div>
     
         <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
             <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
