@@ -99,7 +99,7 @@
                     
                     {#if user}
                         <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
-                            <span>Posted by&nbsp;</span>
+                            <span class="hidden md:block">Posted by&nbsp;</span>
                             <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
                         </div>
                     {/if}

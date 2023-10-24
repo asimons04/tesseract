@@ -46,7 +46,7 @@
     let rendered:string
     
     $: try {
-        source = fixLemmyEncodings(source);
+        source ? source = fixLemmyEncodings(source) : source = ' ';
         if (inline) { rendered = mdInline.render(source) }
         else { rendered = md.render(source) }
     }
@@ -57,7 +57,7 @@
 </script>
 
 
-<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5] overflow-x-scroll">
+<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5] overflow-x-scroll {$$props.class}">
     {@html rendered}
 </div>
 

@@ -21,7 +21,8 @@
     export let expandCompact: boolean;
     export let post: PostView
     export let moderators: Array<CommunityModeratorView> = [];
-
+    export let showCommentForm:boolean = false;
+    
     // Determe post type based on its attributes
     let postType:PostType  = identifyPostType(post)
 
@@ -108,7 +109,7 @@
     <Crossposts post={post} size={displayType=='feed' ? 'xs' : 'sm'}/>
 
     {#if actions}
-        <PostActions  bind:post bind:expandCompact displayType={displayType} postType={postType}
+        <PostActions  bind:post bind:expandCompact displayType={displayType} postType={postType} bind:showCommentForm
             on:edit={(e) => {
                 toast({
                     content: 'The post was edited successfully.',

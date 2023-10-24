@@ -206,7 +206,7 @@ export const postType = (post: PostView | undefined ) => {
 
 
 export const fixLemmyEncodings = function (content:string|undefined):string|undefined {
-    if (!content) return undefined
+    if (!content) return ' '
     
     content = content
         .replaceAll('&amp;', '&')

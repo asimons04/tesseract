@@ -21,7 +21,7 @@
 
 {#if backgroundImage}
     <div class="flex items-stretch rounded-lg min-h-[160px]" style="background-image: url('{backgroundImage}'); background-size: 100% 100%; background-repeat: no-repeat;">
-        <div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 rounded-lg {clazz}" {...$$restProps}>
+        <div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-white/[.85] dark:bg-zinc-900/[.85] rounded-lg {clazz}" {...$$restProps}>
             <slot />
         </div>
     </div>

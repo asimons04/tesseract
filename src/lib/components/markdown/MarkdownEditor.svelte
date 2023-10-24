@@ -25,7 +25,11 @@
   export let previewButton: boolean = false
   export let disabled: boolean = false
   export let rows: number = 4
-
+  export let previewing:boolean = false;
+  
+  export let previewContainerClass:string = '';
+  export let previewContainerStyle:string = '';
+  
   export let beforePreview: (input: string) => string = (input) => input
 
   const dispatcher = createEventDispatcher<{ confirm: string }>()
@@ -89,7 +93,6 @@
     loading = false
   }
 
-  export let previewing = false
 
   const shortcuts = {
     KeyB: () => wrapSelection('**', '**'),
@@ -120,14 +123,13 @@
 
     <div class="flex flex-col border border-slate-300 dark:border-zinc-800 rounded-md overflow-hidden focus-within:border-black focus-within:dark:border-white transition-colors w-full h-full">
         {#if previewing}
-            <!--style="height: {rows*24}px"-->
-            <div class="px-3 py-2.5 overflow-auto text-sm resize-y max-h-screen">
+            <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm resize-y" style="height: {(rows+3)*24}px">
                 <Markdown source={beforePreview(value)} />
             </div>
 
         {:else}
             <!--Toolbar-->
-            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 
+            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 mb-2
                 {$$props.disabled
                     ? 'opacity-60 pointer-events-none'
                     : ''
@@ -258,15 +260,27 @@
                 {...$$restProps}
             />
         {/if}
-    </div>
+        
+        <!---Bottom Toolbar (edit/preview button, submit button--->
+        <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 
+            {$$props.disabled
+                ? 'opacity-60 pointer-events-none'
+                : ''
+            }
+        "
+        >
+            {#if previewButton}
+                <div class="mt-2">
+                    <MultiSelect
+                        bind:selected={previewing}
+                        options={[false, true]}
+                        optionNames={['Edit', 'Preview']}
+                    />
+                </div>
+            {/if} 
 
-    {#if previewButton}
-        <div class="mt-2">
-            <MultiSelect
-                bind:selected={previewing}
-                options={[false, true]}
-                optionNames={['Edit', 'Preview']}
-            />
+            <slot name="actions"/>
         </div>
-    {/if}
+    </div>
+    
 </div>

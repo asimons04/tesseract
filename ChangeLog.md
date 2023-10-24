@@ -20,6 +20,24 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.93
+### Bugfixes
+- Fix regression where allowed/blocked instances were not sorted
+
+### Changes
+- Decrease opacity of user/site/community cards from 90 to 85% to make banners more apparent.
+- Remove background around post body container div; text is now "flat" against the card background.
+- Aligned "Crossposts" item with the rest of post.
+- Reduced gap between post action bar and bottom of post content.
+- Hid comment text input by default. You now need to click "Reply"on the post.
+- Moved edit/preview and submit buttons into comment editor box.
+- "Expand/collapse" preview text buttons are a little more narrow now
+- Spruced up MarkdownEditor component's built-in preview.
+
+
+
+
+
 ## 1.2.8.92
 Note:  1.2.8.91 was not released as a standalone version and was only used internally.
 

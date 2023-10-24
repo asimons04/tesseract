@@ -59,46 +59,36 @@
 </script>
 
 <div class="flex flex-col gap-2 relative">
-    {#if preview}
-        <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm resize-y" style="height: {rows*24}px">
-            <Markdown source={value ? value : ' '} />
-        </div>
-    {:else}
-        <MarkdownEditor
-            rows={rows}
-            placeholder={locked
-                ? 'This post is locked.'
-                : ''
-            }
-            bind:value
-            disabled={locked || loading}
-            on:confirm={submit}
-        />
-    {/if}
-
-    {#if actions || previewAction}
-        <div class="flex flex-row items-center justify-between">
-            {#if previewAction}
-                <MultiSelect
-                    options={[false, true]}
-                    optionNames={['Edit', 'Preview']}
-                    bind:selected={preview}
-                />
-            {/if}
-      
-            {#if actions}
-                <Button
-                    large
-                    on:click={submit}
-                    color="primary"
-                    size="lg"
-                    class="sm:ml-auto w-28"
-                    {loading}
-                    disabled={locked || loading}
-                >
-                    Submit
-                </Button>
+    <MarkdownEditor
+        rows={rows}
+        placeholder={locked
+            ? 'This post is locked.'
+            : ''
+        }
+        bind:value
+        bind:previewing={preview}
+        disabled={locked || loading}
+        previewButton={true}
+        on:confirm={submit}
+    >
+        <div slot="actions" class="w-full mb-2">
+            {#if actions || previewAction}
+                <div class="flex flex-row items-center justify-between">
+                    {#if actions}
+                        <Button
+                            on:click={submit}
+                            color="primary"
+                            size="md"
+                            class="sm:ml-auto w-28"
+                            {loading}
+                            disabled={locked || loading}
+                        >
+                            Submit
+                        </Button>
+                    {/if}
+                </div>
             {/if}
         </div>
-    {/if}
+    </MarkdownEditor>
+   
 </div>

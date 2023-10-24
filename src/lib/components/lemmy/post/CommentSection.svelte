@@ -24,10 +24,13 @@
     
 
     export let data:PageData
+    export let showCommentForm:boolean = false;
 
+    
     let post:PostView
     let commentSort: CommentSortType = data.commentSort;
     let commentsPage:number
+    
 
     $: {
         post = data.post;
@@ -91,7 +94,8 @@
             <Spinner width={24} />
         </div>
         {:then comments}
-        {#if $profile?.user}
+        
+        {#if $profile?.user && showCommentForm}
             <CommentForm
                 postId={post.post_view.post.id}
                 on:comment={ (comment) =>

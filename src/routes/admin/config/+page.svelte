@@ -103,13 +103,13 @@
             (i:Instance) => {
                 return i.domain;
             }
-        ) ?? [].sort(),
+        ).sort() ?? [],
 
         blocked_instances: data.site.federated_instances.blocked.map(
             (i:Instance) => {
                 return i.domain;
             }
-        ) ?? [].sort(),
+        ).sort() ?? [],
 
         taglines: [...(data.site?.taglines.map((t:Tagline) => t.content) ?? [])]
     }

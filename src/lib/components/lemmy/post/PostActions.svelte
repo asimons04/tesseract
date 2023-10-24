@@ -29,6 +29,7 @@
         ArrowTopRightOnSquare,
         ArrowsPointingIn,
         ArrowsPointingOut,
+        ArrowUturnLeft,
         Bookmark,
         BookmarkSlash,
         BugAnt,
@@ -53,7 +54,8 @@
     export let displayType: PostDisplayType
     export let expandCompact: boolean
     export let debug: boolean = false
-    
+    export let showCommentForm:boolean = false;
+
     let theaterMode = false;
     let editing = false
     
@@ -105,13 +107,15 @@
 
 <Fediseer bind:open={fediseer.modal} data={fediseer.data} />
 
-<div class="flex flex-row mt-4 gap-2 items-center h-8">
+<div class="flex flex-row gap-2 items-center h-8">
+    <!--- Post Vote Buttons--->
     <PostVote
         post={post.post}
         bind:vote={post.my_vote}
         bind:score={post.counts.score}
     />
 
+    <!--- Comment Count and Link to Post--->
     <Button
         size="sm"
         href={`/post/${getInstance()}/${post.post.id}`}
@@ -128,9 +132,25 @@
         />
         <FormattedNumber number={post.counts.comments} />
     </Button>
+
+    <!--- Post Reply / Leave Comment Button--->
+    {#if displayType == 'post'}
+        <Button
+            size="sm"
+            color="tertiary"
+            on:click={() => (showCommentForm = !showCommentForm)}
+            disabled={post.post.locked}
+        >
+            <Icon src={ArrowUturnLeft} width={14} height={14} mini />
+            <span class="text-sm">Reply</span>
+        </Button>
+
+    {/if}
   
+    <!--- Spacer --->
     <div class="ml-auto" />
 
+    <!---Debug Button--->
     {#if $userSettings.debugInfo}
         {#if debug}
             {#await import('$lib/components/util/debug/DebugObject.svelte') then { default: DebugObject }}

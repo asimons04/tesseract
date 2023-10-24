@@ -25,6 +25,7 @@
 
     let post:PostView;
     let community:CommunityView
+    let showCommentForm:boolean = false;
         
     
     $: {
@@ -46,6 +47,8 @@
                 post_id: post.post_view.post.id,
             })
         }
+
+        window.scrollTo(0,0);
     })
 
     afterNavigate(async () => {
@@ -109,10 +112,10 @@
         
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
             <!---Post--->
-            <PostCardStyle post={post.post_view} displayType="post" action={true} moderators={post.moderators}/>      
+            <PostCardStyle post={post.post_view} displayType="post" action={true} moderators={post.moderators} bind:showCommentForm={showCommentForm}/>      
 
             <!--- Comments --->
-            <CommentSection bind:data={data} />
+            <CommentSection bind:data={data} bind:showCommentForm={showCommentForm}/>
         </div>
 
         <PWAButtonBar position="bottom"/>
