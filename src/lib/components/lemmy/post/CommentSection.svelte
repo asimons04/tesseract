@@ -26,7 +26,7 @@
     export let data:PageData
     export let showCommentForm:boolean = false;
 
-    
+
     let post:PostView
     let commentSort: CommentSortType = data.commentSort;
     let commentsPage:number
@@ -99,7 +99,11 @@
             <CommentForm
                 postId={post.post_view.post.id}
                 on:comment={ (comment) =>
-                    ( comments.comments = [comment.detail.comment_view, ...comments.comments,] )
+                    {
+                        comments.comments = [comment.detail.comment_view, ...comments.comments,];
+                        showCommentForm = !showCommentForm;
+                    }
+
                 }
                 locked={post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
             />

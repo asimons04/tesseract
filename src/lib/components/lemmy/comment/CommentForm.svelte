@@ -4,11 +4,9 @@
     import type { CommentResponse } from 'lemmy-js-client'
     import { getClient } from '$lib/lemmy.js'
     import { createEventDispatcher } from 'svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
 
     export let postId: number
@@ -21,12 +19,9 @@
     export let value = ''
     export let actions = true
     
-
-    let previewAction = true
-    export { previewAction as preview }
-
+    
     let loading = false
-    let preview = false
+    let previewing = false
 
     async function submit() {
         if (!$profile?.user || !$profile?.jwt || value == '') return
@@ -43,6 +38,7 @@
             dispatch('comment', response);
 
             value = ''
+           
             toast({
                 content: 'Your comment was submitted.',
                 type: 'success',
@@ -66,13 +62,13 @@
             : ''
         }
         bind:value
-        bind:previewing={preview}
+        bind:previewing
         disabled={locked || loading}
         previewButton={true}
         on:confirm={submit}
     >
         <div slot="actions" class="w-full mb-2">
-            {#if actions || previewAction}
+            {#if actions}
                 <div class="flex flex-row items-center justify-between">
                     {#if actions}
                         <Button

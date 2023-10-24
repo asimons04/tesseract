@@ -436,7 +436,7 @@
     
     <div class="flex flex-col lg:flex-row gap-2">
         <!---Section Selection Menu--->
-        <div class="flex flex-row justify-center w-full overflow-x-scroll lg:flex-col lg:max-w-[15%] lg:justify-start gap-2">
+        <div class="flex flex-shrink-0 flex-row justify-center w-full overflow-auto overflow-y-hidden lg:flex-col lg:max-w-[15%] lg:justify-start gap-2">
             <Button
                 color="tertiary"
                 title="General"
