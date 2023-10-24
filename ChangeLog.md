@@ -28,6 +28,10 @@ All major/minor changes between releases will be documented here.
 - On main page, site card now reflows to the top like the community pages do
 - Changed centering method on site/community/user card stats row
 - Clicking "reply" in a post will automatically focus the text area input
+- Removed "select" dropdowns for listing type and sort direction. 
+  - Replaced select/sort dropdowns with menus and a breadcumb trail-style heading
+  - Added pagination to this section (will likely have to reimplement after 0.19.0 releases change to cursors vs page numbers)
+  
 
 
 ## 1.2.8.93

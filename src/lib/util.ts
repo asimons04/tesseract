@@ -63,4 +63,10 @@ export const removeItem = <T>(array: T[], predicate: (item: T) => boolean) => {
   array.splice(array.findIndex(predicate), 1)
 }
 
+// Generates an array of numbers between start and stop.
+export const arrayRange = (start:number, stop:number, step:number=1) => Array.from(
+    { length: (stop - start) / step + 1 },
+    (value, index) => start + index * step
+);
+
 

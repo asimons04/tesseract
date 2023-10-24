@@ -4,19 +4,25 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
-    import { searchParam } from '$lib/util.js'
+    import { arrayRange, searchParam } from '$lib/util.js'
+    import { sortOptions, sortOptionNames } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
+
+    
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
    
     import {
+        ArrowSmallRight,
         Bars3,
         ChartBar,
+        DocumentDuplicate,
         Icon,
         QueueList
     } from 'svelte-hero-icons'
@@ -38,6 +44,8 @@
         }
     });
     
+    
+
     export let data
 </script>
 
@@ -49,28 +57,61 @@
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
         <header>
-            <span class="flex flex-row gap-4 items-center font-bold text-sm text-center mx-auto">
-                {data.listingType} > {data.sort} > Page {data.page}
+            <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto">
+                <!---Listing Type--->
+                <SelectMenu
+                    alignment="bottom-left"
+                    options={['Subscribed', 'Local', 'All']}
+                    selected={data.listingType}
+                    title="Listing Type"
+                    icon={Bars3}
+                    on:select={(e) => {
+                        // @ts-ignore
+                        searchParam($page.url, 'type', e.detail, 'page')
+                    }}
+                />
                 
-            </span>
-        </header>
-
-        <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap px-2">
-            <MultiSelect
-                options={['Subscribed', 'Local', 'All']}
-                disabled={[$profile?.jwt == undefined]}
-                selected={data.listingType}
-                on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-                headless={true}
-                fullWidth={true}
-                items={0}
-            >
-                <Icon src={Bars3} mini width={16} slot="icon"/>
-                <span slot="label">List Type</span>
-            </MultiSelect>
-      
-            <div class="flex flex-col hidden md:block">
-                <MultiSelect
+                <Icon src={ArrowSmallRight} mini width={24} />
+                
+                <!---Sort Menu--->
+                <SelectMenu
+                    alignment="bottom-left"
+                    options={sortOptions}
+                    optionNames={sortOptionNames}
+                    selected={data.sort}
+                    title="Sort Direction"
+                    icon={ChartBar}
+                    on:select={(e) => {
+                        // @ts-ignore
+                        searchParam($page.url, 'sort', e.detail, 'page')
+                    }}
+                />
+                
+                
+                
+                <span class="hidden md:flex md:flex-row gap-2 items-center">
+                    <Icon src={ArrowSmallRight} mini width={24} />
+                    
+                    <!---Page Selection--->
+                    <SelectMenu
+                        alignment="bottom-left"
+                        options={arrayRange(1, data.page +1)}
+                        selected={data.page}
+                        title="Page"
+                        icon={DocumentDuplicate}
+                        on:select={(e) => {
+                            // @ts-ignore
+                            searchParam($page.url, 'page', e.detail.toString())
+                        }}
+                    />
+                </span>
+                <span class="ml-auto"/>
+                
+                <!---Card/Compact Selection--->
+                <SelectMenu
+                    alignment="bottom-right"
+                    title="Post Display Type"
+                    icon={QueueList}
                     options={['Cards', 'Compact']}
                     selected={$userSettings.showCompactPosts
                         ? 'Compact'
@@ -79,21 +120,11 @@
                     on:select={(e) => {
                         $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                     }}
-                    items={0}
-                    headless={true}
-                    fullWidth={true}
-                >
-                    <Icon src={QueueList} mini width={16} slot="icon"/>
-                    <span slot="label">Display Type</span>
-                </MultiSelect>
-            </div>
+                />
 
 
-            <Sort selected={data.sort} headless={true}  fullWidth={true} items={0}>
-                <Icon src={ChartBar} mini width={16} slot="icon"/>
-                <span slot="label">Sort Direction</span>
-            </Sort>
-        </div>
+            </span>
+        </header>
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
             <PostFeed posts={data.posts.posts} />

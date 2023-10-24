@@ -1,24 +1,27 @@
 <script lang="ts">
     
     import { afterNavigate, disableScrollHandling } from '$app/navigation';
-    import { fullCommunityName, searchParam } from '$lib/util.js'
+    import { arrayRange, fullCommunityName, searchParam } from '$lib/util.js'
     import { getSessionStorage, setSessionStorage } from '$lib/session.js'
     import { onDestroy, onMount } from 'svelte'
     import { page } from '$app/stores'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
+    import { sortOptions, sortOptionNames } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
     
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Badge from '$lib/components/ui/Badge.svelte'
+    
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
 
     import {
+        ArrowSmallRight,
         Bars3,
         ChartBar,
+        DocumentDuplicate,
         Icon,
         QueueList
     } from 'svelte-hero-icons'
@@ -72,32 +75,59 @@
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
     
         <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
-            <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap">
+            <header class="w-full">
+                <span class="flex flex-row gap-2 items-center font-bold text-sm">
+                    <!---Sort Menu--->
+                    <SelectMenu
+                        alignment="bottom-left"
+                        options={sortOptions}
+                        optionNames={sortOptionNames}
+                        selected={data.sort}
+                        title="Sort Direction"
+                        icon={ChartBar}
+                        on:select={(e) => {
+                            // @ts-ignore
+                            searchParam($page.url, 'sort', e.detail, 'page')
+                        }}
+                    />
+                    
+                                        
+                    
+                    <Icon src={ArrowSmallRight} mini width={24} />
+                    
+                    <!---Page Selection--->
+                    <SelectMenu
+                        alignment="bottom-left"
+                        options={arrayRange(1, data.page +1)}
+                        selected={data.page}
+                        title="Page"
+                        icon={DocumentDuplicate}
+                        on:select={(e) => {
+                            // @ts-ignore
+                            searchParam($page.url, 'page', e.detail.toString())
+                        }}
+                    />
 
-                <!--Sort Direction-->
-                <Sort selected={data.sort} headless={true} fullWidth={true} items={0}>
-                    <Icon src={ChartBar} mini width={16} slot="icon"/>
-                    <span slot="label">Sort Direction</span>
-                </Sort>
-                
-                <!--Card/Compact View-->
-                <MultiSelect
-                    options={['Cards', 'Compact']}
-                    selected={$userSettings.showCompactPosts
-                        ? 'Compact'
-                        : 'Cards'
-                    }
-                    on:select={(e) => {
-                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                    }}
-                    headless={true}
-                    fullWidth={true}
-                    items={0}
-                >
-                    <Icon src={QueueList} mini width={16} slot="icon"/>
-                    <span slot="label">Display Type</span>
-                </MultiSelect>
-            </div>
+                    <span class="ml-auto"/>
+                    
+                    <!---Card/Compact Selection--->
+                    <SelectMenu
+                        alignment="bottom-right"
+                        title="Post Display Type"
+                        icon={QueueList}
+                        options={['Cards', 'Compact']}
+                        selected={$userSettings.showCompactPosts
+                            ? 'Compact'
+                            : 'Cards'
+                        }
+                        on:select={(e) => {
+                            $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                        }}
+                    />
+    
+    
+                </span>
+            </header>
         </div>
 
         <PostFeed posts={data.posts.posts}/>

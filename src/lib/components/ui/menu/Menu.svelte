@@ -55,8 +55,10 @@
 <div class="overflow-visible 
     {absolute
         ? 'absolute'
-        : 'relative'} cursor-auto {clazz} {itemsClass
-    }"
+        : 'relative'
+    }
+    cursor-auto {clazz} {itemsClass}
+    "
     bind:this={element}
     tabindex="-1"
 >
@@ -70,13 +72,14 @@
             }}
             class="list-none absolute h-auto z-[90] overflow-auto 
                 {getOriginClass(alignment)}
-                rounded-lg py-1 min-w-[14rem] my-2 flex flex-col 
+                rounded-lg py-1 w-max my-2 flex flex-col 
                 shadow-md backdrop-blur-2xl border
                 bg-white  border-slate-200 
                 dark:bg-zinc-950 dark:border-zinc-800
                 {$$props.containerClass}
             "
         >
+
             {#if open}
                 <div on:click={toggleOpen} class="flex flex-col gap-0">
                     <slot {toggleOpen} />

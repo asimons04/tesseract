@@ -1,5 +1,6 @@
 <script lang="ts">
     import { page } from '$app/stores'
+    import { sortOptions, sortOptionNames } from '$lib/lemmy'
     import { searchParam } from '$lib/util.js'
     import MultiSelect from '../input/MultiSelect.svelte'
 
@@ -8,53 +9,22 @@
     export let headless:boolean = false
     export let items:number = 3
     export let fullWidth: boolean = false
+
+    
+
 </script>
 
 <MultiSelect
-  items={items}
-  fullWidth={fullWidth}
-  options={[
-    'Active',
-    'Hot',
-    'New',
-    'Old',
-    'TopAll',
-    'TopNineMonths',
-    'TopSixMonths',
-    'TopThreeMonths',
-    'TopMonth',
-    'TopWeek',
-    'TopDay',
-    'TopTwelveHour',
-    'TopSixHour',
-    'TopHour',
-    'MostComments',
-    'NewComments',
-  ]}
-  optionNames={[
-    'Active',
-    'Hot',
-    'New',
-    'Old',
-    'Top All',
-    'Top 9 Months',
-    'Top 6 Months',
-    'Top 3 Months',
-    'Top Month',
-    'Top Week',
-    'Top Day',
-    'Top 12 Hours',
-    'Top 6 Hours',
-    'Top Hour',
-    'Most Comments',
-    'New Comments',
-  ]}
-  bind:selected
-  on:select={(e) => {
-    if (navigate) searchParam($page.url, 'sort', e.detail, 'page')
-  }}
-  class="w-full"
-  headless={headless}
+    items={items}
+    fullWidth={fullWidth}
+    options={sortOptions}
+    optionNames={sortOptionNames}
+    bind:selected
+    on:select={(e) => {
+        if (navigate) searchParam($page.url, 'sort', e.detail, 'page')
+    }}
+    class="w-full"
+    headless={headless}
 >
   <slot name="icon" slot="icon"/>
   <slot name="label" slot="label"/>

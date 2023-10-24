@@ -138,6 +138,46 @@ export async function uploadImage(image: File | null | undefined): Promise<strin
     )
 }
 
+
+export let sortOptions:string[] = [
+    'Active',
+    'Hot',
+    'New',
+    'Old',
+    'TopAll',
+    'TopNineMonths',
+    'TopSixMonths',
+    'TopThreeMonths',
+    'TopMonth',
+    'TopWeek',
+    'TopDay',
+    'TopTwelveHour',
+    'TopSixHour',
+    'TopHour',
+    'MostComments',
+    'NewComments',
+];
+
+export let sortOptionNames:string[] = [
+    'Active',
+    'Hot',
+    'New',
+    'Old',
+    'Top All',
+    'Top 9 Months',
+    'Top 6 Months',
+    'Top 3 Months',
+    'Top Month',
+    'Top Week',
+    'Top Day',
+    'Top 12 Hours',
+    'Top 6 Hours',
+    'Top Hour',
+    'Most Comments',
+    'New Comments',
+];
+
+
 if (LINKED_INSTANCE_URL) {
     getClient(LINKED_INSTANCE_URL)
       .getSite({})
