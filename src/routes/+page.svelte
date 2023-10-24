@@ -48,6 +48,13 @@
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full px-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
+        <header>
+            <span class="flex flex-row gap-4 items-center font-bold text-sm text-center mx-auto">
+                {data.listingType} > {data.sort} > Page {data.page}
+                
+            </span>
+        </header>
+
         <div class="flex flex-row gap-4 max-w-full w-full justify-between flex-wrap px-2">
             <MultiSelect
                 options={['Subscribed', 'Local', 'All']}
@@ -100,7 +107,7 @@
         </div>
     </div>
 
-    <div class="mt-[-8px]">
+    <div class="mt-[-8px] mb-[-24px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>

@@ -393,24 +393,24 @@
             <div class="mt-auto"/>
 
             <!-- Community subscribers, counts, etc --->
-            <div class="p-2">
-                <div class="text-sm flex flex-row flex-wrap gap-3">
-                    <span class="flex flex-row items-center gap-2 mx-auto">
+            <div class="flex flex-row p-3 mx-auto">
+                <div class="text-sm flex flex-row flex-wrap gap-8 mx-auto">
+                    <span class="flex flex-row items-center gap-2" title="Created">
                         <Icon src={Calendar} width={16} height={16} mini />
                         <RelativeDate date={community_view.community.published} />
                     </span>
 
-                    <span class="flex flex-row items-center gap-2 mx-auto">
+                    <span class="flex flex-row items-center gap-2" title="Subscribers">
                         <Icon src={UserGroup} width={16} height={16} mini />
                         <FormattedNumber number={community_view.counts.subscribers} />
                     </span>
 
-                    <span class="flex flex-row items-center gap-2 mx-auto">
+                    <span class="flex flex-row items-center gap-2" title="Posts">
                         <Icon src={PencilSquare} width={16} height={16} mini />
                         <FormattedNumber number={community_view.counts.posts} />
                     </span>
 
-                    <span class="flex flex-row items-center gap-2 mx-auto">
+                    <span class="flex flex-row items-center gap-2" title="Comments">
                         <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
                         <FormattedNumber number={community_view.counts.comments} />
                     </span>

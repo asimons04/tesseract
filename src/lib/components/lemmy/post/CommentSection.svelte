@@ -24,7 +24,7 @@
     
 
     export let data:PageData
-    export let showCommentForm:boolean = false;
+    export let showCommentForm:boolean = true;
 
 
     let post:PostView

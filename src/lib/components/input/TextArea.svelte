@@ -10,7 +10,8 @@
   export let required: boolean = false
   export let item: any = undefined
   export let spellcheck:string = 'true';
-  
+  export let id:string = '';
+
   let clazz = ''
   export { clazz as class }
 
@@ -41,6 +42,7 @@
     bind:this={item}
     on:input={(e) => dispatcher('input', e)}
     on:keydown
+    {id}
     {placeholder}
     {maxlength}
     {rows}

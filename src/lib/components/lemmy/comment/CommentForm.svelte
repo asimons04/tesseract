@@ -56,6 +56,7 @@
 
 <div class="flex flex-col gap-2 relative">
     <MarkdownEditor
+        id={`commentForm-${postId}`}
         rows={rows}
         placeholder={locked
             ? 'This post is locked.'

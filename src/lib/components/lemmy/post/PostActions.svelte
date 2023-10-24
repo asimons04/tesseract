@@ -138,7 +138,15 @@
         <Button
             size="sm"
             color="tertiary"
-            on:click={() => (showCommentForm = !showCommentForm)}
+            on:click={() => {
+                showCommentForm = !showCommentForm;
+                // Interval to deal with animiation delay
+                setInterval(() => {
+                    let commentForm = document.getElementById(`commentForm-${post.post.id}`);
+                    commentForm?.focus()
+                }, 250);
+
+            }}
             disabled={post.post.locked}
         >
             <Icon src={ArrowUturnLeft} width={14} height={14} mini />

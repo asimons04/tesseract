@@ -21,10 +21,14 @@ All major/minor changes between releases will be documented here.
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
 ## 1.2.8.94
+### Changes
 - Added a bit of bottom padding to crosspost container
-- Removed logo and "Frontpage" header from main page
+- Removed logo and "Frontpage" header from main page.
+  - Replaced with {ListingType} > {SortType} > {PageNumber}
 - On main page, site card now reflows to the top like the community pages do
-- 
+- Changed centering method on site/community/user card stats row
+- Clicking "reply" in a post will automatically focus the text area input
+
 
 ## 1.2.8.93
 ### Bugfixes

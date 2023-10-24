@@ -277,30 +277,30 @@
         </div>
 
         
-
-        <div class="mt-4 text-sm flex flex-row justify-between gap-3 p-3 w-[95%] ml-auto mr-auto">
-            <div class="flex flex-row items-center gap-2">
-                <Icon src={Cake} width={16} height={16} mini />
-                <span class="capitalize">
-                    <RelativeDate date={person.person.published}/>
+        <div class="flex flex-row p-3 mx-auto">
+            <div class="text-sm flex flex-row flex-wrap gap-8 mx-auto">
+                <span class="flex flex-row items-center gap-2" title="Cake Day">
+                    <Icon src={Cake} width={16} height={16} mini />
+                    <span class="capitalize">
+                        <RelativeDate date={person.person.published}/>
+                    </span>
+                </span>
+            
+                <span class="flex flex-row items-center gap-2" title="Posts">
+                    <Icon src={PencilSquare} width={16} height={16} mini />
+                    <FormattedNumber number={person.counts.post_count} />
+                </span>
+    
+                <span class="flex flex-row items-center gap-2" title="Comments">
+                    <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
+                    <FormattedNumber number={person.counts.comment_count} />
+                </span>
+            
+                <span class="flex flex-row items-center gap-2" title="Content Score">
+                    <Icon src={Trophy} width={16} height={16} mini />
+                    <FormattedNumber number={(person.counts.post_score + person.counts.comment_score)} />
                 </span>
             </div>
-            
-            <div class="flex flex-row items-center gap-2">
-                <Icon src={PencilSquare} width={16} height={16} mini />
-                <FormattedNumber number={person.counts.post_count} />
-            </div>
-    
-            <div class="flex flex-row items-center gap-2">
-                <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                <FormattedNumber number={person.counts.comment_count} />
-            </div>
-            
-            <div class="flex flex-row items-center gap-2">
-                <Icon src={Trophy} width={16} height={16} mini />
-                <FormattedNumber number={(person.counts.post_score + person.counts.comment_score)} />
-            </div>
-
         </div>
     </Card>
 

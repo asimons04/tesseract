@@ -26,6 +26,7 @@
   export let disabled: boolean = false
   export let rows: number = 4
   export let previewing:boolean = false;
+  export let id:string = '';
   
   export let previewContainerClass:string = '';
   export let previewContainerStyle:string = '';
@@ -257,6 +258,7 @@
                     }
                 }}
                 {rows}
+                {id}
                 {...$$restProps}
             />
         {/if}
