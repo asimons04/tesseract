@@ -262,7 +262,7 @@
         {/if}
         
         <!---Bottom Toolbar (edit/preview button, submit button--->
-        <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 
+        <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center
             {$$props.disabled
                 ? 'opacity-60 pointer-events-none'
                 : ''
@@ -270,13 +270,14 @@
         "
         >
             {#if previewButton}
-                <div class="mt-2">
+                <div class="mb-3">
                     <MultiSelect
                         bind:selected={previewing}
                         options={[false, true]}
                         optionNames={['Edit', 'Preview']}
                     />
                 </div>
+                
             {/if} 
 
             <slot name="actions"/>

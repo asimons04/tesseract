@@ -75,7 +75,7 @@
                             on:click={submit}
                             color="primary"
                             size="md"
-                            class="sm:ml-auto w-28"
+                            class="ml-auto w-28"
                             {loading}
                             disabled={locked || loading}
                         >

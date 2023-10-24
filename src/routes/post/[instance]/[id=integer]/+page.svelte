@@ -25,6 +25,8 @@
 
     let post:PostView;
     let community:CommunityView
+    
+    // Defined here and bound to both PostCardStyle (to pass to post actions for the reply button) and CommentSection (to control visibility of the comment form)
     let showCommentForm:boolean = false;
         
     
