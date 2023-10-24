@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getSessionStorage, setSessionStorage } from '$lib/session'
-    import { afterNavigate, disableScrollHandling } from '$app/navigation';
+    import { afterNavigate, disableScrollHandling, goto } from '$app/navigation';
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
@@ -23,6 +23,7 @@
         Bars3,
         ChartBar,
         DocumentDuplicate,
+        Home,
         Icon,
         QueueList
     } from 'svelte-hero-icons'
@@ -58,6 +59,16 @@
         
         <header>
             <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto">
+                
+                <!--Home Button-->
+                <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
+                    on:click={() => {
+                        goto(window.location.pathname);
+                    }}
+                >
+                    <Icon src={Home} width={24} />
+                </span>
+
                 <!---Listing Type--->
                 <SelectMenu
                     alignment="bottom-left"

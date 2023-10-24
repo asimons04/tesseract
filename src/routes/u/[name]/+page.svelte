@@ -1,42 +1,27 @@
 <script lang="ts">
-    import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
-    import { getClient } from '$lib/lemmy.js'
-    import { goto } from '$app/navigation'
-    import { isBlocked } from '$lib/lemmy/user.js'
+    import { arrayRange, searchParam } from '$lib/util.js'
     import { isCommentView } from '$lib/lemmy/item.js'
+    import { goto } from '$app/navigation'
     import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
-    import { searchParam } from '$lib/util.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
-    //import Avatar from '$lib/components/ui/Avatar.svelte'
-    //import Button from '$lib/components/input/Button.svelte'
-    //import Card from '$lib/components/ui/Card.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
-    //import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    //import Markdown from '$lib/components/markdown/Markdown.svelte'
-    //import Menu from '$lib/components/ui/menu/Menu.svelte'
-    //import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    //import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
-    //import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    //import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    //import StickyCard from '$lib/components/ui/StickyCard.svelte'
-    //import TextArea from '$lib/components/input/TextArea.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
-    //import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
+        ArrowSmallRight,
         Bars3,
         ChartBar,
+        DocumentDuplicate,
         Icon,
         PencilSquare,
         ShieldCheck,
-        QueueList
+        QueueList,
+        UserCircle
     } from 'svelte-hero-icons'
     
 
@@ -61,6 +46,88 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
+            <header class="w-full">
+                <span class="flex flex-row gap-2 items-center font-bold text-sm">
+                    
+                    <!--Return to profile page of user--->
+                    <span class="mt-[-6px] mr-2 cursor-pointer" title="{data.person_view.person.name}"
+                        on:click={() => {
+                            goto(window.location.pathname);
+                        }}
+                    >
+                        <Icon src={UserCircle} width={24} />
+                    </span>
+                    
+                    <!---Listing Type--->
+                    <SelectMenu
+                        alignment="bottom-left"
+                        options={['all', 'posts', 'comments']}
+                        optionNames={['All', 'Posts', 'Comments']}
+                        selected={data.type}
+                        title="Listing Type"
+                        icon={Bars3}
+                        on:select={(e) => {
+                            // @ts-ignore
+                            searchParam($page.url, 'type', e.detail, 'page')
+                        }}
+                    />
+                    
+                    <Icon src={ArrowSmallRight} mini width={24} />
+                    
+                    <!---Sort Menu--->
+                    <SelectMenu
+                        alignment="bottom-left"
+                        options={['New', 'TopAll', 'Old']}
+                        optionNames={['New', 'Top', 'Old']}
+                        selected={data.sort}
+                        title="Sort Direction"
+                        icon={ChartBar}
+                        on:select={(e) => {
+                            // @ts-ignore
+                            searchParam($page.url, 'sort', e.detail, 'page')
+                        }}
+                    />
+                    
+                    
+                    
+                    
+                    <Icon src={ArrowSmallRight} mini width={24} />
+                    
+                    <!---Page Selection--->
+                    <SelectMenu
+                        alignment="bottom-left"
+                        options={arrayRange(1, data.page +1)}
+                        selected={data.page}
+                        title="Page"
+                        icon={DocumentDuplicate}
+                        on:select={(e) => {
+                            // @ts-ignore
+                            searchParam($page.url, 'page', e.detail.toString())
+                        }}
+                    />
+
+                    <span class="ml-auto"/>
+                    
+                    <!---Card/Compact Selection--->
+                    <SelectMenu
+                        alignment="bottom-right"
+                        title="Post Display Type"
+                        icon={QueueList}
+                        options={['Cards', 'Compact']}
+                        selected={$userSettings.showCompactPosts
+                            ? 'Compact'
+                            : 'Cards'
+                        }
+                        on:select={(e) => {
+                            $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                        }}
+                    />
+
+
+                </span>
+            </header>
+        
+            <!---
             <div class="flex flex-row gap-4 justify-between flex-wrap">
                 <MultiSelect
                     options={['New', 'TopAll', 'Old']}
@@ -105,6 +172,7 @@
                         <span slot="label">Display Type</span>    
                 </MultiSelect>
             </div>
+            --->
             
             <div class="w-full sm:w-full md:w-[80%] lg:w-[90%] xl:w-[75%] flex flex-col gap-5 ml-auto mr-auto">
                 {#each data.items as item (item.counts.id)}

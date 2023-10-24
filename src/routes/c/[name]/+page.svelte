@@ -1,6 +1,6 @@
 <script lang="ts">
     
-    import { afterNavigate, disableScrollHandling } from '$app/navigation';
+    import { afterNavigate, disableScrollHandling, goto } from '$app/navigation';
     import { arrayRange, fullCommunityName, searchParam } from '$lib/util.js'
     import { getSessionStorage, setSessionStorage } from '$lib/session.js'
     import { onDestroy, onMount } from 'svelte'
@@ -23,7 +23,8 @@
         ChartBar,
         DocumentDuplicate,
         Icon,
-        QueueList
+        QueueList,
+        UserGroup
     } from 'svelte-hero-icons'
 
     export let data
@@ -77,6 +78,16 @@
         <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
             <header class="w-full">
                 <span class="flex flex-row gap-2 items-center font-bold text-sm">
+                    
+                    <!--Return to Base community page-->
+                    <span class="mt-[-6px] mr-2 cursor-pointer" title="{data.community.community_view.community.title}"
+                        on:click={() => {
+                            goto(window.location.pathname);
+                        }}
+                    >
+                        <Icon src={UserGroup} width={24} />
+                    </span>
+                    
                     <!---Sort Menu--->
                     <SelectMenu
                         alignment="bottom-left"
