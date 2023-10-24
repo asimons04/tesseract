@@ -20,6 +20,10 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.94
+- Added a bit of bottom padding to crosspost container
+
+
 ## 1.2.8.93
 ### Bugfixes
 - Fix regression where allowed/blocked instances were not sorted

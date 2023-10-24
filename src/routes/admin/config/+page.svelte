@@ -1413,7 +1413,9 @@
                             Configure rate limiting for your instance. 
                         </p>
                         <p class="mt-2">
-                            The value for the limit refers to the number of submissions per interval (defined in seconds). 
+                            The value for the limit refers to the number of submissions per interval (defined in seconds). Example: a limit of 120 with an interval of 60 means a limit of 120 requests per 60 seconds per IP.
+                        </p>
+                        <p class="mt-2">
                             Rate limts are applied for client to API requests and are per IP address of the client. Make sure you are correctly setting your X-Forwarded-For header in
                             your reverse proxy so that Lemmy limits the correct client IP and not the IP of your load balancer.
                         </p>
