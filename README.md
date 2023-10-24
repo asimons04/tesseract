@@ -4,6 +4,8 @@ Tesseract is Lemmy client designed for media-rich feeds and content.  It's proba
 
 It started out as my personal, custom build of Photon, but it got exhausting porting over my bells and whistles each release. To that end, I finally decided to make it an official fork.
 
+You can't really call this a Photon fork anymore.  Deep down, yeah, there's still some Photon left, but much of it has been re-implemented as I've added new features and rewritten various components.
+
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 As of current release, support for 0.19.0 is present and functional.  However, no new 0.19.0 features are implemented in this release as it is still in the backwards compatible channel.

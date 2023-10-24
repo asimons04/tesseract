@@ -43,7 +43,7 @@
       selected
         ? headless
           ? ''
-          : 'bg-slate-900 text-slate-50 dark:bg-zinc-100 dark:text-black hover:bg-slate-800 hover:dark:bg-zinc-300'
+          : 'bg-slate-900 text-slate-50 dark:bg-zinc-100 dark:text-black hover:bg-slate-800 hover:dark:bg-zinc-300 h-8'
         : ''
     }
     disabled:opacity-60 disabled:pointer-events-none whitespace-nowrap

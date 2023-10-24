@@ -44,7 +44,6 @@
                 {optionNames[options.findIndex((o) => selected == o)] || selected}
             </slot>
         </span>
-            <!--</Button>-->
     </div>
 
     {#each options as option, index}

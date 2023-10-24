@@ -1,28 +1,29 @@
 <script lang="ts">
-    import { profile, profileData, setUserID } from '$lib/auth.js'
-    import { userSettings } from '$lib/settings.js'
+    
+    
+    import { amModOfAny,isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { env } from '$env/dynamic/public'
     import { goto } from '$app/navigation'
-
-    import Button from '$lib/components/input/Button.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    import {
-      amModOfAny,
-      isAdmin,
-    } from '$lib/components/lemmy/moderation/moderation.js'
-    
-    import ProfileButton from '$lib/components/ui/navbar/ProfileButton.svelte'
-
-
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Logo from '$lib/components/ui/Logo.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    import Menu from '$lib/components/ui/menu/Menu.svelte'
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import { LINKED_INSTANCE_URL, instance } from '$lib/instance.js'
+    import { instance } from '$lib/instance.js'
+    import { profile, profileData, setUserID } from '$lib/auth.js'
     import { site } from '$lib/lemmy.js'
     import { theme } from '$lib/ui/colors.js'
+    import { userSettings } from '$lib/settings.js'
+
+    import Avatar from '$lib/components/ui/Avatar.svelte'
+    import Button from '$lib/components/input/Button.svelte'
+    import Link from '$lib/components/input/Link.svelte'
+    import Logo from '$lib/components/ui/Logo.svelte'
+    
+    
+    import Menu from '$lib/components/ui/menu/Menu.svelte'
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import ProfileButton from '$lib/components/ui/navbar/ProfileButton.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
+    
     import {
         AdjustmentsHorizontal,
         ArrowLeftOnRectangle,
@@ -45,17 +46,33 @@
         UserCircle,
         UserGroup,
     } from 'svelte-hero-icons'
+    import { searchParam } from '../../util';
   
     let scrollY = 0
     
     export const DISABLE_MODLOG_USERS = (env.PUBLIC_DISABLE_MODLOG_USERS ?? 'false').toLowerCase() == 'true'
     
-    let expandAccountsMenu:boolean = false
+    let expandAccountsMenu:boolean = false;
+    
+    let searchTerm:string = '';
+    let searchType:string = 'All';
+    function search() {
+        let url = new URL(window.location.href);
+        url.pathname = '/search';
+        url.searchParams.set('type', searchType)
+        url.searchParams.set('q', searchTerm);
+        
+        goto(url, {
+            invalidateAll: true,
+        })
+        
+    }
 </script>
   
 <svelte:window bind:scrollY />
   
 <nav class="flex flex-row gap-2 items-center sticky top-0 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl w-full mx-auto px-4 py-2 z-50 box-border h-16">
+    <!---Site Logo and Name on left--->
     <div class="flex flex-row gap-2 items-center mr-auto">
         <a href="/" class="flex flex-row items-center gap-2">
             {#if $site}
@@ -84,8 +101,39 @@
         </a>
     </div>
 
+    <!---Inline Search in Middle--->
+    <form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
+        on:submit={(e) => {
+            e.preventDefault();
+            search();
+        }}
+    >
+        <!---Search Type Selection
+        <MultiSelect
+            alignment="bottom-left"
+            options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
+            selected={'All'}
+            items={0}
+            headless={true}
+            class="pb-2"
+            on:select={(e) => {
+                searchType = e.detail;
+            }}
+        />
+        --->
+
+        <TextInput type="search" placeholder="Search" bind:value={searchTerm}/>
+
+        <Button
+            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
+            on:click={search}
+        >
+            <Icon src={MagnifyingGlass} mini width={18} />
+        </Button>
+    </form>
+
+    <!---Right-side Buttons--->
     <div class="flex flex-row gap-2 py-2 px-2">
-        
         <!--- Show Reports Button if Mod --->
         {#if amModOfAny($profile?.user)}
             <Button
@@ -102,11 +150,11 @@
             </Button>
         {/if}
         
-        <!--- Search --->
+        <!--- Search (Hide in large width since inline search is present--->
         <Button
             href="/search"
             aria-label="Search"
-            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
+            class="lg:hidden max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
         >
             <Icon mini src={MagnifyingGlass} width={16} slot="icon" />
             <span class="hidden md:inline">Search</span>
