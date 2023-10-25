@@ -125,7 +125,7 @@
         <TextInput type="search" placeholder="Search" bind:value={searchTerm}/>
 
         <Button
-            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
+            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300 !px-1"
             on:click={search}
         >
             <Icon src={MagnifyingGlass} mini width={18} />

@@ -46,9 +46,8 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
-            <header class="w-full">
-                <span class="flex flex-row gap-2 items-center font-bold text-sm">
-                    
+        <header class="sticky top-16 w-[101%] bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl z-40 mt-[-0.6rem] md:mx-[-0.5rem]">
+            <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2">
                     <!--Return to profile page of user--->
                     <span class="mt-[-6px] mr-2 cursor-pointer" title="{data.person_view.person.name}"
                         on:click={() => {
@@ -126,53 +125,6 @@
 
                 </span>
             </header>
-        
-            <!---
-            <div class="flex flex-row gap-4 justify-between flex-wrap">
-                <MultiSelect
-                    options={['New', 'TopAll', 'Old']}
-                    optionNames={['New', 'Top', 'Old']}
-                    selected={data.sort}
-                    on:select={(e) => searchParam($page.url, 'sort', e.detail, 'page')}
-                    headless={true}
-                    fullWidth={true}
-                    items={0}
-                >
-                    <Icon src={ChartBar} mini width={16} slot="icon"/>
-                    <span slot="label">Sort Direction</span>
-                </MultiSelect>
-        
-                <MultiSelect
-                    options={['all', 'posts', 'comments']}
-                    optionNames={['All', 'Posts', 'Comments']}
-                    selected={data.type}
-                    on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-                    headless={true}
-                    fullWidth={true}
-                    items={0}
-                >
-                    <Icon src={Bars3} mini width={16} slot="icon"/>
-                    <span slot="label">List Type</span>
-                </MultiSelect>
-
-                <MultiSelect
-                        options={['Cards', 'Compact']}
-                        selected={$userSettings.showCompactPosts
-                            ? 'Compact'
-                            : 'Cards'
-                        }
-                        on:select={(e) => {
-                            $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                        }}
-                        headless={true}
-                        fullWidth={true}
-                        items={0}
-                    >
-                        <Icon src={QueueList} mini width={16} slot="icon"/>
-                        <span slot="label">Display Type</span>    
-                </MultiSelect>
-            </div>
-            --->
             
             <div class="w-full sm:w-full md:w-[80%] lg:w-[90%] xl:w-[75%] flex flex-col gap-5 ml-auto mr-auto">
                 {#each data.items as item (item.counts.id)}

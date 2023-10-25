@@ -72,75 +72,73 @@
     {/if}
 </svelte:head>
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full px-2">
-    <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">
-    
-        <div class="flex flex-col sm:flex-row gap-4 max-w-full w-full">
-            <header class="w-full">
-                <span class="flex flex-row gap-2 items-center font-bold text-sm">
-                    
-                    <!--Return to Base community page-->
-                    <span class="mt-[-6px] mr-2 cursor-pointer" title="{data.community.community_view.community.title}"
-                        on:click={() => {
-                            goto(window.location.pathname);
-                        }}
-                    >
-                        <Icon src={UserGroup} width={24} />
-                    </span>
-                    
-                    <!---Sort Menu--->
-                    <SelectMenu
-                        alignment="bottom-left"
-                        options={sortOptions}
-                        optionNames={sortOptionNames}
-                        selected={data.sort}
-                        title="Sort Direction"
-                        icon={ChartBar}
-                        on:select={(e) => {
-                            // @ts-ignore
-                            searchParam($page.url, 'sort', e.detail, 'page')
-                        }}
-                    />
-                    
-                                        
-                    
-                    <Icon src={ArrowSmallRight} mini width={24} />
-                    
-                    <!---Page Selection--->
-                    <SelectMenu
-                        alignment="bottom-left"
-                        options={arrayRange(1, data.page +1)}
-                        selected={data.page}
-                        title="Page"
-                        icon={DocumentDuplicate}
-                        on:select={(e) => {
-                            // @ts-ignore
-                            searchParam($page.url, 'page', e.detail.toString())
-                        }}
-                    />
-
-                    <span class="ml-auto"/>
-                    
-                    <!---Card/Compact Selection--->
-                    <SelectMenu
-                        alignment="bottom-right"
-                        title="Post Display Type"
-                        icon={QueueList}
-                        options={['Cards', 'Compact']}
-                        selected={$userSettings.showCompactPosts
-                            ? 'Compact'
-                            : 'Cards'
-                        }
-                        on:select={(e) => {
-                            $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                        }}
-                    />
-    
-    
+<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
+    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
+        
+        <header class="sticky top-16 w-[101%] bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl z-40 mt-[-0.6rem] md:mx-[-0.5rem]">
+            <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2">
+                
+                <!--Return to Base community page-->
+                <span class="mt-[-6px] mr-2 cursor-pointer" title="{data.community.community_view.community.title}"
+                    on:click={() => {
+                        goto(window.location.pathname);
+                    }}
+                >
+                    <Icon src={UserGroup} width={24} />
                 </span>
-            </header>
-        </div>
+                
+                <!---Sort Menu--->
+                <SelectMenu
+                    alignment="bottom-left"
+                    options={sortOptions}
+                    optionNames={sortOptionNames}
+                    selected={data.sort}
+                    title="Sort Direction"
+                    icon={ChartBar}
+                    on:select={(e) => {
+                        // @ts-ignore
+                        searchParam($page.url, 'sort', e.detail, 'page')
+                    }}
+                />
+                
+                                    
+                
+                <Icon src={ArrowSmallRight} mini width={24} />
+                
+                <!---Page Selection--->
+                <SelectMenu
+                    alignment="bottom-left"
+                    options={arrayRange(1, data.page +1)}
+                    selected={data.page}
+                    title="Page"
+                    icon={DocumentDuplicate}
+                    on:select={(e) => {
+                        // @ts-ignore
+                        searchParam($page.url, 'page', e.detail.toString())
+                    }}
+                />
 
+                <span class="ml-auto"/>
+                
+                <!---Card/Compact Selection--->
+                <SelectMenu
+                    alignment="bottom-right"
+                    title="Post Display Type"
+                    icon={QueueList}
+                    options={['Cards', 'Compact']}
+                    selected={$userSettings.showCompactPosts
+                        ? 'Compact'
+                        : 'Cards'
+                    }
+                    on:select={(e) => {
+                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                    }}
+                />
+
+
+            </span>
+        </header>
+        
         <PostFeed posts={data.posts.posts}/>
         
         <Pageination

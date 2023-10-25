@@ -35,28 +35,30 @@
 </script>
 
 <div class="relative">
-  <TextInput
-    bind:value={query}
-    on:input={() => {
-      extractSelected(null)
-      debounceFunc()
-    }}
-    {...$$restProps}
-  />
-  <Menu
-    open={(options.length != 0 || showWhenEmpty) && canSearch}
-    alignment="bottom-left"
-  >
-    {#if query == '' && showWhenEmpty}
-      <slot {extractName} {extractSelected} {query} />
-    {:else}
-      {#each options as option}
-        <slot {extractName} {extractSelected} {option} {query}>
-          <MenuButton on:click={() => extractSelected(option)}>
-            {extractName(option)}
-          </MenuButton>
-        </slot>
-      {/each}
-    {/if}
-  </Menu>
+    <TextInput
+        type="search"
+        bind:value={query}
+        on:input={() => {
+            extractSelected(null)
+            debounceFunc()
+        }}
+        {...$$restProps}
+    />
+
+    <Menu
+        open={(options.length != 0 || showWhenEmpty) && canSearch}
+        alignment="bottom-left"
+    >
+        {#if query == '' && showWhenEmpty}
+            <slot {extractName} {extractSelected} {query} />
+        {:else}
+            {#each options as option}
+                <slot {extractName} {extractSelected} {option} {query}>
+                    <MenuButton on:click={() => extractSelected(option)}>
+                        {extractName(option)}
+                    </MenuButton>
+                </slot>
+            {/each}
+        {/if}
+    </Menu>
 </div>

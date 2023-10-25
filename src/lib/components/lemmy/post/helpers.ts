@@ -218,7 +218,9 @@ export const fixLemmyEncodings = function (content:string|undefined):string|unde
 export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolean=true):void {
     if (!element) return;
     try {
-        let offset = -64;
+        // Offset = navbar height + sticky menu height
+        let offset = -64 -24;
+
         let y = element.getBoundingClientRect().top + window.pageYOffset + offset;
         if (smooth) {
             window.scrollTo({top: y, behavior: 'smooth'});

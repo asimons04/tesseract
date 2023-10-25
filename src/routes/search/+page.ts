@@ -18,12 +18,15 @@ export async function load({ url, fetch }) {
     const community = url.searchParams.get('community_name')
     const sort = url.searchParams.get('sort')
     const type = url.searchParams.get('type')
+    const person = url.searchParams.get('person');
+
 
     if (query) {
         const results = await getClient(getInstance(), fetch).search({
             q: query,
             auth: get(profile)?.jwt,
             community_name: community ?? undefined,
+            creator_id: person ?? undefined,
             limit: 40,
             page: page,
             sort: (sort as SortType) || 'New',
@@ -44,9 +47,11 @@ export async function load({ url, fetch }) {
 
         return {
             page: page,
+            sort: sort,
+            community_name: community ?? undefined,
             results: everything,
             streamed: {
-                object: get(profile)?.jwt
+                object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@')))
                 ? getClient(undefined, fetch).resolveObject({
                     auth: get(profile)!.jwt!,
                     q: query,
@@ -58,5 +63,7 @@ export async function load({ url, fetch }) {
 
     return {
         page: 1,
+        sort: sort,
+        community_name: community ?? undefined
     }
 }

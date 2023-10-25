@@ -17,8 +17,7 @@
     export let listing_type: ListingType = 'Subscribed'
     export let items: Community[] | Person[] | undefined = undefined
     export let showWhenEmpty: boolean = false
-    
-    
+
     let showNone: boolean = false
 
     const dispatcher = createEventDispatcher<{ select: Community }>()

@@ -35,9 +35,13 @@
 <Menu {alignment} >
     <div slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
         
-        <span class="flex flex-row gap-1 font-bold text-sm cursor-pointer">
+        <span class="flex flex-row items-center gap-1 font-bold text-sm cursor-pointer">
             {#if icon}
                 <Icon src={icon} mini width={16}/>
+            {/if}
+
+            {#if label}
+                {label}
             {/if}
             
             <slot>
