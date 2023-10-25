@@ -52,12 +52,11 @@ Currently, I just pull the latest version from that repo and bulid it into Tesse
 #### MBFC To-Do List
 - Add an internal updater so the MBFC data can be updated in-situ without waiting for the latest Tesseract release to bundle a new version.
 
-- Since the dataset is already in JSON, consider moving it to a client-side object for lookups; would allow realtime badges without incurring an API call to the Tesseract server for each lookup
-  - Con: Would prevent in-situ updates and lead to stale datasets.
+- Since the dataset is already in JSON, consider moving it to a client-side object for lookups.
+  - Pro: Would allow realtime badges without incurring an API call to the Tesseract server for each lookup
   - Pro:  Badge would only show on posts where the source has a record
-
-- Consider adding an array of communities to the user settings where MBFC badges should be shown; they only really apply to news links but there's no way to differentate a news link for a regular link.
-  - Will likely implement this in a future release if I keep the lookups server-side. I don't know which will work better in the long run, so I'm tabling this until some real world usage provides feedback.
+  - Pro: Can set user-defined filters for credibility ratings to hide posts from disreputable sources
+  - Yeah, that last one settles it.  On one of the next few releases, I'm going to rework MBFC to be client-side.  The data doesn't change incredibly often, so it doesn't need to be _super_ fresh to be useful.  Just need to serve the data JSON from the static directory and have the server update and rotate that file.
 
 
 ### Search Page Enhancements

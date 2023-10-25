@@ -46,6 +46,7 @@
         ArrowSmallRight,
         Bars3,
         ChartBar,
+        Cog,
         DocumentDuplicate,
         MagnifyingGlass,
         QueueList
@@ -67,6 +68,8 @@
         limit: 40
 
     }
+    let advancedSearch:boolean = false;
+
     let searchURL = new URL($page.url);
 
     function search() {
@@ -106,7 +109,7 @@
     <title>Search</title>
 </svelte:head>
 
-<header class="sticky top-16 w-[101%] flex flex-col gap-4 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl z-40 mt-[-0.6rem] md:mx-[-0.6rem]">
+<header class="sticky top-16 w-full flex flex-col gap-4 bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-20 mt-[-0.4rem] px-2">
     <span class="flex flex-row gap-4 items-center font-bold text-sm text-center my-2">
         <!--Home Button-->
         <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
@@ -155,22 +158,42 @@
             }}
         />
 
-        <Icon src={ArrowSmallRight} mini width={24} />
-                    
-        <!---Page Selection--->
+        <span class="hidden lg:flex lg:flex-row gap-2 items-center">
+            <Icon src={ArrowSmallRight} mini width={24} />
+                        
+            <!---Page Selection--->
+            <SelectMenu
+                alignment="bottom-left"
+                options={arrayRange(1, data.page +1)}
+                selected={data.page}
+                title="Page"
+                icon={DocumentDuplicate}
+                on:select={(e) => {
+                    // @ts-ignore
+                    searchParam($page.url, 'page', e.detail.toString())
+                }}
+            />
+            </span>
+        
+
+        <div class="ml-auto"/>
+
+        <!---Simple/Advanced Search Switcher--->
         <SelectMenu
-            alignment="bottom-left"
-            options={arrayRange(1, data.page +1)}
-            selected={data.page}
-            title="Page"
-            icon={DocumentDuplicate}
+            alignment="bottom-right"
+            title="Toggle simple/advanced ssearch"
+            icon={Cog}
+            options={['Advanced Search', 'Simple Search']}
+            selected={advancedSearch
+                ? 'Advanced'
+                : 'Simple'
+            }
             on:select={(e) => {
-                // @ts-ignore
-                searchParam($page.url, 'page', e.detail.toString())
+                e.detail == 'Advanced Search'
+                    ? advancedSearch = true
+                    : advancedSearch = false
             }}
         />
-        
-        <div class="ml-auto"/>
         
         <!---Card/Compact Selection--->
         <SelectMenu
@@ -188,34 +211,36 @@
         />
     </span>
 
-    <span class="flex flex-row gap-2 items-center text-sm text-center mx-auto mb-2">
+    <span class="flex flex-row flex-wrap gap-2 items-center text-sm text-center mx-auto mb-2">
         <!---Filter by User--->
-        <ObjectAutocomplete
-            placeholder="Filter by User"
-            type="person"
-            jwt={$profile?.jwt}
-            listing_type="All"
-            showWhenEmpty={false}
-            bind:q={searchParams.person}
+        <div class="flex flex-row flex-wrap gap-2 items-center text-sm text-center" class:hidden={!advancedSearch}>
+            <ObjectAutocomplete
+                placeholder="User"
+                type="person"
+                jwt={$profile?.jwt}
+                listing_type="All"
+                showWhenEmpty={false}
+                bind:q={searchParams.person}
 
-            on:select={ (e) => {
-                searchParams.person = e.detail.id;
-            }}
-        />
+                on:select={ (e) => {
+                    searchParams.person = e.detail.id;
+                }}
+            />
 
-        <!---Filter by Community--->
-        <ObjectAutocomplete
-            placeholder="Filter by Community"
-            jwt={$profile?.jwt}
-            listing_type="All"
-            showWhenEmpty={false}
-            bind:q={searchParams.community_name}
-            
-            on:select={ (e) => {
-                let communityURL = `${e.detail?.name}@${new URL(e.detail?.actor_id).host}`
-                searchParams.community_name = communityURL;
-            }}
-        />
+            <!---Filter by Community--->
+            <ObjectAutocomplete
+                placeholder="Community"
+                jwt={$profile?.jwt}
+                listing_type="All"
+                showWhenEmpty={false}
+                bind:q={searchParams.community_name}
+                
+                on:select={ (e) => {
+                    let communityURL = `${e.detail?.name}@${new URL(e.detail?.actor_id).host}`
+                    searchParams.community_name = communityURL;
+                }}
+            />
+        </div>
 
 
         <div class="mx-auto" />

@@ -75,7 +75,7 @@
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
-        <header class="sticky top-16 w-[101%] rounded-md bg-white/25 dark:bg-black/25 z-20 backdrop-blur-3xl mt-[-0.4rem] px-2">
+        <header class="sticky top-16 w-full rounded-md bg-white/25 dark:bg-black/25 z-20 backdrop-blur-3xl mt-[-0.4rem] px-2">
             <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
                 
                 <!--Return to Base community page-->

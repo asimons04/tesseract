@@ -21,7 +21,7 @@
 </script>
 
 <Modal bind:open={open}>
-    <h1 class="font-bold text-3xl mt-[-50px] w-fit">Media Bias Fact Check</h1>
+    <h1 class="font-bold text-2xl mt-[-50px] w-fit">Media Bias Fact Check</h1>
     
     {#if data}
         <h2 class="font-bold text-xl w-fit">Report for {data.name}</h2>

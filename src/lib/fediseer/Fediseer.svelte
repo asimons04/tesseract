@@ -29,7 +29,7 @@
 </script>
 
 <Modal bind:open={open}>
-    <h1 class="font-bold text-3xl mt-[-50px] w-fit">Fediseer</h1>
+    <h1 class="font-bold text-2xl mt-[-50px] w-fit">Fediseer</h1>
     
     <!---Site logo, name, and instance domain--->
     {#if data?.site?.site_view}
