@@ -32,6 +32,13 @@
 
         {/if}
 
+        {#if ['satire', 'pro-science'].includes(data.biases.bias)}
+            <div class="bg-slate-300 p-2 rounded-md">
+                <img src="/img/MBFC/center.webp" alt="MBFC Gauge for {data.name} reporting as {data.biases.pretty}" class="mx-auto"/>
+            </div>
+
+        {/if}
+
 
         {#if data.biases?.description}
             <p class="text-sm">{data.biases.description}</p>
