@@ -19,7 +19,7 @@ export async function load({ url, fetch }) {
     const sort = url.searchParams.get('sort')
     const type = url.searchParams.get('type')
     const person = url.searchParams.get('person');
-
+    const limit = url.searchParams.get('limit') || 40;
 
     if (query) {
         const results = await getClient(getInstance(), fetch).search({
@@ -27,7 +27,7 @@ export async function load({ url, fetch }) {
             auth: get(profile)?.jwt,
             community_name: community ?? undefined,
             creator_id: person ?? undefined,
-            limit: 40,
+            limit: limit,
             page: page,
             sort: (sort as SortType) || 'New',
             listing_type: 'All',

@@ -63,7 +63,8 @@
         community_name: data.community_name ?? '',
         sort: data.sort ?? 'New',
         type: data.type ?? 'All',
-        person: undefined
+        person: undefined,
+        limit: 40
 
     }
     let searchURL = new URL($page.url);
@@ -88,13 +89,17 @@
         searchParams.person
             ? searchURL.searchParams.set('person', searchParams.person)
             : searchURL.searchParams.delete('person')
+
+        searchParams.limit
+            ? searchURL.searchParams.set('limit', searchParams.limit.toString())
+            : searchURL.searchParams.delete('limit')
         
         goto(searchURL, {
             invalidateAll: true,
         })
     }
     
-    console.log(data);
+    
 </script>
 
 <svelte:head>
@@ -111,7 +116,8 @@
                     community_name: '',
                     sort: data.sort ?? 'New',
                     type: data.type ?? 'All',
-                    person: undefined
+                    person: undefined,
+                    limit: 40
 
                 }
                 goto(window.location.pathname);

@@ -5,6 +5,7 @@
     import { env } from '$env/dynamic/public'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance.js'
+    import { page } from '$app/stores'
     import { profile, profileData, setUserID } from '$lib/auth.js'
     import { site } from '$lib/lemmy.js'
     import { theme } from '$lib/ui/colors.js'
@@ -56,6 +57,7 @@
     
     let searchTerm:string = '';
     let searchType:string = 'All';
+    
     function search() {
         let url = new URL(window.location.href);
         url.pathname = '/search';
@@ -103,24 +105,12 @@
 
     <!---Inline Search in Middle--->
     <form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
+        class:lg:hidden={$page.url.pathname.includes('/search')}
         on:submit={(e) => {
             e.preventDefault();
             search();
         }}
     >
-        <!---Search Type Selection
-        <MultiSelect
-            alignment="bottom-left"
-            options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
-            selected={'All'}
-            items={0}
-            headless={true}
-            class="pb-2"
-            on:select={(e) => {
-                searchType = e.detail;
-            }}
-        />
-        --->
 
         <TextInput type="search" placeholder="Search" bind:value={searchTerm}/>
 

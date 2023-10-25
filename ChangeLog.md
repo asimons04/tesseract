@@ -20,6 +20,24 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+
+## 1.2.8.95
+### Search Page Enhancements
+- [Bugfix] Added conditional to the `resolveObject` call so it only calls that endpoint if the keyword starts with a `!` or `@` indicating a federated community or user search.
+- Can add a user filter to restrict the keyword search to posts/comments made by a particular user
+  - Since the search needs the `person_id` and not the username, the auto complete box will fill in with their ID.  This is normal until I write a handler to display the user name+domain while keeping the person_id value under the hood.
+
+- Added community filter to restrict the keyword search to posts/comments within a particular community
+- Added new breadcrumb-style toolbar to search page
+- Hid search in navbar when on `/search` page to avoid confusion/clutter
+
+### Other Changes
+- Breadcrumb menus are now sticky on feed, community, search, and user pages.
+- Fix scroll offset to account for new sticky navbars
+
+
+
+
 ## 1.2.8.94
 ### Changes
 - Added a bit of bottom padding to crosspost container
