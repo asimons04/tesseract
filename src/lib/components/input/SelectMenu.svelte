@@ -32,7 +32,7 @@
 </script>
 
 
-<Menu {alignment} >
+<Menu {alignment} containerClass="!z-[30]" >
     <div slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
         
         <span class="flex flex-row items-center gap-1 font-bold text-sm cursor-pointer">

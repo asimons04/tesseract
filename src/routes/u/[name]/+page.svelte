@@ -46,8 +46,8 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
-        <header class="sticky top-16 w-[101%] bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl z-40 mt-[-0.6rem] md:mx-[-0.5rem]">
-            <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2">
+        <header class="sticky top-16 w-[101%] bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl z-20 mt-[-0.6rem] md:mx-[-0.5rem]">
+            <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
                     <!--Return to profile page of user--->
                     <span class="mt-[-6px] mr-2 cursor-pointer" title="{data.person_view.person.name}"
                         on:click={() => {

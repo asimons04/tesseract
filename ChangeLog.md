@@ -35,6 +35,11 @@ All major/minor changes between releases will be documented here.
 - Breadcrumb menus are now sticky on feed, community, search, and user pages.
 - Fix scroll offset to account for new sticky navbars
 
+### to do
+- right padding in breadcrumb navbar
+- Flex wrap the search input fields in /search
+- Consider making a basic/advanced search view to hide the user/community filters
+
 
 
 
