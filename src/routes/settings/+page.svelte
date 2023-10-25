@@ -25,6 +25,7 @@
         BugAnt,
         ArrowTopRightOnSquare,
         ChartBar,
+        CheckCircle,
         CodeBracketSquare,
         CodeBracket,
         Cog6Tooth,
@@ -644,6 +645,21 @@
                         <div class="mx-auto"/>
                         
                         <Switch bind:enabled={$userSettings.uiState.fediseerBadges} />
+                    </div>
+
+                    <!---MBFC Badges--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={CheckCircle} mini width={16}/>
+                                Media Bias Fact Check Badges
+                            </p>
+                            <p class="text-xs font-normal">Show badges on posts with URLs to check them against the Media Bias Fact Check dataset.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.MBFCBadges} />
                     </div>
 
                 

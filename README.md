@@ -39,6 +39,10 @@ Privacy conscious users have long requested media be proxied through Lemmy.  Whi
 
 Read more: [Media Proxy/Cache Docs](docs/MediaProxy.md)
 
+### Media Bias Fact Check (MBFC) Integration
+Posts with URLs can have a MBFC button in the corner which will lookup the publisher in the MBFC database and return their bias and credibility information.
+
+
 ### Fediseer Integration
 - See any endorsements, hesitations, and censures given to instances you're interacting with.
 - Code syntax highlighting in code and inline code blocks.

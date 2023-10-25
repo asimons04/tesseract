@@ -4,7 +4,9 @@ import { router } from './server/router.js'
 // Route Handlers
 import { fediseer_router }      from './lib/fediseer/server.js'
 import { image_proxy }          from './server/image-proxy.js'
+import { mbfc_router }          from './lib/MBFC/server.js'
 import { proxy_pictrs_upload }  from './server/upload-image.js'
+
 
 // Routes
 const api = '/tesseract/api'
@@ -21,6 +23,10 @@ const routes = [
     {
         route: `${api}/fediseer*`,
         handler: fediseer_router
+    },
+    {
+        route: `${api}/mbfc*`,
+        handler: mbfc_router
     },
     
 ]

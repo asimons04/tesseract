@@ -208,11 +208,15 @@ export const postType = (post: PostView | undefined ) => {
 export const fixLemmyEncodings = function (content:string|undefined):string|undefined {
     if (!content) return ' '
     
-    content = content
-        .replaceAll('&amp;', '&')
-        .replaceAll('&lt;', '<')
-    
-    return content;
+    try {
+        let element:HTMLElement = document.createElement('div');
+        element.innerHTML = content;
+        return element.textContent ?? ' '
+    }
+    catch {
+        console.log("fixLemmyEncodings(): Failed to parse content: " + content);
+        return content;
+    }
 }
 
 export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolean=true):void {

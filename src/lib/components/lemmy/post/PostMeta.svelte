@@ -6,12 +6,17 @@
     import { fediseerLookup } from '$lib/fediseer/client.js'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { imageProxyURL } from '$lib/image-proxy'
+    import { isImage, isVideo } from './helpers'
+
+    import { MBFC_lookup } from '$lib/MBFC/client'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
+    import MBFC from '$lib/MBFC/MBFC.svelte'
+
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -23,6 +28,7 @@
         InformationCircle,
         LockClosed,
         Megaphone,
+        Microphone,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -51,6 +57,7 @@
     let locked: boolean
     let read: boolean
     let userIsModerator:boolean
+    let url: string
     
     // Make these variables reactive
     $: {
@@ -69,6 +76,7 @@
         locked                              = post.post.locked ?? false
         read                                = post.read ?? false
         userIsModerator                     = (moderators.filter((index) => index.moderator.id == user.id).length > 0)
+        url                                 = post.post.url ?? undefined
     }
     
      
@@ -79,9 +87,17 @@
         modal: false,
         data: undefined
     }
+
+    let mbfc = {
+        modal: false,
+        loading: false,
+        data: undefined
+    }
 </script>
 
 <Fediseer bind:open={fediseer.modal} data={fediseer.data} />
+<MBFC bind:open={mbfc.modal} data={mbfc.data} />
+
 
 <div class="flex flex-col gap-1.5 grow">
     <div class="flex flex-col gap-1">
@@ -119,6 +135,29 @@
             <!--- Post Badges --->
             <div class="flex flex-row ml-auto mb-auto gap-2">
                 
+                <!--- Media Bias Fact Check--->
+                {#if $userSettings.uiState.MBFCBadges && url && !isImage(url) && !isVideo(url)}
+                    <Badge color="gray">
+                        <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
+                            title="Media Bias Fact Check"
+                            on:click={async () => {
+                                mbfc.loading = true
+                                mbfc.data = await MBFC_lookup(new URL(url).host);
+                                mbfc.loading = false;
+                                mbfc.modal = true;
+                            }}
+                        >
+                            <span class="items-center" class:hidden={!mbfc.loading}>
+                                <Spinner width={14}/>
+                            </span>
+                            <Icon src={Microphone} mini size="12"/>
+                            MBFC
+                        </span>
+                        
+                    </Badge>
+                    
+                {/if}
+
                 <!--- Fediseer Endorsement Badge--->
                 {#if showFediseer && $userSettings.uiState.fediseerBadges}
                     <span class="flex flex-row gap-2 items-center mr-2">

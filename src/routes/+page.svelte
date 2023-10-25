@@ -57,7 +57,7 @@
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
-        <header class="sticky top-16 w-[101%] bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl z-20 mt-[-0.6rem] md:mx-[-0.5rem]">
+        <header class="sticky top-16 w-[101%] rounded-md bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-20 mt-[-0.4rem] px-2">
             <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
                 
                 <!--Home Button-->
@@ -100,38 +100,39 @@
                 
                 
                 
+                
+                <Icon src={ArrowSmallRight} mini width={24} />
+                
+                <!---Page Selection--->
+                <SelectMenu
+                    alignment="bottom-left"
+                    options={arrayRange(1, data.page +1)}
+                    selected={data.page}
+                    title="Page"
+                    icon={DocumentDuplicate}
+                    on:select={(e) => {
+                        // @ts-ignore
+                        searchParam($page.url, 'page', e.detail.toString())
+                    }}
+                />
+                <span class="ml-auto"/>
+                
                 <span class="hidden md:flex md:flex-row gap-2 items-center">
-                    <Icon src={ArrowSmallRight} mini width={24} />
-                    
-                    <!---Page Selection--->
+                    <!---Card/Compact Selection--->
                     <SelectMenu
-                        alignment="bottom-left"
-                        options={arrayRange(1, data.page +1)}
-                        selected={data.page}
-                        title="Page"
-                        icon={DocumentDuplicate}
+                        alignment="bottom-right"
+                        title="Post Display Type"
+                        icon={QueueList}
+                        options={['Cards', 'Compact']}
+                        selected={$userSettings.showCompactPosts
+                            ? 'Compact'
+                            : 'Cards'
+                        }
                         on:select={(e) => {
-                            // @ts-ignore
-                            searchParam($page.url, 'page', e.detail.toString())
+                            $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                         }}
                     />
                 </span>
-                <span class="ml-auto"/>
-                
-                <!---Card/Compact Selection--->
-                <SelectMenu
-                    alignment="bottom-right"
-                    title="Post Display Type"
-                    icon={QueueList}
-                    options={['Cards', 'Compact']}
-                    selected={$userSettings.showCompactPosts
-                        ? 'Compact'
-                        : 'Cards'
-                    }
-                    on:select={(e) => {
-                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                    }}
-                />
 
 
             </span>
