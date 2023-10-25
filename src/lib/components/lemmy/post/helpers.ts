@@ -147,7 +147,7 @@ export const isSongLink = (url:string):boolean => {
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
 export const postType = (post: PostView | undefined ) => {
     
-    if (!post) return false
+    if (!post) return
     
     if (post.post.url && isImage(post.post.url)) {
         return "image"

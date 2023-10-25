@@ -21,13 +21,20 @@
 </script>
 
 <Modal bind:open={open}>
-    <h1 class="font-bold text-3xl mt-[-50px] w-fit">Media Bias/Fact Check</h1>
+    <h1 class="font-bold text-3xl mt-[-50px] w-fit">Media Bias Fact Check</h1>
     
     {#if data}
         <h2 class="font-bold text-xl w-fit">Report for {data.name}</h2>
-        
+        {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(data.biases.bias)}
+            <div class="bg-slate-300 p-2 rounded-md">
+                <img src="/img/MBFC/{data.biases.bias}.webp" alt="MBFC Gauge for {data.name} reporting as {data.biases.pretty}" class="mx-auto"/>
+            </div>
+
+        {/if}
+
+
         {#if data.biases?.description}
-            <p class="text-xs">{data.biases.description}</p>
+            <p class="text-sm">{data.biases.description}</p>
             <p class="text-xs">
                 <strong>Learn more</strong>: 
                 <Link href={data.biases.url} newtab={true} title={data.biases.pretty} highlight>

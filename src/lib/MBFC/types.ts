@@ -10,6 +10,7 @@ export interface MBFCReport {
     reporting: string,
     url: string,
     biases: MBFCBiases
+    score?: number
     
 }
 

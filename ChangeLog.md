@@ -37,6 +37,7 @@ Data is loaded from [https://github.com/drmikecrowe/mbfcext](https://github.com/
 - Add an internal updater so the MBFC data can be updated in-situ without waiting for the latest Tesseract release to bundle it.
 
 - Since the dataset is already in JSON, consider moving it to a client-side object for lookups; would allow realtime badges without incurring an API call to the Tesseract server for each lookup
+  - Would possibly prevent in-situ updates and lead to stale datasets
 
 - Maybe add a graphical gague to plot the bias similar to what's used on the MBFC site.
 

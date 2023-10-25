@@ -6,7 +6,7 @@
     import { fediseerLookup } from '$lib/fediseer/client.js'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { imageProxyURL } from '$lib/image-proxy'
-    import { isImage, isVideo } from './helpers'
+    import { postType } from './helpers'
 
     import { MBFC_lookup } from '$lib/MBFC/client'
     import { userSettings } from '$lib/settings.js'
@@ -96,6 +96,7 @@
 </script>
 
 <Fediseer bind:open={fediseer.modal} data={fediseer.data} />
+
 <MBFC bind:open={mbfc.modal} data={mbfc.data} />
 
 
@@ -136,7 +137,7 @@
             <div class="flex flex-row ml-auto mb-auto gap-2">
                 
                 <!--- Media Bias Fact Check--->
-                {#if $userSettings.uiState.MBFCBadges && url && !isImage(url) && !isVideo(url)}
+                {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <Badge color="gray">
                         <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
                             title="Media Bias Fact Check"

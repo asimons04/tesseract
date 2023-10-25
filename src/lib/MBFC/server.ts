@@ -25,13 +25,55 @@ export async function lookup(domain:string): Promise<MBFCReport|undefined> {
     if (!data) return undefined
 
     // Lookup the provided domain and return the results
-    let info:MBFCReport|undefined = undefined;
-    
+    let info:MBFCReport = {} as MBFCReport
+    let found:boolean = false;
+
+
     try {
-        data.sources.map((item) => { if (item.domain==domain) info=item });
+        data.sources.map((item) => { 
+            if (item.domain==domain) {
+                info=item
+                found=true;
+            }
+        });
+        
         // Resolve bias, credibility descriptions
         
-        if (info) {
+        
+        if (found) {
+            // Create a numeric bias score (-100, -50, 0, 50, 100)
+            switch (info.bias) {
+                case "left":
+                    info.score = -100;
+                    break;
+                case "left-center":
+                    info.score = -50;
+                    break;
+                case "center":
+                    info.score = 0;
+                    break;
+                case "right-center":
+                    info.score = 50;
+                    break;
+                case "right":
+                    info.score = 100;
+                    break;
+                case "pro-science":
+                    info.score = 0;
+                    break;
+                case "conspiracy-pseudoscience":
+                    info.score = 101;
+                    break;
+                
+                case "satire":
+                    info.score = 102;
+                    break;
+                
+                case "fake-news":
+                    info.score = 103;
+                    break;
+            }
+            
             // Biases
             data.biases.map((item) => { 
                 if (info?.bias == item.bias) info.biases = item;
@@ -59,6 +101,8 @@ export async function lookup(domain:string): Promise<MBFCReport|undefined> {
                 if (info?.reporting == item.reporting) info.reporting = item.pretty;
                 
             })
+
+
 
             return info
         }
