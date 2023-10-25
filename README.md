@@ -240,6 +240,7 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_CUSTOM_PIPED             | Comma-separated string | ''                                  |
 | PUBLIC_ENABLE_USER_MEDIA_PROXY  | `bool`              | false                                  |
 | PUBLIC_ENABLE_FEDISEER_BADGES   | `bool`              | false                                  |
+| PUBLIC_ENABLE_MBFC_BADGES       | `bool`              | true                                   |
 
 ### Configuration Options for Media Proxying and Caching
 Descriptions of the config options and what they do are covered in the [Media Proxy Cache](docs/MediaProxy.md) module documentation.
