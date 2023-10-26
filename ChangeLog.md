@@ -36,15 +36,18 @@ All major/minor changes between releases will be documented here.
   - Reduced dead space in moderation modals
 
 ### MBFC Component Refinements
+- Added additional aliases for detecting sources by domain (e.g. `bbc.co.uk` -> `bbc.com`)
 - Added color-coded badges to MBFC results
   - Green check for highest credibility and factual reporting
   - Amber check for medium / mixed levels of credibility / factual reporting
   - Red exclamation triangle for low credibility, low factual content, or for disreputable sourcs
   - Bias rating is a green check for left-center, center, right center, and pro-science. Yellow check for satire, left and right bias, and red exclamation for questionable sourcing/"fake news" label.
-  
+
 
 ### Moderation Tools
-Integrated the Media Bias Fact Check component into the mod tooling.  If you are community moderator or instance admin, there are now options in the MBFC window to automatically populate a removal/purge reason based on the MBFC results.  Should be useful for mods of news/politics communities.
+- Integrated the Media Bias Fact Check component into the mod tooling.  If you are community moderator or instance admin, there are now options in the MBFC window to automatically populate a removal/purge reason based on the MBFC results.  Should be useful for mods of news/politics communities.
+
+- Forced posts into compact mode when rendering in remove/purge modal.
 
 
 

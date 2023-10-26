@@ -126,7 +126,7 @@
         
         {#if item.reason}
             <p class="text-sm font-bold mt-2">Reason</p>
-            <p class="text-sm">{item.reason}</p>
+            <p class="text-sm">{@html item.reason.replaceAll('\n', '<br/>')}</p>
         {/if}
 
     </td>

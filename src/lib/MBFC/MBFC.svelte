@@ -45,7 +45,7 @@
         if (data?.questionable?.length > 0) {
             template += `\nReasoning:`
             for (let i:number=0; i<data.questionable.length; i++) {
-                template += `\n - ${data.questionable[i]}`   
+                template += `${data.questionable[i]}, `   
             }
         }
 
@@ -101,11 +101,11 @@
                             </span>
                             <span
                                 class:text-green-500={data.credibility == 'High Credibility'}
-                                class:text-amber-500={data.credibility == 'Medium Credibility'}
+                                class:text-amber-500={['Medium Credibility', 'N/A'].includes(data.credibility)}
                                 class:text-red-500={data.credibility == 'Low Credibility'}
                             >
                                 <Icon src={
-                                ['High Credibility', 'Medium Credibility'].includes(data.credibility)
+                                ['High Credibility', 'Medium Credibility', 'N/A'].includes(data.credibility)
                                     ? CheckBadge
                                     : ExclamationTriangle
                                 } mini width={24} />

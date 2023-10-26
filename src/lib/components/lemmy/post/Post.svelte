@@ -21,7 +21,7 @@
     export let actions: boolean = true
     export let autoplay:boolean|undefined = undefined;
     export let displayType: PostDisplayType = "feed"
-
+    export let forceCompact:boolean = false;
     let expandCompact: boolean;
    
 </script>
@@ -29,7 +29,7 @@
 
 
 <!--- Compact Posts --->
-{#if  ($userSettings.showCompactPosts && !expandCompact && displayType=='feed') }
+{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
 <Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
 
     <!--- Post Metadata, Title, and Thumbnail  --->

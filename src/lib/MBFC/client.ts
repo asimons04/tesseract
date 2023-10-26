@@ -7,10 +7,17 @@ export async function MBFC_lookup(domain:string):Promise<MBFCReport|undefined> {
             .replace('www.', '')
             .replace('amp.', '')
             .replace('edition.', '')
+            .replace(/.*\.businessinsider\.com/, 'businessinsider.com')
             .replace(/.*\.medium\.com/, 'medium.com')
             .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
+            .replace(/.*\.apnews\.com/, 'apnews.com')
+            .replace(/.*\.elpais\.com/, 'elpais.com')
             .replace('bbc.co.uk', 'bbc.com')
             .replace('news.antiwar.com', 'antiwar.com')
+            .replace('mronline.org', 'monthlyreview.org')
+            .replace('bbc.in', 'bbc.com')
+
+
 
         let result = await fetch(`/tesseract/api/mbfc/lookup?domain=${domain}`);
 

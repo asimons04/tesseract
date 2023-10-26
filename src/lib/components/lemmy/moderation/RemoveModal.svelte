@@ -232,7 +232,7 @@
                     actions={false}
                 />
             {:else if isPostView(item)}
-                <Post actions={false} post={item} />
+                <Post actions={false} post={item} forceCompact={true}/>
             {/if}
         </form>
     {/if}

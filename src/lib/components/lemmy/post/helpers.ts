@@ -233,7 +233,7 @@ export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolea
             else {
                 window.scrollTo({top: y, behavior: 'instant'});
             }
-        }, 250);
+        }, 500);
 
     
     }
