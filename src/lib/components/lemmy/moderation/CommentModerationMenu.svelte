@@ -73,13 +73,12 @@
         <li class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
             Moderation
         </li>
+        
         <!--- Distinguish Comment --->
         <MenuButton  on:click={async () => distinguish(item)}>
             <Icon src={Sparkles} size="16" mini />
             {#if isCommentView(item)}
                 {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
-            {:else}
-                {item.post.distinguished ? 'Un-Distinguish' : 'Distinguish'}
             {/if}
         </MenuButton>
 
