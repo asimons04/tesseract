@@ -1,39 +1,39 @@
 <script lang="ts">
-  import type { CommentView, PostView } from 'lemmy-js-client'
+    import type { CommentView, PostView } from 'lemmy-js-client'
 
-  import { amMod, isAdmin } from './moderation'
-  import { fullCommunityName } from '$lib/util.js'
-  import { getClient } from '$lib/lemmy.js'
-  import { isCommentView, isPostView } from '$lib/lemmy/item.js'
-  import { profile } from '$lib/auth.js'
-  import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
-  import { userSettings } from '$lib/settings.js'
+    import { amMod, isAdmin } from './moderation'
+    import { fullCommunityName } from '$lib/util.js'
+    import { getClient } from '$lib/lemmy.js'
+    import { isCommentView, isPostView } from '$lib/lemmy/item.js'
+    import { profile } from '$lib/auth.js'
+    import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings.js'
 
-  import Button from '$lib/components/input/Button.svelte'
-  import Checkbox from '$lib/components/input/Checkbox.svelte'
-  import Comment from '$lib/components/lemmy/comment/Comment.svelte'
-  import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-  import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-  import Modal from '$lib/components/ui/modal/Modal.svelte'
-  import Post from '$lib/components/lemmy/post/Post.svelte'
-  import TextArea from '$lib/components/input/TextArea.svelte'
+    import Button from '$lib/components/input/Button.svelte'
+    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
+    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import Post from '$lib/components/lemmy/post/Post.svelte'
+    import TextArea from '$lib/components/input/TextArea.svelte'
 
-  import { 
-    Icon,
-    Fire,
-    HandThumbUp,
-    Trash 
-} from 'svelte-hero-icons'
+    import { 
+        Icon,
+        Fire,
+        HandThumbUp,
+        Trash 
+    } from 'svelte-hero-icons'
 
-  export let open: boolean
-  export let item: PostView | CommentView | undefined = undefined
-  export let purge: boolean = false
+    export let open: boolean
+    export let item: PostView | CommentView | undefined = undefined
+    export let purge: boolean = false
 
-  let reason = ''
-  let commentReason: boolean = false
-  let privateMessage: boolean = false
-  let loading = false
+    let reason = ''
+    let commentReason: boolean = false
+    let privateMessage: boolean = false
+    let loading = false
 
     $: removed = item
         ? isCommentView(item)
@@ -41,19 +41,19 @@
             : item.post.removed
         : false
 
-  const getReplyReason = (reason: string) => {
-    if (!item) return `no template`
+    const getReplyReason = (reason: string) => {
+        if (!item) return `no template`
 
-    return removalTemplate($userSettings.moderation.removalReasonPreset, {
-      communityLink: `!${fullCommunityName(
-        item!.community.name,
-        item!.community.actor_id
-      )}`,
-      postTitle: item.post.name,
-      reason: reason,
-      username: item.creator.name,
-    })
-  }
+        return removalTemplate($userSettings.moderation.removalReasonPreset, {
+            communityLink: `!${fullCommunityName(
+            item!.community.name,
+            item!.community.actor_id
+            )}`,
+            postTitle: item.post.name,
+            reason: reason,
+            username: item.creator.name,
+        })
+    }
 
     $: replyReason = commentReason ? getReplyReason(reason) : ''
 
@@ -160,79 +160,76 @@
         loading = false
     }
 
-  const resetText = () => {
-    reason = ''
-    replyReason = ''
-    commentReason = false
-  }
-
-  $: {
-    if (item) {
-      resetText()
+    const resetText = () => {
+        reason = ''
+        replyReason = ''
+        commentReason = false
     }
-  }
+
+    $: {
+        if (item) {
+            resetText()
+        }
+    }
 </script>
 
 <Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}>
   
-  {#if item}
-    <form
-      on:submit|preventDefault={remove}
-      class="flex flex-col gap-4 list-none"
-    >
-      {#if isCommentView(item)}
-        <Comment
-          node={{
-            children: [],
-            comment_view: item,
-            depth: 1,
-          }}
-          postId={item.post.id}
-          actions={false}
-        />
-      {:else if isPostView(item)}
-        <Post actions={false} post={item} />
-      {/if}
+    {#if item}
+        <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
+            {#if isCommentView(item)}
+                <Comment
+                    node={{
+                        children: [],
+                        comment_view: item,
+                        depth: 1,
+                    }}
+                    postId={item.post.id}
+                    actions={false}
+                />
+            {:else if isPostView(item)}
+                <Post actions={false} post={item} />
+            {/if}
 
-      <TextArea
-        rows={3}
-        label="Reason"
-        placeholder="Optional"
-        bind:value={reason}
-      />
+            <TextArea
+                rows={3}
+                label="Reason"
+                placeholder="Optional"
+                bind:value={reason}
+            />
 
-      {#if !removed && ( amMod($profile.user, item.community) || (isAdmin($profile.user) && item.community.local))}
-        <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>
+            {#if !removed && ( amMod($profile.user, item.community) || (isAdmin($profile.user) && item.community.local))}
+                <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>
 
-        {#if commentReason}
-          <MultiSelect
-            options={[false, true]}
-            optionNames={['Comment', 'Message']}
-            bind:selected={privateMessage}
-          />
-          <MarkdownEditor
-            bind:value={replyReason}
-            placeholder={replyReason}
-            rows={3}
-            label="Reply"
-          />
-        {/if}
-      {/if}
+                {#if commentReason}
+                    <MultiSelect
+                        options={[false, true]}
+                        optionNames={['Comment', 'Message']}
+                        bind:selected={privateMessage}
+                    />
+                    <MarkdownEditor
+                        bind:value={replyReason}
+                        placeholder={replyReason}
+                        rows={3}
+                        label="Reply"
+                    />
+                {/if}
+            {/if}
 
-      <Button
-        color={purge ? 'danger' : 'primary'}
-        size="lg"
-        {loading}
-        disabled={loading}
-        submit
-      >
-        <Icon src={purge ? Fire : Trash} mini size="16" slot="icon" />
-        {#if purge}
-          Purge
-        {:else}
-          {removed ? 'Restore' : 'Remove'}
-        {/if}
-      </Button>
-    </form>
-  {/if}
+            <Button
+                color={purge ? 'danger' : 'primary'}
+                size="lg"
+                {loading}
+                disabled={loading}
+                submit
+            >
+                <Icon src={purge ? Fire : Trash} mini size="16" slot="icon" />
+                {#if purge}
+                    Purge
+                {:else}
+                    {removed ? 'Restore' : 'Remove'}
+                {/if}
+            </Button>
+        </form>
+    {/if}
 </Modal>

@@ -69,7 +69,7 @@
   
     <form class="flex flex-col gap-4" on:submit|preventDefault={report}>
         {#if item}
-            <span>Reporting this submission</span>
+            <span class="text-sm">Reporting this submission</span>
             <div class="pointer-events-none list-none">
                 {#if isComment(item)}
                     <Comment
