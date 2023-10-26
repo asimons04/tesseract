@@ -42,6 +42,11 @@ Read more: [Media Proxy/Cache Docs](docs/MediaProxy.md)
 ### Media Bias Fact Check (MBFC) Integration
 Posts with URLs can have a MBFC button in the corner which will lookup the publisher in the MBFC database and return their bias and credibility information.
 
+**For Users**:  Know where the news stories in your feed are coming from and what their sources' credibility ratings are.  
+
+**For Moderators/Admins**:  Quickly and easily identify and squash posts from disreputable sources.  MBFC is integrated into the mod tooling allowing you to populate removal reasons / replies with the results of a MBFC lookup.  Perfect for those who are moderating a news or political community.
+
+
 
 ### Fediseer Integration
 - See any endorsements, hesitations, and censures given to instances you're interacting with.

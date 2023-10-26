@@ -43,7 +43,7 @@
         }
 
         if (data?.questionable?.length > 0) {
-            template += `\nReasoning:`
+            template += `\nReasoning: `
             for (let i:number=0; i<data.questionable.length; i++) {
                 template += `${data.questionable[i]}, `   
             }

@@ -171,6 +171,7 @@
                 'Purge Comment',
             ]}
             selected={data.type}
+            items={2}
             on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
         />
     </div>

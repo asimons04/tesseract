@@ -34,26 +34,26 @@ All major/minor changes between releases will be documented here.
 - In moderation modals, moved the reason fields above the post content
 - Reduced dead space in moderation modals
 
+
 ### MBFC Component Refinements
-- Added additional aliases for detecting sources by domain (e.g. `bbc.co.uk` -> `bbc.com`)
-- Added color-coded badges to MBFC results
-  - Green check for highest credibility and factual reporting
-  - Amber check for medium / mixed levels of credibility / factual reporting
-  - Red exclamation triangle for low credibility, low factual content, or for disreputable sourcs
-  - Bias rating is a green check for left-center, center, right center, and pro-science. Yellow check for satire, left and right bias, and red exclamation for questionable sourcing/"fake news" label.
+1) Added additional aliases to supplement the dataset's built-in alias list for detecting sources by domain (e.g. `bbc.co.uk` -> `bbc.com`, `finance.yahoo.com` -> `news.yahoo.com`, etc)
+2) Added color-coded badges to MBFC results
+    - Green check for highest credibility and factual reporting
+    - Amber check for medium / mixed levels of credibility / factual reporting
+    - Red exclamation triangle for low credibility, low factual content, or for disreputable sourcs
+    - Bias rating is a green check for left-center, center, right center, and pro-science. Yellow check for satire, left and right bias, and red exclamation for questionable sourcing and conspiracy/pseudoscience label.
 
 ### Moderation Tools
-- Integrated the Media Bias Fact Check component into the mod tooling.  If you are community moderator or instance admin, there are now options in the MBFC window to automatically populate a removal/purge reason based on the MBFC results.  Should be useful for mods of news/politics communities.
+1) Integrated the Media Bias Fact Check component into the mod tooling.  If you are community moderator or instance admin, there are now options in the MBFC window to automatically populate a removal/purge reason based on the MBFC results.  Should be useful for mods of news/politics communities.  i.e. If MBFC throws red flags for an article post source, you can click "Remove" right from the MBFC screen to load an abridged MBFC report into the removal modal.
 
-- Forced posts into compact mode when rendering in remove/purge modal.
+2) Forced posts into compact mode when rendering in remove/purge modal.
 
 ### On-Screen Navigation Bars
-- The on-screen navigation bars (Return to feed, scroll to bottom, scroll to top) have been removed and replaced with the sticky navbar used elsewhere.
-- The same functionality is there, just packaged differently.
-- Removed option to show/hide navigation bar since this version is less intrusive and matches the rest of the UI
+1) The on-screen navigation bars (Return to feed, scroll to bottom, scroll to top) have been removed and replaced with the sticky navbar used elsewhere.  The same functionality is there, just packaged differently.
+2) Removed option to show/hide navigation bar since this version is less intrusive and matches the rest of the UI
 
 ### UI Tweaks
-- Decreased size of post titles in feed on small width displays (other screen sizes unchanged)
+1) Decreased size of post titles in feed on small width displays (other screen sizes unchanged)
 
 
 
@@ -111,13 +111,6 @@ Currently, I just pull the latest version from that repo and bulid it into Tesse
 - Fix scroll offset to account for new sticky navbars
 - In small width/mobile view, hid "card/compact" switcher instead of page since there's only room for so much; page turned out to be more useful
 - Reimplemented `fixLemmyEncodings()` to correctly render more HTML entities (e.g. `&amp;` -> &, `&nbsp;` -> `' '`, etc)
-
-
-### to do
-- Flex wrap the search input fields in /search
-- Consider making a basic/advanced search view to hide the user/community filters
-
-
 
 
 ## 1.2.8.94
