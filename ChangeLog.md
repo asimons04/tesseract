@@ -32,6 +32,7 @@ All major/minor changes between releases will be documented here.
   - Changed class of close button to be less intense
   - Decreased font size of title (2xl -> xl)
   - Added icons to report, ban, and remove modals
+  - In moderation modals, moved the reason fields above the post content
 
 
 
