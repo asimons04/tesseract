@@ -29,12 +29,7 @@
     export let open:boolean = false;
 </script>
 
-<Modal bind:open={open}>
-    <h1 class="flex flex-row items-center font-bold text-xl gap-2 mt-[-50px] w-fit">
-        <Icon src={Eye} mini width={20}/>
-        Fediseer
-    </h1>
-    
+<Modal bind:open={open} icon={Eye} title="Fediseer">
     <!---Site logo, name, and instance domain--->
     {#if data?.site?.site_view}
         <div class="flex flex-row gap-3 items-center p-3">

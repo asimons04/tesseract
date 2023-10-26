@@ -1,22 +1,27 @@
 <script lang="ts">
-  import Button from '$lib/components/input/Button.svelte'
-  import TextArea from '$lib/components/input/TextArea.svelte'
-  import Comment from '$lib/components/lemmy/comment/Comment.svelte'
-  import Post from '$lib/components/lemmy/post/Post.svelte'
-  import Modal from '$lib/components/ui/modal/Modal.svelte'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
-  import { getClient } from '$lib/lemmy.js'
   import type { CommentView, PostView } from 'lemmy-js-client'
+
+  import { getClient } from '$lib/lemmy.js'
   import { profile } from '$lib/auth.js'
+  import { toast } from '$lib/components/ui/toasts/toasts.js'
+
+  import Button from '$lib/components/input/Button.svelte'
+  import Comment from '$lib/components/lemmy/comment/Comment.svelte'
+  import Modal from '$lib/components/ui/modal/Modal.svelte'
+  import Post from '$lib/components/lemmy/post/Post.svelte'
+  import TextArea from '$lib/components/input/TextArea.svelte'
+  
+  import {
+    Icon,
+    Flag
+  } from 'svelte-hero-icons'
 
   export let open: boolean
   export let item: PostView | CommentView | undefined = undefined
 
-  const isComment = (item: PostView | CommentView): item is CommentView =>
-    'comment' in item
+  const isComment = (item: PostView | CommentView): item is CommentView => 'comment' in item
 
-  const isPost = (item: PostView | CommentView): item is PostView =>
-    !isComment(item)
+  const isPost = (item: PostView | CommentView): item is PostView => !isComment(item)
 
   let loading = false
   let reason = ''
@@ -60,37 +65,36 @@
   }
 </script>
 
-<Modal bind:open>
-  <h1 class="font-bold text-2xl" slot="title">Report</h1>
-  <form class="flex flex-col gap-4" on:submit|preventDefault={report}>
-    {#if item}
-      <span>Reporting this submission</span>
-      <div class="pointer-events-none list-none">
-        {#if isComment(item)}
-          <Comment
-            actions={false}
-            node={{
-              children: [],
-              comment_view: item,
-              depth: 1,
-              loading: false,
-            }}
-            postId={item.post.id}
-          />
-        {:else if isPost(item)}
-          <Post actions={false} post={item} />
+<Modal bind:open title="Report Submission" icon={Flag}>
+  
+    <form class="flex flex-col gap-4" on:submit|preventDefault={report}>
+        {#if item}
+            <span>Reporting this submission</span>
+            <div class="pointer-events-none list-none">
+                {#if isComment(item)}
+                    <Comment
+                        actions={false}
+                        node={{
+                            children: [],
+                            comment_view: item,
+                            depth: 1,
+                            loading: false,
+                        }}
+                        postId={item.post.id}
+                    />
+                {:else if isPost(item)}
+                    <Post actions={false} post={item} />
+                {/if}
+            </div>
         {/if}
-      </div>
-    {/if}
-    <TextArea
-      required
-      rows={3}
-      label="Reason"
-      placeholder="he's being a meanie :("
-      bind:value={reason}
-    />
-    <Button submit {loading} disabled={loading} color="primary" size="lg">
-      Submit
-    </Button>
-  </form>
+        <TextArea
+            required
+            rows={3}
+            label="Reason"
+            bind:value={reason}
+        />
+        <Button submit {loading} disabled={loading} color="primary" size="lg">
+            Submit
+        </Button>
+    </form>
 </Modal>

@@ -78,8 +78,8 @@
 
 <!--- Open a Modal containing the PostForm component pre-loaded with the post details--->
 {#if editing}
-    <Modal bind:open={editing} fullHeight={true}>
-        <h1 slot="title" class="text-2xl font-bold">Editing post</h1>
+    <Modal bind:open={editing} fullHeight={true} icon={PencilSquare} title="Editing {post.post.name}">
+        
         {#await import('./PostForm.svelte')}
             <div class="mx-auto flex justify-center items-center">
                 <Spinner width={32} />
@@ -141,7 +141,7 @@
             on:click={() => {
                 showCommentForm = !showCommentForm;
                 // Interval to deal with animiation delay
-                setInterval(() => {
+                setTimeout(() => {
                     let commentForm = document.getElementById(`commentForm-${post.post.id}`);
                     commentForm?.focus()
                 }, 250);

@@ -20,6 +20,21 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.96
+
+### Bugfixes
+- Had a `setInterval` where I should have had `setTimeout` in step to auto-focus the comment field when you hit 'reply' on a post. (facepalm)
+
+### Changes
+- **Modals**:
+  - Replaced title slot with a property variable
+  - Added property variable to supply an icon
+  - Changed class of close button to be less intense
+  - Decreased font size of title (2xl -> xl)
+  - Added icons to report, ban, and remove modals
+
+
+
 
 ## 1.2.8.95
 

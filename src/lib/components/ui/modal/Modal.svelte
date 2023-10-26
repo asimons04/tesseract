@@ -1,16 +1,18 @@
 <script lang="ts">
-  import Button from '$lib/components/input/Button.svelte'
-  import Card from '$lib/components/ui/Card.svelte'
-  import { createEventDispatcher } from 'svelte'
-  import { Icon, XMark } from 'svelte-hero-icons'
-  import { expoOut } from 'svelte/easing'
-  import { fade, scale } from 'svelte/transition'
+    import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
+    import { createEventDispatcher } from 'svelte'
+    import { Icon, XMark } from 'svelte-hero-icons'
+    import { expoOut } from 'svelte/easing'
+    import { fade, scale } from 'svelte/transition'
 
-  export let action: string | undefined = undefined
-  export let open = false
-  export let fullHeight:boolean = false
+    export let action: string | undefined = undefined
+    export let open = false
+    export let fullHeight:boolean = false
+    export let title:string = '';
+    export let icon:any = undefined;
 
-  const dispatcher = createEventDispatcher()
+    const dispatcher = createEventDispatcher()
 </script>
 
 {#if open}
@@ -38,9 +40,14 @@
                     class:border-b-0={action}
                 >
                     <div class="flex flex-row max-w-full">
-                        <h1 class="font-bold text-2xl w-max max-w-full">
-                            <slot name="title" />
+                        <h1 class="flex flex-row items-center font-bold text-xl gap-2 w-fit">
+                            {#if icon} 
+                                <Icon src={icon} mini width={20}/>
+                            {/if}
+                            {title}
                         </h1>
+                        
+                        
                         <Button
                             size="md"
                             class="ml-auto"

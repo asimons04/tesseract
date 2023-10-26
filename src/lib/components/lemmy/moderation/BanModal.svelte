@@ -1,15 +1,23 @@
 <script lang="ts">
+    import type { Community, Person, PersonView } from 'lemmy-js-client'
+
+    import { getClient } from '$lib/lemmy.js'
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+
+    import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
+    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import DateInput from '$lib/components/input/DateInput.svelte'
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import UserItem from '$lib/components/lemmy/user/UserItem.svelte'
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import type { Community, Person, PersonView } from 'lemmy-js-client'
-    import { getClient } from '$lib/lemmy.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import DateInput from '$lib/components/input/DateInput.svelte'
-    import { profile } from '$lib/auth.js'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    
+    import {
+        Icon,
+        Check,
+        NoSymbol
+    } from 'svelte-hero-icons'
 
     let item: Person | undefined
 
@@ -102,8 +110,8 @@
     }
 </script>
 
-<Modal bind:open class="max-w-xl w-full">
-    <h1 slot="title">{banned ? 'Unbanning' : 'Banning'} user</h1>
+<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User" icon={banned ? Check : NoSymbol}>
+    
     {#if item}
         <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>
             <div class="flex items-center gap-1">

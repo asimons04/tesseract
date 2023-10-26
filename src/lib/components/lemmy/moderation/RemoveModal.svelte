@@ -1,22 +1,30 @@
 <script lang="ts">
-  import Button from '$lib/components/input/Button.svelte'
-  import TextArea from '$lib/components/input/TextArea.svelte'
-  import Comment from '$lib/components/lemmy/comment/Comment.svelte'
-  import Post from '$lib/components/lemmy/post/Post.svelte'
-  import Modal from '$lib/components/ui/modal/Modal.svelte'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
+  import type { CommentView, PostView } from 'lemmy-js-client'
+
+  import { amMod, isAdmin } from './moderation'
+  import { fullCommunityName } from '$lib/util.js'
   import { getClient } from '$lib/lemmy.js'
   import { isCommentView, isPostView } from '$lib/lemmy/item.js'
-  import type { CommentView, PostView } from 'lemmy-js-client'
   import { profile } from '$lib/auth.js'
-  import Checkbox from '$lib/components/input/Checkbox.svelte'
-  import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-  import { Fire, Icon, Trash } from 'svelte-hero-icons'
-  import MultiSelect from '$lib/components/input/MultiSelect.svelte'
   import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
+  import { toast } from '$lib/components/ui/toasts/toasts.js'
   import { userSettings } from '$lib/settings.js'
-  import { fullCommunityName } from '$lib/util.js'
-  import { amMod, isAdmin } from './moderation'
+
+  import Button from '$lib/components/input/Button.svelte'
+  import Checkbox from '$lib/components/input/Checkbox.svelte'
+  import Comment from '$lib/components/lemmy/comment/Comment.svelte'
+  import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+  import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+  import Modal from '$lib/components/ui/modal/Modal.svelte'
+  import Post from '$lib/components/lemmy/post/Post.svelte'
+  import TextArea from '$lib/components/input/TextArea.svelte'
+
+  import { 
+    Icon,
+    Fire,
+    HandThumbUp,
+    Trash 
+} from 'svelte-hero-icons'
 
   export let open: boolean
   export let item: PostView | CommentView | undefined = undefined
@@ -165,10 +173,8 @@
   }
 </script>
 
-<Modal bind:open>
-  <span slot="title">
-    {purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} submission
-  </span>
+<Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}>
+  
   {#if item}
     <form
       on:submit|preventDefault={remove}

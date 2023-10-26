@@ -21,11 +21,8 @@
     export let open:boolean = false;
 </script>
 
-<Modal bind:open={open}>
-    <h1 class="flex flex-row items-center font-bold text-xl gap-2 mt-[-50px] w-fit">
-        <Icon src={CheckBadge} mini width={20}/>
-        Media Bias Fact Check
-    </h1>
+<Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check">
+    
     {#if data}
         <h2 class="font-bold text-lg w-fit">Report for {data.name}</h2>
         {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(data.biases.bias)}
