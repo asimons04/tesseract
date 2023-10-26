@@ -8,7 +8,8 @@
     import Modal from '$lib/components/ui/modal/Modal.svelte'
 
     import { 
-        Icon, 
+        Icon,
+        CheckBadge, 
         ClipboardDocumentCheck,
         HandThumbUp,
         HandThumbDown,
@@ -21,10 +22,12 @@
 </script>
 
 <Modal bind:open={open}>
-    <h1 class="font-bold text-2xl mt-[-50px] w-fit">Media Bias Fact Check</h1>
-    
+    <h1 class="flex flex-row items-center font-bold text-xl gap-2 mt-[-50px] w-fit">
+        <Icon src={CheckBadge} mini width={20}/>
+        Media Bias Fact Check
+    </h1>
     {#if data}
-        <h2 class="font-bold text-xl w-fit">Report for {data.name}</h2>
+        <h2 class="font-bold text-lg w-fit">Report for {data.name}</h2>
         {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(data.biases.bias)}
             <div class="bg-slate-300 p-2 rounded-md">
                 <img src="/img/MBFC/{data.biases.bias}.webp" alt="MBFC Gauge for {data.name} reporting as {data.biases.pretty}" class="mx-auto"/>
@@ -90,7 +93,7 @@
             
             <p class="ml-2 text-sm">
                 <Link href={data.url} newtab={true} title="Full MBFC report for {data.name}" highlight>
-                    <span class="flex flex-row gap-2">
+                    <span class="flex flex-row gap-2 items-center">
                         <Icon src={ClipboardDocumentCheck} mini width={16}/>
                         Full MBFC Report
                     </span>

@@ -42,9 +42,10 @@
                             <slot name="title" />
                         </h1>
                         <Button
-                            size="square-md"
+                            size="md"
                             class="ml-auto"
-                            color="primary"
+                            rounded="lg"
+                            color="tertiary"
                             on:click={() => (open = false)}
                         >
                             <Icon src={XMark} mini size="16" />

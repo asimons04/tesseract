@@ -11,6 +11,7 @@
     import { 
         Icon, 
         Calendar,
+        Eye,
         HandThumbUp,
         HandThumbDown,
         HandRaised
@@ -29,7 +30,10 @@
 </script>
 
 <Modal bind:open={open}>
-    <h1 class="font-bold text-2xl mt-[-50px] w-fit">Fediseer</h1>
+    <h1 class="flex flex-row items-center font-bold text-xl gap-2 mt-[-50px] w-fit">
+        <Icon src={Eye} mini width={20}/>
+        Fediseer
+    </h1>
     
     <!---Site logo, name, and instance domain--->
     {#if data?.site?.site_view}
