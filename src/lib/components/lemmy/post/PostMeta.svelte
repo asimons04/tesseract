@@ -97,7 +97,7 @@
 
 <Fediseer bind:open={fediseer.modal} data={fediseer.data} />
 
-<MBFC bind:open={mbfc.modal} data={mbfc.data} />
+<MBFC bind:open={mbfc.modal} data={mbfc.data} post={post} />
 
 
 <div class="flex flex-col gap-1.5 grow">

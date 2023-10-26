@@ -2,10 +2,16 @@
     import {
         type MBFCReport,
     } from '$lib/fediseer/client.js'
-
     
+    import type { PostView } from 'lemmy-js-client'
+   
+    import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation.js'
+    import { profile } from '$lib/auth.js'
+    
+    import Button from '$lib/components/input/Button.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import ModerationMenu from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
 
     import { 
         Icon,
@@ -13,18 +19,67 @@
         ClipboardDocumentCheck,
         HandThumbUp,
         HandThumbDown,
-        HandRaised
+        HandRaised,
+        Trash
     } from 'svelte-hero-icons'
 
     
     export let data: MBFCReport
     export let open:boolean = false;
+    export let post:PostView
+
+    function generateModerationPreset():string {
+        let template:string = "Post is not from a reputable or credible source of news:";
+        if (post.post.url) {
+            template += `\nSource: ${new URL(post.post.url).host}`
+        }
+        
+        if (data?.credibility) {
+            template += `\nCredibility: ${data.credibility}`
+        }
+
+        if (data?.reporting) {
+            template += `\nFactual Reporting: ${data.reporting}`
+        }
+
+        if (data?.questionable?.length > 0) {
+            template += `\nReasoning:`
+            for (let i:number=0; i<data.questionable.length; i++) {
+                template += `\n - ${data.questionable[i]}`   
+            }
+        }
+
+        return template;
+
+    }
+
 </script>
 
 <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check">
     
     {#if data}
-        <h2 class="font-bold text-lg w-fit">Report for {data.name}</h2>
+        <h2 class="flex flex-row items-center justify-between w-full">
+            <span class="font-bold text-lg">Report for {data.name}</span>
+            
+            {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user)) && !post.post.removed}
+                
+                <Button color="danger" size="sm" on:click={() => {
+                    open = false;
+                    remove(post, false, generateModerationPreset())
+                }}>
+                    <Icon src={Trash} size="16" mini />
+                        Remove Post
+                </Button>
+            
+                <!--
+                <ModerationMenu bind:item={post} community={post.community} color="ghost" alignment="bottom-right" 
+                    presetReason={generateModerationPreset()}
+                />
+                -->
+            {/if}
+        </h2>
+        
+        
         {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(data.biases.bias)}
             <div class="bg-slate-300 p-2 rounded-md">
                 <img src="/img/MBFC/{data.biases.bias}.webp" alt="MBFC Gauge for {data.name} reporting as {data.biases.pretty}" class="mx-auto"/>

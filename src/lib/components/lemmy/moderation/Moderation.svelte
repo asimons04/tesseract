@@ -9,6 +9,7 @@
     <ReportModal
       bind:open={$modals.reporting.open}
       item={$modals.reporting.item}
+      reason{$modals.reporting.reason}
     />
   {/await}
 {/if}
@@ -18,6 +19,7 @@
       bind:open={$modals.removing.open}
       item={$modals.removing.item}
       purge={$modals.removing.purge}
+      reason={$modals.removing.reason}
     />
   {/await}
 {/if}

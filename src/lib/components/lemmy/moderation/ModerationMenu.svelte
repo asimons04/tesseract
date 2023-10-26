@@ -23,6 +23,8 @@
 
     export let item: PostView | CommentView
     export let color:string = "tertiary"
+    export let alignment:string = 'side-left'
+    export let presetReason:string = ''
 
     let locking = false
     let pinning = false
@@ -83,7 +85,7 @@
     }
 </script>
 
-<Menu alignment="side-left">
+<Menu alignment={alignment}>
     <Button
         on:click={toggleOpen}
         slot="button"
@@ -175,7 +177,7 @@
         </MenuButton>
 
         <!--- Mod/Admin Restore/Remove Post --->
-        <MenuButton color="dangerSecondary" on:click={() => remove(item)}>
+        <MenuButton color="dangerSecondary" on:click={() => remove(item, false, presetReason)}>
             <Icon src={Trash} size="16" mini />
             {#if isCommentView(item)}
                 {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}

@@ -11,6 +11,7 @@ interface Modals {
     open: boolean
     item: SubmissionView | undefined
     purge: boolean
+    reason: string
   }
   banning: {
     open: boolean
@@ -29,6 +30,7 @@ export let modals = writable<Modals>({
     open: false,
     item: undefined,
     purge: false,
+    reason: ''
   },
   banning: {
     open: false,
@@ -48,13 +50,14 @@ export function report(item: SubmissionView) {
   }))
 }
 
-export function remove(item: SubmissionView, purge: boolean = false) {
+export function remove(item: SubmissionView, purge: boolean = false, reason:string='') {
   modals.update((m) => ({
     ...m,
     removing: {
       open: true,
       item: item,
       purge: purge,
+      reason: reason,
     },
   }))
 }
@@ -72,8 +75,7 @@ export function ban(banned: boolean, item: Person, community?: Community) {
 }
 
 export const amMod = (me: MyUserInfo, community: Community) =>
-  me.moderates.map((c) => c.community.id).includes(community.id) ||
-  (community.local && isAdmin(me))
+  me.moderates.map((c) => c.community.id).includes(community.id) || (community.local && isAdmin(me))
 
 export const amModOfAny = (me?: MyUserInfo) => me && (me.moderates.length > 0 || isAdmin(me))
 

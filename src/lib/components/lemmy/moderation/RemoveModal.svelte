@@ -29,8 +29,8 @@
     export let open: boolean
     export let item: PostView | CommentView | undefined = undefined
     export let purge: boolean = false
-
-    let reason = ''
+    export let reason:string 
+    
     let commentReason: boolean = false
     let privateMessage: boolean = false
     let loading = false
@@ -46,8 +46,8 @@
 
         return removalTemplate($userSettings.moderation.removalReasonPreset, {
             communityLink: `!${fullCommunityName(
-            item!.community.name,
-            item!.community.actor_id
+                item!.community.name,
+                item!.community.actor_id
             )}`,
             postTitle: item.post.name,
             reason: reason,
@@ -161,7 +161,6 @@
     }
 
     const resetText = () => {
-        reason = ''
         replyReason = ''
         commentReason = false
     }
@@ -177,19 +176,7 @@
   
     {#if item}
         <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
-            {#if isCommentView(item)}
-                <Comment
-                    node={{
-                        children: [],
-                        comment_view: item,
-                        depth: 1,
-                    }}
-                    postId={item.post.id}
-                    actions={false}
-                />
-            {:else if isPostView(item)}
-                <Post actions={false} post={item} />
-            {/if}
+            
 
             <TextArea
                 rows={3}
@@ -199,14 +186,17 @@
             />
 
             {#if !removed && ( amMod($profile.user, item.community) || (isAdmin($profile.user) && item.community.local))}
-                <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>
-
+                <div class="flex flex-row gap-2 items-center justify-between">
+                    <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>
+                    {#if commentReason}
+                        <MultiSelect
+                            options={[false, true]}
+                            optionNames={['Comment', 'Message']}
+                            bind:selected={privateMessage}
+                        />
+                    {/if}
+                </div>
                 {#if commentReason}
-                    <MultiSelect
-                        options={[false, true]}
-                        optionNames={['Comment', 'Message']}
-                        bind:selected={privateMessage}
-                    />
                     <MarkdownEditor
                         bind:value={replyReason}
                         placeholder={replyReason}
@@ -230,6 +220,20 @@
                     {removed ? 'Restore' : 'Remove'}
                 {/if}
             </Button>
+
+            {#if isCommentView(item)}
+                <Comment
+                    node={{
+                        children: [],
+                        comment_view: item,
+                        depth: 1,
+                    }}
+                    postId={item.post.id}
+                    actions={false}
+                />
+            {:else if isPostView(item)}
+                <Post actions={false} post={item} />
+            {/if}
         </form>
     {/if}
 </Modal>
