@@ -179,12 +179,13 @@
             
 
             <TextArea
-                rows={3}
+                rows={5}
                 label="Reason"
                 placeholder="Optional"
                 bind:value={reason}
             />
-
+            
+            <!--- Only show "Reply with reason" if you're a mod of the community or an admin and the content is local--->
             {#if !removed && ( amMod($profile.user, item.community) || (isAdmin($profile.user) && item.community.local))}
                 <div class="flex flex-row gap-2 items-center justify-between">
                     <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>

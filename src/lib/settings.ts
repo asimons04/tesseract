@@ -88,7 +88,6 @@ interface Settings {
         expandModeratingList: boolean
         expandSubscribedList: boolean
         expandAccountsList: boolean
-        showPWAButtons: boolean
         postsPerPage: number
         fediseerBadges: boolean
         MBFCBadges: boolean
@@ -136,7 +135,6 @@ export const defaultSettings: Settings = {
         expandModeratingList: false,
         expandSubscribedList: true,
         expandAccountsList: true,
-        showPWAButtons: false,
         postsPerPage:                                                   20,
         fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,

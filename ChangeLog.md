@@ -25,15 +25,14 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Had a `setInterval` where I should have had `setTimeout` in step to auto-focus the comment field when you hit 'reply' on a post. (facepalm)
 
-### Changes
-- **Modals**:
-  - Replaced title slot with a property variable
-  - Added property variable to supply an icon
-  - Changed class of close button to be less intense
-  - Decreased font size of title (2xl -> xl)
-  - Added icons to report, ban, and remove modals
-  - In moderation modals, moved the reason fields above the post content
-  - Reduced dead space in moderation modals
+### Modal Changes
+- Replaced title slot with a property variable
+- Added property variable to supply an icon
+- Changed class of close button to be less intense
+- Decreased font size of title (2xl -> xl)
+- Added icons to report, ban, and remove modals
+- In moderation modals, moved the reason fields above the post content
+- Reduced dead space in moderation modals
 
 ### MBFC Component Refinements
 - Added additional aliases for detecting sources by domain (e.g. `bbc.co.uk` -> `bbc.com`)
@@ -43,12 +42,18 @@ All major/minor changes between releases will be documented here.
   - Red exclamation triangle for low credibility, low factual content, or for disreputable sourcs
   - Bias rating is a green check for left-center, center, right center, and pro-science. Yellow check for satire, left and right bias, and red exclamation for questionable sourcing/"fake news" label.
 
-
 ### Moderation Tools
 - Integrated the Media Bias Fact Check component into the mod tooling.  If you are community moderator or instance admin, there are now options in the MBFC window to automatically populate a removal/purge reason based on the MBFC results.  Should be useful for mods of news/politics communities.
 
 - Forced posts into compact mode when rendering in remove/purge modal.
 
+### On-Screen Navigation Bars
+- The on-screen navigation bars (Return to feed, scroll to bottom, scroll to top) have been removed and replaced with the sticky navbar used elsewhere.
+- The same functionality is there, just packaged differently.
+- Removed option to show/hide navigation bar since this version is less intrusive and matches the rest of the UI
+
+### UI Tweaks
+- Decreased size of post titles in feed on small width displays (other screen sizes unchanged)
 
 
 

@@ -63,7 +63,7 @@
                 <!--Home Button-->
                 <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
                     on:click={() => {
-                        goto(window.location.pathname);
+                        goto('/', {invalidateAll: true});
                     }}
                 >
                     <Icon src={Home} width={24} />
