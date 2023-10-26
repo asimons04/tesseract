@@ -74,11 +74,13 @@
 
   // const dispatch = createEventDispatcher()
   export let href: string | undefined = undefined
+  export let newtab:boolean = false
 </script>
 
 {#if href}
     <a
         {href}
+        target="{newtab ? '_blank' : '_self'}"
         on:click
         {...$$restProps}
         title={title}
