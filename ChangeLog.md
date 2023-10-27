@@ -26,6 +26,7 @@ All major/minor changes between releases will be documented here.
 - Removed user, user modlog, and community links from Post actions menu since they're redundant or only useful for mods.
   - The user/community links can be accessed from the post header
   - The user modlog is really only useful for mods/admins, and it also exists in the moderation menu
+- Comments with a score less than -2 are now collapsed by default.
 
 
 ## 1.2.8.96

@@ -149,7 +149,7 @@
             <Button
                 class="ml-auto translate-x-1 opacity-0 group-hover:translate-x-0
                 group-hover:opacity-100 text-xs !transition-all
-                pointer-events-none border-noen"
+                pointer-events-none border-none"
                 color="ghost"
 
                 size="sm"
