@@ -45,7 +45,6 @@
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <img
                         src="{imageProxyURL(thumbnail_url)}"
-                        loading="lazy"
                         class="max-w-full ml-auto mr-auto object-cover rounded-md opacity-0 transition-opacity duration-300"
                         
                         class:opacity-100={loaded}

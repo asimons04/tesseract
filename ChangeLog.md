@@ -20,6 +20,14 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+
+## 1.2.8.97
+### UI Tweaks
+- Removed user, user modlog, and community links from Post actions menu since they're redundant or only useful for mods.
+  - The user/community links can be accessed from the post header
+  - The user modlog is really only useful for mods/admins, and it also exists in the moderation menu
+
+
 ## 1.2.8.96
 
 ### Bugfixes

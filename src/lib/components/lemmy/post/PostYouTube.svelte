@@ -103,7 +103,8 @@
             ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
             : post.post.url
         }
-        highlight nowrap domainOnly={!$userSettings.uiState.showFullURL}
+        highlight nowrap 
+        domainOnly={!$userSettings.uiState.showFullURL}
         newtab={$userSettings.openInNewTab.postLinks}  
         
     />
@@ -129,7 +130,7 @@
     </div>
 
 {:else if post.post.thumbnail_url}
-    <!---Create image post if user has media embeds enabled for posts--->    
+    <!---Create image post if user has media embeds enabled for posts but disabled in feed--->    
     {#if $userSettings.embeddedMedia.post}
         <Link
             href={
