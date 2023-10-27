@@ -83,6 +83,7 @@
             {node.comment_view.comment.distinguished ? distinguishedClassSummary : ''} 
             {node.comment_view.comment.distinguished && !open ? 'border-b': ''} 
             flex flex-row cursor-pointer gap-2 items-center group text-xs flex-wrap
+            hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 hover:rounded-lg
         ">
             <span class:font-bold={op} class="flex flex-row gap-1 items-center">
                 <UserLink
@@ -148,7 +149,9 @@
             <Button
                 class="ml-auto translate-x-1 opacity-0 group-hover:translate-x-0
                 group-hover:opacity-100 text-xs !transition-all
-                pointer-events-none"
+                pointer-events-none border-noen"
+                color="ghost"
+
                 size="sm"
             >
                 {#if open}
