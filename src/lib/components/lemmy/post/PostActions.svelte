@@ -302,15 +302,6 @@
             Share
         </MenuButton>
 
-        <!--- Community Link Button--->
-        <MenuButton
-            link
-            href="/c/{post.community.name}@{new URL(post.community.actor_id).hostname}"
-            title="Go to {post.community.name}@{new URL(post.community.actor_id).hostname}"
-        >
-            <Icon src={UserGroup} width={16} mini />
-            <span>{post.community.title}@{new URL(post.community.actor_id).hostname}</span>
-        </MenuButton>
 
 
         {#if $profile?.jwt}
@@ -381,28 +372,6 @@
             
         {/if}
 
-        <!--- Creator Profile Button--->
-        <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
-        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{post.creator.display_name ?? post.creator.name}@{new URL(post.creator.actor_id).hostname} </li>
-        <MenuButton
-            link
-            href="/u/{post.creator.name}@{new URL(post.creator.actor_id).hostname}"
-            title="View profile for {post.creator.display_name ?? post.creator.name}@{new URL(post.creator.actor_id).hostname}"
-        >
-            <Icon src={UserCircle} width={16} mini />
-            <span>Profile</span>
-        </MenuButton>
-
-        
-        
-        <!--- User Modlog--->
-        <MenuButton link
-            href="/modlog?other_person_id={post.creator.id}"
-            title="Modlog for {post.creator.display_name ?? post.creator.name}@{new URL(post.creator.actor_id).hostname}"
-        >
-            <Icon src={Newspaper} mini size="16" />
-            User Modlog
-        </MenuButton>
 
 
         <!---Browse communities / fediseer of the post creator if different from community's home instance-->
