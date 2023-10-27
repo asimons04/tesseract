@@ -1,13 +1,20 @@
 <script lang="ts">
-    import {
-        type MBFCReport,
-    } from '$lib/MBFC/client.js'
-    
     import type { PostView } from 'lemmy-js-client'
-   
-    import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation.js'
+    
+    import type {
+        MBFCBiases,
+        MBFCCredibility,
+        MBFCDataSet,
+        MBFCQuestionable,  
+        MBFCReport,
+        MBFCReporting
+    } from './types'
+    import MBFCData from '$lib/MBFC/data/data.json'
+
+    import { amMod, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation.js'
     import { profile } from '$lib/auth.js'
     
+    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
@@ -17,16 +24,95 @@
         CheckBadge, 
         CheckCircle,
         ClipboardDocumentCheck,
+        ExclamationCircle,
         ExclamationTriangle,
         Fire,
+        QuestionMarkCircle,
         ShieldExclamation,
         Trash
     } from 'svelte-hero-icons'
 
     
-    export let data: MBFCReport
-    export let open:boolean = false;
     export let post:PostView
+    export let credibility:string = ''
+
+    let open:boolean = false;
+    let results:MBFCReport|undefined = undefined
+
+    function lookup(domain:string):MBFCReport|undefined {
+        try {
+            if (!domain) return
+            domain = new URL(domain).host;
+
+            // Normalize domains to remove any "www', "amp", and other prefixes that trip up detection.  Also replace some domains with their main aliases
+            domain = domain
+                .replace('www.', '')
+                .replace('amp.', '')
+                .replace('edition.', '')
+                .replace(/.*\.businessinsider\.com/, 'businessinsider.com')
+                .replace(/.*\.medium\.com/, 'medium.com')
+                .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
+                .replace(/.*\.apnews\.com/, 'apnews.com')
+                .replace(/.*\.elpais\.com/, 'elpais.com')
+                .replace('bbc.co.uk', 'bbc.com')
+                .replace('news.antiwar.com', 'antiwar.com')
+                .replace('mronline.org', 'monthlyreview.org')
+                .replace('bbc.in', 'bbc.com')
+
+
+            // Lookup the provided domain and return the results
+            let info:MBFCReport = {} as MBFCReport
+            let found:boolean = false;
+
+            MBFCData.sources.map((item:MBFCReport) => { 
+                if (item.domain==domain) {
+                    info=item
+                    found = true
+                }
+            });
+            
+            // Resolve bias, credibility descriptions
+            if (found) {
+                
+                // Biases
+                MBFCData.biases.map((item:MBFCBiases) => { 
+                    if (info?.bias == item.bias) info.biases = item;
+                    
+                })
+                
+                // Map credibility rating to pretty-printed string
+                MBFCData.credibility.map((item:MBFCCredibility) => { 
+                    if (info?.credibility == item.credibility) info.credibility = item.pretty;
+                    
+                })
+                
+                // Map questionable tags to pretty-printed strings
+                MBFCData.questionable.map((item:MBFCQuestionable) => { 
+                    if (info?.questionable) {
+                        for (let i:number=0; i < info.questionable.length; i++) {
+                            let question = info.questionable[i];
+                            if (question == item.questionable) info.questionable[i] = item.pretty;
+                        }
+                    }
+                })
+
+                // Map Reporting rating to pretty-printed string
+                MBFCData.reporting.map((item:MBFCReporting) => { 
+                    if (info?.reporting == item.reporting) info.reporting = item.pretty;
+                    
+                })
+
+                return info
+            }
+            else {
+                return undefined
+            }
+        }
+        catch (err) {
+            console.log(err);
+            return undefined;
+        }
+    }
 
     function generateModerationPreset():string {
         let template:string = "Post is not from a reputable or credible source of news:";
@@ -34,18 +120,20 @@
             template += `\nSource: ${new URL(post.post.url).host}`
         }
         
-        if (data?.credibility) {
-            template += `\nCredibility: ${data.credibility}`
-        }
+        if (results) {
+            if (results.credibility) {
+                template += `\nCredibility: ${results.credibility}`
+            }
 
-        if (data?.reporting) {
-            template += `\nFactual Reporting: ${data.reporting}`
-        }
+            if (results.reporting) {
+                template += `\nFactual Reporting: ${results.reporting}`
+            }
 
-        if (data?.questionable?.length > 0) {
-            template += `\nReasoning: `
-            for (let i:number=0; i<data.questionable.length; i++) {
-                template += `${data.questionable[i]}, `   
+            if (results.questionable?.length > 0) {
+                template += `\nReasoning: `
+                for (let i:number=0; i<results.questionable.length; i++) {
+                    template += `${results.questionable[i]}, `   
+                }
             }
         }
 
@@ -53,39 +141,77 @@
 
     }
 
+    if (post?.post?.url) {
+        results = lookup(post.post.url)
+        if (results) credibility = results.credibility;
+    }
+
+    
+
 </script>
 
-<Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check">
-    
-    {#if data}
+{#if results}
+    <!-- Create a badge based off the credibility score--->
+    <Badge color={
+        results.credibility == "High Credibility"
+        ? 'green'
+        : results.credibility == "Medium Credibility"
+            ? 'yellow'
+            : results.credibility == 'Low Credibility'
+                ? 'red'
+                : 'gray'
+        }>
+        <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
+            title="Media Bias Fact Check"
+            on:click={async () => {
+                open=true;
+            }}
+        >
+            <Icon src={
+                results.credibility == "High Credibility"
+                ? CheckBadge
+                : results.credibility == "Medium Credibility"
+                    ? ExclamationCircle
+                    : results.credibility == 'Low Credibility'
+                        ? ExclamationTriangle
+                        : QuestionMarkCircle
+            } mini size="12"/>
+            
+            {results.credibility}
+        </span>
+        
+    </Badge>
+
+
+    <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check">
         <h2 class="flex flex-row items-center justify-between w-full">
-            <span class="font-bold text-lg">Report for {data.name}</span>
+            <span class="font-bold text-lg">Report for {results.name}</span>
         </h2>
         
         
-        {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(data.biases.bias)}
+        {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(results?.biases?.bias ?? '')}
             <div class="bg-slate-300 p-2 rounded-md">
-                <img src="/img/MBFC/{data.biases.bias}.webp" alt="MBFC Gauge for {data.name} reporting as {data.biases.pretty}" class="mx-auto"/>
+                <img src="/img/MBFC/{results?.biases?.bias}.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
             </div>
 
         {/if}
 
-        {#if ['satire', 'pro-science'].includes(data.biases.bias)}
+        {#if ['satire', 'pro-science'].includes(results?.biases?.bias ?? '')}
             <div class="bg-slate-300 p-2 rounded-md">
-                <img src="/img/MBFC/center.webp" alt="MBFC Gauge for {data.name} reporting as {data.biases.pretty}" class="mx-auto"/>
+                <img src="/img/MBFC/center.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
             </div>
 
         {/if}
 
         <div class="flex flex-row flex-wrap sm:flex-nowrap gap-2">
             <div class="flex flex-col gap-2 w-full sm:w-[60%]">
-                {#if data.biases?.description}
-                    <p class="text-base font-bold">{data?.biases?.name}</p>
-                    <p class="text-sm">{data?.biases.description}</p>
+                {#if results.biases?.description}
+                    <p class="text-base font-bold">{results?.biases?.name}</p>
+                    <p class="text-sm">{results?.biases.description}</p>
                     <p class="text-xs">
                         <strong>Learn more</strong>: 
-                        <Link href={data.biases.url} newtab={true} title={data.biases.pretty} highlight>
-                            {data.biases.url}
+                        <Link href={results.biases.url} newtab={true} title={results.biases.pretty} highlight>
+                            {results.biases.url}
                         </Link>
                     </p>
                 {/if}
@@ -94,72 +220,79 @@
             <div class="flex flex-col gap-2 w-full sm:w-[40%]">
                 <ul class="pl-4 mt-2 text-sm">
         
-                    {#if data.credibility}
+                    {#if results.credibility}
                         <li class="flex flex-row gap-2 justify-between">
                             <span>
-                                <strong>Credibility Rating</strong>: {data.credibility}
+                                <strong>Credibility Rating</strong>: {results.credibility}
                             </span>
                             <span
-                                class:text-green-500={data.credibility == 'High Credibility'}
-                                class:text-amber-500={['Medium Credibility', 'N/A'].includes(data.credibility)}
-                                class:text-red-500={data.credibility == 'Low Credibility'}
+                                class:text-green-500={results.credibility == 'High Credibility'}
+                                class:text-amber-500={['Medium Credibility', 'N/A'].includes(results.credibility)}
+                                class:text-red-500={results.credibility == 'Low Credibility'}
                             >
                                 <Icon src={
-                                ['High Credibility', 'Medium Credibility', 'N/A'].includes(data.credibility)
-                                    ? CheckBadge
-                                    : ExclamationTriangle
+                                    ['High Credibility', 'N/A'].includes(results.credibility)
+                                        ? CheckBadge
+                                        : results.credibility == 'Medium Credibility'
+                                            ? ExclamationCircle
+                                            : ExclamationTriangle
                                 } mini width={24} />
                             </span>
 
                         </li>
                     {/if}
         
-                    {#if data.reporting}
+                    <!--Factual Reporting-->
+                    {#if results.reporting}
                         <li class="flex flex-row gap-2 justify-between mt-2">
                             <span>
-                                <strong>Factual Reporting</strong>: {data.reporting}
+                                <strong>Factual Reporting</strong>: {results.reporting}
                             </span>
                             
                             <span
-                                class:text-green-500={['Very-High', 'High'].includes(data.reporting)}
-                                class:text-amber-500={['Mostly-Factual', 'Mixed'].includes(data.reporting)}
-                                class:text-red-500={['Very-Low', 'Low'].includes(data.reporting)}
+                                class:text-green-500={['Very-High', 'High'].includes(results.reporting)}
+                                class:text-amber-500={['Mostly-Factual', 'Mixed'].includes(results.reporting)}
+                                class:text-red-500={['Very-Low', 'Low'].includes(results.reporting)}
                             >
                                 <Icon src={
-                                ['Very-High', 'High', 'Mostly-Factual', 'Mixed'].includes(data.reporting)
-                                    ? CheckBadge
-                                    : ExclamationTriangle
-                                } mini width={24} />
+                                    ['Very-High', 'High'].includes(results.reporting)
+                                        ? CheckBadge
+                                        : ['Mostly-Factual', 'Mixed'].includes(results.reporting)
+                                            ? ExclamationCircle
+                                            : ExclamationTriangle
+                                    } mini width={24} />
                             </span>
                             
                         </li>
                     {/if}
 
-                    {#if data.biases}
+                    {#if results.biases}
                         <li class="flex flex-row gap-2 justify-between mt-2">
                             <span>
-                                <strong>Bias Rating</strong>: {data.biases.name}
+                                <strong>Bias Rating</strong>: {results.biases.name}
                             </span>
                             
                             <span
-                                class:text-green-500={['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science'].includes(data.biases.name)}
-                                class:text-amber-500={['Left Bias', 'Right Bias', 'Satire'].includes(data.biases.name)}
-                                class:text-red-500={['Questionable Sources', 'Conspiracy-Pseudoscience'].includes(data.biases.name)}
+                                class:text-green-500={['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science'].includes(results.biases.name)}
+                                class:text-amber-500={['Left Bias', 'Right Bias', 'Satire'].includes(results.biases.name)}
+                                class:text-red-500={['Questionable Sources', 'Conspiracy-Pseudoscience'].includes(results.biases.name)}
                             >
                                 <Icon src={
-                                ['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science', 'Left Bias', 'Right Bias', 'Satire'].includes(data.biases.name)
-                                    ? CheckBadge
-                                    : ExclamationTriangle
-                                } mini width={24} />
+                                    ['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science'].includes(results.biases.name)
+                                        ? CheckBadge
+                                        : ['Left Bias', 'Right Bias', 'Satire'].includes(results.biases.name)
+                                            ? ExclamationCircle
+                                            : ExclamationTriangle
+                                    } mini width={24} />
                             </span>
                         </li>
                     {/if}
         
-                    {#if data.questionable?.length > 0}
+                    {#if results.questionable?.length > 0}
                         <li class="mt-2">
                             <strong>Questionable Reasoning</strong>:
                             <ul class="list-disc pl-4 text-sm">
-                                {#each data.questionable as reason}
+                                {#each results.questionable as reason}
                                     <li>{reason}</li>
                                 {/each}
                             </ul>
@@ -170,7 +303,7 @@
         
         </div>
         
-        {#if data.url}
+        {#if results?.url}
             <hr class="mt-1"/>
             
             <div class="flex flex-row items-center">
@@ -180,13 +313,13 @@
                         <Icon src={CheckCircle} mini width={16}/>
                         Full Report
                     </p>
-                    <p class="text-xs font-normal">Read the full report for {data.name} at Media Bias Fact Check.</p>
+                    <p class="text-xs font-normal">Read the full report for {results.name} at Media Bias Fact Check.</p>
                 </div>
                 
                 <div class="mx-auto"/>
                 
                 
-                <Button color="primary" size="sm" href={data.url} newtab={true} title="Full MBFC report for {data.name}">
+                <Button color="primary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
                     <Icon src={ClipboardDocumentCheck} mini size="16"/>
                     <span class="hidden md:block">Full MBFC Report</span>
                 </Button>
@@ -229,10 +362,5 @@
                     
                 </div>
             {/if}
-        
-    {:else}
-        <p class="text-sm font-normal my-auto">
-            No data found for this entity.
-        </p>
-    {/if}
-</Modal>
+    </Modal>
+{/if}

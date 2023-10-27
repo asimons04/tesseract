@@ -26,10 +26,18 @@ All major/minor changes between releases will be documented here.
 - Removed user, user modlog, and community links from Post actions menu since they're redundant or only useful for mods.
   - The user/community links can be accessed from the post header by clicking/tapping on their names
   - The user modlog is really only useful for mods/admins, and it also exists in the moderation menu
-- Comments with a score less than -2 are now collapsed by default.
 - Hide downvote button if not logged in (was simply disabled)
   - Upvote buttons remains visible but disabled to indicate the number is the post/comment score.
 - Hide reply button on posts/comments when not logged in or if post is locked. (Was visible but disabled)
+
+### MBFC Is Now Fully Client-Side
+Moved all of the MBFC lookups client-side.  This made several things feasible which have been implemented:
+- Only posts with sources that have a record in the dataset will show the MBFC badge. Eliminates "dead" badges on posts that either do no apply to MBFC checking or do not have a record.
+
+- Badges are now color-coded depending on the MBFC credibility score
+
+- I left the server API handler (`/tesseract/api/mbfc/lookup`) in place as I may have a future use for it.  The data file used for the API lookup is the same one that's served to clients for local lookups.
+
 
 
 ## 1.2.8.96

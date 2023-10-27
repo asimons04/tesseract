@@ -33,7 +33,9 @@ export async function lookup(domain:string): Promise<MBFCReport|undefined> {
         data.sources.map((item) => { 
             if (item.domain==domain) {
                 info=item
+                info.score = 0;
                 found=true;
+
             }
         });
         

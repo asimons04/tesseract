@@ -97,7 +97,7 @@
 
 <Fediseer bind:open={fediseer.modal} data={fediseer.data} />
 
-<MBFC bind:open={mbfc.modal} data={mbfc.data} post={post} />
+
 
 
 <div class="flex flex-col gap-1.5 grow">
@@ -138,25 +138,7 @@
                 
                 <!--- Media Bias Fact Check--->
                 {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
-                    <Badge color="gray">
-                        <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
-                            title="Media Bias Fact Check"
-                            on:click={async () => {
-                                mbfc.loading = true
-                                mbfc.data = await MBFC_lookup(new URL(url).host);
-                                mbfc.loading = false;
-                                mbfc.modal = true;
-                            }}
-                        >
-                            <span class="items-center" class:hidden={!mbfc.loading}>
-                                <Spinner width={14}/>
-                            </span>
-                            <Icon src={Microphone} mini size="12"/>
-                            MBFC
-                        </span>
-                        
-                    </Badge>
-                    
+                    <MBFC post={post} />
                 {/if}
 
                 <!--- Fediseer Endorsement Badge--->

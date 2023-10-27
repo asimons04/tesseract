@@ -27,8 +27,7 @@
 
         vote = Number(!upvoted)
 
-        await getClient()
-        .likeComment({
+        await getClient().likeComment({
             score: upvoted ? 0 : 1,
             auth: $profile.jwt,
             comment_id: commentId,
@@ -50,8 +49,7 @@
 
         vote = -Number(!upvoted)
 
-        await getClient()
-        .likeComment({
+        await getClient().likeComment({
             score: upvoted ? 0 : -1,
             auth: $profile.jwt,
             comment_id: commentId,

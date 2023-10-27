@@ -9,7 +9,7 @@ export interface MBFCReport {
     questionable: string[],
     reporting: string,
     url: string,
-    biases: MBFCBiases
+    biases?: MBFCBiases
     score?: number
     
 }

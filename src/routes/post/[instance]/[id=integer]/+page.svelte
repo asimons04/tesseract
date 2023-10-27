@@ -2,6 +2,8 @@
     import type { PostType, PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
     import type { PostView, CommunityView} from 'lemmy-js-client'
 
+    
+
     import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
     import { getClient } from '$lib/lemmy.js'
     import {  setSessionStorage } from '$lib/session.js'
@@ -35,7 +37,6 @@
     
     // Defined here and bound to both PostCardStyle (to pass to post actions for the reply button) and CommentSection (to control visibility of the comment form)
     let showCommentForm:boolean = false;
-        
     
     $: {
         post = data.post;

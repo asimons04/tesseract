@@ -24,6 +24,7 @@
     export let community: CommunityView
     export let moderators: Array<CommunityModeratorView>
 
+
     if (isParent) {
         setContext('comments:tree', nodes)
     }
@@ -108,7 +109,6 @@
         <Comment
             postId={post.id}
             bind:node
-            open={node.comment_view.counts.score >= -2}
             op={post.creator_id == node.comment_view.creator.id}
             mod={moderators?.filter((index) => index.moderator.id == node.comment_view.creator.id).length > 0}
         >
