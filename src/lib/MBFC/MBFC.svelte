@@ -162,7 +162,7 @@
                 : 'gray'
         }>
         <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
-            title="Media Bias Fact Check"
+            title="Media Bias Fact Check: {results.credibility}"
             on:click={async () => {
                 open=true;
             }}
@@ -177,7 +177,7 @@
                         : QuestionMarkCircle
             } mini size="12"/>
             
-            {results.credibility}
+            {results.credibility.replace('Credibility', '')} <span class="hidden lg:block">Credibility</span>
         </span>
         
     </Badge>

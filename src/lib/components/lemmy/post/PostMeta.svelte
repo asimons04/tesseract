@@ -112,7 +112,7 @@
                     <CommunityLink {community} />
                 {/if}
                 
-                <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row gap-1 flex-wrap">
+                <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
                     
                     {#if user}
                         <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
