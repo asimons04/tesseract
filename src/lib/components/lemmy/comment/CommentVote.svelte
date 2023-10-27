@@ -83,6 +83,7 @@
 
     <button
         disabled={!$profile?.user}
+        class:hidden={!$profile?.user}
         on:click={downvote}
         class="px-1.5 {vote == -1 ? voteColor(vote) : ''}"
         aria-label="Downvote"

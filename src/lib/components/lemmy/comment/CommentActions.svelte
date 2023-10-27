@@ -69,7 +69,8 @@
         size="sm"
         color="tertiary"
         on:click={() => (replying = !replying)}
-        disabled={comment.post.locked}
+        disabled={comment.post.locked || !$profile.user}
+        hidden={comment.post.locked || !$profile.user}
     >
         <Icon src={ArrowUturnLeft} width={14} height={14} mini />
         <span class="text-xs">Reply</span>

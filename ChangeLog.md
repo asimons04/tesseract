@@ -24,9 +24,12 @@ All major/minor changes between releases will be documented here.
 ## 1.2.8.97
 ### UI Tweaks
 - Removed user, user modlog, and community links from Post actions menu since they're redundant or only useful for mods.
-  - The user/community links can be accessed from the post header
+  - The user/community links can be accessed from the post header by clicking/tapping on their names
   - The user modlog is really only useful for mods/admins, and it also exists in the moderation menu
 - Comments with a score less than -2 are now collapsed by default.
+- Hide downvote button if not logged in (was simply disabled)
+  - Upvote buttons remains visible but disabled to indicate the number is the post/comment score.
+- Hide reply button on posts/comments when not logged in or if post is locked. (Was visible but disabled)
 
 
 ## 1.2.8.96

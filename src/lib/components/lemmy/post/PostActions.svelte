@@ -138,6 +138,8 @@
         <Button
             size="sm"
             color="tertiary"
+            disabled={post.post.locked || !$profile?.user}
+            hidden={post.post.locked || !$profile?.user}
             on:click={() => {
                 showCommentForm = !showCommentForm;
                 // Interval to deal with animiation delay
@@ -147,7 +149,6 @@
                 }, 250);
 
             }}
-            disabled={post.post.locked}
         >
             <Icon src={ArrowUturnLeft} width={14} height={14} mini />
             <span class="text-sm">Reply</span>

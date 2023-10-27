@@ -49,8 +49,9 @@
       
         <Button
             disabled={!$profile?.user}
+            hidden={!$profile?.user}
             aria-label="Downvote"
-            class={vote == -1 ? voteColor(vote) : ''}
+            class="{vote == -1 ? voteColor(vote) : ''}"
             on:click={async () => {
                 if (!$profile?.jwt) return
                 score = await voteItem(post, vote == -1 ? 0 : -1, $profile.jwt)
