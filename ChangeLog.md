@@ -83,7 +83,7 @@ MBFC does not have an official API, nor can I "find" an unofficial one; I also r
 
 I wrote a server-side handler to lookup domains from that file and return a report to the request.  All lookups done via Tesseract are through this endpoint, so there are no 3rd party API calls being performed.
 
-The dataset is loaded from [https://github.com/drmikecrowe/mbfcext](https://github.com/drmikecrowe/mbfcext/blob/0a212eafa1d20940a99fbccf5f1d35d60b949316/docs/v5/data/combined.json)
+The dataset is loaded from [https://github.com/drmikecrowe/mbfcext](https://raw.githubusercontent.com/drmikecrowe/mbfcext/main/docs/v5/data/combined.json)
 
 Currently, I just pull the latest version from that repo and bulid it into Tesseract on each release.  I'm planning to implement a server-side task to periodically pull the latest automatically. 
 
