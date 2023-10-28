@@ -188,155 +188,156 @@
 
 
     <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check">
-        <h2 class="flex flex-row items-center justify-between w-full">
-            <span class="font-bold text-lg">Report for {results.name}</span>
-        </h2>
-        
-        
-        {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(results?.biases?.bias ?? '')}
-            <div class="bg-slate-300 p-2 rounded-md">
-                <img src="/img/MBFC/{results?.biases?.bias}.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
-            </div>
-
-        {/if}
-
-        {#if ['satire', 'pro-science'].includes(results?.biases?.bias ?? '')}
-            <div class="bg-slate-300 p-2 rounded-md">
-                <img src="/img/MBFC/center.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
-            </div>
-
-        {/if}
-
-        <div class="flex flex-row flex-wrap sm:flex-nowrap gap-2">
-            <div class="flex flex-col gap-2 w-full sm:w-[60%]">
-                {#if results.biases?.description}
-                    <p class="text-base font-bold">{results?.biases?.name}</p>
-                    <p class="text-sm">{results?.biases.description}</p>
-                    <p class="text-xs">
-                        <strong>Learn more</strong>: 
-                        <Link href={results.biases.url} newtab={true} title={results.biases.pretty} highlight>
-                            {results.biases.url}
-                        </Link>
-                    </p>
-                {/if}
-            </div>
-
-            <div class="flex flex-col gap-2 w-full sm:w-[40%]">
-                <ul class="pl-4 mt-2 text-sm">
-                    
-                    <!--- Credibility--->
-                    {#if results.credibility}
-                        <li class="flex flex-row gap-2 justify-between">
-                            <span>
-                                <strong>Credibility Rating</strong>: {results.credibility}
-                            </span>
-                            <span
-                                class:text-green-500={results.credibility == 'High Credibility'}
-                                class:text-amber-500={['Medium Credibility', 'N/A'].includes(results.credibility)}
-                                class:text-red-500={results.credibility == 'Low Credibility'}
-                            >
-                                <Icon src={
-                                    ['High Credibility', 'N/A'].includes(results.credibility)
-                                        ? CheckBadge
-                                        : results.credibility == 'Medium Credibility'
-                                            ? ExclamationCircle
-                                            : ExclamationTriangle
-                                } mini width={24} />
-                            </span>
-
-                        </li>
-                    {/if}
-        
-                    <!--Factual Reporting-->
-                    {#if results.reporting}
-                        <li class="flex flex-row gap-2 justify-between mt-2">
-                            <span>
-                                <strong>Factual Reporting</strong>: {results.reporting}
-                            </span>
-                            
-                            <span
-                                class:text-green-500={['Very-High', 'High'].includes(results.reporting)}
-                                class:text-amber-500={['Mostly-Factual', 'Mixed'].includes(results.reporting)}
-                                class:text-red-500={['Very-Low', 'Low'].includes(results.reporting)}
-                            >
-                                <Icon src={
-                                    ['Very-High', 'High'].includes(results.reporting)
-                                        ? CheckBadge
-                                        : ['Mostly-Factual', 'Mixed'].includes(results.reporting)
-                                            ? ExclamationCircle
-                                            : ExclamationTriangle
-                                    } mini width={24} />
-                            </span>
-                            
-                        </li>
-                    {/if}
-
-                    <!---Bias Rating--->
-                    {#if results.biases}
-                        <li class="flex flex-row gap-2 justify-between mt-2">
-                            <span>
-                                <strong>Bias Rating</strong>: {results.biases.name}
-                            </span>
-                            
-                            <span
-                                class:text-green-500={['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science'].includes(results.biases.name)}
-                                class:text-amber-500={['Left Bias', 'Right Bias', 'Satire'].includes(results.biases.name)}
-                                class:text-red-500={['Questionable Sources', 'Conspiracy-Pseudoscience'].includes(results.biases.name)}
-                            >
-                                <Icon src={
-                                    ['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science'].includes(results.biases.name)
-                                        ? CheckBadge
-                                        : ['Left Bias', 'Right Bias', 'Satire'].includes(results.biases.name)
-                                            ? ExclamationCircle
-                                            : ExclamationTriangle
-                                    } mini width={24} />
-                            </span>
-                        </li>
-                    {/if}
-        
-                    <!---Reasons for Questionable Status--->
-                    {#if results.questionable?.length > 0}
-                        <li class="mt-2">
-                            <strong>Questionable Reasoning</strong>:
-                            <ul class="list-disc pl-4 text-sm">
-                                {#each results.questionable as reason}
-                                    <li>{reason}</li>
-                                {/each}
-                            </ul>
-                        </li>
-                    {/if}
-
-                </ul>
-            </div>
-        
-        </div>
-        
-        {#if results?.url}
-            <hr class="mt-1"/>
+        <div class="flex flex-col gap-4 w-full">
+            <h2 class="flex flex-row items-center justify-between w-full">
+                <span class="font-bold text-lg">Report for {results.name}</span>
+            </h2>
             
-            <div class="flex flex-row items-center">
-                
-                <div class="flex flex-col">
-                    <p class="text-sm font-bold flex flex-row gap-2">
-                        <Icon src={CheckCircle} mini width={16}/>
-                        Full Report
-                    </p>
-                    <p class="text-xs font-normal">Read the full report for {results.name} at Media Bias Fact Check.</p>
+            
+            {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(results?.biases?.bias ?? '')}
+                <div class="bg-slate-300 p-2 rounded-md">
+                    <img src="/img/MBFC/{results?.biases?.bias}.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
                 </div>
-                
-                <div class="mx-auto"/>
-                
-                
-                <Button color="tertiary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
-                    <Icon src={ClipboardDocumentCheck} mini size="16"/>
-                    <span class="hidden md:block">Full MBFC Report</span>
-                </Button>
-                
+
+            {/if}
+
+            {#if ['satire', 'pro-science'].includes(results?.biases?.bias ?? '')}
+                <div class="bg-slate-300 p-2 rounded-md">
+                    <img src="/img/MBFC/center.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
+                </div>
+
+            {/if}
+
+            <div class="flex flex-row flex-wrap sm:flex-nowrap gap-2">
+                <div class="flex flex-col gap-2 w-full sm:w-[60%]">
+                    {#if results.biases?.description}
+                        <p class="text-base font-bold">{results?.biases?.name}</p>
+                        <p class="text-sm">{results?.biases.description}</p>
+                        <p class="text-xs">
+                            <strong>Learn more</strong>: 
+                            <Link href={results.biases.url} newtab={true} title={results.biases.pretty} highlight>
+                                {results.biases.url}
+                            </Link>
+                        </p>
+                    {/if}
+                </div>
+
+                <div class="flex flex-col gap-2 w-full sm:w-[40%]">
+                    <ul class="pl-4 mt-2 text-sm">
+                        
+                        <!--- Credibility--->
+                        {#if results.credibility}
+                            <li class="flex flex-row gap-2 justify-between">
+                                <span>
+                                    <strong>Credibility Rating</strong>: {results.credibility}
+                                </span>
+                                <span
+                                    class:text-green-500={results.credibility == 'High Credibility'}
+                                    class:text-amber-500={['Medium Credibility', 'N/A'].includes(results.credibility)}
+                                    class:text-red-500={results.credibility == 'Low Credibility'}
+                                >
+                                    <Icon src={
+                                        ['High Credibility', 'N/A'].includes(results.credibility)
+                                            ? CheckBadge
+                                            : results.credibility == 'Medium Credibility'
+                                                ? ExclamationCircle
+                                                : ExclamationTriangle
+                                    } mini width={24} />
+                                </span>
+
+                            </li>
+                        {/if}
+            
+                        <!--Factual Reporting-->
+                        {#if results.reporting}
+                            <li class="flex flex-row gap-2 justify-between mt-2">
+                                <span>
+                                    <strong>Factual Reporting</strong>: {results.reporting}
+                                </span>
+                                
+                                <span
+                                    class:text-green-500={['Very-High', 'High'].includes(results.reporting)}
+                                    class:text-amber-500={['Mostly-Factual', 'Mixed'].includes(results.reporting)}
+                                    class:text-red-500={['Very-Low', 'Low'].includes(results.reporting)}
+                                >
+                                    <Icon src={
+                                        ['Very-High', 'High'].includes(results.reporting)
+                                            ? CheckBadge
+                                            : ['Mostly-Factual', 'Mixed'].includes(results.reporting)
+                                                ? ExclamationCircle
+                                                : ExclamationTriangle
+                                        } mini width={24} />
+                                </span>
+                                
+                            </li>
+                        {/if}
+
+                        <!---Bias Rating--->
+                        {#if results.biases}
+                            <li class="flex flex-row gap-2 justify-between mt-2">
+                                <span>
+                                    <strong>Bias Rating</strong>: {results.biases.name}
+                                </span>
+                                
+                                <span
+                                    class:text-green-500={['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science'].includes(results.biases.name)}
+                                    class:text-amber-500={['Left Bias', 'Right Bias', 'Satire'].includes(results.biases.name)}
+                                    class:text-red-500={['Questionable Sources', 'Conspiracy-Pseudoscience'].includes(results.biases.name)}
+                                >
+                                    <Icon src={
+                                        ['Least Biased', 'Left-Center Bias', 'Right-Center Bias', 'Pro-Science'].includes(results.biases.name)
+                                            ? CheckBadge
+                                            : ['Left Bias', 'Right Bias', 'Satire'].includes(results.biases.name)
+                                                ? ExclamationCircle
+                                                : ExclamationTriangle
+                                        } mini width={24} />
+                                </span>
+                            </li>
+                        {/if}
+            
+                        <!---Reasons for Questionable Status--->
+                        {#if results.questionable?.length > 0}
+                            <li class="mt-2">
+                                <strong>Questionable Reasoning</strong>:
+                                <ul class="list-disc pl-4 text-sm">
+                                    {#each results.questionable as reason}
+                                        <li>{reason}</li>
+                                    {/each}
+                                </ul>
+                            </li>
+                        {/if}
+
+                    </ul>
+                </div>
+            
             </div>
-        {/if}
-        
-        {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user)) && !post.post.removed}
-            <hr class="mt-1"/>
+            
+            {#if results?.url}
+                <hr class="mt-1"/>
+                
+                <div class="flex flex-row items-center">
+                    
+                    <div class="flex flex-col">
+                        <p class="text-sm font-bold flex flex-row gap-2">
+                            <Icon src={CheckCircle} mini width={16}/>
+                            Full Report
+                        </p>
+                        <p class="text-xs font-normal">Read the full report for {results.name} at Media Bias Fact Check.</p>
+                    </div>
+                    
+                    <div class="mx-auto"/>
+                    
+                    
+                    <Button color="tertiary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
+                        <Icon src={ClipboardDocumentCheck} mini size="16"/>
+                        <span class="hidden md:block">Full MBFC Report</span>
+                    </Button>
+                    
+                </div>
+            {/if}
+            
+            {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user)) && !post.post.removed}
+                <hr class="mt-1"/>
                 <div class="flex flex-row items-center gap-2">
                     <div class="flex flex-col">
                         <p class="text-sm font-bold flex flex-row gap-2">
@@ -370,5 +371,6 @@
                     
                 </div>
             {/if}
+        </div>
     </Modal>
 {/if}

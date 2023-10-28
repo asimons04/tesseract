@@ -2,11 +2,12 @@
   import Modal from '$lib/components/ui/modal/Modal.svelte'
   import DebugTree from '$lib/components/util/debug/DebugTree.svelte'
 
+  import { BugAnt} from 'svelte-hero-icons'
+
   export let object: any
   export let open: boolean = false
 </script>
 
-<Modal bind:open>
-  <span slot="title"><slot name="title">Debug</slot></span>
+<Modal bind:open title="Debug Data Explorer" icon={BugAnt}>
   <DebugTree {object} isParent={true} />
 </Modal>
