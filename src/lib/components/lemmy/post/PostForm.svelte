@@ -394,6 +394,7 @@
         <MarkdownEditor
             rows={10}
             label="Body"
+            resizeable={false}
             bind:value={data.body}
             bind:previewing={previewing}
         />

@@ -27,7 +27,8 @@
   export let rows: number = 4
   export let previewing:boolean = false;
   export let id:string = '';
-  
+  export let resizeable:boolean = true;
+
   export let previewContainerClass:string = '';
   export let previewContainerStyle:string = '';
   
@@ -124,7 +125,7 @@
 
     <div class="flex flex-col border border-slate-300 dark:border-zinc-800 rounded-md overflow-hidden focus-within:border-black focus-within:dark:border-white transition-colors w-full h-full">
         {#if previewing}
-            <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm resize-y" style="height: {(rows+3)*24}px">
+            <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm {resizeable ? 'resize-y' : 'resize-none'}" style="height: {(rows+3)*24}px">
                 <Markdown source={beforePreview(value)} />
             </div>
 
@@ -243,7 +244,7 @@
 
             <!--Actual text area-->
             <TextArea
-                class="border-0 rounded-none h-full focus-within:border-none"
+                class="border-0 rounded-none h-full focus-within:border-none {resizeable ? 'resize-y' : 'resize-none'}"
                 bind:value
                 bind:item={textArea}
                 on:keydown={(e) => {
@@ -263,27 +264,29 @@
             />
         {/if}
         
-        <!---Bottom Toolbar (edit/preview button, submit button--->
-        <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center
-            {$$props.disabled
-                ? 'opacity-60 pointer-events-none'
-                : ''
-            }
-        "
-        >
-            {#if previewButton}
-                <div class="mb-3">
-                    <MultiSelect
-                        bind:selected={previewing}
-                        options={[false, true]}
-                        optionNames={['Edit', 'Preview']}
-                    />
-                </div>
-                
-            {/if} 
+        {#if $$slots.actions}
+            <!---Bottom Toolbar (edit/preview button, submit button--->
+            <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center
+                {$$props.disabled
+                    ? 'opacity-60 pointer-events-none'
+                    : ''
+                }
+            "
+            >
+                {#if previewButton}
+                    <div class="mb-3">
+                        <MultiSelect
+                            bind:selected={previewing}
+                            options={[false, true]}
+                            optionNames={['Edit', 'Preview']}
+                        />
+                    </div>
+                    
+                {/if} 
 
-            <slot name="actions"/>
-        </div>
+                <slot name="actions"/>
+            </div>
+        {/if}
     </div>
     
 </div>

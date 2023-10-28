@@ -57,7 +57,7 @@
 </script>
 
 
-<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5] overflow-x-scroll {$$props.class}">
+<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5] overflow-hidden {$$props.class}">
     {@html rendered}
 </div>
 
