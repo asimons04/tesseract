@@ -115,7 +115,7 @@
     }
 
     function generateModerationPreset():string {
-        let template:string = "Post is not from a reputable or credible source of news:";
+        let template:string = "Post has been removed because it is not from a reputable or credible source:";
         if (post.post.url) {
             template += `\nSource: ${new URL(post.post.url).host}`
         }
@@ -134,6 +134,10 @@
                 for (let i:number=0; i<results.questionable.length; i++) {
                     template += `${results.questionable[i]}, `   
                 }
+            }
+
+            if (results.url) {
+                template += `\nFull Report: ${results.url}`
             }
         }
 
@@ -219,7 +223,8 @@
 
             <div class="flex flex-col gap-2 w-full sm:w-[40%]">
                 <ul class="pl-4 mt-2 text-sm">
-        
+                    
+                    <!--- Credibility--->
                     {#if results.credibility}
                         <li class="flex flex-row gap-2 justify-between">
                             <span>
@@ -266,6 +271,7 @@
                         </li>
                     {/if}
 
+                    <!---Bias Rating--->
                     {#if results.biases}
                         <li class="flex flex-row gap-2 justify-between mt-2">
                             <span>
@@ -288,6 +294,7 @@
                         </li>
                     {/if}
         
+                    <!---Reasons for Questionable Status--->
                     {#if results.questionable?.length > 0}
                         <li class="mt-2">
                             <strong>Questionable Reasoning</strong>:
@@ -298,6 +305,7 @@
                             </ul>
                         </li>
                     {/if}
+
                 </ul>
             </div>
         
@@ -319,7 +327,7 @@
                 <div class="mx-auto"/>
                 
                 
-                <Button color="primary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
+                <Button color="tertiary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
                     <Icon src={ClipboardDocumentCheck} mini size="16"/>
                     <span class="hidden md:block">Full MBFC Report</span>
                 </Button>
