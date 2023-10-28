@@ -33,7 +33,7 @@
             >
                 <div
                     on:click|stopPropagation={() => {}}
-                    class="flex flex-col gap-4 p-3 rounded-xl overflow-y-auto  w-full 
+                    class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
                     dark:bg-zinc-950 dark:border-zinc-800
                     bg-white border border-slate-200  {fullHeight ? 'h-full' : ''}"
                     class:rounded-b-none={action}
@@ -58,7 +58,11 @@
                             <Icon src={XMark} mini size="16" />
                         </Button>
                     </div>
-                    <slot />
+                    
+                    <div class="flex flex-col overflow-y-auto w-full h-full">
+                        <slot />
+                    </div>
+
                 </div>
                 {#if action}
                 <div class="border-x border-b bg-slate-100 dark:bg-zinc-950 dark:border-zinc-800 p-3 py-2 flex justify-end rounded-b-xl">
