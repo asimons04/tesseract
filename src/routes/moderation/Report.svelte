@@ -114,6 +114,7 @@
       creator_blocked: false,
       creator: item.post_creator,
     }}
+    forceCompact={true}
   />
   <div class="flex flex-row gap-4 items-center">
     <div>

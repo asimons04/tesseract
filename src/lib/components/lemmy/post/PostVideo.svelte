@@ -17,6 +17,7 @@
                     ? imageProxyURL(post.post.url)
                     : imageProxyURL(post.post.embed_video_url)
     let videoElement:HTMLVideoElement
+    let muted = autoplay
 </script>
 
 <Link 
@@ -29,19 +30,26 @@
 />
 <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
     <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
-        <video class="rounded-md max-w-full max-h-[85vh] max-w-[88vw] mx-auto" 
-            bind:this={videoElement}
-            on:loadedmetadata={()=>{ 
+        <video class="rounded-md max-w-full max-h-[75vh] max-w-[88vw] mx-auto" 
                 
-                if (displayType =='post') {
-                    videoElement.muted = autoplay;
-                    videoElement.autoplay = autoplay;
-                }
-                videoElement.loop = loop;
-            }}
-            controls playsinline
+            controls playsinline {muted} {autoplay}  {loop}
         >
-            <source src="{source}" />
+            <source src="{source}" type="{
+                new URL(source).pathname.endsWith('mp4') 
+                    ? 'video/mp4' 
+                    : new URL(source).pathname.endsWith('webm') 
+                        ? "video/webm" 
+                        : ''
+            }" />
         </video>
     </div>
 </div>
+<!---
+bind:this={videoElement}
+on:loadedmetadata={()=>{ 
+    if (displayType =='post') {
+        videoElement.muted = false;
+    }
+}}    
+    
+            --->

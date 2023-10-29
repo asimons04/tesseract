@@ -1,8 +1,10 @@
 <script lang="ts">
     import { arrayRange, searchParam } from '$lib/util.js'
+    import { afterNavigate, disableScrollHandling, goto } from '$app/navigation'
+    import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { isCommentView } from '$lib/lemmy/item.js'
-    import { goto } from '$app/navigation'
     import { page } from '$app/stores'
+    import { scrollToTop } from '$lib/components/lemmy/post/helpers'
     import { userSettings } from '$lib/settings.js'
 
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
@@ -27,6 +29,22 @@
 
     export let data
     export let userSideCard = true
+
+    // Hack to deal with Svelte not returning to the correct spot when returning to the post.
+    afterNavigate(async () => {
+        let postID:number|undefined = getSessionStorage('lastClickedPost')?.postID
+        if (postID) {
+            let postDiv = document.getElementById(postID.toString())
+            if (postDiv) {
+                disableScrollHandling();
+                scrollToTop(postDiv, false);
+                setSessionStorage('lastClickedPost', undefined);
+            }
+        }
+        else {
+            window.scrollTo(0,0);
+        }
+    });
 </script>
 
 <svelte:head>

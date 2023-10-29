@@ -39,10 +39,10 @@ All major/minor changes between releases will be documented here.
 - Removed transition animation on posts in feed.  Caused too many problems with restoring the feed position on return and provided too little benefit.
 
 ### Inline Video Updates and Bugfixes
-- Added option to loop videos (inline and Invidious are all that are supported by their respective APIs -- YT supposedly does, but doesn't honor the URL param)
-- Applied option to autoplay in posts (will never autoplay in feed)
-- Capped height to `85vh` to better contain portrait-oriented videos
+- Added option to loop videos (inline videos and Invidious are all that are supported by their respective APIs -- YT supposedly does, but doesn't honor the URL param)
+- Capped height to `80vh` to better contain portrait-oriented videos
 - Adding missing background container to match other post styles.
+- Note:  webm videos are not working in iOS but mp4 do.  God I hate Apple.
 
 ### YouTube
 Cleaned up YouTube/Invidious/Piped renderer 
@@ -56,7 +56,7 @@ Cleaned up YouTube/Invidious/Piped renderer
 - Added crossposts list to compact posts
 - Moved compact post renderer to dedicated component
 - You can now see the post body in compact view if you click the "Expand" bar.
-
+- Added checkbox to confirm report is being made in good faith to report submission form.
 
 ## 1.2.8.97
 ### UI Tweaks

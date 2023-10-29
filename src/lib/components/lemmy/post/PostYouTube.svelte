@@ -15,8 +15,6 @@
     
     let videoID:    string | null | undefined
     let embedURL:   URL = new URL('https://localhost');
-    let extraParams:string = ""
-
     
     if (post?.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
@@ -34,12 +32,14 @@
         if ($userSettings.embeddedMedia.YTFrontend == "Invidious" && $userSettings.embeddedMedia.customInvidious !='') {
             embedURL.host = `${$userSettings.embeddedMedia.customInvidious}`;
         }
-        
-        // Append the video ID to the embed URL
-        embedURL.pathname = `/embed/${videoID}`
     
         // Search for valid extra parameters
         if (videoID) {
+
+            // Append the video ID to the embed URL
+            embedURL.pathname = `/embed/${videoID}`
+
+
             // Enable autoplay videos in post if setting is enabled
             
             if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
