@@ -83,7 +83,7 @@
         data: undefined
     }
 
-    let credibility:string = '';
+    post.credibility = '';
 
 </script>
 
@@ -131,7 +131,7 @@
                 <!--- Media Bias Fact Check--->
                 {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     {#await import('$lib/MBFC/MBFC.svelte') then { default: MBFC }}            
-                        <MBFC post={post} bind:credibility />
+                        <MBFC post={post} bind:credibility={post.credibility} />
                     {/await}
                 {/if}
 

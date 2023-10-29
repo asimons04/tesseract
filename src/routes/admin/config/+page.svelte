@@ -694,8 +694,6 @@
                     </span>
                     <span slot="description" class="text-xs font-normal">
                         <p>Configure your instance logo and banner images.</p>
-                        <p class="mt-2">
-                            <strong>Note</strong>: Tesseract and many other 3rd party Lemmy UIs do not use the banner images.  
                     </span>
                     
                     <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">

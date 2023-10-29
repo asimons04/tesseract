@@ -24,6 +24,16 @@ All major/minor changes between releases will be documented here.
 ### MBFC Module Updates
 - Added ability for authenticated users to report a post from the MBFC result window. Report template will contain an abridged version of the MBFC results.
 
+### Bugfixes
+- Added rule to image proxy handler to exempt image URLs that are already re-written for the proxy.
+
+### UI Tweaks
+- Forced posts into compact view in report modals (similar to remove modals for mods/admins)
+- Put post/comment content inside a `pointer-events-none` classed div to avoid any accidental clicks into potentially problematic content.
+- Increased icon size in modal titles
+
+
+
 
 ## 1.2.8.97
 ### UI Tweaks
