@@ -28,7 +28,7 @@ All major/minor changes between releases will be documented here.
   - Applies to main feed and community feed.  Intentionally not applied to user profile post lists, though you will still see the "Low Credibility" badge.
 
 - Moved lookup process higher up in the post flow so that MBFC results are attached to post objects, pre-render, for filtering purposes.
-  - Applied to main feed and community feed at `/c/[name]`
+  - Applied to main feed communtiesand community feed at `/c/[name]`
   - If MBFC data is not provided in feed data for posts, will fallback to direct lookup on a post-by-post basis (e.g. posts at `/u/[name]`)
 
 - As always, thank you `worldnews@lemmy [dot] [machine learning]` for being a complete dumpster fire of shit sources. You've been really helpful in testing the functionality, efficacy, and necessity of this module.
@@ -37,6 +37,12 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Added rule to image proxy handler to exempt image URLs that are already re-written for the proxy.
 - Removed transition animation on posts in feed.  Caused too many problems with restoring the feed position on return and provided too little benefit.
+
+### Inline Video Updates and Bugfixes
+- Added option to loop videos (inline and Youtube/Invidious/Piped are all that are supported by their respective APIs)
+- Applied option to autoplay in posts (will never autoplay in feed)
+- Capped height to `85vh` to better contain portrait-oriented videos
+- Adding missing background container to match other post styles.
 
 
 ### UI Tweaks
@@ -47,6 +53,7 @@ All major/minor changes between releases will be documented here.
 - Reduced padding for compact posts
 - Added crossposts list to compact posts
 - Moved compact post renderer to dedicated component
+- You can now see the post body in compact view if you click the "Expand" bar.
 
 
 ## 1.2.8.97

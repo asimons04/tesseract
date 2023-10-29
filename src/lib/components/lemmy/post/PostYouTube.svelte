@@ -49,6 +49,10 @@
                 extraParams += "&autoplay=0";
             }
 
+            if ($userSettings.embeddedMedia.loop) {
+                extraParams += "&loop=1"
+            }
+
             // Start time: Can be either t (legacy) or start
             let startTime = new URL(post.post.url).searchParams.get('t') ?? new URL(post.post.url).searchParams.get('start');
             if (startTime) {

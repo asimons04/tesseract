@@ -133,7 +133,8 @@ export const generateModerationPreset = function (post:PostView, results:MBFCRep
 }
 
 export const generateReportPreset = function(post:PostView, results:MBFCReport):string {
-    let template:string = "Disreputable source";
+    let template:string = "Low credibility source";
+    
     if (post.post.url) {
         template += ` -- Source: ${new URL(post.post.url).host}`
     }

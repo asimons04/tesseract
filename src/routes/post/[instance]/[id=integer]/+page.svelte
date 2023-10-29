@@ -165,7 +165,16 @@
         
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
             <!---Post--->
-            <PostCardStyle post={post.post_view} displayType="post" action={true} moderators={post.moderators} bind:showCommentForm={showCommentForm}/>      
+            <PostCardStyle 
+                bind:post={post.post_view} 
+                bind:showCommentForm={showCommentForm}
+                displayType="post" 
+                action={true} 
+                moderators={post.moderators} 
+                autoplay={$userSettings.embeddedMedia.autoplay}
+                loop={$userSettings.embeddedMedia.loop}
+            
+            />      
 
             <!--- Comments --->
             <CommentSection bind:data={data} bind:showCommentForm={showCommentForm}/>

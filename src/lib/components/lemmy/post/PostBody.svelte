@@ -19,6 +19,7 @@
     export let post:PostView;
     export let displayType:PostDisplayType = 'post'
     export let expandPreviewText:boolean = false
+    export let previewLength:number = 250
 </script>
 
 {#if (post.post.body || post.post.embed_description)}
@@ -39,12 +40,12 @@
         {#if displayType=='feed' && !post.post.nsfw}
             {#if post.post.body}    
                 <Markdown source={
-                        ( !expandPreviewText && post.post.body.length > 250)
-                            ? `${post.post.body.slice(0, 250)}...`
+                        ( !expandPreviewText && post.post.body.length > previewLength)
+                            ? `${post.post.body.slice(0, previewLength)}`
                             : post.post.body
                     }
                 />
-                {#if post.post.body.length > 250}
+                {#if post.post.body.length > previewLength}
                     <Button
                         color="tertiary"
                         class="w-full !py-1"
@@ -64,12 +65,12 @@
             <!--- If no post body but there's an embed description avaialble, display that--->
             {:else if post.post.embed_description }
                 <Markdown source={
-                    ( !expandPreviewText && post.post.embed_description.length > 250)
-                        ? `${post.post.embed_description.slice(0, 250)}...`
+                    ( !expandPreviewText && post.post.embed_description.length > previewLength)
+                        ? `${post.post.embed_description.slice(0, previewLength)}`
                         : post.post.embed_description
                     }
                 />
-                {#if post.post.embed_description.length > 250}
+                {#if post.post.embed_description.length > previewLength}
                     <Button
                         color="secondary"
                         class="w-full !py-1"

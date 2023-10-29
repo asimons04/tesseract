@@ -22,6 +22,7 @@
     export let displayType: PostDisplayType = "feed"
     export let forceCompact:boolean = false;
     export let expandCompact: boolean;
+    export let expandPreviewText:boolean 
 
 </script>
 
@@ -48,6 +49,8 @@
                     <span class="text-sm">{new URL(post.post.url).host}</span>
                 </Link>
             {/if}
+
+            <PostBody post={post} displayType={displayType} previewLength={0} bind:expandPreviewText/>
 
             <!--- Crossposts --->
             <Crossposts post={post} size="xs" class="!pl-0"/>

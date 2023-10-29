@@ -17,11 +17,13 @@
     
     export let actions: boolean = true
     export let autoplay:boolean|undefined = undefined;
+    export let loop:boolean | undefined = undefined
     export let displayType: PostDisplayType = "feed"
     export let expandCompact: boolean;
     export let post: PostView
     export let moderators: Array<CommunityModeratorView> = [];
     export let showCommentForm:boolean = false;
+    export let expandPreviewText:boolean
 
     // Determe post type based on its attributes
     let postType:PostType|undefined  = identifyPostType(post)
@@ -50,7 +52,7 @@
     <!--- Direct Video Post --->
     {#if postType == "video"}
         {#await import('$lib/components/lemmy/post/PostVideo.svelte') then { default: PostVideo }}
-            <PostVideo post={post} autoplay={autoplay}/>
+            <PostVideo post={post} displayType={displayType} autoplay={autoplay} loop={loop}/>
         {/await}
     {/if}
 
@@ -103,7 +105,7 @@
         {/await}
     {/if}
 
-    <PostBody post={post} displayType={displayType} />
+    <PostBody post={post} displayType={displayType} bind:expandPreviewText/>
 
     <!--- Crossposts --->
     <Crossposts post={post} size={displayType=='feed' ? 'xs' : 'sm'}/>

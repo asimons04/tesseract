@@ -17,6 +17,7 @@
     import {
         ArchiveBoxXMark,
         ArrowPath,
+        ArrowPathRoundedSquare,
         ArrowUturnDown,
         Icon,
         Bars3,
@@ -703,6 +704,20 @@
                         <div class="mx-auto"/>
 
                         <Switch bind:enabled={$userSettings.embeddedMedia.autoplay} />
+                    </div>
+
+                    <!--- Enable Loop--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowPathRoundedSquare} mini width={16}/>Loop Videos
+                            </p>
+                            <p class="text-xs font-normal">Loop supported videos.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.embeddedMedia.loop} />
                     </div>
 
                     <!--- YouTube Frontend--->

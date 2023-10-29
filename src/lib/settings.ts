@@ -78,6 +78,7 @@ interface Settings {
         YTFrontend: 'YouTube' | 'Invidious' 
         customInvidious: string
         autoplay: boolean
+        loop:boolean
     }
     imageSize: {
         feed: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
@@ -182,7 +183,8 @@ export const defaultSettings: Settings = {
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
         YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                     ??  'YouTube',
         customInvidious:                                                    'yewtu.be',
-        autoplay:                                                           false,
+        autoplay:                                                       false,
+        loop:                                                           true
     },
     proxyMedia: {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,

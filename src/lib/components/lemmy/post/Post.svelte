@@ -12,7 +12,9 @@
     export let autoplay:boolean|undefined = undefined;
     export let displayType: PostDisplayType = "feed"
     export let forceCompact:boolean = false;
+    
     let expandCompact: boolean;
+    let expandPreviewText:boolean
    
 </script>
 
@@ -20,12 +22,26 @@
 
 <!--- Compact Posts --->
 {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
-    <PostCompactStyle bind:post={post} actions={actions} bind:expandCompact={expandCompact} displayType={displayType} />
+    <PostCompactStyle 
+        bind:post={post} 
+        actions={actions} 
+        bind:expandCompact={expandCompact} 
+        bind:expandPreviewText 
+        displayType={displayType} 
+    />
 
 
 <!--- Card Posts --->
 {:else}
-    <PostCardStyle bind:post={post} actions={actions} bind:expandCompact={expandCompact} displayType={displayType} autoplay={autoplay}/>
+    <PostCardStyle 
+        bind:post={post} 
+        actions={actions} 
+        bind:expandCompact={expandCompact} 
+        bind:expandPreviewText 
+        displayType={displayType} 
+        autoplay={false}
+        loop={$userSettings.embeddedMedia.loop}
+    />
 {/if}
 
 
