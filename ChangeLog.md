@@ -39,11 +39,13 @@ All major/minor changes between releases will be documented here.
 - Removed transition animation on posts in feed.  Caused too many problems with restoring the feed position on return and provided too little benefit.
 
 ### Inline Video Updates and Bugfixes
-- Added option to loop videos (inline and Youtube/Invidious/Piped are all that are supported by their respective APIs)
+- Added option to loop videos (inline and Invidious are all that are supported by their respective APIs -- YT supposedly does, but doesn't honor the URL param)
 - Applied option to autoplay in posts (will never autoplay in feed)
 - Capped height to `85vh` to better contain portrait-oriented videos
 - Adding missing background container to match other post styles.
 
+### YouTube
+Cleaned up YouTube/Invidious/Piped renderer 
 
 ### UI Tweaks
 - Forced posts into compact view in report modals (similar to remove modals for mods/admins)

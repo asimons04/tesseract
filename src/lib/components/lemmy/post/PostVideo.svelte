@@ -34,8 +34,8 @@
             on:loadedmetadata={()=>{ 
                 
                 if (displayType =='post') {
-                    videoElement.autoplay = autoplay;
                     videoElement.muted = autoplay;
+                    videoElement.autoplay = autoplay;
                 }
                 videoElement.loop = loop;
             }}

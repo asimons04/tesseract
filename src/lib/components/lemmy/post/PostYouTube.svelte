@@ -14,7 +14,7 @@
     export let autoplay:boolean|undefined = undefined;
     
     let videoID:    string | null | undefined
-    let embedURL:   string = ""
+    let embedURL:   URL = new URL('https://localhost');
     let extraParams:string = ""
 
     
@@ -28,47 +28,47 @@
         
         // Create the embed URL based on the user's preferred YouTube frontend
         if ($userSettings.embeddedMedia.YTFrontend == "YouTube") {
-            embedURL = "https://www.youtube-nocookie.com/embed";
+            embedURL.host = 'www.youtube-nocookie.com';
         }
 
         if ($userSettings.embeddedMedia.YTFrontend == "Invidious" && $userSettings.embeddedMedia.customInvidious !='') {
-            embedURL = `https://${$userSettings.embeddedMedia.customInvidious}/embed`;
+            embedURL.host = `${$userSettings.embeddedMedia.customInvidious}`;
         }
         
         // Append the video ID to the embed URL
-        embedURL += `/${videoID}`
+        embedURL.pathname = `/embed/${videoID}`
     
         // Search for valid extra parameters
         if (videoID) {
             // Enable autoplay videos in post if setting is enabled
             
             if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
-                extraParams += "&autoplay=1";
+                embedURL.searchParams.set('autoplay', '1');
             }
             else {
-                extraParams += "&autoplay=0";
+                embedURL.searchParams.set('autoplay', '0');
             }
 
             if ($userSettings.embeddedMedia.loop) {
-                extraParams += "&loop=1"
+                embedURL.searchParams.set('loop', '1');
             }
 
             // Start time: Can be either t (legacy) or start
             let startTime = new URL(post.post.url).searchParams.get('t') ?? new URL(post.post.url).searchParams.get('start');
             if (startTime) {
-                extraParams += `&start=${startTime}`
+                embedURL.searchParams.set('start', startTime);
             }
 
             // End time: 
             let endTime = new URL(post.post.url).searchParams.get('end');
             if (endTime) {
-                extraParams += `&end=${endTime}`
+                embedURL.searchParams.set('end', endTime);
             }
         }
     }
 
     function showAsEmbed() {
-        if (!embedURL) { return false;}
+        if (!videoID) { return false;}
         if (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) { return true;}
         if (displayType == 'post' && $userSettings.embeddedMedia.post) { return true;}
         
@@ -99,12 +99,12 @@
     <Link 
         href={
             embedURL
-            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
+            ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
             : post.post.url
         }
         title={
             embedURL
-            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
+            ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
             : post.post.url
         }
         highlight nowrap 
@@ -121,7 +121,7 @@
                     <iframe 
                         id="video-{post.post.id}"
                         class="flexiframe"
-                        src="{embedURL}?{extraParams}" 
+                        src="{embedURL.href}" 
                         allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                         loading="lazy"
                         allowfullscreen
@@ -139,7 +139,7 @@
         <Link
             href={
                 embedURL
-                ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
+                ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
                 : post.post.url
             }
             title={post.post.name}
@@ -157,7 +157,7 @@
     <Link
         href={
             embedURL
-            ? embedURL.replace('embed','watch').replace('www.youtube-nocookie','youtube') + `?${extraParams}`
+            ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
             : post.post.url
         }
         title={post.post.name}

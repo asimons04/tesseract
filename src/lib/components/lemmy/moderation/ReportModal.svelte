@@ -6,6 +6,7 @@
   import { toast } from '$lib/components/ui/toasts/toasts.js'
 
   import Button from '$lib/components/input/Button.svelte'
+  import Checkbox from '$lib/components/input/Checkbox.svelte'
   import Comment from '$lib/components/lemmy/comment/Comment.svelte'
   import Modal from '$lib/components/ui/modal/Modal.svelte'
   import Post from '$lib/components/lemmy/post/Post.svelte'
@@ -25,6 +26,7 @@
   const isPost = (item: PostView | CommentView): item is PostView => !isComment(item)
 
   let loading = false
+  let confirm = false
   
 
   async function report() {
@@ -56,15 +58,7 @@
 
     loading = false
   }
-/*
-  const resetText = () => (reason = '')
 
-  $: {
-    if (item) {
-      resetText()
-    }
-  }
-*/
 </script>
 
 <Modal bind:open title="Report Submission" icon={Flag}>
@@ -79,7 +73,14 @@
                     label="Reason"
                     bind:value={reason}
                 />
-                <Button submit {loading} disabled={loading} color="primary" size="lg">
+                
+
+                <Checkbox bind:checked={confirm} defaultvalue={false} class="px-2">
+                    I confirm that this report is being made in good faith.
+                </Checkbox>
+
+
+                <Button submit {loading} disabled={loading || !confirm} color="primary" size="lg">
                     Submit
                 </Button>
             </div>
