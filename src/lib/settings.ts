@@ -51,6 +51,7 @@ interface Settings {
         removed: boolean
         keywords: boolean,
         keywordList: string[]
+        MBFCLowCredibility: boolean
     }
     notifications: {
         enabled: boolean
@@ -158,7 +159,8 @@ export const defaultSettings: Settings = {
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,
         keywords:                                                       false,
-        keywordList:                                                    []
+        keywordList:                                                    [],
+        MBFCLowCredibility:                                             false,
 
     },
    

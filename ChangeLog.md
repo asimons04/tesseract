@@ -23,6 +23,9 @@ All major/minor changes between releases will be documented here.
 ## 1.2.8.98
 ### MBFC Module Updates
 - Added ability for authenticated users to report a post from the MBFC result window. Report template will contain an abridged version of the MBFC results.
+- Created user option to hide posts that are from "Low Credibility" sources.
+- As always, thank you worldnews@lemmy.ml for being a complete dumpster fire of shit sources. You've been really helpful in testing this module.
+
 
 ### Bugfixes
 - Added rule to image proxy handler to exempt image URLs that are already re-written for the proxy.
@@ -31,6 +34,7 @@ All major/minor changes between releases will be documented here.
 - Forced posts into compact view in report modals (similar to remove modals for mods/admins)
 - Put post/comment content inside a `pointer-events-none` classed div to avoid any accidental clicks into potentially problematic content.
 - Increased icon size in modal titles
+- Restored Hide/Delete post options for regular users since apparently they _can_ see those posts.
 
 
 

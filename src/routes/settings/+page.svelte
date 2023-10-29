@@ -838,8 +838,23 @@
                 </span>
                 <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
 
+                    <!--- Hide Low Credibility Posts --->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.uiState.MBFCBadges}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Trash} mini width={16}/>
+                                Hide Low Credibility Posts
+                            </p>
+                            <p class="text-xs font-normal">Hide posts that link to low-credible sources as reported by Media Bias Fact Check.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Switch bind:enabled={$userSettings.hidePosts.MBFCLowCredibility} />
+                    </div>
+
                     <!--- Hide Deleted Posts --->
-                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!amModOfAny($profile?.user)}>
+                    <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={Trash} mini width={16}/>
@@ -854,7 +869,7 @@
                     </div>
 
                     <!--- Hide Removed Posts --->
-                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!amModOfAny($profile?.user)}>
+                    <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={NoSymbol} mini width={16}/>

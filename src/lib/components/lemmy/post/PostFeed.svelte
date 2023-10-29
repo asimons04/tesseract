@@ -30,7 +30,7 @@
             <div
                 in:fly={{
                     y: -8,
-                    duration: 500,
+                    duration: 300,
                     opacity: 0,
                     delay: index < 4 ? index * 100 : 0,
                 }}

@@ -27,102 +27,103 @@
 </script>
 
 
+<div class:hidden={$userSettings.hidePosts.MBFCLowCredibility && post.credibility == 'Low Credibility'}>
+    <!--- Compact Posts --->
+    {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
+    <Card class="bg-white flex flex-col w-full p-5 gap-2.5 " id={post.post.id}>
 
-<!--- Compact Posts --->
-{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
-<Card class="bg-white flex flex-col w-full p-5 gap-2.5" id={post.post.id}>
-
-    <!--- Post Metadata, Title, and Thumbnail  --->
-    <div class="flex flex-row w-full">
-        <div class="flex flex-col gap-2.5
-            { (post.post.thumbnail_url || isImage(post.post.url))
-                ? 'w-[80%]'
-                : 'w-full'
-            }
-        ">
-            <PostMeta post={post} displayType={displayType} showTitle={true}/>
-            
-            {#if post.post.url && !isImage(post.post.url)}
-                <Link
-                    href={post.post.url}
-                    title={post.post.url}
-                    newtab={$userSettings.openInNewTab.postLinks}
-                    highlight
-                >
-                    <span class="text-sm">{new URL(post.post.url).host}</span>
-                </Link>
-            {/if}
-
-        </div>
-        
-        <!--- Thumbnail --->
-        {#if post.post.thumbnail_url || isImage(post.post.url)}
-        <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
-            <div class="grid justify-items-center">
-                <!--- Expand the post in place when clicking thumbnail--->
-                <div 
-                    role="button"
-                    title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                    class="cursor-pointer"
-                    on:click={() => {  
-                        expandCompact = !expandCompact; 
-                        const element = document.getElementById(post.post.id);
-                        if (element) scrollToTop(element);
-
-                    }}
-                >
-                    <!--- Thumbnail for Link Post--->
-                    {#if post.post.thumbnail_url}
-                        <img
-                            src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    <!---Thumbnail for Image Post--->
-                    {:else}
-                        <img
-                            src="{imageProxyURL(post.post.url, 256, 'webp')}"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    {/if}
-            
+        <!--- Post Metadata, Title, and Thumbnail  --->
+        <div class="flex flex-row w-full">
+            <div class="flex flex-col gap-2.5
+                { (post.post.thumbnail_url || isImage(post.post.url))
+                    ? 'w-[80%]'
+                    : 'w-full'
+                }
+            ">
+                <PostMeta bind:post={post} displayType={displayType} showTitle={true}/>
                 
+                {#if post.post.url && !isImage(post.post.url)}
+                    <Link
+                        href={post.post.url}
+                        title={post.post.url}
+                        newtab={$userSettings.openInNewTab.postLinks}
+                        highlight
+                    >
+                        <span class="text-sm">{new URL(post.post.url).host}</span>
+                    </Link>
+                {/if}
+
+            </div>
+            
+            <!--- Thumbnail --->
+            {#if post.post.thumbnail_url || isImage(post.post.url)}
+            <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
+                <div class="grid justify-items-center">
+                    <!--- Expand the post in place when clicking thumbnail--->
+                    <div 
+                        role="button"
+                        title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                        class="cursor-pointer"
+                        on:click={() => {  
+                            expandCompact = !expandCompact; 
+                            const element = document.getElementById(post.post.id);
+                            if (element) scrollToTop(element);
+
+                        }}
+                    >
+                        <!--- Thumbnail for Link Post--->
+                        {#if post.post.thumbnail_url}
+                            <img
+                                src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
+                                loading="lazy"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                            />
+                        <!---Thumbnail for Image Post--->
+                        {:else}
+                            <img
+                                src="{imageProxyURL(post.post.url, 256, 'webp')}"
+                                loading="lazy"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                            />
+                        {/if}
+                
+                    
+                    </div>
                 </div>
             </div>
+            {/if}
         </div>
-        {/if}
-    </div>
 
-    <!--- Post Action Bar--->
-    <div class="flex flex-row w-full">
-        {#if actions}
-            <div class="w-full h-full grid items-end">
-                <PostActions 
-                    bind:post 
-                    bind:expandCompact
-                    displayType={displayType}
-                    on:edit={(e) => {
-                        toast({
-                            content: 'The post was edited successfully.',
-                            type: 'success',
-                        })
-                    }}
-                />
-            </div>
-        {/if}
-    </div>
-</Card>
+        <!--- Post Action Bar--->
+        <div class="flex flex-row w-full">
+            {#if actions}
+                <div class="w-full h-full grid items-end">
+                    <PostActions 
+                        bind:post 
+                        bind:expandCompact
+                        displayType={displayType}
+                        on:edit={(e) => {
+                            toast({
+                                content: 'The post was edited successfully.',
+                                type: 'success',
+                            })
+                        }}
+                    />
+                </div>
+            {/if}
+        </div>
+    </Card>
 
 
 
-<!--- Card Posts --->
-<!---{#if (!$userSettings.showCompactPosts) || ($userSettings.showCompactPosts && expandCompact)  }--->
-{:else}
-    <PostCardStyle post={post} actions={actions} bind:expandCompact={expandCompact} displayType={displayType} autoplay={autoplay}/>
-{/if}
+    <!--- Card Posts --->
+    <!---{#if (!$userSettings.showCompactPosts) || ($userSettings.showCompactPosts && expandCompact)  }--->
+    {:else}
+        <PostCardStyle bind:post={post} actions={actions} bind:expandCompact={expandCompact} displayType={displayType} autoplay={autoplay}/>
+    {/if}
+</div>
 
 
 

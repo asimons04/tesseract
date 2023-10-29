@@ -5,7 +5,7 @@
     
     import { postType as identifyPostType } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    import { userSettings } from '$lib/settings.js'
     
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
@@ -24,13 +24,13 @@
     export let showCommentForm:boolean = false;
 
     // Determe post type based on its attributes
-    let postType:PostType  = identifyPostType(post)
+    let postType:PostType|undefined  = identifyPostType(post)
 
 </script>
 
 <Card class="flex flex-col w-full p-5 gap-1" id={post.post.id}>
     <div class="flex flex-row w-full gap-2.5">
-        <PostMeta post={post} moderators={moderators}/>
+        <PostMeta bind:post={post} moderators={moderators}/>
     </div>
 
     <!--- Link-style post without thumbnail URL--->
