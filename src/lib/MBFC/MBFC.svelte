@@ -1,15 +1,8 @@
 <script lang="ts">
+    import type { MBFCReport } from './types'
     import type { PostView } from 'lemmy-js-client'
     
-    import type {
-        MBFCBiases,
-        MBFCCredibility,
-        MBFCDataSet,
-        MBFCQuestionable,  
-        MBFCReport,
-        MBFCReporting
-    } from './types'
-    import MBFCData from '$lib/MBFC/data/data.json'
+    import { lookup, generateModerationPreset, generateReportPreset } from '$lib/MBFC/client'
 
     import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
     import { profile } from '$lib/auth.js'
@@ -35,152 +28,9 @@
 
     
     export let post:PostView
-    export let credibility:string = ''
 
     let open:boolean = false;
-    let results:MBFCReport|undefined = undefined
-
-    function lookup(domain:string):MBFCReport|undefined {
-        try {
-            if (!domain) return
-            domain = new URL(domain).host;
-
-            // Normalize domains to remove any "www', "amp", and other prefixes that trip up detection.  Also replace some domains with their main aliases
-            domain = domain
-                .replace('www.', '')
-                .replace('amp.', '')
-                .replace('edition.', '')
-                .replace(/.*\.businessinsider\.com/, 'businessinsider.com')
-                .replace(/.*\.medium\.com/, 'medium.com')
-                .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
-                .replace(/.*\.apnews\.com/, 'apnews.com')
-                .replace(/.*\.elpais\.com/, 'elpais.com')
-                .replace('bbc.co.uk', 'bbc.com')
-                .replace('news.antiwar.com', 'antiwar.com')
-                .replace('mronline.org', 'monthlyreview.org')
-                .replace('bbc.in', 'bbc.com')
-
-
-            // Lookup the provided domain and return the results
-            let info:MBFCReport = {} as MBFCReport
-            let found:boolean = false;
-
-            MBFCData.sources.map((item:MBFCReport) => { 
-                if (item.domain==domain) {
-                    info=item
-                    found = true
-                }
-            });
-            
-            // Resolve bias, credibility descriptions
-            if (found) {
-                
-                // Biases
-                MBFCData.biases.map((item:MBFCBiases) => { 
-                    if (info?.bias == item.bias) info.biases = item;
-                    
-                })
-                
-                // Map credibility rating to pretty-printed string
-                MBFCData.credibility.map((item:MBFCCredibility) => { 
-                    if (info?.credibility == item.credibility) info.credibility = item.pretty;
-                    
-                })
-                
-                // Map questionable tags to pretty-printed strings
-                MBFCData.questionable.map((item:MBFCQuestionable) => { 
-                    if (info?.questionable) {
-                        for (let i:number=0; i < info.questionable.length; i++) {
-                            let question = info.questionable[i];
-                            if (question == item.questionable) info.questionable[i] = item.pretty;
-                        }
-                    }
-                })
-
-                // Map Reporting rating to pretty-printed string
-                MBFCData.reporting.map((item:MBFCReporting) => { 
-                    if (info?.reporting == item.reporting) info.reporting = item.pretty;
-                    
-                })
-
-                return info
-            }
-            else {
-                return undefined
-            }
-        }
-        catch (err) {
-            console.log(err);
-            return undefined;
-        }
-    }
-
-    function generateModerationPreset():string {
-        let template:string = "Post has been removed because it is not from a reputable or credible source:";
-        if (post.post.url) {
-            template += `\nSource: ${new URL(post.post.url).host}`
-        }
-        
-        if (results) {
-            if (results.credibility) {
-                template += `\nCredibility: ${results.credibility}`
-            }
-
-            if (results.reporting) {
-                template += `\nFactual Reporting: ${results.reporting}`
-            }
-
-            if (results.questionable?.length > 0) {
-                template += `\nReasoning: `
-                for (let i:number=0; i<results.questionable.length; i++) {
-                    template += `${results.questionable[i]}, `   
-                }
-            }
-
-            if (results.url) {
-                template += `\nFull Report: ${results.url}`
-            }
-        }
-        
-        return template;
-    }
-
-    function generateReportPreset():string {
-        let template:string = "Disreputable source";
-        if (post.post.url) {
-            template += ` -- Source: ${new URL(post.post.url).host}`
-        }
-        
-        if (results) {
-            if (results.credibility) {
-                template += ` -- Credibility: ${results.credibility}`
-            }
-
-            if (results.reporting) {
-                template += ` -- Factual Reporting: ${results.reporting}`
-            }
-
-            if (results.questionable?.length > 0) {
-                template += ` -- Reasoning: `
-                for (let i:number=0; i<results.questionable.length; i++) {
-                    template += `${results.questionable[i]}, `   
-                }
-            }
-
-            if (results.url) {
-                template += ` -- Full Report: ${results.url}`
-            }
-        }
-        
-        return template;
-    }
-
-    if (post?.post?.url) {
-        results = lookup(post.post.url)
-        if (results) credibility = results.credibility;
-    }
-
-    
+    let results:MBFCReport|undefined = post.mbfc ?? lookup(post?.post?.url) ?? undefined
 
 </script>
 
@@ -388,7 +238,7 @@
                     
                     <Button color="danger" size="sm" on:click={() => {
                         open = false;
-                        report(post, generateReportPreset())
+                        report(post, generateReportPreset(post, results))
                     }}>
                         <Icon src={Flag} size="16" mini />
                             <span class="hidden md:block">Report</span>
@@ -415,7 +265,7 @@
                     
                     <Button color="danger" size="sm" on:click={() => {
                         open = false;
-                        remove(post, true, generateModerationPreset())
+                        remove(post, true, generateModerationPreset(post, results))
                     }}>
                         <Icon src={Fire} size="16" mini />
                             <span class="hidden md:block">Purge</span>
@@ -424,7 +274,7 @@
 
                     <Button color="danger" size="sm" on:click={() => {
                         open = false;
-                        remove(post, false, generateModerationPreset())
+                        remove(post, false, generateModerationPreset(post, results))
                     }}>
                         <Icon src={Trash} size="16" mini />
                         <span class="hidden md:block">Remove</span>

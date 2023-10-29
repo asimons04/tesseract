@@ -13,7 +13,7 @@
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
-    
+    import MBFC from '$lib/MBFC/MBFC.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -78,12 +78,10 @@
     
     let fediseer = {
         loading: false,
-        loading2: false,
         modal: false,
         data: undefined
     }
 
-    post.credibility = '';
 
 </script>
 
@@ -130,9 +128,7 @@
                 
                 <!--- Media Bias Fact Check--->
                 {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
-                    {#await import('$lib/MBFC/MBFC.svelte') then { default: MBFC }}            
-                        <MBFC post={post} bind:credibility={post.credibility} />
-                    {/await}
+                    <MBFC post={post} />
                 {/if}
 
                 <!--- Fediseer Endorsement Badge--->

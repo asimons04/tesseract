@@ -1,5 +1,6 @@
 import type { CommentView, GetPostsResponse, PersonView, PostView } from 'lemmy-js-client'
 import { YTFrontends } from '$lib/settings.js'
+import { lookup as MBFCLookup } from '$lib/MBFC/client'
 import { userSettings as UserSettings} from '$lib/settings.js'
 import { get } from 'svelte/store';
 
@@ -222,19 +223,18 @@ export const fixLemmyEncodings = function (content:string|undefined):string|unde
 export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolean=true):void {
     if (!element) return;
     try {
-        setTimeout(() => {
-            // Offset = navbar height (-64) - sticky menu height (32)
-            let offset = 64 + 40;
+            
+        // Offset = navbar height (-64) - sticky menu height (32)
+        let offset = 64 + 40;
 
-            let y = element.getBoundingClientRect().top + window.pageYOffset - offset;
-            if (smooth) {
-                window.scrollTo({top: y, behavior: 'smooth'});
-            }
-            else {
-                window.scrollTo({top: y, behavior: 'instant'});
-            }
-        }, 350);
+        let y = element.getBoundingClientRect().top + window.pageYOffset - offset;
 
+        if (smooth) {
+            window.scrollTo({top: y, behavior: 'smooth'});
+        }
+        else {
+            window.scrollTo(0, y);
+        }
     
     }
     catch {}
@@ -243,160 +243,195 @@ export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolea
 
 // Used in post fetch loader to filter posts by keywords
 export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
-    let filteredPosts: PostView[] = [];
-    let filterWords = get(UserSettings)?.hidePosts?.keywordList ?? [] as string[];
+    try {
+        let filteredPosts: PostView[] = [];
+        let filterWords = get(UserSettings)?.hidePosts?.keywordList ?? [] as string[];
 
-    // Bypass filtering if keyword filtering is disabled by user
-    if (!get(UserSettings)?.hidePosts?.keywords) return {posts: posts};
+        // Bypass filtering if keyword filtering is disabled by user
+        if (!get(UserSettings)?.hidePosts?.keywords) return {posts: posts};
 
-    // Loop over posts and check for any keywords that should be filtered out
-    for(let i:number=0; i<posts.length; i++) {
-        let post:PostView = posts[i];
-        
-        for (let j:number=0; j<filterWords.length; j++) {
-            let word:string = filterWords[j];
-
-            // Keywords starting with a carat should be evaluated as "startsWith"
-            if (word[0] == '^') {
-                word = word.substring(1,word.length) + ' ';
-                if ( 
-                    post?.post?.name?.toLowerCase().startsWith(word.toLowerCase()) || 
-                    post?.post?.body?.toLowerCase().startsWith(word.toLowerCase()) || 
-                    post?.post?.embed_description?.toLowerCase().startsWith(word.toLowerCase())
-                ) {
-                    
-                    filteredPosts.push(posts.splice(i, 1));
-                    i--;
-                    console.log(`Filtering post '${post.post.name}' because it starts with the keyword '${word}'`);
-                    break;
-                }
-
-            }
-            // Keywords starting with exclamation mark should be evaluated as case-sensitive
-            else if (word[0] == '!') {
-                word = word.substring(1,word.length) + ' ';
-                if ( 
-                    post?.post?.name?.includes(word) || 
-                    post?.post?.body?.includes(word) || 
-                    post?.post?.embed_description?.includes(word)
-                ) {
-                    filteredPosts.push(posts.splice(i, 1));
-                    i--;
-                    console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
-                    break;
-                }
-
-                
-            }
-
-            // If the keyword is contained by any other word
-            else if (word[0] == '*') {
-                word = word.substring(1,word.length);
-                if ( 
-                    post?.post?.name?.includes(word) || 
-                    post?.post?.body?.includes(word) || 
-                    post?.post?.embed_description?.includes(word)
-                ) {
-                    filteredPosts.push(posts.splice(i, 1));
-                    i--;
-                    console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
-                    break;
-                }
-
-                
-            }
+        // Loop over posts and check for any keywords that should be filtered out
+        for(let i:number=0; i<posts.length; i++) {
+            let post:PostView = posts[i];
             
-            // Keyword is contained within the post (case-insensitive)
-            else {
-                word = word + ' ';
-                if ( 
-                    post?.post?.name?.toLowerCase().includes(word.toLowerCase()) || 
-                    post?.post?.body?.toLowerCase().includes(word.toLowerCase()) || 
-                    post?.post?.embed_description?.toLowerCase().includes(word.toLowerCase())
-                ) {
-                    filteredPosts.push(posts.splice(i, 1));
-                    i--;
-                    console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
-                    break;
-                }
-            }
+            for (let j:number=0; j<filterWords.length; j++) {
+                let word:string = filterWords[j];
 
+                // Keywords starting with a carat should be evaluated as "startsWith"
+                if (word[0] == '^') {
+                    word = word.substring(1,word.length) + ' ';
+                    if ( 
+                        post?.post?.name?.toLowerCase().startsWith(word.toLowerCase()) || 
+                        post?.post?.body?.toLowerCase().startsWith(word.toLowerCase()) || 
+                        post?.post?.embed_description?.toLowerCase().startsWith(word.toLowerCase())
+                    ) {
+                        
+                        filteredPosts.push(posts.splice(i, 1));
+                        i--;
+                        console.log(`Filtering post '${post.post.name}' because it starts with the keyword '${word}'`);
+                        break;
+                    }
+
+                }
+                // Keywords starting with exclamation mark should be evaluated as case-sensitive
+                else if (word[0] == '!') {
+                    word = word.substring(1,word.length) + ' ';
+                    if ( 
+                        post?.post?.name?.includes(word) || 
+                        post?.post?.body?.includes(word) || 
+                        post?.post?.embed_description?.includes(word)
+                    ) {
+                        filteredPosts.push(posts.splice(i, 1));
+                        i--;
+                        console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
+                        break;
+                    }
+
+                    
+                }
+
+                // If the keyword is contained by any other word
+                else if (word[0] == '*') {
+                    word = word.substring(1,word.length);
+                    if ( 
+                        post?.post?.name?.includes(word) || 
+                        post?.post?.body?.includes(word) || 
+                        post?.post?.embed_description?.includes(word)
+                    ) {
+                        filteredPosts.push(posts.splice(i, 1));
+                        i--;
+                        console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
+                        break;
+                    }
+
+                    
+                }
+                
+                // Keyword is contained within the post (case-insensitive)
+                else {
+                    word = word + ' ';
+                    if ( 
+                        post?.post?.name?.toLowerCase().includes(word.toLowerCase()) || 
+                        post?.post?.body?.toLowerCase().includes(word.toLowerCase()) || 
+                        post?.post?.embed_description?.toLowerCase().includes(word.toLowerCase())
+                    ) {
+                        filteredPosts.push(posts.splice(i, 1));
+                        i--;
+                        console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
+                        break;
+                    }
+                }
+
+            }
         }
+        console.log(filteredPosts);
+        
+        return { posts: posts };
     }
-    console.log(filteredPosts);
-    
-    return { posts: posts };
+    catch (err) {
+        console.log("filterKeywords():  An error has occurred. Returning unfiltered posts list");
+        console.log(err);
+        return { posts: posts}
+    }
 
 }
 
 // Used in post fetch loader to detect and "roll up" crossposts
 export const findCrossposts = function (posts:PostView[]):GetPostsResponse {
-    let uniquePosts: PostView[] = [];
+    try {
+        let uniquePosts: PostView[] = [];
 
-    const isCrosspost = function(post:PostView, otherPost:PostView):boolean {    
-        if ( 
-                post.post.id != otherPost.post.id && 
-                !post.post.deleted && !otherPost.post.deleted &&
-                !post.post.removed && !otherPost.post.removed &&
-                ( 
-                    (post.post.url && otherPost.post.url && post.post.url == otherPost.post.url) || 
-                    post.post.name.toLowerCase().trim() == otherPost.post.name.toLowerCase().trim()
-                ) 
-        ){
-            return true;
-        }
-        return false;
-    }
-        
-    // Loop over each post
-    for (let i:number=0; i<posts.length; i++) {
-        let post = {...posts[i]};
-        post.cross_posts = [] as PostView[];
-        
-        // Loop over each post again to find cross posts.
-        for (let j:number=0; j < posts.length; j++) {
-            let otherPost = posts[j];
-
-            if (isCrosspost(post, otherPost)) {
-                post.cross_posts.push(posts.splice(j, 1)[0]);
-                // Repeat the loop until no more cross posts are found.
-                j=0;
+        const isCrosspost = function(post:PostView, otherPost:PostView):boolean {    
+            if ( 
+                    post.post.id != otherPost.post.id && 
+                    !post.post.deleted && !otherPost.post.deleted &&
+                    !post.post.removed && !otherPost.post.removed &&
+                    ( 
+                        (post.post.url && otherPost.post.url && post.post.url == otherPost.post.url) || 
+                        post.post.name.toLowerCase().trim() == otherPost.post.name.toLowerCase().trim()
+                    ) 
+            ){
+                return true;
             }
+            return false;
         }
-        
-        // Set oldest cross post as parent and remove the defined parent from the list of cross posts.
-        if (post.cross_posts.length >0) {
-
-            // Build a new PostView object to append after massaging the cross posts
-            let oldestCrossPost:PostView = {...post}
             
-            // Loop over the cross posts, find the oldest one, and set that as the parent.
-            for (let j:number=0; j<post.cross_posts.length; j++) {
-                if (new Date(post.post.published) > new Date(post.cross_posts[j].post.published)) {
-                    oldestCrossPost = {...post.cross_posts[j]}
-                    
-                    oldestCrossPost.cross_posts = [...post.cross_posts]
-                    
-                    oldestCrossPost.cross_posts.push({...post})
+        // Loop over each post
+        for (let i:number=0; i<posts.length; i++) {
+            let post = {...posts[i]};
+            post.cross_posts = [] as PostView[];
+            
+            // Loop over each post again to find cross posts.
+            for (let j:number=0; j < posts.length; j++) {
+                let otherPost = posts[j];
+
+                if (isCrosspost(post, otherPost)) {
+                    post.cross_posts.push(posts.splice(j, 1)[0]);
+                    // Repeat the loop until no more cross posts are found.
+                    j=0;
                 }
             }
+            
+            // Set oldest cross post as parent and remove the defined parent from the list of cross posts.
+            if (post.cross_posts.length >0) {
 
-            // Finally, remove the cross post entry that matches the parent.
-            if (oldestCrossPost.cross_posts) {
-                for (let j:number=0; j<oldestCrossPost.cross_posts.length; j++) {
-                    if (oldestCrossPost.post.id == oldestCrossPost.cross_posts[j].post.id) {
-                        oldestCrossPost.cross_posts.splice(j,1);
+                // Build a new PostView object to append after massaging the cross posts
+                let oldestCrossPost:PostView = {...post}
+                
+                // Loop over the cross posts, find the oldest one, and set that as the parent.
+                for (let j:number=0; j<post.cross_posts.length; j++) {
+                    if (new Date(post.post.published) > new Date(post.cross_posts[j].post.published)) {
+                        oldestCrossPost = {...post.cross_posts[j]}
+                        
+                        oldestCrossPost.cross_posts = [...post.cross_posts]
+                        
+                        oldestCrossPost.cross_posts.push({...post})
                     }
                 }
+
+                // Finally, remove the cross post entry that matches the parent.
+                if (oldestCrossPost.cross_posts) {
+                    for (let j:number=0; j<oldestCrossPost.cross_posts.length; j++) {
+                        if (oldestCrossPost.post.id == oldestCrossPost.cross_posts[j].post.id) {
+                            oldestCrossPost.cross_posts.splice(j,1);
+                        }
+                    }
+                }
+                // Add our custom Post object to the return array
+                uniquePosts.push(oldestCrossPost);
             }
-            // Add our custom Post object to the return array
-            uniquePosts.push(oldestCrossPost);
+            // If no cross posts were found for this post, add it as a unique post.
+            else {
+                uniquePosts.push(post)
+            }
         }
-        // If no cross posts were found for this post, add it as a unique post.
-        else {
-            uniquePosts.push(post)
+
+        return { posts: uniquePosts };
+    }
+    catch (err) {
+        console.log("findCrossposts():  An error has occurred. Returning unfiltered posts list");
+        console.log(err);
+        return { posts: posts }
+    }
+}
+
+//Used in post fetch loader to add MBFC report info to post objects (if found)
+export const addMBFCResults = function (posts:PostView[]):GetPostsResponse {
+    try {
+        for (let i:number=0; i<posts.length; i++) {
+            let post = posts[i];
+
+            if (post.post?.url) {
+                post.mbfc = MBFCLookup(post.post.url);
+            }
+
         }
     }
+    catch (err) {
+        console.log("addMBFCResults():  An error has occurred. Returning original posts list");
+        console.log(err);
+    }
 
-    return { posts: uniquePosts };
+    return {posts: posts};
+
 }

@@ -5,7 +5,6 @@
     import { userSettings } from '$lib/settings.js'
     import type { PostView } from 'lemmy-js-client'
     import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
-    import { fly } from 'svelte/transition'
 
     export let posts: PostView[]
 </script>
@@ -26,17 +25,12 @@
         "
     >
     {#each posts as post, index (post.post.id)}
-        {#if !($userSettings.hidePosts.deleted && post.post.deleted) && !($userSettings.hidePosts.removed && post.post.removed)}
-            <div
-                in:fly={{
-                    y: -8,
-                    duration: 300,
-                    opacity: 0,
-                    delay: index < 4 ? index * 100 : 0,
-                }}
-            >
-                <Post post={post}/>
-            </div>
+        {#if 
+                !($userSettings.hidePosts.deleted && post.post.deleted) && 
+                !($userSettings.hidePosts.removed && post.post.removed) &&
+                !($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility')
+        }
+            <Post post={post} displayType="feed"/>
         {/if}
     {/each}
     </div>

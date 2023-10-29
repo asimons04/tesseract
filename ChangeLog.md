@@ -23,20 +23,30 @@ All major/minor changes between releases will be documented here.
 ## 1.2.8.98
 ### MBFC Module Updates
 - Added ability for authenticated users to report a post from the MBFC result window. Report template will contain an abridged version of the MBFC results.
+
 - Created user option to hide posts that are from "Low Credibility" sources.
-- As always, thank you `worldnews@lemmy [dot] [machine learning]` for being a complete dumpster fire of shit sources. You've been really helpful in testing the functionality and efficacy of this module.
+  - Applies to main feed and community feed.  Intentionally not applied to user profile post lists, though you will still see the "Low Credibility" badge.
+
+- Moved lookup process higher up in the post flow so that MBFC results are attached to post objects, pre-render, for filtering purposes.
+  - Applied to main feed and community feed at `/c/[name]`
+  - If MBFC data is not provided in feed data for posts, will fallback to direct lookup on a post-by-post basis (e.g. posts at `/u/[name]`)
+
+- As always, thank you `worldnews@lemmy [dot] [machine learning]` for being a complete dumpster fire of shit sources. You've been really helpful in testing the functionality, efficacy, and necessity of this module.
 
 
 ### Bugfixes
 - Added rule to image proxy handler to exempt image URLs that are already re-written for the proxy.
+- Removed transition animation on posts in feed.  Caused too many problems with restoring the feed position on return and provided too little benefit.
+
 
 ### UI Tweaks
 - Forced posts into compact view in report modals (similar to remove modals for mods/admins)
 - Put post/comment content inside a `pointer-events-none` classed div to avoid any accidental clicks into potentially problematic content.
 - Increased icon size in modal titles
 - Restored Hide/Delete post options for regular users since apparently they _can_ see those posts.
-
-
+- Reduced padding for compact posts
+- Added crossposts list to compact posts
+- Moved compact post renderer to dedicated component
 
 
 ## 1.2.8.97

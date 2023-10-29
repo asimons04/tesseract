@@ -1,6 +1,6 @@
 import type { GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
-import { findCrossposts, filterKeywords } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, findCrossposts, filterKeywords } from '$lib/components/lemmy/post/helpers'
 import { getClient, site } from '$lib/lemmy.js'
 import { get } from 'svelte/store'
 import { error } from '@sveltejs/kit'
@@ -26,12 +26,17 @@ export async function load({ url, fetch }) {
         // Fetch site data
         let siteData = await getClient(undefined, fetch).getSite({});
         site.set(siteData)
+        
+        // Apply MBFC data object to post
+        posts = addMBFCResults(posts.posts);
 
         // Filter the posts for keywords
         posts = filterKeywords(posts.posts);
 
         // Roll up any duplicate posts/crossposts
         posts = findCrossposts(posts.posts);
+
+        
         
         // Return the data to the frontend
         return {

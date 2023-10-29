@@ -9,14 +9,11 @@
     import { userSettings } from '$lib/settings.js'
 
     
-
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
-    import Sort from '$lib/components/lemmy/Sort.svelte'
+    
    
     import {
         ArrowSmallRight,
@@ -41,7 +38,8 @@
             }
         }
         else {
-            window.scrollTo(0,0);
+            // Use default scroll handling
+            //window.scrollTo(0,0);
         }
     });
     
@@ -64,6 +62,7 @@
                 <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
                     on:click={() => {
                         goto('/', {invalidateAll: true});
+                        window.scrollTo(0,0);
                     }}
                 >
                     <Icon src={Home} width={24} />

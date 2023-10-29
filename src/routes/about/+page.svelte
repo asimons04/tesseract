@@ -31,8 +31,8 @@
        
     <h2 class="text-2xl font-bold leading-8 ">Features Unique to Tesseract</h2>
     
-    <ul class="list-disc pl-4 my-3">
-        <li>
+    <ul class="list-disc pl-4 my-3 text-base">
+        <li class="mt-2">
             <p class="font-bold">Full media support in feed and posts</p>
             <ul class="list-disc pl-4">
                 <li>YouTube/Invidious/Piped</li>
@@ -45,7 +45,7 @@
             </ul>
         </li>
 
-        <li>
+        <li class="mt-2">
             <p class="font-bold">Enhanced Community Discovery</p>
             <ul class="list-disc pl-4">
                 <li>Browse the communties of other instances and seamlessly load and subscribe to them.  
@@ -56,7 +56,7 @@
             </ul>
         </li>
 
-        <li>
+        <li class="mt-2">
             <p class="font-bold">Image/Media Proxying and Caching</p>
             <p>
                 Privacy conscious users have long requested media be proxied through Lemmy.  
@@ -72,7 +72,7 @@
             </ul>
         </li>
 
-        <li>
+        <li class="mt-2">
             <p class="font-bold">Fediseer Integration</p>
             <ul class="list-disc pl-4">
                 <li>See endorsements, hesitations, and censures given to the instances you're interacting with.</li>
@@ -81,7 +81,28 @@
             
         </li>
 
-        <li>
+        <li class="mt-2">
+            <p class="font-bold">Media Bias Fact Check (MBFC) Integration</p>
+            <p>
+                Posts with URLs can have a MBFC badge in the corner which will lookup the publisher in the MBFC database and return their bias and credibility information.  
+                The MBFC results are also integrated into the reporting and moderation tools.
+            </p>
+            <p class="font-bold text-sm mt-2">For Users</p>
+            <ul class="list-disc pl-4 text-sm">
+                <li>Easily see where the news stories in your feed are coming from and what their sources' credibility ratings are.</li>
+                <li>Optionally, automatically hide posts that link to non-credible sources.</li>
+                <li>Seamlessly report posts that are from non-credible sources while including a copy of the MBFC results.</li>
+            </ul>
+
+            <p class="font-bold text-sm mt-2">For Admins/Mods</p>
+            <ul class="list-disc pl-4 text-sm">
+                <li>Quickly and easily identify and squash posts from disreputable sources.</li>
+                <li>MBFC is integrated into the mod tooling allowing you to populate removal reasons / replies with the results of a MBFC lookup.</li>
+                <li>Perfect for those who are moderating a news or political community.</li>
+            </ul>
+        </li>
+
+        <li class="mt-2">
             <p class="font-bold">Distinguished and Sticky Comments</p>
             <p>
                 Mods/Admins can distinguish and sticky comments.  Comments that are distinguished will always display at the top of the comment list 

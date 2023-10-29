@@ -1,6 +1,6 @@
 import type { ListingType, SortType } from 'lemmy-js-client'
 
-import { findCrossposts, filterKeywords } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, filterKeywords } from '$lib/components/lemmy/post/helpers'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
@@ -22,6 +22,9 @@ export async function load(req: any) {
             sort: sort,
             auth: get(profile)?.jwt,
         });
+        
+        // Apply MBFC data object to post
+        posts = addMBFCResults(posts.posts);
         
         // Filter the posts for keywords
         posts = filterKeywords(posts.posts);
