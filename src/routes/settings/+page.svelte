@@ -25,7 +25,7 @@
         BugAnt,
         ArrowTopRightOnSquare,
         ChartBar,
-        CheckCircle,
+        CheckBadge,
         CodeBracketSquare,
         CodeBracket,
         Cog6Tooth,
@@ -636,7 +636,7 @@
                     <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
-                                <Icon src={CheckCircle} mini width={16}/>
+                                <Icon src={CheckBadge} mini width={16}/>
                                 Media Bias Fact Check Badges
                             </p>
                             <p class="text-xs font-normal">Show badges on posts with URLs to check them against the Media Bias Fact Check dataset.</p>
@@ -839,18 +839,26 @@
                 <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
 
                     <!--- Hide Low Credibility Posts --->
-                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.uiState.MBFCBadges}>
+                    <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
-                                <Icon src={Trash} mini width={16}/>
+                                <Icon src={ExclamationTriangle} mini width={16}/>
                                 Hide Low Credibility Posts
                             </p>
-                            <p class="text-xs font-normal">Hide posts that link to low-credible sources as reported by Media Bias Fact Check.</p>
+                            <p class="text-xs font-normal">Hide posts that link to low credibility sources as reported by Media Bias Fact Check.</p>
+                            <p class="text-xs font-normal" class:hidden={$userSettings.uiState.MBFCBadges}>
+                                You must 
+                                <a class="text-blue-500 hover:underline max-w-full cursor-pointer" title="Enable MBFC badges on posts" on:click={()=> {$userSettings.uiState.MBFCBadges = true}}>
+                                    enable MBFC badges
+                                </a>
+                                to use this feature.
+                            </p>
                         </div>
                         
                         <div class="mx-auto"/>
-
-                        <Switch bind:enabled={$userSettings.hidePosts.MBFCLowCredibility} />
+                        {#if $userSettings.uiState.MBFCBadges}
+                            <Switch bind:enabled={$userSettings.hidePosts.MBFCLowCredibility} />
+                        {/if}
                     </div>
 
                     <!--- Hide Deleted Posts --->

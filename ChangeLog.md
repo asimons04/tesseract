@@ -24,7 +24,7 @@ All major/minor changes between releases will be documented here.
 ### MBFC Module Updates
 - Added ability for authenticated users to report a post from the MBFC result window. Report template will contain an abridged version of the MBFC results.
 - Created user option to hide posts that are from "Low Credibility" sources.
-- As always, thank you worldnews@lemmy.ml for being a complete dumpster fire of shit sources. You've been really helpful in testing this module.
+- As always, thank you `worldnews@lemmy [dot] [machine learning]` for being a complete dumpster fire of shit sources. You've been really helpful in testing the functionality and efficacy of this module.
 
 
 ### Bugfixes
