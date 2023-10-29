@@ -36,7 +36,7 @@ export function imageProxyURL(url:string, size:number|undefined = undefined, for
     if (url.startsWith('blob:')) return url;
 
     // Don't proxy images that are already going through the proxy
-    if (url.includes('/image_proxy/')) return url;
+    if (url.includes(`${new URL(window.location.href).origin}/image_proxy/`)) return url;
 
     // Build the image proxy URL to return
     try {

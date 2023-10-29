@@ -11,7 +11,7 @@
     } from './types'
     import MBFCData from '$lib/MBFC/data/data.json'
 
-    import { amMod, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation.js'
+    import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
     import { profile } from '$lib/auth.js'
     
     import Badge from '$lib/components/ui/Badge.svelte'
@@ -27,6 +27,7 @@
         ExclamationCircle,
         ExclamationTriangle,
         Fire,
+        Flag,
         QuestionMarkCircle,
         ShieldExclamation,
         Trash
@@ -140,9 +141,38 @@
                 template += `\nFull Report: ${results.url}`
             }
         }
-
+        
         return template;
+    }
 
+    function generateReportPreset():string {
+        let template:string = "Disreputable source";
+        if (post.post.url) {
+            template += ` -- Source: ${new URL(post.post.url).host}`
+        }
+        
+        if (results) {
+            if (results.credibility) {
+                template += ` -- Credibility: ${results.credibility}`
+            }
+
+            if (results.reporting) {
+                template += ` -- Factual Reporting: ${results.reporting}`
+            }
+
+            if (results.questionable?.length > 0) {
+                template += ` -- Reasoning: `
+                for (let i:number=0; i<results.questionable.length; i++) {
+                    template += `${results.questionable[i]}, `   
+                }
+            }
+
+            if (results.url) {
+                template += ` -- Full Report: ${results.url}`
+            }
+        }
+        
+        return template;
     }
 
     if (post?.post?.url) {
@@ -312,6 +342,7 @@
             
             </div>
             
+            <!--Full MBFC Report Button--->
             {#if results?.url}
                 <hr class="mt-1"/>
                 
@@ -328,7 +359,7 @@
                     <div class="mx-auto"/>
                     
                     
-                    <Button color="tertiary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
+                    <Button color="secondary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
                         <Icon src={ClipboardDocumentCheck} mini size="16"/>
                         <span class="hidden md:block">Full MBFC Report</span>
                     </Button>
@@ -336,6 +367,36 @@
                 </div>
             {/if}
             
+
+            <!--- User Report Post--->
+            {#if !post.post.removed && !post.post.deleted && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
+                <hr class="mt-1"/>
+                <div class="flex flex-row items-center gap-2">
+                    <div class="flex flex-col">
+                        <p class="text-sm font-bold flex flex-row gap-2">
+                            <Icon src={Flag} mini width={16}/>
+                            Report Post
+                        </p>
+                        
+                        <p class="text-xs font-normal">
+                            If you feel this post is from a non-credible source, submit a report to the community moderators that includes
+                            an abridged copy of this MBFC result.
+                        </p>
+                    </div>
+                    
+                    <div class="mx-auto"/>
+                    
+                    <Button color="danger" size="sm" on:click={() => {
+                        open = false;
+                        report(post, generateReportPreset())
+                    }}>
+                        <Icon src={Flag} size="16" mini />
+                            <span class="hidden md:block">Report</span>
+                    </Button> 
+                </div>
+            {/if}
+
+            <!--- Moderator Purge/Remove Post --->
             {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user)) && !post.post.removed}
                 <hr class="mt-1"/>
                 <div class="flex flex-row items-center gap-2">

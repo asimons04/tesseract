@@ -20,6 +20,10 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.98
+### MBFC Module Updates
+- Added ability for authenticated users to report a post from the MBFC result window. Report template will contain an abridged version of the MBFC results.
+
 
 ## 1.2.8.97
 ### UI Tweaks

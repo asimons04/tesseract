@@ -45,10 +45,7 @@
         if (!item) return `no template`
 
         return removalTemplate($userSettings.moderation.removalReasonPreset, {
-            communityLink: `!${fullCommunityName(
-                item!.community.name,
-                item!.community.actor_id
-            )}`,
+            communityLink: `!${fullCommunityName(item!.community.name, item!.community.actor_id)}`,
             postTitle: item.post.name,
             reason: reason,
             username: item.creator.name,
@@ -221,20 +218,23 @@
                     {removed ? 'Restore' : 'Remove'}
                 {/if}
             </Button>
+            
+            <div class="pointer-events-none list-none">
+                {#if isCommentView(item)}
+                    <Comment
+                        node={{
+                            children: [],
+                            comment_view: item,
+                            depth: 1,
+                        }}
+                        postId={item.post.id}
+                        actions={false}
+                    />
+                {:else if isPostView(item)}
+                    <Post actions={false} post={item} forceCompact={true}/>
+                {/if}
+            </div>
 
-            {#if isCommentView(item)}
-                <Comment
-                    node={{
-                        children: [],
-                        comment_view: item,
-                        depth: 1,
-                    }}
-                    postId={item.post.id}
-                    actions={false}
-                />
-            {:else if isPostView(item)}
-                <Post actions={false} post={item} forceCompact={true}/>
-            {/if}
         </form>
     {/if}
 </Modal>

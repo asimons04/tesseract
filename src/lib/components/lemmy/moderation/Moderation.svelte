@@ -9,10 +9,11 @@
     <ReportModal
       bind:open={$modals.reporting.open}
       item={$modals.reporting.item}
-      reason{$modals.reporting.reason}
+      reason={$modals.reporting.reason}
     />
   {/await}
 {/if}
+
 {#if $modals.removing.open}
   {#await import('$lib/components/lemmy/moderation/RemoveModal.svelte') then { default: RemoveModal }}
     <RemoveModal

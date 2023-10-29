@@ -42,7 +42,7 @@
                     <div class="flex flex-row max-w-full">
                         <h1 class="flex flex-row items-center font-bold text-xl gap-2 w-fit">
                             {#if icon} 
-                                <Icon src={icon} mini width={24}/>
+                                <Icon src={icon} mini width={28}/>
                             {/if}
                             {title}
                         </h1>

@@ -18,13 +18,14 @@
 
   export let open: boolean
   export let item: PostView | CommentView | undefined = undefined
+  export let reason = ''
 
   const isComment = (item: PostView | CommentView): item is CommentView => 'comment' in item
 
   const isPost = (item: PostView | CommentView): item is PostView => !isComment(item)
 
   let loading = false
-  let reason = ''
+  
 
   async function report() {
     if (!item || !$profile?.jwt || reason == '') return
@@ -55,7 +56,7 @@
 
     loading = false
   }
-
+/*
   const resetText = () => (reason = '')
 
   $: {
@@ -63,13 +64,26 @@
       resetText()
     }
   }
+*/
 </script>
 
 <Modal bind:open title="Report Submission" icon={Flag}>
   
     <form class="flex flex-col gap-4" on:submit|preventDefault={report}>
         {#if item}
-            <span class="text-sm">Reporting this submission</span>
+            <div class="flex flex-col gap-4 w-full">
+                <span class="text-sm">Reporting this submission to the moderators of {item.community?.name}@{new URL(item.community?.actor_id).host}</span>
+                <TextArea
+                    required
+                    rows={3}
+                    label="Reason"
+                    bind:value={reason}
+                />
+                <Button submit {loading} disabled={loading} color="primary" size="lg">
+                    Submit
+                </Button>
+            </div>
+
             <div class="pointer-events-none list-none">
                 {#if isComment(item)}
                     <Comment
@@ -83,18 +97,10 @@
                         postId={item.post.id}
                     />
                 {:else if isPost(item)}
-                    <Post actions={false} post={item} />
+                    <Post actions={false} post={item} forceCompact={true}/>
                 {/if}
             </div>
         {/if}
-        <TextArea
-            required
-            rows={3}
-            label="Reason"
-            bind:value={reason}
-        />
-        <Button submit {loading} disabled={loading} color="primary" size="lg">
-            Submit
-        </Button>
+        
     </form>
 </Modal>
