@@ -35,21 +35,14 @@
             controls playsinline {muted} {autoplay}  {loop}
         >
             <source src="{source}" type="{
-                new URL(source).pathname.endsWith('mp4') 
+                new URL(source).pathname.endsWith('mp4') || new URL(source).pathname.endsWith('m4v')
                     ? 'video/mp4' 
                     : new URL(source).pathname.endsWith('webm') 
                         ? "video/webm" 
-                        : ''
+                        : new URL(source).pathname.endsWith('mov') 
+                            ? "video/quicktime"
+                            : ''
             }" />
         </video>
     </div>
 </div>
-<!---
-bind:this={videoElement}
-on:loadedmetadata={()=>{ 
-    if (displayType =='post') {
-        videoElement.muted = false;
-    }
-}}    
-    
-            --->

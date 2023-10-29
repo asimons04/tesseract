@@ -27,11 +27,11 @@
 </script>
 
 
-<Card class="bg-white flex flex-col w-full p-2 gap-2.5 " id={post.post.id}>
+<Card class="bg-white flex flex-col w-full p-2 gap-0 " id={post.post.id}>
 
     <!--- Post Metadata, Title, and Thumbnail  --->
     <div class="flex flex-row w-full">
-        <div class="flex flex-col gap-2.5
+        <div class="flex flex-col gap-0
             { (post.post.thumbnail_url || isImage(post.post.url))
                 ? 'w-[80%]'
                 : 'w-full'
@@ -59,8 +59,8 @@
         
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
-        <div class="flex-none w-[20%] h-auto ml-4 mt-auto mb-auto">
-            <div class="grid justify-items-center">
+        <div class="flex-none w-[20%] h-auto pl-2 mt-auto mb-auto">
+            <div class="grid {expandPreviewText ? 'justify-items-start' : 'justify-items-center'}">
                 <!--- Expand the post in place when clicking thumbnail--->
                 <div 
                     role="button"

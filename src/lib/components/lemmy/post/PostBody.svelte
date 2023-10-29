@@ -24,7 +24,7 @@
 
 {#if (post.post.body || post.post.embed_description)}
     <!--<div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2" class:hidden={displayType=='feed' && post.post.nsfw}>-->
-    <div class="text-sm rounded-md p-2" class:hidden={displayType=='feed' && post.post.nsfw}>    
+    <div class="text-sm rounded-md" class:hidden={displayType=='feed' && post.post.nsfw}>    
         {#if displayType == 'post' }
             {#if post.post.body}                
                 <Markdown source={post.post.body} />
@@ -48,12 +48,12 @@
                 {#if post.post.body.length > previewLength}
                     <Button
                         color="tertiary"
-                        class="w-full !py-1"
+                        class="w-full !py-0"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
-                            const element = document.getElementById(post.post.id);
-                            if (element) scrollToTop(element);
+                            //const element = document.getElementById(post.post.id);
+                            //if (element) scrollToTop(element);
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
@@ -73,12 +73,12 @@
                 {#if post.post.embed_description.length > previewLength}
                     <Button
                         color="secondary"
-                        class="w-full !py-1"
+                        class="w-full !py-0"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
-                            const element = document.getElementById(post.post.id);
-                            if (element) scrollToTop(element);
+                            //const element = document.getElementById(post.post.id);
+                            //if (element) scrollToTop(element);
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
