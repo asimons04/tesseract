@@ -25,6 +25,7 @@ export let modals = writable<Modals>({
   reporting: {
     open: false,
     item: undefined,
+    reason: ''
   },
   removing: {
     open: false,
@@ -40,12 +41,13 @@ export let modals = writable<Modals>({
   },
 })
 
-export function report(item: SubmissionView) {
+export function report(item: SubmissionView, reason:string='') {
   modals.update((m) => ({
     ...m,
     reporting: {
       open: true,
       item: item,
+      reason: reason
     },
   }))
 }

@@ -7,8 +7,6 @@
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { imageProxyURL } from '$lib/image-proxy'
     import { postType } from './helpers'
-
-    import { MBFC_lookup } from '$lib/MBFC/client'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -24,10 +22,8 @@
         Bookmark,
         BuildingOffice,
         Icon,
-        InformationCircle,
         LockClosed,
         Megaphone,
-        Microphone,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -87,11 +83,8 @@
         data: undefined
     }
 
-    let mbfc = {
-        modal: false,
-        loading: false,
-        data: undefined
-    }
+    let credibility:string = '';
+
 </script>
 
 <Fediseer bind:open={fediseer.modal} data={fediseer.data} />
@@ -138,7 +131,7 @@
                 <!--- Media Bias Fact Check--->
                 {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     {#await import('$lib/MBFC/MBFC.svelte') then { default: MBFC }}            
-                        <MBFC post={post} />
+                        <MBFC post={post} bind:credibility />
                     {/await}
                 {/if}
 
