@@ -33,8 +33,50 @@
 
 
 
-    <!--- Post Metadata, Title, and Thumbnail  --->
+    <!--- Post Link, Body, and Thumbnail  --->
     <div class="flex flex-row w-full">
+        <!--- Thumbnail --->
+        {#if post.post.thumbnail_url || isImage(post.post.url)}
+            <div class="flex-none w-[20%] h-auto pr-2 mt-2">
+                <div class="grid justify-items-start">
+                    <!--- Expand the post in place when clicking thumbnail--->
+                    <div 
+                        role="button"
+                        title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                        class="cursor-pointer"
+                        on:click={() => {  
+                            expandCompact = !expandCompact; 
+                            const element = document.getElementById(post.post.id);
+                            if (element) scrollToTop(element);
+
+                        }}
+                    >
+                        <!--- Thumbnail for Link Post--->
+                        {#if post.post.thumbnail_url}
+                            <img
+                                src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
+                                loading="lazy"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                            />
+                        <!---Thumbnail for Image Post--->
+                        {:else}
+                            <img
+                                src="{imageProxyURL(post.post.url, 256, 'webp')}"
+                                loading="lazy"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                            />
+                        {/if}
+                
+                    
+                    </div>
+                </div>
+            </div>
+        {/if}
+        
+        
+        <!---Post body and link--->
         <div class="flex flex-col gap-0
             { (post.post.thumbnail_url || isImage(post.post.url))
                 ? 'w-[80%]'
@@ -51,57 +93,22 @@
                     <span class="text-xs">{new URL(post.post.url).host}</span>
                 </Link>
             {/if}
-
-            <PostBody post={post} displayType={displayType} previewLength={120} bind:expandPreviewText inline={!expandPreviewText}/>
+            
+            <div class="mt-1"/>
+            <PostBody post={post} displayType={displayType} previewLength={240} bind:expandPreviewText inline={!expandPreviewText}/>
 
             <!--- Crossposts --->
             <Crossposts post={post} size="xs" class="!pl-0"/>
 
         </div>
         
-        <!--- Thumbnail --->
-        {#if post.post.thumbnail_url || isImage(post.post.url)}
-        <div class="flex-none w-[20%] h-auto pl-2 mt-auto mb-auto">
-            <div class="grid {expandPreviewText ? 'justify-items-start' : 'justify-items-center'}">
-                <!--- Expand the post in place when clicking thumbnail--->
-                <div 
-                    role="button"
-                    title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                    class="cursor-pointer"
-                    on:click={() => {  
-                        expandCompact = !expandCompact; 
-                        const element = document.getElementById(post.post.id);
-                        if (element) scrollToTop(element);
-
-                    }}
-                >
-                    <!--- Thumbnail for Link Post--->
-                    {#if post.post.thumbnail_url}
-                        <img
-                            src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    <!---Thumbnail for Image Post--->
-                    {:else}
-                        <img
-                            src="{imageProxyURL(post.post.url, 256, 'webp')}"
-                            loading="lazy"
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    {/if}
-            
-                
-                </div>
-            </div>
-        </div>
-        {/if}
+        
     </div>
-
+    
+    <div class="mt-1"/>
+    
     <!--- Post Action Bar--->
-    <div class="flex flex-row w-full">
+    <div class="flex flex-row w-full mt-1">
         {#if actions}
             <div class="w-full h-full grid items-end">
                 <PostActions 

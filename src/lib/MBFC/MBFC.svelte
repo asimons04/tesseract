@@ -201,7 +201,7 @@
                     <div class="flex flex-col">
                         <p class="text-sm font-bold flex flex-row gap-2">
                             <Icon src={CheckCircle} mini width={16}/>
-                            Full Report
+                            Full Results
                         </p>
                         <p class="text-xs font-normal">Read the full report for {results.name} at Media Bias Fact Check.</p>
                     </div>
@@ -209,9 +209,9 @@
                     <div class="mx-auto"/>
                     
                     
-                    <Button color="secondary" size="sm" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
+                    <Button color="primary" size="md" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
                         <Icon src={ClipboardDocumentCheck} mini size="16"/>
-                        <span class="hidden md:block">Full MBFC Report</span>
+                        <span class="hidden md:block">Full Results</span>
                     </Button>
                     
                 </div>
@@ -236,7 +236,7 @@
                     
                     <div class="mx-auto"/>
                     
-                    <Button color="danger" size="sm" on:click={() => {
+                    <Button color="warning" size="md" on:click={() => {
                         open = false;
                         report(post, generateReportPreset(post, results))
                     }}>
@@ -263,7 +263,7 @@
                     
                     <div class="mx-auto"/>
                     
-                    <Button color="danger" size="sm" on:click={() => {
+                    <Button color="danger" size="md" on:click={() => {
                         open = false;
                         remove(post, true, generateModerationPreset(post, results))
                     }}>
@@ -272,7 +272,7 @@
                     </Button>   
 
 
-                    <Button color="danger" size="sm" on:click={() => {
+                    <Button color="danger" size="md" on:click={() => {
                         open = false;
                         remove(post, false, generateModerationPreset(post, results))
                     }}>

@@ -29,6 +29,9 @@
     danger:
       'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',
 
+    warning:
+      'border border-amber-500 bg-amber-500 hover:text-amber-500 hover:bg-transparent text-black',
+
     ghost: `border border-slate-200 dark:border-zinc-800 bg-transparent
         hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 dark:text-zinc-400 hover:text-inherit
         hover:dark:text-inherit`,
