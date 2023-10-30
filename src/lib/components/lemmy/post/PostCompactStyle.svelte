@@ -77,7 +77,7 @@
         
         
         <!---Post body and link--->
-        <div class="flex flex-col gap-0 w-full">
+        <div class="flex flex-col gap-0 {post.post.thumbnail_url || isImage(post.post.url) ? 'w-[80%]' : 'w-full'}">
             {#if post.post.url && !isImage(post.post.url)}
                 <Link
                     href={post.post.url}
