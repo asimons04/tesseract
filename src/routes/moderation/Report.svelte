@@ -114,10 +114,21 @@
             // Remove post if "remove" option selected
             if (!resolved && actions.remove && isPostReport(item)) {
                 try {
+                    await getClient().removePost({
+                        auth: $profile.jwt,
+                        post_id: item.post.id,
+                        removed: true,
+                        reason: actions.removeReason || undefined,
+                    })
 
+                    item.post.removed = true
                 }
                 catch (err) {
                     console.log(err)
+                    toast({
+                        content: "Failed to remove post.",
+                        type: 'error',
+                    })
                 }
 
             }
@@ -125,10 +136,20 @@
             // Remove comment if "remove" option selected
             if (!resolved && actions.remove && isCommentReport(item)) {
                 try {
-
+                    await getClient().removeComment({
+                        auth: $profile.jwt,
+                        comment_id: item.comment.id,
+                        removed: true,
+                        reason: actions.removeReason || undefined,
+                    })
+                    item.comment.removed = true
                 }
                 catch (err) {
                     console.log(err)
+                    toast({
+                        content: "Failed to remove comment.",
+                        type: 'error',
+                    })
                 }
 
             }
