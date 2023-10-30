@@ -37,7 +37,7 @@
     <div class="flex flex-row w-full">
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
-            <div class="flex-none w-[20%] h-auto pr-2 mt-2">
+            <div class="flex-none w-[20%] md:w-[15%] h-auto pr-2 mt-2">
                 <div class="grid justify-items-start">
                     <!--- Expand the post in place when clicking thumbnail--->
                     <div 
@@ -77,12 +77,7 @@
         
         
         <!---Post body and link--->
-        <div class="flex flex-col gap-0
-            { (post.post.thumbnail_url || isImage(post.post.url))
-                ? 'w-[80%]'
-                : 'w-full'
-            }
-        ">
+        <div class="flex flex-col gap-0 w-full">
             {#if post.post.url && !isImage(post.post.url)}
                 <Link
                     href={post.post.url}

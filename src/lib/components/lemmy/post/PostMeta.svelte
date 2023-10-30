@@ -92,6 +92,7 @@
 
 <div class="flex flex-col gap-1.5 grow">
     <div class="flex flex-col gap-1">
+        
         <span class="flex flex-row gap-2 text-sm items-center">
             {#if community}
                 <Avatar url={community.icon} width={32} alt={community.name} />
@@ -102,24 +103,29 @@
                     <CommunityLink {community} />
                 {/if}
                 
-                <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
+                <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-2 flex-wrap">
                     
                     {#if user}
-                        <div class="mr-0.5 flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
+                        <div class="flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
                             <span class="hidden md:block">Posted by&nbsp;</span>
                             <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
                         </div>
                     {/if}
                 
-                    <span>
+                    
+                    
+                    
+                    <span class="flex flex-row gap-1">
+                        <span class="pl-1 hidden sm:block">•</span>
                         <RelativeDate date={published} />
+                        
                         {#if upvotes != undefined && downvotes != undefined}
                             <span>•</span>
-                            <span>
-                                {Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%
-                            </span>
+                            <span>{Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%</span>
                         {/if}
                     </span>
+
+                    
                 </span>
             </div>
             
