@@ -264,7 +264,7 @@
             />
         {/if}
         
-        {#if $$slots.actions}
+        {#if $$slots.actions || previewButton}
             <!---Bottom Toolbar (edit/preview button, submit button--->
             <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center
                 {$$props.disabled
