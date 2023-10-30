@@ -83,8 +83,7 @@
 {#if href}
     <a
         {href}
-        target="{newtab ? '_blank' : '_self'}"
-        on:click
+        target="{newtab ? '_blank' : undefined}"
         {...$$restProps}
         title={title}
         class:hidden={hidden}

@@ -23,6 +23,7 @@
     export let forceCompact:boolean = false;
     export let expandCompact: boolean;
     export let expandPreviewText:boolean 
+    export let disablePostLinks:boolean = false
 
 </script>
 
@@ -34,7 +35,7 @@
 
 
     <!--- Post Link, Body, and Thumbnail  --->
-    <div class="flex flex-row w-full">
+    <div class="flex flex-row w-full {disablePostLinks ? 'pointer-events-none list-none' : ''}">
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
             <div class="flex-none w-[20%] md:w-[15%] h-auto pr-2 mt-2">

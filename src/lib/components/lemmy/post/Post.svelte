@@ -12,7 +12,8 @@
     export let autoplay:boolean|undefined = undefined;
     export let displayType: PostDisplayType = "feed"
     export let forceCompact:boolean = false;
-    
+    export let disablePostLinks:boolean = false
+
     let expandCompact: boolean;
     let expandPreviewText:boolean
    
@@ -27,7 +28,8 @@
         actions={actions} 
         bind:expandCompact={expandCompact} 
         bind:expandPreviewText 
-        displayType={displayType} 
+        displayType={displayType}
+        {disablePostLinks}
     />
 
 

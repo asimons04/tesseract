@@ -20,6 +20,20 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+## 1.2.8.99
+### Bugfixes
+- Fixed same/newtab behaviour in button elements. Sometimes they'd transparently `invalidateAll` when they shouldn't.
+- Fixed bounding issue when expanding long-format post body in compact post mode.
+
+
+### Moderation
+- Disabled post links and body content when viewing reports. Title and action buttons are still functional, but not the post link or any content in the post body. Similar to how posts are rendered "unclickable" in report and remove modals.
+
+- Removed "Cards/Compact" switcher in Report management panel. Posts are intentionally forced into compact view and this button was now useless.
+
+- When resolving reports, added ability for moderator to reply to reporter via DM with the resolution.
+
+
 ## 1.2.8.98
 ### MBFC Module Updates
 - Added ability for authenticated users to report a post from the MBFC result window. Report template will contain an abridged version of the MBFC results.
