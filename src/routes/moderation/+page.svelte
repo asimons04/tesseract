@@ -82,6 +82,18 @@
                     </div>
 
                     <Report bind:item={item} />
+                    
+                    {#if item.resolver?.id}
+                        <div class="flex flex-col gap-1.5">
+                            <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
+                                Resolved by
+                            </span>
+                            
+                            <span class="font-bold">
+                                <UserLink avatar user={item.resolver} />
+                            </span>
+                        </div>
+                    {/if}
 
                 </Card>
             </div>

@@ -52,10 +52,10 @@
         banInstance: false,
         banInstanceReason: '',
         
-        replyReporter: false,
+        replyReporter: true,
         replyReporterText: '',
         replyReporterBody: '',
-        replyReporterIncludeActions: false,
+        replyReporterIncludeActions: true,
     }
 
     // Live-update the reply to the reporter based on the selected moderation options.
@@ -86,44 +86,80 @@
 
 
     async function resolve() {
-        if (!$profile?.jwt || !$profile.user) return
+        if (!$profile?.jwt || !$profile.user ||!item ) return
         resolving = true
 
         try {
-            if (isCommentReport(item)) {
-                await getClient().resolveCommentReport({
-                    auth: $profile.jwt,
-                    report_id: item.comment_report.id,
-                    resolved: !resolved,
-                })
+            
+            // Lock post if "lock" option selected.
+            if ( !resolved && actions.lock && isPostReport(item)) {
+                try {
+                    await getClient().lockPost({
+                        auth: $profile.jwt,
+                        locked: true,
+                        post_id: item.post.id,
+                    })
 
-                resolved = !resolved
+                    item.post.locked = true
 
-                toast({
-                    content: `${resolved ? 'Resolved' : 'Unresolved'} that report.`,
-                    type: 'success',
-                })
-            } 
-            else if (isPostReport(item)) {
-                await getClient().resolvePostReport({
-                    auth: $profile.jwt,
-                    report_id: item.post_report.id,
-                    resolved: !resolved,
-                })
+                } catch (err) {
+                    console.log(err)
+                    toast({
+                        content: "Failed to lock post",
+                        type: 'error',
+                    })
+                }
+            }
 
-                resolved = !resolved
-                toast({
-                    content: `${resolved ? 'Resolved' : 'Unresolved'} that report.`,
-                    type: 'success',
-                })
+            // Remove post if "remove" option selected
+            if (!resolved && actions.remove && isPostReport(item)) {
+                try {
+
+                }
+                catch (err) {
+                    console.log(err)
+                }
+
+            }
+
+            // Remove comment if "remove" option selected
+            if (!resolved && actions.remove && isCommentReport(item)) {
+                try {
+
+                }
+                catch (err) {
+                    console.log(err)
+                }
+
+            }
+
+            // Ban user from community if that is selected
+            if (!resolved && actions.banCommunity) {
+                try {
+
+                }
+                catch (err) {
+                    console.log(err)
+                }
+
+            }
+
+            // Ban user from instance if selected
+            if (!resolved && actions.banInstance) {
+                try {
+
+                }
+                catch (err) {
+                    console.log(err)
+                }
             }
 
             // Send DM to reporter if selected
-            if (actions.replyReporter) {
+            if (!resolved && actions.replyReporter) {
                 try {
                     await getClient().createPrivateMessage({
                         auth: $profile.jwt,
-                        content: actions.replyReporterHeader  + (actions.replyReporterText ?? 'Your report has been resolved'),
+                        content: actions.replyReporterBody,
                         recipient_id: item.creator.id
                     })
 
@@ -141,6 +177,44 @@
                 }
             }
 
+            
+            // Resolve Comment Report
+            if (isCommentReport(item)) {
+                await getClient().resolveCommentReport({
+                    auth: $profile.jwt,
+                    report_id: item.comment_report.id,
+                    resolved: !resolved,
+                })
+
+                resolved = !resolved
+                item.comment_report.resolved = resolved
+                
+                toast({
+                    content: `${resolved ? 'Resolved' : 'Unresolved'} that report.`,
+                    type: 'success',
+                })
+            } 
+            
+            // Resolve Post Report
+            if (isPostReport(item)) {
+                await getClient().resolvePostReport({
+                    auth: $profile.jwt,
+                    report_id: item.post_report.id,
+                    resolved: !resolved,
+                })
+
+                resolved = !resolved
+                item.post_report.resolved = resolved;
+
+                toast({
+                    content: `${resolved ? 'Resolved' : 'Unresolved'} that report.`,
+                    type: 'success',
+                })
+            }
+
+            
+
+            // Update reports object store
             const reports = await getClient().getReportCount({
                 auth: $profile?.jwt,
             })
@@ -163,6 +237,44 @@
 
 
 <div class="flex flex-col gap-2 w-full">
+    <details class="flex flex-col gap-2">
+        <summary class="text-xs font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
+            Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+        </summary>
+        
+        {#if isCommentReport(item)}
+            <CommentItem
+                comment={
+                    {
+                        ...item,
+                        subscribed: 'NotSubscribed',
+                        creator_blocked: false,
+                        saved: false,
+                        creator: item.comment_creator,
+                    }
+                }
+                actions={false}
+            />
+        {:else if isPostReport(item)}
+            <Post
+                post={
+                    {
+                        ...item,
+                        saved: false,
+                        subscribed: 'NotSubscribed',
+                        unread_comments: 0,
+                        read: false,
+                        creator_blocked: false,
+                        creator: item.post_creator,
+                    }
+                }
+                forceCompact={true}
+                disablePostLinks={true}
+                actions={false}
+            />
+        {/if}
+    </details>
+    
     <div>
         <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
             Report Details
@@ -175,17 +287,24 @@
     <!--- Moderation Actions Form--->
     <div class="flex flex-col gap-2 w-full" class:hidden={resolved}>
         
-        <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
+        <span class="mt-4 text-xs font-bold dark:text-zinc-400 text-slate-600">
             Actions to Take
         </span>
 
         {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
-            <Checkbox bind:checked={actions.lock} defaultValue={false} >Lock Post</Checkbox>
+            
+            <!--Lock Post--->
+            <span class:hidden={!isPostReport(item)} >
+                <Checkbox bind:checked={actions.lock} >Lock Post</Checkbox>
+            </span>
         
             <!--- Remove Content--->
-            <Checkbox bind:checked={actions.remove} defaultValue={false} >
-                Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-            </Checkbox>
+            <span class:hidden={ (isCommentReport(item) && item.comment?.removed) || (isPostReport(item) && item.post?.removed) }>
+                <Checkbox bind:checked={actions.remove} >
+                    Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+                </Checkbox>
+            </span>
+            
             <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.remove}>
                 <TextInput 
                     bind:value={actions.removeReason}
@@ -195,7 +314,7 @@
             </span>
             
             <!---Community Ban--->
-            <Checkbox bind:checked={actions.banCommunity}  defaultValue={false} >Ban From Community</Checkbox>
+            <Checkbox bind:checked={actions.banCommunity}>Ban From Community</Checkbox>
             <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.banCommunity}>
                 <TextInput 
                     bind:value={actions.banCommunityReason}
@@ -206,7 +325,7 @@
             
             <!--- Instance Ban (admins only)--->
             {#if $profile?.user && isAdmin($profile.user)}
-                <Checkbox bind:checked={actions.banInstance} defaultValue={false} >Ban From Instance</Checkbox>
+                <Checkbox bind:checked={actions.banInstance}>Ban From Instance</Checkbox>
                 
                 <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.banInstance}>
                     <TextInput 
@@ -219,11 +338,11 @@
 
             <!---Reply to reporter form--->
             <div class="flex flex-col gap-2 w-full">
-                <Checkbox bind:checked={actions.replyReporter} defaultValue={false} >Reply to reporter</Checkbox>
+                <Checkbox bind:checked={actions.replyReporter} >Reply to reporter</Checkbox>
                 
                 <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.replyReporter}>
                     
-                    <Checkbox bind:checked={actions.replyReporterIncludeActions} defaultValue={false} >Include Actions Taken</Checkbox>
+                    <Checkbox bind:checked={actions.replyReporterIncludeActions} >Include Actions Taken</Checkbox>
                     <TextInput 
                         bind:value={actions.replyReporterText}
                         type="text"
@@ -258,7 +377,7 @@
 
         <Button
             on:click={resolve}
-            class="{resolved ? '!text-green-500' : ''}"
+            color="primary"
             size="md"
             aria-label="{resolved ? "Unresolve" : "Resolve"}"
             title="{resolved ? "Unresolve" : "Resolve"}"
@@ -272,40 +391,3 @@
     </div>
 </div>
 
-<details class="flex flex-col gap-2">
-    <summary class="text-xs font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
-        Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-    </summary>
-    
-    {#if isCommentReport(item)}
-        <CommentItem
-            comment={
-                {
-                    ...item,
-                    subscribed: 'NotSubscribed',
-                    creator_blocked: false,
-                    saved: false,
-                    creator: item.comment_creator,
-                }
-            }
-            actions={false}
-        />
-    {:else if isPostReport(item)}
-        <Post
-            post={
-                {
-                    ...item,
-                    saved: false,
-                    subscribed: 'NotSubscribed',
-                    unread_comments: 0,
-                    read: false,
-                    creator_blocked: false,
-                    creator: item.post_creator,
-                }
-            }
-            forceCompact={true}
-            disablePostLinks={true}
-            actions={false}
-        />
-    {/if}
-</details>
