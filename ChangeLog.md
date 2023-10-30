@@ -52,11 +52,14 @@ Cleaned up YouTube/Invidious/Piped renderer
 - Put post/comment content inside a `pointer-events-none` classed div to avoid any accidental clicks into potentially problematic content.
 - Increased icon size in modal titles
 - Restored Hide/Delete post options for regular users since apparently they _can_ see those posts.
-- Reduced padding for compact posts
-- Added crossposts list to compact posts
-- Moved compact post renderer to dedicated component
-- You can now see the post body in compact view if you click the "Expand" bar.
+- Tweaked layout of compact posts
+  - Added crossposts list to compact posts
+  - Moved compact post renderer to dedicated component
+  - Added fully-collapsed post body with expansion button
 - Added checkbox to confirm report is being made in good faith to report submission form.
+
+
+
 
 ## 1.2.8.97
 ### UI Tweaks

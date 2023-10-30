@@ -199,7 +199,7 @@
                 <div class="flex flex-row items-center">
                     
                     <div class="flex flex-col">
-                        <p class="text-sm font-bold flex flex-row gap-2">
+                        <p class="text-sm font-bold flex flex-row gap-2 items-center">
                             <Icon src={CheckCircle} mini width={16}/>
                             Full Results
                         </p>
@@ -223,7 +223,7 @@
                 <hr class="mt-1"/>
                 <div class="flex flex-row items-center gap-2">
                     <div class="flex flex-col">
-                        <p class="text-sm font-bold flex flex-row gap-2">
+                        <p class="text-sm font-bold flex flex-row items-center gap-2">
                             <Icon src={Flag} mini width={16}/>
                             Report Post
                         </p>
@@ -236,7 +236,7 @@
                     
                     <div class="mx-auto"/>
                     
-                    <Button color="warning" size="md" on:click={() => {
+                    <Button color="primary" size="md" on:click={() => {
                         open = false;
                         report(post, generateReportPreset(post, results))
                     }}>
@@ -251,7 +251,7 @@
                 <hr class="mt-1"/>
                 <div class="flex flex-row items-center gap-2">
                     <div class="flex flex-col">
-                        <p class="text-sm font-bold flex flex-row gap-2">
+                        <p class="text-sm font-bold flex flex-row gap-2 items-center">
                             <Icon src={ShieldExclamation} mini width={16}/>
                             Moderation
                         </p>
