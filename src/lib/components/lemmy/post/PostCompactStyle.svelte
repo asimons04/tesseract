@@ -29,6 +29,10 @@
 
 <Card class="bg-white flex flex-col w-full p-2 gap-0 " id={post.post.id}>
 
+    <PostMeta bind:post={post} displayType={displayType} showTitle={true}/>
+
+
+
     <!--- Post Metadata, Title, and Thumbnail  --->
     <div class="flex flex-row w-full">
         <div class="flex flex-col gap-0
@@ -37,8 +41,6 @@
                 : 'w-full'
             }
         ">
-            <PostMeta bind:post={post} displayType={displayType} showTitle={true}/>
-            
             {#if post.post.url && !isImage(post.post.url)}
                 <Link
                     href={post.post.url}
@@ -46,11 +48,11 @@
                     newtab={$userSettings.openInNewTab.postLinks}
                     highlight
                 >
-                    <span class="text-sm">{new URL(post.post.url).host}</span>
+                    <span class="text-xs">{new URL(post.post.url).host}</span>
                 </Link>
             {/if}
 
-            <PostBody post={post} displayType={displayType} previewLength={0} bind:expandPreviewText/>
+            <PostBody post={post} displayType={displayType} previewLength={120} bind:expandPreviewText inline={!expandPreviewText}/>
 
             <!--- Crossposts --->
             <Crossposts post={post} size="xs" class="!pl-0"/>

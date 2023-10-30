@@ -20,6 +20,7 @@
     export let displayType:PostDisplayType = 'post'
     export let expandPreviewText:boolean = false
     export let previewLength:number = 250
+    export let inline:boolean = false
 </script>
 
 {#if (post.post.body || post.post.embed_description)}
@@ -27,9 +28,9 @@
     <div class="text-sm rounded-md" class:hidden={displayType=='feed' && post.post.nsfw}>    
         {#if displayType == 'post' }
             {#if post.post.body}                
-                <Markdown source={post.post.body} />
+                <Markdown source={post.post.body} {inline}/>
             {:else if post.post.embed_description}
-                <Markdown source={post.post.embed_description} />
+                <Markdown source={post.post.embed_description} {inline} />
             {/if}
             
             <slot />
@@ -44,6 +45,7 @@
                             ? `${post.post.body.slice(0, previewLength)}`
                             : post.post.body
                     }
+                    {inline}
                 />
                 {#if post.post.body.length > previewLength}
                     <Button
@@ -69,6 +71,7 @@
                         ? `${post.post.embed_description.slice(0, previewLength)}`
                         : post.post.embed_description
                     }
+                    {inline}
                 />
                 {#if post.post.embed_description.length > previewLength}
                     <Button
