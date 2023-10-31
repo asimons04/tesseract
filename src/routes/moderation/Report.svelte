@@ -6,6 +6,7 @@
     } from 'lemmy-js-client'
     
     import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
+    import { fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
     import { isCommentReport, isPostReport } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
@@ -17,6 +18,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import DateInput from '$lib/components/input/DateInput.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
@@ -24,7 +26,8 @@
     import Switch from '$lib/components/input/Switch.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
-    
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+
     import { 
         Icon, 
         ArrowUturnLeft,
@@ -34,6 +37,9 @@
         Clipboard,
         ClipboardDocumentList,
         Clock,
+        ExclamationTriangle,
+        Folder,
+        FolderOpen,
         LockClosed,
         NoSymbol,
         Trash,
@@ -49,8 +55,9 @@
             ? item.post_report.resolved
             : false
 
-    let resolving:boolean = false
     
+    let resolving:boolean = false
+    let open:boolean = false;
     let debug:boolean = false;
 
     let actions = {
@@ -76,6 +83,8 @@
         replyReporterIncludeActions: true,
     }
 
+    let actionsDefault = {...actions};
+
     // Live-update the reply to the reporter based on the selected moderation options.
     $: {
         actions.replyReporterBody = `**Re: Report for ${isCommentReport(item) ? 'comment' : 'post'} in ${item.community.title ?? item.community.name}**\n\n`
@@ -87,8 +96,8 @@
 
                 if (actions.lock)           actions.replyReporterBody += "- Reported post has been locked\n";
                 if (actions.remove)         actions.replyReporterBody += `- Reported ${isCommentReport(item) ? 'comment' : 'post'} has been removed\n`;
-                if (actions.banCommunity)   actions.replyReporterBody += `- User was ${actions.banCommunityExpires ? 'temporariliy' : 'permanently'} banned from this community\n`
-                if (actions.banInstance)    actions.replyReporterBody += `- User was ${actions.banInstanceExpires ? 'temporariliy' : 'permanently'} banned from this instance\n`
+                if (actions.banCommunity)   actions.replyReporterBody += `- User was ${actions.banCommunityExpires ? 'temporarily' : 'permanently'} banned from this community\n`
+                if (actions.banInstance)    actions.replyReporterBody += `- User was ${actions.banInstanceExpires ? 'temporarily' : 'permanently'} banned from this instance\n`
                 
                 // Add an additional newline to finish list
                 actions.replyReporterBody += '\n'
@@ -359,37 +368,55 @@
                 type: 'error',
             })
         }
-        resolving = false
+        resolving = false;
+        actions = actionsDefault;
+        open=false;
     }
 </script>
 
 
 
 
-<Card class="p-4 flex flex-col gap-4 text-sm !bg-slate-100 dark:!bg-zinc-950">
+<Card class="p-4 flex flex-col gap-4 text-sm !bg-slate-100 dark:!bg-black">
     <div class="flex flex-col gap-1.5">
-        <span class="flex flex-row w-full justify-between">
-            <span class="text-base font-bold dark:text-zinc-400 text-slate-600">
-                Report from
+        
+        <span class="flex flex-row w-full gap-2 justify-between">
+  
+            <span class="flex flex-col gap-1 text-xs w-1/3">
+                <span class="font-bold dark:text-zinc-400 text-slate-600">
+                    Report from 
+                </span>
+                <UserLink user={item.creator} />
+            </span>
+
+            <span class="flex flex-col gap-1 text-xs w-1/3">
+                <span class="font-bold dark:text-zinc-400 text-slate-600">
+                    Report to
+                </span>
+                <CommunityLink community={item.community} />
             </span>
             
-            <Badge color="{item.comment_report?.resolved || item.post_report?.resolved ? 'green' : 'yellow'}">
-                <Icon src={item.comment_report?.resolved || item.post_report?.resolved ? Check : ExclamationTriangle} mini size="14" />
-                <span class="hidden md:block">{item.comment_report?.resolved || item.post_report?.resolved ? 'Resolved' : 'Needs Action'}</span>
-            </Badge>
+            <span class="flex flex-col gap-2 w-1/3">
+                <Badge color="{item.comment_report?.resolved || item.post_report?.resolved ? 'green' : 'yellow'}">
+                    <Icon src={item.comment_report?.resolved || item.post_report?.resolved ? Check : ExclamationTriangle} mini size="14" />
+                    <span class="hidden md:block">{item.comment_report?.resolved || item.post_report?.resolved ? 'Resolved' : 'Needs Action'}</span>
+                </Badge>
+
+                <Button color="primary" size="sm" on:click={ ()=>{open=!open} } icon={open ? Folder : FolderOpen}>
+                    {open ? 'Close' : 'Open'}
+                </Button>
+            </span>
 
         </span>
         
         
-        <span class="font-bold">
-            <UserLink avatar user={item.creator} />
-        </span>
+        
     </div>
 
-    <div class="flex flex-col gap-2 w-full">
+    <div class="flex flex-col gap-2 w-full" in:fly={{ y: -6, opacity: 0, duration: 500 }} class:hidden={!open}>
         
         <!--- Preview of content being reported--->
-        <details class="flex flex-col gap-2">
+        <details open class="flex flex-col gap-2">
             <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
                 Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
             </summary>
@@ -707,7 +734,20 @@
 
         </div>
 
+
         <div class="flex flex-row gap-2 items-center">
+            {#if item.resolver?.id}
+                <div class="flex flex-col gap-1.5">
+                    <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
+                        Resolved by
+                    </span>
+                    
+                    <span class="font-bold text-xs">
+                        <UserLink user={item.resolver} />
+                    </span>
+                </div>
+            {/if}
+            
             <span class="ml-auto" />
 
             <!---Debug Button--->
@@ -738,5 +778,7 @@
             
         </div>
     </div>
+
+    
 </Card>
 
