@@ -34,6 +34,7 @@
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
     export let showFediseer:boolean             = true;
+    export let collapseBadges:boolean           = false;
                       
     // Extract data from post object for easier reference
     // These values are mutable so define them and bind them reactively
@@ -92,7 +93,7 @@
 
 <div class="flex flex-col gap-1.5 grow">
     <div class="flex flex-col gap-1">
-        
+       
         <span class="flex flex-row gap-2 text-sm items-center">
             {#if community}
                 <Avatar url={community.icon} width={32} alt={community.name} />
@@ -128,78 +129,80 @@
                     
                 </span>
             </div>
-            
+
             <!--- Post Badges --->
-            <div class="flex flex-row ml-auto mb-auto gap-2">
+        <div class="flex flex-row ml-auto mb-auto gap-2">
                 
-                <!--- Media Bias Fact Check--->
-                {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
-                    <MBFC post={post} />
-                {/if}
+            <!--- Media Bias Fact Check--->
+            {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
+                <MBFC post={post} {collapseBadges}/>
+            {/if}
 
-                <!--- Fediseer Endorsement Badge--->
-                {#if showFediseer && $userSettings.uiState.fediseerBadges}
-                    <span class="flex flex-row gap-2 items-center mr-2">
-                        <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
-                        
-                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
-                            class="cursor-pointer"
-                            class:hidden={fediseer.loading}
-                            loading="lazy"
-                            alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
-                            title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
-                            on:click={async (e) => {
-                                fediseer.loading = true;
-                                fediseer.data = await fediseerLookup(new URL(community.actor_id).hostname);
-                                fediseer.loading = false;
-                                fediseer.modal = true;
-                            }}
-                        />
-                    </span>
-                {/if}
+            <!--- Fediseer Endorsement Badge--->
+            {#if showFediseer && $userSettings.uiState.fediseerBadges}
+                <span class="flex flex-row gap-2 items-center mr-2">
+                    <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
+                    
+                    <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
+                        class="cursor-pointer"
+                        class:hidden={fediseer.loading}
+                        loading="lazy"
+                        alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
+                        title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
+                        on:click={async (e) => {
+                            fediseer.loading = true;
+                            fediseer.data = await fediseerLookup(new URL(community.actor_id).hostname);
+                            fediseer.loading = false;
+                            fediseer.modal = true;
+                        }}
+                    />
+                </span>
+            {/if}
 
-                {#if nsfw}
-                    <Badge color="red">
-                        <Icon src={BuildingOffice} mini size="12"/>
-                        <span class="hidden md:block">NSFW</span>
-                    </Badge>
-                {/if}
+            {#if nsfw}
+                <Badge color="red">
+                    <Icon src={BuildingOffice} mini size="12"/>
+                    <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
+                </Badge>
+            {/if}
 
-                {#if saved}
-                    <Badge label="Saved" color="yellow">
-                        <Icon src={Bookmark} mini size="12" />
-                        <span class="hidden md:block">Saved</span>
-                    </Badge>
-                {/if}
-                
-                {#if locked}
-                    <Badge label="Locked" color="yellow">
-                        <Icon src={LockClosed} mini size="14" />
-                        <span class="hidden md:block">Locked</span>
-                    </Badge>
-                {/if}
-                
-                {#if removed}
-                    <Badge label="Removed" color="red">
-                        <Icon src={Trash} mini size="14" />
-                        <span class="hidden md:block">Removed</span>
-                    </Badge>
-                {/if}
-                
-                {#if deleted}
-                    <Badge label="Deleted" color="red">
-                        <Icon src={Trash} mini size="14" />
-                        <span class="hidden md:block">Deleted</span>
-                    </Badge>
-                {/if}
-                
-                {#if featured}
-                    <Badge label="Featured" color="green">
-                        <Icon src={Megaphone} mini size="14" />
-                        <span class="hidden md:block">Featured</span>
-                    </Badge>
-                {/if}
-            </div>
+            {#if saved}
+                <Badge label="Saved" color="yellow">
+                    <Icon src={Bookmark} mini size="12" />
+                    <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>
+                </Badge>
+            {/if}
+            
+            {#if locked}
+                <Badge label="Locked" color="yellow">
+                    <Icon src={LockClosed} mini size="14" />
+                    <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>
+                </Badge>
+            {/if}
+            
+            {#if removed}
+                <Badge label="Removed" color="red">
+                    <Icon src={Trash} mini size="14" />
+                    <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>
+                </Badge>
+            {/if}
+            
+            {#if deleted}
+                <Badge label="Deleted" color="red">
+                    <Icon src={Trash} mini size="14" />
+                    <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>
+                </Badge>
+            {/if}
+            
+            {#if featured}
+                <Badge label="Featured" color="green">
+                    <Icon src={Megaphone} mini size="14" />
+                    <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
+                </Badge>
+            {/if}
+        </div>
+            
+            
         </span>
     </div>
 

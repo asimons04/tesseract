@@ -24,6 +24,8 @@
     } from 'svelte-hero-icons'
 
     export let data
+    
+
 </script>
 
 <svelte:head>
@@ -56,12 +58,13 @@
 </div>
 
 {#if data?.items?.length > 0}
-    <div class="flex flex-col gap-8 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto">
-        {#each data.items as item}
-            <div in:fly={{ y: -6, opacity: 0, duration: 500 }}>
+    <!--flex flex-col gap-8 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto-->
+    <div class="flex flex-row gap-1 w-full max-h-full">
+        <div class="flex flex-col gap-8 w-full">
+            {#each data.items as item}
                 <Report bind:item={item} />
-            </div>
-        {/each}
+            {/each}
+        </div>
     </div>
 {:else}
     <Placeholder

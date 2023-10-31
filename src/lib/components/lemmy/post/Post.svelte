@@ -13,7 +13,8 @@
     export let displayType: PostDisplayType = "feed"
     export let forceCompact:boolean = false;
     export let disablePostLinks:boolean = false
-
+    export let collapseBadges:boolean = false;
+    
     let expandCompact: boolean;
     let expandPreviewText:boolean
    
@@ -30,6 +31,7 @@
         bind:expandPreviewText 
         displayType={displayType}
         {disablePostLinks}
+        {collapseBadges}
     />
 
 
@@ -43,6 +45,7 @@
         displayType={displayType} 
         autoplay={false}
         loop={$userSettings.embeddedMedia.loop}
+        {collapseBadges}
     />
 {/if}
 

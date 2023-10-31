@@ -24,6 +24,7 @@
     export let moderators: Array<CommunityModeratorView> = [];
     export let showCommentForm:boolean = false;
     export let expandPreviewText:boolean
+    export let collapseBadges:boolean = false;
 
     // Determe post type based on its attributes
     let postType:PostType|undefined  = identifyPostType(post)
@@ -32,7 +33,7 @@
 
 <Card class="flex flex-col w-full p-5 gap-1" id={post.post.id}>
     <div class="flex flex-row w-full gap-2.5">
-        <PostMeta bind:post={post} moderators={moderators}/>
+        <PostMeta bind:post={post} moderators={moderators} {collapseBadges}/>
     </div>
 
     <!--- Link-style post without thumbnail URL--->

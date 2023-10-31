@@ -28,6 +28,7 @@
 
     
     export let post:PostView
+    export let collapseBadges:boolean = false;
 
     let open:boolean = false;
     let results:MBFCReport|undefined = post.mbfc ?? lookup(post?.post?.url) ?? undefined
@@ -61,7 +62,7 @@
                         : QuestionMarkCircle
             } mini size="12"/>
             
-            {results.credibility.replace('Credibility', '')} <span class="hidden lg:block">Credibility</span>
+            {results.credibility.replace('Credibility', '')} <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">Credibility</span>
         </span>
         
     </Badge>

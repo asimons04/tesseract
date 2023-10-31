@@ -39,7 +39,8 @@
         }
         else {
             // Use default scroll handling
-            //window.scrollTo(0,0);
+            disableScrollHandling();
+            window.scrollTo(0,0);
         }
     });
     

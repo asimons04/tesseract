@@ -24,13 +24,14 @@
     export let expandCompact: boolean;
     export let expandPreviewText:boolean 
     export let disablePostLinks:boolean = false
+    export let collapseBadges:boolean = false;
 
 </script>
 
 
 <Card class="bg-white flex flex-col w-full p-2 gap-0 " id={post.post.id}>
 
-    <PostMeta bind:post={post} displayType={displayType} showTitle={true}/>
+    <PostMeta bind:post={post} displayType={displayType} showTitle={true} {collapseBadges}/>
 
 
 
