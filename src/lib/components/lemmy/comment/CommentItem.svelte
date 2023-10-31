@@ -12,11 +12,13 @@
 
   export let comment: CommentView
   export let actions:boolean = true
+  export let collapseBadges:boolean = false;
+
 </script>
 
 <Card class="flex flex-col bg-white rounded-md p-5 flex-1 gap-1" id={comment.post.id}>
     <div class="flex flex-row justify-between items-center">
-        <PostMeta post={comment} showFediseer={false}/>
+        <PostMeta post={comment} showFediseer={false} {collapseBadges}/>
     
         <Button
             color="secondary"
@@ -35,6 +37,7 @@
             node={{ children: [], comment_view: comment, depth: 1 }}
             replying={false}
             {actions}
+            {collapseBadges}
         />
     </div>
 </Card>

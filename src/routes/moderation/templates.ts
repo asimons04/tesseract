@@ -25,6 +25,8 @@ let instanceBanPresets:ContentRemovalTemplate[] = [];
 
 
 export const getRemovalTemplates = function (item:PostReportView | CommentReportView | PrivateMessageReportView):ContentRemovalTemplateReturn {
+    removalPresets = [];
+    
     addStandardReasons();
     addMBFCPreset(item);
     

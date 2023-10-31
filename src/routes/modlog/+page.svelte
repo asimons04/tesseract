@@ -58,7 +58,6 @@
         }
     }
 
-    console.log(data);
 </script>
 
 <svelte:head>
@@ -241,7 +240,7 @@
         {#if $userSettings.modlogCardView ?? !window.matchMedia('(min-width: 1600px)').matches}
             <div class="flex flex-col gap-4">
                 {#each data.modlog as modlog}
-                    <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
+                    <div class="bg-slate-300 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
                         <ModlogItemCard item={modlog} />
                     </div>
                 {/each}

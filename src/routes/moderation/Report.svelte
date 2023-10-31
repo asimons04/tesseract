@@ -1,7 +1,10 @@
 <script lang="ts">
     import type {
         CommentReportView,
+        GetPersonDetailsResponse,
+        PersonView,
         PostReportView,
+        PostView,
         PrivateMessageReportView,
     } from 'lemmy-js-client'
     
@@ -9,7 +12,12 @@
     import { fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
     import { getRemovalTemplates } from './templates'
-    import { isCommentReport, isPostReport } from '$lib/lemmy/item.js'
+    import { 
+        getItemPublished, 
+        isCommentReport, 
+        isPostReport, 
+        isCommentView 
+    } from '$lib/lemmy/item.js'
     
     import { profile } from '$lib/auth.js'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
@@ -17,8 +25,12 @@
     import { userSettings } from '$lib/settings.js'
     
     // Modlog Loader
-    import {load as loadModlog} from '$routes/modlog/+page'
-
+    import {
+        type Modlog,
+        load as loadModlog
+    
+    } from '$routes/modlog/+page'
+    import ModlogItemCard from '$routes/modlog/item/ModlogItemCard.svelte'
 
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -28,6 +40,7 @@
     import DateInput from '$lib/components/input/DateInput.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
@@ -51,6 +64,7 @@
         LockClosed,
         Microphone,
         NoSymbol,
+        PencilSquare,
         Trash,
         UserGroup
     } from 'svelte-hero-icons'
@@ -69,21 +83,36 @@
     let open:boolean = false;
     let debug:boolean = false;
     
-    let modlog = {
+    interface ModlogContainer {
+        url: URL,
+        show: boolean,
+        loading:boolean,
+        data?:Modlog
+    }
+
+    let modlog:ModlogContainer = {
         url: new URL(window.location.href),
         show: false,
-        person_id: undefined,
-        community_id: undefined,
-        moderator_id: undefined,
-        type: "All",
-        page: 1,
         loading: false,
         data: undefined
     }
 
+    interface PersonProfile {
+        items?:PostView[],
+        loading:boolean,
+        show:boolean,
+        person_view?: PersonView
+    }
+
+    let creatorProfile:PersonProfile = {
+        loading: false,
+        show: false,
+    };
 
     // Load Moderation presets from the template module
     let removalPresets = getRemovalTemplates(item);
+
+
 
 
     // Object containing the actions to perform
@@ -139,6 +168,7 @@
         actions.replyReporterBody += 'Your report has been resolved.';
     }
 
+    // Validates a date string to ensure it converts to a proper date in the future.
     function validateExpiryDate(dateStr:string):boolean {
         let date:number = Date.parse(dateStr);
         
@@ -161,6 +191,93 @@
         return true;
     }
 
+    // Expands a report item, hides the rest. Send `false` as argument to close and un-hide.
+    function openReport(state:boolean):void {
+        let element = document.getElementById(isCommentReport(item) ? item.comment_report.id : item.post_report.id);
+        let reports = document.getElementsByName('ModeratorReport'); 
+        
+
+        if (state) {
+            // Hide all closed reports if one is open.
+            reports.forEach((report) => {
+                if (report != element) {
+                    report.style.display='none';
+                }
+            })
+        }
+        else {
+            // Show all reports
+            reports.forEach((report) => {
+                report.style.display='flex';
+            })
+
+            // Empty modlog data and creator content
+            modlog.data = undefined;
+            creatorProfile.items = undefined;
+            creatorProfile.person_view = undefined;
+        }
+        
+        scrollToTop(element);
+
+    }
+
+    // Populates the ModLog panel for the user being reported on.
+    async function getModlog(personID:number|undefined=undefined, communityID:number|undefined=undefined):Promise<void> {
+
+        
+        if (communityID) {
+            
+            modlog.url.searchParams.set('community_id', communityID.toString());
+        }
+        else {
+            modlog.url.searchParams.delete('community_id');
+        }
+
+
+        if (personID) {
+            modlog.url.searchParams.set('other_person_id',personID.toString());
+        }
+        else {
+            modlog.url.searchParams.set('other_person_id', isCommentReport(item) ? item.comment.creator_id.toString() : item.post.creator_id.toString() )
+        }
+        
+        modlog.url.searchParams.set('type', 'All');
+
+        modlog.loading = true;
+        modlog.show = open
+        modlog.data = await loadModlog({url: modlog.url});
+        modlog.loading= false;
+        
+    }
+
+    // Fetch the user details by person ID
+    async function getUserPostsComments(personID:number):Promise<void> {
+        if (!personID || !$profile?.jwt) return;
+
+        try {
+            creatorProfile.loading = true;
+
+            const user = await getClient(undefined, fetch).getPersonDetails({
+                limit: 50,
+                page: 1,
+                person_id: personID,
+                sort: 'New',
+                auth: $profile?.jwt,
+            })
+
+            const items = [...user.posts, ...user.comments]
+            items.sort((a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a)))
+
+            creatorProfile.items = items;
+            creatorProfile.person_view = user.person_view;
+            creatorProfile.loading = false;
+            creatorProfile.show = true;
+        }
+        catch (err){
+            console.log(err);
+        }
+
+    }
 
     async function resolve() {
         if (!$profile?.jwt || !$profile.user ||!item ) return
@@ -396,6 +513,7 @@
                 type: 'error',
             })
         }
+        
         resolving = false;
         actions = actionsDefault;
         open=false;
@@ -407,9 +525,11 @@
 
 
 
-<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[75vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
-    <!---Badge and Open/Close Button Row--->
-    <span class="flex flex-col-reverse lg:flex-row w-full gap-4">
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[80vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
+    
+    
+    <!---Report Title, Badge and Open/Close Button Row--->
+    <span class="flex flex-col lg:flex-row w-full gap-4">
         <!--- Report Title--->
         <span class="text-base font-bold">
             {isCommentReport(item) ? 'Comment Report' : isPostReport(item) ? `Post Report: ${item.post.name.length > 45 ? item.post.name.slice(0,45) + '...' : item.post.name}` : 'Post Report'}
@@ -454,40 +574,21 @@
             <!--- Open Close Button (also populates sidebar) --->
             <Button color="primary" size="sm" class="!w-[75px] h-8" icon={open ? Folder : FolderOpen}
                 on:click={ async ()=>{
-                    let element = document.getElementById(isCommentReport(item) ? item.comment_report.id : item.post_report.id);
-                    let reports = document.getElementsByName('ModeratorReport');
+                    // Toggle the `open` boolean
                     open=!open; 
                     
+                    // Get the person id of the person being reported on
+                    let reporteeID = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id;
 
                     if (open) {                        
-                        // Hide all closed reports if one is open.
-                        reports.forEach((report) => {
-                            if (report != element) {
-                                report.style.display='none';
-                            }
-                        })
-
-                        scrollToTop(element);
-
-                        modlog.person_id = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id
-                        modlog.community_id = item.community.id
-                        
-                        if (modlog.person_id) {
-                            modlog.url.searchParams.set('other_person_id', modlog.person_id.toString());
-                            modlog.url.searchParams.set('type', modlog.type);
-                            modlog.loading = true;
-                            modlog.show=open
-                            modlog.data = await loadModlog({url: modlog.url});
-                            modlog.loading= false;
-                        }
+                        openReport(open);
+                        await getUserPostsComments(reporteeID);
+                        await getModlog(reporteeID);
                     }
                     else {
-                        // Hide all closed reports if one is open.
-                        reports.forEach((report) => {
-                            report.style.display='flex';
-                        })
-                        scrollToTop(element);
+                        openReport(open);
                         modlog.show = open;
+                        creatorProfile.show = open;
                     }
                     
                 }} 
@@ -503,21 +604,28 @@
     <!--Header Row with from, to, sent, badges, and open/close button-->
     <span class="flex flex-col lg:flex-row w-full gap-2 justify-between">
         
-        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/4">
+        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             <span class="font-bold dark:text-zinc-400 text-slate-600">
                 Report from 
             </span>
             <UserLink user={item.creator} />
         </span>
 
-        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/4">
+        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             <span class="font-bold dark:text-zinc-400 text-slate-600">
                 Report to
             </span>
             <CommunityLink community={item.community} />
         </span>
 
-        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/4">
+        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
+            <span class="font-bold dark:text-zinc-400 text-slate-600">
+                Report against 
+            </span>
+            <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />
+        </span>
+
+        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             <span class="font-bold dark:text-zinc-400 text-slate-600">
                 Sent
             </span>
@@ -525,7 +633,7 @@
         </span>
 
         
-        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/4">
+        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             {#if item.resolver?.id}        
                 <span class="font-bold dark:text-zinc-400 text-slate-600">
                     Resolved by
@@ -533,11 +641,11 @@
                 <UserLink user={item.resolver} />
             {/if}
         </span>
+        
     </span>
 
+    <!---Collapsible Portion--->
     <div class="flex flex-row gap-4 w-full overflow-hidden {open ? 'border-t' : ''}" class:hidden={!open}>
-        
-        
         <!--- Left side / Report Form--->
         <div class="flex flex-col gap-2 w-full p-2 overflow-y-scroll" >
             <!--- Reported Post Preview and Report Details Row--->                
@@ -886,6 +994,8 @@
 
         </div>
 
+
+        
         <!--- Right pane / Modlog --->
         <div class="hidden w-1/2 p-2 overflow-y-scroll" class:md:block={modlog.show}>
             {#if modlog.loading}
@@ -894,7 +1004,52 @@
                 </span>
             {:else}
                 <h1 class="text-lg font-bold">Modlog</h1>
-                <pre>{JSON.stringify(modlog.data, null, 2)}</pre>
+                <p class="text-sm font-normal">
+                    Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
+                    are usually all that is relevant to make a moderation decision.
+                </p>
+
+                {#if modlog.data?.modlog?.length > 0}
+                    <div class="flex flex-col gap-4 mt-2">
+                        {#each modlog.data.modlog as modlogItem}
+                            {#if ['postRemoval', 'postLock', 'commentRemoval', 'ban'].includes(modlogItem.actionName)}
+                                <div class="bg-slate-300 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
+                                    <ModlogItemCard item={modlogItem} />
+                                </div>
+                            {/if}
+
+                        {/each}
+                    </div>
+
+                {/if}
+
+            {/if}
+        </div>
+
+        <!---Right Pane / Profile --->
+        <div class="hidden w-1/2 p-2 overflow-y-scroll" class:md:block={creatorProfile.show}>
+            {#if creatorProfile?.loading}
+                <Spinner width={64}/>
+            
+            {:else}
+                <h1 class="text-lg font-bold">Profile</h1>
+                <p class="text-sm font-normal">
+                    Latest 50 posts and comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                </p>
+
+                {#if creatorProfile?.items && creatorProfile?.items?.length > 0 }
+                    <div class="w-full flex flex-col gap-5 mx-auto">
+                        {#each creatorProfile.items as item (item.counts.id)}
+                            {#if isCommentView(item)}
+                                <CommentItem comment={item} collapseBadges={true} />
+                            {:else if !isCommentView(item)}
+                                <Post post={item} collapseBadges={true}/>
+                            {/if}
+                        {/each}
+                    </div>
+                {:else}
+                    <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions." />
+                {/if}
             {/if}
         </div>
     </div>
