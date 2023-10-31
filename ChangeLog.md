@@ -24,7 +24,7 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Fixed same/newtab behaviour in button elements. Sometimes they'd transparently `invalidateAll` when they shouldn't.
 - Fixed bounding issue when expanding long-format post body in compact post mode.
-
+- Added additional domain normalizations to MBFC lookup (detects mobile, `m.` subdomains)
 
 ### Moderation
 - Disabled post links and body content when viewing reports. Title and action buttons are still functional, but not the post link or any content in the post body. Similar to how posts are rendered "unclickable" in report and remove modals.

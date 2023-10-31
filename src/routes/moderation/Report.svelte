@@ -8,7 +8,9 @@
     import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
     import { fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
+    import { getRemovalTemplates } from './templates'
     import { isCommentReport, isPostReport } from '$lib/lemmy/item.js'
+    
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
@@ -41,13 +43,14 @@
         Folder,
         FolderOpen,
         LockClosed,
+        Microphone,
         NoSymbol,
         Trash,
         UserGroup
     } from 'svelte-hero-icons'
     
 
-  export let item: PostReportView | CommentReportView | PrivateMessageReportView
+    export let item: PostReportView | CommentReportView | PrivateMessageReportView
 
     $: resolved = isCommentReport(item)
         ? item.comment_report.resolved
@@ -59,7 +62,11 @@
     let resolving:boolean = false
     let open:boolean = false;
     let debug:boolean = false;
+    
+    let removalPresets = getRemovalTemplates(item);
 
+
+    // Object containing the actions to perform
     let actions = {
         lock: false,
         
@@ -83,6 +90,7 @@
         replyReporterIncludeActions: true,
     }
 
+    // A copy of the actions object used to reset it after submission
     let actionsDefault = {...actions};
 
     // Live-update the reply to the reporter based on the selected moderation options.
@@ -448,7 +456,7 @@
                         }
                     }
                     forceCompact={true}
-                    disablePostLinks={true}
+                    disablePostLinks={false}
                     actions={false}
                 />
             {/if}
@@ -512,7 +520,28 @@
                             <p class="text-xs font-normal">The reason for removing this content. It will appear in the modlog.</p>
                             
                             <div class="mt-2"/>
-                            <TextInput bind:value={actions.removeReason} type="text" placeholder="Removal reason"/>
+                            
+                            <div class="flex flex-row gap-1 items-start">
+                                <MultiSelect 
+                                    options={removalPresets.options}
+                                    optionNames={removalPresets.names}
+                                    selected=""
+                                    on:select={(e) => {
+                                        switch (e.detail) {
+                                            case "REPORTTEXT":
+                                                actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
+                                                break;
+                                            default:
+                                                actions.removeReason = e.detail
+                                        }
+                                    }}
+                                    headless={true}
+                                    class="!min-w-[185px]"
+                                    items={0}
+                                    label="Removal Reason Presets"
+                                />
+                                <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={3} placeholder="Removal reason"/>
+                            </div>
                         </div>
                     </div>
 
@@ -667,7 +696,7 @@
 
 
                     <!---Reporter Reply--->
-                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!isPostReport(item)}>
+                    <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>

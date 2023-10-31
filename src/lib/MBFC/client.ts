@@ -9,6 +9,7 @@ function normalizeDomain(domain:string):string {
     domain = domain
     .replace('www.', '')
     .replace('amp.', '')
+    .replace(/^m\./,'')
     .replace('bbc.co.uk', 'bbc.com')
     .replace('mronline.org', 'monthlyreview.org')
     .replace('bbc.in', 'bbc.com')
@@ -19,6 +20,7 @@ function normalizeDomain(domain:string):string {
     .replace(/.*\.elpais\.com/, 'elpais.com')
     .replace(/.*\.medium\.com/, 'medium.com')
     .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
+    
     
     return domain;
 }
