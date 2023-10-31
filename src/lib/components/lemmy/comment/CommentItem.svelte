@@ -11,6 +11,7 @@
     } from 'svelte-hero-icons'
 
   export let comment: CommentView
+  export let actions:boolean = true
 </script>
 
 <Card class="flex flex-col bg-white rounded-md p-5 flex-1 gap-1" id={comment.post.id}>
@@ -33,6 +34,7 @@
             postId={comment.post.id}
             node={{ children: [], comment_view: comment, depth: 1 }}
             replying={false}
+            {actions}
         />
     </div>
 </Card>

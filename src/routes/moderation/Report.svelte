@@ -11,13 +11,17 @@
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
-
+    
+    
+    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
+    import DateInput from '$lib/components/input/DateInput.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
+    import Switch from '$lib/components/input/Switch.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
@@ -25,7 +29,15 @@
         Icon, 
         ArrowUturnLeft,
         BugAnt,
+        ChatBubbleLeftEllipsis,
         Check,
+        Clipboard,
+        ClipboardDocumentList,
+        Clock,
+        LockClosed,
+        NoSymbol,
+        Trash,
+        UserGroup
     } from 'svelte-hero-icons'
     
 
@@ -43,15 +55,21 @@
 
     let actions = {
         lock: false,
+        
         remove: false,
         removeReason: '',
+        removeReplyToAuthor: false,
         
         banCommunity: false,
         banCommunityReason: '',
+        banCommunityDeleteData: false,
+        banCommunityExpires: '',
         
         banInstance: false,
         banInstanceReason: '',
-        
+        banInstanceDeleteData: false,
+        banInstanceExpires: '',
+
         replyReporter: true,
         replyReporterText: '',
         replyReporterBody: '',
@@ -67,10 +85,10 @@
             if (actions.lock || actions.remove || actions.banCommunity || actions.banInstance) {
                 actions.replyReporterBody += "Actions taken in response to this report:\n";
 
-                if (actions.lock)           actions.replyReporterBody += "- Post locked\n";
-                if (actions.remove)         actions.replyReporterBody += `- ${isCommentReport(item) ? 'Comment' : 'Post'} removed\n`;
-                if (actions.banCommunity)   actions.replyReporterBody += "- User was banned from community\n"
-                if (actions.banInstance)    actions.replyReporterBody += "- User was banned from this instance\n"
+                if (actions.lock)           actions.replyReporterBody += "- Reported post has been locked\n";
+                if (actions.remove)         actions.replyReporterBody += `- Reported ${isCommentReport(item) ? 'comment' : 'post'} has been removed\n`;
+                if (actions.banCommunity)   actions.replyReporterBody += `- User was ${actions.banCommunityExpires ? 'temporariliy' : 'permanently'} banned from this community\n`
+                if (actions.banInstance)    actions.replyReporterBody += `- User was ${actions.banInstanceExpires ? 'temporariliy' : 'permanently'} banned from this instance\n`
                 
                 // Add an additional newline to finish list
                 actions.replyReporterBody += '\n'
@@ -84,9 +102,36 @@
         actions.replyReporterBody += 'Your report has been resolved.';
     }
 
+    function validateExpiryDate(dateStr:string):boolean {
+        let date:number = Date.parse(dateStr);
+        
+        if (Number.isNaN(date)) {
+            toast({
+                content: 'Invalid date. It must be an absolute date.',
+                type: 'error',
+            });
+            return false;
+        }
+
+        if (date < Date.now()) {
+            toast({
+                content: 'Invalid date. It is before the current time.',
+                type: 'error',
+            });
+            return false;
+        }
+
+        return true;
+    }
+
 
     async function resolve() {
         if (!$profile?.jwt || !$profile.user ||!item ) return
+        
+        // Validate the ban expiry dates and pop up a toast warning before returning early.
+        if (actions.banCommunityExpires != '' && !validateExpiryDate(actions.banCommunityExpires)) return;
+        if (actions.banInstanceExpires  != '' && !validateExpiryDate(actions.banInstanceExpires)) return;
+
         resolving = true
 
         try {
@@ -154,10 +199,21 @@
 
             }
 
+            
             // Ban user from community if that is selected
             if (!resolved && actions.banCommunity) {
                 try {
+                    let date:number = Date.parse(actions.banCommunityExpires)
 
+                    await getClient().banFromCommunity({
+                        auth: $profile.jwt,
+                        ban: true,
+                        community_id: item.post.community_id,
+                        person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                        reason: actions.banCommunityReason || undefined,
+                        remove_data: actions.banCommunityDeleteData,
+                        expires: date ? Math.floor(date / 1000) : undefined,
+                    })
                 }
                 catch (err) {
                     console.log(err)
@@ -168,11 +224,64 @@
             // Ban user from instance if selected
             if (!resolved && actions.banInstance) {
                 try {
-
+                    let date:number = Date.parse(actions.banInstanceExpires)
+                    await getClient().banPerson({
+                        auth: $profile.jwt,
+                        ban: true,
+                        person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                        reason: actions.banInstanceReason || undefined,
+                        remove_data: actions.banInstanceDeleteData,
+                        expires: date ? Math.floor(date / 1000) : undefined,
+                    })
                 }
                 catch (err) {
                     console.log(err)
                 }
+            }
+
+
+            //// Follow-Up Messages:  If selected, sends follow-up DMs to the post/comment author and/or reporter
+            
+            // Post/Comment Removal DM to Author
+            if (!resolved && actions.remove && actions.removeReplyToAuthor) {
+                
+                let template:string = '';
+                
+                template = `Your ${isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} in 
+                    !${item.community.name}@${new URL(item.community.actor_id).host} has been removed:\n\n`
+                
+                
+                template += `- **Post**: [${item.post.name}](${item.post.ap_id})\n`
+                
+                if (isCommentReport(item)) {
+                    template += `- **Comment**: [${item.comment.content}](${item.comment.ap_id})\n`    
+                }
+                if (actions.removeReason != '') {
+                    template += `- **Reason**: ${actions.removeReason}\n`
+                }
+
+                template += '\n';
+
+                try {
+                    await getClient().createPrivateMessage({
+                        auth: $profile.jwt,
+                        content: template,
+                        recipient_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                    })
+
+                    toast({
+                        content: "Sent reply to post/comment author.",
+                        type: 'success'
+                    });
+                }
+                catch (err) {
+                    console.log(err);
+                    toast({
+                        content: 'Failed to message post/comment author.',
+                        type: 'warning',
+                    })
+                }
+
             }
 
             // Send DM to reporter if selected
@@ -257,158 +366,377 @@
 
 
 
-<div class="flex flex-col gap-2 w-full">
-    <details class="flex flex-col gap-2">
-        <summary class="text-xs font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
-            Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-        </summary>
-        
-        {#if isCommentReport(item)}
-            <CommentItem
-                comment={
-                    {
-                        ...item,
-                        subscribed: 'NotSubscribed',
-                        creator_blocked: false,
-                        saved: false,
-                        creator: item.comment_creator,
-                    }
-                }
-                actions={false}
-            />
-        {:else if isPostReport(item)}
-            <Post
-                post={
-                    {
-                        ...item,
-                        saved: false,
-                        subscribed: 'NotSubscribed',
-                        unread_comments: 0,
-                        read: false,
-                        creator_blocked: false,
-                        creator: item.post_creator,
-                    }
-                }
-                forceCompact={true}
-                disablePostLinks={true}
-                actions={false}
-            />
-        {/if}
-    </details>
-    
-    <div>
-        <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
-            Report Details
+<Card class="p-4 flex flex-col gap-4 text-sm !bg-slate-100 dark:!bg-zinc-950">
+    <div class="flex flex-col gap-1.5">
+        <span class="flex flex-row w-full justify-between">
+            <span class="text-base font-bold dark:text-zinc-400 text-slate-600">
+                Report from
+            </span>
+            
+            <Badge color="{item.comment_report?.resolved || item.post_report?.resolved ? 'green' : 'yellow'}">
+                <Icon src={item.comment_report?.resolved || item.post_report?.resolved ? Check : ExclamationTriangle} mini size="14" />
+                <span class="hidden md:block">{item.comment_report?.resolved || item.post_report?.resolved ? 'Resolved' : 'Needs Action'}</span>
+            </Badge>
+
         </span>
-        <p>{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
+        
+        
+        <span class="font-bold">
+            <UserLink avatar user={item.creator} />
+        </span>
     </div>
 
-
-
-    <!--- Moderation Actions Form--->
-    <div class="flex flex-col gap-2 w-full" class:hidden={resolved}>
+    <div class="flex flex-col gap-2 w-full">
         
-        <span class="mt-4 text-xs font-bold dark:text-zinc-400 text-slate-600">
-            Actions to Take
-        </span>
-
-        {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
+        <!--- Preview of content being reported--->
+        <details class="flex flex-col gap-2">
+            <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
+                Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+            </summary>
             
-            <!--Lock Post--->
-            <span class:hidden={!isPostReport(item)} >
-                <Checkbox bind:checked={actions.lock} >Lock Post</Checkbox>
-            </span>
+            {#if isCommentReport(item)}
+                <CommentItem
+                    comment={
+                        {
+                            ...item,
+                            subscribed: 'NotSubscribed',
+                            creator_blocked: false,
+                            saved: false,
+                            creator: item.comment_creator,
+                        }
+                    }
+                    actions={false}
+                />
+            {:else if isPostReport(item)}
+                <Post
+                    post={
+                        {
+                            ...item,
+                            saved: false,
+                            subscribed: 'NotSubscribed',
+                            unread_comments: 0,
+                            read: false,
+                            creator_blocked: false,
+                            creator: item.post_creator,
+                        }
+                    }
+                    forceCompact={true}
+                    disablePostLinks={true}
+                    actions={false}
+                />
+            {/if}
+        </details>
         
-            <!--- Remove Content--->
-            <span class:hidden={ (isCommentReport(item) && item.comment?.removed) || (isPostReport(item) && item.post?.removed) }>
-                <Checkbox bind:checked={actions.remove} >
-                    Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-                </Checkbox>
+        <div>
+            <span class="text-base font-bold dark:text-zinc-400 text-slate-600">
+                Report Details
             </span>
+            <p>{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
+        </div>
+
+
+
+        <!--- Moderation Actions Form--->
+        <div class="flex flex-col gap-2 w-full" class:hidden={resolved}>
             
-            <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.remove}>
-                <TextInput 
-                    bind:value={actions.removeReason}
-                    type="text"
-                    label="Reason for {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} removal"
-                />
+            <span class="mt-4 text-base font-bold dark:text-zinc-400 text-slate-600">
+                Actions to Take
             </span>
+
+            {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
+                <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                    <!---Lock Post--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!isPostReport(item) || (isPostReport(item) && item.post.locked)}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={LockClosed} mini width={16}/>
+                                Lock Post
+                            </p>
+                            <p class="text-xs font-normal">Lock the post to prevent any further comments.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={actions.lock} />
+                    </div>
+                    
+                    <!---Remove Post/Comment--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isCommentReport(item) && item.comment?.removed) || (isPostReport(item) && item.post?.removed) }>
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Trash} mini width={16}/>
+                                Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+                            </p>
+                            <p class="text-xs font-normal">Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={actions.remove} />
+                    </div>
+
+                    <!--- Remove Post:  Reason for Post/Comment Removal --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.remove} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Clipboard} mini width={16}/>
+                                Removal Reason
+                            </p>
+                            <p class="text-xs font-normal">The reason for removing this content. It will appear in the modlog.</p>
+                            
+                            <div class="mt-2"/>
+                            <TextInput bind:value={actions.removeReason} type="text" placeholder="Removal reason"/>
+                        </div>
+                    </div>
+
+
+                    <!--- Remove Post: Reply to Author --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.remove} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                                Reply to Author
+                            </p>
+                            <p class="text-xs font-normal">
+                                Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
+                                their content has been removed. The reason given above will be included in that message.
+                            </p>                        
+                        </div>
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={actions.removeReplyToAuthor} />
+                    </div>
+
+
+
+
+                    <!---CommunityBan--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={item.creator_banned_from_community}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={UserGroup} mini width={16}/>
+                                Ban From Community
+                            </p>
+                            <p class="text-xs font-normal">
+                                Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={actions.banCommunity} />
+                    </div>
+
+                    <!--- Community Ban: Delete Data in Community --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banCommunity} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Trash} mini width={16}/>
+                                Remove Posts/Comments
+                            </p>
+                            <p class="text-xs font-normal">Remove all post and comments in this community made by this user.</p>                        
+                        </div>
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={actions.banCommunityDeleteData} />
+                    </div>
+
+                    <!---Community Ban: Reason for Community Ban --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banCommunity} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Clipboard} mini width={16}/>
+                                Reason for Community Ban
+                            </p>
+                            <p class="text-xs font-normal">The given reason meriting the ban from this community.</p>
+                            
+                            <div class="mt-2"/>
+                            <TextInput bind:value={actions.banCommunityReason} type="text" placeholder="Ban reason"/>
+                        </div>
+                    </div>
+
+                    <!--- Commuunity Ban: Duration of Community Ban --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banCommunity} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Clock} mini width={16}/>
+                                Community Ban Duration
+                            </p>
+                            <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent community ban.</p>                        
+                        </div>
+
+                        <div class="mx-auto"/>
+
+                        <DateInput bind:value={actions.banCommunityExpires} class="w-[175px]"/>
+                    </div>
+
+
+
+
+                    <!--- Admin-Only Options--->
+                    {#if $profile?.user && isAdmin($profile.user)}
+                    
+                        <!---Instance Ban --->
+                        <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned)}>
+                            <div class="flex flex-col">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={NoSymbol} mini width={16}/>
+                                    Ban From Instance
+                                </p>
+                                <p class="text-xs font-normal">
+                                    Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
+                                </p>
+                            </div>
+                            
+                            <div class="mx-auto"/>
+                            
+                            <Switch bind:enabled={actions.banInstance} />
+                        </div>
+
+                        <!--- Instance Ban: Delete Data Known to Instance --->
+                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banInstance} >
+                            <div class="flex flex-col w-full">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Trash} mini width={16}/>
+                                    Remove Posts/Comments
+                                </p>
+                                <p class="text-xs font-normal">Remove all post and comments on this instance made by this user.</p>                        
+                            </div>
+                            <div class="mx-auto"/>
+                            
+                            <Switch bind:enabled={actions.banInstanceDeleteData} />
+                        </div>
+
+                        <!---Instance Ban: Reason for Instance Ban --->
+                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banInstance} >
+                            <div class="flex flex-col w-full">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Clipboard} mini width={16}/>
+                                    Reason for Instance Ban
+                                </p>
+                                <p class="text-xs font-normal">The given reason meriting the ban from this instance.</p>
+                                
+                                <div class="mt-2"/>
+                                <TextInput bind:value={actions.banInstanceReason} type="text" placeholder="Ban reason"/>
+                            </div>
+                        </div>
+
+                        <!--- Instance Ban: Duration of Instance Ban --->
+                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banInstance} >
+                            <div class="flex flex-col w-full">
+                                <p class="text-sm font-bold flex flex-row gap-2">
+                                    <Icon src={Clock} mini width={16}/>
+                                    Instance Ban Duration
+                                </p>
+                                <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent instance ban.</p>                        
+                            </div>
+
+                            <div class="mx-auto"/>
+
+                            <DateInput bind:value={actions.banInstanceExpires} class="w-[175px]"/>
+                        </div>
+                    {/if}
+
+
+
+                    <!---Reporter Reply--->
+                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!isPostReport(item)}>
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                                Reply to Reporter
+                            </p>
+                            <p class="text-xs font-normal">
+                                Send the reporter a DM letting them know their report was seen and resolved.
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={actions.replyReporter} />
+                    </div>
+
+                    <!--- Reporter Reply: Include mod actions taken in reply --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.replyReporter} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ClipboardDocumentList} mini width={16}/>
+                                Include Actions Taken
+                            </p>
+                            <p class="text-xs font-normal">Include a list of actions taken in the process of resolving their report.</p>                        
+                        </div>
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={actions.replyReporterIncludeActions} />
+                    </div>
+
+                    <!---Reporter Reply: Mod Comments --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.replyReporter} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Clipboard} mini width={16}/>
+                                Additional Comments
+                            </p>
+                            <p class="text-xs font-normal">Include a "moderator comment" in the reply to the reporter.</p>
+                            
+                            <div class="mt-2"/>
+                            <TextInput bind:value={actions.replyReporterText} type="text" placeholder="Additional comments to include in reply"/>
+                        </div>
+                    </div>
+
+                    <!---Reporter Reply: Preview --->
+                    <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.replyReporter} >
+                        <div class="flex flex-col w-full">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={Clipboard} mini width={16}/>
+                                Reply Preview
+                            </p>
+                            <p class="text-xs font-normal">
+                                A preview of the generated reply that will be sent to the reporter. After you've made your mod action selections, 
+                                you can edit the response manually before sending, if needed.
+                            </p>
+                            
+                            <MarkdownEditor value={actions.replyReporterBody} previewButton={true} previewing={true} rows={10} images={false}/>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            {/if}
             
-            <!---Community Ban--->
-            <Checkbox bind:checked={actions.banCommunity}>Ban From Community</Checkbox>
-            <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.banCommunity}>
-                <TextInput 
-                    bind:value={actions.banCommunityReason}
-                    type="text"
-                    label="Reason for community ban"
-                />
-            </span>
-            
-            <!--- Instance Ban (admins only)--->
-            {#if $profile?.user && isAdmin($profile.user)}
-                <Checkbox bind:checked={actions.banInstance}>Ban From Instance</Checkbox>
-                
-                <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.banInstance}>
-                    <TextInput 
-                        bind:value={actions.banInstanceReason}
-                        type="text"
-                        label="Reason for instance ban"
-                    />
-                </span>
+
+        </div>
+
+        <div class="flex flex-row gap-2 items-center">
+            <span class="ml-auto" />
+
+            <!---Debug Button--->
+            {#if $userSettings.debugInfo}
+                {#if debug}
+                    {#await import('$lib/components/util/debug/DebugObject.svelte') then { default: DebugObject }}
+                        <DebugObject object={item} bind:open={debug} />
+                    {/await}
+                {/if}
+
+                <Button on:click={() => (debug = true)} size="square-md" title="Debug Info" color="ghost">
+                    <Icon src={BugAnt} mini size="16" slot="icon" />
+                </Button>
             {/if}
 
-            <!---Reply to reporter form--->
-            <div class="flex flex-col gap-2 w-full">
-                <Checkbox bind:checked={actions.replyReporter} >Reply to reporter</Checkbox>
-                
-                <span class="ml-[1.5rem] flex flex-col gap-2" class:hidden={!actions.replyReporter}>
-                    
-                    <Checkbox bind:checked={actions.replyReporterIncludeActions} >Include Actions Taken</Checkbox>
-                    <TextInput 
-                        bind:value={actions.replyReporterText}
-                        type="text"
-                        label="Additional comments to send to reporter:"
-                        placeholder="Your report has been resolved"
-                    />
-                    
-                    <!---Preview the reply that gets sent to the reporter--->
-                    <MarkdownEditor label="Reply preview:" value={actions.replyReporterBody} previewButton={true} previewing={true} rows={7} images={false}/>
-                    
-                </span>
-            </div>
-        {/if}
-
-    </div>
-
-    <div class="flex flex-row gap-2 items-center">
-        <span class="ml-auto" />
-
-        <!---Debug Button--->
-        {#if $userSettings.debugInfo}
-            {#if debug}
-                {#await import('$lib/components/util/debug/DebugObject.svelte') then { default: DebugObject }}
-                    <DebugObject object={item} bind:open={debug} />
-                {/await}
-            {/if}
-
-            <Button on:click={() => (debug = true)} size="square-md" title="Debug Info" color="ghost">
-                <Icon src={BugAnt} mini size="16" slot="icon" />
+            <Button
+                on:click={resolve}
+                color="primary"
+                size="md"
+                aria-label="{resolved ? "Unresolve" : "Resolve"}"
+                title="{resolved ? "Unresolve" : "Resolve"}"
+                loading={resolving}
+                disabled={resolving}
+            >
+                <Icon src={resolved ? ArrowUturnLeft : Check} mini size="16" slot="icon" />
+                {resolved ? "Unresolve" : "Resolve"}
             </Button>
-        {/if}
-
-        <Button
-            on:click={resolve}
-            color="primary"
-            size="md"
-            aria-label="{resolved ? "Unresolve" : "Resolve"}"
-            title="{resolved ? "Unresolve" : "Resolve"}"
-            loading={resolving}
-            disabled={resolving}
-        >
-            <Icon src={resolved ? ArrowUturnLeft : Check} mini size="16" slot="icon" />
-            {resolved ? "Unresolve" : "Resolve"}
-        </Button>
-        
+            
+        </div>
     </div>
-</div>
+</Card>
 

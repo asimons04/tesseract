@@ -64,7 +64,7 @@
                     
                     <div class="flex flex-col gap-1.5">
                         <span class="flex flex-row w-full justify-between">
-                            <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
+                            <span class="text-base font-bold dark:text-zinc-400 text-slate-600">
                                 Report from
                             </span>
                             
