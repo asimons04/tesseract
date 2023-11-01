@@ -559,7 +559,7 @@
 
 
 
-<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[80vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[85vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
     
     
     <!---Report Title, Badge and Open/Close Button Row--->

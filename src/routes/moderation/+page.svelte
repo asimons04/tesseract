@@ -33,9 +33,11 @@
 </svelte:head>
 
 <div class="p-2 mb-4 flex flex-col gap-4">
-    <h1 class="font-bold text-2xl">Reports</h1>
+    
     
     <div class="flex flex-row flex-wrap justify-between">
+        <h1 class="font-bold text-2xl">Reports</h1>
+        
         <div>
             <MultiSelect
                 selected={data.type}
