@@ -689,6 +689,7 @@
                                 }
                             }
                             actions={false}
+                            collapseBadges={true}
                         />
                     {:else if isPostReport(item)}
                         <Post
