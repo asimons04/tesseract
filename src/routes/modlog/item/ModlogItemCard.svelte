@@ -27,7 +27,7 @@
     
     {#if item.actionName}
         <SectionTitle class="mt-2">Action</SectionTitle>
-        <span class="text-base">
+        <span class="">
             <ModlogAction action={item.actionName} expires={item.expires ?? undefined}/>
             {#if item.expires}
                 <span class="text-xs flex items-center gap-1">

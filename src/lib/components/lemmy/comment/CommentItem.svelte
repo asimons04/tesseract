@@ -18,8 +18,7 @@
 
 <Card class="flex flex-col bg-white rounded-md p-5 flex-1 gap-1" id={comment.post.id}>
     <div class="flex flex-row justify-between items-center">
-        <PostMeta post={comment} showFediseer={false} {collapseBadges}/>
-    
+        <PostMeta post={comment} showFediseer={false} {collapseBadges} showTitle={false}/>
         <Button
             color="secondary"
             href="/post/{comment.post.id}?thread={comment.comment.path}#{comment.comment.id}"
@@ -30,7 +29,9 @@
             <Icon src={ArrowTopRightOnSquare} width={16}/>
         </Button>
     </div>
-  
+    
+    <p class="text-sm font-bold">{comment.post.name}</p>  
+    
     <div class="list-none">
         <Comment
             postId={comment.post.id}

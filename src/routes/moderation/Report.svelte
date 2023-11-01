@@ -1,6 +1,7 @@
 <script lang="ts">
     import type {
         CommentReportView,
+        CommentView,
         GetPersonDetailsResponse,
         PersonView,
         PostReportView,
@@ -8,6 +9,7 @@
         PrivateMessageReportView,
     } from 'lemmy-js-client'
     
+    import { afterNavigate } from '$app/navigation'
     import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
     import { fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
@@ -30,7 +32,7 @@
         load as loadModlog
     
     } from '$routes/modlog/+page'
-    import ModlogItemCard from '$routes/modlog/item/ModlogItemCard.svelte'
+    import ModlogItemList from '$routes/modlog/item/ModlogItemList.svelte'
 
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -47,6 +49,7 @@
     import Switch from '$lib/components/input/Switch.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
+    import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { 
@@ -63,14 +66,21 @@
         FolderOpen,
         LockClosed,
         Microphone,
+        Newspaper,
         NoSymbol,
         PencilSquare,
         Trash,
-        UserGroup
+        User,
+        UserGroup,
+        Window
     } from 'svelte-hero-icons'
     
 
     export let item: PostReportView | CommentReportView | PrivateMessageReportView
+    
+    afterNavigate(async () => {
+        
+    });
 
     $: resolved = isCommentReport(item)
         ? item.comment_report.resolved
@@ -78,10 +88,13 @@
             ? item.post_report.resolved
             : false
 
+    $: reporteeID = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id;
     
     let resolving:boolean = false
     let open:boolean = false;
     let debug:boolean = false;
+    
+    
     
     interface ModlogContainer {
         url: URL,
@@ -98,15 +111,18 @@
     }
 
     interface PersonProfile {
-        items?:PostView[],
+        posts?: PostView[],
+        comments?: CommentView[],
         loading:boolean,
         show:boolean,
-        person_view?: PersonView
+        person_view?: PersonView,
+        panel: 'posts' | 'comments' | 'profile'
     }
 
     let creatorProfile:PersonProfile = {
         loading: false,
         show: false,
+        panel: 'posts'
     };
 
     // Load Moderation presets from the template module
@@ -198,12 +214,19 @@
         
 
         if (state) {
+            // Don't await
+            getUserPostsComments(reporteeID);
+            
             // Hide all closed reports if one is open.
             reports.forEach((report) => {
                 if (report != element) {
                     report.style.display='none';
                 }
             })
+
+            creatorProfile.loading = true;
+            creatorProfile.panel = 'profile';
+            creatorProfile.show = true;
         }
         else {
             // Show all reports
@@ -213,8 +236,14 @@
 
             // Empty modlog data and creator content
             modlog.data = undefined;
-            creatorProfile.items = undefined;
+            
+            creatorProfile.posts = undefined;
+            creatorProfile.comments = undefined;
             creatorProfile.person_view = undefined;
+            
+            // Hide the modlog and profile sidebar
+            modlog.show = false;
+            creatorProfile.show = false;
         }
         
         scrollToTop(element);
@@ -264,12 +293,16 @@
                 sort: 'New',
                 auth: $profile?.jwt,
             })
-
-            const items = [...user.posts, ...user.comments]
-            items.sort((a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a)))
-
-            creatorProfile.items = items;
+            const posts = [...user.posts]
+            const comments = [...user.comments]
+            
+            posts.sort((a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a)))
+            comments.sort((a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a)))
+            
+            creatorProfile.posts = posts;
+            creatorProfile.comments = comments;
             creatorProfile.person_view = user.person_view;
+            
             creatorProfile.loading = false;
             creatorProfile.show = true;
         }
@@ -517,6 +550,7 @@
         resolving = false;
         actions = actionsDefault;
         open=false;
+        openReport(open);
     }
 
     
@@ -566,6 +600,7 @@
                 title="{resolved ? "Unresolve" : "Resolve"}"
                 loading={resolving}
                 disabled={resolving || !open}
+                hidden={!open}
             >
                 <Icon src={resolved ? ArrowUturnLeft : Check} mini size="16" slot="icon" />
                 {resolved ? "Unresolve" : "Resolve"}
@@ -575,24 +610,9 @@
             <Button color="primary" size="sm" class="!w-[75px] h-8" icon={open ? Folder : FolderOpen}
                 on:click={ async ()=>{
                     // Toggle the `open` boolean
-                    open=!open; 
-                    
-                    // Get the person id of the person being reported on
-                    let reporteeID = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id;
-
-                    if (open) {                        
-                        openReport(open);
-                        await getUserPostsComments(reporteeID);
-                        await getModlog(reporteeID);
-                    }
-                    else {
-                        openReport(open);
-                        modlog.show = open;
-                        creatorProfile.show = open;
-                    }
-                    
+                    open=!open;
+                    openReport(open);
                 }} 
-                
             >
                 <span class="hidden lg:block">{open ? 'Close' : 'Open'}</span>
             </Button>
@@ -601,7 +621,7 @@
 
     </span>
     
-    <!--Header Row with from, to, sent, badges, and open/close button-->
+    <!--Header Row with from, to, sent, resolver-->
     <span class="flex flex-col lg:flex-row w-full gap-2 justify-between">
         
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
@@ -626,14 +646,6 @@
         </span>
 
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
-            <span class="font-bold dark:text-zinc-400 text-slate-600">
-                Sent
-            </span>
-            <RelativeDate date={isCommentReport(item) ? item.comment_report.published : item.post_report.published} />
-        </span>
-
-        
-        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             {#if item.resolver?.id}        
                 <span class="font-bold dark:text-zinc-400 text-slate-600">
                     Resolved by
@@ -641,13 +653,22 @@
                 <UserLink user={item.resolver} />
             {/if}
         </span>
+
+        <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
+            <span class="font-bold dark:text-zinc-400 text-slate-600">
+                Sent
+            </span>
+            <RelativeDate date={isCommentReport(item) ? item.comment_report.published : item.post_report.published} />
+        </span>
         
     </span>
 
     <!---Collapsible Portion--->
-    <div class="flex flex-row gap-4 w-full overflow-hidden {open ? 'border-t' : ''}" class:hidden={!open}>
+    <div class="flex flex-row pt-4 gap-4 w-full overflow-hidden {open ? 'border-t' : ''}" class:hidden={!open}>
+        
         <!--- Left side / Report Form--->
-        <div class="flex flex-col gap-2 w-full p-2 overflow-y-scroll" >
+        <div class="flex flex-col gap-2 w-full lg:w-2/3 p-2 overflow-y-scroll" >
+            
             <!--- Reported Post Preview and Report Details Row--->                
             <div class="flex flex-col gap-4 xl:flex-row w-full">
                 <!--- Preview of content being reported--->
@@ -701,7 +722,7 @@
             </div>
 
             <!--- Moderation Actions Form--->
-            <div class="flex flex-col gap-2 w-full" class:hidden={resolved}>
+            <div class="flex flex-col gap-2 pr-2 w-full" class:hidden={resolved}>
                 
                 <span class="mt-4 text-base font-bold dark:text-zinc-400 text-slate-600">
                     Actions to Take
@@ -740,7 +761,7 @@
                         </div>
 
                         <!--- Remove Post:  Reason for Post/Comment Removal --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.remove} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={Clipboard} mini width={16}/>
@@ -776,7 +797,7 @@
 
 
                         <!--- Remove Post: Reply to Author --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.remove} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
@@ -795,7 +816,7 @@
 
 
 
-                        <!---CommunityBan--->
+                        <!---Community Ban--->
                         <div class="flex flex-row w-full gap-2 py-2" class:hidden={item.creator_banned_from_community}>
                             <div class="flex flex-col">
                                 <p class="text-sm font-bold flex flex-row gap-2">
@@ -813,7 +834,7 @@
                         </div>
 
                         <!--- Community Ban: Delete Data in Community --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banCommunity} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={Trash} mini width={16}/>
@@ -827,7 +848,7 @@
                         </div>
 
                         <!---Community Ban: Reason for Community Ban --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banCommunity} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={Clipboard} mini width={16}/>
@@ -841,7 +862,7 @@
                         </div>
 
                         <!--- Commuunity Ban: Duration of Community Ban --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banCommunity} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={Clock} mini width={16}/>
@@ -879,7 +900,7 @@
                             </div>
 
                             <!--- Instance Ban: Delete Data Known to Instance --->
-                            <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banInstance} >
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
                                 <div class="flex flex-col w-full">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={Trash} mini width={16}/>
@@ -893,7 +914,7 @@
                             </div>
 
                             <!---Instance Ban: Reason for Instance Ban --->
-                            <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banInstance} >
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
                                 <div class="flex flex-col w-full">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={Clipboard} mini width={16}/>
@@ -907,7 +928,7 @@
                             </div>
 
                             <!--- Instance Ban: Duration of Instance Ban --->
-                            <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.banInstance} >
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
                                 <div class="flex flex-col w-full">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={Clock} mini width={16}/>
@@ -942,7 +963,7 @@
                         </div>
 
                         <!--- Reporter Reply: Include mod actions taken in reply --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.replyReporter} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={ClipboardDocumentList} mini width={16}/>
@@ -956,7 +977,7 @@
                         </div>
 
                         <!---Reporter Reply: Mod Comments --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.replyReporter} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={Clipboard} mini width={16}/>
@@ -970,7 +991,7 @@
                         </div>
 
                         <!---Reporter Reply: Preview --->
-                        <div class="flex flex-row w-full gap-2 py-2 !border-t-0" class:hidden={!actions.replyReporter} >
+                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
                             <div class="flex flex-col w-full">
                                 <p class="text-sm font-bold flex flex-row gap-2">
                                     <Icon src={Clipboard} mini width={16}/>
@@ -994,63 +1015,171 @@
 
         </div>
 
-
-        
-        <!--- Right pane / Modlog --->
-        <div class="hidden w-1/2 p-2 overflow-y-scroll" class:md:block={modlog.show}>
-            {#if modlog.loading}
-                <span class="flex flex-row items-center">    
-                    <Spinner width={64}/>
-                </span>
-            {:else}
-                <h1 class="text-lg font-bold">Modlog</h1>
-                <p class="text-sm font-normal">
-                    Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
-                    are usually all that is relevant to make a moderation decision.
-                </p>
-
-                {#if modlog.data?.modlog?.length > 0}
-                    <div class="flex flex-col gap-4 mt-2">
-                        {#each modlog.data.modlog as modlogItem}
-                            {#if ['postRemoval', 'postLock', 'commentRemoval', 'ban'].includes(modlogItem.actionName)}
-                                <div class="bg-slate-300 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
-                                    <ModlogItemCard item={modlogItem} />
-                                </div>
-                            {/if}
-
-                        {/each}
-                    </div>
-
-                {/if}
-
-            {/if}
-        </div>
-
-        <!---Right Pane / Profile --->
-        <div class="hidden w-1/2 p-2 overflow-y-scroll" class:md:block={creatorProfile.show}>
-            {#if creatorProfile?.loading}
-                <Spinner width={64}/>
+        <!--- Right 1/3 Width Pane--->
+        <div class="hidden lg:flex flex-col gap-2 w-1/3">
             
-            {:else}
-                <h1 class="text-lg font-bold">Profile</h1>
-                <p class="text-sm font-normal">
-                    Latest 50 posts and comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                </p>
+            <!-- Menu Bar--->
+            <div class="flex flex-row w-full gap-4 justify-between px-2">
+                <Button color="tertiary" size="sm" title="Profile" class="{creatorProfile.panel=='profile' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        modlog.show = false;
+                        creatorProfile.show = true;
+                        creatorProfile.panel='profile'
 
-                {#if creatorProfile?.items && creatorProfile?.items?.length > 0 }
-                    <div class="w-full flex flex-col gap-5 mx-auto">
-                        {#each creatorProfile.items as item (item.counts.id)}
-                            {#if isCommentView(item)}
-                                <CommentItem comment={item} collapseBadges={true} />
-                            {:else if !isCommentView(item)}
-                                <Post post={item} collapseBadges={true}/>
-                            {/if}
-                        {/each}
-                    </div>
+                        if (!creatorProfile.person_view) {
+                            creatorProfile.loading = true;
+                            await getUserPostsComments(reporteeID);
+                        }
+                    }}
+                >
+                    <Icon src={User} mini width={16}/>
+                    <span class="hidden xl:block">Profile</span>
+                </Button>
+
+                <Button color="tertiary" size="sm" title="Posts" class="{creatorProfile.panel=='posts' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        modlog.show = false;
+                        creatorProfile.show = true;
+                        creatorProfile.panel='posts'
+
+                        if (!creatorProfile.posts) {
+                            creatorProfile.loading = true;
+                            await getUserPostsComments(reporteeID);
+                        }
+                    }}
+                >
+                    <Icon src={Window} mini width={16}/>
+                    <span class="hidden xl:block">Posts</span>
+                </Button>
+
+                <Button color="tertiary" size="sm" title="Comments" class="{creatorProfile.panel=='comments' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        modlog.show = false;
+                        creatorProfile.show = true;
+                        creatorProfile.panel='comments'
+                        
+                        if (!creatorProfile.comments) {
+                            creatorProfile.loading = true; 
+                            await getUserPostsComments(reporteeID);
+                        }
+                    }}
+                >
+                    <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                    <span class="hidden xl:block">Comments</span>
+                </Button>
+
+                <Button color="tertiary" size="sm" title="Modlog" class="{modlog.show ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        creatorProfile.show = false;
+                        modlog.loading = true;
+                        modlog.show = true;
+                        await getModlog(reporteeID);
+                        
+                    }}
+                >
+                    <Icon src={Newspaper} mini width={16}/>
+                    <span class="hidden xl:block">Modlog</span>
+                </Button>
+            </div>
+            
+            <!--- Right pane / Modlog --->
+            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={modlog.show}>
+                {#if modlog.loading}
+                    <span class="flex flex-row w-full items-center">    
+                        <span class="ml-auto"/>
+                        <Spinner width={64}/>
+                        <span class="mr-auto"/>
+                    </span>
                 {:else}
-                    <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions." />
+                    <h1 class="text-lg font-bold">Modlog</h1>
+                    <p class="text-sm font-normal">
+                        Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
+                        are usually all that is relevant to make a moderation decision.
+                    </p>
+
+                    {#if modlog.data?.modlog?.length > 0}
+                        <div class="flex flex-col gap-4 mt-2">
+                            {#each modlog.data.modlog as modlogItem}
+                                {#if ['postRemoval', 'postLock', 'postUnlock', 'commentRemoval', 'ban'].includes(modlogItem.actionName)}
+                                    <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
+                                        <ModlogItemList item={modlogItem} />
+                                    </div>
+                                {/if}
+
+                            {/each}
+                        </div>
+
+                    {/if}
+
                 {/if}
-            {/if}
+            </div>
+
+            <!---Right Pane / User Profile --->
+            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='profile'}>
+                {#if creatorProfile.loading}
+                    <span class="flex flex-row w-full items-center">        
+                        <span class="ml-auto"/>
+                        <Spinner width={64}/>
+                        <span class="mr-auto"/>
+                    </span>
+                {:else}
+                    {#if creatorProfile?.person_view }
+                        <UserCard person={creatorProfile.person_view} />
+                    {/if}
+                {/if}
+            </div>
+
+            <!---Right Pane / User Posts --->
+            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='posts'}>
+                {#if creatorProfile.loading}
+                    <span class="flex flex-row w-full items-center">        
+                        <span class="ml-auto"/>
+                        <Spinner width={64}/>
+                        <span class="mr-auto"/>
+                    </span>
+                {:else}
+                    <h1 class="text-lg font-bold">Posts</h1>
+                    <p class="text-sm font-normal">
+                        Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                    </p>
+
+                    {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
+                        <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                            {#each creatorProfile.posts as item (item.counts.id)}
+                                <Post post={item} collapseBadges={true} forceCompact={true}/>
+                            {/each}
+                        </div>
+                    {:else}
+                        <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                    {/if}
+                {/if}
+            </div>
+
+            <!---Right Pane / User Comments --->
+            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='comments'}>
+                {#if creatorProfile.loading}
+                    <span class="flex flex-row w-full items-center">        
+                        <span class="ml-auto"/>
+                        <Spinner width={64}/>
+                        <span class="mr-auto"/>
+                    </span>
+                {:else}
+                    <h1 class="text-lg font-bold">Comments</h1>
+                    <p class="text-sm font-normal">
+                        Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                    </p>
+
+                    {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
+                        <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                            {#each creatorProfile.comments as item (item.counts.id)}
+                                <CommentItem comment={item} collapseBadges={true} />
+                            {/each}
+                        </div>
+                    {:else}
+                        <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
+                    {/if}
+                {/if}
+            </div>
         </div>
     </div>
 </Card>

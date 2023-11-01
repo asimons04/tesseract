@@ -85,7 +85,7 @@
                 </Button>
             </div>
 
-            <div class="pointer-events-none list-none">
+            <div class="pointer-events-none list-none overflow-x-none">
                 {#if isComment(item)}
                     <Comment
                         actions={false}
