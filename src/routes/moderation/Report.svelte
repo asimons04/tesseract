@@ -537,9 +537,8 @@
         }
         
         resolving = false;
-        actions = actionsDefault;
-        open=false;
-        toggleOpenReport(open);
+        actions = {...actionsDefault};
+        toggleOpenReport();
     }
 
     
