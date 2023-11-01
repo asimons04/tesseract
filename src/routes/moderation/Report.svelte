@@ -763,7 +763,7 @@
                                     
                                     <div class="mt-2"/>
                                     
-                                    <div class="flex flex-row gap-1 items-start">
+                                    <div class="flex flex-col md:flex-row gap-1 items-start">
                                         <MultiSelect 
                                             options={removalPresets.options}
                                             optionNames={removalPresets.names}
