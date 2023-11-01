@@ -219,7 +219,13 @@
             })
 
             creatorProfile.loading = true;
-            sidePanel= 'profile';
+            if (resolved) {
+                getModlog();
+                sidePanel= 'modlog';
+            }
+            else {
+                sidePanel = 'profile';
+            }
         }
         else {
             // Show all reports
@@ -247,7 +253,6 @@
 
         
         if (communityID) {
-            
             modlog.url.searchParams.set('community_id', communityID.toString());
         }
         else {
@@ -649,13 +654,7 @@
     {#if open}
         
         <!-- Side panel Menu Bar--->
-        <div class="flex flex-col gap-1">
-            <!--
-            <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
-                Tools
-            </span>
-            -->
-            
+        <div class="hidden lg:flex flex-col gap-1">
             <div class="flex flex-row w-full gap-2 py-1 bg-slate-200 dark:bg-zinc-800 rounded-md">
                 <span class="ml-4 flex text-xs font-bold items-center">
                     Lookup Tools:
@@ -674,7 +673,7 @@
                     }}
                 >
                     <Icon src={User} mini width={16}/>
-                    <span class="hidden xl:block">User Profile</span>
+                    User Profile
                 </Button>
 
                 <Button color="tertiary" size="sm" title="Community" class="{sidePanel=='community' ? 'font-bold' : ''}"
@@ -685,7 +684,7 @@
                     }}
                 >
                     <Icon src={UserGroup} mini width={16}/>
-                    <span class="hidden xl:block">Community</span>
+                    Community
                 </Button>
 
                 <Button color="tertiary" size="sm" title="Posts" class="{sidePanel=='posts' ? 'font-bold' : ''}"
@@ -701,7 +700,7 @@
                     }}
                 >
                     <Icon src={Window} mini width={16}/>
-                    <span class="hidden xl:block">Posts</span>
+                    Posts
                 </Button>
 
                 <Button color="tertiary" size="sm" title="Comments" class="{sidePanel=='comments' ? 'font-bold' : ''}"
@@ -717,7 +716,7 @@
                     }}
                 >
                     <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                    <span class="hidden xl:block">Comments</span>
+                    Comments
                 </Button>
 
                 <Button color="tertiary" size="sm" title="Modlog" class="{sidePanel=='modlog' ? 'font-bold' : ''}"
@@ -731,7 +730,7 @@
                     }}
                 >
                     <Icon src={Newspaper} mini width={16}/>
-                    <span class="hidden xl:block">Modlog History</span>
+                    Modlog History
                 </Button>
             </div>
         </div>
@@ -1096,7 +1095,7 @@
                     
                     <!--- Right pane / Modlog --->
                     {#if sidePanel == 'modlog'}
-                        <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        <div class="w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
                             {#if modlog.loading}
                                 <span class="flex flex-row w-full items-center">    
                                     <span class="ml-auto"/>
@@ -1104,7 +1103,7 @@
                                     <span class="mr-auto"/>
                                 </span>
                             {:else}
-                                <h1 class="text-lg font-bold">Modlog</h1>
+                                <h1 class="text-lg font-bold">Modlog History</h1>
                                 <p class="text-sm font-normal">
                                     Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
                                     are usually all that is relevant to make a moderation decision.
