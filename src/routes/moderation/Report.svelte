@@ -782,7 +782,7 @@
                                             items={0}
                                             label="Removal Reason Presets"
                                         />
-                                        <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={3} placeholder="Removal reason"/>
+                                        <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={4} placeholder="Removal reason"/>
                                     </div>
                                 </div>
                             </div>
