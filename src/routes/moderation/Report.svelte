@@ -11,7 +11,7 @@
     
     import { afterNavigate } from '$app/navigation'
     import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
-    import { fly } from 'svelte/transition'
+    import { fade, fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
     import { getRemovalTemplates } from './templates'
     import { 
@@ -1075,107 +1075,115 @@
                 </div>
                 
                 <!--- Right pane / Modlog --->
-                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={modlog.show}>
-                    {#if modlog.loading}
-                        <span class="flex flex-row w-full items-center">    
-                            <span class="ml-auto"/>
-                            <Spinner width={64}/>
-                            <span class="mr-auto"/>
-                        </span>
-                    {:else}
-                        <h1 class="text-lg font-bold">Modlog</h1>
-                        <p class="text-sm font-normal">
-                            Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
-                            are usually all that is relevant to make a moderation decision.
-                        </p>
+                {#if modlog.show}
+                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        {#if modlog.loading}
+                            <span class="flex flex-row w-full items-center">    
+                                <span class="ml-auto"/>
+                                <Spinner width={64}/>
+                                <span class="mr-auto"/>
+                            </span>
+                        {:else}
+                            <h1 class="text-lg font-bold">Modlog</h1>
+                            <p class="text-sm font-normal">
+                                Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
+                                are usually all that is relevant to make a moderation decision.
+                            </p>
 
-                        {#if modlog.data?.modlog?.length > 0}
-                            <div class="flex flex-col gap-4 mt-2">
-                                {#each modlog.data.modlog as modlogItem}
-                                    {#if [
-                                            'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
-                                            'ban', 'unban' ,'banCommunity', 'unbanCommunity'
-                                        ].includes(modlogItem.actionName)
-                                    }
-                                        <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
-                                            <ModlogItemList item={modlogItem} />
-                                        </div>
-                                    {/if}
+                            {#if modlog.data?.modlog?.length > 0}
+                                <div class="flex flex-col gap-4 mt-2">
+                                    {#each modlog.data.modlog as modlogItem}
+                                        {#if [
+                                                'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
+                                                'ban', 'unban' ,'banCommunity', 'unbanCommunity'
+                                            ].includes(modlogItem.actionName)
+                                        }
+                                            <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
+                                                <ModlogItemList item={modlogItem} />
+                                            </div>
+                                        {/if}
 
-                                {/each}
-                            </div>
+                                    {/each}
+                                </div>
+
+                            {/if}
 
                         {/if}
-
-                    {/if}
-                </div>
+                    </div>
+                {/if}
 
                 <!---Right Pane / User Profile --->
-                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='profile'}>
-                    {#if creatorProfile.loading}
-                        <span class="flex flex-row w-full items-center">        
-                            <span class="ml-auto"/>
-                            <Spinner width={64}/>
-                            <span class="mr-auto"/>
-                        </span>
-                    {:else}
-                        {#if creatorProfile?.person_view }
-                            <UserCard person={creatorProfile.person_view} />
+                {#if creatorProfile.show && creatorProfile.panel=='profile' }
+                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        {#if creatorProfile.loading}
+                            <span class="flex flex-row w-full items-center">        
+                                <span class="ml-auto"/>
+                                <Spinner width={64}/>
+                                <span class="mr-auto"/>
+                            </span>
+                        {:else}
+                            {#if creatorProfile?.person_view }
+                                <UserCard person={creatorProfile.person_view} />
+                            {/if}
                         {/if}
-                    {/if}
-                </div>
+                    </div>
+                {/if}
 
                 <!---Right Pane / User Posts --->
-                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='posts'}>
-                    {#if creatorProfile.loading}
-                        <span class="flex flex-row w-full items-center">        
-                            <span class="ml-auto"/>
-                            <Spinner width={64}/>
-                            <span class="mr-auto"/>
-                        </span>
-                    {:else}
-                        <h1 class="text-lg font-bold">Posts</h1>
-                        <p class="text-sm font-normal">
-                            Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                        </p>
-
-                        {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
-                            <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                                {#each creatorProfile.posts as item (item.counts.id)}
-                                    <Post post={item} collapseBadges={true} forceCompact={true}/>
-                                {/each}
-                            </div>
+                {#if creatorProfile.show && creatorProfile.panel=='posts'}
+                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}} >
+                        {#if creatorProfile.loading}
+                            <span class="flex flex-row w-full items-center">        
+                                <span class="ml-auto"/>
+                                <Spinner width={64}/>
+                                <span class="mr-auto"/>
+                            </span>
                         {:else}
-                            <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                            <h1 class="text-lg font-bold">Posts</h1>
+                            <p class="text-sm font-normal">
+                                Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                            </p>
+
+                            {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
+                                <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                                    {#each creatorProfile.posts as item (item.counts.id)}
+                                        <Post post={item} collapseBadges={true} forceCompact={true}/>
+                                    {/each}
+                                </div>
+                            {:else}
+                                <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                            {/if}
                         {/if}
-                    {/if}
-                </div>
+                    </div>
+                {/if}
 
                 <!---Right Pane / User Comments --->
-                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='comments'}>
-                    {#if creatorProfile.loading}
-                        <span class="flex flex-row w-full items-center">        
-                            <span class="ml-auto"/>
-                            <Spinner width={64}/>
-                            <span class="mr-auto"/>
-                        </span>
-                    {:else}
-                        <h1 class="text-lg font-bold">Comments</h1>
-                        <p class="text-sm font-normal">
-                            Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                        </p>
-
-                        {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
-                            <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                                {#each creatorProfile.comments as item (item.counts.id)}
-                                    <CommentItem comment={item} collapseBadges={true} />
-                                {/each}
-                            </div>
+                {#if creatorProfile.show && creatorProfile.panel=='comments'}
+                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        {#if creatorProfile.loading}
+                            <span class="flex flex-row w-full items-center">        
+                                <span class="ml-auto"/>
+                                <Spinner width={64}/>
+                                <span class="mr-auto"/>
+                            </span>
                         {:else}
-                            <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
+                            <h1 class="text-lg font-bold">Comments</h1>
+                            <p class="text-sm font-normal">
+                                Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                            </p>
+
+                            {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
+                                <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                                    {#each creatorProfile.comments as item (item.counts.id)}
+                                        <CommentItem comment={item} collapseBadges={true} />
+                                    {/each}
+                                </div>
+                            {:else}
+                                <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
+                            {/if}
                         {/if}
-                    {/if}
-                </div>
+                    </div>
+                {/if}
             </div>
         </div>
     {/if}
