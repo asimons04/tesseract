@@ -455,11 +455,6 @@
                         content: template,
                         recipient_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
                     })
-
-                    toast({
-                        content: "Sent reply to post/comment author.",
-                        type: 'success'
-                    });
                 }
                 catch (err) {
                     console.log(err);
@@ -479,11 +474,6 @@
                         content: actions.replyReporterBody,
                         recipient_id: item.creator.id
                     })
-
-                    toast({
-                        content: "Sent reply to reporter.",
-                        type: 'success'
-                    });
                 }
                 catch (err) {
                     console.log(err);
@@ -1102,9 +1092,7 @@
                         <div class="flex flex-col gap-4 mt-2">
                             {#each modlog.data.modlog as modlogItem}
                                 {#if [
-                                        'postRemoval', 'postRestore', 
-                                        'postLock', 'postUnlock', 
-                                        'commentRemoval', 'commentRestore', 
+                                        'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
                                         'ban', 'unban' ,'banCommunity', 'unbanCommunity'
                                     ].includes(modlogItem.actionName)
                                 }
