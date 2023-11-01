@@ -9,7 +9,7 @@
         PrivateMessageReportView,
     } from 'lemmy-js-client'
     
-    import { afterNavigate } from '$app/navigation'
+    import { afterNavigate, beforeNavigate } from '$app/navigation'
     import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
     import { fade, fly, slide } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
@@ -79,8 +79,9 @@
 
     export let item: PostReportView | CommentReportView | PrivateMessageReportView
     
-    afterNavigate(async () => {
-        
+    beforeNavigate(() => {
+        if (open) toggleOpenReport();
+
     });
 
     $: resolved = isCommentReport(item)
@@ -143,7 +144,7 @@
         banInstanceDeleteData: false,
         banInstanceExpires: '',
 
-        replyReporter: true,
+        replyReporter: false,
         replyReporterText: '',
         replyReporterBody: '',
         replyReporterIncludeActions: true,
@@ -202,12 +203,13 @@
     }
 
     // Expands a report item, hides the rest. Send `false` as argument to close and un-hide.
-    function openReport(state:boolean):void {
+    function toggleOpenReport():void {
         let element = document.getElementById(isCommentReport(item) ? item.comment_report.id : item.post_report.id);
         let reports = document.getElementsByName('ModeratorReport'); 
         
+        open=!open;
 
-        if (state) {
+        if (open) {
             // Don't await
             getUserPostsComments(reporteeID);
             
@@ -537,7 +539,7 @@
         resolving = false;
         actions = actionsDefault;
         open=false;
-        openReport(open);
+        toggleOpenReport(open);
     }
 
     
@@ -595,11 +597,7 @@
 
             <!--- Open Close Button (also populates sidebar) --->
             <Button color="primary" size="sm" class="!w-[75px] h-8" icon={open ? Folder : FolderOpen}
-                on:click={ async ()=>{
-                    // Toggle the `open` boolean
-                    open=!open;
-                    openReport(open);
-                }} 
+                on:click={toggleOpenReport} 
             >
                 <span class="hidden lg:block">{open ? 'Close' : 'Open'}</span>
             </Button>

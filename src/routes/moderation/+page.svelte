@@ -65,7 +65,10 @@
     <div class="flex flex-col gap-1 w-full max-h-full">
         {#each data.items as item}
             {#if 
-                    (type == 'unread' && (isCommentReport(item) && !item.comment_report.resolved) || (isPostReport(item) && !item.post_report.resolved)) || type == 'all'                
+                    (
+                        (!type || type == 'unread') && 
+                        (isCommentReport(item) && !item.comment_report.resolved) || (isPostReport(item) && !item.post_report.resolved)
+                    ) || type == 'all'                
             }
                 <div class="mt-[-0.25rem]" transition:fly={{delay: 300, duration:500, x: '50%'}}>    
                     <Report bind:item={item} />
