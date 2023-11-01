@@ -246,7 +246,7 @@
             creatorProfile.show = false;
         }
         
-        scrollToTop(element);
+        //scrollToTop(element);
 
     }
 
@@ -654,528 +654,530 @@
     </span>
 
     <!---Collapsible Portion--->
-    <div class="flex flex-row pt-4 gap-4 w-full overflow-hidden {open ? 'border-t' : ''}" class:hidden={!open}>
-        
-        <!--- Left side / Report Form--->
-        <div class="flex flex-col gap-2 w-full lg:w-2/3 p-2 overflow-y-scroll" >
+    {#if open}
+        <div class="flex flex-row pt-4 gap-4 w-full overflow-hidden" transition:fly={{ duration: 300, y: -60, opacity: 0 }}>
             
-            <!--- Reported Post Preview and Report Details Row--->                
-            <div class="flex flex-col gap-4 xl:flex-row w-full">
-                <!--- Preview of content being reported--->
-                <details open class="flex flex-col gap-2 w-full xl:w-1/2">
-                    <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
-                        Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-                    </summary>
-                    
-                    {#if isCommentReport(item)}
-                        <CommentItem
-                            comment={
-                                {
-                                    ...item,
-                                    subscribed: 'NotSubscribed',
-                                    creator_blocked: false,
-                                    saved: false,
-                                    creator: item.comment_creator,
-                                }
-                            }
-                            actions={false}
-                            collapseBadges={true}
-                        />
-                    {:else if isPostReport(item)}
-                        <Post
-                            post={
-                                {
-                                    ...item,
-                                    saved: false,
-                                    subscribed: 'NotSubscribed',
-                                    unread_comments: 0,
-                                    read: false,
-                                    creator_blocked: false,
-                                    creator: item.post_creator,
-                                }
-                            }
-                            forceCompact={true}
-                            disablePostLinks={false}
-                            actions={false}
-                            collapseBadges={true}
-                        />
-                    {/if}
-
-                </details>
-            
-                <details open class="flex flex-col gap-2  w-full xl:w-1/2">
-                    <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
-                        Report Details
-                    </summary>
-                    
-                    <p class="text-sm font-normal">{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
-                </details>
-            </div>
-
-            <!--- Moderation Actions Form--->
-            <div class="flex flex-col gap-2 pr-2 w-full" class:hidden={resolved}>
+            <!--- Left side / Report Form--->
+            <div class="flex flex-col gap-2 w-full lg:w-2/3 p-2 overflow-y-scroll" >
                 
-                <span class="mt-4 text-base font-bold dark:text-zinc-400 text-slate-600">
-                    Actions to Take
-                </span>
-
-                {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
-                    <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
-                        <!---Lock Post--->
-                        <div class="flex flex-row w-full gap-2 py-2" class:hidden={!isPostReport(item) || (isPostReport(item) && item.post.locked)}>
-                            <div class="flex flex-col">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={LockClosed} mini width={16}/>
-                                    Lock Post
-                                </p>
-                                <p class="text-xs font-normal">Lock the post to prevent any further comments.</p>
-                            </div>
-                            
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={actions.lock} />
-                        </div>
+                <!--- Reported Post Preview and Report Details Row--->                
+                <div class="flex flex-col gap-4 xl:flex-row w-full">
+                    <!--- Preview of content being reported--->
+                    <details open class="flex flex-col gap-2 w-full xl:w-1/2">
+                        <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
+                            Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+                        </summary>
                         
-                        <!---Remove Post/Comment--->
-                        <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isCommentReport(item) && item.comment?.removed) || (isPostReport(item) && item.post?.removed) }>
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Trash} mini width={16}/>
-                                    Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-                                </p>
-                                <p class="text-xs font-normal">Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}</p>
-                            </div>
-                            
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={actions.remove} />
-                        </div>
+                        {#if isCommentReport(item)}
+                            <CommentItem
+                                comment={
+                                    {
+                                        ...item,
+                                        subscribed: 'NotSubscribed',
+                                        creator_blocked: false,
+                                        saved: false,
+                                        creator: item.comment_creator,
+                                    }
+                                }
+                                actions={false}
+                                collapseBadges={true}
+                            />
+                        {:else if isPostReport(item)}
+                            <Post
+                                post={
+                                    {
+                                        ...item,
+                                        saved: false,
+                                        subscribed: 'NotSubscribed',
+                                        unread_comments: 0,
+                                        read: false,
+                                        creator_blocked: false,
+                                        creator: item.post_creator,
+                                    }
+                                }
+                                forceCompact={true}
+                                disablePostLinks={false}
+                                actions={false}
+                                collapseBadges={true}
+                            />
+                        {/if}
 
-                        <!--- Remove Post:  Reason for Post/Comment Removal --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Clipboard} mini width={16}/>
-                                    Removal Reason
-                                </p>
-                                <p class="text-xs font-normal">The reason for removing this content. It will appear in the modlog.</p>
-                                
-                                <div class="mt-2"/>
-                                
-                                <div class="flex flex-row gap-1 items-start">
-                                    <MultiSelect 
-                                        options={removalPresets.options}
-                                        optionNames={removalPresets.names}
-                                        selected=""
-                                        on:select={(e) => {
-                                            switch (e.detail) {
-                                                case "REPORTTEXT":
-                                                    actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
-                                                    break;
-                                                default:
-                                                    actions.removeReason = e.detail
-                                            }
-                                        }}
-                                        headless={true}
-                                        class="!min-w-[185px]"
-                                        items={0}
-                                        label="Removal Reason Presets"
-                                    />
-                                    <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={3} placeholder="Removal reason"/>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!--- Remove Post: Reply to Author --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                                    Reply to Author
-                                </p>
-                                <p class="text-xs font-normal">
-                                    Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
-                                    their content has been removed. The reason given above will be included in that message.
-                                </p>                        
-                            </div>
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={actions.removeReplyToAuthor} />
-                        </div>
-
-
-
-
-                        <!---Community Ban--->
-                        <div class="flex flex-row w-full gap-2 py-2" class:hidden={item.creator_banned_from_community}>
-                            <div class="flex flex-col">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={UserGroup} mini width={16}/>
-                                    Ban From Community
-                                </p>
-                                <p class="text-xs font-normal">
-                                    Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
-                                </p>
-                            </div>
-                            
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={actions.banCommunity} />
-                        </div>
-
-                        <!--- Community Ban: Delete Data in Community --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Trash} mini width={16}/>
-                                    Remove Posts/Comments
-                                </p>
-                                <p class="text-xs font-normal">Remove all post and comments in this community made by this user.</p>                        
-                            </div>
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={actions.banCommunityDeleteData} />
-                        </div>
-
-                        <!---Community Ban: Reason for Community Ban --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Clipboard} mini width={16}/>
-                                    Reason for Community Ban
-                                </p>
-                                <p class="text-xs font-normal">The given reason meriting the ban from this community.</p>
-                                
-                                <div class="mt-2"/>
-                                <TextInput bind:value={actions.banCommunityReason} type="text" placeholder="Ban reason"/>
-                            </div>
-                        </div>
-
-                        <!--- Commuunity Ban: Duration of Community Ban --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Clock} mini width={16}/>
-                                    Community Ban Duration
-                                </p>
-                                <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent community ban.</p>                        
-                            </div>
-
-                            <div class="mx-auto"/>
-
-                            <DateInput bind:value={actions.banCommunityExpires} class="w-[175px]"/>
-                        </div>
-
-
-
-
-                        <!--- Admin-Only Options--->
-                        {#if $profile?.user && isAdmin($profile.user)}
+                    </details>
+                
+                    <details open class="flex flex-col gap-2  w-full xl:w-1/2">
+                        <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
+                            Report Details
+                        </summary>
                         
-                            <!---Instance Ban --->
-                            <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned)}>
+                        <p class="text-sm font-normal">{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
+                    </details>
+                </div>
+
+                <!--- Moderation Actions Form--->
+                <div class="flex flex-col gap-2 pr-2 w-full" class:hidden={resolved}>
+                    
+                    <span class="mt-4 text-base font-bold dark:text-zinc-400 text-slate-600">
+                        Actions to Take
+                    </span>
+
+                    {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
+                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                            <!---Lock Post--->
+                            <div class="flex flex-row w-full gap-2 py-2" class:hidden={!isPostReport(item) || (isPostReport(item) && item.post.locked)}>
                                 <div class="flex flex-col">
                                     <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={NoSymbol} mini width={16}/>
-                                        Ban From Instance
+                                        <Icon src={LockClosed} mini width={16}/>
+                                        Lock Post
+                                    </p>
+                                    <p class="text-xs font-normal">Lock the post to prevent any further comments.</p>
+                                </div>
+                                
+                                <div class="mx-auto"/>
+                                
+                                <Switch bind:enabled={actions.lock} />
+                            </div>
+                            
+                            <!---Remove Post/Comment--->
+                            <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isCommentReport(item) && item.comment?.removed) || (isPostReport(item) && item.post?.removed) }>
+                                <div class="flex flex-col w-full">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={Trash} mini width={16}/>
+                                        Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+                                    </p>
+                                    <p class="text-xs font-normal">Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}</p>
+                                </div>
+                                
+                                <div class="mx-auto"/>
+                                
+                                <Switch bind:enabled={actions.remove} />
+                            </div>
+
+                            <!--- Remove Post:  Reason for Post/Comment Removal --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
+                                <div class="flex flex-col w-full">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={Clipboard} mini width={16}/>
+                                        Removal Reason
+                                    </p>
+                                    <p class="text-xs font-normal">The reason for removing this content. It will appear in the modlog.</p>
+                                    
+                                    <div class="mt-2"/>
+                                    
+                                    <div class="flex flex-row gap-1 items-start">
+                                        <MultiSelect 
+                                            options={removalPresets.options}
+                                            optionNames={removalPresets.names}
+                                            selected=""
+                                            on:select={(e) => {
+                                                switch (e.detail) {
+                                                    case "REPORTTEXT":
+                                                        actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
+                                                        break;
+                                                    default:
+                                                        actions.removeReason = e.detail
+                                                }
+                                            }}
+                                            headless={true}
+                                            class="!min-w-[185px]"
+                                            items={0}
+                                            label="Removal Reason Presets"
+                                        />
+                                        <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={3} placeholder="Removal reason"/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!--- Remove Post: Reply to Author --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
+                                <div class="flex flex-col w-full">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                                        Reply to Author
                                     </p>
                                     <p class="text-xs font-normal">
-                                        Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
+                                        Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
+                                        their content has been removed. The reason given above will be included in that message.
+                                    </p>                        
+                                </div>
+                                <div class="mx-auto"/>
+                                
+                                <Switch bind:enabled={actions.removeReplyToAuthor} />
+                            </div>
+
+
+
+
+                            <!---Community Ban--->
+                            <div class="flex flex-row w-full gap-2 py-2" class:hidden={item.creator_banned_from_community}>
+                                <div class="flex flex-col">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={UserGroup} mini width={16}/>
+                                        Ban From Community
+                                    </p>
+                                    <p class="text-xs font-normal">
+                                        Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
                                     </p>
                                 </div>
                                 
                                 <div class="mx-auto"/>
                                 
-                                <Switch bind:enabled={actions.banInstance} />
+                                <Switch bind:enabled={actions.banCommunity} />
                             </div>
 
-                            <!--- Instance Ban: Delete Data Known to Instance --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                            <!--- Community Ban: Delete Data in Community --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
                                 <div class="flex flex-col w-full">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={Trash} mini width={16}/>
                                         Remove Posts/Comments
                                     </p>
-                                    <p class="text-xs font-normal">Remove all post and comments on this instance made by this user.</p>                        
+                                    <p class="text-xs font-normal">Remove all post and comments in this community made by this user.</p>                        
                                 </div>
                                 <div class="mx-auto"/>
                                 
-                                <Switch bind:enabled={actions.banInstanceDeleteData} />
+                                <Switch bind:enabled={actions.banCommunityDeleteData} />
                             </div>
 
-                            <!---Instance Ban: Reason for Instance Ban --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                            <!---Community Ban: Reason for Community Ban --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
                                 <div class="flex flex-col w-full">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={Clipboard} mini width={16}/>
-                                        Reason for Instance Ban
+                                        Reason for Community Ban
                                     </p>
-                                    <p class="text-xs font-normal">The given reason meriting the ban from this instance.</p>
+                                    <p class="text-xs font-normal">The given reason meriting the ban from this community.</p>
                                     
                                     <div class="mt-2"/>
-                                    <TextInput bind:value={actions.banInstanceReason} type="text" placeholder="Ban reason"/>
+                                    <TextInput bind:value={actions.banCommunityReason} type="text" placeholder="Ban reason"/>
                                 </div>
                             </div>
 
-                            <!--- Instance Ban: Duration of Instance Ban --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                            <!--- Commuunity Ban: Duration of Community Ban --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
                                 <div class="flex flex-col w-full">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={Clock} mini width={16}/>
-                                        Instance Ban Duration
+                                        Community Ban Duration
                                     </p>
-                                    <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent instance ban.</p>                        
+                                    <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent community ban.</p>                        
                                 </div>
 
                                 <div class="mx-auto"/>
 
-                                <DateInput bind:value={actions.banInstanceExpires} class="w-[175px]"/>
+                                <DateInput bind:value={actions.banCommunityExpires} class="w-[175px]"/>
                             </div>
+
+
+
+
+                            <!--- Admin-Only Options--->
+                            {#if $profile?.user && isAdmin($profile.user)}
+                            
+                                <!---Instance Ban --->
+                                <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned)}>
+                                    <div class="flex flex-col">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={NoSymbol} mini width={16}/>
+                                            Ban From Instance
+                                        </p>
+                                        <p class="text-xs font-normal">
+                                            Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.banInstance} />
+                                </div>
+
+                                <!--- Instance Ban: Delete Data Known to Instance --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Trash} mini width={16}/>
+                                            Remove Posts/Comments
+                                        </p>
+                                        <p class="text-xs font-normal">Remove all post and comments on this instance made by this user.</p>                        
+                                    </div>
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.banInstanceDeleteData} />
+                                </div>
+
+                                <!---Instance Ban: Reason for Instance Ban --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Clipboard} mini width={16}/>
+                                            Reason for Instance Ban
+                                        </p>
+                                        <p class="text-xs font-normal">The given reason meriting the ban from this instance.</p>
+                                        
+                                        <div class="mt-2"/>
+                                        <TextInput bind:value={actions.banInstanceReason} type="text" placeholder="Ban reason"/>
+                                    </div>
+                                </div>
+
+                                <!--- Instance Ban: Duration of Instance Ban --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Clock} mini width={16}/>
+                                            Instance Ban Duration
+                                        </p>
+                                        <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent instance ban.</p>                        
+                                    </div>
+
+                                    <div class="mx-auto"/>
+
+                                    <DateInput bind:value={actions.banInstanceExpires} class="w-[175px]"/>
+                                </div>
+                            {/if}
+
+
+
+                            <!---Reporter Reply--->
+                            <div class="flex flex-row w-full gap-2 py-2">
+                                <div class="flex flex-col">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                                        Reply to Reporter
+                                    </p>
+                                    <p class="text-xs font-normal">
+                                        Send the reporter a DM letting them know their report was seen and resolved.
+                                    </p>
+                                </div>
+                                
+                                <div class="mx-auto"/>
+                                
+                                <Switch bind:enabled={actions.replyReporter} />
+                            </div>
+
+                            <!--- Reporter Reply: Include mod actions taken in reply --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
+                                <div class="flex flex-col w-full">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={ClipboardDocumentList} mini width={16}/>
+                                        Include Actions Taken
+                                    </p>
+                                    <p class="text-xs font-normal">Include a list of actions taken in the process of resolving their report.</p>                        
+                                </div>
+                                <div class="mx-auto"/>
+                                
+                                <Switch bind:enabled={actions.replyReporterIncludeActions} />
+                            </div>
+
+                            <!---Reporter Reply: Mod Comments --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
+                                <div class="flex flex-col w-full">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={Clipboard} mini width={16}/>
+                                        Additional Comments
+                                    </p>
+                                    <p class="text-xs font-normal">Include a "moderator comment" in the reply to the reporter.</p>
+                                    
+                                    <div class="mt-2"/>
+                                    <TextInput bind:value={actions.replyReporterText} type="text" placeholder="Additional comments to include in reply"/>
+                                </div>
+                            </div>
+
+                            <!---Reporter Reply: Preview --->
+                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
+                                <div class="flex flex-col w-full">
+                                    <p class="text-sm font-bold flex flex-row gap-2">
+                                        <Icon src={Clipboard} mini width={16}/>
+                                        Reply Preview
+                                    </p>
+                                    <p class="text-xs font-normal">
+                                        A preview of the generated reply that will be sent to the reporter. After you've made your mod action selections, 
+                                        you can edit the response manually before sending, if needed.
+                                    </p>
+                                    
+                                    <MarkdownEditor value={actions.replyReporterBody} previewButton={true} previewing={true} rows={10} images={false}/>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    {/if}
+                    
+
+                </div>
+
+            </div>
+
+            <!--- Right 1/3 Width Pane--->
+            <div class="hidden lg:flex flex-col gap-2 w-1/3">
+                
+                <!-- Menu Bar--->
+                <div class="flex flex-row w-full gap-4 justify-between px-2">
+                    <Button color="tertiary" size="sm" title="Profile" class="{creatorProfile.panel=='profile' ? 'font-bold' : ''}"
+                        on:click={async() => {
+                            modlog.show = false;
+                            creatorProfile.show = true;
+                            creatorProfile.panel='profile'
+
+                            if (!creatorProfile.person_view) {
+                                creatorProfile.loading = true;
+                                await getUserPostsComments(reporteeID);
+                            }
+                        }}
+                    >
+                        <Icon src={User} mini width={16}/>
+                        <span class="hidden xl:block">Profile</span>
+                    </Button>
+
+                    <Button color="tertiary" size="sm" title="Posts" class="{creatorProfile.panel=='posts' ? 'font-bold' : ''}"
+                        on:click={async() => {
+                            modlog.show = false;
+                            creatorProfile.show = true;
+                            creatorProfile.panel='posts'
+
+                            if (!creatorProfile.posts) {
+                                creatorProfile.loading = true;
+                                await getUserPostsComments(reporteeID);
+                            }
+                        }}
+                    >
+                        <Icon src={Window} mini width={16}/>
+                        <span class="hidden xl:block">Posts</span>
+                    </Button>
+
+                    <Button color="tertiary" size="sm" title="Comments" class="{creatorProfile.panel=='comments' ? 'font-bold' : ''}"
+                        on:click={async() => {
+                            modlog.show = false;
+                            creatorProfile.show = true;
+                            creatorProfile.panel='comments'
+                            
+                            if (!creatorProfile.comments) {
+                                creatorProfile.loading = true; 
+                                await getUserPostsComments(reporteeID);
+                            }
+                        }}
+                    >
+                        <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                        <span class="hidden xl:block">Comments</span>
+                    </Button>
+
+                    <Button color="tertiary" size="sm" title="Modlog" class="{modlog.show ? 'font-bold' : ''}"
+                        on:click={async() => {
+                            creatorProfile.show = false;
+                            modlog.loading = true;
+                            modlog.show = true;
+                            await getModlog(reporteeID);
+                            
+                        }}
+                    >
+                        <Icon src={Newspaper} mini width={16}/>
+                        <span class="hidden xl:block">Modlog</span>
+                    </Button>
+                </div>
+                
+                <!--- Right pane / Modlog --->
+                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={modlog.show}>
+                    {#if modlog.loading}
+                        <span class="flex flex-row w-full items-center">    
+                            <span class="ml-auto"/>
+                            <Spinner width={64}/>
+                            <span class="mr-auto"/>
+                        </span>
+                    {:else}
+                        <h1 class="text-lg font-bold">Modlog</h1>
+                        <p class="text-sm font-normal">
+                            Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
+                            are usually all that is relevant to make a moderation decision.
+                        </p>
+
+                        {#if modlog.data?.modlog?.length > 0}
+                            <div class="flex flex-col gap-4 mt-2">
+                                {#each modlog.data.modlog as modlogItem}
+                                    {#if [
+                                            'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
+                                            'ban', 'unban' ,'banCommunity', 'unbanCommunity'
+                                        ].includes(modlogItem.actionName)
+                                    }
+                                        <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
+                                            <ModlogItemList item={modlogItem} />
+                                        </div>
+                                    {/if}
+
+                                {/each}
+                            </div>
+
                         {/if}
 
-
-
-                        <!---Reporter Reply--->
-                        <div class="flex flex-row w-full gap-2 py-2">
-                            <div class="flex flex-col">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                                    Reply to Reporter
-                                </p>
-                                <p class="text-xs font-normal">
-                                    Send the reporter a DM letting them know their report was seen and resolved.
-                                </p>
-                            </div>
-                            
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={actions.replyReporter} />
-                        </div>
-
-                        <!--- Reporter Reply: Include mod actions taken in reply --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={ClipboardDocumentList} mini width={16}/>
-                                    Include Actions Taken
-                                </p>
-                                <p class="text-xs font-normal">Include a list of actions taken in the process of resolving their report.</p>                        
-                            </div>
-                            <div class="mx-auto"/>
-                            
-                            <Switch bind:enabled={actions.replyReporterIncludeActions} />
-                        </div>
-
-                        <!---Reporter Reply: Mod Comments --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Clipboard} mini width={16}/>
-                                    Additional Comments
-                                </p>
-                                <p class="text-xs font-normal">Include a "moderator comment" in the reply to the reporter.</p>
-                                
-                                <div class="mt-2"/>
-                                <TextInput bind:value={actions.replyReporterText} type="text" placeholder="Additional comments to include in reply"/>
-                            </div>
-                        </div>
-
-                        <!---Reporter Reply: Preview --->
-                        <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
-                            <div class="flex flex-col w-full">
-                                <p class="text-sm font-bold flex flex-row gap-2">
-                                    <Icon src={Clipboard} mini width={16}/>
-                                    Reply Preview
-                                </p>
-                                <p class="text-xs font-normal">
-                                    A preview of the generated reply that will be sent to the reporter. After you've made your mod action selections, 
-                                    you can edit the response manually before sending, if needed.
-                                </p>
-                                
-                                <MarkdownEditor value={actions.replyReporterBody} previewButton={true} previewing={true} rows={10} images={false}/>
-                                
-                            </div>
-                        </div>
-                        
-                    </div>
-                {/if}
-                
-
-            </div>
-
-        </div>
-
-        <!--- Right 1/3 Width Pane--->
-        <div class="hidden lg:flex flex-col gap-2 w-1/3">
-            
-            <!-- Menu Bar--->
-            <div class="flex flex-row w-full gap-4 justify-between px-2">
-                <Button color="tertiary" size="sm" title="Profile" class="{creatorProfile.panel=='profile' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        modlog.show = false;
-                        creatorProfile.show = true;
-                        creatorProfile.panel='profile'
-
-                        if (!creatorProfile.person_view) {
-                            creatorProfile.loading = true;
-                            await getUserPostsComments(reporteeID);
-                        }
-                    }}
-                >
-                    <Icon src={User} mini width={16}/>
-                    <span class="hidden xl:block">Profile</span>
-                </Button>
-
-                <Button color="tertiary" size="sm" title="Posts" class="{creatorProfile.panel=='posts' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        modlog.show = false;
-                        creatorProfile.show = true;
-                        creatorProfile.panel='posts'
-
-                        if (!creatorProfile.posts) {
-                            creatorProfile.loading = true;
-                            await getUserPostsComments(reporteeID);
-                        }
-                    }}
-                >
-                    <Icon src={Window} mini width={16}/>
-                    <span class="hidden xl:block">Posts</span>
-                </Button>
-
-                <Button color="tertiary" size="sm" title="Comments" class="{creatorProfile.panel=='comments' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        modlog.show = false;
-                        creatorProfile.show = true;
-                        creatorProfile.panel='comments'
-                        
-                        if (!creatorProfile.comments) {
-                            creatorProfile.loading = true; 
-                            await getUserPostsComments(reporteeID);
-                        }
-                    }}
-                >
-                    <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                    <span class="hidden xl:block">Comments</span>
-                </Button>
-
-                <Button color="tertiary" size="sm" title="Modlog" class="{modlog.show ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        creatorProfile.show = false;
-                        modlog.loading = true;
-                        modlog.show = true;
-                        await getModlog(reporteeID);
-                        
-                    }}
-                >
-                    <Icon src={Newspaper} mini width={16}/>
-                    <span class="hidden xl:block">Modlog</span>
-                </Button>
-            </div>
-            
-            <!--- Right pane / Modlog --->
-            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={modlog.show}>
-                {#if modlog.loading}
-                    <span class="flex flex-row w-full items-center">    
-                        <span class="ml-auto"/>
-                        <Spinner width={64}/>
-                        <span class="mr-auto"/>
-                    </span>
-                {:else}
-                    <h1 class="text-lg font-bold">Modlog</h1>
-                    <p class="text-sm font-normal">
-                        Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
-                        are usually all that is relevant to make a moderation decision.
-                    </p>
-
-                    {#if modlog.data?.modlog?.length > 0}
-                        <div class="flex flex-col gap-4 mt-2">
-                            {#each modlog.data.modlog as modlogItem}
-                                {#if [
-                                        'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
-                                        'ban', 'unban' ,'banCommunity', 'unbanCommunity'
-                                    ].includes(modlogItem.actionName)
-                                }
-                                    <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
-                                        <ModlogItemList item={modlogItem} />
-                                    </div>
-                                {/if}
-
-                            {/each}
-                        </div>
-
                     {/if}
+                </div>
 
-                {/if}
-            </div>
-
-            <!---Right Pane / User Profile --->
-            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='profile'}>
-                {#if creatorProfile.loading}
-                    <span class="flex flex-row w-full items-center">        
-                        <span class="ml-auto"/>
-                        <Spinner width={64}/>
-                        <span class="mr-auto"/>
-                    </span>
-                {:else}
-                    {#if creatorProfile?.person_view }
-                        <UserCard person={creatorProfile.person_view} />
-                    {/if}
-                {/if}
-            </div>
-
-            <!---Right Pane / User Posts --->
-            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='posts'}>
-                {#if creatorProfile.loading}
-                    <span class="flex flex-row w-full items-center">        
-                        <span class="ml-auto"/>
-                        <Spinner width={64}/>
-                        <span class="mr-auto"/>
-                    </span>
-                {:else}
-                    <h1 class="text-lg font-bold">Posts</h1>
-                    <p class="text-sm font-normal">
-                        Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                    </p>
-
-                    {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
-                        <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                            {#each creatorProfile.posts as item (item.counts.id)}
-                                <Post post={item} collapseBadges={true} forceCompact={true}/>
-                            {/each}
-                        </div>
+                <!---Right Pane / User Profile --->
+                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='profile'}>
+                    {#if creatorProfile.loading}
+                        <span class="flex flex-row w-full items-center">        
+                            <span class="ml-auto"/>
+                            <Spinner width={64}/>
+                            <span class="mr-auto"/>
+                        </span>
                     {:else}
-                        <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                        {#if creatorProfile?.person_view }
+                            <UserCard person={creatorProfile.person_view} />
+                        {/if}
                     {/if}
-                {/if}
-            </div>
+                </div>
 
-            <!---Right Pane / User Comments --->
-            <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='comments'}>
-                {#if creatorProfile.loading}
-                    <span class="flex flex-row w-full items-center">        
-                        <span class="ml-auto"/>
-                        <Spinner width={64}/>
-                        <span class="mr-auto"/>
-                    </span>
-                {:else}
-                    <h1 class="text-lg font-bold">Comments</h1>
-                    <p class="text-sm font-normal">
-                        Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                    </p>
-
-                    {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
-                        <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                            {#each creatorProfile.comments as item (item.counts.id)}
-                                <CommentItem comment={item} collapseBadges={true} />
-                            {/each}
-                        </div>
+                <!---Right Pane / User Posts --->
+                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='posts'}>
+                    {#if creatorProfile.loading}
+                        <span class="flex flex-row w-full items-center">        
+                            <span class="ml-auto"/>
+                            <Spinner width={64}/>
+                            <span class="mr-auto"/>
+                        </span>
                     {:else}
-                        <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
+                        <h1 class="text-lg font-bold">Posts</h1>
+                        <p class="text-sm font-normal">
+                            Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                        </p>
+
+                        {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
+                            <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                                {#each creatorProfile.posts as item (item.counts.id)}
+                                    <Post post={item} collapseBadges={true} forceCompact={true}/>
+                                {/each}
+                            </div>
+                        {:else}
+                            <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                        {/if}
                     {/if}
-                {/if}
+                </div>
+
+                <!---Right Pane / User Comments --->
+                <div class="hidden w-full p-2 overflow-y-scroll" class:md:block={creatorProfile.show && creatorProfile.panel=='comments'}>
+                    {#if creatorProfile.loading}
+                        <span class="flex flex-row w-full items-center">        
+                            <span class="ml-auto"/>
+                            <Spinner width={64}/>
+                            <span class="mr-auto"/>
+                        </span>
+                    {:else}
+                        <h1 class="text-lg font-bold">Comments</h1>
+                        <p class="text-sm font-normal">
+                            Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                        </p>
+
+                        {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
+                            <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                                {#each creatorProfile.comments as item (item.counts.id)}
+                                    <CommentItem comment={item} collapseBadges={true} />
+                                {/each}
+                            </div>
+                        {:else}
+                            <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
+                        {/if}
+                    {/if}
+                </div>
             </div>
         </div>
-    </div>
+    {/if}
 </Card>
 
