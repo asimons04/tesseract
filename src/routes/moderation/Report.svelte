@@ -1170,7 +1170,9 @@
                                         {/each}
                                     </div>
                                 {:else}
-                                    <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                                    <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                                        <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                                    </div>
                                 {/if}
                             {/if}
                         </div>

@@ -4,15 +4,16 @@
     import { page } from '$app/stores'
     import { searchParam } from '$lib/util.js'
     import { userSettings } from '$lib/settings.js'
+    import { 
+        isCommentReport, 
+        isPostReport, 
+    } from '$lib/lemmy/item.js'
     
-    
-    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Report from './Report.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+
 
     import { 
         Icon,
@@ -25,6 +26,7 @@
 
     export let data
     
+    $: type = $page.url.searchParams.get('type')?.toLowerCase() 
 
 </script>
 
@@ -60,14 +62,18 @@
 </div>
 
 {#if data?.items?.length > 0}
-    <!--flex flex-col gap-8 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto-->
-    <div class="flex flex-row gap-1 w-full max-h-full">
-        <div class="flex flex-col gap-1 w-full">
-            {#each data.items as item}
-                <Report bind:item={item} />
-            {/each}
-        </div>
+    <div class="flex flex-col gap-1 w-full max-h-full">
+        {#each data.items as item}
+            {#if 
+                    (type == 'unread' && (isCommentReport(item) && !item.comment_report.resolved) || (isPostReport(item) && !item.post_report.resolved)) || type == 'all'                
+            }
+                <div class="mt-[-0.25rem]" transition:fly={{delay: 300, duration:500, x: '50%'}}>    
+                    <Report bind:item={item} />
+                </div>
+            {/if}
+        {/each}
     </div>
+    
 {:else}
     <Placeholder
         icon={Inbox}
