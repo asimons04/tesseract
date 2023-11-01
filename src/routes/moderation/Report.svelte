@@ -190,7 +190,10 @@
             });
             return false;
         }
-
+        
+        // Removing past date check since I took out the timezone shims for 0.19 and this breaks for short duration bans. Will re-enable when released for 0.19 with proper date strings.
+        // For what it's worth, the API doesn't care if the date is in the past.  It just won't be effective.
+        /*
         if (date < Date.now()) {
             toast({
                 content: 'Invalid date. It is before the current time.',
@@ -198,6 +201,7 @@
             });
             return false;
         }
+        */
 
         return true;
     }
