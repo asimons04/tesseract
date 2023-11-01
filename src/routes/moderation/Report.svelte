@@ -1150,7 +1150,7 @@
 
                     <!---Right Pane / User Posts --->
                     {#if sidePanel =='posts'}
-                        <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}} >
+                        <div class="w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}} >
                             {#if creatorProfile.loading}
                                 <span class="flex flex-row w-full items-center">        
                                     <span class="ml-auto"/>
@@ -1178,7 +1178,7 @@
 
                     <!---Right Pane / User Comments --->
                     {#if sidePanel=='comments'}
-                        <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        <div class="w-full gap-2 p-2 overflow-y-scroll" in:fade={{duration: 300}}>
                             {#if creatorProfile.loading}
                                 <span class="flex flex-row w-full items-center">        
                                     <span class="ml-auto"/>
