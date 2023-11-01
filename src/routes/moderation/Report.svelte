@@ -11,7 +11,7 @@
     
     import { afterNavigate } from '$app/navigation'
     import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
-    import { fade, fly } from 'svelte/transition'
+    import { fade, fly, slide } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
     import { getRemovalTemplates } from './templates'
     import { 
@@ -38,6 +38,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
+    import CommunityCardBasic from './components/CommunityCardBasic.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import DateInput from '$lib/components/input/DateInput.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
@@ -49,7 +50,7 @@
     import Switch from '$lib/components/input/Switch.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
-    import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
+    import UserCardBasic from './components/UserCardBasic.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { 
@@ -93,19 +94,16 @@
     let resolving:boolean = false
     let open:boolean = false;
     let debug:boolean = false;
-    
-    
+    let sidePanel: 'posts' | 'comments' | 'profile' | 'community' | 'modlog' | 'closed' = 'profile'
     
     interface ModlogContainer {
         url: URL,
-        show: boolean,
         loading:boolean,
         data?:Modlog
     }
 
     let modlog:ModlogContainer = {
         url: new URL(window.location.href),
-        show: false,
         loading: false,
         data: undefined
     }
@@ -114,15 +112,11 @@
         posts?: PostView[],
         comments?: CommentView[],
         loading:boolean,
-        show:boolean,
         person_view?: PersonView,
-        panel: 'posts' | 'comments' | 'profile'
     }
 
     let creatorProfile:PersonProfile = {
         loading: false,
-        show: false,
-        panel: 'posts'
     };
 
     // Load Moderation presets from the template module
@@ -225,8 +219,7 @@
             })
 
             creatorProfile.loading = true;
-            creatorProfile.panel = 'profile';
-            creatorProfile.show = true;
+            sidePanel= 'profile';
         }
         else {
             // Show all reports
@@ -242,8 +235,7 @@
             creatorProfile.person_view = undefined;
             
             // Hide the modlog and profile sidebar
-            modlog.show = false;
-            creatorProfile.show = false;
+            sidePanel = 'closed'
         }
         
         //scrollToTop(element);
@@ -549,7 +541,7 @@
 
 
 
-<Card class="mt-[-1rem] p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[85vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[85vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
     
     
     <!---Report Title, Badge and Open/Close Button Row--->
@@ -612,7 +604,7 @@
     </span>
     
     <!--Header Row with from, to, sent, resolver-->
-    <span class="flex flex-col lg:flex-row w-full gap-2 justify-between">
+    <span class="flex flex-col lg:flex-row w-full mx-4 gap-2 justify-between">
         
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             <span class="font-bold dark:text-zinc-400 text-slate-600">
@@ -655,13 +647,103 @@
 
     <!---Collapsible Portion--->
     {#if open}
-        <div class="flex flex-row pt-4 gap-4 w-full overflow-hidden" transition:fly={{ duration: 300, y: -60, opacity: 0 }}>
+        
+        <!-- Side panel Menu Bar--->
+        <div class="flex flex-col gap-1">
+            <!--
+            <span class="text-xs font-bold dark:text-zinc-400 text-slate-600">
+                Tools
+            </span>
+            -->
+            
+            <div class="flex flex-row w-full gap-2 py-1 bg-slate-200 dark:bg-zinc-800 rounded-md">
+                <span class="ml-4 flex text-xs font-bold items-center">
+                    Lookup Tools:
+                </span>
+
+                <Button color="tertiary" size="sm" title="User's Profile" class="{sidePanel=='profile' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        sidePanel == 'profile'
+                            ? sidePanel='closed'
+                            : sidePanel = 'profile'
+
+                        if (!creatorProfile.person_view) {
+                            creatorProfile.loading = true;
+                            await getUserPostsComments(reporteeID);
+                        }
+                    }}
+                >
+                    <Icon src={User} mini width={16}/>
+                    <span class="hidden xl:block">User Profile</span>
+                </Button>
+
+                <Button color="tertiary" size="sm" title="Community" class="{sidePanel=='community' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        sidePanel == 'community'
+                            ? sidePanel='closed'
+                            : sidePanel='community'
+                    }}
+                >
+                    <Icon src={UserGroup} mini width={16}/>
+                    <span class="hidden xl:block">Community</span>
+                </Button>
+
+                <Button color="tertiary" size="sm" title="Posts" class="{sidePanel=='posts' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        sidePanel == 'posts'
+                            ? sidePanel='closed'
+                            : sidePanel='posts'
+
+                        if (!creatorProfile.posts) {
+                            creatorProfile.loading = true;
+                            await getUserPostsComments(reporteeID);
+                        }
+                    }}
+                >
+                    <Icon src={Window} mini width={16}/>
+                    <span class="hidden xl:block">Posts</span>
+                </Button>
+
+                <Button color="tertiary" size="sm" title="Comments" class="{sidePanel=='comments' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        sidePanel == 'comments'
+                            ? sidePanel = 'closed'
+                            : sidePanel='comments'
+                        
+                        if (!creatorProfile.comments) {
+                            creatorProfile.loading = true; 
+                            await getUserPostsComments(reporteeID);
+                        }
+                    }}
+                >
+                    <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                    <span class="hidden xl:block">Comments</span>
+                </Button>
+
+                <Button color="tertiary" size="sm" title="Modlog" class="{sidePanel=='modlog' ? 'font-bold' : ''}"
+                    on:click={async() => {
+                        sidePanel == 'modlog'
+                            ? sidePanel = 'closed'
+                            : sidePanel = 'modlog'
+
+                        if (sidePanel == 'modlog') await getModlog(reporteeID);
+                        
+                    }}
+                >
+                    <Icon src={Newspaper} mini width={16}/>
+                    <span class="hidden xl:block">Modlog History</span>
+                </Button>
+            </div>
+        </div>
+
+        <div class="flex flex-row gap-4 w-full overflow-hidden" transition:fly={{ duration: 300, y: -60, opacity: 0 }}>
             
             <!--- Left side / Report Form--->
-            <div class="flex flex-col gap-2 w-full lg:w-2/3 p-2 overflow-y-scroll" >
-                
+            <div class="flex flex-col gap-2 w-full {sidePanel != 'closed' ? 'lg:w-2/3' : ''} p-2 overflow-y-scroll" >
+
                 <!--- Reported Post Preview and Report Details Row--->                
                 <div class="flex flex-col gap-4 xl:flex-row w-full">
+                    
                     <!--- Preview of content being reported--->
                     <details open class="flex flex-col gap-2 w-full xl:w-1/2">
                         <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
@@ -1006,185 +1088,134 @@
                 </div>
 
             </div>
+            
+            
+            <!--- Right 1/3 Width Side Panel--->
+            {#if sidePanel != 'closed'}
+                <div class="hidden lg:flex flex-col gap-2 w-1/3" transition:fly={{duration:300, x: '33%'}}>
+                    
+                    <!--- Right pane / Modlog --->
+                    {#if sidePanel == 'modlog'}
+                        <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                            {#if modlog.loading}
+                                <span class="flex flex-row w-full items-center">    
+                                    <span class="ml-auto"/>
+                                    <Spinner width={64}/>
+                                    <span class="mr-auto"/>
+                                </span>
+                            {:else}
+                                <h1 class="text-lg font-bold">Modlog</h1>
+                                <p class="text-sm font-normal">
+                                    Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
+                                    are usually all that is relevant to make a moderation decision.
+                                </p>
 
-            <!--- Right 1/3 Width Pane--->
-            <div class="hidden lg:flex flex-col gap-2 w-1/3">
-                
-                <!-- Menu Bar--->
-                <div class="flex flex-row w-full gap-4 justify-between px-2">
-                    <Button color="tertiary" size="sm" title="Profile" class="{creatorProfile.panel=='profile' ? 'font-bold' : ''}"
-                        on:click={async() => {
-                            modlog.show = false;
-                            creatorProfile.show = true;
-                            creatorProfile.panel='profile'
+                                {#if modlog.data?.modlog?.length > 0}
+                                    <div class="flex flex-col gap-4 mt-2">
+                                        {#each modlog.data.modlog as modlogItem}
+                                            {#if [
+                                                    'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
+                                                    'ban', 'unban' ,'banCommunity', 'unbanCommunity'
+                                                ].includes(modlogItem.actionName)
+                                            }
+                                                <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
+                                                    <ModlogItemList item={modlogItem} />
+                                                </div>
+                                            {/if}
 
-                            if (!creatorProfile.person_view) {
-                                creatorProfile.loading = true;
-                                await getUserPostsComments(reporteeID);
-                            }
-                        }}
-                    >
-                        <Icon src={User} mini width={16}/>
-                        <span class="hidden xl:block">Profile</span>
-                    </Button>
+                                        {/each}
+                                    </div>
 
-                    <Button color="tertiary" size="sm" title="Posts" class="{creatorProfile.panel=='posts' ? 'font-bold' : ''}"
-                        on:click={async() => {
-                            modlog.show = false;
-                            creatorProfile.show = true;
-                            creatorProfile.panel='posts'
+                                {/if}
 
-                            if (!creatorProfile.posts) {
-                                creatorProfile.loading = true;
-                                await getUserPostsComments(reporteeID);
-                            }
-                        }}
-                    >
-                        <Icon src={Window} mini width={16}/>
-                        <span class="hidden xl:block">Posts</span>
-                    </Button>
+                            {/if}
+                        </div>
+                    {/if}
 
-                    <Button color="tertiary" size="sm" title="Comments" class="{creatorProfile.panel=='comments' ? 'font-bold' : ''}"
-                        on:click={async() => {
-                            modlog.show = false;
-                            creatorProfile.show = true;
-                            creatorProfile.panel='comments'
-                            
-                            if (!creatorProfile.comments) {
-                                creatorProfile.loading = true; 
-                                await getUserPostsComments(reporteeID);
-                            }
-                        }}
-                    >
-                        <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                        <span class="hidden xl:block">Comments</span>
-                    </Button>
+                    <!---Right Pane / User Profile --->
+                    {#if sidePanel =='profile' }
+                        <div class="flex flex-col w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                            {#if creatorProfile.loading}
+                                <span class="flex flex-row w-full items-center">        
+                                    <span class="ml-auto"/>
+                                    <Spinner width={64}/>
+                                    <span class="mr-auto"/>
+                                </span>
+                            {:else}
+                                {#if creatorProfile?.person_view }
+                                    <UserCardBasic person={creatorProfile.person_view} />
+                                {/if}
+                            {/if}
+                        </div>
+                    {/if}
 
-                    <Button color="tertiary" size="sm" title="Modlog" class="{modlog.show ? 'font-bold' : ''}"
-                        on:click={async() => {
-                            creatorProfile.show = false;
-                            modlog.loading = true;
-                            modlog.show = true;
-                            await getModlog(reporteeID);
-                            
-                        }}
-                    >
-                        <Icon src={Newspaper} mini width={16}/>
-                        <span class="hidden xl:block">Modlog</span>
-                    </Button>
+                    <!---Right Pane / User Posts --->
+                    {#if sidePanel =='posts'}
+                        <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}} >
+                            {#if creatorProfile.loading}
+                                <span class="flex flex-row w-full items-center">        
+                                    <span class="ml-auto"/>
+                                    <Spinner width={64}/>
+                                    <span class="mr-auto"/>
+                                </span>
+                            {:else}
+                                <h1 class="text-lg font-bold">Posts</h1>
+                                <p class="text-sm font-normal">
+                                    Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                                </p>
+
+                                {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
+                                    <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                                        {#each creatorProfile.posts as item (item.counts.id)}
+                                            <Post post={item} collapseBadges={true} forceCompact={true}/>
+                                        {/each}
+                                    </div>
+                                {:else}
+                                    <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
+                                {/if}
+                            {/if}
+                        </div>
+                    {/if}
+
+                    <!---Right Pane / User Comments --->
+                    {#if sidePanel=='comments'}
+                        <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                            {#if creatorProfile.loading}
+                                <span class="flex flex-row w-full items-center">        
+                                    <span class="ml-auto"/>
+                                    <Spinner width={64}/>
+                                    <span class="mr-auto"/>
+                                </span>
+                            {:else}
+                                <h1 class="text-lg font-bold">Comments</h1>
+                                <p class="text-sm font-normal">
+                                    Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                                </p>
+
+                                {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
+                                    <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
+                                        {#each creatorProfile.comments as item (item.counts.id)}
+                                            <CommentItem comment={item} collapseBadges={true} />
+                                        {/each}
+                                    </div>
+                                {:else}
+                                    <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
+                                {/if}
+                            {/if}
+                        </div>
+                    {/if}
+                    
+                    <!---Right Pane / Community Profile --->
+                    {#if sidePanel=='community' }
+                        <div class="flex flex-col w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                            {#if item?.community }
+                                <CommunityCardBasic community={item.community} />
+                            {/if}
+                        </div>
+                    {/if}
+                    
                 </div>
-                
-                <!--- Right pane / Modlog --->
-                {#if modlog.show}
-                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
-                        {#if modlog.loading}
-                            <span class="flex flex-row w-full items-center">    
-                                <span class="ml-auto"/>
-                                <Spinner width={64}/>
-                                <span class="mr-auto"/>
-                            </span>
-                        {:else}
-                            <h1 class="text-lg font-bold">Modlog</h1>
-                            <p class="text-sm font-normal">
-                                Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
-                                are usually all that is relevant to make a moderation decision.
-                            </p>
-
-                            {#if modlog.data?.modlog?.length > 0}
-                                <div class="flex flex-col gap-4 mt-2">
-                                    {#each modlog.data.modlog as modlogItem}
-                                        {#if [
-                                                'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
-                                                'ban', 'unban' ,'banCommunity', 'unbanCommunity'
-                                            ].includes(modlogItem.actionName)
-                                        }
-                                            <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
-                                                <ModlogItemList item={modlogItem} />
-                                            </div>
-                                        {/if}
-
-                                    {/each}
-                                </div>
-
-                            {/if}
-
-                        {/if}
-                    </div>
-                {/if}
-
-                <!---Right Pane / User Profile --->
-                {#if creatorProfile.show && creatorProfile.panel=='profile' }
-                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
-                        {#if creatorProfile.loading}
-                            <span class="flex flex-row w-full items-center">        
-                                <span class="ml-auto"/>
-                                <Spinner width={64}/>
-                                <span class="mr-auto"/>
-                            </span>
-                        {:else}
-                            {#if creatorProfile?.person_view }
-                                <UserCard person={creatorProfile.person_view} />
-                            {/if}
-                        {/if}
-                    </div>
-                {/if}
-
-                <!---Right Pane / User Posts --->
-                {#if creatorProfile.show && creatorProfile.panel=='posts'}
-                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}} >
-                        {#if creatorProfile.loading}
-                            <span class="flex flex-row w-full items-center">        
-                                <span class="ml-auto"/>
-                                <Spinner width={64}/>
-                                <span class="mr-auto"/>
-                            </span>
-                        {:else}
-                            <h1 class="text-lg font-bold">Posts</h1>
-                            <p class="text-sm font-normal">
-                                Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                            </p>
-
-                            {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
-                                <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                                    {#each creatorProfile.posts as item (item.counts.id)}
-                                        <Post post={item} collapseBadges={true} forceCompact={true}/>
-                                    {/each}
-                                </div>
-                            {:else}
-                                <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
-                            {/if}
-                        {/if}
-                    </div>
-                {/if}
-
-                <!---Right Pane / User Comments --->
-                {#if creatorProfile.show && creatorProfile.panel=='comments'}
-                    <div class="w-full p-2 overflow-y-scroll" in:fade={{duration: 300}}>
-                        {#if creatorProfile.loading}
-                            <span class="flex flex-row w-full items-center">        
-                                <span class="ml-auto"/>
-                                <Spinner width={64}/>
-                                <span class="mr-auto"/>
-                            </span>
-                        {:else}
-                            <h1 class="text-lg font-bold">Comments</h1>
-                            <p class="text-sm font-normal">
-                                Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                            </p>
-
-                            {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
-                                <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                                    {#each creatorProfile.comments as item (item.counts.id)}
-                                        <CommentItem comment={item} collapseBadges={true} />
-                                    {/each}
-                                </div>
-                            {:else}
-                                <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
-                            {/if}
-                        {/if}
-                    </div>
-                {/if}
-            </div>
+            {/if}
         </div>
     {/if}
 </Card>

@@ -32,12 +32,12 @@
     <title>Reports</title>
 </svelte:head>
 
-<div class="p-2 mb-4 flex flex-col gap-4">
+<div class="p-2 flex flex-col gap-4">
     
     
     <div class="flex flex-row flex-wrap justify-between">
         <h1 class="font-bold text-2xl">Reports</h1>
-        
+
         <div>
             <MultiSelect
                 selected={data.type}
@@ -62,7 +62,7 @@
 {#if data?.items?.length > 0}
     <!--flex flex-col gap-8 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto-->
     <div class="flex flex-row gap-1 w-full max-h-full">
-        <div class="flex flex-col gap-8 w-full">
+        <div class="flex flex-col gap-1 w-full">
             {#each data.items as item}
                 <Report bind:item={item} />
             {/each}
