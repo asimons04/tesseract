@@ -44,7 +44,7 @@ Posts with URLs can have a MBFC badge in the corner which will lookup the publis
 
 **For Users**:
 - Easily see where the news stories in your feed are coming from and what their sources' credibility ratings are.  
-- Optionally automatically hide posts that link to non-credible sources.
+- Optionally, automatically hide posts that link to non-credible sources.
 - Seamlessly report posts that are from non-credible sources while including a copy of the MBFC results.
 
 **For Moderators/Admins**:  

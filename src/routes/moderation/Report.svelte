@@ -1101,7 +1101,13 @@
                     {#if modlog.data?.modlog?.length > 0}
                         <div class="flex flex-col gap-4 mt-2">
                             {#each modlog.data.modlog as modlogItem}
-                                {#if ['postRemoval', 'postLock', 'postUnlock', 'commentRemoval', 'ban'].includes(modlogItem.actionName)}
+                                {#if [
+                                        'postRemoval', 'postRestore', 
+                                        'postLock', 'postUnlock', 
+                                        'commentRemoval', 'commentRestore', 
+                                        'ban', 'unban' ,'banCommunity', 'unbanCommunity'
+                                    ].includes(modlogItem.actionName)
+                                }
                                     <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
                                         <ModlogItemList item={modlogItem} />
                                     </div>
