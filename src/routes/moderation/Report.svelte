@@ -730,16 +730,24 @@
 
 
 
-<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-200 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-4'}" 
+    name="ModeratorReport" 
+    id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}"
+>
     
     
     <!---Report Title, Badge and Open/Close Button Row--->
     <span class="flex flex-col lg:flex-row w-full gap-4">
         
-        
         <!--- Report Title and Button Bar--->
         <span class="text-base font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-            {isCommentReport(item) ? 'Comment Report' : isPostReport(item) ? `Post Report: ${item.post.name.length > 120 ? item.post.name.slice(0,120) + '...' : item.post.name}` : 'Post Report'}
+            {
+                isCommentReport(item) 
+                    ? `Comment Report: "${item.comment.content.length > 120 ? item.comment.content.slice(0,120) : item.comment.content}"` 
+                    : isPostReport(item) 
+                        ? `Post Report: ${item.post.name.length > 120 ? item.post.name.slice(0,120) : item.post.name}` 
+                        : 'Report'
+            }
         </span>
         
         <span class="ml-auto"/>

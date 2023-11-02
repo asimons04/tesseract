@@ -35,11 +35,8 @@
 </svelte:head>
 
 <div class="p-2 flex flex-col gap-4">
-    
-    
     <div class="flex flex-row flex-wrap justify-between">
         <h1 class="font-bold text-2xl">Reports</h1>
-
         <div>
             <MultiSelect
                 selected={data.type}
@@ -55,14 +52,14 @@
         <div class="flex flex-col">
             <Button href="/modlog" class="h-max ml-auto">
                 <Icon src={Newspaper} size="16" mini />
-                Modlog
+                Full Modlog
             </Button>
         </div>
     </div>
 </div>
 
 {#if data?.items?.length > 0}
-    <div class="flex flex-col gap-2 w-full max-h-full">
+    <div class="flex flex-col gap-1 w-full max-h-full">
         {#each data.items as item}
             {#if 
                     (
