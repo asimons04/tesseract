@@ -17,6 +17,7 @@
     import { 
         getItemPublished, 
         isCommentReport, 
+        isPrivateMessageReport,
         isPostReport, 
         isCommentView 
     } from '$lib/lemmy/item.js'
@@ -66,6 +67,7 @@
         Folder,
         FolderOpen,
         LockClosed,
+        LockOpen,
         Microphone,
         Newspaper,
         NoSymbol,
@@ -91,7 +93,16 @@
             : false
 
     $: reporteeID = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id;
+    $: itemType =
+        isCommentReport(item)
+            ? 'comment'
+            : isPostReport(item)
+                ? 'post'
+                : isPrivateMessageReport(item)
+                    ? 'private_message'
+                    : undefined
     
+
     let resolving:boolean = false
     let open:boolean = false;
     let debug:boolean = false;
@@ -128,11 +139,27 @@
 
     // Object containing the actions to perform
     let actions = {
-        lock: false,
+        // Positive Actions
+        unlock: false,
         
+        restore: false,
+        restoreReason: '',
+        restoreReplyToAuthor: '',
+
+        unbanCommunity: false,
+        unbanCommunityReason: '',
+        
+        unbanInstance: false,
+        unbanInstanceReason: '',
+
+        // Negative Actions
+        lock: false,
+
         remove: false,
         removeReason: '',
         removeReplyToAuthor: false,
+
+
         
         banCommunity: false,
         banCommunityReason: '',
@@ -323,167 +350,282 @@
         if (actions.banInstanceExpires  != '' && !validateExpiryDate(actions.banInstanceExpires)) return;
 
         resolving = true
+        let keepOpen = resolved;
 
         try {
             
-            // Lock post if "lock" option selected.
-            if ( !resolved && actions.lock && isPostReport(item)) {
-                try {
-                    await getClient().lockPost({
-                        auth: $profile.jwt,
-                        locked: true,
-                        post_id: item.post.id,
-                    })
+            if (!resolved) {
+                // Lock post if "lock" option selected.
+                if ( actions.lock && isPostReport(item)) {
+                    try {
+                        await getClient().lockPost({
+                            auth: $profile.jwt,
+                            locked: true,
+                            post_id: item.post.id,
+                        })
 
-                    item.post.locked = true
+                        item.post.locked = true
 
-                } catch (err) {
-                    console.log(err)
-                    toast({
-                        content: "Failed to lock post",
-                        type: 'error',
-                    })
-                }
-            }
-
-            // Remove post if "remove" option selected
-            if (!resolved && actions.remove && isPostReport(item)) {
-                try {
-                    await getClient().removePost({
-                        auth: $profile.jwt,
-                        post_id: item.post.id,
-                        removed: true,
-                        reason: actions.removeReason || undefined,
-                    })
-
-                    item.post.removed = true
-                }
-                catch (err) {
-                    console.log(err)
-                    toast({
-                        content: "Failed to remove post.",
-                        type: 'error',
-                    })
+                    } catch (err) {
+                        console.log(err)
+                        toast({
+                            content: "Failed to lock post",
+                            type: 'error',
+                        })
+                    }
                 }
 
-            }
+                // Unlock post if "unlock" option selected.
+                if ( actions.unlock && isPostReport(item)) {
+                    try {
+                        await getClient().lockPost({
+                            auth: $profile.jwt,
+                            locked: false,
+                            post_id: item.post.id,
+                        })
 
-            // Remove comment if "remove" option selected
-            if (!resolved && actions.remove && isCommentReport(item)) {
-                try {
-                    await getClient().removeComment({
-                        auth: $profile.jwt,
-                        comment_id: item.comment.id,
-                        removed: true,
-                        reason: actions.removeReason || undefined,
-                    })
-                    item.comment.removed = true
-                }
-                catch (err) {
-                    console.log(err)
-                    toast({
-                        content: "Failed to remove comment.",
-                        type: 'error',
-                    })
+                        item.post.locked = false
+
+                    } catch (err) {
+                        console.log(err)
+                        toast({
+                            content: "Failed to unlock post",
+                            type: 'error',
+                        })
+                    }
                 }
 
-            }
+                // Remove post if "remove" option selected
+                if (actions.remove && isPostReport(item)) {
+                    try {
+                        await getClient().removePost({
+                            auth: $profile.jwt,
+                            post_id: item.post.id,
+                            removed: true,
+                            reason: actions.removeReason || undefined,
+                        })
+
+                        item.post.removed = true
+                    }
+                    catch (err) {
+                        console.log(err)
+                        toast({
+                            content: "Failed to remove post.",
+                            type: 'error',
+                        })
+                    }
+
+                }
+
+                // Restore post if "restore" option selected
+                if (actions.restore && isPostReport(item)) {
+                    try {
+                        await getClient().removePost({
+                            auth: $profile.jwt,
+                            post_id: item.post.id,
+                            removed: false,
+                            reason: actions.restoreReason || undefined,
+                        })
+
+                        item.post.removed = false
+                    }
+                    catch (err) {
+                        console.log(err)
+                        toast({
+                            content: "Failed to restore post.",
+                            type: 'error',
+                        })
+                    }
+
+                }
+
+                // Remove comment if "remove" option selected
+                if (actions.remove && isCommentReport(item)) {
+                    try {
+                        await getClient().removeComment({
+                            auth: $profile.jwt,
+                            comment_id: item.comment.id,
+                            removed: true,
+                            reason: actions.removeReason || undefined,
+                        })
+                        item.comment.removed = true
+                    }
+                    catch (err) {
+                        console.log(err)
+                        toast({
+                            content: "Failed to remove comment.",
+                            type: 'error',
+                        })
+                    }
+
+                }
+
+                // Restore comment if "restore" option selected
+                if (actions.remove && isCommentReport(item)) {
+                    try {
+                        await getClient().removeComment({
+                            auth: $profile.jwt,
+                            comment_id: item.comment.id,
+                            removed: false,
+                            reason: actions.restoreReason || undefined,
+                        })
+                        item.comment.removed = false
+                    }
+                    catch (err) {
+                        console.log(err)
+                        toast({
+                            content: "Failed to restore comment.",
+                            type: 'error',
+                        })
+                    }
+
+                }
 
             
-            // Ban user from community if that is selected
-            if (!resolved && actions.banCommunity) {
-                try {
-                    let date:number = Date.parse(actions.banCommunityExpires)
+                // Ban user from community if that is selected
+                if (actions.banCommunity) {
+                    try {
+                        let date:number = Date.parse(actions.banCommunityExpires)
 
-                    await getClient().banFromCommunity({
-                        auth: $profile.jwt,
-                        ban: true,
-                        community_id: item.post.community_id,
-                        person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                        reason: actions.banCommunityReason || undefined,
-                        remove_data: actions.banCommunityDeleteData,
-                        expires: date ? Math.floor(date / 1000) : undefined,
-                    })
+                        await getClient().banFromCommunity({
+                            auth: $profile.jwt,
+                            ban: true,
+                            community_id: item.post.community_id,
+                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                            reason: actions.banCommunityReason || undefined,
+                            remove_data: actions.banCommunityDeleteData,
+                            expires: date ? Math.floor(date / 1000) : undefined,
+                        })
+                        item.creator_banned_from_community = true;
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
+
                 }
-                catch (err) {
-                    console.log(err)
+
+                // Unban user from community if that is selected
+                if (actions.unbanCommunity) {
+                    try {
+
+                        await getClient().banFromCommunity({
+                            auth: $profile.jwt,
+                            ban: false,
+                            reason: actions.unbanCommunityReason || undefined,
+                            community_id: item.post.community_id,
+                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                        })
+
+                        item.creator_banned_from_community = false;
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
+
                 }
 
-            }
+                // Ban user from instance if selected
+                if (actions.banInstance) {
+                    try {
+                        let date:number = Date.parse(actions.banInstanceExpires)
+                        await getClient().banPerson({
+                            auth: $profile.jwt,
+                            ban: true,
+                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                            reason: actions.banInstanceReason || undefined,
+                            remove_data: actions.banInstanceDeleteData,
+                            expires: date ? Math.floor(date / 1000) : undefined,
+                        })
 
-            // Ban user from instance if selected
-            if (!resolved && actions.banInstance) {
-                try {
-                    let date:number = Date.parse(actions.banInstanceExpires)
-                    await getClient().banPerson({
-                        auth: $profile.jwt,
-                        ban: true,
-                        person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                        reason: actions.banInstanceReason || undefined,
-                        remove_data: actions.banInstanceDeleteData,
-                        expires: date ? Math.floor(date / 1000) : undefined,
-                    })
+                        isCommentReport(item)
+                            ? item.comment_creator.banned = true
+                            : item.post_creator.banned = true
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
                 }
-                catch (err) {
-                    console.log(err)
+
+                // Unban user from instance if selected
+                if (actions.unbanInstance) {
+                    try {
+                        await getClient().banPerson({
+                            auth: $profile.jwt,
+                            ban: false,
+                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                            reason: actions.unbanInstanceReason || undefined,
+                        })
+                        
+                        isCommentReport(item)
+                            ? item.comment_creator.banned = false
+                            : item.post_creator.banned = false
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
                 }
-            }
 
 
-            //// Follow-Up Messages:  If selected, sends follow-up DMs to the post/comment author and/or reporter
-            
-            // Post/Comment Removal DM to Author
-            if (!resolved && actions.remove && actions.removeReplyToAuthor) {
+                //// Follow-Up Messages:  If selected, sends follow-up DMs to the post/comment author and/or reporter
                 
-                let template:string = '';
-                
-                template = `Your ${isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} in 
-                    !${item.community.name}@${new URL(item.community.actor_id).host} has been removed:\n\n`
-                
-                
-                template += `- **Post**: [${item.post.name}](${item.post.ap_id})\n`
-                
-                if (isCommentReport(item)) {
-                    template += `- **Comment**: [${item.comment.content}](${item.comment.ap_id})\n`    
-                }
-                if (actions.removeReason != '') {
-                    template += `- **Reason**: ${actions.removeReason}\n`
+                // Post/Comment Removal DM to Author
+                if ( (actions.remove && actions.removeReplyToAuthor) || (actions.restore && actions.restoreReplyToAuthor) ) {
+                    
+                    let template:string = '';
+                    let reason:string = '';
+
+                    if (actions.remove)     reason = actions.removeReason;
+                    if (actions.restore)    reason = actions.restoreReason;
+
+                    
+                    template = `Your ${isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} in 
+                        !${item.community.name}@${new URL(item.community.actor_id).host} has been ${actions.restore ? 'restored' : 'removed'}:\n\n`
+                    
+                    
+                    template += `- **Post**: [${item.post.name}](${item.post.ap_id})\n`
+                    
+                    if (isCommentReport(item)) {
+                        template += `- **Comment**: [${item.comment.content}](${item.comment.ap_id})\n`    
+                    }
+                    if (reason != '') {
+                        template += `- **Reason**: ${reason}\n`
+                    }
+
+                    template += '\n';
+
+                    try {
+                        await getClient().createPrivateMessage({
+                            auth: $profile.jwt,
+                            content: template,
+                            recipient_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                        })
+                    }
+                    catch (err) {
+                        console.log(err);
+                        toast({
+                            content: 'Failed to message post/comment author.',
+                            type: 'warning',
+                        })
+                    }
+
                 }
 
-                template += '\n';
-
-                try {
-                    await getClient().createPrivateMessage({
-                        auth: $profile.jwt,
-                        content: template,
-                        recipient_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                    })
-                }
-                catch (err) {
-                    console.log(err);
-                    toast({
-                        content: 'Failed to message post/comment author.',
-                        type: 'warning',
-                    })
-                }
-
-            }
-
-            // Send DM to reporter if selected
-            if (!resolved && actions.replyReporter) {
-                try {
-                    await getClient().createPrivateMessage({
-                        auth: $profile.jwt,
-                        content: actions.replyReporterBody,
-                        recipient_id: item.creator.id
-                    })
-                }
-                catch (err) {
-                    console.log(err);
-                    toast({
-                        content: 'Failed to message user.',
-                        type: 'warning',
-                    })
+                // Send DM to reporter if selected
+                if (actions.replyReporter) {
+                    try {
+                        await getClient().createPrivateMessage({
+                            auth: $profile.jwt,
+                            content: actions.replyReporterBody,
+                            recipient_id: item.creator.id
+                        })
+                    }
+                    catch (err) {
+                        console.log(err);
+                        toast({
+                            content: 'Failed to message user.',
+                            type: 'warning',
+                        })
+                    }
                 }
             }
 
@@ -533,7 +675,8 @@
                 reports.comment_reports +
                 reports.post_reports +
                 (reports.private_message_reports ?? 0)
-        } catch (err) {
+        
+            } catch (err) {
             toast({
                 content: err as any,
                 type: 'error',
@@ -542,7 +685,9 @@
         
         resolving = false;
         actions = {...actionsDefault};
-        toggleOpenReport();
+        
+        // If un-resolving the report, keep it open
+        if (!keepOpen) toggleOpenReport();
     }
 
     
@@ -556,7 +701,9 @@
     
     <!---Report Title, Badge and Open/Close Button Row--->
     <span class="flex flex-col lg:flex-row w-full gap-4">
-        <!--- Report Title--->
+        
+        
+        <!--- Report Title and Button Bar--->
         <span class="text-base font-bold">
             {isCommentReport(item) ? 'Comment Report' : isPostReport(item) ? `Post Report: ${item.post.name.length > 45 ? item.post.name.slice(0,45) + '...' : item.post.name}` : 'Post Report'}
         </span>
@@ -804,151 +951,261 @@
 
                     {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
                         <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                            
                             <!---Lock Post--->
-                            <div class="flex flex-row w-full gap-2 py-2" class:hidden={!isPostReport(item) || (isPostReport(item) && item.post.locked)}>
-                                <div class="flex flex-col">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={LockClosed} mini width={16}/>
-                                        Lock Post
-                                    </p>
-                                    <p class="text-xs font-normal">Lock the post to prevent any further comments.</p>
+                            {#if isPostReport(item) && !item.post.locked}
+                                <div class="flex flex-row w-full gap-2 py-2">
+                                    <div class="flex flex-col">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={LockClosed} mini width={16}/>
+                                            Lock Post
+                                        </p>
+                                        <p class="text-xs font-normal">Lock the post to prevent any further comments.</p>
+                                    </div>
+                                    
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.lock} />
                                 </div>
-                                
-                                <div class="mx-auto"/>
-                                
-                                <Switch bind:enabled={actions.lock} />
-                            </div>
+                            {/if}
+
+                            <!---Unlock Post--->
+                            {#if isPostReport(item) && item.post.locked}
+                                <div class="flex flex-row w-full gap-2 py-2">
+                                    <div class="flex flex-col">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={LockOpen} mini width={16}/>
+                                            Unlock Post
+                                        </p>
+                                        <p class="text-xs font-normal">Unlock a post so that it may receive votes and comments.</p>
+                                    </div>
+                                    
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.unlock} />
+                                </div>
+                            {/if}
                             
                             <!---Remove Post/Comment--->
-                            <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isCommentReport(item) && item.comment?.removed) || (isPostReport(item) && item.post?.removed) }>
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={Trash} mini width={16}/>
-                                        Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-                                    </p>
-                                    <p class="text-xs font-normal">Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}</p>
+                            {#if (isCommentReport(item) && !item.comment.removed) || (isPostReport(item) && !item.post.removed)}
+                                <div class="flex flex-row w-full gap-2 py-2" >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Trash} mini width={16}/>
+                                            Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+                                        </p>
+                                        <p class="text-xs font-normal">Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}</p>
+                                    </div>
+                                    
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.remove} />
                                 </div>
-                                
-                                <div class="mx-auto"/>
-                                
-                                <Switch bind:enabled={actions.remove} />
-                            </div>
 
-                            <!--- Remove Post:  Reason for Post/Comment Removal --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={Clipboard} mini width={16}/>
-                                        Removal Reason
-                                    </p>
-                                    <p class="text-xs font-normal">The reason for removing this content. It will appear in the modlog.</p>
-                                    
-                                    <div class="mt-2"/>
-                                    
-                                    <div class="flex flex-col md:flex-row gap-1 items-start">
-                                        <MultiSelect 
-                                            options={removalPresets.options}
-                                            optionNames={removalPresets.names}
-                                            selected=""
-                                            on:select={(e) => {
-                                                switch (e.detail) {
-                                                    case "REPORTTEXT":
-                                                        actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
-                                                        break;
-                                                    default:
-                                                        actions.removeReason = e.detail
-                                                }
-                                            }}
-                                            headless={true}
-                                            class="!min-w-[185px]"
-                                            items={0}
-                                            label="Removal Reason Presets"
-                                        />
-                                        <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={4} placeholder="Removal reason"/>
+                                <!--- Remove Post:  Reason for Post/Comment Removal --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Clipboard} mini width={16}/>
+                                            Removal Reason
+                                        </p>
+                                        <p class="text-xs font-normal">The reason for removing this content. It will appear in the modlog.</p>
+                                        
+                                        <div class="mt-2"/>
+                                        
+                                        <div class="flex flex-col md:flex-row gap-1 items-start">
+                                            <MultiSelect 
+                                                options={removalPresets.options}
+                                                optionNames={removalPresets.names}
+                                                selected=""
+                                                on:select={(e) => {
+                                                    switch (e.detail) {
+                                                        case "REPORTTEXT":
+                                                            actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
+                                                            break;
+                                                        default:
+                                                            actions.removeReason = e.detail
+                                                    }
+                                                }}
+                                                headless={true}
+                                                class="!min-w-[185px]"
+                                                items={0}
+                                                label="Removal Reason Presets"
+                                            />
+                                            <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={4} placeholder="Removal reason"/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
 
-                            <!--- Remove Post: Reply to Author --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                                        Reply to Author
-                                    </p>
-                                    <p class="text-xs font-normal">
-                                        Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
-                                        their content has been removed. The reason given above will be included in that message.
-                                    </p>                        
+                                <!--- Remove Post: Reply to Author --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                                            Reply to Author
+                                        </p>
+                                        <p class="text-xs font-normal">
+                                            Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
+                                            their content has been removed. The reason given above will be included in that message.
+                                        </p>                        
+                                    </div>
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.removeReplyToAuthor} />
                                 </div>
-                                <div class="mx-auto"/>
-                                
-                                <Switch bind:enabled={actions.removeReplyToAuthor} />
-                            </div>
+                            {/if}
+
+                            
+                            <!---Restore Post/Comment--->
+                            {#if (isCommentReport(item) && item.comment.removed) || (isPostReport(item) && item.post.removed)}
+                                <div class="flex flex-row w-full gap-2 py-2" >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Trash} mini width={16}/>
+                                            Restore  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
+                                        </p>
+                                        <p class="text-xs font-normal">Restores the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} to the community.</p>
+                                    </div>
+                                    
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.restore} />
+                                </div>
+
+                                <!--- Restore Post:  Reason for Post/Comment Restoration --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.restore} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Clipboard} mini width={16}/>
+                                            Restore Reason
+                                        </p>
+                                        <p class="text-xs font-normal">The reason for restoring this content. It will appear in the modlog.</p>
+                                        
+                                        <div class="mt-2"/>
+                                        
+                                        <TextArea class="w-full" bind:value={actions.restoreReason} type="text" rows={4} placeholder="Restore reason"/>
+                                        
+                                    </div>
+                                </div>
+
+
+                                <!--- Restore Post: Reply to Author --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.restore} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                                            Reply to Author
+                                        </p>
+                                        <p class="text-xs font-normal">
+                                            Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
+                                            their content has been restored. The reason given above will be included in that message.
+                                        </p>                        
+                                    </div>
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.restoreReplyToAuthor} />
+                                </div>
+                            {/if}
 
 
 
 
                             <!---Community Ban--->
-                            <div class="flex flex-row w-full gap-2 py-2" class:hidden={item.creator_banned_from_community}>
-                                <div class="flex flex-col">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={UserGroup} mini width={16}/>
-                                        Ban From Community
-                                    </p>
-                                    <p class="text-xs font-normal">
-                                        Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
-                                    </p>
-                                </div>
-                                
-                                <div class="mx-auto"/>
-                                
-                                <Switch bind:enabled={actions.banCommunity} />
-                            </div>
-
-                            <!--- Community Ban: Delete Data in Community --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={Trash} mini width={16}/>
-                                        Remove Posts/Comments
-                                    </p>
-                                    <p class="text-xs font-normal">Remove all post and comments in this community made by this user.</p>                        
-                                </div>
-                                <div class="mx-auto"/>
-                                
-                                <Switch bind:enabled={actions.banCommunityDeleteData} />
-                            </div>
-
-                            <!---Community Ban: Reason for Community Ban --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={Clipboard} mini width={16}/>
-                                        Reason for Community Ban
-                                    </p>
-                                    <p class="text-xs font-normal">The given reason meriting the ban from this community.</p>
+                            {#if !item.creator_banned_from_community}
+                                <div class="flex flex-row w-full gap-2 py-2">
+                                    <div class="flex flex-col">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={UserGroup} mini width={16}/>
+                                            Ban From Community
+                                        </p>
+                                        <p class="text-xs font-normal">
+                                            Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
+                                        </p>
+                                    </div>
                                     
-                                    <div class="mt-2"/>
-                                    <TextInput bind:value={actions.banCommunityReason} type="text" placeholder="Ban reason"/>
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.banCommunity} />
                                 </div>
-                            </div>
-
-                            <!--- Commuunity Ban: Duration of Community Ban --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={Clock} mini width={16}/>
-                                        Community Ban Duration
-                                    </p>
-                                    <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent community ban.</p>                        
+                            
+                                <!--- Community Ban: Delete Data in Community --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Trash} mini width={16}/>
+                                            Remove Posts/Comments
+                                        </p>
+                                        <p class="text-xs font-normal">Remove all post and comments in this community made by this user.</p>                        
+                                    </div>
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.banCommunityDeleteData} />
                                 </div>
 
-                                <div class="mx-auto"/>
+                                <!---Community Ban: Reason for Community Ban --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Clipboard} mini width={16}/>
+                                            Reason for Community Ban
+                                        </p>
+                                        <p class="text-xs font-normal">The given reason meriting the ban from this community.</p>
+                                        
+                                        <div class="mt-2"/>
+                                        <TextInput bind:value={actions.banCommunityReason} type="text" placeholder="Ban reason"/>
+                                    </div>
+                                </div>
 
-                                <DateInput bind:value={actions.banCommunityExpires} class="w-[175px]"/>
-                            </div>
+                                <!--- Commuunity Ban: Duration of Community Ban --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Clock} mini width={16}/>
+                                            Community Ban Duration
+                                        </p>
+                                        <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent community ban.</p>                        
+                                    </div>
+
+                                    <div class="mx-auto"/>
+
+                                    <DateInput bind:value={actions.banCommunityExpires} class="w-[175px]"/>
+                                </div>
+                            {/if}
+
+
+                            <!---Community Unban--->
+                            {#if item.creator_banned_from_community}
+                                <div class="flex flex-row w-full gap-2 py-2">
+                                    <div class="flex flex-col">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={UserGroup} mini width={16}/>
+                                            Unban From Community
+                                        </p>
+                                        <p class="text-xs font-normal">
+                                            Lift the community ban applied to the author of the reported content.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.unbanCommunity} />
+                                </div>
+
+                                <!---Community Unban: Reason for Community Ban --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.unbanCommunity} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Clipboard} mini width={16}/>
+                                            Reason for Community Unban
+                                        </p>
+                                        <p class="text-xs font-normal">The given reason meriting the lifting of the community ban.</p>
+                                        
+                                        <div class="mt-2"/>
+                                        <TextInput bind:value={actions.unbanCommunityReason} type="text" placeholder="Unban reason"/>
+                                    </div>
+                                </div>
+                            {/if}
 
 
 
@@ -957,64 +1214,104 @@
                             {#if $profile?.user && isAdmin($profile.user)}
                             
                                 <!---Instance Ban --->
-                                <div class="flex flex-row w-full gap-2 py-2" class:hidden={ (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned)}>
-                                    <div class="flex flex-col">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={NoSymbol} mini width={16}/>
-                                            Ban From Instance
-                                        </p>
-                                        <p class="text-xs font-normal">
-                                            Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.banInstance} />
-                                </div>
-
-                                <!--- Instance Ban: Delete Data Known to Instance --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Trash} mini width={16}/>
-                                            Remove Posts/Comments
-                                        </p>
-                                        <p class="text-xs font-normal">Remove all post and comments on this instance made by this user.</p>                        
-                                    </div>
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.banInstanceDeleteData} />
-                                </div>
-
-                                <!---Instance Ban: Reason for Instance Ban --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Clipboard} mini width={16}/>
-                                            Reason for Instance Ban
-                                        </p>
-                                        <p class="text-xs font-normal">The given reason meriting the ban from this instance.</p>
+                                {#if (isPostReport(item) && !item.post_creator.banned) || (isCommentReport(item) && !item.comment_creator.banned) }
+                                    <div class="flex flex-row w-full gap-2 py-2" >
+                                        <div class="flex flex-col">
+                                            <p class="text-sm font-bold flex flex-row gap-2">
+                                                <Icon src={NoSymbol} mini width={16}/>
+                                                Ban From Instance
+                                            </p>
+                                            <p class="text-xs font-normal">
+                                                Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
+                                            </p>
+                                        </div>
                                         
-                                        <div class="mt-2"/>
-                                        <TextInput bind:value={actions.banInstanceReason} type="text" placeholder="Ban reason"/>
-                                    </div>
-                                </div>
-
-                                <!--- Instance Ban: Duration of Instance Ban --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Clock} mini width={16}/>
-                                            Instance Ban Duration
-                                        </p>
-                                        <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent instance ban.</p>                        
+                                        <div class="mx-auto"/>
+                                        
+                                        <Switch bind:enabled={actions.banInstance} />
                                     </div>
 
-                                    <div class="mx-auto"/>
+                                    <!--- Instance Ban: Delete Data Known to Instance --->
+                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                                        <div class="flex flex-col w-full">
+                                            <p class="text-sm font-bold flex flex-row gap-2">
+                                                <Icon src={Trash} mini width={16}/>
+                                                Remove Posts/Comments
+                                            </p>
+                                            <p class="text-xs font-normal">Remove all post and comments on this instance made by this user.</p>                        
+                                        </div>
+                                        <div class="mx-auto"/>
+                                        
+                                        <Switch bind:enabled={actions.banInstanceDeleteData} />
+                                    </div>
 
-                                    <DateInput bind:value={actions.banInstanceExpires} class="w-[175px]"/>
-                                </div>
+                                    <!---Instance Ban: Reason for Instance Ban --->
+                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                                        <div class="flex flex-col w-full">
+                                            <p class="text-sm font-bold flex flex-row gap-2">
+                                                <Icon src={Clipboard} mini width={16}/>
+                                                Reason for Instance Ban
+                                            </p>
+                                            <p class="text-xs font-normal">The given reason meriting the ban from this instance.</p>
+                                            
+                                            <div class="mt-2"/>
+                                            <TextInput bind:value={actions.banInstanceReason} type="text" placeholder="Ban reason"/>
+                                        </div>
+                                    </div>
+
+                                    <!--- Instance Ban: Duration of Instance Ban --->
+                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
+                                        <div class="flex flex-col w-full">
+                                            <p class="text-sm font-bold flex flex-row gap-2">
+                                                <Icon src={Clock} mini width={16}/>
+                                                Instance Ban Duration
+                                            </p>
+                                            <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent instance ban.</p>                        
+                                        </div>
+
+                                        <div class="mx-auto"/>
+
+                                        <DateInput bind:value={actions.banInstanceExpires} class="w-[175px]"/>
+                                    </div>
+                                {/if}
+
+                                
+                                <!---Instance Unan --->
+                                {#if (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned) }
+                                    <div class="flex flex-row w-full gap-2 py-2" >
+                                        <div class="flex flex-col">
+                                            <p class="text-sm font-bold flex flex-row gap-2">
+                                                <Icon src={Check} mini width={16}/>
+                                                Unban From Instance
+                                            </p>
+                                            <p class="text-xs font-normal">
+                                                Lift the instance ban for the author of the reported content.
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="mx-auto"/>
+                                        
+                                        <Switch bind:enabled={actions.unbanInstance} />
+                                    </div>
+
+
+                                    <!---Instance Unban: Reason for Instance Unban --->
+                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.unbanInstance} >
+                                        <div class="flex flex-col w-full">
+                                            <p class="text-sm font-bold flex flex-row gap-2">
+                                                <Icon src={Clipboard} mini width={16}/>
+                                                Reason for Instance Unban
+                                            </p>
+                                            <p class="text-xs font-normal">The given reason you're lifting the instance ban.</p>
+                                            
+                                            <div class="mt-2"/>
+                                            <TextInput bind:value={actions.unbanInstanceReason} type="text" placeholder="Unban reason"/>
+                                        </div>
+                                    </div>
+                                {/if}
+
+
+
                             {/if}
 
 
@@ -1134,7 +1431,7 @@
 
                     <!---Right Pane / User Profile --->
                     {#if sidePanel =='profile' }
-                        <div class="flex flex-col w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        <div class="flex flex-col w-full h-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
                             {#if creatorProfile.loading}
                                 <span class="flex flex-row w-full items-center">        
                                     <span class="ml-auto"/>
@@ -1143,7 +1440,7 @@
                                 </span>
                             {:else}
                                 {#if creatorProfile?.person_view }
-                                    <UserCardBasic person={creatorProfile.person_view} />
+                                    <UserCardBasic person={creatorProfile.person_view} community={item.community} bind:banned={item.creator_banned_from_community} />
                                 {/if}
                             {/if}
                         </div>

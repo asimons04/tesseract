@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getSessionStorage, setSessionStorage } from '$lib/session'
-    import { afterNavigate, disableScrollHandling, goto } from '$app/navigation';
+    import { afterNavigate, beforeNavigate, disableScrollHandling, goto } from '$app/navigation';
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
@@ -25,9 +25,12 @@
         QueueList
     } from 'svelte-hero-icons'
 
+    beforeNavigate(() => {
+        return
+    });
     
     // Hack to deal with Svelte not returning to the correct spot when returning to the post.
-    afterNavigate(async () => {
+    afterNavigate(() => {
         let postID:number|undefined = getSessionStorage('lastClickedPost')?.postID
         if (postID) {
             let postDiv = document.getElementById(postID.toString())

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { LocalUserView, PersonView } from 'lemmy-js-client'
+    import type { CommunityView, LocalUserView, PersonView } from 'lemmy-js-client'
 
     import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { isBlocked } from '$lib/lemmy/user.js'
@@ -45,6 +45,8 @@
     
 
     export let person:LocalUserView | PersonView
+    export let community:CommunityView
+    export let banned:boolean = false;
 
     let blocking = false
     let userBioModal = false;
@@ -240,6 +242,19 @@
                                         : 'Block'
                                     }
                                 </MenuButton>
+                                
+                                
+                                <!---Community Ban--->
+                                <MenuButton
+                                    color="dangerSecondary"
+                                    on:click={() => {
+                                        ban(banned, person.person, community);
+                                        banned=!banned
+                                    }}
+                                >
+                                    <Icon slot="icon" mini size="16" src={ShieldExclamation} />
+                                    {banned ? 'Unban from Community' : 'Ban from Community'}
+                                </MenuButton>
                             {/if}
                         
                             
@@ -312,4 +327,6 @@
         </span>
     </div>
 {/if}
+
+<div class="mt-[150px]"/>
     
