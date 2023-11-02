@@ -156,7 +156,7 @@
 </Modal>
 
 
-<Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, '384', 'webp') : ''}>
+<Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, '384', 'webp') : ''} class="min-h-[130px]">
     <div class="flex flex-row gap-3 items-start p-3">
         <div class="flex-shrink-0">
             <Avatar

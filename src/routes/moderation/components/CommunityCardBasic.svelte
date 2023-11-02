@@ -26,7 +26,7 @@
 </script>
 
 
-<Card backgroundImage={($userSettings.uiState.showBannersInCards && community?.banner) ? imageProxyURL(community.banner, '384', 'webp') : ''}>
+<Card backgroundImage={($userSettings.uiState.showBannersInCards && community?.banner) ? imageProxyURL(community.banner, '384', 'webp') : ''} class="min-h-[130px]">
     <div class="flex flex-col gap-2 h-full">
         
         <!--- Commuinity Avatar, display name, and federation name--->

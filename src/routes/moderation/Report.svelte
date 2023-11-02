@@ -185,14 +185,21 @@
         actions.replyReporterBody += "Thank you for your submission.\n\n";
         
         if (actions.replyReporterIncludeActions) {
-            if (actions.lock || actions.remove || actions.banCommunity || actions.banInstance) {
+            if (actions.lock || actions.remove || actions.banCommunity || actions.banInstance || actions.unlock || actions.restore || actions.unbanCommunity || actions.unbanInstance) {
                 actions.replyReporterBody += "Actions taken in response to this report:\n";
 
                 if (actions.lock)           actions.replyReporterBody += "- Reported post has been locked\n";
+                if (actions.unlock)         actions.replyReporterBody += "- Reported post has been unlocked\n";
+
                 if (actions.remove)         actions.replyReporterBody += `- Reported ${isCommentReport(item) ? 'comment' : 'post'} has been removed\n`;
-                if (actions.banCommunity)   actions.replyReporterBody += `- User was ${actions.banCommunityExpires ? 'temporarily' : 'permanently'} banned from this community\n`
-                if (actions.banInstance)    actions.replyReporterBody += `- User was ${actions.banInstanceExpires ? 'temporarily' : 'permanently'} banned from this instance\n`
+                if (actions.restore)         actions.replyReporterBody += `- Reported ${isCommentReport(item) ? 'comment' : 'post'} has been restored\n`;
                 
+                if (actions.banCommunity)   actions.replyReporterBody += `- User was ${actions.banCommunityExpires ? 'temporarily' : 'permanently'} banned from this community\n`
+                if (actions.unbanCommunity)   actions.replyReporterBody += `- The ${actions.banCommunityExpires ? 'temporary' : 'permanent'} community ban was lifted\n`
+                
+                if (actions.banInstance)    actions.replyReporterBody += `- User was ${actions.banInstanceExpires ? 'temporarily' : 'permanently'} banned from this instance\n`
+                if (actions.unbanInstance)    actions.replyReporterBody += `- The ${actions.banInstanceExpires ? 'temporary' : 'permanent'} instance ban was lifted\n`
+
                 // Add an additional newline to finish list
                 actions.replyReporterBody += '\n'
             }
@@ -276,14 +283,12 @@
             sidePanel = 'closed'
         }
         
-        //scrollToTop(element);
+        scrollToTop(element);
 
     }
 
     // Populates the ModLog panel for the user being reported on.
-    async function getModlog(personID:number|undefined=undefined, communityID:number|undefined=undefined):Promise<void> {
-
-        
+    async function getModlog(communityID:number|undefined=undefined):Promise<void> {
         if (communityID) {
             modlog.url.searchParams.set('community_id', communityID.toString());
         }
@@ -291,18 +296,11 @@
             modlog.url.searchParams.delete('community_id');
         }
 
-
-        if (personID) {
-            modlog.url.searchParams.set('other_person_id',personID.toString());
-        }
-        else {
-            modlog.url.searchParams.set('other_person_id', isCommentReport(item) ? item.comment.creator_id.toString() : item.post.creator_id.toString() )
-        }
         
+        modlog.url.searchParams.set('other_person_id', isCommentReport(item) ? item.comment.creator_id.toString() : item.post.creator_id.toString() )
         modlog.url.searchParams.set('type', 'All');
 
         modlog.loading = true;
-        modlog.show = open
         modlog.data = await loadModlog({url: modlog.url});
         modlog.loading= false;
         
@@ -740,8 +738,8 @@
         
         
         <!--- Report Title and Button Bar--->
-        <span class="text-base font-bold">
-            {isCommentReport(item) ? 'Comment Report' : isPostReport(item) ? `Post Report: ${item.post.name.length > 45 ? item.post.name.slice(0,45) + '...' : item.post.name}` : 'Post Report'}
+        <span class="text-base font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+            {isCommentReport(item) ? 'Comment Report' : isPostReport(item) ? `Post Report: ${item.post.name.length > 120 ? item.post.name.slice(0,120) + '...' : item.post.name}` : 'Post Report'}
         </span>
         
         <span class="ml-auto"/>
@@ -982,7 +980,7 @@
                 <div class="flex flex-col gap-2 pr-2 w-full" class:hidden={resolved}>
                     
                     <span class="mt-4 text-base font-bold dark:text-zinc-400 text-slate-600">
-                        Actions to Take
+                        Available Actions
                     </span>
 
                     {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
