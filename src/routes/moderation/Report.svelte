@@ -1493,10 +1493,7 @@
                             {:else}
                                 <h1 class="text-lg font-bold">Modlog History</h1>
                                 <p class="text-sm font-normal">
-                                    Abridged modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />
-                                    {#if lookupThisCommunityOnly}
-                                        filtered for events in <CommunityLink community={item.community}  boldCommunityName={false}/>
-                                    {/if}
+                                    Abridged modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
                                 </p>
 
                                 {#if modlog.data?.modlog?.length > 0}
@@ -1549,11 +1546,8 @@
                                 </span>
                             {:else}
                                 <h1 class="text-lg font-bold">Posts</h1>
-                                <p class="text-sm font-normal">
-                                    Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />
-                                    {#if lookupThisCommunityOnly}
-                                        showing only submissions to <CommunityLink community={item.community}  boldCommunityName={false}/>
-                                    {/if}
+                                <p class="text-sm font-normal whitespace-normal">
+                                    Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
                                 </p>
 
                                 {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
@@ -1583,10 +1577,7 @@
                             {:else}
                                 <h1 class="text-lg font-bold">Comments</h1>
                                 <p class="text-sm font-normal">
-                                    Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />
-                                    {#if lookupThisCommunityOnly}
-                                        showing only submissions to <CommunityLink community={item.community}  boldCommunityName={false}/>
-                                    {/if}
+                                    Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
                                 </p>
 
                                 {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
