@@ -14,7 +14,8 @@
     export let showInstance: boolean | undefined = undefined
     export let href: string | undefined = undefined
     export let heading:boolean = false
-    
+    export let boldCommunityName:boolean = true;
+
     function linkFromCommunity(community: Community) {
         const domain = new URL(community.actor_id).hostname
         return `/c/${community.name}@${domain}`
@@ -22,22 +23,16 @@
 </script>
 
 <a 
-    class="items-center flex flex-row gap-2 hover:underline
-        {heading ? 'font-bold text-2xl' : ''}
-    " 
+    class="items-center flex flex-row gap-2 hover:underline {heading ? 'font-bold text-2xl' : ''}" 
     href={href ?? linkFromCommunity(community)} 
     title={community.title.replace('&amp;', '&')}
 >
     {#if avatar}
-        <Avatar
-            url={community.icon}
-            alt={community.name}
-            width={avatarSize}
-        />
+        <Avatar url={community.icon} alt={community.name} width={avatarSize} />
     {/if}
 
     {#if name}
-        <span class="flex flex-wrap gap-0 font-bold">
+        <span class="flex flex-wrap gap-0 {boldCommunityName ? 'font-bold' : 'font-normal'}">
             
             {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}
                 

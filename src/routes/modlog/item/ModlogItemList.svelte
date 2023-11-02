@@ -28,7 +28,7 @@
             <li class="flex flex-nowrap gap-1"><strong>Date:</strong> {new Date(item.timestamp).toLocaleString()}</li>
             
             {#if item.community}
-                <li class="flex flex-nowrap gap-1"><strong>Community:</strong> <CommunityLink community={item.community} showInstance />
+                <li class="flex flex-nowrap gap-1"><strong>Community:</strong> <CommunityLink community={item.community} showInstance boldCommunityName={false} />
             {/if}
 
             {#if item.moderator}
