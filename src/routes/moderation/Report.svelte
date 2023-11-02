@@ -1477,7 +1477,7 @@
                                     <div class="flex flex-col">
                                         <p class="text-sm font-bold flex flex-row gap-2">
                                             <Icon src={Funnel} mini width={16}/>
-                                            Filter for Community
+                                            This Community Only
                                         </p>
                                         <p class="text-xs font-normal">Filter the modlog to only actions in the reported community.</p>
                                     </div>
