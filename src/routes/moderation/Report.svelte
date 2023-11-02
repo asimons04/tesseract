@@ -815,12 +815,14 @@
         </span>
 
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
-            {#if item.resolver?.id}        
                 <span class="font-bold dark:text-zinc-400 text-slate-600">
                     Resolved by
                 </span>
-                <UserLink user={item.resolver} />
-            {/if}
+                {#if (isCommentReport(item) && item.comment_report.resolved) || (isPostReport(item) && item.post_report.resolved)}        
+                    <UserLink user={item.resolver} />
+                {:else}
+                    ---
+                {/if}
         </span>
 
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">

@@ -62,7 +62,7 @@
 </div>
 
 {#if data?.items?.length > 0}
-    <div class="flex flex-col gap-1 w-full max-h-full">
+    <div class="flex flex-col gap-2 w-full max-h-full">
         {#each data.items as item}
             {#if 
                     (
