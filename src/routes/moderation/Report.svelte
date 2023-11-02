@@ -877,7 +877,7 @@
 
                         if (!creatorProfile.posts) {
                             creatorProfile.loading = true;
-                            await getUserPostsComments(reporteeID);
+                            getUserPostsComments(reporteeID);
                         }
                     }}
                 >
@@ -893,7 +893,7 @@
                         
                         if (!creatorProfile.comments) {
                             creatorProfile.loading = true; 
-                            await getUserPostsComments(reporteeID);
+                            getUserPostsComments(reporteeID);
                         }
                     }}
                 >

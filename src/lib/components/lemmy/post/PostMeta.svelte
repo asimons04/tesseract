@@ -128,7 +128,7 @@
             </div>
 
             <!--- Post Badges --->
-            <div class="flex flex-row ml-auto mb-auto gap-2">
+            <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
                 <!--- Media Bias Fact Check--->
                 {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <MBFC post={post} {collapseBadges}/>
