@@ -25,19 +25,17 @@ export async function load({ url, fetch }) {
         unresolved_only: type == 'unread',
     }
 
-    const [posts, comments, private_messages] = await Promise.all([
+    const [posts, comments] = await Promise.all([
         client.listPostReports({
             ...params,
         }),
         client.listCommentReports({
             ...params,
         }),
-        client.listPrivateMessageReports({
-            ...params,
-        }),
+
     ])
 
-    const everything = [...posts.post_reports, ...comments.comment_reports, ...private_messages.private_message_reports]
+    const everything = [...posts.post_reports, ...comments.comment_reports]
         .sort((a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a)))
 
     return {
@@ -46,3 +44,12 @@ export async function load({ url, fetch }) {
         items: everything,
     }
 }
+
+// Removing PM report checks.  Don't feel like detecting admin state on this release. Especially when the PM reporting feature hasn't been plugged in yet.
+/*
+client.listPrivateMessageReports({
+    ...params,
+}),
+
+, ...private_messages.private_message_reports
+*/

@@ -158,8 +158,6 @@
         remove: false,
         removeReason: '',
         removeReplyToAuthor: false,
-
-
         
         banCommunity: false,
         banCommunityReason: '',
@@ -351,7 +349,6 @@
         if (actions.banInstanceExpires  != '' && !validateExpiryDate(actions.banInstanceExpires)) return;
 
         resolving = true
-        let keepOpen = resolved;
 
         try {
             
@@ -726,7 +723,7 @@
         actions = {...actionsDefault};
         
         // If un-resolving the report, keep it open
-        if (!keepOpen) toggleOpenReport();
+        if (resolved) toggleOpenReport();
     }
 
     
