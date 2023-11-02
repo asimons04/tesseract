@@ -31,7 +31,29 @@ All major/minor changes between releases will be documented here.
 
 - Removed "Cards/Compact" switcher in Report management panel. Posts are intentionally forced into compact view and this button was now useless.
 
-- When resolving reports, added ability for moderator to reply to reporter via DM with the resolution.
+### Complete Mod Report Overhaul
+With the new mod tooling, you can take multiple actions in one batch.  
+- Lock posts, remove posts/comments, and optionally temp/perma ban from community/instance all in one fell swoop.
+- Unlock, restore, and unban from community/instance if an action was performed in error or after additional review.
+- Can even combine bans such as a temporary instance ban and a permanent community ban. Note that only admins will see the section that contains the instance ban options.
+- All "reason" and duration fields are present, so all mod operations are possible and auditable.
+- Post/comment preview is collapsible (in case of disturbing content, you won't have to look at it while you fill out the form)
+
+- Optionally follow up with the reporter to let them know their report has been received and processed.
+  - Can include an action report in the reply to let them know what actions were taken
+  - Uses a hard-coded template that can be modified prior to resolving the report.
+  - If no actions are taken, will use a standard blurb about the submission not violating any server/community rules (see screenshot below).
+
+- Optionally follow up with the author being reported on.  Let them know, via DM, that their submission was removed and why.
+  - This currently uses a basic hardcoded response:
+  - Your [post|comment] in [community] has been removed:
+    - **Post**: [Linked post title]
+    - **Reasons**: [Reason provided in mod form]
+
+- Optionally follow up with the post/comment author to inform them of a community ban.
+  - Will let them know they've been banned, if it's temporary or permanent, and if temporary, when it expires.
+  - Not available for instance ban since they wouldn't receive it if local 
+
 
 
 ## 1.2.8.98
