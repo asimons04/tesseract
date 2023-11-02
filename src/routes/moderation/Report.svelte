@@ -74,6 +74,7 @@
         Newspaper,
         NoSymbol,
         PencilSquare,
+        Photo,
         Trash,
         User,
         UserGroup,
@@ -282,7 +283,7 @@
             sidePanel = 'closed'
         }
         
-        scrollToTop(element);
+        //scrollToTop(element);
 
     }
 
@@ -730,7 +731,7 @@
 
 
 
-<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-200 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-4'}" 
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-4'}" 
     name="ModeratorReport" 
     id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}"
 >
@@ -740,14 +741,19 @@
     <span class="flex flex-col lg:flex-row w-full gap-4">
         
         <!--- Report Title and Button Bar--->
-        <span class="text-base font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-            {
-                isCommentReport(item) 
-                    ? `Comment Report: "${item.comment.content.length > 120 ? item.comment.content.slice(0,120) : item.comment.content}"` 
-                    : isPostReport(item) 
-                        ? `Post Report: ${item.post.name.length > 120 ? item.post.name.slice(0,120) : item.post.name}` 
-                        : 'Report'
-            }
+        <span class="flex flex-row gap-2 items-center text-base font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+            <Icon src={isCommentReport(item) ? ChatBubbleLeftEllipsis : Photo} mini width={20} />
+            {isCommentReport(item) ? "Comment Report: " : "Post Report: "}
+            
+            <span class="text-sm font-normal whitespace-nowrap overflow-hidden text-ellipsis">
+                {
+                    isCommentReport(item) 
+                        ? `"${item.comment.content.length > 120 ? item.comment.content.slice(0,120) + '...' : item.comment.content}"` 
+                        : isPostReport(item) 
+                            ? `"${item.post.name.length > 120 ? item.post.name.slice(0,120) + '...' : item.post.name}"` 
+                            : ''
+                }
+            </span>
         </span>
         
         <span class="ml-auto"/>
