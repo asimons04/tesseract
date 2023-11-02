@@ -38,6 +38,7 @@
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    import Checkbox from '$lib/components/input/Checkbox.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
     import CommunityCardBasic from './components/CommunityCardBasic.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
@@ -94,21 +95,13 @@
             : false
 
     $: reporteeID = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id;
-    $: itemType =
-        isCommentReport(item)
-            ? 'comment'
-            : isPostReport(item)
-                ? 'post'
-                : isPrivateMessageReport(item)
-                    ? 'private_message'
-                    : undefined
-    
-
+   
     let resolving:boolean = false
     let open:boolean = false;
     let debug:boolean = false;
     let sidePanel: 'posts' | 'comments' | 'profile' | 'community' | 'modlog' | 'closed' = 'profile'
-    
+    let lookupThisCommunityOnly:boolean = false;
+
     interface ModlogContainer {
         url: URL,
         loading:boolean,
@@ -128,10 +121,12 @@
         comments?: CommentView[],
         loading:boolean,
         person_view?: PersonView,
+        communityOnly: boolean
     }
 
     let creatorProfile:PersonProfile = {
         loading: false,
+        communityOnly: false
     };
 
     // Load Moderation presets from the template module
@@ -311,7 +306,7 @@
     }
 
     // Fetch the user details by person ID
-    async function getUserPostsComments(personID:number):Promise<void> {
+    async function getUserPostsComments(personID:number, communityID:number|undefined = undefined):Promise<void> {
         if (!personID || !$profile?.jwt) return;
 
         try {
@@ -323,6 +318,7 @@
                 person_id: personID,
                 sort: 'New',
                 auth: $profile?.jwt,
+                community_id: communityID
             })
             const posts = [...user.posts]
             const comments = [...user.comments]
@@ -862,7 +858,7 @@
                     User Profile
                 </Button>
 
-                <Button color="tertiary" size="sm" title="Community" class="{sidePanel=='community' ? 'font-bold' : ''}"
+                    <Button color="tertiary" size="sm" title="Community" class="{sidePanel=='community' ? 'font-bold' : ''}"
                     on:click={async() => {
                         sidePanel == 'community'
                             ? sidePanel='closed'
@@ -911,13 +907,40 @@
                             ? sidePanel = 'closed'
                             : sidePanel = 'modlog'
 
-                        if (sidePanel == 'modlog') await getModlog();
+                        if (sidePanel == 'modlog') {
+                            if (lookupThisCommunityOnly) getModlog(item.community.id)
+                            else getModlog()   
+                        }
                         
                     }}
                 >
                     <Icon src={Newspaper} mini width={16}/>
                     Modlog History
                 </Button>
+
+                <!--- Filter posts/comments/modlog for the reported community only--->
+                <span class="flex flex-row gap-4 ml-auto pr-4 items-center">
+                    <span class="text-xs font-bold flex flex-row gap-2 items-center">
+                        <Icon src={Funnel} mini width={16}/>
+                        This Community Only
+                    </span>
+
+                    <Switch bind:enabled={lookupThisCommunityOnly} 
+                        on:change={()=> {
+                            lookupThisCommunityOnly = !lookupThisCommunityOnly
+                            
+                            if (lookupThisCommunityOnly) {
+                                getUserPostsComments(reporteeID, item.community.id)
+                                getModlog(item.community.id)
+                            }
+                            else {
+                                getUserPostsComments(reporteeID)
+                                getModlog()
+                            }
+                        }}
+                    />
+                </span>
+
             </div>
         </div>
 
@@ -1472,29 +1495,6 @@
                                 <p class="text-sm font-normal">
                                     Abridged modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />. 
                                 </p>
-                                
-                                <div class="flex flex-row w-full ml-4 pr-4 gap-2 py-2">
-                                    <div class="flex flex-col">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Funnel} mini width={16}/>
-                                            This Community Only
-                                        </p>
-                                        <p class="text-xs font-normal">Filter the modlog to only actions in the reported community.</p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={modlog.communityOnly} 
-                                        on:change={()=> {
-                                            modlog.communityOnly = !modlog.communityOnly
-                                            modlog.communityOnly
-                                                ? getModlog(item.community.id)
-                                                : getModlog()
-                                            }}
-                                    />
-                                </div>
-
-
 
                                 {#if modlog.data?.modlog?.length > 0}
                                     <div class="flex flex-col gap-4 mt-2">

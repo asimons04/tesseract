@@ -1,15 +1,18 @@
 <script lang="ts">
-    import Link from '$lib/components/input/Link.svelte'
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     import type { ModLog } from '../+page.js'
-    import ModlogAction from '../ModlogAction.svelte'
+    
+    import { fly } from 'svelte/transition'
     import { userSettings } from '$lib/settings.js'
-  
+
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import Link from '$lib/components/input/Link.svelte'
+    import ModlogAction from '../ModlogAction.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    
     export let item: ModLog
 </script>
 
-    <div class="text-xs font-normal">
+    <div class="text-xs font-normal"  transition:fly={{duration:300, x: '33%'}}>
         {#if item.actionName}
             <span class="text-sm font-bold">
                 <ModlogAction action={item.actionName} expires={item.expires ?? undefined}/>
