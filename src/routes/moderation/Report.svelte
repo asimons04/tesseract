@@ -148,7 +148,7 @@
 
         unbanCommunity: false,
         unbanCommunityReason: '',
-        
+        unbanCommunityNotify: false,
         unbanInstance: false,
         unbanInstanceReason: '',
 
@@ -165,6 +165,7 @@
         banCommunityReason: '',
         banCommunityDeleteData: false,
         banCommunityExpires: '',
+        banCommunityNotify: false,
         
         banInstance: false,
         banInstanceReason: '',
@@ -439,6 +440,7 @@
 
                 }
 
+
                 // Remove comment if "remove" option selected
                 if (actions.remove && isCommentReport(item)) {
                     try {
@@ -461,7 +463,7 @@
                 }
 
                 // Restore comment if "restore" option selected
-                if (actions.remove && isCommentReport(item)) {
+                if (actions.restore && isCommentReport(item)) {
                     try {
                         await getClient().removeComment({
                             auth: $profile.jwt,
@@ -480,6 +482,7 @@
                     }
 
                 }
+
 
             
                 // Ban user from community if that is selected
@@ -568,6 +571,42 @@
 
                 //// Follow-Up Messages:  If selected, sends follow-up DMs to the post/comment author and/or reporter
                 
+                // Community Ban/Unban Notify to author
+                if ( (actions.banCommunity && actions.banCommunityNotify) || (actions.unbanCommunity && actions.unbanCommunityNotify) ) {
+                    let template:string = '';
+                    let duration:string = '';
+
+                    if (actions.banCommunity) {
+                        actions.banCommunityExpires
+                            ? duration = `until ${actions.banCommunityExpires}`
+                            : duration = 'permanently'
+
+                        template += `You have been banned from ${item.community.name}@${new URL(item.community.actor_id).host} ${duration}.\n\n`
+                        template += `**Reason**: ${actions.banCommunityReason || '{None provided}'}\n`
+                    }
+
+                    if (actions.unbanCommunity) {
+                        template = `Your ban from  ${item.community.name}@${new URL(item.community.actor_id).host} has been lifted.`
+                    }
+
+                    try {
+                        await getClient().createPrivateMessage({
+                            auth: $profile.jwt,
+                            content: template,
+                            recipient_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
+                        })
+                    }
+                    catch (err) {
+                        console.log(err);
+                        toast({
+                            content: 'Failed to message post/comment author.',
+                            type: 'warning',
+                        })
+                    }
+                }
+
+
+
                 // Post/Comment Removal DM to Author
                 if ( (actions.remove && actions.removeReplyToAuthor) || (actions.restore && actions.restoreReplyToAuthor) ) {
                     
@@ -1171,6 +1210,22 @@
 
                                     <DateInput bind:value={actions.banCommunityExpires} class="w-[175px]"/>
                                 </div>
+
+                                <!--- Community Ban: Notify User --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Trash} mini width={16}/>
+                                            Send Ban Notification
+                                        </p>
+                                        <p class="text-xs font-normal">
+                                            Send a message to the user letting them know they have been banned, why, and for how long. The ban reason will be included in that message.
+                                        </p>                        
+                                    </div>
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.banCommunityNotify} />
+                                </div>
                             {/if}
 
 
@@ -1204,6 +1259,20 @@
                                         <div class="mt-2"/>
                                         <TextInput bind:value={actions.unbanCommunityReason} type="text" placeholder="Unban reason"/>
                                     </div>
+                                </div>
+
+                                <!--- Community Unban: Notify User --->
+                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.unbanCommunity} >
+                                    <div class="flex flex-col w-full">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Trash} mini width={16}/>
+                                            Send Unban Notification
+                                        </p>
+                                        <p class="text-xs font-normal">Send a message to the user letting them know their ban has been lifted. The ban reason will be included in that message.</p>
+                                    </div>
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={actions.unbanCommunityNotify} />
                                 </div>
                             {/if}
 
@@ -1276,7 +1345,7 @@
                                 {/if}
 
                                 
-                                <!---Instance Unan --->
+                                <!---Instance Unban --->
                                 {#if (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned) }
                                     <div class="flex flex-row w-full gap-2 py-2" >
                                         <div class="flex flex-col">
@@ -1309,8 +1378,6 @@
                                         </div>
                                     </div>
                                 {/if}
-
-
 
                             {/if}
 
