@@ -13,6 +13,6 @@
   export let color: BadgeColor = 'gray'
 </script>
 
-<span class="px-2 py-0.5 rounded-full max-h-[20px] text-xs ml-auto font-bold flex items-center gap-1 {badgeColor[color]} {$$props.class}" title={label}>
+<span class="px-2 py-0.5 rounded-full max-h-[20px] text-xs ml-auto font-bold flex items-center gap-1 whitespace-nowrap overflow-hidden {badgeColor[color]} {$$props.class}" title={label}>
     <slot />
 </span>

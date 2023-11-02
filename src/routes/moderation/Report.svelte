@@ -66,6 +66,7 @@
         ExclamationTriangle,
         Folder,
         FolderOpen,
+        Funnel,
         LockClosed,
         LockOpen,
         Microphone,
@@ -111,13 +112,15 @@
     interface ModlogContainer {
         url: URL,
         loading:boolean,
-        data?:Modlog
+        data?:Modlog,
+        communityOnly:boolean
     }
 
     let modlog:ModlogContainer = {
         url: new URL(window.location.href),
         loading: false,
-        data: undefined
+        data: undefined,
+        communityOnly: false,
     }
 
     interface PersonProfile {
@@ -258,6 +261,7 @@
             })
 
             creatorProfile.loading = true;
+            
             if (resolved) {
                 getModlog();
                 sidePanel= 'modlog';
@@ -290,10 +294,10 @@
     // Populates the ModLog panel for the user being reported on.
     async function getModlog(communityID:number|undefined=undefined):Promise<void> {
         if (communityID) {
-            modlog.url.searchParams.set('community_id', communityID.toString());
+            modlog.url.searchParams.set('community', communityID.toString());
         }
         else {
-            modlog.url.searchParams.delete('community_id');
+            modlog.url.searchParams.delete('community');
         }
 
         
@@ -907,7 +911,7 @@
                             ? sidePanel = 'closed'
                             : sidePanel = 'modlog'
 
-                        if (sidePanel == 'modlog') await getModlog(reporteeID);
+                        if (sidePanel == 'modlog') await getModlog();
                         
                     }}
                 >
@@ -1456,7 +1460,7 @@
                     
                     <!--- Right pane / Modlog --->
                     {#if sidePanel == 'modlog'}
-                        <div class="w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        <div class="w-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
                             {#if modlog.loading}
                                 <span class="flex flex-row w-full items-center">    
                                     <span class="ml-auto"/>
@@ -1466,9 +1470,31 @@
                             {:else}
                                 <h1 class="text-lg font-bold">Modlog History</h1>
                                 <p class="text-sm font-normal">
-                                    Modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.  Only post/comment removals, post locks, and bans are shown as they
-                                    are usually all that is relevant to make a moderation decision.
+                                    Abridged modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />. 
                                 </p>
+                                
+                                <div class="flex flex-row w-full ml-4 pr-4 gap-2 py-2">
+                                    <div class="flex flex-col">
+                                        <p class="text-sm font-bold flex flex-row gap-2">
+                                            <Icon src={Funnel} mini width={16}/>
+                                            Filter for Community
+                                        </p>
+                                        <p class="text-xs font-normal">Filter the modlog to only actions in the reported community.</p>
+                                    </div>
+                                    
+                                    <div class="mx-auto"/>
+                                    
+                                    <Switch bind:enabled={modlog.communityOnly} 
+                                        on:change={()=> {
+                                            modlog.communityOnly = !modlog.communityOnly
+                                            modlog.communityOnly
+                                                ? getModlog(item.community.id)
+                                                : getModlog()
+                                            }}
+                                    />
+                                </div>
+
+
 
                                 {#if modlog.data?.modlog?.length > 0}
                                     <div class="flex flex-col gap-4 mt-2">
@@ -1494,7 +1520,7 @@
 
                     <!---Right Pane / User Profile --->
                     {#if sidePanel =='profile' }
-                        <div class="flex flex-col w-full h-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        <div class="flex flex-col w-full h-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
                             {#if creatorProfile.loading}
                                 <span class="flex flex-row w-full items-center">        
                                     <span class="ml-auto"/>
@@ -1511,7 +1537,7 @@
 
                     <!---Right Pane / User Posts --->
                     {#if sidePanel =='posts'}
-                        <div class="w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}} >
+                        <div class="w-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}} >
                             {#if creatorProfile.loading}
                                 <span class="flex flex-row w-full items-center">        
                                     <span class="ml-auto"/>
@@ -1541,7 +1567,7 @@
 
                     <!---Right Pane / User Comments --->
                     {#if sidePanel=='comments'}
-                        <div class="w-full gap-2 p-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        <div class="w-full gap-2 p-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
                             {#if creatorProfile.loading}
                                 <span class="flex flex-row w-full items-center">        
                                     <span class="ml-auto"/>
@@ -1569,7 +1595,7 @@
                     
                     <!---Right Pane / Community Profile --->
                     {#if sidePanel=='community' }
-                        <div class="flex flex-col w-full p-2 gap-2 overflow-y-scroll" in:fade={{duration: 300}}>
+                        <div class="flex flex-col w-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
                             {#if item?.community }
                                 <CommunityCardBasic community={item.community} />
                             {/if}
