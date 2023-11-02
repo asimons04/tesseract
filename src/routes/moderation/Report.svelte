@@ -730,7 +730,7 @@
 
 
 
-<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[85vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh]" name="ModeratorReport" id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}">
     
     
     <!---Report Title, Badge and Open/Close Button Row--->
@@ -917,6 +917,7 @@
             </div>
         </div>
 
+        <!--- Main Content Area--->
         <div class="flex flex-row gap-4 w-full overflow-hidden" transition:fly={{ duration: 300, y: -60, opacity: 0 }}>
             
             <!--- Left side / Report Form--->
