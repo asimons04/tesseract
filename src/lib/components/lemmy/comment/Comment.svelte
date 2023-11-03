@@ -34,8 +34,8 @@
 
     let editing = false
     let newComment = node.comment_view.comment.content
-    let distinguishedClassSummary = 'border-l border-r border-t border-green-500/50 bg-green-500/5 p-1'
-    let distinguishedClassContent = 'border-l border-r border-b border-green-500/50 bg-green-500/5 p-1'
+    let distinguishedClassSummary = 'border-l border-r rounded-t-md border-t border-green-500/50 bg-green-500/5 p-1'
+    let distinguishedClassContent = 'shadow-md border-l border-r rounded-b-md border-b border-green-500/50 bg-green-500/5 p-1'
 </script>
 
 {#if editing}

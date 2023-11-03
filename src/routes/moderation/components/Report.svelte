@@ -58,6 +58,8 @@
 
     import ContentPanel from './layout/ContentPanel.svelte'
     import SidePanel from './layout/SidePanel.svelte'
+    import SidePanelControlBar from './layout/SidePanelControlBar.svelte'
+    import SidePanelControlButton from './layout/SidePanelControlButton.svelte'
 
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
@@ -763,7 +765,7 @@
 
 
 
-<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-4'}" 
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-2'}" 
     name="ModeratorReport" 
     id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}"
 >
@@ -810,7 +812,7 @@
             {/if}
 
             <!---Quick Actions Menu--->
-            {#if !resolved}
+            {#if !resolved && open}
             <SelectMenu
                 alignment="bottom-right"
                 options={['manual', 'spam-ban', 'lock-remove-nonotify', 'lock-remove']}
@@ -897,118 +899,75 @@
         
     </span>
 
-    {#if open}
-    <!-- Side panel Menu Bar--->
-    <div class="hidden lg:flex flex-col gap-1">
-        <div class="flex flex-row w-full gap-2 py-1 bg-slate-200 dark:bg-zinc-800 rounded-md">
-            <span class="ml-4 flex text-xs font-bold items-center">
-                Lookup Tools:
-            </span>
-
-            <Button color="tertiary" size="sm" title="User's Profile" class="{sidePanel=='profile' ? 'font-bold' : ''}"
-                on:click={async() => {
-                    sidePanel == 'profile'
-                        ? sidePanel='closed'
-                        : sidePanel = 'profile'
-
-                    if (!creatorProfile.person_view) {
-                        creatorProfile.loading = true;
-                        await getUserPostsComments(reporteeID);
-                    }
-                }}
-            >
-                <Icon src={User} mini width={16}/>
-                User Profile
-            </Button>
-
-                <Button color="tertiary" size="sm" title="Community" class="{sidePanel=='community' ? 'font-bold' : ''}"
-                on:click={async() => {
-                    sidePanel == 'community'
-                        ? sidePanel='closed'
-                        : sidePanel='community'
-                }}
-            >
-                <Icon src={UserGroup} mini width={16}/>
-                Community
-            </Button>
-
-            <Button color="tertiary" size="sm" title="Posts" class="{sidePanel=='posts' ? 'font-bold' : ''}"
-                on:click={async() => {
-                    sidePanel == 'posts'
-                        ? sidePanel='closed'
-                        : sidePanel='posts'
-
-                    if (!creatorProfile.posts) {
-                        creatorProfile.loading = true;
-                        getUserPostsComments(reporteeID);
-                    }
-                }}
-            >
-                <Icon src={Window} mini width={16}/>
-                Posts
-            </Button>
-
-            <Button color="tertiary" size="sm" title="Comments" class="{sidePanel=='comments' ? 'font-bold' : ''}"
-                on:click={async() => {
-                    sidePanel == 'comments'
-                        ? sidePanel = 'closed'
-                        : sidePanel='comments'
-                    
-                    if (!creatorProfile.comments) {
-                        creatorProfile.loading = true; 
-                        getUserPostsComments(reporteeID);
-                    }
-                }}
-            >
-                <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                Comments
-            </Button>
-
-            <Button color="tertiary" size="sm" title="Modlog" class="{sidePanel=='modlog' ? 'font-bold' : ''}"
-                on:click={async() => {
-                    sidePanel == 'modlog'
-                        ? sidePanel = 'closed'
-                        : sidePanel = 'modlog'
-
-                    if (sidePanel == 'modlog') {
-                        if (lookupThisCommunityOnly) getModlog(item.community.id)
-                        else getModlog()   
-                    }
-                    
-                }}
-            >
-                <Icon src={Newspaper} mini width={16}/>
-                Modlog History
-            </Button>
-
-            <!--- Filter posts/comments/modlog for the reported community only--->
-            <span class="flex flex-row gap-4 ml-auto pr-4 items-center">
-                <span class="text-xs font-bold flex flex-row gap-2 items-center">
-                    <Icon src={Funnel} mini width={16}/>
-                    This Community Only
-                </span>
-
-                <Switch bind:enabled={lookupThisCommunityOnly} 
-                    on:change={()=> {
-                        lookupThisCommunityOnly = !lookupThisCommunityOnly
-                        
-                        if (lookupThisCommunityOnly) {
-                            getUserPostsComments(reporteeID, item.community.id)
-                            getModlog(item.community.id)
-                        }
-                        else {
-                            getUserPostsComments(reporteeID)
-                            getModlog()
-                        }
-                    }}
-                />
-            </span>
-
-        </div>
-    </div>
-    {/if}
 
     <!---Collapsible Portion--->
+    <SidePanelControlBar bind:display={open}>
+        
+        <!---Profile--->
+        <SidePanelControlButton bind:sidePanel={sidePanel} icon={User} name="User Profile" value='profile'
+            action={() => {
+                if (!creatorProfile.person_view) {
+                    creatorProfile.loading = true;
+                    getUserPostsComments(reporteeID);
+                }
+            }}
+        />
+
+        <!---Community--->
+        <SidePanelControlButton bind:sidePanel={sidePanel} icon={UserGroup} name="Community" value='community'/>
+
+        <!---Posts--->
+        <SidePanelControlButton bind:sidePanel={sidePanel} icon={Window} name="Posts" value='posts'
+            action={() => {
+                if (!creatorProfile.posts) {
+                    creatorProfile.loading = true;
+                    getUserPostsComments(reporteeID);
+                }
+            }}
+        />
+        
+        <!---Comments--->
+        <SidePanelControlButton bind:sidePanel={sidePanel} icon={ChatBubbleLeftEllipsis} name="Comments" value='comments'
+            action={() => {
+                if (!creatorProfile.comments) {
+                    creatorProfile.loading = true; 
+                    getUserPostsComments(reporteeID);
+                }
+            }}
+        />
+        <!---Modlog History--->
+        <SidePanelControlButton bind:sidePanel={sidePanel} icon={Newspaper} name="Modlog History" value='modlog'
+            action={() => {
+                if (lookupThisCommunityOnly) getModlog(item.community.id)
+                else getModlog()   
+            }}
+        />
+       
+
+        <!--- Toggle filter posts/comments/modlog for the reported community only--->
+        <span class="flex flex-row gap-4 ml-auto pr-4 items-center">
+            <span class="text-xs font-bold flex flex-row gap-2 items-center">
+                <Icon src={Funnel} mini width={16}/>
+                This Community Only
+            </span>
+
+            <Switch bind:enabled={lookupThisCommunityOnly} 
+                on:change={()=> {
+                    lookupThisCommunityOnly = !lookupThisCommunityOnly
+                    
+                    if (lookupThisCommunityOnly) {
+                        getUserPostsComments(reporteeID, item.community.id)
+                        getModlog(item.community.id)
+                    }
+                    else {
+                        getUserPostsComments(reporteeID)
+                        getModlog()
+                    }
+                }}
+            />
+        </span>
+
+    </SidePanelControlBar>
 
     <!--- Main Content Area--->
     <ContentPanel bind:sidePanel={sidePanel} bind:display={open}>

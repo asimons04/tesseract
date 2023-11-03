@@ -1,10 +1,12 @@
 <script lang="ts">
     import Button from '$lib/components/input/Button.svelte'
     import Comment from '$lib/components/lemmy/comment/Comment.svelte'
+    import Link from '$lib/components/input/Link.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    
     import type { CommentView } from 'lemmy-js-client'
-
+    import { getInstance } from '$lib/lemmy'
     import {
         Icon,
         ArrowTopRightOnSquare
@@ -22,7 +24,7 @@
         
         <Button
             color="secondary"
-            href="/post/{comment.post.id}?thread={comment.comment.path}#{comment.comment.id}"
+            href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}#{comment.comment.id}"
             size="sm"
             class="self-start"
             title="Jump to Comment"
@@ -31,7 +33,7 @@
         </Button>
     </div>
     
-    <p class="text-sm font-bold">{comment.post.name}</p>  
+    <Link href="/post/{getInstance()}/{comment.post.id}"><span class="text-sm font-bold">{comment.post.name}</span></Link>  
     
     <div class="list-none">
         <Comment

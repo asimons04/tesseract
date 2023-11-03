@@ -64,7 +64,7 @@
                         (isCommentReport(item) && !item.comment_report.resolved) || (isPostReport(item) && !item.post_report.resolved)
                     ) || type == 'all'                
             }
-                <div class="mt-[-0.25rem]" transition:fly={{delay: 300, duration:500, x: '50%'}}>    
+                <div class="mt-[-0.25rem]" transition:fly={{delay: 350, duration:500, x: '50%'}}>    
                     <Report bind:item={item} />
                 </div>
             {/if}
