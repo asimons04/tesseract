@@ -100,7 +100,7 @@
     
 
     export let item: PostReportView | CommentReportView | PrivateMessageReportView
-    
+
     // Closes the current report before leaving the page.  Needed to be able to switch between "all" and "unread"
     beforeNavigate(() => {
         if (open) toggleOpenReport();

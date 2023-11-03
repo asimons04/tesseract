@@ -55,26 +55,37 @@
     </div>
 </div>
 
-{#if data?.items?.length > 0}
-    <div class="flex flex-col gap-1 w-full max-h-full">
-        {#each data.items as item}
-            {#if 
-                    (
-                        (!type || type == 'unread') && 
-                        (isCommentReport(item) && !item.comment_report.resolved) || (isPostReport(item) && !item.post_report.resolved)
-                    ) || type == 'all'                
-            }
-                <div class="mt-[-0.25rem]" transition:fly={{delay: 350, duration:500, x: '50%'}}>    
-                    <Report bind:item={item} />
-                </div>
-            {/if}
-        {/each}
-    </div>
-    
-{:else}
-    <Placeholder
-        icon={Inbox}
-        title="No new reports"
-        description="When submissions are reported, you can act on them here."
-    />
+{#if (!type || type=='unread') }
+
+    {#if data?.items?.length > 0}
+        <div class="flex flex-col gap-1 w-full max-h-full">
+            {#each data.items as item}
+                {#if (isCommentReport(item) && !item.comment_report.resolved) || (isPostReport(item) && !item.post_report.resolved) }  
+                    <div class="mt-[-0.25rem]" transition:fly={{delay: 300, duration:500, x: '50%'}}>    
+                        <Report bind:item={item}/>
+                    </div>
+                {/if}
+            {/each}
+        </div>
+        
+    {:else}
+        <Placeholder icon={Inbox} title="No new reports" description="When submissions are reported, you can act on them here."/>
+    {/if}
 {/if}
+
+
+
+{#if type=='all'}
+    {#if data?.items?.length > 0}
+        <div class="flex flex-col gap-1 w-full max-h-full">
+            {#each data.items as item}
+                    <div class="mt-[-0.25rem]" transition:fly={{delay: 300, duration:500, x: '50%'}}>    
+                        <Report bind:item={item} />
+                    </div>
+            {/each}
+        </div>
+    {:else}
+        <Placeholder icon={Inbox} title="No reports" description="When submissions are reported, you can act on them here."/>
+    {/if}
+{/if}
+    
