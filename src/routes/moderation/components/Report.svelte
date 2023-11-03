@@ -13,7 +13,7 @@
 
 
     import { afterNavigate, beforeNavigate } from '$app/navigation'
-    import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fade, fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
     import { getRemovalTemplates } from '../lib/templates'
@@ -50,17 +50,24 @@
     import ConfigSwitch from './ConfigSwitch.svelte'
     import ConfigTextArea from './ConfigTextArea.svelte'
     
+    import MiniModlog from './MiniModlog.svelte'
+    import MiniCommentFeed from './MiniCommentFeed.svelte'
+    import MiniCommunityProfile from './MiniCommunityProfile.svelte'
+    import MiniPostFeed from './MiniPostFeed.svelte'
+    import MiniProfileView from './MiniProfileView.svelte'
+
+    import ContentPanel from './layout/ContentPanel.svelte'
+    import SidePanel from './layout/SidePanel.svelte'
 
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
-    import UserCardBasic from './UserCardBasic.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
-
+    import UserReportDetails from './UserReportDetails.svelte'
+    
     import { 
         Icon, 
         ArrowUturnLeft,
@@ -890,552 +897,381 @@
         
     </span>
 
-    <!---Collapsible Portion--->
     {#if open}
-        
-        <!-- Side panel Menu Bar--->
-        <div class="hidden lg:flex flex-col gap-1">
-            <div class="flex flex-row w-full gap-2 py-1 bg-slate-200 dark:bg-zinc-800 rounded-md">
-                <span class="ml-4 flex text-xs font-bold items-center">
-                    Lookup Tools:
+    <!-- Side panel Menu Bar--->
+    <div class="hidden lg:flex flex-col gap-1">
+        <div class="flex flex-row w-full gap-2 py-1 bg-slate-200 dark:bg-zinc-800 rounded-md">
+            <span class="ml-4 flex text-xs font-bold items-center">
+                Lookup Tools:
+            </span>
+
+            <Button color="tertiary" size="sm" title="User's Profile" class="{sidePanel=='profile' ? 'font-bold' : ''}"
+                on:click={async() => {
+                    sidePanel == 'profile'
+                        ? sidePanel='closed'
+                        : sidePanel = 'profile'
+
+                    if (!creatorProfile.person_view) {
+                        creatorProfile.loading = true;
+                        await getUserPostsComments(reporteeID);
+                    }
+                }}
+            >
+                <Icon src={User} mini width={16}/>
+                User Profile
+            </Button>
+
+                <Button color="tertiary" size="sm" title="Community" class="{sidePanel=='community' ? 'font-bold' : ''}"
+                on:click={async() => {
+                    sidePanel == 'community'
+                        ? sidePanel='closed'
+                        : sidePanel='community'
+                }}
+            >
+                <Icon src={UserGroup} mini width={16}/>
+                Community
+            </Button>
+
+            <Button color="tertiary" size="sm" title="Posts" class="{sidePanel=='posts' ? 'font-bold' : ''}"
+                on:click={async() => {
+                    sidePanel == 'posts'
+                        ? sidePanel='closed'
+                        : sidePanel='posts'
+
+                    if (!creatorProfile.posts) {
+                        creatorProfile.loading = true;
+                        getUserPostsComments(reporteeID);
+                    }
+                }}
+            >
+                <Icon src={Window} mini width={16}/>
+                Posts
+            </Button>
+
+            <Button color="tertiary" size="sm" title="Comments" class="{sidePanel=='comments' ? 'font-bold' : ''}"
+                on:click={async() => {
+                    sidePanel == 'comments'
+                        ? sidePanel = 'closed'
+                        : sidePanel='comments'
+                    
+                    if (!creatorProfile.comments) {
+                        creatorProfile.loading = true; 
+                        getUserPostsComments(reporteeID);
+                    }
+                }}
+            >
+                <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
+                Comments
+            </Button>
+
+            <Button color="tertiary" size="sm" title="Modlog" class="{sidePanel=='modlog' ? 'font-bold' : ''}"
+                on:click={async() => {
+                    sidePanel == 'modlog'
+                        ? sidePanel = 'closed'
+                        : sidePanel = 'modlog'
+
+                    if (sidePanel == 'modlog') {
+                        if (lookupThisCommunityOnly) getModlog(item.community.id)
+                        else getModlog()   
+                    }
+                    
+                }}
+            >
+                <Icon src={Newspaper} mini width={16}/>
+                Modlog History
+            </Button>
+
+            <!--- Filter posts/comments/modlog for the reported community only--->
+            <span class="flex flex-row gap-4 ml-auto pr-4 items-center">
+                <span class="text-xs font-bold flex flex-row gap-2 items-center">
+                    <Icon src={Funnel} mini width={16}/>
+                    This Community Only
                 </span>
 
-                <Button color="tertiary" size="sm" title="User's Profile" class="{sidePanel=='profile' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        sidePanel == 'profile'
-                            ? sidePanel='closed'
-                            : sidePanel = 'profile'
-
-                        if (!creatorProfile.person_view) {
-                            creatorProfile.loading = true;
-                            await getUserPostsComments(reporteeID);
-                        }
-                    }}
-                >
-                    <Icon src={User} mini width={16}/>
-                    User Profile
-                </Button>
-
-                    <Button color="tertiary" size="sm" title="Community" class="{sidePanel=='community' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        sidePanel == 'community'
-                            ? sidePanel='closed'
-                            : sidePanel='community'
-                    }}
-                >
-                    <Icon src={UserGroup} mini width={16}/>
-                    Community
-                </Button>
-
-                <Button color="tertiary" size="sm" title="Posts" class="{sidePanel=='posts' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        sidePanel == 'posts'
-                            ? sidePanel='closed'
-                            : sidePanel='posts'
-
-                        if (!creatorProfile.posts) {
-                            creatorProfile.loading = true;
-                            getUserPostsComments(reporteeID);
-                        }
-                    }}
-                >
-                    <Icon src={Window} mini width={16}/>
-                    Posts
-                </Button>
-
-                <Button color="tertiary" size="sm" title="Comments" class="{sidePanel=='comments' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        sidePanel == 'comments'
-                            ? sidePanel = 'closed'
-                            : sidePanel='comments'
+                <Switch bind:enabled={lookupThisCommunityOnly} 
+                    on:change={()=> {
+                        lookupThisCommunityOnly = !lookupThisCommunityOnly
                         
-                        if (!creatorProfile.comments) {
-                            creatorProfile.loading = true; 
-                            getUserPostsComments(reporteeID);
+                        if (lookupThisCommunityOnly) {
+                            getUserPostsComments(reporteeID, item.community.id)
+                            getModlog(item.community.id)
+                        }
+                        else {
+                            getUserPostsComments(reporteeID)
+                            getModlog()
                         }
                     }}
+                />
+            </span>
+
+        </div>
+    </div>
+    {/if}
+
+    <!---Collapsible Portion--->
+
+    <!--- Main Content Area--->
+    <ContentPanel bind:sidePanel={sidePanel} bind:display={open}>
+
+        <!---User Report Details and Preview of Post/Comment Being Reported--->
+        <UserReportDetails bind:item={item}/>
+
+        <!--- Moderation Actions Form--->
+        <ConfigContainer title="Available Actions" display={ !resolved && $profile?.user && (amModOfAny($profile.user))}>
+
+            <!--- Lock Posts--->
+            <ConfigSwitch bind:enabled={actions.lock} icon={LockClosed} 
+                name="Lock Post" 
+                description="Lock the post to prevent any further comments or votes."
+                display={isPostReport(item) && !item.post.locked}
+            />
+
+            <!--- Unlock Post--->
+            <ConfigSwitch bind:enabled={actions.unlock} icon={LockOpen} 
+                name="Unlock Post" 
+                description="Unlock a post so that it may receive votes and comments."
+                display={isPostReport(item) && item.post.locked}
+            />
+
+
+            <!---Remove Comment/Post--->
+            <ConfigSwitch bind:enabled={actions.remove} icon={Trash}
+                name="Remove {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
+                description="Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}"
+                display={(isCommentReport(item) && !item.comment.removed) || (isPostReport(item) && !item.post.removed)}
+            >
+
+                <!---Remove Comment/Post Reason with Preset Selector--->
+                <ConfigTextArea bind:value={actions.removeReason} icon={Clipboard}
+                    name="Removal Reason"
+                    description="The reason for removing this content. It will appear in the modlog."
+                    placeholder="Removal reason"
+                    display={actions.remove}
+                    nested={true}
+                    rows={6}
                 >
-                    <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                    Comments
-                </Button>
-
-                <Button color="tertiary" size="sm" title="Modlog" class="{sidePanel=='modlog' ? 'font-bold' : ''}"
-                    on:click={async() => {
-                        sidePanel == 'modlog'
-                            ? sidePanel = 'closed'
-                            : sidePanel = 'modlog'
-
-                        if (sidePanel == 'modlog') {
-                            if (lookupThisCommunityOnly) getModlog(item.community.id)
-                            else getModlog()   
-                        }
-                        
-                    }}
-                >
-                    <Icon src={Newspaper} mini width={16}/>
-                    Modlog History
-                </Button>
-
-                <!--- Filter posts/comments/modlog for the reported community only--->
-                <span class="flex flex-row gap-4 ml-auto pr-4 items-center">
-                    <span class="text-xs font-bold flex flex-row gap-2 items-center">
-                        <Icon src={Funnel} mini width={16}/>
-                        This Community Only
-                    </span>
-
-                    <Switch bind:enabled={lookupThisCommunityOnly} 
-                        on:change={()=> {
-                            lookupThisCommunityOnly = !lookupThisCommunityOnly
-                            
-                            if (lookupThisCommunityOnly) {
-                                getUserPostsComments(reporteeID, item.community.id)
-                                getModlog(item.community.id)
-                            }
-                            else {
-                                getUserPostsComments(reporteeID)
-                                getModlog()
+                    <MultiSelect slot="left"
+                        options={removalPresets.options}
+                        optionNames={removalPresets.names}
+                        selected=""
+                        on:select={(e) => {
+                            switch (e.detail) {
+                                case "REPORTTEXT":
+                                    actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
+                                    break;
+                                default:
+                                    actions.removeReason = e.detail
                             }
                         }}
+                        headless={true}
+                        class="!min-w-[185px]"
+                        items={0}
                     />
-                </span>
+                </ConfigTextArea>
 
-            </div>
-        </div>
+                <!--- Remove Post: Reply to Author --->
+                <ConfigSwitch bind:enabled={actions.removeReplyToAuthor} icon={ChatBubbleLeftEllipsis}
+                    name="Reply to Author"
+                    description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been removed. The reason given above will be included in that message."
+                    display={actions.remove}
+                    nested={true}
+                />
+            </ConfigSwitch>
 
-        <!--- Main Content Area--->
-        <div class="flex flex-row gap-4 w-full overflow-hidden" transition:fly={{ duration: 300, y: -60, opacity: 0 }}>
-            
-            <!--- Left side / Report Form--->
-            <div class="flex flex-col gap-2 w-full {sidePanel != 'closed' ? 'lg:w-2/3' : ''} p-2 overflow-y-scroll" >
 
-                <!--- Reported Post Preview and Report Details Row--->                
-                <div class="flex flex-col gap-4 xl:flex-row w-full">
-                    
-                    <!--- Preview of content being reported--->
-                    <details open class="flex flex-col gap-2 w-full xl:w-1/2">
-                        <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
-                            Reported {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-                        </summary>
-                        
-                        {#if isCommentReport(item)}
-                            <CommentItem
-                                comment={
-                                    {
-                                        ...item,
-                                        subscribed: 'NotSubscribed',
-                                        creator_blocked: false,
-                                        saved: false,
-                                        creator: item.comment_creator,
-                                    }
-                                }
-                                actions={false}
-                                collapseBadges={true}
-                            />
-                        {:else if isPostReport(item)}
-                            <Post
-                                post={
-                                    {
-                                        ...item,
-                                        saved: false,
-                                        subscribed: 'NotSubscribed',
-                                        unread_comments: 0,
-                                        read: false,
-                                        creator_blocked: false,
-                                        creator: item.post_creator,
-                                    }
-                                }
-                                forceCompact={true}
-                                disablePostLinks={false}
-                                actions={false}
-                                collapseBadges={true}
-                            />
-                        {/if}
-
-                    </details>
                 
-                    <details open class="flex flex-col gap-2  w-full xl:w-1/2">
-                        <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
-                            Report Details
-                        </summary>
-                        
-                        <p class="text-sm font-normal">{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
-                    </details>
-                </div>
+            <!---Restore Post/Comment--->
+            <ConfigSwitch bind:enabled={actions.restore} icon={Trash}
+                name="Restore  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
+                description="Restores the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} to the community."
+                display={(isCommentReport(item) && item.comment.removed) || (isPostReport(item) && item.post.removed)}
+            >
+                <ConfigTextArea bind:value={actions.restoreReason} icon={Clipboard}
+                    name="Restore Reason"
+                    description="The reason for restoring this content. It will appear in the modlog."
+                    display={actions.restore}
+                    nested={true}
+                    rows={4}
+                    placeholder="Restore reason"
+                />
 
-                <!--- Moderation Actions Form--->
-                <div class="flex flex-col gap-2 pr-2 w-full" class:hidden={resolved}>
-                    
-                    <span class="mt-4 text-base font-bold dark:text-zinc-400 text-slate-600">
-                        Available Actions
-                    </span>
-
-                    <ConfigContainer display={$profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}>
-
-                        <!--- Lock Posts--->
-                        <ConfigSwitch bind:enabled={actions.lock} icon={LockClosed} 
-                            name="Lock Post" 
-                            description="Lock the post to prevent any further comments or votes."
-                            display={isPostReport(item) && !item.post.locked}
-                        />
-
-                        <!--- Unlock Post--->
-                        <ConfigSwitch bind:enabled={actions.unlock} icon={LockOpen} 
-                            name="Unlock Post" 
-                            description="Unlock a post so that it may receive votes and comments."
-                            display={isPostReport(item) && item.post.locked}
-                        />
-
-
-                        <!---Remove Comment/Post--->
-                        <ConfigSwitch bind:enabled={actions.remove} icon={Trash}
-                            name="Remove {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
-                            description="Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}"
-                            display={(isCommentReport(item) && !item.comment.removed) || (isPostReport(item) && !item.post.removed)}
-                        >
-
-                            <!---Remove Comment/Post Reason with Preset Selector--->
-                            <ConfigTextArea bind:value={actions.removeReason} icon={Clipboard}
-                                name="Removal Reason"
-                                description="The reason for removing this content. It will appear in the modlog."
-                                placeholder="Removal reason"
-                                display={actions.remove}
-                                nested={true}
-                                rows={6}
-                            >
-                                <MultiSelect slot="left"
-                                    options={removalPresets.options}
-                                    optionNames={removalPresets.names}
-                                    selected=""
-                                    on:select={(e) => {
-                                        switch (e.detail) {
-                                            case "REPORTTEXT":
-                                                actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
-                                                break;
-                                            default:
-                                                actions.removeReason = e.detail
-                                        }
-                                    }}
-                                    headless={true}
-                                    class="!min-w-[185px]"
-                                    items={0}
-                                />
-                            </ConfigTextArea>
-
-                            <!--- Remove Post: Reply to Author --->
-                            <ConfigSwitch bind:enabled={actions.removeReplyToAuthor} icon={ChatBubbleLeftEllipsis}
-                                name="Reply to Author"
-                                description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been removed. The reason given above will be included in that message."
-                                display={actions.remove}
-                                nested={true}
-                            />
-                        </ConfigSwitch>
-
-
-                            
-                        <!---Restore Post/Comment--->
-                        <ConfigSwitch bind:enabled={actions.restore} icon={Trash}
-                            name="Restore  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
-                            description="Restores the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} to the community."
-                            display={(isCommentReport(item) && item.comment.removed) || (isPostReport(item) && item.post.removed)}
-                        >
-                            <ConfigTextArea bind:value={actions.restoreReason} icon={Clipboard}
-                                name="Restore Reason"
-                                description="The reason for restoring this content. It will appear in the modlog."
-                                display={actions.restore}
-                                nested={true}
-                                rows={4}
-                                placeholder="Restore reason"
-                            />
-
-                            <ConfigSwitch bind:enabled={actions.restoreReplyToAuthor} icon={ChatBubbleLeftEllipsis}
-                                name="Reply to Author"
-                                description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been restored. The reason given above will be included in that message."
-                                display={actions.restore}
-                                nested={true}
-                            />
-                        </ConfigSwitch>
+                <ConfigSwitch bind:enabled={actions.restoreReplyToAuthor} icon={ChatBubbleLeftEllipsis}
+                    name="Reply to Author"
+                    description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been restored. The reason given above will be included in that message."
+                    display={actions.restore}
+                    nested={true}
+                />
+            </ConfigSwitch>
 
 
 
-                        <!---Community Ban--->
-                        <ConfigSwitch bind:enabled={actions.banCommunity} icon={UserGroup}
-                            name="Ban From Community"
-                            description="Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
-                            display={!item.creator_banned_from_community}
-                        >
-                            <ConfigSwitch bind:enabled={actions.banCommunityDeleteData} icon={Trash}
-                                name="Remove Posts/Comments"
-                                description="Remove all post and comments in this community made by this user."
-                                display={actions.banCommunity}
-                                nested={true}
-                            />
+            <!---Community Ban--->
+            <ConfigSwitch bind:enabled={actions.banCommunity} icon={UserGroup}
+                name="Ban From Community"
+                description="Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
+                display={!item.creator_banned_from_community}
+            >
+                <ConfigSwitch bind:enabled={actions.banCommunityDeleteData} icon={Trash}
+                    name="Remove Posts/Comments"
+                    description="Remove all post and comments in this community made by this user."
+                    display={actions.banCommunity}
+                    nested={true}
+                />
 
-                            <ConfigTextArea bind:value={actions.banCommunityReason} icon={Clipboard}
-                                name="Reason for Community Ban"
-                                description="The given reason meriting the ban from this community. This will appear in the modlog."
-                                display={actions.banCommunity}
-                                nested={true}
-                                rows={3}
-                                placeholder="Ban reason"
-                            />
+                <ConfigTextArea bind:value={actions.banCommunityReason} icon={Clipboard}
+                    name="Reason for Community Ban"
+                    description="The given reason meriting the ban from this community. This will appear in the modlog."
+                    display={actions.banCommunity}
+                    nested={true}
+                    rows={3}
+                    placeholder="Ban reason"
+                />
 
-                            <ConfigSwitch bind:enabled={actions.banCommunityNotify} icon={Megaphone}
-                                name="Send Ban Notification"
-                                description="Send a message to the user letting them know they have been banned, why, and for how long. The ban reason will be included in that message."
-                                display={actions.banCommunity}
-                                nested={true}
-                            />
+                <ConfigSwitch bind:enabled={actions.banCommunityNotify} icon={Megaphone}
+                    name="Send Ban Notification"
+                    description="Send a message to the user letting them know they have been banned, why, and for how long. The ban reason will be included in that message."
+                    display={actions.banCommunity}
+                    nested={true}
+                />
 
-                            <ConfigDateInput bind:value={actions.banCommunityExpires} icon={Clock}
-                                name="Community Ban Duration"
-                                description="The expiration date of the ban. Leave blank to effect a permanent community ban."
-                                display={actions.banCommunity}
-                                nested={true}
-                            />
+                <ConfigDateInput bind:value={actions.banCommunityExpires} icon={Clock}
+                    name="Community Ban Duration"
+                    description="The expiration date of the ban. Leave blank to effect a permanent community ban."
+                    display={actions.banCommunity}
+                    nested={true}
+                />
 
-                        </ConfigSwitch>
+            </ConfigSwitch>
 
-                        <!---Community Unban--->
-                        <ConfigSwitch bind:enabled={actions.unbanCommunity} icon={UserGroup}
-                            name="Unban From Community"
-                            description="Lift the community ban applied to the author of the reported content."
-                            display={item.creator_banned_from_community}
-                        >
-                            <ConfigTextArea bind:value={actions.unbanCommunityReason} icon={Clipboard}
-                                name="Reason for Community Unban"
-                                description="The given reason meriting the lifting of the community ban."
-                                nested={true}
-                                rows={3}
-                                placeholder="Unban reason"
-                                display={actions.unbanCommunity}
-                            />
+            <!---Community Unban--->
+            <ConfigSwitch bind:enabled={actions.unbanCommunity} icon={UserGroup}
+                name="Unban From Community"
+                description="Lift the community ban applied to the author of the reported content."
+                display={item.creator_banned_from_community}
+            >
+                <ConfigTextArea bind:value={actions.unbanCommunityReason} icon={Clipboard}
+                    name="Reason for Community Unban"
+                    description="The given reason meriting the lifting of the community ban."
+                    nested={true}
+                    rows={3}
+                    placeholder="Unban reason"
+                    display={actions.unbanCommunity}
+                />
 
-                            <ConfigSwitch bind:enabled={actions.unbanCommunityNotify} icon={Megaphone}
-                                name="Send Unban Notification"
-                                description="Send a message to the user letting them know their ban has been lifted. The ban reason will be included in that message."
-                                nested={true}
-                                display={actions.unbanCommunity}
-                            />
-                        </ConfigSwitch>
-
-
-                        <!--- Instance Ban (Admin Only) --->
-                        <ConfigSwitch bind:enabled={actions.banInstance} icon={NoSymbol}
-                            name="Ban From Instance"
-                            description="Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
-                            display={
-                                ( $profile?.user && isAdmin($profile.user) ) &&
-                                ( (isPostReport(item) && !item.post_creator.banned) || (isCommentReport(item) && !item.comment_creator.banned) )
-                            }
-                        >
-                            <ConfigSwitch bind:enabled={actions.banInstanceDeleteData} icon={Trash}
-                                name="Remove Posts/Comments"
-                                description="Remove all posts and comments on this instance made by this user."
-                                nested={true}
-                                display={actions.banInstance}
-                            />
-
-                            <ConfigTextArea bind:value={actions.banInstanceReason} icon={Clipboard}
-                                name="Reason for Instance Ban"
-                                description="The given reason meriting the ban from this instance."
-                                rows={3}
-                                nested={true}
-                                placeholder="Instance ban reason"
-                                display={actions.banInstance}
-                            />
-
-                            <ConfigDateInput bind:value={actions.banInstanceExpires} icon={Clock}
-                                name="Instance Ban Duration"
-                                description="The expiration date of the ban. Leave blank to effect a permanent instance ban."
-                                display={actions.banInstance}
-                                nested={true}
-                            />
-                        </ConfigSwitch>
+                <ConfigSwitch bind:enabled={actions.unbanCommunityNotify} icon={Megaphone}
+                    name="Send Unban Notification"
+                    description="Send a message to the user letting them know their ban has been lifted. The ban reason will be included in that message."
+                    nested={true}
+                    display={actions.unbanCommunity}
+                />
+            </ConfigSwitch>
 
 
-                        <!-- Instance Unban (Admin Only)-->
-                        <ConfigSwitch bind:enabled={actions.unbanInstance} icon={Check}
-                            name="Unban From Instance"
-                            description="Lift the instance ban for the author of the reported content."
-                            display={
-                                ( $profile?.user && isAdmin($profile.user) ) &&
-                                ( (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned) )
-                            }
-                        >
-                            <ConfigTextArea bind:value={actions.unbanInstanceReason} icon={Clipboard}
-                                name="Reason for Instance Unban"
-                                description="The given reason you're lifting the instance ban."
-                                display={actions.unbanInstance}
-                                rows={3}
-                                nested={true}
-                                placeholder="Instance unban reason"
-                            />
-                        </ConfigSwitch>
+            <!--- Instance Ban (Admin Only) --->
+            <ConfigSwitch bind:enabled={actions.banInstance} icon={NoSymbol}
+                name="Ban From Instance"
+                description="Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
+                display={
+                    ( $profile?.user && isAdmin($profile.user) ) &&
+                    ( (isPostReport(item) && !item.post_creator.banned) || (isCommentReport(item) && !item.comment_creator.banned) )
+                }
+            >
+                <ConfigSwitch bind:enabled={actions.banInstanceDeleteData} icon={Trash}
+                    name="Remove Posts/Comments"
+                    description="Remove all posts and comments on this instance made by this user."
+                    nested={true}
+                    display={actions.banInstance}
+                />
 
-                        <!--- Reply To Reporter-->
-                        <ConfigSwitch bind:enabled={actions.replyReporter} icon={ChatBubbleLeftEllipsis}
-                            name="Reply to Reporter"
-                            description="Send the reporter a DM letting them know their report was seen and resolved."
-                        >
-                            <ConfigSwitch bind:enabled={actions.replyReporterIncludeActions} icon={ClipboardDocumentList}
-                                name="Include Actions Taken"
-                                description="Include a list of actions taken in the process of resolving their report."
-                                nested={true}
-                                display={actions.replyReporter}
-                            />
+                <ConfigTextArea bind:value={actions.banInstanceReason} icon={Clipboard}
+                    name="Reason for Instance Ban"
+                    description="The given reason meriting the ban from this instance."
+                    rows={3}
+                    nested={true}
+                    placeholder="Instance ban reason"
+                    display={actions.banInstance}
+                />
 
-                            <ConfigTextArea bind:value={actions.replyReporterText} icon={Clipboard}
-                                name="Additional Comments"
-                                description="Include a 'moderator comment' in the reply to the reporter."
-                                rows={3}
-                                nested={true}
-                                placeholder="Additional comments to include in reply."
-                                display={actions.replyReporter}
-                            />
+                <ConfigDateInput bind:value={actions.banInstanceExpires} icon={Clock}
+                    name="Instance Ban Duration"
+                    description="The expiration date of the ban. Leave blank to effect a permanent instance ban."
+                    display={actions.banInstance}
+                    nested={true}
+                />
+            </ConfigSwitch>
 
-                            <ConfigMarkdownEditor bind:value={actions.replyReporterBody} icon={Clipboard}
-                                name="Reply Preview"
-                                description="A preview of the generated reply that will be sent to the reporter. After you've made your mod action selections, you can edit the response manually before sending, if needed."
-                                rows={10}
-                                nested={true}
-                                previewing={true}
-                                images={false}
-                                display={actions.replyReporter}
-                            />
-                        </ConfigSwitch>
-                    </ConfigContainer>
-                </div>
-            </div>
-            
-            
-            <!--- Right 1/3 Width Side Panel--->
-            {#if sidePanel != 'closed'}
-                <div class="hidden lg:flex flex-col gap-2 w-1/3" transition:fly={{duration:300, x: '33%'}}>
-                    
-                    <!--- Right pane / Modlog --->
-                    {#if sidePanel == 'modlog'}
-                        <div class="w-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
-                            {#if modlog.loading}
-                                <span class="flex flex-row w-full items-center">    
-                                    <span class="ml-auto"/>
-                                    <Spinner width={64}/>
-                                    <span class="mr-auto"/>
-                                </span>
-                            {:else}
-                                <h1 class="text-lg font-bold">Modlog History</h1>
-                                <p class="text-sm font-normal">
-                                    Abridged modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                                </p>
 
-                                {#if modlog.data?.modlog?.length > 0}
-                                    <div class="flex flex-col gap-4 mt-2">
-                                        {#each modlog.data.modlog as modlogItem}
-                                            {#if [
-                                                    'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
-                                                    'ban', 'unban' ,'banCommunity', 'unbanCommunity'
-                                                ].includes(modlogItem.actionName)
-                                            }
-                                                <div class="bg-slate-200 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
-                                                    <ModlogItemList item={modlogItem} />
-                                                </div>
-                                            {/if}
+            <!-- Instance Unban (Admin Only)-->
+            <ConfigSwitch bind:enabled={actions.unbanInstance} icon={Check}
+                name="Unban From Instance"
+                description="Lift the instance ban for the author of the reported content."
+                display={
+                    ( $profile?.user && isAdmin($profile.user) ) &&
+                    ( (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned) )
+                }
+            >
+                <ConfigTextArea bind:value={actions.unbanInstanceReason} icon={Clipboard}
+                    name="Reason for Instance Unban"
+                    description="The given reason you're lifting the instance ban."
+                    display={actions.unbanInstance}
+                    rows={3}
+                    nested={true}
+                    placeholder="Instance unban reason"
+                />
+            </ConfigSwitch>
 
-                                        {/each}
-                                    </div>
+            <!--- Reply To Reporter-->
+            <ConfigSwitch bind:enabled={actions.replyReporter} icon={ChatBubbleLeftEllipsis}
+                name="Reply to Reporter"
+                description="Send the reporter a DM letting them know their report was seen and resolved."
+            >
+                <ConfigSwitch bind:enabled={actions.replyReporterIncludeActions} icon={ClipboardDocumentList}
+                    name="Include Actions Taken"
+                    description="Include a list of actions taken in the process of resolving their report."
+                    nested={true}
+                    display={actions.replyReporter}
+                />
 
-                                {/if}
+                <ConfigTextArea bind:value={actions.replyReporterText} icon={Clipboard}
+                    name="Additional Comments"
+                    description="Include a 'moderator comment' in the reply to the reporter."
+                    rows={3}
+                    nested={true}
+                    placeholder="Additional comments to include in reply."
+                    display={actions.replyReporter}
+                />
 
-                            {/if}
-                        </div>
-                    {/if}
+                <ConfigMarkdownEditor bind:value={actions.replyReporterBody} icon={Clipboard}
+                    name="Reply Preview"
+                    description="A preview of the generated reply that will be sent to the reporter. After you've made your mod action selections, you can edit the response manually before sending, if needed."
+                    rows={10}
+                    nested={true}
+                    previewing={true}
+                    images={false}
+                    display={actions.replyReporter}
+                />
+            </ConfigSwitch>
+        </ConfigContainer>
+        
+        <!--- Right 1/3 Width Side Panel--->
+        <SidePanel slot="sidePanel" width="w-1/3" display={sidePanel != 'closed'}>
+            <!--- Right pane / Modlog --->
+            <MiniModlog bind:item={item} bind:modlog={modlog} display={sidePanel=='modlog'} />
 
-                    <!---Right Pane / User Profile --->
-                    {#if sidePanel =='profile' }
-                        <div class="flex flex-col w-full h-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
-                            {#if creatorProfile.loading}
-                                <span class="flex flex-row w-full items-center">        
-                                    <span class="ml-auto"/>
-                                    <Spinner width={64}/>
-                                    <span class="mr-auto"/>
-                                </span>
-                            {:else}
-                                {#if creatorProfile?.person_view }
-                                    <UserCardBasic person={creatorProfile.person_view} community={item.community} bind:banned={item.creator_banned_from_community} />
-                                {/if}
-                            {/if}
-                        </div>
-                    {/if}
+            <!---Right Pane / User Posts --->
+            <MiniPostFeed bind:item={item} bind:creatorProfile={creatorProfile} display={sidePanel=='posts'}/>
 
-                    <!---Right Pane / User Posts --->
-                    {#if sidePanel =='posts'}
-                        <div class="w-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}} >
-                            {#if creatorProfile.loading}
-                                <span class="flex flex-row w-full items-center">        
-                                    <span class="ml-auto"/>
-                                    <Spinner width={64}/>
-                                    <span class="mr-auto"/>
-                                </span>
-                            {:else}
-                                <h1 class="text-lg font-bold">Posts</h1>
-                                <p class="text-sm font-normal whitespace-normal">
-                                    Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                                </p>
+            <!--- Right Pane / User Comments --->
+            <MiniCommentFeed bind:item={item} bind:creatorProfile={creatorProfile} display={sidePanel=='comments'}/>
 
-                                {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }
-                                    <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                                        {#each creatorProfile.posts as item (item.counts.id)}
-                                            <Post post={item} collapseBadges={true} forceCompact={true}/>
-                                        {/each}
-                                    </div>
-                                {:else}
-                                    <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                                        <Placeholder icon={PencilSquare} title="No submissions" description="This user has not created any posts." />
-                                    </div>
-                                {/if}
-                            {/if}
-                        </div>
-                    {/if}
+            <!--- Right Pane / User Profile View--->
+            <MiniProfileView bind:item={item} bind:creatorProfile={creatorProfile} display={sidePanel=='profile'}/>
 
-                    <!---Right Pane / User Comments --->
-                    {#if sidePanel=='comments'}
-                        <div class="w-full gap-2 p-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
-                            {#if creatorProfile.loading}
-                                <span class="flex flex-row w-full items-center">        
-                                    <span class="ml-auto"/>
-                                    <Spinner width={64}/>
-                                    <span class="mr-auto"/>
-                                </span>
-                            {:else}
-                                <h1 class="text-lg font-bold">Comments</h1>
-                                <p class="text-sm font-normal">
-                                    Latest 50 comments made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
-                                </p>
-
-                                {#if creatorProfile?.comments && creatorProfile?.comments?.length > 0 }
-                                    <div class="mt-2 w-full flex flex-col gap-5 mx-auto">
-                                        {#each creatorProfile.comments as item (item.counts.id)}
-                                            <CommentItem comment={item} collapseBadges={true} />
-                                        {/each}
-                                    </div>
-                                {:else}
-                                    <Placeholder icon={PencilSquare} title="No submissions" description="This user has no comments." />
-                                {/if}
-                            {/if}
-                        </div>
-                    {/if}
-                    
-                    <!---Right Pane / Community Profile --->
-                    {#if sidePanel=='community' }
-                        <div class="flex flex-col w-full p-2 gap-2 overflow-x-hidden overflow-y-scroll" in:fade={{duration: 300}}>
-                            {#if item?.community }
-                                <CommunityCardBasic community={item.community} />
-                            {/if}
-                        </div>
-                    {/if}
-                    
-                </div>
-            {/if}
-        </div>
-    {/if}
+            <!--- Right Pane / Community Profile --->
+            <MiniCommunityProfile bind:item={item} display={sidePanel=='community'} />
+        </SidePanel>
+    </ContentPanel>
+        
+    
 </Card>
 

@@ -7,6 +7,9 @@ import type {
 
 } from 'lemmy-js-client'
 
+export type SidePanelTypes = 'posts' | 'comments' | 'profile' | 'community' | 'modlog' | 'closed'
+export type PanelWidths = 'w-full' | 'w-1/5' | 'w-1/4' | 'w-1/3' | 'w-1/2'
+
 export interface ContentRemovalTemplate {
     name: string,
     message: string

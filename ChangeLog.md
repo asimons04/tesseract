@@ -28,6 +28,8 @@ All major/minor changes between releases will be documented here.
 
 ### Bugfixes
 - Fixed type on `restoreReplyToAuthor` in mod action object
+- Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
+
 
 
 ## 1.2.8.99
