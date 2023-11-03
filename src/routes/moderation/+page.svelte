@@ -12,14 +12,11 @@
     import Button from '$lib/components/input/Button.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import Report from './Report.svelte'
+    import Report from './components/Report.svelte'
 
 
     import { 
         Icon,
-        Check,
-        EnvelopeOpen, 
-        ExclamationTriangle,
         Inbox, 
         Newspaper 
     } from 'svelte-hero-icons'

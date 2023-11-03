@@ -20,6 +20,16 @@ All major/minor changes between releases will be documented here.
 
 - To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
+
+## 1.2.9
+
+### Misc
+- Added down chevron to SelectMenu component
+
+### Bugfixes
+- Fixed type on `restoreReplyToAuthor` in mod action object
+
+
 ## 1.2.8.99
 ### Bugfixes
 - Fixed same/newtab behaviour in button elements. Sometimes they'd transparently `invalidateAll` when they shouldn't.

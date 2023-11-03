@@ -7,7 +7,8 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     
     import { 
-        Icon
+        Icon,
+        ChevronDown
     } from 'svelte-hero-icons'
     
 
@@ -47,7 +48,11 @@
             <slot>
                 {optionNames[options.findIndex((o) => selected == o)] || selected}
             </slot>
+            
+            <span class="ml-auto"/>
+            <Icon src={ChevronDown} mini width={14}/>
         </span>
+        
     </div>
 
     {#each options as option, index}

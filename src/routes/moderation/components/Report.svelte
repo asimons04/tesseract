@@ -1,25 +1,27 @@
 <script lang="ts">
     import type {
         CommentReportView,
-        CommentView,
-        GetPersonDetailsResponse,
-        PersonView,
         PostReportView,
-        PostView,
         PrivateMessageReportView,
     } from 'lemmy-js-client'
     
+    import type {
+        ModlogContainer,
+        PersonProfile,
+        ModActionList,
+    } from '../lib/types'
+
+
     import { afterNavigate, beforeNavigate } from '$app/navigation'
-    import { amMod, isAdmin, remove, report } from '$lib/components/lemmy/moderation/moderation.js'
-    import { fade, fly, slide } from 'svelte/transition'
+    import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { fade, fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
-    import { getRemovalTemplates } from './templates'
+    import { getRemovalTemplates } from '../lib/templates'
     import { 
         getItemPublished, 
         isCommentReport, 
         isPrivateMessageReport,
         isPostReport, 
-        isCommentView 
     } from '$lib/lemmy/item.js'
     
     import { profile } from '$lib/auth.js'
@@ -38,21 +40,25 @@
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
-    import CommunityCardBasic from './components/CommunityCardBasic.svelte'
+    import CommunityCardBasic from './CommunityCardBasic.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import DateInput from '$lib/components/input/DateInput.svelte'
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+    
+    import ConfigContainer from './ConfigContainer.svelte'
+    import ConfigDateInput from './ConfigDateInput.svelte'
+    import ConfigMarkdownEditor from './ConfigMarkdownEditor.svelte'
+    import ConfigSwitch from './ConfigSwitch.svelte'
+    import ConfigTextArea from './ConfigTextArea.svelte'
+    
+
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    import UserCardBasic from './components/UserCardBasic.svelte'
+    import UserCardBasic from './UserCardBasic.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { 
@@ -65,11 +71,13 @@
         ClipboardDocumentList,
         Clock,
         ExclamationTriangle,
+        Fire,
         Folder,
         FolderOpen,
         Funnel,
         LockClosed,
         LockOpen,
+        Megaphone,
         Microphone,
         Newspaper,
         NoSymbol,
@@ -84,6 +92,7 @@
 
     export let item: PostReportView | CommentReportView | PrivateMessageReportView
     
+    // Closes the current report before leaving the page.  Needed to be able to switch between "all" and "unread"
     beforeNavigate(() => {
         if (open) toggleOpenReport();
 
@@ -103,31 +112,18 @@
     let sidePanel: 'posts' | 'comments' | 'profile' | 'community' | 'modlog' | 'closed' = 'profile'
     let lookupThisCommunityOnly:boolean = false;
 
-    interface ModlogContainer {
-        url: URL,
-        loading:boolean,
-        data?:Modlog,
-        communityOnly:boolean
-    }
+    
 
     let modlog:ModlogContainer = {
         url: new URL(window.location.href),
         loading: false,
         data: undefined,
-        communityOnly: false,
     }
 
-    interface PersonProfile {
-        posts?: PostView[],
-        comments?: CommentView[],
-        loading:boolean,
-        person_view?: PersonView,
-        communityOnly: boolean
-    }
+    
 
     let creatorProfile:PersonProfile = {
         loading: false,
-        communityOnly: false
     };
 
     // Load Moderation presets from the template module
@@ -143,7 +139,7 @@
         
         restore: false,
         restoreReason: '',
-        restoreReplyToAuthor: '',
+        restoreReplyToAuthor: false,
 
         unbanCommunity: false,
         unbanCommunityReason: '',
@@ -725,6 +721,35 @@
         if (resolved) toggleOpenReport();
     }
 
+
+    
+    function applyActionPreset(preset:string) {
+        if (!preset) return
+        
+        if (preset == 'spam-ban') {
+            actions.remove = true;
+            actions.removeReason = "Spam";
+            actions.banCommunity = true;
+            actions.banCommunityDeleteData = true;
+            actions.banCommunityReason = 'Spam';
+
+            if (isAdmin($profile.user)) {
+                actions.banInstance = true;
+                actions.banInstanceReason = 'Spam';
+            }
+            if (isPostReport(item)) actions.lock = true;
+        }
+
+        // Locks an item (if post) and removes it with a generic notification
+        if (preset == 'lock-remove') {
+            if (isPostReport(item)) actions.lock = true;
+            actions.remove = true;
+            actions.removeReason = 'Your submission has been removed because it violates the community or server rules.';
+            actions.removeReplyToAuthor = true;
+
+        }
+
+    }
     
 </script>
 
@@ -776,6 +801,23 @@
                     <Icon src={BugAnt} mini size="16" slot="icon" />
                 </Button>
             {/if}
+
+            <!---Quick Actions Menu--->
+            {#if !resolved}
+            <SelectMenu
+                alignment="bottom-right"
+                options={['manual', 'spam-ban', 'lock-remove-nonotify', 'lock-remove']}
+                optionNames={['Quick Actions', 'Spam, Ban, Thank You Man', 'Lock and Remove (No Notify)', 'Lock and Remove']}
+                selected={'manual'}
+                title="Quick Actions"
+                icon={Fire}
+                on:select={(e) => {
+                    // @ts-ignore
+                    applyActionPreset(e.detail)
+                }}
+            />
+            {/if}
+
 
             <!--- Resolve Button--->
             <Button
@@ -1027,469 +1069,242 @@
                         Available Actions
                     </span>
 
-                    {#if $profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
-                            
-                            <!---Lock Post--->
-                            {#if isPostReport(item) && !item.post.locked}
-                                <div class="flex flex-row w-full gap-2 py-2">
-                                    <div class="flex flex-col">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={LockClosed} mini width={16}/>
-                                            Lock Post
-                                        </p>
-                                        <p class="text-xs font-normal">Lock the post to prevent any further comments.</p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.lock} />
-                                </div>
-                            {/if}
+                    <ConfigContainer display={$profile?.user && (amMod($profile.user, item.community) || isAdmin($profile.user))}>
 
-                            <!---Unlock Post--->
-                            {#if isPostReport(item) && item.post.locked}
-                                <div class="flex flex-row w-full gap-2 py-2">
-                                    <div class="flex flex-col">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={LockOpen} mini width={16}/>
-                                            Unlock Post
-                                        </p>
-                                        <p class="text-xs font-normal">Unlock a post so that it may receive votes and comments.</p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.unlock} />
-                                </div>
-                            {/if}
-                            
-                            <!---Remove Post/Comment--->
-                            {#if (isCommentReport(item) && !item.comment.removed) || (isPostReport(item) && !item.post.removed)}
-                                <div class="flex flex-row w-full gap-2 py-2" >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Trash} mini width={16}/>
-                                            Remove  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-                                        </p>
-                                        <p class="text-xs font-normal">Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}</p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.remove} />
-                                </div>
+                        <!--- Lock Posts--->
+                        <ConfigSwitch bind:enabled={actions.lock} icon={LockClosed} 
+                            name="Lock Post" 
+                            description="Lock the post to prevent any further comments or votes."
+                            display={isPostReport(item) && !item.post.locked}
+                        />
 
-                                <!--- Remove Post:  Reason for Post/Comment Removal --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Clipboard} mini width={16}/>
-                                            Removal Reason
-                                        </p>
-                                        <p class="text-xs font-normal">The reason for removing this content. It will appear in the modlog.</p>
-                                        
-                                        <div class="mt-2"/>
-                                        
-                                        <div class="flex flex-col md:flex-row gap-1 items-start">
-                                            <MultiSelect 
-                                                options={removalPresets.options}
-                                                optionNames={removalPresets.names}
-                                                selected=""
-                                                on:select={(e) => {
-                                                    switch (e.detail) {
-                                                        case "REPORTTEXT":
-                                                            actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
-                                                            break;
-                                                        default:
-                                                            actions.removeReason = e.detail
-                                                    }
-                                                }}
-                                                headless={true}
-                                                class="!min-w-[185px]"
-                                                items={0}
-                                                label="Removal Reason Presets"
-                                            />
-                                            <TextArea class="w-full" bind:value={actions.removeReason} type="text" rows={4} placeholder="Removal reason"/>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!--- Unlock Post--->
+                        <ConfigSwitch bind:enabled={actions.unlock} icon={LockOpen} 
+                            name="Unlock Post" 
+                            description="Unlock a post so that it may receive votes and comments."
+                            display={isPostReport(item) && item.post.locked}
+                        />
 
 
-                                <!--- Remove Post: Reply to Author --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.remove} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                                            Reply to Author
-                                        </p>
-                                        <p class="text-xs font-normal">
-                                            Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
-                                            their content has been removed. The reason given above will be included in that message.
-                                        </p>                        
-                                    </div>
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.removeReplyToAuthor} />
-                                </div>
-                            {/if}
+                        <!---Remove Comment/Post--->
+                        <ConfigSwitch bind:enabled={actions.remove} icon={Trash}
+                            name="Remove {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
+                            description="Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}"
+                            display={(isCommentReport(item) && !item.comment.removed) || (isPostReport(item) && !item.post.removed)}
+                        >
+
+                            <!---Remove Comment/Post Reason with Preset Selector--->
+                            <ConfigTextArea bind:value={actions.removeReason} icon={Clipboard}
+                                name="Removal Reason"
+                                description="The reason for removing this content. It will appear in the modlog."
+                                placeholder="Removal reason"
+                                display={actions.remove}
+                                nested={true}
+                                rows={6}
+                            >
+                                <MultiSelect slot="left"
+                                    options={removalPresets.options}
+                                    optionNames={removalPresets.names}
+                                    selected=""
+                                    on:select={(e) => {
+                                        switch (e.detail) {
+                                            case "REPORTTEXT":
+                                                actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
+                                                break;
+                                            default:
+                                                actions.removeReason = e.detail
+                                        }
+                                    }}
+                                    headless={true}
+                                    class="!min-w-[185px]"
+                                    items={0}
+                                />
+                            </ConfigTextArea>
+
+                            <!--- Remove Post: Reply to Author --->
+                            <ConfigSwitch bind:enabled={actions.removeReplyToAuthor} icon={ChatBubbleLeftEllipsis}
+                                name="Reply to Author"
+                                description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been removed. The reason given above will be included in that message."
+                                display={actions.remove}
+                                nested={true}
+                            />
+                        </ConfigSwitch>
+
 
                             
-                            <!---Restore Post/Comment--->
-                            {#if (isCommentReport(item) && item.comment.removed) || (isPostReport(item) && item.post.removed)}
-                                <div class="flex flex-row w-full gap-2 py-2" >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Trash} mini width={16}/>
-                                            Restore  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}
-                                        </p>
-                                        <p class="text-xs font-normal">Restores the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} to the community.</p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.restore} />
-                                </div>
+                        <!---Restore Post/Comment--->
+                        <ConfigSwitch bind:enabled={actions.restore} icon={Trash}
+                            name="Restore  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
+                            description="Restores the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} to the community."
+                            display={(isCommentReport(item) && item.comment.removed) || (isPostReport(item) && item.post.removed)}
+                        >
+                            <ConfigTextArea bind:value={actions.restoreReason} icon={Clipboard}
+                                name="Restore Reason"
+                                description="The reason for restoring this content. It will appear in the modlog."
+                                display={actions.restore}
+                                nested={true}
+                                rows={4}
+                                placeholder="Restore reason"
+                            />
 
-                                <!--- Restore Post:  Reason for Post/Comment Restoration --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.restore} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Clipboard} mini width={16}/>
-                                            Restore Reason
-                                        </p>
-                                        <p class="text-xs font-normal">The reason for restoring this content. It will appear in the modlog.</p>
-                                        
-                                        <div class="mt-2"/>
-                                        
-                                        <TextArea class="w-full" bind:value={actions.restoreReason} type="text" rows={4} placeholder="Restore reason"/>
-                                        
-                                    </div>
-                                </div>
-
-
-                                <!--- Restore Post: Reply to Author --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.restore} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                                            Reply to Author
-                                        </p>
-                                        <p class="text-xs font-normal">
-                                            Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that 
-                                            their content has been restored. The reason given above will be included in that message.
-                                        </p>                        
-                                    </div>
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.restoreReplyToAuthor} />
-                                </div>
-                            {/if}
+                            <ConfigSwitch bind:enabled={actions.restoreReplyToAuthor} icon={ChatBubbleLeftEllipsis}
+                                name="Reply to Author"
+                                description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been restored. The reason given above will be included in that message."
+                                display={actions.restore}
+                                nested={true}
+                            />
+                        </ConfigSwitch>
 
 
 
+                        <!---Community Ban--->
+                        <ConfigSwitch bind:enabled={actions.banCommunity} icon={UserGroup}
+                            name="Ban From Community"
+                            description="Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
+                            display={!item.creator_banned_from_community}
+                        >
+                            <ConfigSwitch bind:enabled={actions.banCommunityDeleteData} icon={Trash}
+                                name="Remove Posts/Comments"
+                                description="Remove all post and comments in this community made by this user."
+                                display={actions.banCommunity}
+                                nested={true}
+                            />
 
-                            <!---Community Ban--->
-                            {#if !item.creator_banned_from_community}
-                                <div class="flex flex-row w-full gap-2 py-2">
-                                    <div class="flex flex-col">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={UserGroup} mini width={16}/>
-                                            Ban From Community
-                                        </p>
-                                        <p class="text-xs font-normal">
-                                            Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.banCommunity} />
-                                </div>
-                            
-                                <!--- Community Ban: Delete Data in Community --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Trash} mini width={16}/>
-                                            Remove Posts/Comments
-                                        </p>
-                                        <p class="text-xs font-normal">Remove all post and comments in this community made by this user.</p>                        
-                                    </div>
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.banCommunityDeleteData} />
-                                </div>
+                            <ConfigTextArea bind:value={actions.banCommunityReason} icon={Clipboard}
+                                name="Reason for Community Ban"
+                                description="The given reason meriting the ban from this community. This will appear in the modlog."
+                                display={actions.banCommunity}
+                                nested={true}
+                                rows={3}
+                                placeholder="Ban reason"
+                            />
 
-                                <!---Community Ban: Reason for Community Ban --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Clipboard} mini width={16}/>
-                                            Reason for Community Ban
-                                        </p>
-                                        <p class="text-xs font-normal">The given reason meriting the ban from this community.</p>
-                                        
-                                        <div class="mt-2"/>
-                                        <TextInput bind:value={actions.banCommunityReason} type="text" placeholder="Ban reason"/>
-                                    </div>
-                                </div>
+                            <ConfigSwitch bind:enabled={actions.banCommunityNotify} icon={Megaphone}
+                                name="Send Ban Notification"
+                                description="Send a message to the user letting them know they have been banned, why, and for how long. The ban reason will be included in that message."
+                                display={actions.banCommunity}
+                                nested={true}
+                            />
 
-                                <!--- Commuunity Ban: Duration of Community Ban --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Clock} mini width={16}/>
-                                            Community Ban Duration
-                                        </p>
-                                        <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent community ban.</p>                        
-                                    </div>
+                            <ConfigDateInput bind:value={actions.banCommunityExpires} icon={Clock}
+                                name="Community Ban Duration"
+                                description="The expiration date of the ban. Leave blank to effect a permanent community ban."
+                                display={actions.banCommunity}
+                                nested={true}
+                            />
 
-                                    <div class="mx-auto"/>
+                        </ConfigSwitch>
 
-                                    <DateInput bind:value={actions.banCommunityExpires} class="w-[175px]"/>
-                                </div>
+                        <!---Community Unban--->
+                        <ConfigSwitch bind:enabled={actions.unbanCommunity} icon={UserGroup}
+                            name="Unban From Community"
+                            description="Lift the community ban applied to the author of the reported content."
+                            display={item.creator_banned_from_community}
+                        >
+                            <ConfigTextArea bind:value={actions.unbanCommunityReason} icon={Clipboard}
+                                name="Reason for Community Unban"
+                                description="The given reason meriting the lifting of the community ban."
+                                nested={true}
+                                rows={3}
+                                placeholder="Unban reason"
+                                display={actions.unbanCommunity}
+                            />
 
-                                <!--- Community Ban: Notify User --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banCommunity} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Trash} mini width={16}/>
-                                            Send Ban Notification
-                                        </p>
-                                        <p class="text-xs font-normal">
-                                            Send a message to the user letting them know they have been banned, why, and for how long. The ban reason will be included in that message.
-                                        </p>                        
-                                    </div>
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.banCommunityNotify} />
-                                </div>
-                            {/if}
+                            <ConfigSwitch bind:enabled={actions.unbanCommunityNotify} icon={Megaphone}
+                                name="Send Unban Notification"
+                                description="Send a message to the user letting them know their ban has been lifted. The ban reason will be included in that message."
+                                nested={true}
+                                display={actions.unbanCommunity}
+                            />
+                        </ConfigSwitch>
 
 
-                            <!---Community Unban--->
-                            {#if item.creator_banned_from_community}
-                                <div class="flex flex-row w-full gap-2 py-2">
-                                    <div class="flex flex-col">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={UserGroup} mini width={16}/>
-                                            Unban From Community
-                                        </p>
-                                        <p class="text-xs font-normal">
-                                            Lift the community ban applied to the author of the reported content.
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.unbanCommunity} />
-                                </div>
+                        <!--- Instance Ban (Admin Only) --->
+                        <ConfigSwitch bind:enabled={actions.banInstance} icon={NoSymbol}
+                            name="Ban From Instance"
+                            description="Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
+                            display={
+                                ( $profile?.user && isAdmin($profile.user) ) &&
+                                ( (isPostReport(item) && !item.post_creator.banned) || (isCommentReport(item) && !item.comment_creator.banned) )
+                            }
+                        >
+                            <ConfigSwitch bind:enabled={actions.banInstanceDeleteData} icon={Trash}
+                                name="Remove Posts/Comments"
+                                description="Remove all posts and comments on this instance made by this user."
+                                nested={true}
+                                display={actions.banInstance}
+                            />
 
-                                <!---Community Unban: Reason for Community Ban --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.unbanCommunity} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Clipboard} mini width={16}/>
-                                            Reason for Community Unban
-                                        </p>
-                                        <p class="text-xs font-normal">The given reason meriting the lifting of the community ban.</p>
-                                        
-                                        <div class="mt-2"/>
-                                        <TextInput bind:value={actions.unbanCommunityReason} type="text" placeholder="Unban reason"/>
-                                    </div>
-                                </div>
+                            <ConfigTextArea bind:value={actions.banInstanceReason} icon={Clipboard}
+                                name="Reason for Instance Ban"
+                                description="The given reason meriting the ban from this instance."
+                                rows={3}
+                                nested={true}
+                                placeholder="Instance ban reason"
+                                display={actions.banInstance}
+                            />
 
-                                <!--- Community Unban: Notify User --->
-                                <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.unbanCommunity} >
-                                    <div class="flex flex-col w-full">
-                                        <p class="text-sm font-bold flex flex-row gap-2">
-                                            <Icon src={Trash} mini width={16}/>
-                                            Send Unban Notification
-                                        </p>
-                                        <p class="text-xs font-normal">Send a message to the user letting them know their ban has been lifted. The ban reason will be included in that message.</p>
-                                    </div>
-                                    <div class="mx-auto"/>
-                                    
-                                    <Switch bind:enabled={actions.unbanCommunityNotify} />
-                                </div>
-                            {/if}
+                            <ConfigDateInput bind:value={actions.banInstanceExpires} icon={Clock}
+                                name="Instance Ban Duration"
+                                description="The expiration date of the ban. Leave blank to effect a permanent instance ban."
+                                display={actions.banInstance}
+                                nested={true}
+                            />
+                        </ConfigSwitch>
 
 
+                        <!-- Instance Unban (Admin Only)-->
+                        <ConfigSwitch bind:enabled={actions.unbanInstance} icon={Check}
+                            name="Unban From Instance"
+                            description="Lift the instance ban for the author of the reported content."
+                            display={
+                                ( $profile?.user && isAdmin($profile.user) ) &&
+                                ( (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned) )
+                            }
+                        >
+                            <ConfigTextArea bind:value={actions.unbanInstanceReason} icon={Clipboard}
+                                name="Reason for Instance Unban"
+                                description="The given reason you're lifting the instance ban."
+                                display={actions.unbanInstance}
+                                rows={3}
+                                nested={true}
+                                placeholder="Instance unban reason"
+                            />
+                        </ConfigSwitch>
 
+                        <!--- Reply To Reporter-->
+                        <ConfigSwitch bind:enabled={actions.replyReporter} icon={ChatBubbleLeftEllipsis}
+                            name="Reply to Reporter"
+                            description="Send the reporter a DM letting them know their report was seen and resolved."
+                        >
+                            <ConfigSwitch bind:enabled={actions.replyReporterIncludeActions} icon={ClipboardDocumentList}
+                                name="Include Actions Taken"
+                                description="Include a list of actions taken in the process of resolving their report."
+                                nested={true}
+                                display={actions.replyReporter}
+                            />
 
-                            <!--- Admin-Only Options--->
-                            {#if $profile?.user && isAdmin($profile.user)}
-                            
-                                <!---Instance Ban --->
-                                {#if (isPostReport(item) && !item.post_creator.banned) || (isCommentReport(item) && !item.comment_creator.banned) }
-                                    <div class="flex flex-row w-full gap-2 py-2" >
-                                        <div class="flex flex-col">
-                                            <p class="text-sm font-bold flex flex-row gap-2">
-                                                <Icon src={NoSymbol} mini width={16}/>
-                                                Ban From Instance
-                                            </p>
-                                            <p class="text-xs font-normal">
-                                                Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban.
-                                            </p>
-                                        </div>
-                                        
-                                        <div class="mx-auto"/>
-                                        
-                                        <Switch bind:enabled={actions.banInstance} />
-                                    </div>
+                            <ConfigTextArea bind:value={actions.replyReporterText} icon={Clipboard}
+                                name="Additional Comments"
+                                description="Include a 'moderator comment' in the reply to the reporter."
+                                rows={3}
+                                nested={true}
+                                placeholder="Additional comments to include in reply."
+                                display={actions.replyReporter}
+                            />
 
-                                    <!--- Instance Ban: Delete Data Known to Instance --->
-                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
-                                        <div class="flex flex-col w-full">
-                                            <p class="text-sm font-bold flex flex-row gap-2">
-                                                <Icon src={Trash} mini width={16}/>
-                                                Remove Posts/Comments
-                                            </p>
-                                            <p class="text-xs font-normal">Remove all post and comments on this instance made by this user.</p>                        
-                                        </div>
-                                        <div class="mx-auto"/>
-                                        
-                                        <Switch bind:enabled={actions.banInstanceDeleteData} />
-                                    </div>
-
-                                    <!---Instance Ban: Reason for Instance Ban --->
-                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
-                                        <div class="flex flex-col w-full">
-                                            <p class="text-sm font-bold flex flex-row gap-2">
-                                                <Icon src={Clipboard} mini width={16}/>
-                                                Reason for Instance Ban
-                                            </p>
-                                            <p class="text-xs font-normal">The given reason meriting the ban from this instance.</p>
-                                            
-                                            <div class="mt-2"/>
-                                            <TextInput bind:value={actions.banInstanceReason} type="text" placeholder="Ban reason"/>
-                                        </div>
-                                    </div>
-
-                                    <!--- Instance Ban: Duration of Instance Ban --->
-                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.banInstance} >
-                                        <div class="flex flex-col w-full">
-                                            <p class="text-sm font-bold flex flex-row gap-2">
-                                                <Icon src={Clock} mini width={16}/>
-                                                Instance Ban Duration
-                                            </p>
-                                            <p class="text-xs font-normal">The expiration date of the ban. Leave blank to effect a permanent instance ban.</p>                        
-                                        </div>
-
-                                        <div class="mx-auto"/>
-
-                                        <DateInput bind:value={actions.banInstanceExpires} class="w-[175px]"/>
-                                    </div>
-                                {/if}
-
-                                
-                                <!---Instance Unban --->
-                                {#if (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned) }
-                                    <div class="flex flex-row w-full gap-2 py-2" >
-                                        <div class="flex flex-col">
-                                            <p class="text-sm font-bold flex flex-row gap-2">
-                                                <Icon src={Check} mini width={16}/>
-                                                Unban From Instance
-                                            </p>
-                                            <p class="text-xs font-normal">
-                                                Lift the instance ban for the author of the reported content.
-                                            </p>
-                                        </div>
-                                        
-                                        <div class="mx-auto"/>
-                                        
-                                        <Switch bind:enabled={actions.unbanInstance} />
-                                    </div>
-
-
-                                    <!---Instance Unban: Reason for Instance Unban --->
-                                    <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.unbanInstance} >
-                                        <div class="flex flex-col w-full">
-                                            <p class="text-sm font-bold flex flex-row gap-2">
-                                                <Icon src={Clipboard} mini width={16}/>
-                                                Reason for Instance Unban
-                                            </p>
-                                            <p class="text-xs font-normal">The given reason you're lifting the instance ban.</p>
-                                            
-                                            <div class="mt-2"/>
-                                            <TextInput bind:value={actions.unbanInstanceReason} type="text" placeholder="Unban reason"/>
-                                        </div>
-                                    </div>
-                                {/if}
-
-                            {/if}
-
-
-
-                            <!---Reporter Reply--->
-                            <div class="flex flex-row w-full gap-2 py-2">
-                                <div class="flex flex-col">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={ChatBubbleLeftEllipsis} mini width={16}/>
-                                        Reply to Reporter
-                                    </p>
-                                    <p class="text-xs font-normal">
-                                        Send the reporter a DM letting them know their report was seen and resolved.
-                                    </p>
-                                </div>
-                                
-                                <div class="mx-auto"/>
-                                
-                                <Switch bind:enabled={actions.replyReporter} />
-                            </div>
-
-                            <!--- Reporter Reply: Include mod actions taken in reply --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={ClipboardDocumentList} mini width={16}/>
-                                        Include Actions Taken
-                                    </p>
-                                    <p class="text-xs font-normal">Include a list of actions taken in the process of resolving their report.</p>                        
-                                </div>
-                                <div class="mx-auto"/>
-                                
-                                <Switch bind:enabled={actions.replyReporterIncludeActions} />
-                            </div>
-
-                            <!---Reporter Reply: Mod Comments --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={Clipboard} mini width={16}/>
-                                        Additional Comments
-                                    </p>
-                                    <p class="text-xs font-normal">Include a "moderator comment" in the reply to the reporter.</p>
-                                    
-                                    <div class="mt-2"/>
-                                    <TextInput bind:value={actions.replyReporterText} type="text" placeholder="Additional comments to include in reply"/>
-                                </div>
-                            </div>
-
-                            <!---Reporter Reply: Preview --->
-                            <div class="flex flex-row w-full gap-2 ml-4 pr-4 !border-t-0" class:hidden={!actions.replyReporter} >
-                                <div class="flex flex-col w-full">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={Clipboard} mini width={16}/>
-                                        Reply Preview
-                                    </p>
-                                    <p class="text-xs font-normal">
-                                        A preview of the generated reply that will be sent to the reporter. After you've made your mod action selections, 
-                                        you can edit the response manually before sending, if needed.
-                                    </p>
-                                    
-                                    <MarkdownEditor value={actions.replyReporterBody} previewButton={true} previewing={true} rows={10} images={false}/>
-                                    
-                                </div>
-                            </div>
-                            
-                        </div>
-                    {/if}
-                    
-
+                            <ConfigMarkdownEditor bind:value={actions.replyReporterBody} icon={Clipboard}
+                                name="Reply Preview"
+                                description="A preview of the generated reply that will be sent to the reporter. After you've made your mod action selections, you can edit the response manually before sending, if needed."
+                                rows={10}
+                                nested={true}
+                                previewing={true}
+                                images={false}
+                                display={actions.replyReporter}
+                            />
+                        </ConfigSwitch>
+                    </ConfigContainer>
                 </div>
-
             </div>
             
             

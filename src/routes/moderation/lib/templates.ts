@@ -1,17 +1,14 @@
-interface ContentRemovalTemplate {
-    name: string,
-    message: string
-}
-
-interface ContentRemovalTemplateReturn {
-    options: string[],
-    names: string[]
-}
 import type {
     CommentReportView,
     PostReportView,
     PrivateMessageReportView,
 } from 'lemmy-js-client'
+
+
+import type {
+    ContentRemovalTemplate,
+    ContentRemovalTemplateReturn
+} from './types'
 
 import { isCommentReport, isPostReport } from '$lib/lemmy/item.js'
 import {
