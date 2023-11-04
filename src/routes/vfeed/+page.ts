@@ -4,12 +4,35 @@ import { addMBFCResults, filterKeywords } from '$lib/components/lemmy/post/helpe
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
-import { profile } from '$lib/auth.js'
+import { type Profile, getProfile, profile, profileData } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'
 
 const userProfile = get(profile)
 
+/*
+profileData.update((pd) => {
+    // too lazy to make a decent system
+    const id = Math.floor(Math.random() * 100000)
+
+    const newProfile: Profile = {
+        id: id,
+        instance: inst,
+        jwt: jwt,
+        username: user.user.local_user_view.person.name,
+    }
+
+    profile.set({
+        ...newProfile,
+        user: user!.user,
+    })
+
+    return {
+        profile: id,
+        profiles: [...pd.profiles, newProfile],
+    }
+})
+*/
 
 
 let communities:number[] = [15, 12166, 7091, 12, 3428];

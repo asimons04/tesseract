@@ -7,10 +7,31 @@ import { getClient, site } from '$lib/lemmy.js'
 import { getInbox, getInboxItemPublished } from '$lib/lemmy/inbox.js'
 import { moveItem } from '$lib/util.js'
 import { userSettings } from '$lib/settings.js'
-
-
-
 import { toast } from '$lib/components/ui/toasts/toasts.js'
+
+// What gets stored in localstorage.
+export interface ProfileData {
+    profiles: Profile[]
+    profile: number
+    defaultInstance?: string
+}
+
+interface PersonData extends MyUserInfo {
+    unreads: number
+    reports: number
+}
+
+export interface Profile {
+    id: number
+    instance: string
+    jwt?: string
+    user?: PersonData
+    username?: string
+    favorites?: number[]
+    color?: string
+}
+
+
 const getDefaultProfile = (): Profile => ({
     id: -1,
     instance: get(profileData)?.defaultInstance ?? get(instance),
@@ -28,44 +49,25 @@ function saveToStorage(key: string, item: any, stringify: boolean = true) {
     return localStorage.setItem(key, stringify ? JSON.stringify(item) : item)
 }
 
-export interface Profile {
-    id: number
-    instance: string
-    jwt?: string
-    user?: PersonData
-    username?: string
-    favorites?: number[]
-    color?: string
-}
 
-// What gets stored in localstorage.
-interface ProfileData {
-    profiles: Profile[]
-    profile: number
-    defaultInstance?: string
-}
 
-interface PersonData extends MyUserInfo {
-    unreads: number
-    reports: number
-}
 
-export let profileData = writable<ProfileData>(
-    getFromStorage<ProfileData>('profileData') ?? { profiles: [], profile: -1 }
-)
+// Initialize profileData store with either the content of localStorave->profileData or a blank starter entry
+export let profileData = writable<ProfileData>( getFromStorage<ProfileData>('profileData') ?? { profiles: [], profile: -1 } )
 
-// stupid hack to get dev server working
-// why does this always happen to me
 
-let initialInstance = get(profileData).defaultInstance
+let guestInstance = get(profileData).defaultInstance
 
 profileData.subscribe(async (pd) => {
+    // Save changes to profileData to localStorage 
     saveToStorage('profileData', pd)
 
-    if (pd.profile == -1 && initialInstance != pd.defaultInstance) {
-        initialInstance = get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL
+    // If guest profile is selected and the guest instance 
+    if (pd.profile == -1 && guestInstance != pd.defaultInstance) {
+        guestInstance = get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL
         instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
     }
+    
 })
 
 
@@ -75,38 +77,48 @@ profileData.subscribe(async (pd) => {
 export let profile = writable<Profile | undefined>(getProfile())
 
 profile.subscribe(async (p) => {
+    // If profile ID is -1 (default), set the instnace to the currently selected guest instance or the system-defined DEFAULT_INSTANCE_URL
     if (p?.id == -1) {
         instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
     }
 
+    // If profile is not found or lacks an auth token, reset it to default
     if (!p || !p.jwt) {
         profileData.update((pd) => ({ ...pd, profile: -1 }))
         return
     }
-
+    // If user details (MyUserInfo from API) are already stored, don't proceed to fetch it.
     if (p.user) return
 
+    // Set the current instance to the instance defined in the profile.
     instance.set(p.instance)
 
-    // fetch the user because p.user is undefined
+    // Fetch the user details from the API because p.user is undefined
     const user = await userFromJwt(p.jwt, p.instance)
+    
+    // Set the site store to the data returned from the getSite() call in userFromJwt
     site.set(user?.site)
 
+    // Update the profile store with the retrieved data
     profile.update(() => ({
         ...p,
         user: user!.user,
         username: user?.user.local_user_view.person.name,
     }))
+
+
 })
 
+// Used at login to store a new user profile
 export async function setUser(jwt: string, inst: string, username: string) {
+    // Test that the instance parameter can be a valid URL
     try {
         new URL(`https://${inst}`)
     } catch (err) {
         return
     }
     
-
+    // Make authenticated call to getSite to grab the my_user key.
     const user = await userFromJwt(jwt, inst)
     if (!user) {
         toast({
@@ -116,24 +128,33 @@ export async function setUser(jwt: string, inst: string, username: string) {
         return
     }
 
+    // Set the instance store value to the provided instance (it's confirmed to be valid since userFromJwt would have to return successfully)
     instance.set(inst)
 
+    // Update the profileData store and localStorage and add a new profile.
     profileData.update((pd) => {
-        // too lazy to make a decent system
+        // Generate a random number to use as the profile ID
         const id = Math.floor(Math.random() * 100000)
 
+        // Create a new profile object that will be added to the localStorage store
         const newProfile: Profile = {
             id: id,
             instance: inst,
             jwt: jwt,
             username: user.user.local_user_view.person.name,
+            favorites: [],
+
         }
 
+        // Set the value of the current profile store to the one we just created and attach the my_user data to that (as to not srore it in localStorage
         profile.set({
             ...newProfile,
             user: user!.user,
         })
 
+        // Return data that gets written to localStorave->profileData
+        // Sets the active profile to the one just created
+        // Appends the new profile to the aray of profiles already stored.
         return {
             profile: id,
             profiles: [...pd.profiles, newProfile],
@@ -159,6 +180,7 @@ async function userFromJwt(jwt: string, instance: string): Promise<{ user: Perso
     }
 }
 
+// Returns the Profile data of the currently selected profile (profileData.profile -> profileData.profiles[profileData.profile])
 function getProfile() {
     const id = get(profileData).profile
 
@@ -171,10 +193,20 @@ function getProfile() {
     return pd.profiles.find((p) => p.id == id)
 }
 
+function updateProfile() {
+    const id = get(profileData).profile
+    if (id == -1) return
+
+
+
+}
+
 export function resetProfile() {
     profile.set(getDefaultProfile())
     profileData.update((p) => ({ ...p, profile: -1 }))
 }
+
+
 
 export function deleteProfile(id: number) {
     const pd = get(profileData)

@@ -33,9 +33,8 @@
     }
 
     // Disable inline images if user option set
-    if (!$userSettings.inlineImages || !images) {
-        md.disable(['image'])
-    }
+    if (!$userSettings.inlineImages) md.disable(['image'])
+    if (!images) md.disable(['image'])
 
     let div: HTMLElement
 
