@@ -27,10 +27,19 @@ All major/minor changes between releases will be documented here.
 - Added down chevron to SelectMenu component
 
 
-### New Settings
-- **Open Posts in New Tab**:  You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.
+### New Features
+#### Import/Export Tesseract Settings
+You can now export your Tesseract settings to a JSON file and import it again. New features are coming that will utilize settings storage for templates, favorite communities, community groups, and more. Having the ability to export/backup and restore is going to be a necessary feature, so getting this part out of the way first.
 
-- **Versioned Settings**:  
+- Transfer your settings between devices
+- Backup your preferences and configuration
+- Does _not_ backup accounts as the auth token is a required part of the account profile.
+    - Considering encrypting the account fields with a user-provided export password
+
+### New Settings
+- **Open Posts in New Tab**:  You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and tie it to the user setting.
+
+- **Versioned Settings**:  I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things. 
 
 ### Bugfixes
 - Fixed type on `restoreReplyToAuthor` in mod action object

@@ -83,6 +83,16 @@ interface Settings {
         customInvidious: string
         autoplay: boolean
         loop:boolean
+        enabledSources: {
+            youtube: boolean,
+            spotify: boolean,
+            soundcloud: boolean,
+            bandcamp: boolean,
+            vimeo: boolean,
+            odysee: boolean,
+            songlink: boolean,
+            generic: boolean
+        }
     }
     imageSize: {
         feed: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
@@ -116,6 +126,7 @@ interface Settings {
 }
 
 export const defaultSettings: Settings = {
+    version: 0.1,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -124,6 +135,7 @@ export const defaultSettings: Settings = {
     
     moderation: {
         removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
+
     },
     
     debugInfo: false,
@@ -188,7 +200,17 @@ export const defaultSettings: Settings = {
         YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                     ??  'YouTube',
         customInvidious:                                                    'yewtu.be',
         autoplay:                                                       false,
-        loop:                                                           true
+        loop:                                                           true,
+        enabledSources: {
+            youtube:    true,
+            spotify:    true,
+            soundcloud: true,
+            bandcamp:   true,
+            vimeo:      true,
+            odysee:     true,
+            songlink:   true,
+            generic:    true
+        },
     },
     proxyMedia: {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
@@ -297,13 +319,13 @@ if (custom_piped_instances.length > 0) {
     YTFrontends.piped.push(...custom_piped_instances);
 }
 
-function migrateSettings(old:any, current:Settings) {
+export function migrateSettings(old:any) {
+    // Update legacy versions of user settings to the first controlled version
     if (!old.version) {
-        
         // Change image size from string to object; populate with default vaules
         if (typeof old.imageSize == 'string') {
             delete old.imageSize;
-            old.imageSize = current.imageSize;
+            old.imageSize = defaultSettings.imageSize;
         }
 
         // Delete the old showInstances object and replace with single boolean under the uiState object
@@ -321,10 +343,18 @@ function migrateSettings(old:any, current:Settings) {
         old.version = 0;
     }
 
+    // Version 0 -> 0.1
     if (old.version == 0) {
-        return
+        // Add individual selectors for embedded media
+        if (!old.embeddedMedia.enabledSources) {
+            if (old.embeddedMedia.feed || old.embeddedMedia.post) {
+                old.embeddedMedia.enabledSources = {...defaultSettings.embeddedMedia.enabledSources}
+            }
+        }
+        old.version = 0.1;
     }
-    return old;
+
+    return { ...defaultSettings, ...old }
 }
 
 
@@ -335,12 +365,10 @@ if (typeof window != 'undefined') {
         localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
     )
 
-    // Migrations from old settings styles to new
-    migrateSettings(oldUserSettings, defaultSettings);
+    // Migrations from old settings styles to new and store them to localStorage.
+    userSettings.set(migrateSettings(oldUserSettings));
     
-    // Store the settings back to localstorage over top a copy of the current version of the settings (accepting defaults for any missing keys in the old version)
-    // This likely won't be necessary after the updates to enable settings versioning.
-    userSettings.set({ ...defaultSettings, ...oldUserSettings })
+    
 }
 
 

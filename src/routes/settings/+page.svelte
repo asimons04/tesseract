@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY } from '$lib/settings'
+    import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
     import {isAdmin, amModOfAny } from '$lib/components/lemmy/moderation/moderation'
     import { profile } from '$lib/auth.js'
     import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
@@ -16,6 +16,8 @@
     
     import {
         ArchiveBoxXMark,
+        ArrowDownTray,
+        ArrowUpTray,
         ArrowPath,
         ArrowPathRoundedSquare,
         ArrowUturnDown,
@@ -60,6 +62,16 @@
 
     let data = {
         loading: false,
+    }
+
+    interface UploadFiles {
+        tesseract: FileList | undefined,
+        lemmy: FileList | undefined
+    }
+
+    const uploadFiles:UploadFiles = {
+        tesseract: undefined,
+        lemmy: undefined
     }
 
     // Keyword filtering helpers
@@ -116,7 +128,49 @@
 
     }
 
-    let selected: 'general' | 'feed' | 'posts' | 'media' | 'moderation' | 'filters'  = 'general';
+    const exportSettings = function():void {
+        let dataString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($userSettings, null, 2));
+        let downloadAnchorNode = document.createElement('a');
+        
+        downloadAnchorNode.setAttribute("href",     dataString);
+        downloadAnchorNode.setAttribute("download", "tesseract.json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    const importSettings = function(): void {
+        let uploadButton = document.getElementById('settingsFileUpload') ;
+        uploadButton?.click();
+    }
+
+
+    let selected: 'general' | 'feed' | 'posts' | 'media' | 'moderation' | 'filters' | 'impexp' = 'general';
+
+    // Watch for a file to be uploaded for Tesseract settings
+    $: if (uploadFiles.tesseract && uploadFiles.tesseract.length > 0) {
+        try {
+            let file = uploadFiles.tesseract[0];
+            let reader = new FileReader();
+            
+            reader.readAsText(file);
+            reader.onload = function() {
+                let uploadedSettings = JSON.parse(reader.result as string);
+                $userSettings = migrateSettings(uploadedSettings, defaultSettings);
+                toast({
+                    type: 'success',
+                    content: "Successfully uploaded and applied settings."
+            });
+            }
+        }
+        catch (err) {
+            toast({
+                type: 'error',
+                content: "Failed to parse uploaded settings."
+            });
+        }
+    }
+          
 
 </script>
 
@@ -202,6 +256,16 @@
         >
             <Icon src={Funnel} mini width={16} slot="icon"/>
             <span class="hidden sm:block">Filters</span> 
+        </Button>
+
+        <Button
+            color="tertiary"
+            title="Export settings"
+            alignment="left"
+            on:click={() => selected = 'impexp'}
+        >
+            <Icon src={ArrowDownTray} mini width={16} slot="icon"/>
+            <span class="hidden sm:block">Import/Export</span> 
         </Button>
     </div>
 
@@ -1026,6 +1090,62 @@
 
                         <Switch bind:enabled={$userSettings.hidePosts.keywords} />
                     </div>
+                </div>
+            </Setting>
+        </div>
+
+        <!---Import/Export Options--->
+        <div class:hidden={selected!='impexp'}>
+            <Setting>
+                <span class="flex flex-row gap-2" slot="title">
+                    <Icon src={ArrowDownTray} mini width={24} slot="icon"/>
+                    Import and Export Settings
+                </span>
+                
+                <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                    
+                    <!--- Export Tesseract Settings --->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowDownTray} mini width={16}/>
+                                Export Tesseract Settings
+                            </p>
+                            <p class="text-xs font-normal">
+                                Export your Tesseract application settings to a JSON file. This does not include any account information.
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Button class="font-normal h-8" size="md" icon={ArrowDownTray} color="primary" on:click={exportSettings}>
+                                Export
+                        </Button>
+                    </div>
+
+                    <!--- Import Tesseract Settings --->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowUpTray} mini width={16}/>
+                                Import Tesseract Settings
+                            </p>
+                            <p class="text-xs font-normal">
+                                Upload and import your Tesseract application settings from a JSON file. 
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <input id='settingsFileUpload' bind:files={uploadFiles.tesseract} type='file' name='settingsFileUpload' accept=".json,application/json" class="hidden"/>
+                        <Button class="font-normal h-8" size="md" icon={ArrowUpTray} color="primary" on:click={importSettings}>
+                            Upload
+                        </Button>
+                    </div>
+
+
+
+
                 </div>
             </Setting>
         </div>
