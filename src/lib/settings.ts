@@ -1,4 +1,4 @@
-import type { CommentSortType, SortType } from 'lemmy-js-client'
+import type { CommentSortType, CommunityView, SortType } from 'lemmy-js-client'
 import { type Writable, writable } from 'svelte/store'
 import { env } from '$env/dynamic/public'
 
@@ -41,8 +41,6 @@ const isBrowser = () => {
     if (typeof window != 'undefined') return true;
     return false;
 }
-
-
 
 
 interface Settings {

@@ -8,8 +8,20 @@ import { profile } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'
 
+const userProfile = get(profile)
+
+
 
 let communities:number[] = [15, 12166, 7091, 12, 3428];
+/*
+profile.update((p) => {
+        ...p,
+        favorites: communities
+    }
+)
+*/
+console.log(userProfile);
+
 let postsPerPage:number = 250;
 
 // Use ceiling to ensure at least 1 post per community. 

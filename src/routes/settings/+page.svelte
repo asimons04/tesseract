@@ -129,7 +129,12 @@
     }
 
     const exportSettings = function():void {
-        let dataString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($userSettings, null, 2));
+        let exportData = {
+            profiles: {...$profile},
+            settings: {...$userSettings}
+        }
+        
+        let dataString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
         let downloadAnchorNode = document.createElement('a');
         
         downloadAnchorNode.setAttribute("href",     dataString);
@@ -139,30 +144,36 @@
         downloadAnchorNode.remove();
     }
 
-    const importSettings = function(): void {
+    const uploadSettings = function(): void {
         let uploadButton = document.getElementById('settingsFileUpload') ;
         uploadButton?.click();
     }
 
-
-    let selected: 'general' | 'feed' | 'posts' | 'media' | 'moderation' | 'filters' | 'impexp' = 'general';
-
-    // Watch for a file to be uploaded for Tesseract settings
-    $: if (uploadFiles.tesseract && uploadFiles.tesseract.length > 0) {
+    const importSettings = function(upload:FileList): void {
         try {
-            let file = uploadFiles.tesseract[0];
+            let file = upload[0];
             let reader = new FileReader();
             
             reader.readAsText(file);
             reader.onload = function() {
                 try {
                     let uploadedSettings = JSON.parse(reader.result as string);
-                    $userSettings = migrateSettings(uploadedSettings, defaultSettings);
-                    toast({
-                        type: 'success',
-                        content: "Successfully uploaded and applied settings."
+                    
+                    if (uploadedSettings.settings) {
+                        $userSettings = migrateSettings(uploadedSettings.settings, defaultSettings);
+
+                        toast({
+                            type: 'success',
+                            content: "Successfully uploaded and applied settings."
+                        });
+                    }
+                    else {
+                        toast({
+                        type: 'error',
+                        content: "Failed to parse uploaded settings."
                     });
-                }catch (err) {
+                    }
+                } catch (err) {
                     toast({
                         type: 'error',
                         content: "Failed to parse uploaded settings."
@@ -176,6 +187,14 @@
                 content: "Failed to parse uploaded settings."
             });
         }
+    }
+
+
+    let selected: 'general' | 'feed' | 'posts' | 'media' | 'moderation' | 'filters' | 'impexp' = 'general';
+
+    // Watch for a file to be uploaded for Tesseract settings
+    $: if (uploadFiles.tesseract && uploadFiles.tesseract.length > 0) {
+        importSettings(uploadFiles.tesseract)
     }
           
 
@@ -1145,7 +1164,7 @@
                         <div class="mx-auto"/>
                         
                         
-                        <Button class="font-normal h-8" size="md" icon={ArrowUpTray} color="primary" on:click={importSettings}>
+                        <Button class="font-normal h-8" size="md" icon={ArrowUpTray} color="primary" on:click={uploadSettings}>
                             Upload
                             <input id='settingsFileUpload' bind:files={uploadFiles.tesseract} type='file' name='settingsFileUpload' accept=".json,application/json" class="hidden"/>
                         </Button>
