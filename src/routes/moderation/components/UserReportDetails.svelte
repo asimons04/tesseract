@@ -71,7 +71,7 @@
                 Report Details
             </summary>
             
-            <Markdown source={isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'} />
+            <Markdown images={false} source={isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No report text provided by user.'} />
         </details>   
         
         

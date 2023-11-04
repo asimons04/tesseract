@@ -7,6 +7,7 @@
     
     export let source: string = ''
     export let inline: boolean = false
+    export let images:boolean = true;
 
     function replaceURLs(node: HTMLElement) {
         const links = node.querySelectorAll('a')
@@ -32,7 +33,7 @@
     }
 
     // Disable inline images if user option set
-    if (!$userSettings.inlineImages) {
+    if (!$userSettings.inlineImages || !images) {
         md.disable(['image'])
     }
 
