@@ -21,15 +21,6 @@
 
 {#if display}
     <div class="flex flex-col gap-4 xl:flex-row w-full">
-        <!--- Report from the User--->
-        <details open class="flex flex-col gap-2  w-full xl:w-1/3">
-            <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
-                Report Details
-            </summary>
-            
-            <p class="text-sm font-normal">{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
-        </details>   
-        
         <!--- Preview of content being reported--->
         <details open class="flex flex-col gap-2 w-full xl:w-2/3">
             <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
@@ -71,5 +62,17 @@
             {/if}
 
         </details>
+        
+        
+        <!--- Report from the User--->
+        <details open class="flex flex-col gap-2  w-full xl:w-1/3">
+            <summary class="text-base font-bold dark:text-zinc-400 text-slate-600 mb-4 cursor-pointer">
+                Report Details
+            </summary>
+            
+            <p class="text-sm font-normal">{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
+        </details>   
+        
+        
     </div>
 {/if}

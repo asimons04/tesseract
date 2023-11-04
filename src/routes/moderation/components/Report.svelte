@@ -904,6 +904,8 @@
 
 
     <!---Collapsible Portion--->
+    
+    <!--- Lookup Buttons to populate the sidebar--->
     <SidePanelControlBar bind:display={open}>
         
         <!---Profile--->
