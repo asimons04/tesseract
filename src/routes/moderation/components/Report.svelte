@@ -276,6 +276,7 @@
             reports.forEach((report) => {
                 report.style.display='flex';
             })
+
             // Hide the modlog and profile sidebar
             sidePanel = 'closed'
             
@@ -284,9 +285,7 @@
             
             creatorProfile.posts = undefined;
             creatorProfile.comments = undefined;
-            creatorProfile.person_view = undefined;
-            
-            
+            //creatorProfile.person_view = undefined;
         }
         
         scrollToTop(element, false);
@@ -356,7 +355,6 @@
         resolving = true
 
         try {
-            
             if (!resolved) {
                 // Lock post if "lock" option selected.
                 if ( actions.lock && isPostReport(item)) {
@@ -887,7 +885,10 @@
                 <span class="font-bold dark:text-zinc-400 text-slate-600">
                     Resolved by
                 </span>
-                {#if (isCommentReport(item) && item.comment_report.resolved) || (isPostReport(item) && item.post_report.resolved)}        
+                {#if 
+                    ( (isCommentReport(item) && item.comment_report.resolved) || (isPostReport(item) && item.post_report.resolved) ) 
+                    && item.resolver
+                }        
                     <UserLink user={item.resolver} />
                 {:else}
                     ---

@@ -24,8 +24,24 @@ All major/minor changes between releases will be documented here.
 ## 1.2.9
 
 ### To Do
-- Add a community group object to the profile data
-- Store full community details but omit description
+- [X] Add favorities container to user profile store
+- [ ] Create an interface for community groups
+- [ ] Add groups container to user profile store
+- [ ] Write functions to add/remove favorities
+- [ ] Write functions to add/remove items to groups
+- [ ] Write a settings panel to create and manage groups
+    - [ ] Create new group
+    - [ ] Rename/delete groups
+    - [ ] Add/remove communities
+    - [ ] Use community autocomplete to assist in adding
+- [ ] Create a community button for the post action bar
+    - [ ] Add to Favorities
+    - [ ] Add to Group
+- [ ] Create a group management modal (e.g. to select which group to quick-add a community to or to create a new group to use)
+- [ ] Create 
+
+
+    
 - 
 
 ### Misc
@@ -49,6 +65,7 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 ### Bugfixes
 - Fixed type on `restoreReplyToAuthor` in mod action object
 - Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
+- Fixed race condition with displaying resolver on reports on initial resolve.
 
 
 

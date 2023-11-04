@@ -1,4 +1,4 @@
-import type { GetSiteResponse, MyUserInfo } from 'lemmy-js-client'
+import type { GetSiteResponse, MyUserInfo, SortType } from 'lemmy-js-client'
 
 import { amModOfAny } from '$lib/components/lemmy/moderation/moderation.js'
 import { DEFAULT_INSTANCE_URL, instance } from '$lib/instance.js'
@@ -8,6 +8,12 @@ import { getInbox, getInboxItemPublished } from '$lib/lemmy/inbox.js'
 import { moveItem } from '$lib/util.js'
 import { userSettings } from '$lib/settings.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
+
+export interface CommunityGroup {
+    name:string,
+    communities:number[],
+    sort: SortType,
+}
 
 // What gets stored in localstorage.
 export interface ProfileData {
@@ -28,6 +34,7 @@ export interface Profile {
     user?: PersonData
     username?: string
     favorites?: number[]
+    groups?: CommunityGroup[]
     color?: string
 }
 
@@ -106,7 +113,6 @@ profile.subscribe(async (p) => {
         username: user?.user.local_user_view.person.name,
     }))
 
-
 })
 
 // Used at login to store a new user profile
@@ -143,6 +149,7 @@ export async function setUser(jwt: string, inst: string, username: string) {
             jwt: jwt,
             username: user.user.local_user_view.person.name,
             favorites: [],
+            groups: []
 
         }
 
@@ -193,13 +200,6 @@ function getProfile() {
     return pd.profiles.find((p) => p.id == id)
 }
 
-function updateProfile() {
-    const id = get(profileData).profile
-    if (id == -1) return
-
-
-
-}
 
 export function resetProfile() {
     profile.set(getDefaultProfile())
