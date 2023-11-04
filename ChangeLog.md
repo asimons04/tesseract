@@ -26,6 +26,12 @@ All major/minor changes between releases will be documented here.
 ### Misc
 - Added down chevron to SelectMenu component
 
+
+### New Settings
+- **Open Posts in New Tab**:  You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.
+
+- **Versioned Settings**:  
+
 ### Bugfixes
 - Fixed type on `restoreReplyToAuthor` in mod action object
 - Fixed rare unhandled exception in UserLink if display name wasn't found on a user object

@@ -493,6 +493,20 @@
                         <Switch bind:enabled={$userSettings.nsfwBlur} />
                     </div>
                     
+                    <!---Open Posts in New Tab--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowTopRightOnSquare} mini width={16}/>
+                                Open Posts in New Tab
+                            </p>
+                            <p class="text-xs font-normal">Posts in the feed will open in a new tab. If you have Tesseract installed as a PWA, you will likely want to make sure this is disabled.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.openInNewTab.posts} />
+                    </div>
                 </div>
                 
 

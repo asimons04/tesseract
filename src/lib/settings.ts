@@ -37,7 +37,11 @@ const strToArray = (str:string | undefined) => {
     return trimmedArr;
 }
 
+
+
+
 interface Settings {
+    version: number
     markReadPosts: boolean
     instance?: string
     showCompactPosts: boolean
@@ -293,6 +297,35 @@ if (custom_piped_instances.length > 0) {
     YTFrontends.piped.push(...custom_piped_instances);
 }
 
+function migrateSettings(old:any, current:Settings) {
+    if (!old.version) {
+        
+        // Change image size from string to object; populate with default vaules
+        if (typeof old.imageSize == 'string') {
+            delete old.imageSize;
+            old.imageSize = current.imageSize;
+        }
+
+        // Delete the old showInstances object and replace with single boolean under the uiState object
+        if (old.showInstances?.user || old.showInstances?.community || old.showInstances?.comments) {
+            old.uiState.showInstances = true;
+            delete old.showInstances;
+        }
+
+        // Make sure the keyword filter list gets initialized
+        if (!old.hidePosts.keywordList) {
+            old.hidePosts.keywordList = []
+        }
+
+        // Set initial version control version
+        old.version = 0;
+    }
+
+    if (old.version == 0) {
+        return
+    }
+    return old;
+}
 
 
 
@@ -303,21 +336,10 @@ if (typeof window != 'undefined') {
     )
 
     // Migrations from old settings styles to new
-    if (typeof oldUserSettings.imageSize == 'string') {
-        delete oldUserSettings.imageSize;
-        oldUserSettings.imageSize = defaultSettings.imageSize;
-    }
-
-    if (oldUserSettings.showInstances?.user || oldUserSettings.showInstances?.community || oldUserSettings.showInstances?.comments) {
-        oldUserSettings.uiState.showInstances = true;
-        delete oldUserSettings.showInstances;
-    }
+    migrateSettings(oldUserSettings, defaultSettings);
     
-    // Make sure the keyword filter list gets initialized
-    if (!oldUserSettings.hidePosts.keywordList) {
-        oldUserSettings.hidePosts.keywordList = []
-    }
-
+    // Store the settings back to localstorage over top a copy of the current version of the settings (accepting defaults for any missing keys in the old version)
+    // This likely won't be necessary after the updates to enable settings versioning.
     userSettings.set({ ...defaultSettings, ...oldUserSettings })
 }
 

@@ -119,6 +119,7 @@
     <Button
         size="sm"
         href={`/post/${getInstance()}/${post.post.id}`}
+        newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
         class="!text-inherit h-8 px-3 border-none"
         title="Comments"
         color="ghost"

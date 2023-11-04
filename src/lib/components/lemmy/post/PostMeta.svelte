@@ -205,6 +205,7 @@
     {#if showTitle}
     <a
         href="/post/{getInstance()}/{id}"
+        target="{$userSettings.openInNewTab.posts ? '_blank' : undefined}"
         class="font-medium max-w-full w-full break-words"
         style="word-break: break-word;"
         class:text-slate-500={read && $userSettings.markReadPosts}
