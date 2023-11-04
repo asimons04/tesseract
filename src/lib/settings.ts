@@ -308,7 +308,8 @@ export const YTFrontends = {
         'pipedapi.drgns.space',
         'piapi.ggtyler.dev',
         'watchapi.pluto.lat',
-        'piped.syncpundit.io'
+        'piped.syncpundit.io',
+        'piped.yt'
 
     ]
 }
