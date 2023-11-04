@@ -1,5 +1,5 @@
 import type { CommentSortType, SortType } from 'lemmy-js-client'
-import { writable } from 'svelte/store'
+import { type Writable, writable } from 'svelte/store'
 import { env } from '$env/dynamic/public'
 
 export const SSR_ENABLED = env.PUBLIC_SSR_ENABLED?.toLowerCase() == 'true'
@@ -35,6 +35,11 @@ const strToArray = (str:string | undefined) => {
     }
     trimmedArr.sort();
     return trimmedArr;
+}
+
+const isBrowser = () => {
+    if (typeof window != 'undefined') return true;
+    return false;
 }
 
 
@@ -219,7 +224,7 @@ export const defaultSettings: Settings = {
    
 }
 
-export const userSettings = writable(defaultSettings)
+
 
 // Global option environment flags
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                 ?? false
@@ -315,10 +320,26 @@ if (custom_invidious_instances.length > 0) {
     YTFrontends.invidious.push(...custom_invidious_instances);
 }
 
+// Add user-defined Piped instances
 if (custom_piped_instances.length > 0) {
     YTFrontends.piped.push(...custom_piped_instances);
 }
 
+
+// Create a writable store for the user settings
+export const userSettings = writable(defaultSettings)
+
+if (isBrowser()) {
+
+    let oldUserSettings = JSON.parse(
+        localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
+    )
+
+    // Migrations from old settings styles to new and store them to localStorage.
+    userSettings.set(migrateSettings(oldUserSettings));
+}
+
+// Settings migrations
 export function migrateSettings(old:any) {
     // Update legacy versions of user settings to the first controlled version
     if (!old.version) {
@@ -329,10 +350,11 @@ export function migrateSettings(old:any) {
         }
 
         // Delete the old showInstances object and replace with single boolean under the uiState object
-        if (old.showInstances?.user || old.showInstances?.community || old.showInstances?.comments) {
-            old.uiState.showInstances = true;
-            delete old.showInstances;
-        }
+        old.showInstances && (old.showInstances?.user || old.showInstances?.community || old.showInstances?.comments)
+            ? old.uiState.showInstances = true
+            : old.uiState.showInstances = false
+        delete old.showInstances;
+        
 
         // Make sure the keyword filter list gets initialized
         if (!old.hidePosts.keywordList) {
@@ -358,23 +380,9 @@ export function migrateSettings(old:any) {
 }
 
 
-
-if (typeof window != 'undefined') {
-
-    let oldUserSettings = JSON.parse(
-        localStorage.getItem('settings') ?? JSON.stringify(defaultSettings)
-    )
-
-    // Migrations from old settings styles to new and store them to localStorage.
-    userSettings.set(migrateSettings(oldUserSettings));
-    
-    
-}
-
-
-
-userSettings.subscribe((settings) => {
-  if (typeof window != 'undefined') {
+// Subscribe to the store and save it to localStorage on change.
+userSettings.subscribe((settings:Settings) => {
+  if (isBrowser()) {
     localStorage.setItem('settings', JSON.stringify(settings))
   }
 })

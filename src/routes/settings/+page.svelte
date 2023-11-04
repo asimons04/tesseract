@@ -155,12 +155,19 @@
             
             reader.readAsText(file);
             reader.onload = function() {
-                let uploadedSettings = JSON.parse(reader.result as string);
-                $userSettings = migrateSettings(uploadedSettings, defaultSettings);
-                toast({
-                    type: 'success',
-                    content: "Successfully uploaded and applied settings."
-            });
+                try {
+                    let uploadedSettings = JSON.parse(reader.result as string);
+                    $userSettings = migrateSettings(uploadedSettings, defaultSettings);
+                    toast({
+                        type: 'success',
+                        content: "Successfully uploaded and applied settings."
+                    });
+                }catch (err) {
+                    toast({
+                        type: 'error',
+                        content: "Failed to parse uploaded settings."
+                    });
+                }
             }
         }
         catch (err) {
@@ -1137,9 +1144,10 @@
                         
                         <div class="mx-auto"/>
                         
-                        <input id='settingsFileUpload' bind:files={uploadFiles.tesseract} type='file' name='settingsFileUpload' accept=".json,application/json" class="hidden"/>
+                        
                         <Button class="font-normal h-8" size="md" icon={ArrowUpTray} color="primary" on:click={importSettings}>
                             Upload
+                            <input id='settingsFileUpload' bind:files={uploadFiles.tesseract} type='file' name='settingsFileUpload' accept=".json,application/json" class="hidden"/>
                         </Button>
                     </div>
 

@@ -276,7 +276,9 @@
             reports.forEach((report) => {
                 report.style.display='flex';
             })
-
+            // Hide the modlog and profile sidebar
+            sidePanel = 'closed'
+            
             // Empty modlog data and creator content
             modlog.data = undefined;
             
@@ -284,8 +286,7 @@
             creatorProfile.comments = undefined;
             creatorProfile.person_view = undefined;
             
-            // Hide the modlog and profile sidebar
-            sidePanel = 'closed'
+            
         }
         
         scrollToTop(element, false);

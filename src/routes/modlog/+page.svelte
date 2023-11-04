@@ -177,7 +177,7 @@
         
     <div class="flex flex-row w-full flex-wrap items-center justify-between">
 
-        <div class="max-w-sm" class:hidden={filter.community.set}>
+        <div class="max-w-sm" >
             <div class="block my-1 font-bold text-sm">Community</div>
             <ObjectAutocomplete
                 placeholder="Filter by community"
