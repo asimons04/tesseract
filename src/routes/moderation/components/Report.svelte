@@ -288,7 +288,7 @@
             sidePanel = 'closed'
         }
         
-        //scrollToTop(element);
+        scrollToTop(element, false);
 
     }
 
@@ -775,11 +775,14 @@
     <span class="flex flex-col lg:flex-row w-full gap-4">
         
         <!--- Report Title and Button Bar--->
-        <span class="flex flex-row gap-2 items-center text-base font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+        <span class="flex flex-row gap-2 items-center" role="button" on:click={toggleOpenReport}>
             <Icon src={isCommentReport(item) ? ChatBubbleLeftEllipsis : Photo} mini width={20} />
-            {isCommentReport(item) ? "Comment Report: " : "Post Report: "}
             
-            <span class="text-sm font-normal whitespace-nowrap overflow-hidden text-ellipsis">
+            
+            <span class="text-sm font-normal whitespace-nowrap overflow-hidden text-ellipsis hover:underline">
+                <span class="text-base font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+                    {isCommentReport(item) ? "Comment Report: " : "Post Report: "}
+                </span>
                 {
                     isCommentReport(item) 
                         ? `"${item.comment.content.length > 120 ? item.comment.content.slice(0,120) + '...' : item.comment.content}"` 
