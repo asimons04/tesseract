@@ -12,6 +12,7 @@
     } from '$lib/lemmy/item.js'
 
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte';
     import Post from '$lib/components/lemmy/post/Post.svelte'
     
     export let display:boolean = true;
@@ -70,7 +71,7 @@
                 Report Details
             </summary>
             
-            <p class="text-sm font-normal">{isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'}</p>
+            <Markdown source={isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided'} />
         </details>   
         
         
