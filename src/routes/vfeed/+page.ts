@@ -8,7 +8,6 @@ import { goto } from '$app/navigation'
 import { 
     type Profile, 
     type ProfileData,
-    getProfile, 
     profile, 
     profileData 
 } from '$lib/auth.js'
@@ -19,14 +18,8 @@ import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'
 
 
-let communities:number[] = [15, 12166, 7091, 12, 3428];
-
-//communities.forEach((c) => {
- //   addFavorite(c);
-//})
-
-//delFavorite(420);
-//console.log(await resolveFavorite(12166));
+let userProfile = get(profile)
+let communities = userProfile.favorites?.map((c) => c.id) ?? []
 
 let postsPerPage = 50;
 
@@ -35,10 +28,6 @@ let postsPerCommunity = Math.ceil(postsPerPage / communities.length)
 postsPerCommunity > 50
     ? postsPerCommunity=50
     : undefined
-
-
-
-
 
 export async function load(req: any) {
     
@@ -52,6 +41,7 @@ export async function load(req: any) {
     const sort: SortType = (req.url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     
     const client = getClient(undefined, fetch)
+    
     const params = {
         page: page,
         sort: sort,
@@ -59,7 +49,9 @@ export async function load(req: any) {
         auth: get(profile)?.jwt
     }
 
+    let site = client.getSite();
 
+    // Loop over the communities array and call getPosts for each. Store each promise in the tasks array.
     for (let i:number=0; i< communities.length; i++) {
         let community_id = communities[i];
         tasks.push(client.getPosts({
@@ -68,15 +60,24 @@ export async function load(req: any) {
         }))
     }
 
+    // Await all of the promises in the tasks array and store the results in the tasksResult array
     tasksResult = await Promise.all(tasks);
     
+    // Loop over tasksResults and join the posts it returned into the combinedPosts array
     for (let i:number=0; i< tasksResult.length; i++) {
         let posts = tasksResult[i];
         combinedPosts = [...combinedPosts, ...posts.posts]
     }
+
+    // Sort the posts however (currently new->old)
     combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+    
+    // Load the posts into a posts object
     let posts = { posts: [...combinedPosts] }
     
+
+
+
     // Filter the posts for keywords
     posts = filterKeywords(posts.posts);
     
@@ -86,96 +87,16 @@ export async function load(req: any) {
     // Apply MBFC data object to post
     posts = addMBFCResults(posts.posts);
         
-    console.log(posts);
-    
-
     //console.log(tasks)
     //console.log(tasksResult);
     //console.log(combinedPosts)
-    return posts;
-
-    /*
     
-    try {
-        const [posts] = await Promise.all([
-            client.listPostReports({
-                ...params,
-            }),
-            client.listCommentReports({
-                ...params,
-            }),
     
-        ])
-
-        let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: 40,
-            community_name: req.params.name,
-            page: page,
-            sort: sort,
-            auth: get(profile)?.jwt,
-        });
-        
-        // Apply MBFC data object to post
-        posts = addMBFCResults(posts.posts);
-        
-        // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
-
-        return {
-            sort: sort,
-            page: page,
-            posts: posts,
-            community: await getClient(undefined, req.fetch).getCommunity({
-                name: req.params.name,
-                auth: get(profile)?.jwt,
-            }),
-        }
+    return {
+        ...posts,
+        site: site,
+        page: page,
+        sort: sort
     }
-    
-    // If the community is not found, try to resolve it
-    catch {
-        if (!get(profile)?.jwt) {
-            toast({
-                content: `You must be logged in to resolve communities not currently known to this instance.`,
-                type: 'warning',
-            })
-            goto('/communities');
-            return
-
-        }
-        toast({
-            content: `This community is not known to your instance. Fetching community from its home instance. This may take a moment...`,
-            type: 'success',
-            duration: 10000
-        })
-
-        await getClient(undefined, fetch).resolveObject({
-            auth: get(profile)!.jwt!,
-            q: '!' + req.params.name,
-        })
-        
-        let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: 40,
-            community_name: req.params.name,
-            page: page,
-            sort: sort,
-            auth: get(profile)?.jwt,
-        })
-        
-        // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
-
-
-        return {
-            sort: sort,
-            page: page,
-            posts: posts,
-            community: await getClient(undefined, req.fetch).getCommunity({
-                name: req.params.name,
-                auth: get(profile)?.jwt,
-            }),
-        }
-    }
-    */
 }
 
