@@ -36,6 +36,9 @@
                 return 'bottom-[-500%] right-[120%]'
             case 'side-right':
                 return 'bottom-[-500%] right-[-120%]'
+            
+            case "left":
+                return "bottom-[-160%] right-[75%]"
             default:
                 return 'bottom-[100%] origin-top-left'
       }
