@@ -31,6 +31,7 @@
         EllipsisVertical,
         Envelope,
         Hashtag,
+        Home,
         Icon,
         InformationCircle,
         NoSymbol,
@@ -207,6 +208,16 @@
                                     <Icon src={Newspaper} mini size="16" />
                                     User Modlog
                                 </MenuButton>
+
+                                <!--- View on Home Instance--->
+                                <MenuButton link
+                                    href="{person.person.actor_id}"
+                                    newtab={$userSettings.openInNewTab.postLinks}
+                                    title="View {person.person.display_name ?? person.person.name}'s profile on thier home instance"
+                                >
+                                    <Icon src={Home} mini size="16" />
+                                    View on User's Home Instance
+                                </MenuButton>
                                 
                                 <!--- Actions for Logged-in <Users--->
                                 {#if $profile?.user && $profile.jwt && person.person.id != $profile.user.local_user_view.person.id}
@@ -222,7 +233,7 @@
                                     {#if person.person.matrix_user_id}
                                     <MenuButton link
                                         href="https://matrix.to/#/{person.person.matrix_user_id}"
-                                        newTab = {true}
+                                        newtab = {true}
                                     >
                                         <Icon solid size="16" src={Hashtag} />
                                         Message on Matrix

@@ -146,7 +146,7 @@
 
     const uploadSettings = function(): void {
         let uploadButton = document.getElementById('settingsFileUpload') ;
-        uploadButton?.click();
+        uploadButton!.click();
     }
 
     const importSettings = function(upload:FileList): void {

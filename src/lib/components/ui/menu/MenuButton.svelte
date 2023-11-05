@@ -24,7 +24,7 @@
     export let loading:boolean = false
     export let disabled:boolean = false
     export let title:string = '';
-    export let newTab:boolean = false;
+    export let newtab:boolean = false;
     
     export let toggleOpen:Function
     
@@ -35,7 +35,7 @@
     {#if link}
         <a
             {href}
-            target="{newTab ? '_blank' : '_self'}"
+            target="{newtab ? '_blank' : undefined}"
             title="{title}"
             on:click={(e) => click('click', e)}
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm transition-colors 

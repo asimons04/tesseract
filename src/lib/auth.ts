@@ -1,4 +1,4 @@
-import type { GetSiteResponse, MyUserInfo, SortType } from 'lemmy-js-client'
+import type { Community, GetSiteResponse, MyUserInfo, SortType } from 'lemmy-js-client'
 
 import { amModOfAny } from '$lib/components/lemmy/moderation/moderation.js'
 import { DEFAULT_INSTANCE_URL, instance } from '$lib/instance.js'
@@ -11,9 +11,10 @@ import { toast } from '$lib/components/ui/toasts/toasts.js'
 
 export interface CommunityGroup {
     name:string,
-    communities:number[],
+    communities:Community[],
     sort: SortType,
 }
+
 
 // What gets stored in localstorage.
 export interface ProfileData {
@@ -33,7 +34,7 @@ export interface Profile {
     jwt?: string
     user?: PersonData
     username?: string
-    favorites?: number[]
+    favorites?: Community[]
     groups?: CommunityGroup[]
     color?: string
 }
@@ -78,24 +79,22 @@ profileData.subscribe(async (pd) => {
 })
 
 
-
-
-
 export let profile = writable<Profile | undefined>(getProfile())
 
-profile.subscribe(async (p) => {
+profile.subscribe(async (p:Profile) => {
     // If profile ID is -1 (default), set the instnace to the currently selected guest instance or the system-defined DEFAULT_INSTANCE_URL
     if (p?.id == -1) {
         instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
     }
 
-    // If profile is not found or lacks an auth token, reset it to default
+    // If profile is not found or lacks an auth token, reset the active profile to the guest profile
     if (!p || !p.jwt) {
-        profileData.update((pd) => ({ ...pd, profile: -1 }))
+        profileData.update((pd:ProfileData) => ({ ...pd, profile: -1 }))
         return
     }
     // If user details (MyUserInfo from API) are already stored, don't proceed to fetch it.
-    if (p.user) return
+    
+    if (p.user) return    
 
     // Set the current instance to the instance defined in the profile.
     instance.set(p.instance)
@@ -112,8 +111,10 @@ profile.subscribe(async (p) => {
         user: user!.user,
         username: user?.user.local_user_view.person.name,
     }))
-
 })
+
+
+
 
 // Used at login to store a new user profile
 export async function setUser(jwt: string, inst: string, username: string) {
@@ -197,13 +198,25 @@ function getProfile() {
 
     const pd = get(profileData)
 
-    return pd.profiles.find((p) => p.id == id)
+    return pd.profiles.find((p:Profile) => p.id == id)
 }
 
 
 export function resetProfile() {
     profile.set(getDefaultProfile())
     profileData.update((p) => ({ ...p, profile: -1 }))
+}
+
+// Update the profile in the profileData object in localStorage
+export function saveProfileToProfileData() {
+    let pd = get(profileData)
+    let pIndex = pd.profiles.findIndex((p:Profile) => p.id == pd.profile)
+    
+    profileData.update((pd:ProfileData) => {
+        let newProfileData:ProfileData = {...pd}
+        newProfileData.profiles[pIndex] = {...get(profile)}
+        return { ...newProfileData}
+    })
 }
 
 

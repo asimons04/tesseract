@@ -1,6 +1,6 @@
 import type { GetPostsResponse, ListingType, SortType } from 'lemmy-js-client'
 
-import { addMBFCResults, filterKeywords } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, filterKeywords, findCrossposts } from '$lib/components/lemmy/post/helpers'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
@@ -13,20 +13,20 @@ import {
     profileData 
 } from '$lib/auth.js'
 
-import { addFavorite } from './utils'
+import { addFavorite, delFavorite, resolveFavorite } from './favorites'
 
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'
 
 
-let communities:number[] = [15, 12166, 7091, 12, 3428, 420];
+let communities:number[] = [15, 12166, 7091, 12, 3428];
 
-communities.forEach((c) => {
-    addFavorite(c);
-})
+//communities.forEach((c) => {
+ //   addFavorite(c);
+//})
 
-const userProfile = get(profile)
-console.log(userProfile);
+//delFavorite(420);
+//console.log(await resolveFavorite(12166));
 
 let postsPerPage = 50;
 
@@ -41,6 +41,9 @@ postsPerCommunity > 50
 
 
 export async function load(req: any) {
+    
+    //console.log(await resolveFavorite(12166));
+    
     let tasks:Array<Promise<any>> = []
     let tasksResult:GetPostsResponse[]
     let combinedPosts:GetPostsResponse[] = []
@@ -72,12 +75,24 @@ export async function load(req: any) {
         combinedPosts = [...combinedPosts, ...posts.posts]
     }
     combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+    let posts = { posts: [...combinedPosts] }
     
-    console.log(tasks)
-    console.log(tasksResult);
+    // Filter the posts for keywords
+    posts = filterKeywords(posts.posts);
+    
+    // Roll up crossposts
+    posts = findCrossposts(posts.posts);
 
-    console.log(combinedPosts)
-    return { posts: combinedPosts};
+    // Apply MBFC data object to post
+    posts = addMBFCResults(posts.posts);
+        
+    console.log(posts);
+    
+
+    //console.log(tasks)
+    //console.log(tasksResult);
+    //console.log(combinedPosts)
+    return posts;
 
     /*
     
@@ -91,11 +106,6 @@ export async function load(req: any) {
             }),
     
         ])
-
-
-
-
-
 
         let posts = await getClient(undefined, req.fetch).getPosts({
             limit: 40,

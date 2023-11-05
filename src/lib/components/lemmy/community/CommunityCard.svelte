@@ -1,6 +1,8 @@
 <script lang="ts">
     import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
     
+    import {addFavorite, isFavorite } from '$routes/vfeed/favorites'
+
     import { addSubscription } from '$lib/lemmy/user.js'
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fullCommunityName } from '$lib/util.js'
@@ -47,6 +49,7 @@
         Rss,
         ShieldCheck,
         ShieldExclamation,
+        Star,
         UserGroup,
     } from 'svelte-hero-icons'
     
@@ -64,8 +67,9 @@
         hiding: false,
         removing: false,
         subscribing: false,
-        
     }
+
+    $: favorite = isFavorite(community_view.community)
 
     async function subscribe() {
         if (!$profile?.jwt) return
@@ -315,6 +319,22 @@
                                             }
                                         </span>
                                     </MenuButton>
+
+                                    <!--- Add/Remove Favorite--->
+                                    <MenuButton>
+                                        <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+                                            e.stopPropagation();
+                                            favorite = !favorite
+                                            addFavorite(community_view.community, favorite)
+                                        }}>
+                                            <Icon
+                                                src={Star}
+                                                mini
+                                                size="16"
+                                            />
+                                            {favorite ? 'Remove Favorite' : 'Add Favorite'}
+                                        </span>
+                                    </MenuButton>
                                     
                                     <!--- Block/Unblock Community --->
                                     <MenuButton disabled={loading.blocking || community_view.community.removed} loading={loading.blocking} color="dangerSecondary">
@@ -436,6 +456,28 @@
             >
                 <Icon src={PencilSquare} mini size="16" slot="icon" />
                 Create Post
+            </Button>
+
+            <Button 
+                color="primary"
+                size="lg"
+                disabled={loading.subscribing || community_view.community.removed } 
+                loading={loading.subscribing}
+                on:click={ (e) => {
+                    e.stopPropagation();
+                    subscribe();
+                }}
+            >
+                <Icon
+                    src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
+                    mini
+                    size="16"
+                />
+                {
+                    (community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending')
+                        ? 'Unsubscribe'
+                        : 'Subscribe'
+                }
             </Button>
         {/if}
     </div>

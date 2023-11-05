@@ -15,7 +15,7 @@
 
 </script>
 
-<!---min-h-[10vh]--->
+
 <div class="h-auto overflow-y-auto flex flex-col { expanded ? 'pl-1' : '' }"
     class:hidden={hidden}
 >

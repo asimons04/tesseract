@@ -18,6 +18,7 @@
         MagnifyingGlass,
         Minus,
         Plus,
+        Star,
         UserGroup,
         XCircle
     } from 'svelte-hero-icons'
@@ -98,8 +99,71 @@
         <!--- Subscribed Community List --->
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
+        
+        
+        <!--- Favorites Show/Hide Button--->
+        
+            <SidebarButton 
+                class="w-full"  
+                title="{$userSettings.uiState.expandFavoritesList ? 'Collapse' : 'Expand'} Moderating"  
+                expanded={$userSettings.uiState.expandSidebar}
+                on:click={() => {
+                    $userSettings.uiState.expandFavoritesList = !$userSettings.uiState.expandFavoritesList;
+                    // Hide the "subscribed" list
+                    $userSettings.uiState.expandSubscribedList = false;
+                    $userSettings.uiState.expandModeratingList = false;
+                }}
+            >
+                <span class="w-full flex flex-row gap-2 items-center">
+                    <Icon src={Star} mini size="18" />
+                    {#if $userSettings.uiState.expandSidebar}
+                        Favorites
+                        <span class="ml-auto"/>
+                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
+                            {$profile?.favorites.length}
+                        </span>
+                    {/if}
+                </span>
+            </SidebarButton>
+            
+            {#if $profile?.favorites.length > 0}
+                <CommunityList
+                    expanded={$userSettings.uiState.expandSidebar}
+                    items={$profile.favorites}
+                    hidden={!$userSettings.uiState.expandFavoritesList}
+                />
+            {/if}
+            
+            <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+        
+        
+        
+        <!--- Subscribed Show/Hide Button--->
+        <SidebarButton 
+            class="w-full"
+            title="{$userSettings.uiState.expandSubscribedList ? 'Collapse' : 'Expand'} Subscriptions"  
+            expanded={$userSettings.uiState.expandSidebar}
+            on:click={() => {
+                $userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList
+                $userSettings.uiState.expandModeratingList = false;
+                $userSettings.uiState.expandFavoritesList = false;
+            }}
+        >
+            <span class="w-full flex flex-row gap-2 items-center">
+                <Icon src={InboxArrowDown} mini size="18" />
+                {#if $userSettings.uiState.expandSidebar}
+                    Subscribed
+                    <span class="ml-auto"/>
+                    <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
+                        {$profile?.user.follows.length}
+                    </span>
+                {/if}
+            </span>
+        </SidebarButton>
+
         <!--- Search field to filter the subscribed communities--->
-        <div class="p-3 flex flex-row gap-1" class:hidden={!$userSettings.uiState.expandSidebar}>
+        {#if $userSettings.uiState.expandSidebar}
+        <div class="p-2 flex flex-row gap-1" class:hidden={!$userSettings.uiState.expandSubscribedList}>
             <TextInput 
                 bind:value={communityFiltervalue}
                 type="text"
@@ -114,46 +178,20 @@
                     // Hide the 'moderating list'
                     if ($userSettings.uiState.expandModeratingList) {
                         $userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList;   
+                        $userSettings.uiState.expandFavoritesList = !$userSettings.uiState.expandFavoritesList;   
                     }
                 }}
                 class="h-8 w-full"
             />
-            <span class="my-auto cursor-pointer"
-                title="Reset Search Filter"
-                on:click={async () => {
+            <span class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
                     debounce('');
                     communityFiltervalue = '';
-                    //communityFilterTerm = '';
                 }}
             >
-                <Icon
-                    src={XCircle}
-                    mini
-                    size="18"
-                />
+                <Icon src={XCircle} mini size="18"/>
             </span>
         </div>
-        
-
-        <SidebarButton 
-            class="w-full"
-            title="{$userSettings.uiState.expandSubscribedList ? 'Collapse' : 'Expand'} Subscriptions"  
-            expanded={$userSettings.uiState.expandSidebar}
-            on:click={() => {
-                $userSettings.uiState.expandSubscribedList = !$userSettings.uiState.expandSubscribedList
-                $userSettings.uiState.expandModeratingList = false;
-            }}
-        >
-
-            <Icon src={InboxArrowDown} mini size="18" />
-            
-            <span class="w-full flex flex-row justify-between" class:hidden={!$userSettings.uiState.expandSidebar}>
-                Subscribed
-                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
-                    {$profile?.user.follows.length}
-                </span>
-            </span>
-        </SidebarButton>
+        {/if}
 
         
         
@@ -175,16 +213,21 @@
                 expanded={$userSettings.uiState.expandSidebar}
                 on:click={() => {
                     $userSettings.uiState.expandModeratingList = !$userSettings.uiState.expandModeratingList;
-                    // Hide the "subscribed" list
+                    
+                    // Hide the "subscribed" and favorites lists
                     $userSettings.uiState.expandSubscribedList = false;
+                    $userSettings.uiState.expandFavoritesList = false;
                 }}
             >
-                <Icon src={HandRaised} mini size="18" />
-                <span class="w-full flex flex-row justify-between" class:hidden={!$userSettings.uiState.expandSidebar}>
-                    Moderating
-                    <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
-                        {$profile?.user.moderates.length}
-                    </span>
+                <span class="w-full flex flex-row gap-2 items-center" class:hidden={!$userSettings.uiState.expandSidebar}>
+                    <Icon src={HandRaised} mini size="18" />
+                    {#if $userSettings.uiState.expandSidebar}
+                        Moderating
+                        <span class="ml-auto"/>
+                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
+                            {$profile?.user.moderates.length}
+                        </span>
+                    {/if}
                 </span>
             </SidebarButton>
             

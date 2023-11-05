@@ -17,37 +17,31 @@ export const blockUser = async (block: boolean, id: number) => {
 }
 
 export const isBlocked = (me: MyUserInfo, user: number) =>
-  me.person_blocks.map((b) => b.target.id).includes(user)
+    me.person_blocks.map((b) => b.target.id).includes(user)
 
-export const addSubscription = (
-  community: Community,
-  subscribe: boolean = true
-) => {
-  const p = get(profile)
+export const addSubscription = (community: Community, subscribe: boolean = true) => {
+    const p = get(profile)
 
-  if (!p?.user) return
+    if (!p?.user) return
 
-  if (subscribe) {
-    profile.set({
-      ...p,
-      user: {
-        ...p.user,
-        follows: [
-          ...p.user.follows,
-          {
-            community: community,
-            follower: p.user.local_user_view.person,
-          },
-        ],
-      },
-    })
-  } else {
-    p.user.follows.splice(
-      p.user.follows.findIndex((i) => i.community.id == community.id),
-      1
-    )
-    profile.set(p)
-  }
+    if (subscribe) {
+        profile.set({
+            ...p,
+            user: {
+                ...p.user,
+                follows: [
+                    ...p.user.follows,
+                    {
+                        community: community,
+                        follower: p.user.local_user_view.person,
+                    },
+                ],
+            },
+        })
+    } else {
+        p.user.follows.splice(p.user.follows.findIndex((i) => i.community.id == community.id), 1)
+        profile.set(p)
+    }
 }
 
 export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
