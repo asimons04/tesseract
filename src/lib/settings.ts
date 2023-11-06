@@ -332,6 +332,14 @@ if (isBrowser()) {
     userSettings.set(migrateSettings(oldUserSettings));
 }
 
+// Subscribe to the store and save it to localStorage on change.
+userSettings.subscribe((settings:Settings) => {
+  if (isBrowser()) {
+    localStorage.setItem('settings', JSON.stringify(settings))
+  }
+})
+
+
 // Settings migrations
 export function migrateSettings(old:any) {
     // Update legacy versions of user settings to the first controlled version
@@ -377,19 +385,17 @@ export function migrateSettings(old:any) {
         delete old.uiState.expandAccountsList;
 
 
+        // Rename the settings key to open external links in new tab
         old.openInNewTab.links = old.openInNewTab.postLinks
         delete old.openInNewTab.postLinks
         old.version = 0.2
-
+    }
+    
+    // 0.2 -> 0.3
+    if (old.version == 0.2) {
+        
     }
 
     return { ...defaultSettings, ...old }
 }
 
-
-// Subscribe to the store and save it to localStorage on change.
-userSettings.subscribe((settings:Settings) => {
-  if (isBrowser()) {
-    localStorage.setItem('settings', JSON.stringify(settings))
-  }
-})

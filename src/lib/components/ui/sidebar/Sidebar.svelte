@@ -114,14 +114,14 @@
             <div class="ml-auto"/>
 
             <Button title="Favorites" size="md" class="!border-none" color="ghost" on:click={()=> panel='favorites'}>
-                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 text-bold' : '' }">
+                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 text-bold' : '' }">
                     <Icon src={Star} mini size="18" title="Favorites" />
                     <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Favorites</span>
                 </span>
             </Button>
 
             <Button title="Subscribed" size="md" class="!border-none" color="ghost" on:click={()=> panel='subscribed'}>
-                <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 text-bold' : '' }">
+                <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 dark:text-sky-500 text-bold' : '' }">
                     <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
                     <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Subscribed</span>
                 </span>
@@ -129,7 +129,7 @@
 
             {#if $profile?.user.moderates.length > 0}
                 <Button title="Moderating" size="md" class="!border-none" color="ghost" on:click={()=> panel='moderating'}>
-                    <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 text-bold' : '' }">
+                    <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 dark:text-sky-500 text-bold' : '' }">
                         <Icon src={HandRaised} mini size="18" title="Moderating" />
                         <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Moderating</span>
                     </span>
@@ -173,7 +173,9 @@
                         items={$profile.favorites}
                     />
                 {:else}
-                    <Placeholder size="22" icon={ArchiveBox} title="No Favorites" description="Your favoritie communities will appear here." />
+                    {#if $userSettings.uiState.expandSidebar}
+                        <Placeholder size="22" icon={ArchiveBox} title="No Favorites" description="Your favoritie communities will appear here." />
+                    {/if}
                 {/if}
             {/if}
             
@@ -186,7 +188,9 @@
                         filter={communityFilterTerm}
                     />
                 {:else}
-                    <Placeholder size="22" icon={ArchiveBox} title="No Subscriptions" description="You're not subscribed to any communities. When you are, they will be listed here." />
+                    {#if $userSettings.uiState.expandSidebar}
+                        <Placeholder size="22" icon={ArchiveBox} title="No Subscriptions" description="You're not subscribed to any communities. When you are, they will be listed here." />
+                    {/if}
                 {/if}
             {/if}
         
