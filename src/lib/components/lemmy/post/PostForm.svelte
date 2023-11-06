@@ -274,17 +274,17 @@
         </Button>
         
         <!--- Cancel Button --->
-        {#if passedCommunity}
-            <Button 
-                color="primary"
-                size="sm"
-                href="/c/{passedCommunity.name}"
-                title="Cancel"
+        
+        <Button 
+            color="primary"
+            size="sm"
+            title="Cancel"
+            on:click={()=> history.back()}
             >
             <Icon src={XCircle} mini size="16"/>
             
         </Button>
-        {/if}
+        
 
 
         <!--- Restore from Draft--->
