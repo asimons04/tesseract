@@ -130,8 +130,9 @@
 
     const exportSettings = function():void {
         let exportData = {
-            profiles: {...$profile},
-            settings: {...$userSettings}
+            favorites:  [...$profile.favorites],
+            groups:     [...$profile.groups],
+            settings:   {...$userSettings}
         }
         
         let dataString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
@@ -161,6 +162,8 @@
                     
                     if (uploadedSettings.settings) {
                         $userSettings = migrateSettings(uploadedSettings.settings, defaultSettings);
+                        $profile.favorites = [...uploadedSettings.favorites];
+                        $profile.groups = [...uploadedSettings.groups];
 
                         toast({
                             type: 'success',
