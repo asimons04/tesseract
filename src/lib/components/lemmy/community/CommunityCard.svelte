@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
     
-    import {addFavorite, isFavorite } from '$routes/vfeed/favorites'
+    import {addFavorite, isFavorite } from '$lib/favorites'
 
     import { addSubscription } from '$lib/lemmy/user.js'
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'

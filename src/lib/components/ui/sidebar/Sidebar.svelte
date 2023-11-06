@@ -109,7 +109,36 @@
         <!--- Favorites, Subscribed, and Moderating Communities--->
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
-        
+        <!---Switcher Buttons--->
+        <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-2">
+            <div class="ml-auto"/>
+
+            <Button title="Favorites" size="md" class="!border-none" color="ghost" on:click={()=> panel='favorites'}>
+                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 text-bold' : '' }">
+                    <Icon src={Star} mini size="18" title="Favorites" />
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Favorites</span>
+                </span>
+            </Button>
+
+            <Button title="Subscribed" size="md" class="!border-none" color="ghost" on:click={()=> panel='subscribed'}>
+                <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 text-bold' : '' }">
+                    <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Subscribed</span>
+                </span>
+            </Button>
+
+            {#if $profile?.user.moderates.length > 0}
+                <Button title="Moderating" size="md" class="!border-none" color="ghost" on:click={()=> panel='moderating'}>
+                    <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 text-bold' : '' }">
+                        <Icon src={HandRaised} mini size="18" title="Moderating" />
+                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Moderating</span>
+                    </span>
+                </Button>
+            {/if}
+
+            <div class="mr-auto"/>
+        </div>
+
         <!--- Search field to filter the subscribed communities--->
         {#if $userSettings.uiState.expandSidebar}
             <div class="p-2 flex flex-row gap-1">
@@ -132,57 +161,33 @@
                 </span>
             </div>
         {/if}
-
-        <!---Switcher Buttons--->
-        <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-2">
-            <div class="ml-auto"/>
-
-            <Button title="Favorites" size="md" class="!border-none" color="ghost" on:click={()=> panel='favorites'}>
-                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 text-bold' : '' }">
-                    <Icon src={Star} mini size="18" title="Favorites" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Favorites</span>
-                </span>
-            </Button>
-
-            <Button title="Subscribed" size="md" class="!border-none" color="ghost" on:click={()=> panel='subscribed'}>
-                <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 text-bold' : '' }">
-                    <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Subscribed</span>
-                </span>
-            </Button>
-
-            <Button title="Moderating" size="md" class="!border-none" color="ghost" on:click={()=> panel='moderating'}>
-                <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 text-bold' : '' }">
-                    <Icon src={HandRaised} mini size="18" title="Moderating" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Moderating</span>
-                </span>
-            </Button>
-
-            <div class="mr-auto"/>
-        </div>
         
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
         <div class="flex flex-col gap-1 h-full overflow-y-auto">
             {#if panel=='favorites'}
                 <!--- Favorites--->
-                {#if $profile?.favorites.length > 0}
+                {#if $profile?.favorites?.length > 0}
                     <CommunityList
                         expanded={$userSettings.uiState.expandSidebar}
                         items={$profile.favorites}
                     />
                 {:else}
-                    <Placeholder icon={ArchiveBox} title="No Favorites" description="Your favoritie communities will appear here." />
+                    <Placeholder size="22" icon={ArchiveBox} title="No Favorites" description="Your favoritie communities will appear here." />
                 {/if}
             {/if}
             
             {#if panel=='subscribed'}
-                <!--- Subscribed community list --->
-                <CommunityList
-                    expanded={$userSettings.uiState.expandSidebar}
-                    items={$profile.user.follows.map((i) => i.community)}
-                    filter={communityFilterTerm}
-                />
+                {#if $profile.user.follows.length > 0}
+                    <!--- Subscribed community list --->
+                    <CommunityList
+                        expanded={$userSettings.uiState.expandSidebar}
+                        items={$profile.user.follows.map((i) => i.community)}
+                        filter={communityFilterTerm}
+                    />
+                {:else}
+                    <Placeholder size="22" icon={ArchiveBox} title="No Subscriptions" description="You're not subscribed to any communities. When you are, they will be listed here." />
+                {/if}
             {/if}
         
             <!--- Communities User is Moderating --->

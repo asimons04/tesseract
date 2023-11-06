@@ -12,7 +12,7 @@ import {
     profileData 
 } from '$lib/auth.js'
 
-import { addFavorite, delFavorite, resolveFavorite } from './favorites'
+import { addFavorite, delFavorite, resolveFavorite } from '$lib/favorites'
 
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'

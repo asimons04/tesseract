@@ -4,6 +4,8 @@
     
     import { getFediseerInfo, fediseerLookup } from '$lib/fediseer/client.js'
     
+    
+    import {addFavorite, isFavorite } from '$lib/favorites'
     import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { createEventDispatcher } from 'svelte'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
@@ -44,6 +46,7 @@
         PencilSquare,
         Tv,
         Share,
+        Star,
         Trash,
         UserCircle,
         UserGroup
@@ -66,6 +69,7 @@
         data: undefined
     }
     
+    $: favorite = isFavorite(post.community)
     
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
@@ -238,7 +242,8 @@
     {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
         <ModerationMenu bind:item={post} community={post.community} color="ghost"/>
     {/if}
-    
+
+        
     <!--- Post Actions Menu --->
     <Menu
         alignment="side-left"
@@ -339,6 +344,21 @@
             >
                 <Icon src={ArrowTopRightOnSquare} width={16} mini />
                 Crosspost
+            </MenuButton>
+
+            <MenuButton>
+                <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+                    //e.stopPropagation();
+                    favorite = !favorite
+                    addFavorite(post.community, favorite)
+                }}>
+                    <Icon
+                        src={Star}
+                        mini
+                        size="16"
+                    />
+                    {favorite ? 'Un-Favorite Community' : 'Favorite Community'}
+                </span>
             </MenuButton>
 
 

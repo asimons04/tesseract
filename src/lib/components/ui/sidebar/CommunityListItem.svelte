@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Community } from 'lemmy-js-client'
 
-    import { addFavorite, isFavorite } from '$routes/vfeed/favorites'
+    import { addFavorite, isFavorite } from '$lib/favorites'
     import { flip } from 'svelte/animate'
     import { expoOut } from 'svelte/easing'
     import { slide, fade } from 'svelte/transition'

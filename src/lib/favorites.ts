@@ -7,9 +7,6 @@ import {
 } from '$lib/auth.js'
 
 import { get } from 'svelte/store'
-import { userSettings } from '$lib/settings'
-
-
 
 // Add a favorite community to your profile 
 export const addFavorite = function(community:Community, favorite:boolean) {
@@ -18,11 +15,11 @@ export const addFavorite = function(community:Community, favorite:boolean) {
     
     if (!community) return 
     if (!userProfile?.jwt) return
+    if (!userProfile.favorites) userProfile.favorites = [] as Community[]
+    
     let index = userProfile.favorites.findIndex((c:Community) => c.id==community.id)
 
     if (favorite && index < 0) {
-        if (!userProfile.favorites) userProfile.favorites = [] as Community[]
-        
         userProfile.favorites.push(community)
         
         profile.set({

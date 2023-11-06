@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Icon, type IconSource } from 'svelte-hero-icons'
+    import { Icon, type IconSource } from 'svelte-hero-icons'
 
-  export let icon: IconSource | undefined = undefined
-
-  export let title: string
-  export let description: string | undefined = undefined
+    export let icon: IconSource | undefined = undefined
+    export let size:string = "28"
+    export let title: string
+    export let description: string | undefined = undefined
 </script>
 
 <div
@@ -14,7 +14,7 @@
     <div
       class="border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 p-3 rounded-full"
     >
-      <Icon src={icon} size="28" />
+      <Icon src={icon} size="{size}" />
     </div>
   {/if}
   <div class="flex flex-col gap-1 text-center">
