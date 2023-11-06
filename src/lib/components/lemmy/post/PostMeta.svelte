@@ -121,7 +121,9 @@
                         
                         {#if upvotes != undefined && downvotes != undefined}
                             <span>•</span>
-                            <span>{Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%</span>
+                            <span title="{upvotes.toString()} Upvotes / {downvotes.toString()} Downvotes">
+                                {Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%
+                            </span>
                         {/if}
                     </span>
                 </span>
