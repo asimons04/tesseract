@@ -1143,6 +1143,10 @@
                             <p class="text-xs font-normal">
                                 Export your Tesseract application settings to a JSON file. This does not include any account information.
                             </p>
+                            <details>
+                                <summary class="text-xs font-bold cursor-pointer mt-2">What's include in the export?</summary>
+                                <p class="text-xs font-normal">All setting and preferences (except dark mode) as well as your favorites and community groups.</p>
+                            </details>
                         </div>
                         
                         <div class="mx-auto"/>
@@ -1160,7 +1164,9 @@
                                 Import Tesseract Settings
                             </p>
                             <p class="text-xs font-normal">
-                                Upload and import your Tesseract application settings from a JSON file. 
+                                Upload and import your Tesseract application settings, favorites, and community groups from a JSON file. The favorites and groups will be imported 
+                                into your currently selected profile. Note that favorites/groups must be restored to an account on the same instance from which they were 
+                                generated since the community IDs need to match.
                             </p>
                         </div>
                         
