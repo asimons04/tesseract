@@ -63,7 +63,7 @@
 
 
 {#if showAsEmbed()}
-    <Link href={post.post.url} newtab={$userSettings.openInNewTab.postLinks} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+    <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
         
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
@@ -91,7 +91,7 @@
         <Link
             href={post.post.url}
             title={post.post.name}
-            newtab={$userSettings.openInNewTab.postLinks}
+            newtab={$userSettings.openInNewTab.links}
             highlight nowrap
         />
         <PostImage post={post} displayType={displayType}/>

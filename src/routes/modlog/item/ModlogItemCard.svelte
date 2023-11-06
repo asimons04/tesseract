@@ -56,13 +56,13 @@
         <SectionTitle class="mt-2">Item</SectionTitle>
 
         {#if item.link && item.content}
-            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.postLinks}>
+            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}>
                 {item.content}
             </Link>
         {:else if item.content}
             <p>{item.content}</p>
         {:else if item.link}
-            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.postLinks}/>
+            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
         {/if}
     {/if}
   

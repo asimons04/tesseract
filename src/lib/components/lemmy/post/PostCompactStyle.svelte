@@ -84,7 +84,7 @@
                 <Link
                     href={post.post.url}
                     title={post.post.url}
-                    newtab={$userSettings.openInNewTab.postLinks}
+                    newtab={$userSettings.openInNewTab.links}
                     highlight
                 >
                     <span class="text-xs">{new URL(post.post.url).host}</span>

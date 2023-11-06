@@ -43,11 +43,11 @@
                 <li class="flex flex-nowrap gap-1">
                     <strong>Item:</strong>
                     {#if item.link && item.content}
-                        <Link href={item.link} highlight newtab={$userSettings.openInNewTab.postLinks}>{item.content}</Link>
+                        <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}>{item.content}</Link>
                     {:else if item.content}
                         {item.content}
                     {:else if item.link}
-                        <Link href={item.link} highlight newtab={$userSettings.openInNewTab.postLinks}/>
+                        <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
                     {/if}
                 </li>
             {/if}

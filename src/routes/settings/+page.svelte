@@ -331,7 +331,7 @@
                         
                         <div class="mx-auto"/>
                         
-                        <Switch bind:enabled={$userSettings.openInNewTab.postLinks} />
+                        <Switch bind:enabled={$userSettings.openInNewTab.links} />
                     </div>
 
                     <!---Use Display Names--->

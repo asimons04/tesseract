@@ -23,7 +23,7 @@
 <Link 
     href={post.post.url}
     title={post.post.url}
-    newtab={$userSettings.openInNewTab.postLinks}  
+    newtab={$userSettings.openInNewTab.links}  
     domainOnly={!$userSettings.uiState.showFullURL}
     highlight nowrap 
         

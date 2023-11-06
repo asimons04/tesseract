@@ -15,7 +15,7 @@
         links.forEach((l) => {
             const photonified = photonify(l.href)
             if (photonified) l.href = photonified
-            if ($userSettings.openInNewTab.postLinks) l.target = '_blank'
+            if ($userSettings.openInNewTab.links) l.target = '_blank'
         })
 
         // If media proxying is enabled, rewrite image urls

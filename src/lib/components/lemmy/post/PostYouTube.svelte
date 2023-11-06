@@ -109,7 +109,7 @@
         }
         highlight nowrap 
         domainOnly={!$userSettings.uiState.showFullURL}
-        newtab={$userSettings.openInNewTab.postLinks}  
+        newtab={$userSettings.openInNewTab.links}  
         
     />
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
@@ -143,7 +143,7 @@
                 : post.post.url
             }
             title={post.post.name}
-            newtab={$userSettings.openInNewTab.postLinks}
+            newtab={$userSettings.openInNewTab.links}
             highlight nowrap
         />
         <PostImage post={post} displayType={displayType}/>

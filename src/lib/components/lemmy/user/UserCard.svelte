@@ -212,7 +212,7 @@
                                 <!--- View on Home Instance--->
                                 <MenuButton link
                                     href="{person.person.actor_id}"
-                                    newtab={$userSettings.openInNewTab.postLinks}
+                                    newtab={$userSettings.openInNewTab.links}
                                     title="View {person.person.display_name ?? person.person.name}'s profile on thier home instance"
                                 >
                                     <Icon src={Home} mini size="16" />

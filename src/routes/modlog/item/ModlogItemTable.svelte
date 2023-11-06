@@ -116,7 +116,7 @@
         {#if item.content}
             <p class="text-sm font-bold mt-2">Content</p>
             {#if item.link}
-                <Link highlight href={item.link} newtab={$userSettings.openInNewTab.postLinks}>
+                <Link highlight href={item.link} newtab={$userSettings.openInNewTab.links}>
                     <p class="text-sm">{item.content.substring(0, 360)}</p>
                 </Link>
             {:else}

@@ -30,14 +30,14 @@
 </script>
 
 {#if url}
-    <Link class="text-xs" href={url} newtab={$userSettings.openInNewTab.postLinks} title={url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+    <Link class="text-xs" href={url} newtab={$userSettings.openInNewTab.links} title={url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
 
 {/if}
 
 {#if thumbnail_url}
     <Link
         href={url}
-        newtab={$userSettings.openInNewTab.postLinks}
+        newtab={$userSettings.openInNewTab.links}
         title={title}
     >
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">

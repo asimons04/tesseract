@@ -73,7 +73,7 @@ interface Settings {
         removalReasonPreset: string
     },
     openInNewTab: {
-        postLinks: boolean,
+        links: boolean,
         posts: boolean,
     },
     modlogCardView: boolean | undefined
@@ -104,10 +104,6 @@ interface Settings {
     uiState: {
         expandSidebar: boolean
         expandCommunitySidebar: boolean
-        expandModeratingList: boolean
-        expandSubscribedList: boolean
-        expandAccountsList: boolean
-        expandFavoritesList: boolean
         postsPerPage: number
         fediseerBadges: boolean
         MBFCBadges: boolean
@@ -130,7 +126,7 @@ interface Settings {
 }
 
 export const defaultSettings: Settings = {
-    version: 0.1,
+    version: 0.2,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -154,10 +150,6 @@ export const defaultSettings: Settings = {
     uiState: {
         expandSidebar: true,
         expandCommunitySidebar: true,
-        expandModeratingList: false,
-        expandSubscribedList: true,
-        expandFavoritesList: true,
-        expandAccountsList: true,
         postsPerPage:                                                   20,
         fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,
@@ -192,7 +184,7 @@ export const defaultSettings: Settings = {
     nsfwBlur:       toBool(env.PUBLIC_NSFW_BLUR)                        ??  true,
     tagNSFWCommunities: toBool(env.PUBLIC_TAG_NSFW_COMMUNITIES)         ??  true,
     openInNewTab: {
-        postLinks:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
+        links:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ??  false,
     },
     modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ??  true,
@@ -375,6 +367,20 @@ export function migrateSettings(old:any) {
             }
         }
         old.version = 0.1;
+    }
+
+    // 0.1 -> 0.2
+    if (old.version == 0.1) {
+        delete old.uiState.expandModeratingList;
+        delete old.uiState.expandSubscribedList;
+        delete old.uiState.expandFavoritesList;
+        delete old.uiState.expandAccountsList;
+
+
+        old.openInNewTab.links = old.openInNewTab.postLinks
+        delete old.openInNewTab.postLinks
+        old.version = 0.2
+
     }
 
     return { ...defaultSettings, ...old }
