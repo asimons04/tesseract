@@ -160,10 +160,10 @@
                 try {
                     let uploadedSettings = JSON.parse(reader.result as string);
                     
-                    if (uploadedSettings.settings) {
-                        $userSettings = migrateSettings(uploadedSettings.settings, defaultSettings);
-                        $profile.favorites = [...uploadedSettings.favorites];
-                        $profile.groups = [...uploadedSettings.groups];
+                    if (uploadedSettings.settings || uploadedSettings.favorites || uploadedSettings.groups) {
+                        if (uploadedSettings.settings) $userSettings = migrateSettings(uploadedSettings.settings, defaultSettings);
+                        if (uploadedSettings.favorites) $profile.favorites = [...uploadedSettings.favorites];
+                        if (uploadedSettings.groups) $profile.groups = [...uploadedSettings.groups];
 
                         toast({
                             type: 'success',

@@ -117,7 +117,9 @@ profile.subscribe(async (p:Profile) => {
 
 
 // Used at login to store a new user profile
-export async function setUser(jwt: string, inst: string, username: string) {
+export async function setUser(jwt: string, inst: string, username: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined>  {
+    let user:{ user: PersonData; site: GetSiteResponse } | undefined = undefined
+    
     // Test that the instance parameter can be a valid URL
     try {
         new URL(`https://${inst}`)
@@ -125,8 +127,16 @@ export async function setUser(jwt: string, inst: string, username: string) {
         return
     }
     
-    // Make authenticated call to getSite to grab the my_user key.
-    const user = await userFromJwt(jwt, inst)
+    try {
+        // Make authenticated call to getSite to grab the my_user key.
+        user = await userFromJwt(jwt, inst)
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+    // If user object unresolved for any reason, toast an error and return
     if (!user) {
         toast({
             content: 'Failed to fetch your user. Is your instance down?',
@@ -139,7 +149,8 @@ export async function setUser(jwt: string, inst: string, username: string) {
     instance.set(inst)
 
     // Update the profileData store and localStorage and add a new profile.
-    profileData.update((pd) => {
+    profileData.update((pd:ProfileData) => {
+        
         // Generate a random number to use as the profile ID
         const id = Math.floor(Math.random() * 100000)
 
@@ -148,7 +159,7 @@ export async function setUser(jwt: string, inst: string, username: string) {
             id: id,
             instance: inst,
             jwt: jwt,
-            username: user.user.local_user_view.person.name,
+            username: user!.user.local_user_view.person.name,
             favorites: [],
             groups: []
 

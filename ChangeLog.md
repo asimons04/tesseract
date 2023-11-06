@@ -25,16 +25,16 @@ All major/minor changes between releases will be documented here.
 
 ### To Do
 - [X] Add favorities container to user profile store
-- [ ] Create an interface for community groups
+- [X] Create an interface for community groups
 - [ ] Add groups container to user profile store
-- [ ] Write functions to add/remove favorities
+- [X] Write functions to add/remove favorities
 - [ ] Write functions to add/remove items to groups
 - [ ] Write a settings panel to create and manage groups
     - [ ] Create new group
     - [ ] Rename/delete groups
     - [ ] Add/remove communities
     - [ ] Use community autocomplete to assist in adding
-- [ ] Create a community button for the post action bar
+- [] Create a community button for the post action bar
     - [ ] Add to Favorities
     - [ ] Add to Group
 - [ ] Create a group management modal (e.g. to select which group to quick-add a community to or to create a new group to use)
@@ -49,6 +49,14 @@ All major/minor changes between releases will be documented here.
 
 
 ### New Features
+
+#### Favorite Communities
+You can now mark a community as a favorite and have it show up in your "Favorites" list for quick access.
+
+[Experimental] You can also browse a feed of just your favorited communities.  
+
+
+
 #### Import/Export Tesseract Settings
 You can now export your Tesseract settings to a JSON file and import it again. New features are coming that will utilize settings storage for templates, favorite communities, community groups, and more. Having the ability to export/backup and restore is going to be a necessary feature, so getting this part out of the way first.
 
@@ -60,7 +68,7 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 #### New Settings
 - **Open Posts in New Tab**:  You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and tie it to the user setting.
 
-- **Versioned Settings**:  I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things. 
+- **Versioned Settings**:  I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things (favorites lists, community groups, etc). 
 
 ### Bugfixes
 - Fixed type on `restoreReplyToAuthor` in mod action object
