@@ -62,7 +62,7 @@
     class="hidden sm:flex flex-col pl-4 pr-4 pt-[1.2rem] overflow-auto sticky top-16 bottom-0
         gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black
         {$userSettings.uiState.expandSidebar
-            ? `max-w-[25%] xl:max-w-[18%] lg:max-w-[20%] resize-x min-w-[12rem]`
+            ? `max-w-[25%] lg:max-w-[20%] xl:max-w-[18%] resize-x min-w-[20rem]`
             : "w-max max-w-max min-w-max"
         }
     "
@@ -110,28 +110,28 @@
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
         <!---Switcher Buttons--->
-        <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-2">
+        <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-1">
             <div class="ml-auto"/>
 
             <Button title="Favorites" size="md" class="!border-none" color="ghost" on:click={()=> panel='favorites'}>
-                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 text-bold' : '' }">
+                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                     <Icon src={Star} mini size="18" title="Favorites" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Favorites</span>
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'md:block' : ''} text-xs">Favorites</span>
                 </span>
             </Button>
 
             <Button title="Subscribed" size="md" class="!border-none" color="ghost" on:click={()=> panel='subscribed'}>
-                <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 dark:text-sky-500 text-bold' : '' }">
+                <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                     <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Subscribed</span>
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'md:block' : ''} text-xs">Subscribed</span>
                 </span>
             </Button>
 
             {#if $profile?.user.moderates.length > 0}
                 <Button title="Moderating" size="md" class="!border-none" color="ghost" on:click={()=> panel='moderating'}>
-                    <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 dark:text-sky-500 text-bold' : '' }">
+                    <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={HandRaised} mini size="18" title="Moderating" />
-                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'xl:block' : ''} text-xs font-normal">Moderating</span>
+                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'md:block' : ''} text-xs ">Moderating</span>
                     </span>
                 </Button>
             {/if}
