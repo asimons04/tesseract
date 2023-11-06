@@ -273,20 +273,6 @@
             {previewing ? 'Edit' : 'Preview'}
         </Button>
         
-        <!--- Cancel Button --->
-        
-        <Button 
-            color="primary"
-            size="sm"
-            title="Cancel"
-            on:click={()=> history.back()}
-            >
-            <Icon src={XCircle} mini size="16"/>
-            
-        </Button>
-        
-
-
         <!--- Restore from Draft--->
         <Button
             on:click={async () => {

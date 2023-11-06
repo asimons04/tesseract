@@ -56,6 +56,8 @@
         )
         
     }
+
+    
 </script>
 
 <nav
@@ -116,14 +118,14 @@
             <Button title="Favorites" size="md" class="!border-none" color="ghost" on:click={()=> panel='favorites'}>
                 <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                     <Icon src={Star} mini size="18" title="Favorites" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'md:block' : ''} text-xs">Favorites</span>
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Favorites</span>
                 </span>
             </Button>
 
             <Button title="Subscribed" size="md" class="!border-none" color="ghost" on:click={()=> panel='subscribed'}>
                 <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                     <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'md:block' : ''} text-xs">Subscribed</span>
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Subscribed</span>
                 </span>
             </Button>
 
@@ -131,7 +133,7 @@
                 <Button title="Moderating" size="md" class="!border-none" color="ghost" on:click={()=> panel='moderating'}>
                     <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={HandRaised} mini size="18" title="Moderating" />
-                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'md:block' : ''} text-xs ">Moderating</span>
+                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">Moderating</span>
                     </span>
                 </Button>
             {/if}
