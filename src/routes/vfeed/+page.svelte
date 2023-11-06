@@ -4,6 +4,8 @@
     import { afterNavigate, beforeNavigate, disableScrollHandling, goto } from '$app/navigation';
     import { page } from '$app/stores'
     import { arrayRange, searchParam } from '$lib/util.js'
+    import { getSessionStorage, setSessionStorage } from '$lib/session'
+    import { scrollToTop } from '$lib/components/lemmy/post/helpers'
     import { sortOptions, sortOptionNames } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
 
@@ -27,6 +29,24 @@
 
     export let data
     console.log(data);
+
+    // Hack to deal with Svelte not returning to the correct spot when returning to the post.
+    afterNavigate(() => {
+        let postID:number|undefined = getSessionStorage('lastClickedPost')?.postID
+        if (postID) {
+            let postDiv = document.getElementById(postID.toString())
+            if (postDiv) {
+                disableScrollHandling();
+                scrollToTop(postDiv, false);
+                setSessionStorage('lastClickedPost', undefined);
+            }
+        }
+        else {
+            // Use default scroll handling
+            disableScrollHandling();
+            window.scrollTo(0,0);
+        }
+    });
 
 </script>
 

@@ -22,6 +22,7 @@
         Bars3,
         ChartBar,
         DocumentDuplicate,
+        Home,
         Icon,
         QueueList,
         UserGroup
@@ -78,13 +79,14 @@
         <header class="sticky top-16 w-full rounded-md bg-white/25 dark:bg-black/25 z-20 backdrop-blur-3xl mt-[-0.4rem] px-2">
             <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
                 
-                <!--Return to Base community page-->
-                <span class="mt-[-6px] mr-2 cursor-pointer" title="{data.community.community_view.community.title}"
+                <!--Home Button-->
+                <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
                     on:click={() => {
-                        goto(window.location.pathname);
+                        goto('/', {invalidateAll: true});
+                        window.scrollTo(0,0);
                     }}
                 >
-                    <Icon src={UserGroup} width={24} />
+                    <Icon src={Home} width={24} />
                 </span>
                 
                 <!---Sort Menu--->
