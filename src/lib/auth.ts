@@ -66,11 +66,11 @@ export let profileData = writable<ProfileData>( getFromStorage<ProfileData>('pro
 
 let guestInstance = get(profileData).defaultInstance
 
-profileData.subscribe(async (pd) => {
+profileData.subscribe(async (pd:ProfileData) => {
     // Save changes to profileData to localStorage 
     saveToStorage('profileData', pd)
 
-    // If guest profile is selected and the guest instance 
+    // If guest profile is selected and the guest instance ...ok, not really sure why this is necessary unless it's an edge case I haven't been able to reproduce.
     if (pd.profile == -1 && guestInstance != pd.defaultInstance) {
         guestInstance = get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL
         instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
@@ -124,6 +124,7 @@ export async function setUser(jwt: string, inst: string, username: string): Prom
     try {
         new URL(`https://${inst}`)
     } catch (err) {
+        console.log("auth.ts->setUser(jwt, inst) -> Invalid instance URL", err);
         return
     }
     
@@ -133,7 +134,7 @@ export async function setUser(jwt: string, inst: string, username: string): Prom
 
     }
     catch (err) {
-        console.log(err);
+        console.log("auth.ts->setUser(jwt, inst) -> userFromJwt:", err);
     }
 
     // If user object unresolved for any reason, toast an error and return
@@ -171,7 +172,7 @@ export async function setUser(jwt: string, inst: string, username: string): Prom
             user: user!.user,
         })
 
-        // Return data that gets written to localStorave->profileData
+        // Return data that gets written to localStorage->profileData
         // Sets the active profile to the one just created
         // Appends the new profile to the aray of profiles already stored.
         return {
@@ -184,18 +185,24 @@ export async function setUser(jwt: string, inst: string, username: string): Prom
 }
 
 async function userFromJwt(jwt: string, instance: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
-    const site = await getClient(instance, undefined, jwt).getSite({ auth: jwt })
-    const myUser = site.my_user
+    try {
+        const site = await getClient(instance, undefined, jwt).getSite({ auth: jwt })
+        const myUser = site.my_user
     
-    if (!myUser) return undefined
+        if (!myUser) return undefined
     
-    return {
-        user: {
-            unreads: 0,
-            reports: 0,
-            ...myUser,
-        },
-        site: site,
+        return {
+            user: {
+                unreads: 0,
+                reports: 0,
+                ...myUser,
+            },
+            site: site,
+        }
+    } 
+    catch (err) {
+        console.log("auth.ts->userFromJWT", err);
+        return undefined;
     }
 }
 
