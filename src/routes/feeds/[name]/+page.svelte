@@ -50,6 +50,9 @@
     });
 
 </script>
+<svelte:head>
+    <title>Feeds: {data.feedName}</title>
+</svelte:head>
 
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
 

@@ -37,7 +37,7 @@ export async function load(req: any) {
     // Search the user's defined groups to see if the supplied feed name matches a group
     let index = userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == feed)
     if (index >=0) {
-        communities = userProfile.groups[index].communities
+        communities = userProfile.groups[index].communities.map((c:Community) => c.id) ?? []
         feedName    = userProfile.groups[index].name
     }
 
@@ -88,15 +88,13 @@ export async function load(req: any) {
     }
 
     // Sort the posts however
-    if (sort == 'New')      combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
-    if (sort == 'Old')      combinedPosts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
+    if (sort == 'New')          combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+    if (sort == 'Old')          combinedPosts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
     if (sort == 'NewComments')  combinedPosts.sort((a, b) => Date.parse(b.counts.newest_commentTime) - Date.parse(a.counts.newest_comment_time))
-    if (sort.startsWith('Top')) combinedPosts.sort((a, b) => b.counts.score - a.counts.score)
-    
-    if (sort == 'Active') combinedPosts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
-    if (sort == 'Hot') combinedPosts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+    if (sort == 'Active')       combinedPosts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+    if (sort == 'Hot')          combinedPosts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
     if (sort == 'MostComments') combinedPosts.sort((a, b) => b.counts.comments - a.counts.comments)
-    
+    if (sort.startsWith('Top')) combinedPosts.sort((a, b) => b.counts.score - a.counts.score)
     
 
 
@@ -128,6 +126,7 @@ export async function load(req: any) {
         page: page,
         sort: sort,
         feed: feed,
+        feedName: feedName
     }
 }
 

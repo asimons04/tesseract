@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Community } from 'lemmy-js-client'
 
-    import { addFavorite, isFavorite } from '$lib/favorites'
+    import { addFavorite, addCommunityToGroup, isFavorite } from '$lib/favorites'
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fullCommunityName } from '$lib/util.js'
     import { goto } from '$app/navigation'
@@ -93,7 +93,7 @@
         </MenuButton>
 
         <!---Add to Group (Not yet implemented--->
-        <MenuButton title="Add to Group" on:click={(e) => {e.stopPropagation(); addFavorite(community, !favorite)} }>
+        <MenuButton title="Add to Group" on:click={(e) => {e.stopPropagation(); addCommunityToGroup(community)} }>
             <Icon src={QueueList} mini size="16" />
             Add to Group
         </MenuButton>
