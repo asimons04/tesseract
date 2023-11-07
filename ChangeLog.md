@@ -53,7 +53,7 @@ All major/minor changes between releases will be documented here.
 #### Favorite Communities
 You can now mark a community as a favorite and have it show up in your "Favorites" list for quick access.
 
-[Experimental] You can also browse a feed of just your favorited communities.  
+You can also browse a feed of just your favorited communities.  
 
 
 
