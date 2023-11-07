@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Community, Person } from 'lemmy-js-client'
 
-    import { createEventDispatcher, onMount } from 'svelte'
+    import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
     
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -47,28 +47,42 @@
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
     let textArea: HTMLTextAreaElement
-    
+    let uploadingImage = false
+    let loading = false
+    let image: FileList | null = null
     let emojiPickerOpen:boolean = false
     let pickerContainer:HTMLDivElement
-    let picker = new EmojiPicker({
-        data: EmojiMartData,
-        navPosition: 'none',
-        //categories: ['frequent'],
-        //onClickOutside: () => { emojiPickerOpen = !emojiPickerOpen },
-        onEmojiSelect: (s) => {
-            textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, s.native)
-            emojiPickerOpen = !emojiPickerOpen
-        },
-        set: 'google',
-        theme: dark() ? 'dark': 'auto',
-        previewPosition: 'none',
-        dynamicWidth: true
-    });
     
+    const getPicker = function () { 
+        return new EmojiPicker({
+            data: EmojiMartData,
+            onEmojiSelect: (s) => {
+                value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, s.native)
+                emojiPickerOpen = !emojiPickerOpen
+            },
+            set: 'google',
+            theme: dark() ? 'dark': 'auto',
+            previewPosition: 'none',
+            navPosition: 'none',
+            dynamicWidth: true
+        });
+    }
+    let picker = getPicker();
+
+    // Recreate the picker when its container gets removed/recreated in the DOM when switching between edit/preview
+    afterUpdate(() => {
+        if (pickerContainer && !pickerContainer.contains(picker)) {
+            picker = getPicker()
+            pickerContainer.appendChild(picker)
+        }
+
+    })
+    
+    // Initialize the emoji picker
     onMount(() => {
         pickerContainer.appendChild(picker);
     })
-    
+
 
     function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
         return str.substring(0, startIndex) + replacement + str.substring(endIndex)
@@ -95,9 +109,7 @@
         value = textArea.value
     }
 
-    let uploadingImage = false
-    let loading = false
-    let image: FileList | null = null
+    
 
     async function upload() {
         if (!$profile?.jwt || image == null) return
@@ -153,41 +165,32 @@
     <div class="flex flex-col border border-slate-300 dark:border-zinc-800 rounded-md overflow-hidden focus-within:border-black focus-within:dark:border-white transition-colors w-full h-full">
         {#if previewing}
             <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm {resizeable ? 'resize-y' : 'resize-none'}" style="height: {(rows+3)*24}px">
-                <Markdown source={beforePreview(value)} />
+                <Markdown source={value} />
             </div>
 
         {:else}
-            <!--Toolbar-->
-            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-visible p-1.5 gap-1.5 mb-2 h-[40px]
-                {$$props.disabled
-                    ? 'opacity-60 pointer-events-none'
-                    : ''
-                }
-            "
-            >
-                <!--Emoji Picker Button-->
-                <Button
-                    on:click={() => emojiPickerOpen = !emojiPickerOpen}
-                    title="Emojis"
-                    size="square-md"
-                >
-                    <span class="font-bold">
-                        <Icon src={FaceSmile} mini size="16"/>
-                    </span>
-                </Button>
-
-                <!--- Emoji Picker--->
-                <div bind:this={pickerContainer} class="overflow-hidden z-20 w-full ml-[-15px]" class:hidden={!emojiPickerOpen} style="height: {(rows+5)*24}px"/>
-
-                {#if !emojiPickerOpen}
-                    {#if images}
+            <div class="flex flex-col">
+                <!--Toolbar-->
+                <div class="[&>*]:flex-shrink-0 flex flex-row overflow-x-scroll overflow-y-hidden h-fit p-1.5 gap-1.5 mb-2 {$$props.disabled ? 'opacity-60 pointer-events-none' : ''}">
+                    <!--Emoji Picker Button-->
                     <Button
-                        on:click={() => (uploadingImage = !uploadingImage)}
-                        title="Image"
+                        on:click={() => emojiPickerOpen = !emojiPickerOpen}
+                        title="Emojis"
                         size="square-md"
                     >
-                        <Icon src={Photo} size="16" mini />
+                        <span class="font-bold">
+                            <Icon src={FaceSmile} mini size="16"/>
+                        </span>
                     </Button>
+
+                    {#if images}
+                        <Button
+                            on:click={() => (uploadingImage = !uploadingImage)}
+                            title="Image"
+                            size="square-md"
+                        >
+                            <Icon src={Photo} size="16" mini />
+                        </Button>
                     {/if}
                 
                     <Button
@@ -282,33 +285,35 @@
                             X<sup>1</sup>
                         </span>
                     </Button>
+                </div>
 
-                    
+                <!---Emoji Picker Panel--->
+                <div class="w-full z-20 h-[0px]">
+                    <!--- Emoji Picker--->
+                    <div bind:this={pickerContainer} class="overflow-hidden w-full" class:hidden={!emojiPickerOpen} style="height: {(rows+5)*24}px"/>
+                </div>
 
-                    
-                {/if}
-            </div>
-
-            <!--Actual text area-->
-            <TextArea
-                class="border-0 rounded-none h-full focus-within:border-none {resizeable ? 'resize-y' : 'resize-none'}"
-                bind:value
-                bind:item={textArea}
-                on:keydown={(e) => {
-                    if (disabled) return
-                    if (e.ctrlKey || e.metaKey) {
-                        // @ts-ignore
-                        let shortcut = shortcuts[e.code]
-                        if (shortcut) {
-                            e.preventDefault()
-                            shortcut?.()
+                <!--Actual text area-->
+                <TextArea
+                    class="border-0 rounded-none h-full focus-within:border-none {resizeable ? 'resize-y' : 'resize-none'}"
+                    bind:value
+                    bind:item={textArea}
+                    on:keydown={(e) => {
+                        if (disabled) return
+                        if (e.ctrlKey || e.metaKey) {
+                            // @ts-ignore
+                            let shortcut = shortcuts[e.code]
+                            if (shortcut) {
+                                e.preventDefault()
+                                shortcut?.()
+                            }
                         }
-                    }
-                }}
-                {rows}
-                {id}
-                {...$$restProps}
-            />
+                    }}
+                    {rows}
+                    {id}
+                    {...$$restProps}
+                />
+            </div>
         {/if}
         
         {#if $$slots.actions || previewButton}
