@@ -185,10 +185,14 @@ pre {
 }
 
 em-emoji-picker {
-    width: 100%;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
  } 
 
+
 @media screen and (max-width:67em) {
+    
     .flexrow { 
         flex-direction: column; 
         align-items: left;

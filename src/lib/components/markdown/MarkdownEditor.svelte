@@ -52,8 +52,12 @@
     let pickerContainer:HTMLDivElement
     let picker = new EmojiPicker({
         data: EmojiMartData,
+        navPosition: 'none',
+        //categories: ['frequent'],
+        //onClickOutside: () => { emojiPickerOpen = !emojiPickerOpen },
         onEmojiSelect: (s) => {
             textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, s.native)
+            emojiPickerOpen = !emojiPickerOpen
         },
         set: 'google',
         theme: dark() ? 'dark': 'auto',
@@ -154,7 +158,7 @@
 
         {:else}
             <!--Toolbar-->
-            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-visible p-1.5 gap-1.5 mb-2 h-[36px]
+            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-visible p-1.5 gap-1.5 mb-2 h-[40px]
                 {$$props.disabled
                     ? 'opacity-60 pointer-events-none'
                     : ''
@@ -173,7 +177,7 @@
                 </Button>
 
                 <!--- Emoji Picker--->
-                <div bind:this={pickerContainer} class="overflow-hidden z-50 w-full pr-[1.3rem] mt-[-0.2rem]" class:hidden={!emojiPickerOpen} style="height: {(rows+5.5)*24}px"/>
+                <div bind:this={pickerContainer} class="overflow-hidden z-20 w-full ml-[-15px]" class:hidden={!emojiPickerOpen} style="height: {(rows+5)*24}px"/>
 
                 {#if !emojiPickerOpen}
                     <Button
