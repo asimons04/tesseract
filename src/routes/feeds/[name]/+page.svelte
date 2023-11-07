@@ -5,7 +5,7 @@
     import { page } from '$app/stores'
     import { arrayRange, searchParam } from '$lib/util.js'
     import { getSessionStorage, setSessionStorage } from '$lib/session'
-    import { profile } from '$lib/auth'
+    import { type CommunityGroup, profile } from '$lib/auth'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
     import { sortOptions, sortOptionNames } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
@@ -74,8 +74,8 @@
                 
                 <SelectMenu
                     alignment="bottom-left"
-                    options={['favorites']}
-                    optionNames={['Favorites']}
+                    options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase()) ?? [] ]}
+                    optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name) ?? [] ]}
                     selected={data.feed}
                     title="Listing Type"
                     icon={Bars3}
