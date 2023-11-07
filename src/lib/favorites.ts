@@ -73,7 +73,7 @@ export const addGroup = function(name:string, communities:Community[] = [] as Co
 
     if (name) {
         let newGroup:CommunityGroup = {
-            name: name,
+            name: name.slice(0,25),
             communities: [...communities]
         }
         
@@ -117,10 +117,6 @@ export const addCommunityToGroup = function (community:Community, groupName:stri
     profile.set({...userProfile})
     saveProfile(userProfile)
     console.log("Added community to group");
-
-
-    
-
 }
 
 

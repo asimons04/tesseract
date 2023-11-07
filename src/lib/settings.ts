@@ -126,7 +126,7 @@ interface Settings {
 }
 
 export const defaultSettings: Settings = {
-    version: 0.2,
+    version: 0.3,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,

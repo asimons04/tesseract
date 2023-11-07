@@ -71,21 +71,22 @@
                     <Icon src={Home} width={24} />
                 </span>
 
-                
-                <SelectMenu
-                    alignment="bottom-left"
-                    options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase()) ?? [] ]}
-                    optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name) ?? [] ]}
-                    selected={data.feed}
-                    title="Listing Type"
-                    icon={Bars3}
-                    on:select={(e) => {
-                        // @ts-ignore
-                        goto(`/feeds/${e.detail}`)
-                    }}
-                />
-                
-                <Icon src={ArrowSmallRight} mini width={24} />
+                {#if data.feed}
+                    <SelectMenu
+                        alignment="bottom-left"
+                        options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase()) ?? [] ]}
+                        optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name) ?? [] ]}
+                        selected={data.feed}
+                        title="Listing Type"
+                        icon={Bars3}
+                        on:select={(e) => {
+                            // @ts-ignore
+                            goto(`/feeds/${e.detail}`)
+                        }}
+                    />
+                    
+                    <Icon src={ArrowSmallRight} mini width={24} />
+                {/if}
                 
                 <!---Sort Menu--->
                 <SelectMenu
