@@ -1144,7 +1144,7 @@
                                 Export your Tesseract application settings to a JSON file. This does not include any account information.
                             </p>
                             <details>
-                                <summary class="text-xs font-bold cursor-pointer mt-2">What's include in the export?</summary>
+                                <summary class="text-xs font-bold cursor-pointer mt-2">What's included in the export?</summary>
                                 <p class="text-xs font-normal">All setting and preferences (except dark mode) as well as your favorites and community groups.</p>
                             </details>
                         </div>

@@ -12,7 +12,7 @@ import { toast } from '$lib/components/ui/toasts/toasts.js'
 export interface CommunityGroup {
     name:string,
     communities:Community[],
-    sort: SortType,
+    sort?: SortType,
 }
 
 
