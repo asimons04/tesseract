@@ -184,6 +184,10 @@ pre {
     min-width:90%;
 }
 
+em-emoji-picker {
+    width: 100%;
+ } 
+
 @media screen and (max-width:67em) {
     .flexrow { 
         flex-direction: column; 

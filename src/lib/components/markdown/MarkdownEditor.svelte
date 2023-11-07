@@ -1,109 +1,132 @@
 <script lang="ts">
-  import { profile } from '$lib/auth.js'
-  import Button from '$lib/components/input/Button.svelte'
-  import FileInput from '$lib/components/input/FileInput.svelte'
-  import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-  import TextArea from '$lib/components/input/TextArea.svelte'
-  import Markdown from '$lib/components/markdown/Markdown.svelte'
-  import Modal from '$lib/components/ui/modal/Modal.svelte'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
-  import { uploadImage } from '$lib/lemmy.js'
-  import type { Community, Person } from 'lemmy-js-client'
-  import { createEventDispatcher } from 'svelte'
-  import {
-    CodeBracket,
-    ExclamationTriangle,
-    Icon,
-    Link,
-    ListBullet,
-    Photo,
-  } from 'svelte-hero-icons'
+    import type { Community, Person } from 'lemmy-js-client'
 
-  export let images: boolean = true
-  export let value: string = ''
-  export let label: string | undefined = undefined
-  export let previewButton: boolean = false
-  export let disabled: boolean = false
-  export let rows: number = 4
-  export let previewing:boolean = false;
-  export let id:string = '';
-  export let resizeable:boolean = true;
+    import { createEventDispatcher, onMount } from 'svelte'
+    
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { uploadImage } from '$lib/lemmy.js'
+    
+    import Button from '$lib/components/input/Button.svelte'
+    import FileInput from '$lib/components/input/FileInput.svelte'
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import TextArea from '$lib/components/input/TextArea.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
 
-  export let previewContainerClass:string = '';
-  export let previewContainerStyle:string = '';
+    import EmojiMartData from '@emoji-mart/data/sets/14/google.json'
+    import {Picker as EmojiPicker}  from 'emoji-mart'
   
-  export let beforePreview: (input: string) => string = (input) => input
+  
+  
+    import {
+        CodeBracket,
+        ExclamationTriangle,
+        FaceSmile,
+        Icon,
+        Link,
+        ListBullet,
+        Photo,
+    } from 'svelte-hero-icons'
 
-  const dispatcher = createEventDispatcher<{ confirm: string }>()
+    export let images: boolean = true
+    export let value: string = ''
+    export let label: string | undefined = undefined
+    export let previewButton: boolean = false
+    export let disabled: boolean = false
+    export let rows: number = 4
+    export let previewing:boolean = false;
+    export let id:string = '';
+    export let resizeable:boolean = true;
 
-  let textArea: HTMLTextAreaElement
+    export let previewContainerClass:string = '';
+    export let previewContainerStyle:string = '';
+  
+    export let beforePreview: (input: string) => string = (input) => input
 
-  function replaceTextAtIndices(
-    str: string,
-    startIndex: number,
-    endIndex: number,
-    replacement: string
-  ) {
-    return str.substring(0, startIndex) + replacement + str.substring(endIndex)
-  }
+    const dispatcher = createEventDispatcher<{ confirm: string }>()
 
-  function wrapSelection(start: string, end: string) {
-    const startPos = textArea.selectionStart
-    const endPos = textArea.selectionEnd
+    let textArea: HTMLTextAreaElement
+    
+    let emojiPickerOpen:boolean = false
+    let pickerContainer:HTMLDivElement
+    let picker = new EmojiPicker({
+        data: EmojiMartData,
+        onEmojiSelect: (s) => {
+            textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, s.native)
+        },
+        set: 'google',
+        theme: dark() ? 'dark': 'auto',
+        previewPosition: 'none',
+        dynamicWidth: true
+    });
+    
+    onMount(() => {
+        pickerContainer.appendChild(picker);
+    })
+    
 
-    const substring = textArea.value.substring(startPos, endPos)
-    let newText = `${start}${substring}${end}`
-
-    textArea.value = replaceTextAtIndices(
-      textArea.value,
-      startPos,
-      endPos,
-      newText
-    )
-
-    textArea.focus()
-    textArea.selectionStart = startPos + start.length
-    textArea.selectionEnd = endPos + start.length
-
-    value = textArea.value
-  }
-
-  let uploadingImage = false
-  let loading = false
-  let image: FileList | null = null
-
-  async function upload() {
-    if (!$profile?.jwt || image == null) return
-
-    loading = true
-
-    try {
-      const uploaded = await uploadImage(image[0])
-
-      if (!uploaded) throw new Error('Image upload returned undefined')
-
-      wrapSelection(`![](${uploaded})`, '')
-
-      uploadingImage = false
-    } catch (err) {
-      toast({
-        content: err as any,
-        type: 'error',
-      })
+    function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
+        return str.substring(0, startIndex) + replacement + str.substring(endIndex)
     }
 
-    loading = false
-  }
+    function wrapSelection(start: string, end: string) {
+        const startPos = textArea.selectionStart
+        const endPos = textArea.selectionEnd
+
+        const substring = textArea.value.substring(startPos, endPos)
+        let newText = `${start}${substring}${end}`
+
+        textArea.value = replaceTextAtIndices(
+            textArea.value,
+            startPos,
+            endPos,
+            newText
+        )
+
+        textArea.focus()
+        textArea.selectionStart = startPos + start.length
+        textArea.selectionEnd = endPos + start.length
+
+        value = textArea.value
+    }
+
+    let uploadingImage = false
+    let loading = false
+    let image: FileList | null = null
+
+    async function upload() {
+        if (!$profile?.jwt || image == null) return
+
+        loading = true
+
+        try {
+            const uploaded = await uploadImage(image[0])
+            if (!uploaded) throw new Error('Image upload returned undefined')
+            wrapSelection(`![](${uploaded})`, '')
+            uploadingImage = false
+        } catch (err) {
+            toast({
+                content: err as any,
+                type: 'error',
+            })
+        }
+
+        loading = false
+    }
 
 
-  const shortcuts = {
-    KeyB: () => wrapSelection('**', '**'),
-    KeyI: () => wrapSelection('*', '*'),
-    KeyS: () => wrapSelection('~~', '~~'),
-    KeyH: () => wrapSelection('\n# ', ''),
-    KeyK: () => wrapSelection('[](', ')'),
-    Enter: () => dispatcher('confirm', value),
-  }
+    const shortcuts = {
+        KeyB: () => wrapSelection('**', '**'),
+        KeyE: () => {emojiPickerOpen = !emojiPickerOpen},
+        KeyI: () => wrapSelection('*', '*'),
+        KeyS: () => wrapSelection('~~', '~~'),
+        KeyH: () => wrapSelection('\n# ', ''),
+        KeyK: () => wrapSelection('[](', ')'),
+        Enter: () => dispatcher('confirm', value),
+    }
+
+    
 </script>
 
 {#if uploadingImage && images}
@@ -131,114 +154,132 @@
 
         {:else}
             <!--Toolbar-->
-            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 mb-2
+            <div class="[&>*]:flex-shrink-0 flex flex-row overflow-visible p-1.5 gap-1.5 mb-2 h-[36px]
                 {$$props.disabled
                     ? 'opacity-60 pointer-events-none'
                     : ''
                 }
             "
             >
+                <!--Emoji Picker Button-->
                 <Button
-                    on:click={() => wrapSelection('**', '**')}
-                    title="Bold"
-                    size="square-md"
-                >
-                    <span class="font-bold">B</span>
-                </Button>
-
-                <Button
-                    on:click={() => wrapSelection('*', '*')}
-                    title="Italic"
-                    size="square-md"
-                >
-                    <span class="italic font-bold">I</span>
-                </Button>
-            
-                <Button
-                    on:click={() => wrapSelection('[label](url)', '')}
-                    title="Link"
-                    size="square-md"
-                >
-                    <Icon src={Link} mini size="16" />
-                </Button>
-            
-                <Button
-                    on:click={() => wrapSelection('\n# ', '')}
-                    title="Header"
-                    size="square-md"
-                >
-                    <span class="italic font-bold font-serif">H</span>
-                </Button>
-
-                <Button
-                    on:click={() => wrapSelection('~~', '~~')}
-                    title="Strikethrough"
-                    size="square-md"
-                >
-                    <span class="line-through font-bold">S</span>
-                </Button>
-
-                <Button
-                    on:click={() => wrapSelection('\n> ', '')}
-                    title="Quote"
-                    size="square-md"
-                >
-                    <span class="font-bold font-serif">"</span>
-                </Button>
-
-                <Button
-                    on:click={() => wrapSelection('\n- ', '')}
-                    title="List"
-                    size="square-md"
-                >
-                    <Icon src={ListBullet} mini size="16" />
-                </Button>
-
-                <Button
-                    on:click={() => wrapSelection('`', '`')}
-                    title="Code"
-                    size="square-md"
-                >
-                    <Icon src={CodeBracket} mini size="16" />
-                </Button>
-
-                <Button
-                    on:click={() =>
-                    wrapSelection('::: spoiler <spoiler title>\n', '\n:::')}
-                    title="Spoiler"
-                    size="square-md"
-                >
-                    <Icon src={ExclamationTriangle} mini size="16" />
-                </Button>
-            
-                <Button
-                    on:click={() => wrapSelection('~', '~')}
-                    title="Subscript"
+                    on:click={() => emojiPickerOpen = !emojiPickerOpen}
+                    title="Emojis"
                     size="square-md"
                 >
                     <span class="font-bold">
-                        X<sub>1</sub>
-                    </span>
-                </Button>
-            
-                <Button
-                    on:click={() => wrapSelection('^', '^')}
-                    title="Superscript"
-                    size="square-md"
-                >
-                    <span class="font-bold">
-                        X<sup>1</sup>
+                        <Icon src={FaceSmile} mini size="16"/>
                     </span>
                 </Button>
 
-                {#if images}
-                <Button
-                    on:click={() => (uploadingImage = !uploadingImage)}
-                    title="Image"
-                    size="square-md"
-                >
-                    <Icon src={Photo} size="16" mini />
-                </Button>
+                <!--- Emoji Picker--->
+                <div bind:this={pickerContainer} class="overflow-hidden z-50 w-full pr-[1.3rem] mt-[-0.2rem]" class:hidden={!emojiPickerOpen} style="height: {(rows+5.5)*24}px"/>
+
+                {#if !emojiPickerOpen}
+                    <Button
+                        on:click={() => wrapSelection('**', '**')}
+                        title="Bold"
+                        size="square-md"
+                    >
+                        <span class="font-bold">B</span>
+                    </Button>
+
+                    <Button
+                        on:click={() => wrapSelection('*', '*')}
+                        title="Italic"
+                        size="square-md"
+                    >
+                        <span class="italic font-bold">I</span>
+                    </Button>
+                
+                    <Button
+                        on:click={() => wrapSelection('[label](url)', '')}
+                        title="Link"
+                        size="square-md"
+                    >
+                        <Icon src={Link} mini size="16" />
+                    </Button>
+                
+                    <Button
+                        on:click={() => wrapSelection('\n# ', '')}
+                        title="Header"
+                        size="square-md"
+                    >
+                        <span class="italic font-bold font-serif">H</span>
+                    </Button>
+
+                    <Button
+                        on:click={() => wrapSelection('~~', '~~')}
+                        title="Strikethrough"
+                        size="square-md"
+                    >
+                        <span class="line-through font-bold">S</span>
+                    </Button>
+
+                    <Button
+                        on:click={() => wrapSelection('\n> ', '')}
+                        title="Quote"
+                        size="square-md"
+                    >
+                        <span class="font-bold font-serif">"</span>
+                    </Button>
+
+                    <Button
+                        on:click={() => wrapSelection('\n- ', '')}
+                        title="List"
+                        size="square-md"
+                    >
+                        <Icon src={ListBullet} mini size="16" />
+                    </Button>
+
+                    <Button
+                        on:click={() => wrapSelection('`', '`')}
+                        title="Code"
+                        size="square-md"
+                    >
+                        <Icon src={CodeBracket} mini size="16" />
+                    </Button>
+
+                    <Button
+                        on:click={() =>
+                        wrapSelection('::: spoiler <spoiler title>\n', '\n:::')}
+                        title="Spoiler"
+                        size="square-md"
+                    >
+                        <Icon src={ExclamationTriangle} mini size="16" />
+                    </Button>
+                
+                    <Button
+                        on:click={() => wrapSelection('~', '~')}
+                        title="Subscript"
+                        size="square-md"
+                    >
+                        <span class="font-bold">
+                            X<sub>1</sub>
+                        </span>
+                    </Button>
+                
+                    <Button
+                        on:click={() => wrapSelection('^', '^')}
+                        title="Superscript"
+                        size="square-md"
+                    >
+                        <span class="font-bold">
+                            X<sup>1</sup>
+                        </span>
+                    </Button>
+
+                    
+
+                    {#if images}
+                    <Button
+                        on:click={() => (uploadingImage = !uploadingImage)}
+                        title="Image"
+                        size="square-md"
+                    >
+                        <Icon src={Photo} size="16" mini />
+                    </Button>
+                    {/if}
                 {/if}
             </div>
 

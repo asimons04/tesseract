@@ -33,13 +33,17 @@ export async function load(req: any) {
         communities = userProfile.favorites?.map((c:Community) => c.id) ?? []
         feedName = "My Favorites"
     }
-
-    if (userProfile.groups) {
+    else if (userProfile.groups) {
         // Search the user's defined groups to see if the supplied feed name matches a group
         let index = userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == feed)
         if (index >=0) {
             communities = userProfile.groups[index].communities.map((c:Community) => c.id) ?? []
             feedName    = userProfile.groups[index].name
+        }
+        else {
+            communities = [] as Community[]
+            feedName = 'Feed Not Found'
+            feed = ''
         }
     }
     else {

@@ -71,22 +71,21 @@
                     <Icon src={Home} width={24} />
                 </span>
 
-                {#if data.feed}
-                    <SelectMenu
-                        alignment="bottom-left"
-                        options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase()) ?? [] ]}
-                        optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name) ?? [] ]}
-                        selected={data.feed}
-                        title="Listing Type"
-                        icon={Bars3}
-                        on:select={(e) => {
-                            // @ts-ignore
-                            goto(`/feeds/${e.detail}`)
-                        }}
-                    />
+                
+                <SelectMenu
+                    alignment="bottom-left"
+                    options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase()) ?? [] ]}
+                    optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name) ?? [] ]}
+                    selected={data.feed || 'Choose a Group'}
+                    title="Listing Type"
+                    icon={Bars3}
+                    on:select={(e) => {
+                        // @ts-ignore
+                        goto(`/feeds/${e.detail}`)
+                    }}
+                />
                     
-                    <Icon src={ArrowSmallRight} mini width={24} />
-                {/if}
+                <Icon src={ArrowSmallRight} mini width={24} />
                 
                 <!---Sort Menu--->
                 <SelectMenu
@@ -146,7 +145,7 @@
                 <Placeholder
                     icon={ArchiveBox}
                     title="No posts"
-                    description="There's nothing here. Have you favorited any communities?"
+                    description={`There's nothing here.  ${data.feed ? "You haven't added any communities to this group" : `The specified group does not seem to exist yet.`}`}
                 />
             {/if}
             

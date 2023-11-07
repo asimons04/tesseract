@@ -1,10 +1,23 @@
 <script lang="ts">
     import { LINKED_INSTANCE_URL } from "$lib/instance.js"
+
+    import { expoOut } from 'svelte/easing'
+    import { flip } from 'svelte/animate'
+    import { profile, profileData } from '$lib/auth.js'
+    import { userSettings } from '$lib/settings.js'
+    
+    import Button from '../../input/Button.svelte'
+    import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
+
     import {
         AdjustmentsHorizontal,
         ArchiveBox,
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
+        Bars3,
         BuildingOffice,
         ChevronDoubleLeft,
         ChevronDoubleDown,
@@ -23,22 +36,6 @@
         UserGroup,
         XCircle
     } from 'svelte-hero-icons'
-    
-    import Button from '../../input/Button.svelte'
-    
-
-    import { expoOut } from 'svelte/easing'
-    import { flip } from 'svelte/animate'
-    import { profile, profileData } from '$lib/auth.js'
-    import { userSettings } from '$lib/settings.js'
-    
-    import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
-    
-    
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    
     let panel: 'favorites' | 'subscribed' | 'moderating' = 'subscribed';
     
     // Support components for the community filter
@@ -104,6 +101,12 @@
     <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities">
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Communities</span>
+    </SidebarButton>
+
+    <!---Feed Groups--->
+    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Feeds">
+        <Icon src={Bars3} mini size="18" title="Feeds" />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>Feeds</span>
     </SidebarButton>
 
 
