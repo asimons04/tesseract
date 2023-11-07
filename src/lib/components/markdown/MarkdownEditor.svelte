@@ -52,7 +52,7 @@
     let image: FileList | null = null
     let emojiPickerOpen:boolean = false
     let pickerContainer:HTMLDivElement
-    
+
     const getPicker = function () { 
         return new EmojiPicker({
             data: EmojiMartData,
