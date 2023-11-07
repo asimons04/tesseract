@@ -90,8 +90,7 @@ export async function load(req: any) {
     // Sort the posts however
     if (sort == 'New')      combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
     if (sort == 'Old')      combinedPosts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-    
-    if (sort == 'NewComments')  combinedPosts.sort((a, b) => b.unread_comments - a.unread_comments)
+    if (sort == 'NewComments')  combinedPosts.sort((a, b) => Date.parse(b.counts.newest_commentTime) - Date.parse(a.counts.newest_comment_time))
     if (sort.startsWith('Top')) combinedPosts.sort((a, b) => b.counts.score - a.counts.score)
     if (sort == 'Active' || sort == 'MostComments' || sort == 'Hot') combinedPosts.sort((a, b) => b.counts.comments - a.counts.comments)
 
