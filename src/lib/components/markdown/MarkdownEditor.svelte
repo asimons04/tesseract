@@ -180,6 +180,16 @@
                 <div bind:this={pickerContainer} class="overflow-hidden z-20 w-full ml-[-15px]" class:hidden={!emojiPickerOpen} style="height: {(rows+5)*24}px"/>
 
                 {#if !emojiPickerOpen}
+                    {#if images}
+                    <Button
+                        on:click={() => (uploadingImage = !uploadingImage)}
+                        title="Image"
+                        size="square-md"
+                    >
+                        <Icon src={Photo} size="16" mini />
+                    </Button>
+                    {/if}
+                
                     <Button
                         on:click={() => wrapSelection('**', '**')}
                         title="Bold"
@@ -275,15 +285,7 @@
 
                     
 
-                    {#if images}
-                    <Button
-                        on:click={() => (uploadingImage = !uploadingImage)}
-                        title="Image"
-                        size="square-md"
-                    >
-                        <Icon src={Photo} size="16" mini />
-                    </Button>
-                    {/if}
+                    
                 {/if}
             </div>
 
