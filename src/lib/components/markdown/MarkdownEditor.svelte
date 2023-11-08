@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Community, Person } from 'lemmy-js-client'
 
-    import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
+    import { createEventDispatcher } from 'svelte'
     
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -15,11 +15,6 @@
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
 
-    //import EmojiMartData from '@emoji-mart/data/sets/14/google.json'
-    //import {Picker as EmojiPicker}  from 'emoji-mart'
-  
-  
-  
     import {
         CodeBracket,
         ExclamationTriangle,
@@ -52,42 +47,6 @@
     let loading = false
     let image: FileList | null = null
     let emojiPickerOpen:boolean = false
-    /*
-    let emojiPickerOpen:boolean = false
-    let pickerContainer:HTMLDivElement
-
-    const getPicker = function () { 
-        return new EmojiPicker({
-            data: EmojiMartData,
-            onEmojiSelect: (s) => {
-                value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, s.native)
-                emojiPickerOpen = !emojiPickerOpen
-            },
-            set: 'google',
-            theme: dark() ? 'dark': 'auto',
-            previewPosition: 'none',
-            navPosition: 'none',
-            dynamicWidth: true
-        });
-    }
-    
-    let picker = getPicker();
-
-    // Recreate the picker when its container gets removed/recreated in the DOM when switching between edit/preview
-    afterUpdate(() => {
-        if (pickerContainer && !pickerContainer.contains(picker)) {
-            picker = getPicker()
-            pickerContainer.appendChild(picker)
-        }
-
-    })
-    
-    // Initialize the emoji picker
-    onMount(() => {
-        pickerContainer.appendChild(picker);
-    })
-    */
-
 
     function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
         return str.substring(0, startIndex) + replacement + str.substring(endIndex)
@@ -294,12 +253,6 @@
 
                 <!---Emoji Picker Panel--->
                 <EmojiPicker bind:value bind:textArea {rows} bind:open={emojiPickerOpen} />
-                <!--
-                <div class="w-full z-20 h-[0px]">
-                    
-                    <div bind:this={pickerContainer} class="overflow-hidden w-full" class:hidden={!emojiPickerOpen} style="height: {(rows+5)*24}px"/>
-                </div>
-                -->
 
                 <!--Actual text area-->
                 <TextArea

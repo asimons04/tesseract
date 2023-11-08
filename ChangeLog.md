@@ -50,6 +50,7 @@ All major/minor changes between releases will be documented here.
 
 
 ### New Features
+The last release was mostly for the mods/admins, so this release has something for the users.  Several somethings, actually.
 
 #### Emoji Picker and Custom Emoji Support
 Added Emoji picker to markdown editor toolbar.  It supports the instance-specific custom emojis, but doesn't currently scale them down; they just appear as images.
@@ -65,13 +66,14 @@ You can now mark a community as a favorite and have it show up in your "Favorite
 You can create named groups and add communities to them.  Access them from the sidebar.  Similar to favorites list, but more granular.
 
 #### Custom Feeds
-Finally, you can tame your subscriptions and bring some order to the firehose.
+Finally, you can tame your subscriptions and bring some order to the chaos.
 
-Building from the favorites and community groups, Tesseract now has custom feeds based on those. 
+Building from the favorites and community groups, Tesseract now has custom feeds based on the communities you place into those groups. 
 
 View only posts from your chosen group of communities as a feed.  For example, you can create a group called "News and Politics" and add your news and political communities to those.  Then browse those as a virtual feed.  Create another group for memes and lulz, one for music communities, and so on.  
 
-
+#### New Setting: Open Posts in New Tab
+You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and expose it as a user setting.
 
 #### Import/Export Tesseract Settings
 You can now export your Tesseract settings to a JSON file and import it again. New features are coming that will utilize settings storage for templates, favorite communities, community groups, and more. Having the ability to export/backup and restore is going to be a necessary feature, so getting this part out of the way first.
@@ -82,10 +84,6 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 - The exports are meant to transfer settings for the same account to different devices and not to share groups/favorites.  However, that can be achieved as long as it is done between acounts on the same instance.  The groups and favorites rely on the community ID which will vary from instance to instance.
     
 
-#### New Settings
-- **Open Posts in New Tab**:  You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and tie it to the user setting.
-
-- **Versioned Settings**:  
 
 ### Bugfixes and Misc Changes
 - Fixed type on `restoreReplyToAuthor` in mod action object

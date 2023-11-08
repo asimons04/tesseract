@@ -15,44 +15,44 @@
     export let rows:number                      // Number of rows of the parent markdown editor
     export let open:boolean                     // Toggles the picker open/closed
 
+    // Read in the current site info and grab its custom emojis (if any)
     let siteInfo = get(site);
-    let siteEmojis = []
-
-    
-    if (siteInfo?.custom_emojis) {
-        let customEmojis = {
-            id: 'custom',
-            name: 'Custom',
-            emojis: []
-        }
-
-        for (let i:number=0; i < siteInfo.custom_emojis.length; i++) {
-            let ce = siteInfo.custom_emojis[i];
-            
-            let customEmoji = {
-                id: ce.custom_emoji.shortcode,
-                name: ce.custom_emoji.alt_text,
-                keywords: ce.keywords.map((kw) => kw.keyword),
-                skins: [ {src: ce.custom_emoji.image_url} ]
+    let siteEmojis:any = []
+    try {
+        if (siteInfo?.custom_emojis) {
+            let customEmojis = {
+                id: 'custom',
+                name: 'Custom',
+                emojis: [] as any[]
             }
-            
-            customEmojis.emojis.push(customEmoji)
-            
+
+            for (let i:number=0; i < siteInfo.custom_emojis.length; i++) {
+                let ce = siteInfo.custom_emojis[i];
+                
+                let customEmoji:any = {
+                    id: ce.custom_emoji.shortcode,
+                    name: ce.custom_emoji.alt_text,
+                    keywords: ce.keywords.map((kw) => kw.keyword),
+                    skins: [ {src: ce.custom_emoji.image_url} ]
+                }
+                customEmojis.emojis.push(customEmoji)
+            }
+            siteEmojis.push(customEmojis)
         }
-        siteEmojis.push(customEmojis)
     }
-    
-    console.log(siteEmojis);
+    catch (err) {
+        console.log("Failed to import site custom emojis", err);
+    }
 
     function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
         return str.substring(0, startIndex) + replacement + str.substring(endIndex)
 
     }
+
     const getPicker = function () { 
         return new EmojiPicker({
             data: EmojiMartData,
             onEmojiSelect: (s) => {
-                console.log(s);
                 let emojiValue:string
                 s.native
                     ? emojiValue = s.native
@@ -81,7 +81,6 @@
             picker = getPicker()
             pickerContainer.appendChild(picker)
         }
-
     })
     
     // Initialize the emoji picker
@@ -91,7 +90,7 @@
 </script>
 
 <!--- Zero-height container to make the overlap work--->
-<div class="w-full z-20 h-[0px]">
+<div class="w-full z-20 h-0">
     <!--- Emoji Picker Container--->
     <div bind:this={pickerContainer} class="overflow-hidden w-full" class:hidden={!open} style="height: {(rows+5)*24}px"/>
 </div>
