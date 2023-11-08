@@ -44,16 +44,32 @@ All major/minor changes between releases will be documented here.
     
 - 
 
-### Misc
-- Added down chevron to SelectMenu component
+
+
+
 
 
 ### New Features
 
-#### Favorite Communities
-You can now mark a community as a favorite and have it show up in your "Favorites" list for quick access.
+#### Emoji Picker and Custom Emoji Support
+Added Emoji picker to markdown editor toolbar.  It supports the instance-specific custom emojis, but doesn't currently scale them down; they just appear as images.
 
-You can also browse a feed of just your favorited communities.  
+#### HTML5 Media Embeds in Posts/Comments
+ Added `markdown-it-html5-embed` so that inline videos and audio files can be embedded with the same syntax as an image tag.  This is one of the few cross-compatible ways inline media can be shared between Tesseract and Lemmy-UI.
+    
+
+#### Favorite Communities
+You can now mark a community as a favorite and have it show up in your "Favorites" list in the sidebar for quick access.
+
+#### Community Groups
+You can create named groups and add communities to them.  Access them from the sidebar.  Similar to favorites list, but more granular.
+
+#### Custom Feeds
+Finally, you can tame your subscriptions and bring some order to the firehose.
+
+Building from the favorites and community groups, Tesseract now has custom feeds based on those. 
+
+View only posts from your chosen group of communities as a feed.  For example, you can create a group called "News and Politics" and add your news and political communities to those.  Then browse those as a virtual feed.  Create another group for memes and lulz, one for music communities, and so on.  
 
 
 
@@ -61,21 +77,22 @@ You can also browse a feed of just your favorited communities.
 You can now export your Tesseract settings to a JSON file and import it again. New features are coming that will utilize settings storage for templates, favorite communities, community groups, and more. Having the ability to export/backup and restore is going to be a necessary feature, so getting this part out of the way first.
 
 - Transfer your settings between devices
-- Backup your preferences and configuration
+- Backup your preferences, configuration, favorites, and groups.
 - Does _not_ backup accounts as the auth token is a required part of the account profile.
-    - Considering encrypting the account fields with a user-provided export password
+- The exports are meant to transfer settings for the same account to different devices and not to share groups/favorites.  However, that can be achieved as long as it is done between acounts on the same instance.  The groups and favorites rely on the community ID which will vary from instance to instance.
+    
 
 #### New Settings
 - **Open Posts in New Tab**:  You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and tie it to the user setting.
 
-- **Versioned Settings**:  I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things (favorites lists, community groups, etc). 
+- **Versioned Settings**:  
 
-### Bugfixes
+### Bugfixes and Misc Changes
 - Fixed type on `restoreReplyToAuthor` in mod action object
 - Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
 - Fixed race condition with displaying resolver on reports on initial resolve.
-
-
+- Added down chevron to SelectMenu component (forgot that on the last 2 releases)
+- Implemented versioning of the settings. I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things (favorites lists, community groups, etc). 
 
 ## 1.2.8.99
 ### Bugfixes

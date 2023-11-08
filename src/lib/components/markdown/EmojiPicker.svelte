@@ -1,6 +1,11 @@
 <script lang="ts">
+
     
     import { afterUpdate, onMount } from 'svelte'
+    import { get } from 'svelte/store'
+    import { site } from '$lib/lemmy'
+
+
     
     import EmojiMartData from '@emoji-mart/data/sets/14/google.json'
     import {Picker as EmojiPicker}  from 'emoji-mart'
@@ -10,6 +15,35 @@
     export let rows:number                      // Number of rows of the parent markdown editor
     export let open:boolean                     // Toggles the picker open/closed
 
+    let siteInfo = get(site);
+    let siteEmojis = []
+
+    
+    if (siteInfo?.custom_emojis) {
+        let customEmojis = {
+            id: 'custom',
+            name: 'Custom',
+            emojis: []
+        }
+
+        for (let i:number=0; i < siteInfo.custom_emojis.length; i++) {
+            let ce = siteInfo.custom_emojis[i];
+            
+            let customEmoji = {
+                id: ce.custom_emoji.shortcode,
+                name: ce.custom_emoji.alt_text,
+                keywords: ce.keywords.map((kw) => kw.keyword),
+                skins: [ {src: ce.custom_emoji.image_url} ]
+            }
+            
+            customEmojis.emojis.push(customEmoji)
+            
+        }
+        siteEmojis.push(customEmojis)
+    }
+    
+    console.log(siteEmojis);
+
     function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
         return str.substring(0, startIndex) + replacement + str.substring(endIndex)
 
@@ -18,14 +52,23 @@
         return new EmojiPicker({
             data: EmojiMartData,
             onEmojiSelect: (s) => {
-                value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, s.native)
+                console.log(s);
+                let emojiValue:string
+                s.native
+                    ? emojiValue = s.native
+                    : s.src
+                        ? emojiValue = `![${s.name}](${s.src} "${s.shortcodes.replaceAll(':', '')}")`
+                        : emojiValue=""
+
+                value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, emojiValue)
                 open = !open
             },
             set: 'google',
             theme: dark() ? 'dark': 'auto',
             previewPosition: 'none',
             navPosition: 'none',
-            dynamicWidth: true
+            dynamicWidth: true,
+            custom: siteEmojis
         });
     }
     

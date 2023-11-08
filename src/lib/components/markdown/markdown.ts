@@ -1,6 +1,6 @@
 import MarkdownIt from 'markdown-it'
 import markdown_it_container from 'markdown-it-container'
-
+import markdown_it_html5_embed from 'markdown-it-html5-embed' 
 // @ts-ignore
 import markdown_it_sub from 'markdown-it-sub'
 // @ts-ignore
@@ -25,6 +25,15 @@ export const md = new MarkdownIt({
                 return '</details>\n'
             }
         },
+    })
+    .use(markdown_it_html5_embed, {
+        html5embed: {
+            useImageSyntax: true, // Enables video/audio embed with ![]() syntax (default)
+            attributes: {
+                audio: 'controls preload="metadata"',
+                video: 'width="100%" max-height="100%" controls loop preload="metadata"',
+            },
+        }
     })
     .use(markdown_it_sub)
     .use(markdown_it_sup)
