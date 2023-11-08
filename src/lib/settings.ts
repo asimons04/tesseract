@@ -76,7 +76,6 @@ interface Settings {
         links: boolean,
         posts: boolean,
     },
-    modlogCardView: boolean | undefined
     debugInfo: boolean
     systemUI: boolean
     embeddedMedia: {
@@ -187,8 +186,6 @@ export const defaultSettings: Settings = {
         links:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ??  false,
     },
-    modlogCardView: toBool(env.PUBLIC_MODLOG_CARD_VIEW)                 ??  true,
-
     experimentalFeatures:                                               false,
     
     embeddedMedia: {
@@ -393,7 +390,8 @@ export function migrateSettings(old:any) {
     
     // 0.2 -> 0.3
     if (old.version == 0.2) {
-        
+        delete old.modlogCardView
+        old.version = 0.3
     }
 
     return { ...defaultSettings, ...old }

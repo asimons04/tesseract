@@ -126,7 +126,8 @@ export async function load(req: any) {
     //console.log(tasks)
     //console.log(tasksResult);
     //console.log(combinedPosts)
-    
+    console.log(posts)
+    console.log(params);
     
     return {
         ...posts,

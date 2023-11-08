@@ -100,12 +100,15 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 
 
 ### Bugfixes and Misc Changes
-- Fixed type on `restoreReplyToAuthor` in mod action object
-- Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
-- Fixed race condition with displaying resolver on reports on initial resolve.
-- Added down chevron to SelectMenu component (forgot that on the last 2 releases)
-- Implemented versioning of the settings. I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things (favorites lists, community groups, etc). 
-- Restored subscribe/unsubscribe button in community panel (was formerly only in the action menu)
+- [Bugfix] Fixed type on `restoreReplyToAuthor` in mod action object
+- [Bugfix] Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
+- [Bugfix] Fixed race condition with displaying resolver on reports on initial resolve.
+- [UI] Added down chevron to SelectMenu component (forgot that on the last 2 releases)
+- [Infrastructure] Implemented versioning of the settings. I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things (favorites lists, community groups, etc). 
+- [Community Panels]Restored subscribe/unsubscribe button in community panel (was formerly only in the action menu)
+- [Modlog] Removed card view as an option.
+- [Modlog] Re-implemented table view to use flex and reflow into something resembling the old cards but more compact.  Works for desktop and mobile.
+- [Modlog] Due to the above, modlog search/filtering now work in mobile
 
 
 ## 1.2.8.99

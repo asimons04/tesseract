@@ -8,7 +8,6 @@
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
-    import ModlogItemCard from './item/ModlogItemCard.svelte'
     import ModlogItemTable from './item/ModlogItemTable.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
@@ -217,17 +216,7 @@
     </div>
     
     <div class="flex flex-row w-full flex-wrap items-center justify-between">
-        <MultiSelect
-            options={[false, true, undefined]}
-            optionNames={['Table', 'Cards', 'Default']}
-            selected={
-                $userSettings.modlogCardView ??
-                !window.matchMedia('(min-width: 1600px)').matches
-            }
-            on:select={
-                (e) => { $userSettings.modlogCardView = e.detail; }
-            }
-        />
+        <div class="ml-auto"/>
 
         <Button color="primary" on:click={() => goto('/modlog') }>
             <Icon src={ArrowPathRoundedSquare} class="h-8" mini size="16"/>
@@ -237,44 +226,21 @@
     </div>
 
     {#if data.modlog && data.modlog.length > 0}
-        {#if $userSettings.modlogCardView ?? !window.matchMedia('(min-width: 1600px)').matches}
-            <div class="flex flex-col gap-4">
-                {#each data.modlog as modlog}
-                    <div class="bg-slate-100 border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 p-2 text-sm rounded-md leading-[22px]">    
-                        <ModlogItemCard item={modlog} />
-                    </div>
-                {/each}
+        <div class="flex flex-col gap-2 divide-y w-full">
+            
+            <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-16 text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-20">
+                <div class="w-[5%]">Time</div>
+                <div class="w-[15%]">Community</div>
+                <div class="w-[20%]">Moderator</div>
+                <div class="w-[20%]">Moderatee</div>
+                <div class="w-[40%]">Details</div>
             </div>
-        
-        {:else}
-        <div style="width:100%; overflow-x: auto;">
-            <table class="table overflow-x-auto table-fixed relative" style="min-width: 800px;">
-                <colgroup class="table-fixed">
-                    <col width="5%" />
-                    <col width="15%" />
-                    <col width="15%" />
-                    <col width="15%" />
-                    <col width="50%" />
-                </colgroup>
-
-                <thead class="text-left sticky top-0">
-                    <tr class="rounded-t-lg overflow-hidden">
-                        <th>Time</th>
-                        <th>Community</th>
-                        <th>Moderator</th>
-                        <th>User</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-
-                <tbody class="text-sm">
-                    {#each data.modlog as modlog}
-                        <ModlogItemTable item={modlog} filter={filter} />
-                    {/each}
-                </tbody>
-            </table>
+            
+            {#each data.modlog as modlog}
+                <ModlogItemTable item={modlog} filter={filter} />
+            {/each}
         </div>
-        {/if}
+        
 
         <Pageination
             page={data.page}
