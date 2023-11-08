@@ -8,14 +8,15 @@
     import { uploadImage } from '$lib/lemmy.js'
     
     import Button from '$lib/components/input/Button.svelte'
+    import EmojiPicker from './EmojiPicker.svelte'
     import FileInput from '$lib/components/input/FileInput.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
 
-    import EmojiMartData from '@emoji-mart/data/sets/14/google.json'
-    import {Picker as EmojiPicker}  from 'emoji-mart'
+    //import EmojiMartData from '@emoji-mart/data/sets/14/google.json'
+    //import {Picker as EmojiPicker}  from 'emoji-mart'
   
   
   
@@ -51,6 +52,8 @@
     let loading = false
     let image: FileList | null = null
     let emojiPickerOpen:boolean = false
+    /*
+    let emojiPickerOpen:boolean = false
     let pickerContainer:HTMLDivElement
 
     const getPicker = function () { 
@@ -67,6 +70,7 @@
             dynamicWidth: true
         });
     }
+    
     let picker = getPicker();
 
     // Recreate the picker when its container gets removed/recreated in the DOM when switching between edit/preview
@@ -82,6 +86,7 @@
     onMount(() => {
         pickerContainer.appendChild(picker);
     })
+    */
 
 
     function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
@@ -288,10 +293,13 @@
                 </div>
 
                 <!---Emoji Picker Panel--->
+                <EmojiPicker bind:value bind:textArea {rows} bind:open={emojiPickerOpen} />
+                <!--
                 <div class="w-full z-20 h-[0px]">
-                    <!--- Emoji Picker--->
+                    
                     <div bind:this={pickerContainer} class="overflow-hidden w-full" class:hidden={!emojiPickerOpen} style="height: {(rows+5)*24}px"/>
                 </div>
+                -->
 
                 <!--Actual text area-->
                 <TextArea
