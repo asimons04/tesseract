@@ -5,8 +5,6 @@
     import { get } from 'svelte/store'
     import { site } from '$lib/lemmy'
 
-
-    
     import EmojiMartData from '@emoji-mart/data/sets/14/google.json'
     import {Picker as EmojiPicker}  from 'emoji-mart'
     
@@ -14,10 +12,16 @@
     export let textArea:HTMLTextAreaElement     // Text area (used to get cursor position)
     export let rows:number                      // Number of rows of the parent markdown editor
     export let open:boolean                     // Toggles the picker open/closed
-
+    export let closeOnSelect:boolean = true     // Whether to close the picker upon selection of an emoji    
+    export let navButtons:boolean = false       // Whether to show the category buttons at the top of the picker
+    export let set: 'native' | 'apple'|'facebook'|'google'|'twitter' = 'google'  //Icon set used for emoji previews (Note: You'll also need to change the EmojiMartData import to bring in the correct set as data)
+    export let theme: 'light' | 'dark' | 'auto' = dark() ? 'dark': 'auto'
+    
+    
     // Read in the current site info and grab its custom emojis (if any)
     let siteInfo = get(site);
     let siteEmojis:any = []
+    
     try {
         if (siteInfo?.custom_emojis) {
             let customEmojis = {
@@ -53,6 +57,7 @@
         return new EmojiPicker({
             data: EmojiMartData,
             onEmojiSelect: (s) => {
+                // Use native emoji value or the src value for custom emojis
                 let emojiValue:string
                 s.native
                     ? emojiValue = s.native
@@ -61,12 +66,12 @@
                         : emojiValue=""
 
                 value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, emojiValue)
-                open = !open
+                if (closeOnSelect) open = !open
             },
-            set: 'google',
-            theme: dark() ? 'dark': 'auto',
+            set: set,
+            theme: theme,
             previewPosition: 'none',
-            navPosition: 'none',
+            navPosition: navButtons ? 'top' : 'none',
             dynamicWidth: true,
             custom: siteEmojis
         });

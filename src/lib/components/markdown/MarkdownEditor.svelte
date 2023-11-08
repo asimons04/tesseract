@@ -252,7 +252,7 @@
                 </div>
 
                 <!---Emoji Picker Panel--->
-                <EmojiPicker bind:value bind:textArea {rows} bind:open={emojiPickerOpen} />
+                <EmojiPicker bind:value bind:textArea {rows} bind:open={emojiPickerOpen} navButtons={true}/>
 
                 <!--Actual text area-->
                 <TextArea

@@ -81,6 +81,7 @@
             <Icon src={EllipsisVertical} mini size="16" slot="icon" />
         </Button>
         
+        <!---Community Name Header--->
         <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
             {community.title ?? community.name}
         </span>
@@ -92,7 +93,7 @@
             {favorite ? 'Remove from Favorites' : 'Add to Favorites'}
         </MenuButton>
 
-        <!---Add to Group (Not yet implemented--->
+        <!---Add to Group--->
         <MenuButton title="Add to Group" on:click={(e) => {e.stopPropagation(); addCommunityToGroup(community)} }>
             <Icon src={QueueList} mini size="16" />
             Add to Group

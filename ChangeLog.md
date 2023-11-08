@@ -55,6 +55,9 @@ The last release was mostly for the mods/admins, so this release has something f
 #### Emoji Picker and Custom Emoji Support
 Added Emoji picker to markdown editor toolbar.  It supports the instance-specific custom emojis, but doesn't currently scale them down; they just appear as images.
 
+The picker can be toggled open/closed with the Emojis button in the editor toolbar or with the Ctrl/Meta + E hotkey (while the editor is in focus).
+
+
 #### HTML5 Media Embeds in Posts/Comments
  Added `markdown-it-html5-embed` so that inline videos and audio files can be embedded with the same syntax as an image tag.  This is one of the few cross-compatible ways inline media can be shared between Tesseract and Lemmy-UI.
     
@@ -66,11 +69,22 @@ You can now mark a community as a favorite and have it show up in your "Favorite
 You can create named groups and add communities to them.  Access them from the sidebar.  Similar to favorites list, but more granular.
 
 #### Custom Feeds
-Finally, you can tame your subscriptions and bring some order to the chaos.
+Finally, you can tame your subscriptions and bring some order to the chaos.  Sort your communities into groups and view them as individual feeds.
 
 Building from the favorites and community groups, Tesseract now has custom feeds based on the communities you place into those groups. 
 
-View only posts from your chosen group of communities as a feed.  For example, you can create a group called "News and Politics" and add your news and political communities to those.  Then browse those as a virtual feed.  Create another group for memes and lulz, one for music communities, and so on.  
+
+**Examples**:
+- Create a group called "News and Politics" and add your news and political communities to those.    
+- Create another group for memes and lulz
+- Put your music communities in one group/feed
+- Add all of the communities you moderate to a group, sort by new, and efficiently separate the wheat from the chaff.
+
+Then browse any/each of those as virtual feeds without any of the mood whiplash you get from browsing `Subscribed` or `All`.  Make sorting by `New` bearable again :)
+
+The custom feeds have the same filtering capabilities as the regular feed: currently, that includes crosspost rollups, MBFC credibility filtering, and keyword filtering.
+
+While you don't _have_ to be subscribed to a community to add it to a group/favorite, it is recommended in case others unsubscribe; you would then stop receiving updates for it.
 
 #### New Setting: Open Posts in New Tab
 You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and expose it as a user setting.
