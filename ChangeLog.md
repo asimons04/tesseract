@@ -53,13 +53,13 @@ All major/minor changes between releases will be documented here.
 The last release was mostly for the mods/admins, so this release has something for the users.  Several somethings, actually.
 
 #### Emoji Picker and Custom Emoji Support
-Added Emoji picker to markdown editor toolbar.  It supports the instance-specific custom emojis, but doesn't currently scale them down; they just appear as images.
+Added Emoji picker to markdown editor toolbar.  It supports the instance-specific custom emojis but doesn't currently scale them down; they just appear as images.
 
 The picker can be toggled open/closed with the Emojis button in the editor toolbar or with the Ctrl/Meta + E hotkey (while the editor is in focus).
 
 
 #### HTML5 Media Embeds in Posts/Comments
- Added `markdown-it-html5-embed` so that inline videos and audio files can be embedded with the same syntax as an image tag.  This is one of the few cross-compatible ways inline media can be shared between Tesseract and Lemmy-UI.
+ Added `markdown-it-html5-embed` so that inline videos and audio files can be embedded with the same syntax as an image tag.  This is one of the few, cross-compatible ways inline media can be shared between Tesseract and Lemmy-UI.
     
 
 #### Favorite Communities
@@ -105,6 +105,8 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 - Fixed race condition with displaying resolver on reports on initial resolve.
 - Added down chevron to SelectMenu component (forgot that on the last 2 releases)
 - Implemented versioning of the settings. I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things (favorites lists, community groups, etc). 
+- Restored subscribe/unsubscribe button in community panel (was formerly only in the action menu)
+
 
 ## 1.2.8.99
 ### Bugfixes

@@ -58,12 +58,12 @@
             data: EmojiMartData,
             onEmojiSelect: (s) => {
                 // Use native emoji value or the src value for custom emojis
-                let emojiValue:string
+                let emojiValue:string = ''
                 s.native
                     ? emojiValue = s.native
                     : s.src
                         ? emojiValue = `![${s.name}](${s.src} "${s.shortcodes.replaceAll(':', '')}")`
-                        : emojiValue=""
+                        : undefined
 
                 value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, emojiValue)
                 if (closeOnSelect) open = !open
