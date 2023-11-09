@@ -293,7 +293,7 @@
                 <span class="flex flex-row items-center gap-2" title="Cake Day">
                     <Icon src={Cake} width={16} height={16} mini />
                     <span class="capitalize">
-                        <RelativeDate date={person.person.published}/>
+                        <RelativeDate date={person.person?.published}/>
                     </span>
                 </span>
             

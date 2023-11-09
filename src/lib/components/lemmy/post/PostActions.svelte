@@ -82,7 +82,7 @@
 
 <!--- Open a Modal containing the PostForm component pre-loaded with the post details--->
 {#if editing}
-    <Modal bind:open={editing} fullHeight={true} icon={PencilSquare} title="Editing {post.post.name}">
+    <Modal bind:open={editing} fullHeight={false} icon={PencilSquare} title="Editing {post.post.name}">
         
         {#await import('./PostForm.svelte')}
             <div class="mx-auto flex justify-center items-center">
