@@ -3,6 +3,7 @@
     import {isAdmin, amModOfAny } from '$lib/components/lemmy/moderation/moderation'
     import { profile } from '$lib/auth.js'
     import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
+    import { saveProfile } from '$lib/favorites'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -164,6 +165,8 @@
                         if (uploadedSettings.settings) $userSettings = migrateSettings(uploadedSettings.settings, defaultSettings);
                         if (uploadedSettings.favorites) $profile.favorites = [...uploadedSettings.favorites];
                         if (uploadedSettings.groups) $profile.groups = [...uploadedSettings.groups];
+
+                        if (uploadedSettings.favorites || uploadedSettings.groups) saveProfile($profile);
 
                         toast({
                             type: 'success',

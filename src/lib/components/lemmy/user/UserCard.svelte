@@ -289,7 +289,7 @@
 
         
         <div class="flex flex-row p-3 mx-auto">
-            <div class="text-sm flex flex-row flex-wrap gap-8 mx-auto">
+            <div class="text-sm flex flex-row gap-8 mx-auto">
                 <span class="flex flex-row items-center gap-2" title="Cake Day">
                     <Icon src={Cake} width={16} height={16} mini />
                     <span class="capitalize">
