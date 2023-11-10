@@ -104,12 +104,13 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 - [Bugfix] Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
 - [Bugfix] Fixed race condition with displaying resolver on reports on initial resolve.
 - [UI] Added down chevron to SelectMenu component (forgot that on the last 2 releases)
-- [Infrastructure] Implemented versioning of the settings. I have a a few new features that will heavily utilize LocalStorage, so I want to make sure settings can be migrated from version to version without losing anything.  Until now, it's just a few preferences. Once I implement the next few features, losing settings will be much more annoying if you've customized things (favorites lists, community groups, etc). 
+- [Infrastructure] Implemented versioning of the settings. Now that there are more user-defined things getting saved to local storage, I want to make sure settings can be migrated from version to version without losing anything as well as the ability to transfer those across devices.
 - [Community Panels]Restored subscribe/unsubscribe button in community panel (was formerly only in the action menu)
 - [Modlog] Removed card view as an option.
 - [Modlog] Re-implemented table view to use flex and reflow into something resembling the old cards but more compact.  Works for desktop and mobile.
 - [Modlog] Due to the above, modlog search/filtering now work in mobile
-
+- [Modlog] Filters remain present when there's a selection; avoid having to reload modlog just to switch filter params.
+- [Image Proxy] Added rule to bypass proxying for inline `data:` images.
 
 ## 1.2.8.99
 ### Bugfixes

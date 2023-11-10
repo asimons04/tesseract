@@ -24,6 +24,7 @@
         ChartBar,
         DocumentDuplicate,
         Home,
+        PencilSquare,
         QueueList,
     } from 'svelte-hero-icons'
 
@@ -74,8 +75,8 @@
                 
                 <SelectMenu
                     alignment="bottom-left"
-                    options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase()) ?? [] ]}
-                    optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name) ?? [] ]}
+                    options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase())?.sort() ?? [] ]}
+                    optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name)?.sort() ?? [] ]}
                     selected={data.feed || 'Choose a Group'}
                     title="Listing Type"
                     icon={Bars3}
@@ -116,7 +117,19 @@
                     }}
                 />
                 <span class="ml-auto"/>
+
+                <!--Edit Group Button-->
+                <span class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold" title="Edit Group"
+                    on:click={() => {
+                        
+                    }}
+                >
+                    <Icon src={PencilSquare} width={18} />
+                    <span class="hidden md:inline">Edit</span>
+                </span>
                 
+
+
                 <span class="hidden md:flex md:flex-row gap-2 items-center">
                     <!---Card/Compact Selection--->
                     <SelectMenu

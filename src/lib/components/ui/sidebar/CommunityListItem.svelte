@@ -9,6 +9,7 @@
     import {  setSessionStorage } from '$lib/session.js'
     import { userSettings } from '$lib/settings.js'
 
+    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -42,8 +43,12 @@
         window.location.pathname='/create/post';
         
     }
+    let groupAddModal:boolean = false;
 
 </script>
+<div class="z-20">
+    <AddCommunityGroup bind:open={groupAddModal} community={community} />
+</div>
 
 <div class="inline-flex w-full" class:hidden={ hidden}>
     <Button
@@ -94,8 +99,9 @@
         </MenuButton>
 
         <!---Add to Group--->
-        <MenuButton title="Add to Group" on:click={(e) => {e.stopPropagation(); addCommunityToGroup(community)} }>
+        <MenuButton title="Add to Group" on:click={(e) => {e.stopPropagation(); groupAddModal=!groupAddModal} }>
             <Icon src={QueueList} mini size="16" />
+            <!--addCommunityToGroup(community)-->
             Add to Group
         </MenuButton>
 
