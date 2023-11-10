@@ -190,7 +190,7 @@
             
         </div>
         
-        <div class="max-w-sm" class:hidden={filter.moderator.set}>
+        <div class="max-w-sm">
             <div class="block my-1 font-bold text-sm">Moderator</div>
             <ObjectAutocomplete
                 placeholder="Filter by Moderator"
@@ -202,7 +202,7 @@
             />
         </div>
 
-        <div class="max-w-sm" class:hidden={filter.moderatee.set}>
+        <div class="max-w-sm">
             <div class="block my-1 font-bold text-sm">Moderatee</div>
             <ObjectAutocomplete
                 placeholder="Filter by Moderatee"

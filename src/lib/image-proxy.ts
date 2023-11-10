@@ -35,6 +35,9 @@ export function imageProxyURL(url:string, size:number|undefined = undefined, for
     // Don't proxy local blobs
     if (url.startsWith('blob:')) return url;
 
+    // Don't proxy inline data images
+    if (url.startsWith('data:')) return url;
+
     // Don't proxy images that are already going through the proxy
     if (url.includes(`${new URL(window.location.href).origin}/image_proxy/`)) return url;
 
