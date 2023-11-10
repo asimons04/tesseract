@@ -103,9 +103,12 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 - [Bugfix] Fixed type on `restoreReplyToAuthor` in mod action object
 - [Bugfix] Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
 - [Bugfix] Fixed race condition with displaying resolver on reports on initial resolve.
+- [Bugfix] Community and user links are now properly detected in markdown and will re-write to fetch locally within Tesseract.
+
 - [UI] Added down chevron to SelectMenu component (forgot that on the last 2 releases)
 - [Infrastructure] Implemented versioning of the settings. Now that there are more user-defined things getting saved to local storage, I want to make sure settings can be migrated from version to version without losing anything as well as the ability to transfer those across devices.
 - [Community Panels]Restored subscribe/unsubscribe button in community panel (was formerly only in the action menu)
+
 - [Modlog] Removed card view as an option.
 - [Modlog] Re-implemented table view to use flex and reflow into something resembling the old cards but more compact.  Works for desktop and mobile.
 - [Modlog] Due to the above, modlog search/filtering now work in mobile
