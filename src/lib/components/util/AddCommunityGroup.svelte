@@ -11,6 +11,7 @@
     import {
         addCommunityToGroup,
         addGroup,
+        memberOf,
         saveProfile
     } from '$lib/favorites'
     import { toast } from '$lib/components/ui/toasts/toasts';
@@ -25,21 +26,27 @@
     import { 
         Icon, 
         UserGroup,
+        XCircle
     } from 'svelte-hero-icons'
     
 
     export let open:boolean = false;
     export let community:Community;
     
-    let myGroups:string[] = []
-    $: myGroups = $profile?.groups?.map((cg:CommunityGroup) => cg.name)?.sort() || [] as string[]
+    //let myGroups:string[] = []
+    //let communityMemberOf:string[] = []
+
+    $: myGroups = $profile?.groups?.map((cg:CommunityGroup) => cg.name )?.filter((cg:string) => !memberOf(community).includes(cg))?.sort() || [] as string[]
+    $: communityMemberOf = memberOf(community) || [] as string[]
+
 
     let newGroupName:string = ''
     let selectedGroup:string = 'new'
 
     function submit() {
-        if (newGroupName) addGroup(newGroupName, [community])
-        else addCommunityToGroup(community, selectedGroup);
+        newGroupName
+            ? addGroup(newGroupName, [community])
+            : addCommunityToGroup(community, selectedGroup);
         
         toast({
             content: `Added ${community.name} to ${newGroupName ? newGroupName : selectedGroup }`,
@@ -47,7 +54,7 @@
         })
 
         // Reset the values
-        open = !open
+        //open = !open
         selectedGroup = 'new';
         newGroupName = ''
     }
@@ -83,11 +90,41 @@
                 
                 <span class="ml-auto"/>
                 
-                <Button disabled={selectedGroup=='new' && newGroupName==''} color="primary" size="lg" on:click={submit} class="h-[2.5rem] mt-[1.5rem]">
+                <Button disabled={selectedGroup=='new' && (newGroupName=='' || myGroups.includes(newGroupName))} color="primary" size="lg" on:click={submit} class="h-[2.5rem] mt-[1.5rem]">
                     Add
                 </Button>
             </div>
 
+            <div class="flex flex-col gap-1">
+                {#if communityMemberOf.length > 0}
+                    <span class="text-sm font-bold">Member Of</span>
+                    <span class="text-xs font-normal">This community is a member of the following groups:</span>
+
+                    <div class="flex flex-col gap-2 mx-[20%]">
+                        {#each communityMemberOf as group}
+                            <div class="w-full rounded-md bg-slate-200 dark:bg-zinc-700 flex flex-row gap-2 items-center">
+                                <p class="pl-4 py-2 text-sm font-bold">{group}</p>
+
+                                <div class="mx-auto"/>
+                                
+                                <Button
+                                    color="ghost"
+                                    class="mr-4 border-none"
+                                    on:click={() => {
+                                        //delKeyword(keyword);
+
+                                    }}
+                                >
+                                    
+                                    <Icon src={XCircle} mini width={22}/>
+                                </Button>
+                            </div>
+                        {/each}
+                    </div>
+
+                {/if}
+
+            </div>
             
         {/if}
 

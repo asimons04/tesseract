@@ -120,6 +120,28 @@ export const addCommunityToGroup = function (community:Community, groupName:stri
 }
 
 
+export const memberOf = function(community:Community): string[] {
+    
+    
+    const userProfile = get(profile)
+    
+    if (!community) return [];
+    if (!userProfile?.jwt) return []
+    if (!userProfile.groups) {
+        userProfile.groups = [] as CommunityGroup[]
+        return []
+    }
+
+    let groups = userProfile.groups;
+    let memberOfGroups:string[] = [];
+
+    groups.forEach((group:CommunityGroup) => {
+        let index = group.communities.findIndex((c:Community) => c.id == community.id);
+        if (index >=0) memberOfGroups.push(group.name);
+    })
+
+    return memberOfGroups.sort();
+}
 
 // Saves the profile back to the profileData object in localStorage.
 export const saveProfile = function(userProfile:Profile):void {
