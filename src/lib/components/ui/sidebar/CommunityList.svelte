@@ -7,6 +7,7 @@
     export let expanded: boolean
     export let hidden: boolean
     export let filter: string
+    export let group:string = ''
 
 </script>
 
@@ -15,6 +16,7 @@
     {#each items.sort( (a, b) => a.title.localeCompare(b.title) ) as community (community.id)}
         <CommunityListItem 
             community={community} 
+            group={group}
             hidden={(filter && !community.title.toLowerCase().trim().includes(filter.toLowerCase().trim())) || false }
             {expanded}
         />

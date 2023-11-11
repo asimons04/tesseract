@@ -28,12 +28,16 @@ export async function load(req: any) {
     let feedName    = ''
     let communities = [] as Community[];
 
+    /*
     // Get a list of communities based on the supplied feed name.
     if (feed == 'favorites') {
         communities = userProfile.favorites?.map((c:Community) => c.id) ?? []
         feedName = "My Favorites"
     }
-    else if (userProfile.groups) {
+    else 
+    */
+    
+    if (userProfile.groups) {
         // Search the user's defined groups to see if the supplied feed name matches a group
         let index = userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == feed)
         if (index >=0) {
@@ -126,8 +130,8 @@ export async function load(req: any) {
     //console.log(tasks)
     //console.log(tasksResult);
     //console.log(combinedPosts)
-    console.log(posts)
-    console.log(params);
+    //console.log(posts)
+    //console.log(params);
     
     return {
         ...posts,

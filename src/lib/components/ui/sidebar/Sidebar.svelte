@@ -4,6 +4,7 @@
     import { expoOut } from 'svelte/easing'
     import { flip } from 'svelte/animate'
     import { profile, profileData } from '$lib/auth.js'
+    import { sortGroups } from '$lib/favorites'
     import { userSettings } from '$lib/settings.js'
     
     import Button from '../../input/Button.svelte'
@@ -36,7 +37,9 @@
         UserGroup,
         XCircle
     } from 'svelte-hero-icons'
-    let panel: 'favorites' | 'subscribed' | 'moderating' = 'subscribed';
+    import CommunityGroup from "./CommunityGroup.svelte";
+    
+    let panel: 'groups' | 'subscribed' | 'moderating' = 'subscribed';
     
     // Support components for the community filter
     let communityFilterTerm:string = '';
@@ -118,17 +121,17 @@
         <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-1">
             <div class="ml-auto"/>
 
-            <Button title="Favorites" size="md" class="!border-none" color="ghost" on:click={()=> panel='favorites'}>
-                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                    <Icon src={Star} mini size="18" title="Favorites" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Favorites</span>
-                </span>
-            </Button>
-
             <Button title="Subscribed" size="md" class="!border-none" color="ghost" on:click={()=> panel='subscribed'}>
                 <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                     <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
                     <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Subscribed</span>
+                </span>
+            </Button>
+
+            <Button title="Groups" size="md" class="!border-none" color="ghost" on:click={()=> panel='groups'}>
+                <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                    <Icon src={Star} mini size="18" title="Groups" />
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Groups</span>
                 </span>
             </Button>
 
@@ -170,23 +173,30 @@
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
         <div class="flex flex-col gap-1 h-full overflow-y-auto">
-            {#if panel=='favorites'}
-                <!--- Favorites--->
-                {#if $profile?.favorites?.length > 0}
-                    <CommunityList
-                        expanded={$userSettings.uiState.expandSidebar}
-                        items={$profile.favorites}
-                    />
+            
+            
+            <!--- Favorites--->
+            {#if panel=='groups'}
+                
+                {#if $profile?.groups}
+                    
+                    {#each $profile.groups.sort(sortGroups) as group}
+                        <CommunityGroup expanded={$userSettings.uiState.expandSidebar} group={group} />
+                    {/each}
+                
                 {:else}
                     {#if $userSettings.uiState.expandSidebar}
-                        <Placeholder size="22" icon={ArchiveBox} title="No Favorites" description="Your favoritie communities will appear here." />
+                        <Placeholder size="22" icon={ArchiveBox} title="No Groups" description="Your favoritie and grouped communities will appear here." />
                     {/if}
                 {/if}
             {/if}
             
+            
+            
+            <!--- Subscribed community list --->
             {#if panel=='subscribed'}
                 {#if $profile.user.follows.length > 0}
-                    <!--- Subscribed community list --->
+                    
                     <CommunityList
                         expanded={$userSettings.uiState.expandSidebar}
                         items={$profile.user.follows.map((i) => i.community)}

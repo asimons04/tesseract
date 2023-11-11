@@ -9,52 +9,32 @@ import {
 
 import { get } from 'svelte/store'
 
+export function sortGroups(a:string|CommunityGroup, b:string|CommunityGroup) {
+    if (typeof a == 'string') {
+        if (a.toLowerCase() < b.toLowerCase()) return -1
+        if (a.toLowerCase() > b.toLowerCase()) return 1
+        if (a.toLowerCase() == b.toLowerCase()) return 0
+    }
+
+    if (typeof a == 'object') {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+        if (a.name.toLowerCase() == b.name.toLowerCase()) return 0
+    }
+}
+
+
+
+
 // Add a favorite community to your profile 
-export const addFavorite = function(community:Community, favorite:boolean) {
-    // Read the current user profile
-    const userProfile = get(profile)
-    
-    if (!community) return 
-    if (!userProfile?.jwt) return
-    if (!userProfile.favorites) userProfile.favorites = [] as Community[]
-    
-    let index = userProfile.favorites.findIndex((c:Community) => c.id==community.id)
-
-    if (favorite && index < 0) {
-        userProfile.favorites.push(community)
-        
-        profile.set({
-            ...userProfile
-        })
-
-        // Update the profile in the profileData object in localStorage
-        saveProfile(userProfile)
-        console.log("Added favorite")
-    }
-    else {
-        // Un-favorite the community
-        if (index < 0) return
-        userProfile.favorites.splice(index,1);
-        
-        profile.set({
-            ...userProfile
-        })
-    
-        saveProfile(userProfile)
-        console.log("Deleted favorite");
-    }
-    
+export const addFavorite = function(community:Community, favorite:boolean): void {
+    favorite
+        ? addCommunityToGroup(community, 'Favorites')
+        : removeCommunityFromGroup(community, 'Favorites')
 }
 
 export const isFavorite = function(community:Community):boolean {
-    // Read the current user profile
-    const userProfile = get(profile)
-    
-    if (!community) return false
-    if (!userProfile?.jwt) return false
-    if (!userProfile.favorites) return false
-    if (userProfile.favorites.findIndex((c:Community) => c.id==community.id) >= 0) return true;
-    return false;
+    return memberOf(community).includes('Favorites')
 }
 
 
@@ -95,8 +75,7 @@ export const addCommunityToGroup = function (community:Community, groupName:stri
     // Read the current user profile
     const userProfile = get(profile)
 
-    if (!community) return
-    if (!userProfile?.jwt) return
+    if (!community || !userProfile?.jwt) return
     if (!userProfile.groups) userProfile.groups = [] as CommunityGroup[]
 
     // Check to see if the group already exists
@@ -119,18 +98,47 @@ export const addCommunityToGroup = function (community:Community, groupName:stri
     console.log("Added community to group");
 }
 
+export const removeCommunityFromGroup = function(community:Community, groupName:string):void {
+    const userProfile = get(profile)
+    if (!community || !userProfile?.jwt) return
+    if (!userProfile.groups) userProfile.groups = [] as CommunityGroup[]
+    
+    // Check if group exists
+    let groupIndex = userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == groupName.toLowerCase())
+    if (groupIndex < 0) return
 
+    let group = userProfile.groups[groupIndex]
+    let communityIndex  = group.communities.findIndex((c:Community) => c.id == community.id)
+
+    if (communityIndex >= 0) group.communities.splice(communityIndex, 1);
+
+    profile.set({...userProfile})
+    saveProfile(userProfile);
+    console.log("Removed community from group");
+}
+
+
+
+
+// Removes a group and all of its communities
+export const removeGroup = function (groupName:string):void {
+    const userProfile = get(profile)
+    if (!groupName || !userProfile?.jwt) return
+
+    let groupIndex = userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == groupName.toLowerCase())
+    if (groupIndex < 0) return
+    
+    userProfile.groups.splice(groupIndex, 1);
+    profile.set({...userProfile})
+    saveProfile(userProfile)
+    console.log("Removed group and its members")
+}
+
+// Returns the group names a community is currently a member of (or empty array if none)
 export const memberOf = function(community:Community): string[] {
-    
-    
     const userProfile = get(profile)
     
-    if (!community) return [];
-    if (!userProfile?.jwt) return []
-    if (!userProfile.groups) {
-        userProfile.groups = [] as CommunityGroup[]
-        return []
-    }
+    if (!community || !userProfile?.jwt || !userProfile.groups) return [];
 
     let groups = userProfile.groups;
     let memberOfGroups:string[] = [];
@@ -146,17 +154,17 @@ export const memberOf = function(community:Community): string[] {
 // Saves the profile back to the profileData object in localStorage.
 export const saveProfile = function(userProfile:Profile):void {
     let pd = get(profileData)
-
     let pIndex = pd.profiles.findIndex((p:Profile) => p.id == pd.profile)
-    
+
+    let profileCopy = {...userProfile}
     // Don't store the 'user' key that has the user's Lemmy API profile data.
-    userProfile.user = undefined;
+    profileCopy.user = undefined;
 
     // Update the profile in the profileData object in localStorage
     profileData.update((pd:ProfileData) => {
         let newProfileData:ProfileData = {...pd}
         
-        newProfileData.profiles[pIndex] = {...userProfile}
+        newProfileData.profiles[pIndex] = {...profileCopy}
         
         return { ...newProfileData}
     })

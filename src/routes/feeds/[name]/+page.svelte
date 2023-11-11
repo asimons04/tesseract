@@ -7,6 +7,7 @@
     import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { type CommunityGroup, profile } from '$lib/auth'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
+    import { sortGroups } from '$lib/favorites'
     import { sortOptions, sortOptionNames } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
 
@@ -49,6 +50,8 @@
             window.scrollTo(0,0);
         }
     });
+    
+    
 
 </script>
 <svelte:head>
@@ -75,8 +78,8 @@
                 
                 <SelectMenu
                     alignment="bottom-left"
-                    options={['favorites', ...$profile.groups?.map((cg) => cg.name.toLowerCase())?.sort() ?? [] ]}
-                    optionNames={['Favorites', ...$profile.groups?.map((cg) => cg.name)?.sort() ?? [] ]}
+                    options={[...$profile.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]}
+                    optionNames={[...$profile.groups?.map((cg) => cg.name)?.sort(sortGroups) ?? [] ]}
                     selected={data.feed || 'Choose a Group'}
                     title="Listing Type"
                     icon={Bars3}

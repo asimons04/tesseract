@@ -96,7 +96,29 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 - Backup your preferences, configuration, favorites, and groups.
 - Does _not_ backup accounts as the auth token is a required part of the account profile.
 - The exports are meant to transfer settings for the same account to different devices and not to share groups/favorites.  However, that can be achieved as long as it is done between acounts on the same instance.  The groups and favorites rely on the community ID which will vary from instance to instance.
-    
+
+#### Sync Settings To/From Server
+Sync your Tesseract settings (config, preferences, and groups/favorites) to your home Lemmy instance.  This will allow you to load your preferences, groups, and favorites on another device without having to physically transfer and import an export JSON file.
+
+**Warnings and Cautions**:  
+
+The way this is done is a _horrible_ abuse of the Lemmy API.  There's currently no custom fields available to store 3rd party data, so I had to get creative.
+
+The `theme` field in your user profile maps to a `text` field in the database.  It's also not a value used for anything outside of Lemmy-UI.  That said, it is capable of holding arbitrary date such as a serialized JSON object representing whatever we want.  In this case, your Tesseract config.
+
+Please be aware that this **will** break Lemmy UI's CSS while your profile data is stored inside the `theme` value. To restore the `theme` field in your profile to a valid value, use the "Clear from Lemmy" button at the bottom of the Import and Export Settings panel. 
+
+Also of note is that this does not merge the settings; what you load from the server will replace your current Tesseract settings, groups, and favorites. 
+
+**Tips/Tricks**
+
+If you just want to quickly transfer your settings to another device (e.g. PC -> phone or vice-versa), you can save your Tesseract settings to Lemmy, load them on the new device, and then return the `theme` field to a valid value.  You can use the file export for long-term storage.
+
+I've submitted an RFC to see about getting a custom field for this purpose added to the API, but I do not know if it will gain traction or not.  For now, I'm content with this method unless it proves to cause problems (none so far in testing).
+
+If you rarely, if ever, use Lemmy-UI, then you can leave your profile data saved there and only clear it if you do need to use it (that's what I do :shrug:).
+
+
 
 
 ### Bugfixes and Misc Changes

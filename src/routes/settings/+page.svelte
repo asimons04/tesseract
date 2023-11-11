@@ -1,6 +1,8 @@
 <script lang="ts">
     import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
-    import {isAdmin, amModOfAny } from '$lib/components/lemmy/moderation/moderation'
+    import { amModOfAny } from '$lib/components/lemmy/moderation/moderation'
+    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
+    import { getClient} from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
     import { saveProfile } from '$lib/favorites'
@@ -30,6 +32,8 @@
         ArrowTopRightOnSquare,
         ChartBar,
         CheckBadge,
+        CloudArrowDown,
+        CloudArrowUp,
         CodeBracketSquare,
         CodeBracket,
         Cog6Tooth,
@@ -63,6 +67,7 @@
 
     let data = {
         loading: false,
+        saving: false
     }
 
     interface UploadFiles {
@@ -131,7 +136,6 @@
 
     const exportSettings = function():void {
         let exportData = {
-            favorites:  [...$profile.favorites],
             groups:     [...$profile.groups],
             settings:   {...$userSettings}
         }
@@ -161,12 +165,11 @@
                 try {
                     let uploadedSettings = JSON.parse(reader.result as string);
                     
-                    if (uploadedSettings.settings || uploadedSettings.favorites || uploadedSettings.groups) {
+                    if (uploadedSettings.settings || uploadedSettings.groups) {
                         if (uploadedSettings.settings) $userSettings = migrateSettings(uploadedSettings.settings, defaultSettings);
-                        if (uploadedSettings.favorites) $profile.favorites = [...uploadedSettings.favorites];
                         if (uploadedSettings.groups) $profile.groups = [...uploadedSettings.groups];
 
-                        if (uploadedSettings.favorites || uploadedSettings.groups) saveProfile($profile);
+                        if (uploadedSettings.groups) saveProfile($profile);
 
                         toast({
                             type: 'success',
@@ -176,7 +179,7 @@
                     else {
                         toast({
                         type: 'error',
-                        content: "Failed to parse uploaded settings."
+                        content: "No settings found in JSON upload."
                     });
                     }
                 } catch (err) {
@@ -190,9 +193,109 @@
         catch (err) {
             toast({
                 type: 'error',
-                content: "Failed to parse uploaded settings."
+                content: "Catch: Failed to read uploaded file."
             });
         }
+    }
+
+    // Abuse the fuck out of the Lemmy API by storing our settings in the theme field
+    const saveToLemmy = async function():Promise<void> {
+        data.saving = true;
+        let settingsExport = {
+            groups:     [...$profile.groups],
+            settings:   {...$userSettings}
+        }
+
+        try {
+            const res = await getClient().saveUserSettings({
+                auth: $profile.jwt,
+                ...$profile.user.local_user_view.person,
+                theme: JSON.stringify(settingsExport)
+            })
+            
+            toast({
+                type: 'success',
+                content: "Successfully uploaded and saved settings to Lemmy."
+            });
+        }
+        catch (err) {
+            toast({
+                type: 'error',
+                content: "Failed to save settings to Lemmy profile."
+            });
+        }
+        data.saving = false;
+    }
+
+    const loadFromLemmy = async function():Promise<void> {
+        data.saving = true;
+        try {
+            const res = await getClient().getSite({auth: $profile?.jwt})
+            let mySettings = JSON.parse(res.my_user.local_user_view.local_user.theme)
+
+            if (mySettings && (mySettings.settings || mySettings.groups)) {
+                // Import settings
+                if (mySettings.settings) $userSettings = migrateSettings(mySettings.settings, defaultSettings);
+                
+                // Fix the stupid sanitizaiton Lemmy does to ampersands and such
+                if (mySettings.groups) {
+                    for (let i:number=0; i< mySettings.groups.length; i++) {
+                        mySettings.groups[i].name = fixLemmyEncodings(mySettings.groups[i].name);
+                    }
+                    $profile.groups = [...mySettings.groups];
+                    saveProfile($profile);
+                }
+
+                toast({
+                    type: 'success',
+                    content: "Successfully loaded settings from Lemmy profile."
+                });
+            }
+            else {
+                toast({
+                    type: 'warning',
+                    content: "Loaded data from profile but unable to parse it.  See console log."
+                });
+                console.log(res)
+            }
+
+        }
+        catch (err) {
+            toast({
+                type: 'error',
+                content: "Failed to load settings from Lemmy profile."
+            });
+            console.log(err)
+        }
+
+
+        data.saving = false;
+
+    }
+
+    // Reset the Lemmy profile's `theme` field to a valid value.
+    const clearFromLemmy = async function():Promise<void> {
+        data.saving = true;
+
+        try {
+            const res = await getClient().saveUserSettings({
+                auth: $profile.jwt,
+                ...$profile.user.local_user_view.person,
+                theme: 'browser'
+            })
+            
+            toast({
+                type: 'success',
+                content: "Successfully restored valid value to profile 'theme' key."
+            });
+        }
+        catch (err) {
+            toast({
+                type: 'error',
+                content: "Failed to restore theme key to a default value."
+            });
+        }
+        data.saving = false;
     }
 
 
@@ -1177,12 +1280,78 @@
                         
                         
                         <Button class="font-normal h-8" size="md" icon={ArrowUpTray} color="primary" on:click={uploadSettings}>
-                            Upload
+                            Import
                             <input id='settingsFileUpload' bind:files={uploadFiles.tesseract} type='file' name='settingsFileUpload' accept=".json,application/json" class="hidden"/>
                         </Button>
                     </div>
 
 
+                    <!--- Save Tesseract Settings to Lemmy--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={CloudArrowUp} mini width={16}/>
+                                Save Tesseract Settings to Lemmy
+                            </p>
+                            <p class="text-xs font-normal">
+                                Use the <code>theme</code> key in your user profile to hold your Tesseract settings and groups.
+                            </p>
+                            
+                            <details>
+                                <summary class="text-xs font-bold cursor-pointer mt-2">Warnings and Cautions</summary>
+                                <p class="text-xs font-normal">
+                                    <strong>Use this at your own risk!</strong>  This is a horrible abuse of the Lemmy API.  Also, it <strong>will</strong> break the CSS in Lemmy-UI since it won't be able to 
+                                    parse and download the CSS named in this field. 
+                                </p>
+                            </details>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Button class="font-normal h-8" size="md" icon={CloudArrowUp} color="primary" disabled={data.saving} on:click={saveToLemmy}>
+                                Save to Lemmy
+                        </Button>
+                    </div>
+
+
+                    <!--- Load Tesseract Settings from Lemmy--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={CloudArrowDown} mini width={16}/>
+                                Load Tesseract Settings From Lemmy
+                            </p>
+                            <p class="text-xs font-normal">
+                                Load your Tesseract settings from the <code>theme</code> key in your Lemmy user profile.
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Button class="font-normal h-8" size="md" icon={CloudArrowDown} color="primary" disabled={data.saving} on:click={loadFromLemmy}>
+                                Load from Lemmy
+                        </Button>
+                    </div>
+
+                    <!--- Restore Lemmy 'theme' field to a valid value--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowUturnDown} mini width={16}/>
+                                Remove Tesseract Settings From Lemmy
+                            </p>
+                            <p class="text-xs font-normal">
+                                Clear your saved config from your Lemmy profile and restore the <code>theme</code> field to a valid value. Do this if you want to
+                                fix the CSS in Lemmy-UI.
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+
+                        <Button class="font-normal h-8" size="md" icon={ArrowUturnDown} color="primary" disabled={data.saving} on:click={clearFromLemmy}>
+                                Clear from Lemmy
+                        </Button>
+                    </div>
 
 
                 </div>

@@ -25,7 +25,7 @@
 
   //flex flex-row items-center w-max max-w-full overflow-auto
   let containerClass = `
-    flex flex-row items-center min-w-[120px] ${fullWidth ? '' : 'w-max'} max-w-full overflow-auto
+    flex flex-row items-center min-w-[120px] ${fullWidth ? 'w-full' : ''} max-w-full overflow-auto
     ${
       headless
         ? 'pb-1'
@@ -50,7 +50,7 @@
     relative
   `
 </script>
-<div class="flex flex-col">
+<div class="flex flex-col {fullWidth ? 'w-full' : ''}">
     
     <span class="flex flex-row gap-1 my-1">
         <span><slot name="icon"/></span>
