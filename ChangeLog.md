@@ -100,13 +100,16 @@ You can now export your Tesseract settings to a JSON file and import it again. N
 #### Sync Settings To/From Server
 Sync your Tesseract settings (config, preferences, and groups/favorites) to your home Lemmy instance.  This will allow you to load your preferences, groups, and favorites on another device without having to physically transfer and import an export JSON file.
 
-**Warnings and Cautions**:  
+
+**Notes, Warnings, and Cautions**:  
+
+Sync to/from server is a one-off operation.  Your current settings are stored/retrieved from the API but any changes after that are still local-only. You'll need to sync them to Lemmy after any significant changes. 
 
 The way this is done is a _horrible_ abuse of the Lemmy API.  There's currently no custom fields available to store 3rd party data, so I had to get creative.
 
-The `theme` field in your user profile maps to a `text` field in the database.  It's also not a value used for anything outside of Lemmy-UI.  That said, it is capable of holding arbitrary date such as a serialized JSON object representing whatever we want.  In this case, your Tesseract config.
+The `theme` field in your user profile maps to a `text` field in the database.  It's also not a value used for anything load-bearing outside of Lemmy-UI.  That said, it is capable of holding arbitrary date such as a serialized JSON object representing whatever we want.  In this case, your Tesseract config.
 
-Please be aware that this **will** break Lemmy UI's CSS while your profile data is stored inside the `theme` value. To restore the `theme` field in your profile to a valid value, use the "Clear from Lemmy" button at the bottom of the Import and Export Settings panel. 
+Please be aware that this **will** break Lemmy UI's CSS while your profile data is stored inside the `theme` field. To restore the `theme` field in your profile to a valid value, use the "Clear from Lemmy" button at the bottom of the Import and Export Settings panel. 
 
 Also of note is that this does not merge the settings; what you load from the server will replace your current Tesseract settings, groups, and favorites. 
 

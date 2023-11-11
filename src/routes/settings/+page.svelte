@@ -227,6 +227,7 @@
         data.saving = false;
     }
 
+    // Load the settings from the Lemmy profile's `theme` field
     const loadFromLemmy = async function():Promise<void> {
         data.saving = true;
         try {
@@ -1309,7 +1310,7 @@
                         <div class="mx-auto"/>
 
                         <Button class="font-normal h-8" size="md" icon={CloudArrowUp} color="primary" disabled={data.saving} on:click={saveToLemmy}>
-                                Save to Lemmy
+                                Upload
                         </Button>
                     </div>
 
@@ -1329,7 +1330,7 @@
                         <div class="mx-auto"/>
 
                         <Button class="font-normal h-8" size="md" icon={CloudArrowDown} color="primary" disabled={data.saving} on:click={loadFromLemmy}>
-                                Load from Lemmy
+                                Download
                         </Button>
                     </div>
 
@@ -1349,7 +1350,7 @@
                         <div class="mx-auto"/>
 
                         <Button class="font-normal h-8" size="md" icon={ArrowUturnDown} color="primary" disabled={data.saving} on:click={clearFromLemmy}>
-                                Clear from Lemmy
+                               Reset
                         </Button>
                     </div>
 
