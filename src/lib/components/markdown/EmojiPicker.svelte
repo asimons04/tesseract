@@ -14,9 +14,7 @@
     export let open:boolean                     // Toggles the picker open/closed
     export let closeOnSelect:boolean = true     // Whether to close the picker upon selection of an emoji    
     export let navButtons:boolean = false       // Whether to show the category buttons at the top of the picker
-    export let set: 'native' | 'apple'|'facebook'|'google'|'twitter' = 'google'  //Icon set used for emoji previews (Note: You'll also need to change the EmojiMartData import to bring in the correct set as data)
-    export let theme: 'light' | 'dark' | 'auto' = dark() ? 'dark': 'auto'
-    
+        
     
     // Read in the current site info and grab its custom emojis (if any)
     let siteInfo = get(site);
@@ -68,8 +66,8 @@
                 value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, emojiValue)
                 if (closeOnSelect) open = !open
             },
-            set: set,
-            theme: theme,
+            set: 'google',
+            theme: dark() ? 'dark': 'auto',
             previewPosition: 'none',
             navPosition: navButtons ? 'top' : 'none',
             dynamicWidth: true,

@@ -65,7 +65,7 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
-        <header class="sticky top-16 w-full rounded-md bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-20 mt-[-0.4rem] px-2">
+        <header class="sticky top-16 w-full backdrop-blur-3xl z-20 mt-[-0.5rem] px-2">
             <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
                     <!--Home Button-->
                     <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
