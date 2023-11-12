@@ -14,11 +14,9 @@
     import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
     import {  setSessionStorage } from '$lib/session.js'
-    import { userSettings } from '$lib/settings.js'
 
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -26,7 +24,7 @@
 
     import {
         Icon,
-        EllipsisVertical,
+        Bars3,
         PencilSquare,
         QueueList,
         Star,
@@ -51,9 +49,10 @@
         window.location.pathname='/create/post';
         
     }
+    
     let groupAddModal:boolean = false;
-
 </script>
+
 <div class="z-20">
     <AddCommunityGroup bind:open={groupAddModal} community={community} />
 </div>
@@ -91,7 +90,7 @@
         containerClass="!max-h-[90vh]"
     >
         <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
-            <Icon src={EllipsisVertical} mini size="16" slot="icon" />
+            <Icon src={Bars3} mini size="16" slot="icon" />
         </Button>
         
         <!---Community Name Header--->
@@ -108,7 +107,7 @@
             <Icon src={PencilSquare} mini size="16" />
             Create Post
         </MenuButton>
-        
+
         <!---Favorite/Unfavorite--->
         <MenuButton title="{favorite ? 'Remove from Favorites' : 'Add to Favorites'}" on:click={(e) => {e.stopPropagation(); addFavorite(community, !favorite)} }>
             <Icon src={Star} mini size="16" />

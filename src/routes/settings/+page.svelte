@@ -1301,7 +1301,7 @@
                             <details>
                                 <summary class="text-xs font-bold cursor-pointer mt-2">Warnings and Cautions</summary>
                                 <p class="text-xs font-normal">
-                                    <strong>This <em>will</em> break the CSS in Lemmy-UI</strong>:  This is a horrible abuse of the Lemmy API, but the <code>theme</code> field is the only available settings
+                                    <strong>This <em>will</em> break the CSS in Lemmy-UI for this account</strong>:  This is a horrible abuse of the Lemmy API, but the <code>theme</code> field is the only available settings
                                     key that's available in the API that's able to hold arbitrary text data. To fix the broken CSS in Lemmy-UI, use the "Reset" option below to restore the <code>theme</code>
                                     key to a value that's valid for the Lemmy-UI CSS selector.
                                 </p>

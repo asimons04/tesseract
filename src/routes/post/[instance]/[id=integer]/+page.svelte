@@ -118,7 +118,7 @@
 <div class="flex flex-col md:flex-row gap-4 w-full py-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
-        <header class="sticky top-16 w-full rounded-md bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-20 mt-[-1.2rem] px-2">
+        <header class="sticky top-16 w-full backdrop-blur-3xl z-20 mt-[-1.2rem] px-2">
             <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
                 
                 <!--Home Button-->

@@ -117,7 +117,9 @@
                                     <Button
                                         color="ghost"
                                         class="mr-4 border-none"
-                                        on:click={() => {
+                                        on:click={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
                                             removeCommunityFromGroup(community, group);
                                         }}
                                     >

@@ -128,12 +128,14 @@
                 </span>
             </Button>
 
-            <Button title="Groups" size="md" class="!border-none" color="ghost" on:click={()=> panel='groups'}>
-                <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                    <Icon src={Star} mini size="18" title="Groups" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Groups</span>
-                </span>
-            </Button>
+            {#if $userSettings.uiState.expandSidebar}
+                <Button title="Groups" size="md" class="!border-none" color="ghost" on:click={()=> panel='groups'}>
+                    <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={Star} mini size="18" title="Groups" />
+                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Groups</span>
+                    </span>
+                </Button>
+            {/if}
 
             {#if $profile?.user.moderates.length > 0}
                 <Button title="Moderating" size="md" class="!border-none" color="ghost" on:click={()=> panel='moderating'}>
@@ -177,9 +179,8 @@
             
             <!--- Favorites--->
             {#if panel=='groups'}
-                
+
                 {#if $profile?.groups}
-                    
                     {#each $profile.groups.sort(sortGroups) as group}
                         <CommunityGroup expanded={$userSettings.uiState.expandSidebar} group={group} />
                     {/each}

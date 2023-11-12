@@ -1,26 +1,29 @@
 <script lang="ts">
-import type { CommunityGroup } from '$lib/auth'
-import { goto } from '$app/navigation'
+    import type { CommunityGroup } from '$lib/auth'
+    import { goto } from '$app/navigation'
 
-import Button from '$lib/components/input/Button.svelte'
-import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
-import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
+    import Button from '$lib/components/input/Button.svelte'
+    import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
+    import Menu from '$lib/components/ui/menu/Menu.svelte'
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
 
-import {
-    Icon,
-    ArrowTopRightOnSquare,
-    PencilSquare,
-    UserGroup
-} from 'svelte-hero-icons'
+    import {
+        Icon,
+        ArrowTopRightOnSquare,
+        Bars3,
+        PencilSquare,
+        UserGroup
+    } from 'svelte-hero-icons'
 
-export let group:CommunityGroup
-export let expanded:boolean = true;
+    export let group:CommunityGroup
+    export let expanded:boolean = true;
 
-let open:boolean = false;
+    let open:boolean = false;
 </script>
 
 
-{#if group && group.communities?.length > 0}
+{#if group && expanded && group.communities?.length > 0}
     <div class="flex flex-col gap-1">    
         
         <div class="flex flex-row w-full px-2 gap-4 items-center">
@@ -32,21 +35,40 @@ let open:boolean = false;
             </SidebarButton>
 
             <span class="ml-auto"/>
+            {#if expanded}
             
-            <!--Edit Group Button--->
-            <span class="cursor-pointer {expanded ? '' : 'hidden'}" title="Edit Group" on:click={() => { }}>
-                <Icon src={PencilSquare} mini size="18" />
-            </span>
+            <Menu
+                alignment="bottom-right"
+                itemsClass="h-8 md:h-8"
+                containerClass="!max-h-[90vh]"
+            >
+                <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Group Options">
+                    <Icon src={Bars3} mini size="16" slot="icon" />
+                </Button>
+                
+                <!---Group Name Header--->
+                <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
+                    {group.name}
+                </span>
+        
+                <!---View Group as Feed--->
+                <MenuButton link href="/feeds/{group.name}" title="View as Feed">
+                    <Icon src={ArrowTopRightOnSquare} mini size="18"/>
+                    View as Feed
+                </MenuButton>
 
-            <!---View as Feed Button--->
-            <span class="cursor-pointer {expanded ? '' : 'hidden'}" on:click={() => goto(`/feeds/${group.name}`)} title="View as Feed">
-                <Icon src={ArrowTopRightOnSquare} mini size="18"/>
-            </span>
-            
+                <!---Create Post --->
+                <MenuButton link title="Edit Group">
+                    <Icon src={PencilSquare} mini size="16" />
+                    Edit Group
+                </MenuButton>
+                
+            </Menu>
+            {/if}
         </div>
         
         {#if open}
-            <div class="pl-4">
+            <div class="pl-4 pr-2">
                 <CommunityList {expanded} items={group.communities} group={group.name}/>
             </div>
         {/if}
