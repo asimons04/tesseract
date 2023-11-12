@@ -1,7 +1,5 @@
 <script lang="ts">
-    import type {
-        Community
-    } from 'lemmy-js-client'
+    import type { Community } from 'lemmy-js-client'
     
     import { 
         type CommunityGroup,
@@ -14,6 +12,7 @@
         memberOf,
         removeCommunityFromGroup
     } from '$lib/favorites'
+    
     import { toast } from '$lib/components/ui/toasts/toasts';
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -46,13 +45,13 @@
             ? addGroup(newGroupName, [community])
             : addCommunityToGroup(community, selectedGroup);
         
+        communityMemberOf = memberOf(community) || []
         toast({
             content: `Added ${community.name} to ${newGroupName ? newGroupName : selectedGroup }`,
             type: "success"
         })
 
         // Reset the values
-        //open = !open
         selectedGroup = 'new';
         newGroupName = ''
     }
@@ -121,6 +120,7 @@
                                             e.preventDefault();
                                             e.stopPropagation();
                                             removeCommunityFromGroup(community, group);
+                                            communityMemberOf = memberOf(community) || []
                                         }}
                                     >
                                         

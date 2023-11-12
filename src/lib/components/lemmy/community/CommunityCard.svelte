@@ -14,19 +14,20 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
     
-    import Button from '$lib/components/input/Button.svelte'
-    import Badge from '$lib/components/ui/Badge.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import Badge from '$lib/components/ui/Badge.svelte'
+    import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
-    import StickyCard from '$lib/components/ui/StickyCard.svelte'
-    
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import StickyCard from '$lib/components/ui/StickyCard.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    
 
     import {
         Calendar,
@@ -46,6 +47,7 @@
         PencilSquare,
         Plus,
         PlusCircle,
+        QueueList,
         Rss,
         ShieldCheck,
         ShieldExclamation,
@@ -60,6 +62,7 @@
     
     
     let sidebar: boolean = false
+    let groupAddModal:boolean = false
     let expandModerators:boolean = false
 
     let loading = {
@@ -154,6 +157,8 @@
 
 </script>
 
+
+<!---Community Info Modal--->
 <Modal bind:open={sidebar}>
     <span slot="title">{community_view.community.title.replace('&amp;', '&')}</span>
     <div class="mx-auto">
@@ -192,6 +197,10 @@
     </div>
 </Modal>
 
+<!---Modal to Add Community to a Group--->
+<div class="z-20">
+    <AddCommunityGroup bind:open={groupAddModal} community={community_view.community} />
+</div>
 
 
 
@@ -307,11 +316,7 @@
                                             e.stopPropagation();
                                             subscribe();
                                         }}>
-                                            <Icon
-                                                src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
-                                                mini
-                                                size="16"
-                                            />
+                                            <Icon src={community_view.subscribed == 'Subscribed' ? Minus : Rss} mini size="16" />
                                             {
                                                 community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
                                                 ? 'Unsubscribe'
@@ -327,13 +332,15 @@
                                             favorite = !favorite
                                             addFavorite(community_view.community, favorite)
                                         }}>
-                                            <Icon
-                                                src={Star}
-                                                mini
-                                                size="16"
-                                            />
+                                            <Icon src={Star} mini size="16" />
                                             {favorite ? 'Remove Favorite' : 'Add Favorite'}
                                         </span>
+                                    </MenuButton>
+
+                                    <!---Add to Group--->
+                                    <MenuButton title="Add/Remove to Group" on:click={(e) => {e.stopPropagation(); groupAddModal=!groupAddModal} }>
+                                        <Icon src={QueueList} mini size="16" />
+                                        Add/Remove to Group(s)
                                     </MenuButton>
                                     
                                     <!--- Block/Unblock Community --->
@@ -342,11 +349,7 @@
                                             e.stopPropagation(); 
                                             block(); 
                                         }}>
-                                            <Icon
-                                                src={community_view.blocked  ? ShieldCheck : ShieldExclamation}
-                                                mini
-                                                size="16"
-                                            />
+                                            <Icon src={community_view.blocked  ? ShieldCheck : ShieldExclamation} mini size="16" />
                                             {community_view.blocked ? 'Unblock' : 'Block'} Community
                                         </span>
                                     </MenuButton>
@@ -360,11 +363,7 @@
                                             remove(); 
                                         }}>
 
-                                            <Icon
-                                                src={community_view.community.removed  ? PlusCircle : MinusCircle}
-                                                mini
-                                                size="16"
-                                            />
+                                            <Icon src={community_view.community.removed  ? PlusCircle : MinusCircle} mini size="16" />
                                             {community_view.community.removed ? 'Restore' : 'Remove'} Community
                                         </span>
                                     </MenuButton>
@@ -375,11 +374,7 @@
                                             e.stopPropagation(); 
                                             hide();
                                         }}>
-                                            <Icon
-                                                src={community_view.community.hidden  ? Eye : EyeSlash}
-                                                mini
-                                                size="16"
-                                            />
+                                            <Icon src={community_view.community.hidden  ? Eye : EyeSlash} mini size="16" />
                                             {community_view.community.hidden ? 'Unhide' : 'Hide'} Community
                                         </span>
                                     </MenuButton>

@@ -8,12 +8,16 @@
         memberOf,
         removeCommunityFromGroup
     } from '$lib/favorites'
+    
+    import { addSubscription } from '$lib/lemmy/user.js'
+    import {getClient} from '$lib/lemmy'
 
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fullCommunityName } from '$lib/util.js'
     import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
     import {  setSessionStorage } from '$lib/session.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -25,6 +29,7 @@
     import {
         Icon,
         Bars3,
+        Minus,
         PencilSquare,
         QueueList,
         Star,
@@ -40,6 +45,7 @@
     $: favorite = isFavorite(community)
     $: if (group && memberOf(community).includes(group)) isGroupMember = true;
 
+    
     function createPost() {
         setSessionStorage('lastSeenCommunity', {
             id: community.id,
@@ -48,6 +54,25 @@
         // Hack to get the session storage to read on create post. "goto" wasn't picking up the change
         window.location.pathname='/create/post';
         
+    }
+
+    let unsubscribing:boolean = false;
+    async function unsubscribe() {
+        if (!$profile?.jwt) return
+        unsubscribing = true
+
+        try {
+            await getClient().followCommunity({
+                auth: $profile.jwt,
+                community_id: community.id,
+                follow: false,
+            })
+        } catch (error) {
+            toast({ content: error as any, type: 'error' })
+        }
+        
+        addSubscription(community, false)
+        unsubscribing = false
     }
     
     let groupAddModal:boolean = false;
@@ -115,9 +140,9 @@
         </MenuButton>
 
         <!---Add to Group--->
-        <MenuButton title="Add to Group" on:click={(e) => {e.stopPropagation(); groupAddModal=!groupAddModal} }>
+        <MenuButton title="Add/Remove to Group" on:click={(e) => {e.stopPropagation(); groupAddModal=!groupAddModal} }>
             <Icon src={QueueList} mini size="16" />
-            Add to Group(s)
+            Add/Remove to Group(s)
         </MenuButton>
 
         <!---Remove from Group--->
@@ -127,6 +152,19 @@
             Remove from {group}
         </MenuButton>
         {/if}
+
+        <!---Unsubscribe--->
+        <MenuButton disabled={unsubscribing} loading={unsubscribing}>
+            <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+                e.stopPropagation();
+                unsubscribe();
+            }}>
+                <span class:hidden={unsubscribing}>
+                    <Icon src={Minus} mini size="16" />
+                </span>
+                Unsubscribe
+            </span>
+        </MenuButton>
 
         
     </Menu>

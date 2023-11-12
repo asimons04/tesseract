@@ -122,29 +122,29 @@
         <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-1">
             <div class="ml-auto"/>
 
-            <Button title="Subscribed" size="md" class="!border-none" color="ghost" on:click={()=> panel='subscribed'}>
+            <SidebarButton title="Subscribed" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='subscribed'}>
                 <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                     <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
                     <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Subscribed</span>
                 </span>
-            </Button>
+            </SidebarButton>
 
             {#if $userSettings.uiState.expandSidebar}
-                <Button title="Groups" size="md" class="!border-none" color="ghost" on:click={()=> panel='groups'}>
+                <SidebarButton title="Groups" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='groups'}>
                     <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={Star} mini size="18" title="Groups" />
                         <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Groups</span>
                     </span>
-                </Button>
+                </SidebarButton>
             {/if}
 
             {#if $profile?.user.moderates.length > 0}
-                <Button title="Moderating" size="md" class="!border-none" color="ghost" on:click={()=> panel='moderating'}>
+                <SidebarButton title="Moderating" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='moderating'}>
                     <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={HandRaised} mini size="18" title="Moderating" />
                         <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">Moderating</span>
                     </span>
-                </Button>
+                </SidebarButton>
             {/if}
 
             <div class="mr-auto"/>
@@ -178,19 +178,30 @@
         <div class="flex flex-col gap-1 h-full overflow-y-auto">
             
             
-            <!--- Favorites--->
-            {#if panel=='groups'}
-
-                {#if $profile?.groups}
-                    {#each $profile.groups.sort(sortGroups) as group}
-                        <CommunityGroup expanded={$userSettings.uiState.expandSidebar} group={group} />
-                    {/each}
-                
-                {:else}
-                    {#if $userSettings.uiState.expandSidebar}
+            <!--- Groups--->
+            {#if panel=='groups' && $userSettings.uiState.expandSidebar}
+                <div class="flex flex-col gap-1 h-full overflow-y-auto">
+                    {#if $profile?.groups}
+                        {#each $profile.groups.sort(sortGroups) as group}
+                            <CommunityGroup group={group} />
+                        {/each}
+                    {:else}
                         <Placeholder size="22" icon={ArchiveBox} title="No Groups" description="Your favoritie and grouped communities will appear here." />
                     {/if}
-                {/if}
+                </div>
+
+                <div class="mt-auto"/>
+                
+                <div class="mb-4 p-1 border border-slate-500/75 dark:border-zinc-500/75 rounded-md bg-white/50 dark:bg-black/50 hover:bg-white hover:dark:bg-black w-full items-center">
+                    
+                    <span class="flex flex-row gap-2 text-xs font-bold cursor-pointer">
+                        <span class="ml-auto"/>
+                        <Icon src={Cog6Tooth} mini size="18"/>
+                        Manage Groups
+                        <span class="mr-auto"/>
+                    </span>
+
+                </div>
             {/if}
             
             

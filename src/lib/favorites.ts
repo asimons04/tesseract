@@ -95,7 +95,6 @@ export const addCommunityToGroup = function (community:Community, groupName:stri
 
     profile.set({...userProfile})
     saveProfile(userProfile)
-    console.log("Added community to group");
 }
 
 export const removeCommunityFromGroup = function(community:Community, groupName:string):void {
@@ -114,7 +113,6 @@ export const removeCommunityFromGroup = function(community:Community, groupName:
 
     profile.set({...userProfile})
     saveProfile(userProfile);
-    console.log("Removed community from group");
 }
 
 
@@ -131,7 +129,6 @@ export const removeGroup = function (groupName:string):void {
     userProfile.groups.splice(groupIndex, 1);
     profile.set({...userProfile})
     saveProfile(userProfile)
-    console.log("Removed group and its members")
 }
 
 // Returns the group names a community is currently a member of (or empty array if none)
