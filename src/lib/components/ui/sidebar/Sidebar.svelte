@@ -33,6 +33,7 @@
         MagnifyingGlass,
         Minus,
         Plus,
+        QueueList,
         Star,
         UserGroup,
         XCircle
@@ -108,7 +109,7 @@
 
     <!---Feed Groups--->
     <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Feeds">
-        <Icon src={Bars3} mini size="18" title="Feeds" />
+        <Icon src={QueueList} mini size="18" title="Feeds" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Feeds</span>
     </SidebarButton>
 

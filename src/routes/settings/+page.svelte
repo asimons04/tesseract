@@ -201,16 +201,35 @@
     // Abuse the fuck out of the Lemmy API by storing our settings in the theme field
     const saveToLemmy = async function():Promise<void> {
         data.saving = true;
-        let settingsExport = {
-            groups:     [...$profile.groups],
-            settings:   {...$userSettings}
-        }
 
         try {
+            let oldSettings = {}
+
+            // Fetch the current value of the settings object (theme for now) from the API
+            const myProfile = await getClient().getSite({auth: $profile?.jwt})
+            
+
+            // In case old settings are still the default 'theme' values.
+            if (typeof myProfile.my_user.local_user_view.local_user.theme == 'string') oldSettings = {}
+            else oldSettings = JSON.parse(myProfile.my_user.local_user_view.local_user.theme)
+            
+
+            // Export the current settings to an object under the Tesseract key.
+            let settingsExport = {
+                tesseract: {
+                    groups:     [...$profile.groups || []],
+                    settings:   {...$userSettings}
+                }
+            }
+            
+            // Keep the old settings (for any other UIs that abuse the 'theme' field) and only overwrite the ones for Tesseract
+            let settings = { ...oldSettings, ...settingsExport};
+
+            // Save the updated settings object back to the 'theme' field. (for some reason, the local user 'person' object is required)
             const res = await getClient().saveUserSettings({
                 auth: $profile.jwt,
                 ...$profile.user.local_user_view.person,
-                theme: JSON.stringify(settingsExport)
+                theme: JSON.stringify(settings)
             })
             
             toast({
@@ -219,6 +238,7 @@
             });
         }
         catch (err) {
+            console.log(err);
             toast({
                 type: 'error',
                 content: "Failed to save settings to Lemmy profile."
@@ -234,7 +254,9 @@
             const res = await getClient().getSite({auth: $profile?.jwt})
             let mySettings = JSON.parse(res.my_user.local_user_view.local_user.theme)
 
-            if (mySettings && (mySettings.settings || mySettings.groups)) {
+            if (mySettings && mySettings.tesseract && (mySettings.tesseract.settings || mySettings.tesseract.groups)) {
+                mySettings = mySettings.tesseract;
+
                 // Import settings
                 if (mySettings.settings) $userSettings = migrateSettings(mySettings.settings, defaultSettings);
                 
@@ -348,7 +370,7 @@
             alignment="left"
             on:click={()=> { selected = 'feed' }}
         >
-            <Icon src={Bars3} mini width={16} slot="icon"/>
+            <Icon src={QueueList} mini width={16} slot="icon"/>
             <span class="hidden sm:block">Feed</span>
         </Button>
 
@@ -559,7 +581,7 @@
         <div class:hidden={selected!='feed'}>
             <Setting>
                 <span class="flex flex-row gap-2" slot="title">
-                    <Icon src={Bars3} mini width={24} slot="icon"/>
+                    <Icon src={QueueList} mini width={24} slot="icon"/>
                     Feed Options
                 </span>
                 
@@ -569,7 +591,7 @@
                     <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
-                                <Icon src={Bars3} mini width={16}/>Default Feed
+                                <Icon src={QueueList} mini width={16}/>Default Feed
                             </p>
                             <p class="text-xs font-normal">Show only posts you're suscribed to, show all from your local instance, or show all posts known to your instance</p>
                         </div>
