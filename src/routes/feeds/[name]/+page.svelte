@@ -7,10 +7,11 @@
     import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { type CommunityGroup, profile } from '$lib/auth'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
-    import { sortGroups } from '$lib/favorites'
+    import { getGroup, groupExists, sortGroups } from '$lib/favorites'
     import { sortOptions, sortOptionNames } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
 
+    import EditCommunityGroup from '$lib/components/util/EditCommunityGroup.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
@@ -31,6 +32,7 @@
 
 
     export let data
+    let editCommunityGroup:boolean = false;
 
     // Hack to deal with Svelte not returning to the correct spot when returning to the post.
     afterNavigate(() => {
@@ -56,6 +58,10 @@
 <svelte:head>
     <title>Feeds: {data.feedName}</title>
 </svelte:head>
+
+{#if editCommunityGroup && groupExists(data.feedName)}
+    <EditCommunityGroup bind:open={editCommunityGroup} group={getGroup(data.feedName)} />
+{/if}
 
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
 
@@ -122,9 +128,9 @@
                 <span class="ml-auto"/>
 
                 <!--Edit Group Button-->
-                <span class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold" title="Edit Group"
+                <span class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" title="Edit Group"
                     on:click={() => {
-                        
+                        editCommunityGroup = true;
                     }}
                 >
                     <Icon src={PencilSquare} width={18} />

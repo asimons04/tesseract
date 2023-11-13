@@ -51,6 +51,11 @@ export const getGroup = function (group:number|string): CommunityGroup|undefined
 }
 
 
+export const groupExists = function(groupName:string):boolean {
+    return getGroupIndex(groupName) >= 0
+    
+}
+
 // Add a favorite community to your profile 
 export const addFavorite = function(community:Community, favorite:boolean): void {
     favorite

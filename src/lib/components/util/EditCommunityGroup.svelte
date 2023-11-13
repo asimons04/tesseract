@@ -39,10 +39,7 @@
     }
 
     // Reset the formdata value to the current group
-    onMount(() => { 
-        console.log("Mounted modal");
-        reset()
-    });
+    onMount(() => reset() );
 
     let communitySearchInput:string = ''
     
@@ -66,6 +63,7 @@
         }
         
         if (updateGroup(group, formData)) {
+            open = false;
             toast({
                 content: `Updated group.`,
                 type: "success"
