@@ -14,6 +14,8 @@
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
 
+    import { Icon, Trash } from 'svelte-hero-icons'
+
     export let data
 
     let formData: Omit<SaveUserSettings, 'auth'> | undefined = {
@@ -68,6 +70,7 @@
         switch (level) {
             case 0: {
                 toast({
+                    type: "warning",
                     content: 'Are you sure you want to delete your account?',
                     action: () => deleteAccount(1),
                 })
@@ -76,6 +79,7 @@
 
             case 1: {
                 toast({
+                    type: "warning",
                     content: 'Are you really sure?',
                     action: () => deleteAccount(2),
                 })
@@ -84,6 +88,7 @@
     
             case 2: {
                 toast({
+                    type: "warning",
                     content: 'Final warning. Are you reeeeeeally sure?',
                     action: () => deleteAccount(3),
                 })
@@ -145,18 +150,9 @@
 </script>
 
 {#if deletion.modal}
-  <Modal
-    bind:open={deletion.modal}
-    action="Submit"
-    on:action={() => deleteAccount(4)}
-  >
-    <span slot="title">Delete account</span>
-    <TextInput
-      label="Password"
-      type="password"
-      bind:value={deletion.password}
-    />
-  </Modal>
+    <Modal bind:open={deletion.modal} title="Delete Account" icon={Trash} action="Submit" on:action={() => deleteAccount(4)} >
+        <TextInput label="Password" type="password" bind:value={deletion.password} />
+    </Modal>
 {/if}
 
 

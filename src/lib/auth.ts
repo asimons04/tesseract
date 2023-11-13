@@ -11,6 +11,7 @@ import { toast } from '$lib/components/ui/toasts/toasts.js'
 
 export interface CommunityGroup {
     name:string,
+    icon?:string,
     communities:Community[],
     sort?: SortType,
 }

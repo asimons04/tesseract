@@ -85,7 +85,8 @@
                     icon={Bars3}
                     on:select={(e) => {
                         // @ts-ignore
-                        goto(`/feeds/${e.detail}`)
+                        let params
+                        goto(`/feeds/${e.detail}?${new URL(window.location.href).searchParams.toString()}`)
                     }}
                 />
                     

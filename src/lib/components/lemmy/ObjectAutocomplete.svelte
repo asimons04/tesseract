@@ -17,6 +17,7 @@
     export let listing_type: ListingType = 'Subscribed'
     export let items: Community[] | Person[] | undefined = undefined
     export let showWhenEmpty: boolean = false
+    export let label:string = ''
 
     let showNone: boolean = false
 
@@ -24,105 +25,122 @@
 </script>
 
 {#if type == 'community'}
-    <SearchInput
-        options={items || []}
-        on:search={async () => {
-            if (q == '') showNone = true
-            else showNone = false
-
-            const results = await getClient().search({
-                q: q || ' ',
-                auth: jwt,
-                type_: 'Communities',
-                limit: 20,
-                listing_type: listing_type,
-                sort: 'TopAll',
-            })
-            items = results.communities.map((c) => c.community)
-        }}
-        debounceTime={600}
-        extractName={(c) => c.title}
-        bind:query={q}
-        extractSelected={(c) => {
-            if (c) dispatcher('select', c)
-        }}
-
-        let:extractName
-        let:extractSelected
-        let:option
-        let:query
-        {showWhenEmpty}
-        {...$$restProps}
-    >
-    
-        {#if query == '' && showWhenEmpty}
-            <MenuButton on:click={() => dispatcher('select', undefined)}>
-                <Icon src={XCircle} size="16" mini />
-                <div class="flex flex-col text-left">
-                    <span>None</span>
-                </div>
-            </MenuButton>
-        {:else if option}
-            <MenuButton on:click={() => extractSelected(option)}>
-                <Avatar url={option.icon} alt={option.title} width={24} />
-                <div class="flex flex-col text-left">
-                    <span>{option.title}</span>
-                    <span class="text-xs opacity-80">
-                        {new URL(option.actor_id).hostname}
-                    </span>
-                </div>
-            </MenuButton>
+    <label class="flex flex-col w-full {$$props.class}">
+        {#if label != ''}
+            <span class="font-bold text-sm text-left mb-1 w-max self-start">
+                {label}
+            </span>
         {/if}
-    </SearchInput>
+
+        <SearchInput
+            options={items || []}
+            on:search={async () => {
+                if (q == '') showNone = true
+                else showNone = false
+
+                const results = await getClient().search({
+                    q: q || ' ',
+                    auth: jwt,
+                    type_: 'Communities',
+                    limit: 20,
+                    listing_type: listing_type,
+                    sort: 'TopAll',
+                })
+                items = results.communities.map((c) => c.community)
+            }}
+            debounceTime={600}
+            extractName={(c) => c.title}
+            bind:query={q}
+            extractSelected={(c) => {
+                if (c) dispatcher('select', c)
+            }}
+
+            let:extractName
+            let:extractSelected
+            let:option
+            let:query
+            {showWhenEmpty}
+            {...$$restProps}
+        >
+        
+            {#if query == '' && showWhenEmpty}
+                <MenuButton on:click={() => dispatcher('select', undefined)}>
+                    <Icon src={XCircle} size="16" mini />
+                    <div class="flex flex-col text-left">
+                        <span>None</span>
+                    </div>
+                </MenuButton>
+            {:else if option}
+                <MenuButton on:click={() => extractSelected(option)}>
+                    <Avatar url={option.icon} alt={option.title} width={24} />
+                    <div class="flex flex-col text-left">
+                        <span>{option.title}</span>
+                        <span class="text-xs opacity-80">
+                            {new URL(option.actor_id).hostname}
+                        </span>
+                    </div>
+                </MenuButton>
+            {/if}
+        </SearchInput>
+    </label>
 {/if}
 
+
+
 {#if type == 'person'}
-    <SearchInput
-        options={items || []}
-        on:search={async () => {
-            if (q == '') showNone = true
-            else showNone = false
-
-            const results = await getClient().search({
-                q: q || ' ',
-                auth: jwt,
-                type_: 'Users',
-                limit: 20,
-            })
-            items = results.users.map((u) => u.person)
-        }}
-        debounceTime={600}
-        extractName={(u) => u.name}
-        bind:query={q}
-        extractSelected={(u) => {
-            if (u) dispatcher('select', u)
-        }}
-
-        let:extractName
-        let:extractSelected
-        let:option
-        let:query
-        {showWhenEmpty}
-        {...$$restProps}
-    >
-    
-        {#if query == '' && showWhenEmpty}
-            <MenuButton on:click={() => dispatcher('select', undefined)}>
-                <Icon src={XCircle} size="16" mini />
-                <div class="flex flex-col text-left">
-                    <span>None</span>
-                </div>
-            </MenuButton>
-        {:else if option}
-            <MenuButton on:click={() => extractSelected(option)}>
-                <Avatar url={option.avatar} alt={option.name} width={24} />
-                <div class="flex flex-col text-left">
-                    <span>{option.name}</span>
-                    <span class="text-xs opacity-80">
-                        {new URL(option.actor_id).hostname}
-                    </span>
-                </div>
-            </MenuButton>
+    <label class="flex flex-col w-full {$$props.class}">
+        {#if label != ''}
+            <span class="font-bold text-sm text-left mb-1 w-max self-start">
+                {label}
+            </span>
         {/if}
-    </SearchInput>
+        <SearchInput
+            options={items || []}
+            on:search={async () => {
+                if (q == '') showNone = true
+                else showNone = false
+
+                const results = await getClient().search({
+                    q: q || ' ',
+                    auth: jwt,
+                    type_: 'Users',
+                    limit: 20,
+                })
+                items = results.users.map((u) => u.person)
+            }}
+            debounceTime={600}
+            extractName={(u) => u.name}
+            bind:query={q}
+            extractSelected={(u) => {
+                if (u) dispatcher('select', u)
+            }}
+
+            let:extractName
+            let:extractSelected
+            let:option
+            let:query
+            {showWhenEmpty}
+            {...$$restProps}
+        >
+        
+            {#if query == '' && showWhenEmpty}
+                <MenuButton on:click={() => dispatcher('select', undefined)}>
+                    <Icon src={XCircle} size="16" mini />
+                    <div class="flex flex-col text-left">
+                        <span>None</span>
+                    </div>
+                </MenuButton>
+            {:else if option}
+                <MenuButton on:click={() => extractSelected(option)}>
+                    <Avatar url={option.avatar} alt={option.name} width={24} />
+                    <div class="flex flex-col text-left">
+                        <span>{option.name}</span>
+                        <span class="text-xs opacity-80">
+                            {new URL(option.actor_id).hostname}
+                        </span>
+                    </div>
+                </MenuButton>
+            {/if}
+        </SearchInput>
+    </label>
 {/if}

@@ -7,7 +7,8 @@
     import { sortGroups } from '$lib/favorites'
     import { userSettings } from '$lib/settings.js'
     
-    import Button from '../../input/Button.svelte'
+    import Button from '$lib/components/input/Button.svelte'
+    import Checkbox from '$lib/components/input/Checkbox.svelte'
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
@@ -45,7 +46,8 @@
     // Support components for the community filter
     let communityFilterTerm:string = '';
     let communityFiltervalue:string = '';
-    
+    let showEmptyGroups:boolean = false;
+
     let debounceTimer: ReturnType<typeof setTimeout>;
     function debounce(value:string,  timeout=300) {
         clearTimeout(debounceTimer);
@@ -65,7 +67,7 @@
     class="hidden sm:flex flex-col pl-4 pr-4 pt-[1.2rem] overflow-auto sticky top-16 bottom-0
         gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black z-50
         {$userSettings.uiState.expandSidebar
-            ? `max-w-[25%] lg:max-w-[20%] xl:max-w-[18%] resize-x min-w-[20rem]`
+            ? `max-w-[25%] lg:max-w-[20%] xl:max-w-[18%] min-w-[20rem]`
             : "w-max max-w-max min-w-max"
         }
     "
@@ -129,6 +131,7 @@
                 </span>
             </SidebarButton>
 
+
             {#if $userSettings.uiState.expandSidebar}
                 <SidebarButton title="Groups" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='groups'}>
                     <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
@@ -181,9 +184,10 @@
             <!--- Groups--->
             {#if panel=='groups' && $userSettings.uiState.expandSidebar}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
+                    
                     {#if $profile?.groups}
                         {#each $profile.groups.sort(sortGroups) as group}
-                            <CommunityGroup group={group} />
+                            <CommunityGroup group={group} bind:showEmptyGroups/>
                         {/each}
                     {:else}
                         <Placeholder size="22" icon={ArchiveBox} title="No Groups" description="Your favoritie and grouped communities will appear here." />
@@ -192,15 +196,22 @@
 
                 <div class="mt-auto"/>
                 
-                <div class="mb-4 p-1 border border-slate-500/75 dark:border-zinc-500/75 rounded-md bg-white/50 dark:bg-black/50 hover:bg-white hover:dark:bg-black w-full items-center">
+                
+                <hr class="border-slate-300/60"/>
+                <div class="flex flex-col gap-2">
+                    <div class="pl-2">
+                        <Checkbox bind:checked={showEmptyGroups}>Show Empty Groups</Checkbox>
+                    </div>
                     
-                    <span class="flex flex-row gap-2 text-xs font-bold cursor-pointer">
-                        <span class="ml-auto"/>
-                        <Icon src={Cog6Tooth} mini size="18"/>
-                        Manage Groups
-                        <span class="mr-auto"/>
-                    </span>
+                    <div class="mb-4 p-1 border border-slate-500/75 dark:border-zinc-500/75 rounded-md bg-white/50 dark:bg-black/50 hover:bg-white hover:dark:bg-black w-full items-center">
+                        <span class="flex flex-row gap-2 text-xs font-bold cursor-pointer">
+                            <span class="ml-auto"/>
+                            <Icon src={Cog6Tooth} mini size="18"/>
+                            Manage Groups
+                            <span class="mr-auto"/>
+                        </span>
 
+                    </div>
                 </div>
             {/if}
             

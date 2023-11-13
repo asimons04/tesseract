@@ -16,7 +16,7 @@ export async function load(req: any) {
     
     try {
         let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: 40,
+            limit: get(userSettings)?.uiState.postsPerPage || 40,
             community_name: req.params.name,
             page: page,
             sort: sort,
@@ -54,7 +54,8 @@ export async function load(req: any) {
         toast({
             content: `This community is not known to your instance. Fetching community from its home instance. This may take a moment...`,
             type: 'success',
-            duration: 10000
+            loading: true,
+            duration: 15000
         })
 
         await getClient(undefined, fetch).resolveObject({
@@ -63,7 +64,7 @@ export async function load(req: any) {
         })
         
         let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: 40,
+            limit: get(userSettings)?.uiState.postsPerPage || 40,
             community_name: req.params.name,
             page: page,
             sort: sort,

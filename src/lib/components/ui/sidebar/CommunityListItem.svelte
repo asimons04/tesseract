@@ -45,7 +45,19 @@
     $: favorite = isFavorite(community)
     $: if (group && memberOf(community).includes(group)) isGroupMember = true;
 
-    
+    function removeFromCurrentGroup(confirm:boolean=false):void {
+        if (!confirm) {
+            toast({
+                type: "warning",
+                content: `Are you sure you want to remove ${community.title || community.name} from ${group}?`,
+                action: () => removeFromCurrentGroup(true),
+            })
+            return
+        }
+
+        removeCommunityFromGroup(community, group)
+    }
+
     function createPost() {
         setSessionStorage('lastSeenCommunity', {
             id: community.id,
@@ -57,10 +69,19 @@
     }
 
     let unsubscribing:boolean = false;
-    async function unsubscribe() {
+    async function unsubscribe(confirm:boolean=false):Promise<void> {
         if (!$profile?.jwt) return
+        
+        if (!confirm) {
+            toast({
+                type: "warning",
+                content: `Are you sure you want to unsubscribe from ${community.title || community.name}?`,
+                action: () => unsubscribe(true),
+            })
+            return
+        }
+    
         unsubscribing = true
-
         try {
             await getClient().followCommunity({
                 auth: $profile.jwt,
@@ -109,18 +130,14 @@
     </Button>
     
     {#if expanded}
-    <Menu
-        alignment="bottom-right"
-        itemsClass="h-8 md:h-8"
-        containerClass="!max-h-[90vh]"
-    >
+    <Menu alignment="bottom-right" itemsClass="h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[19rem]">
         <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
             <Icon src={Bars3} mini size="16" slot="icon" />
         </Button>
         
         <!---Community Name Header--->
         <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            {community.title ?? community.name}
+            {community.title ?? community.name}@{new URL(community.actor_id).host}
         </span>
 
         <!---Create Post --->
@@ -147,7 +164,7 @@
 
         <!---Remove from Group--->
         {#if isGroupMember && group != 'Favorites'}
-        <MenuButton title="Remove from Group" on:click={(e) => {e.stopPropagation(); removeCommunityFromGroup(community, group)}} >
+        <MenuButton title="Remove from Group" on:click={(e) => {e.stopPropagation(); removeFromCurrentGroup()}} >
             <Icon src={Trash} mini size="16" />
             Remove from {group}
         </MenuButton>

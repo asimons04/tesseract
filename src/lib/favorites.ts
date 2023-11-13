@@ -9,7 +9,8 @@ import {
 
 import { get } from 'svelte/store'
 
-export function sortGroups(a:string|CommunityGroup, b:string|CommunityGroup) {
+// Alphabetically sorts either an array of group names or an array of CommunityGroups objects
+export function sortGroups(a:string|CommunityGroup|Community, b:string|CommunityGroup|Community) {
     if (typeof a == 'string') {
         if (a.toLowerCase() < b.toLowerCase()) return -1
         if (a.toLowerCase() > b.toLowerCase()) return 1
@@ -23,7 +24,31 @@ export function sortGroups(a:string|CommunityGroup, b:string|CommunityGroup) {
     }
 }
 
+export function sortCommunities(a:Community, b:Community) {
+    return a.title.localeCompare(b.title)
+}
 
+
+// Returns the index of a group given its name as a parameter (case-insensitive)
+export const getGroupIndex = function (groupName:string):number {
+    const userProfile = get(profile)
+
+    if (!groupName) return -1
+    if (!userProfile.groups) return -1
+
+    return userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == groupName.toLowerCase())
+}
+
+export const getGroup = function (group:number|string): CommunityGroup|undefined {
+    const userProfile = get(profile)
+
+    if (typeof group == 'number' && userProfile.groups[group]) return userProfile.groups[group]
+    if (typeof group == 'number') return undefined
+   
+    let index = getGroupIndex(group);
+    if (index < 0) return undefined
+    return userProfile.groups[index] || undefined
+}
 
 
 // Add a favorite community to your profile 
@@ -116,6 +141,20 @@ export const removeCommunityFromGroup = function(community:Community, groupName:
 }
 
 
+export const updateGroup = function(oldGroup:CommunityGroup, newGroup:CommunityGroup):boolean {
+    const userProfile = get(profile)
+    if(!profile || !oldGroup || !newGroup) return false
+    
+    let index = getGroupIndex(oldGroup.name);
+    if (index < 0) return false
+
+    userProfile.groups[index] = {...newGroup}
+    profile.set({...userProfile})
+    saveProfile(userProfile)
+
+    return true
+
+}
 
 
 // Removes a group and all of its communities
