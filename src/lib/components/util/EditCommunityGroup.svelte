@@ -113,28 +113,28 @@
         formData = undefined;
         open = false;
     }
-
     
     
 
 </script>
 
 {#if formData}
-    <Modal bind:open={open} icon={UserGroup} title="Edit Group: {group.name}">
-        <div class="flex flex-col gap-2">
+    <Modal bind:open={open} icon={UserGroup} fullHeight title="Edit Group: {group.name}">
+        <div class="flex flex-col h-full gap-2 pr-2">
             
             <TextInput bind:value={formData.name} label="Group Name"/>
             
             <ObjectAutocomplete
                 label="Add Member"
                 placeholder="Add a community to '{formData.name}'"
-                jwt={$profile?.jwt}
                 listing_type="All"
-                showWhenEmpty={true}
+                showWhenEmpty={false}
+                containerClass="!max-h-[50vh]"
                 bind:q={communitySearchInput}
                 on:select={(e) => {
-                    addMember(e.detail)
-                    communitySearchInput = ''
+                    if (e.detail) {
+                        addMember(e.detail)
+                    }
                 }}
             />
             
@@ -143,7 +143,7 @@
                     <span class="text-sm font-bold">Members</span>
                     <span class="text-xs font-normal">The following communities are members of this group:</span>
                     
-                    <div class="flex flex-col gap-2 ml-[20%] pr-4 max-h-[30vh] overflow-y-scroll" >
+                    <div class="flex flex-col gap-2 md:ml-[20%] pr-4 max-h-[60vh] overflow-y-scroll" >
                         {#each formData.communities as community}
                             <div class="w-full rounded-md bg-slate-200 dark:bg-zinc-700 flex flex-row gap-2 items-center">
                                 
@@ -178,8 +178,9 @@
                 {/if}
             </div>
 
+            <span class="mt-auto"/>
             <span class="flex flex-row gap-4 w-full p-2">
-                <Button size="lg" color="danger" class="w-full" icon={Trash} on:click={() => deleteGroup()} >Delete Group</Button>
+                <Button size="lg" color="danger"  class="w-full" icon={Trash} on:click={() => deleteGroup()} >Delete</Button>
                 <Button size="lg" color="primary" class="w-full" icon={ArrowUturnDown} on:click={reset} disabled={!modified} >Reset</Button>
                 <Button size="lg" color="primary" class="w-full" icon={ArrowUpTray} on:click={submit} disabled={!modified}>Save</Button>
             </span>

@@ -8,9 +8,11 @@
 
     export let action: string | undefined = undefined
     export let open = false
-    export let fullHeight:boolean = false
     export let title:string = '';
     export let icon:any = undefined;
+
+    export let fullHeight:boolean = false
+    export let height:string = ''
 
     const dispatcher = createEventDispatcher()
 </script>
@@ -25,10 +27,10 @@
   
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div transition:scale={{ start: 0.9, easing: expoOut }}
-            class="overflow-y-auto {$$props.class} rounded-xl max-w-full box-border w-full {fullHeight ? 'h-full' : ''}"
+            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-full' : height} {$$props.class}"
         >
             <div
-                class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : ''}"
+                class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : height}"
                 on:click={() => {}}
             >
                 <div

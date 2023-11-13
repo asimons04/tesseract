@@ -3,6 +3,7 @@
 
     import { createEventDispatcher } from 'svelte'
     import { getClient } from '$lib/lemmy.js'
+    import { profile } from '$lib/auth'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -13,15 +14,15 @@
     
     export let q: string = ''
     export let type: 'community' | 'person' = 'community'
-    export let jwt: string | undefined = undefined
     export let listing_type: ListingType = 'Subscribed'
-    export let items: Community[] | Person[] | undefined = undefined
+    export let items: Community[] | Person[] | undefined = []
     export let showWhenEmpty: boolean = false
     export let label:string = ''
+    export let containerClass:string = ''
 
     let showNone: boolean = false
 
-    const dispatcher = createEventDispatcher<{ select: Community }>()
+    const dispatcher = createEventDispatcher<{ select: Community|Person }>()
 </script>
 
 {#if type == 'community'}
@@ -33,16 +34,14 @@
         {/if}
 
         <SearchInput
-            options={items || []}
+            containerClass="{containerClass}"
+            bind:options={items}
             on:search={async () => {
-                if (q == '') showNone = true
-                else showNone = false
-
                 const results = await getClient().search({
                     q: q || ' ',
-                    auth: jwt,
+                    auth: $profile?.jwt || undefined,
                     type_: 'Communities',
-                    limit: 20,
+                    limit: 50,
                     listing_type: listing_type,
                     sort: 'TopAll',
                 })
@@ -52,7 +51,9 @@
             extractName={(c) => c.title}
             bind:query={q}
             extractSelected={(c) => {
-                if (c) dispatcher('select', c)
+                if (c) {
+                    dispatcher('select', c)
+                }
             }}
 
             let:extractName
@@ -70,7 +71,7 @@
                         <span>None</span>
                     </div>
                 </MenuButton>
-            {:else if option}
+            {:else if option && query != ''}
                 <MenuButton on:click={() => extractSelected(option)}>
                     <Avatar url={option.icon} alt={option.title} width={24} />
                     <div class="flex flex-col text-left">
@@ -102,7 +103,7 @@
 
                 const results = await getClient().search({
                     q: q || ' ',
-                    auth: jwt,
+                    auth: $profile?.jwt || undefined,
                     type_: 'Users',
                     limit: 20,
                 })

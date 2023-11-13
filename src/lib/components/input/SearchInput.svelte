@@ -1,4 +1,6 @@
 <script lang="ts">
+    type T = $$Generic
+    
     import TextInput from '$lib/components/input/TextInput.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -7,14 +9,14 @@
     export let query: string
     export let debounceTime: number = 300
 
-    type T = $$Generic
-
     export let options: T[]
     export let extractSelected: (item: T | null) => any
     export let extractName: (item: T) => string
     export let showWhenEmpty: boolean = false
+    export let containerClass:string = ''
     
     let canSearch: boolean = false
+        
     export { canSearch as searchOnMount }
 
     const debounce = (fn: Function, ms = 300) => {
@@ -38,7 +40,7 @@
     <TextInput
         type="search"
         bind:value={query}
-        on:input={() => {
+        on:keyup={() => {
             extractSelected(null)
             debounceFunc()
         }}
@@ -46,12 +48,14 @@
     />
 
     <Menu
-        open={(options.length != 0 || showWhenEmpty) && canSearch}
+        open={((options.length > 0 && query != '') || showWhenEmpty) }
         alignment="bottom-left"
+        containerClass="{containerClass}"
     >
         {#if query == '' && showWhenEmpty}
             <slot {extractName} {extractSelected} {query} />
-        {:else}
+        
+        {:else if query!=''}
             {#each options as option}
                 <slot {extractName} {extractSelected} {option} {query}>
                     <MenuButton on:click={() => extractSelected(option)}>
