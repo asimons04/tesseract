@@ -31,7 +31,6 @@
 
 
     export let data
-    console.log(data);
 
     // Hack to deal with Svelte not returning to the correct spot when returning to the post.
     afterNavigate(() => {
