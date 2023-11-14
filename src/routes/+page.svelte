@@ -30,6 +30,7 @@
     });
     
     // Hack to deal with Svelte not returning to the correct spot when returning to the post.
+    /*
     afterNavigate(() => {
         let postID:number|undefined = getSessionStorage('lastClickedPost')?.postID
         if (postID) {
@@ -46,6 +47,7 @@
             window.scrollTo(0,0);
         }
     });
+    */
     
     
 

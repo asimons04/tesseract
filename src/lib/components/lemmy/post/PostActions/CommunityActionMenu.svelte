@@ -3,7 +3,8 @@
     
     import {addFavorite, isFavorite } from '$lib/favorites'
     import { createPost, subscribe } from '$lib/components/lemmy/community/helpers'
-    
+    import { goto } from '$app/navigation'
+
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -12,6 +13,7 @@
     import {
         Icon,
         Minus,
+        Newspaper,
         PencilSquare,
         QueueList,
         Rss,
@@ -51,11 +53,16 @@
         <Icon slot="icon" src={UserGroup} width={16} mini />
     </Button>
 
-    <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">Community Actions</li>
+    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">Community Actions</li>
 
     <MenuButton on:click={() => createPost(post.community)} title="Create Post">
         <Icon src={PencilSquare} width={16} mini />
         Create Post
+    </MenuButton>
+
+    <MenuButton on:click={() => goto(`/c/${post.community.name}@${new URL(post.community.actor_id).hostname}`)} title="Browse {post.community.title || post.community.name}">
+        <Icon src={Newspaper} width={16} mini />
+        Browse {post.community.title || post.community.name}
     </MenuButton>
 
     <!---Add/Remove to Favorites--->

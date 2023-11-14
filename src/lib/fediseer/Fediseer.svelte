@@ -78,9 +78,16 @@
                     {/if}
                             
                     <div class="flex flex-col w-full">
-                        <div class="flex flex-row">
+                        
+                        <div class="flex flex-row items-center">
                             <h2 class="font-bold text-2xl">{site.name}</h2>
                             
+                            <span class="px-4 text-sm italic">
+                                {site.description ?? ''}
+                            </span>
+                            
+
+
                             <div class="ml-auto">
                                 <span class="flex flex-row items-center gap-2 text-sm">
                                     <Icon src={Calendar} width={16} height={16} mini />
@@ -93,6 +100,8 @@
                             {fediseer.data.instance}
                         </span>
                     </div>
+
+                    
                 </div>
             
             <!---Fallback in case the call to getSite fails for this instance--->
@@ -255,7 +264,11 @@
         </div>
     {:else}
         <div class="mx-auto my-auto">
-            <Spinner width={64} />
+            <h1 class="font-bold text-base">Retrieving Fediseer report for {instance}</h1>
+        </div>
+
+        <div class="mx-auto my-auto">
+                <Spinner width={64} />
         </div>
     {/if}
 </Modal>

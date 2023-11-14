@@ -32,6 +32,7 @@
     export let userSideCard = true
 
     // Hack to deal with Svelte not returning to the correct spot when returning to the post.
+    /*
     afterNavigate(async () => {
         let postID:number|undefined = getSessionStorage('lastClickedPost')?.postID
         if (postID) {
@@ -46,6 +47,7 @@
             window.scrollTo(0,0);
         }
     });
+    */
 </script>
 
 <svelte:head>

@@ -13,7 +13,17 @@
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
 
-
+    
+    import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
+    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
+    import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
+    import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
+    import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
+    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
+    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
+    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
+    import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
+    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
     
     export let actions: boolean = true
     export let autoplay:boolean|undefined = undefined;
@@ -31,79 +41,59 @@
 
 </script>
 
-<Card class="flex flex-col w-full p-5 gap-1" id={post.post.id}>
+<Card class="flex flex-col w-full p-5 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''}" id={post.post.id}>
     <div class="flex flex-row w-full gap-2.5">
         <PostMeta bind:post={post} moderators={moderators} {collapseBadges}/>
     </div>
 
     <!--- Link-style post without thumbnail URL--->
     {#if postType == "link" || postType == "thumbLink"}
-        {#await import('$lib/components/lemmy/post/PostLink.svelte') then { default: PostLink }}        
-            <PostLink post={post} displayType={displayType} />
-        {/await}
+        <PostLink post={post} displayType={displayType} />
     {/if}
 
     <!--- Direct Image Post --->
     {#if postType == "image"}
-        {#await import('$lib/components/lemmy/post/PostImage.svelte') then { default: PostImage }}
-            <PostImage post={post} displayType={displayType}/>
-        {/await}
+        <PostImage post={post} displayType={displayType}/>
     {/if}
         
     <!--- Direct Video Post --->
     {#if postType == "video"}
-        {#await import('$lib/components/lemmy/post/PostVideo.svelte') then { default: PostVideo }}
-            <PostVideo post={post} displayType={displayType} autoplay={autoplay} loop={loop}/>
-        {/await}
+        <PostVideo post={post} displayType={displayType} autoplay={autoplay} loop={loop}/>
     {/if}
 
     <!--- Bandcamp Embed --->
     {#if postType == "bandcamp"}
-        {#await import('$lib/components/lemmy/post/PostBandcamp.svelte') then {default: PostBandcamp }}
-            <PostBandcamp post={post} displayType={displayType}/>
-        {/await}
+        <PostBandcamp post={post} displayType={displayType}/>
     {/if}
 
     <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
     {#if postType == "youtube"}
-        {#await import('$lib/components/lemmy/post/PostYouTube.svelte') then { default: PostYouTube }}
-            <PostYouTube post={post} displayType={displayType} autoplay={autoplay}/>
-        {/await}
+        <PostYouTube post={post} displayType={displayType} autoplay={autoplay}/>
     {/if}
 
     <!--- Spotify Embed --->
     {#if postType == "spotify"}
-        {#await import('$lib/components/lemmy/post/PostSpotify.svelte') then { default: PostSpotify }}
-            <PostSpotify post={post} displayType={displayType} />
-        {/await}
+        <PostSpotify post={post} displayType={displayType} />
     {/if}
 
     <!--- Soundcloud Embed --->
     {#if postType == "soundcloud"}
-        {#await import('$lib/components/lemmy/post/PostSoundCloud.svelte') then { default: PostSoundCloud }}
-            <PostSoundCloud post={post} displayType={displayType} />
-        {/await}
+        <PostSoundCloud post={post} displayType={displayType} />
     {/if}
 
     <!--- Vimeo Embed --->
     {#if postType == "vimeo"}
-        {#await import('$lib/components/lemmy/post/PostVimeo.svelte') then { default: PostVimeo }}
-            <PostVimeo post={post} displayType={displayType} />
-        {/await}
+        <PostVimeo post={post} displayType={displayType} />
     {/if}
 
     <!--- Odysee Embed --->
     {#if postType == "odysee"}
-        {#await import('$lib/components/lemmy/post/PostOdysee.svelte') then { default: PostOdysee }}
-            <PostOdysee post={post} displayType={displayType} />
-        {/await}
+        <PostOdysee post={post} displayType={displayType} />
     {/if}
 
     <!--- SongLink Embed --->
     {#if postType == "songlink"}
-        {#await import('$lib/components/lemmy/post/PostSongLink.svelte') then { default: PostSongLink }}
-            <PostSongLink post={post} displayType={displayType} />
-        {/await}
+        <PostSongLink post={post} displayType={displayType} />
     {/if}
 
     <PostBody post={post} displayType={displayType} bind:expandPreviewText/>

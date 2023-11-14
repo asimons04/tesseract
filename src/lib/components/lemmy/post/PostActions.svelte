@@ -14,6 +14,7 @@
     import CommentCountButton   from './PostActions/CommentCountButton.svelte'
     import CommunityActionMenu  from './PostActions/CommunityActionMenu.svelte'
     import DebugButton          from './PostActions/DebugButton.svelte'
+    import ExploreMenu          from './PostActions/ExploreMenu.svelte'
     import PostActionsMenu      from './PostActions/PostActionsMenu.svelte'
     import PostReplyButton      from './PostActions/PostReplyButton.svelte'
     import PostVote             from './PostActions/PostVote.svelte'
@@ -65,7 +66,7 @@
     }
 </script>
 
-<div class="flex flex-row gap-2 items-center h-8 {$userSettings.showCompactPosts && !expandCompact ? '' : 'mx-[-1rem]'}">
+<div class="flex flex-row gap-2 items-center h-8 {displayType == 'post' ? 'mt-auto' : ''} {$userSettings.showCompactPosts && !expandCompact ? '' : 'mx-[-1rem]'}">
     <!--- Post Vote Buttons--->
     <PostVote post={post.post} bind:vote={post.my_vote} bind:score={post.counts.score} />
 
@@ -98,7 +99,7 @@
     <!--Theater Mode Button for YouTube/Vimeo Videos--->
     {#if ['youtube', 'vimeo', 'video'].includes(postType) && ( ($userSettings.embeddedMedia.post && displayType == 'post') ||($userSettings.embeddedMedia.feed && displayType == 'feed') ) }
         <span class="hidden md:block">
-            <Button  title="{theaterMode ? 'Exit' : ''} Theater Mode" color="ghost" size="square-md"
+            <Button  class="hover:text-inherit !border-none"title="{theaterMode ? 'Exit' : ''} Theater Mode" color="ghost" size="square-md"
                 on:click={
                     async () => {
                         if (!theaterMode) {
@@ -129,8 +130,11 @@
     
     <!--- Moderation Menu--->
     {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <ModerationMenu bind:item={post} community={post.community} color="ghost"/>
+        <ModerationMenu bind:item={post} community={post.community} color="ghost" alignment="top-right"/>
     {/if}
+
+    <!---Explore Menu--->
+    <ExploreMenu bind:post />
 
     <!---Community Action Menu--->
     <CommunityActionMenu bind:post />
