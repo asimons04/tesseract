@@ -55,9 +55,11 @@
         })
     }
 </script>
+<!--
 <h1 class="flex flex-row justify-between">
     <span class="font-bold text-2xl">Blocks</span>
 </h1>
+-->
 
 {#if data.community_blocks.length > 0 || data.person_blocks.length > 0}
     {#if data.person_blocks.length > 0}

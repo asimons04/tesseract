@@ -55,7 +55,8 @@
     <title>Inbox</title>
 </svelte:head>
 <h1 class="flex flex-row justify-between">
-    <span class="font-bold text-2xl">Inbox</span>
+    <!--<span class="font-bold text-2xl">Inbox</span>--->
+    <span />
     
     <Button
         on:click={markAllAsRead}

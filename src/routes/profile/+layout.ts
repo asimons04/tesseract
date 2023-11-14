@@ -19,18 +19,16 @@ export async function load({ params, url, fetch }) {
     //username: get(profile)!.user?.local_user_view.person.name,
     const items = [...user.posts, ...user.comments]
 
-    if (sort == 'TopAll') {
-        items.sort(
-            (a, b) =>
-            b.counts.upvotes -
-            b.counts.downvotes -
-            (a.counts.upvotes - a.counts.downvotes)
-        )
-    } else if (sort == 'New') {
-        items.sort(
-            (a, b) =>
-            Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a))
-        )
+    if (sort.startsWith('Top')) {
+        items.sort( (a, b) => b.counts.upvotes - b.counts.downvotes - (a.counts.upvotes - a.counts.downvotes) )
+    } 
+    
+    else if (sort == 'New') {
+        items.sort( (a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a)) )
+    }
+    
+    else if (sort == 'Old') {
+        items.sort( (a, b) => Date.parse(getItemPublished(a)) - Date.parse(getItemPublished(b)) )
     }
 
     return {

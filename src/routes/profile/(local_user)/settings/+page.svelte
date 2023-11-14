@@ -158,7 +158,8 @@
 
 <form class="flex flex-col gap-4 h-full" on:submit|preventDefault={save}>
     <h1 class="flex flex-row justify-between">
-        <span class="font-bold text-2xl">User settings</span>
+        <!--<span class="font-bold text-2xl">User settings</span>-->
+        <span />
         <Button
             submit
             size="lg"

@@ -8,8 +8,9 @@
   export let id: string = ""
   export let domainOnly:boolean = false;
 
-</script>
 
+</script>
+{#if href}
 <a {href} 
     id={id}
     class="{highlight ? 'text-blue-500' : ''} hover:underline max-w-full"
@@ -21,8 +22,7 @@
 >
     <slot name="icon" />
     <slot>
-        <span
-            class="flex gap-0 
+        <span class="flex gap-0 
                 {nowrap
                     ? 'w-full whitespace-nowrap overflow-hidden text-ellipsis text-xs'
                     : ''
@@ -35,3 +35,4 @@
     </slot>
   
 </a>
+{/if}
