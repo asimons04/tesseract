@@ -7,11 +7,12 @@
         expanded: {
             censures: boolean,
             endorsements: boolean,
-            hesitations:boolean
+            hesitations:boolean,
+            admins: boolean
         }
     }
 
-    import type { PostView, SiteView } from 'lemmy-js-client'
+    import type { PersonView, PostView, SiteView } from 'lemmy-js-client'
     import { onMount } from 'svelte'
 
     import { 
@@ -25,6 +26,7 @@
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { 
         Icon, 
@@ -32,7 +34,8 @@
         Eye,
         HandThumbUp,
         HandThumbDown,
-        HandRaised
+        HandRaised,
+        ShieldCheck
     } from 'svelte-hero-icons'
     
     
@@ -43,7 +46,8 @@
         expanded: {
             censures: false,
             endorsements: false,
-            hesitations: false
+            hesitations: false,
+            admins: false
         }
     }
     
@@ -52,6 +56,7 @@
 
     //new URL(post.community.actor_id).hostname);
     let site:SiteView
+    let admins:PersonView[] = []
 
     onMount(async ()=> {
         fediseer.loading = true;
@@ -60,7 +65,7 @@
 
         if (fediseer.data.success && fediseer.data?.site?.site_view?.site) {
             site = fediseer.data.site.site_view.site
-            
+            admins = fediseer.data.site.admins
             fediseer.ready = true;
         }
     })
@@ -89,7 +94,7 @@
 
 
                             <div class="ml-auto">
-                                <span class="flex flex-row items-center gap-2 text-sm">
+                                <span class="flex flex-row whitespace-nowrap items-center gap-2 text-sm">
                                     <Icon src={Calendar} width={16} height={16} mini />
                                     <RelativeDate date={site.published} />
                                 </span>
@@ -124,12 +129,36 @@
                     {/if}
                 </div>
             {/if}
+
+            
         
         
         
             <!--Endorsements, Censures, and Hesitations--->
             <div class="flex flex-col gap-2">
                 
+                <!---Site Admins--->
+                {#if admins.length > 0}
+                <div class="flex flex-col">
+                    <Button color="tertiary" alignment="left" on:click={ ()=> { fediseer.expanded.admins = !fediseer.expanded.admins}}>
+                        <Icon src={ShieldCheck} mini size="18" />
+
+                        <span class="w-full flex flex-row justify-between">
+                            Admins
+                            <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
+                                {admins.length}
+                            </span>
+                        </span>
+                    </Button>
+                    
+                    <div class="flex flex-col gap-2 pl-4 text-sm" class:hidden={!fediseer.expanded.admins}>
+                        {#each admins as admin}
+                            <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
+                        {/each}
+                    </div>
+                </div>
+                {/if}
+
                 <!---Endorsements Received--->
                 <div class="flex flex-col">
                     <Button color="tertiary" alignment="left" on:click={ ()=> { fediseer.expanded.endorsements = !fediseer.expanded.endorsements}} >

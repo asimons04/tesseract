@@ -63,7 +63,7 @@
         {#if community}
             <CommunityLink avatar avatarSize={42} community={community} />
 
-            <div class="flex flex-row gap-8 w-full">
+            <div class="flex flex-col md:flex-row gap-8 w-full">
                 <div class="flex flex-row gap-4 items-center w-full">
                     
                     <div class="flex flex-col gap-2 w-full">
