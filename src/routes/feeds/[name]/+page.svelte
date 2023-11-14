@@ -28,35 +28,14 @@
         Home,
         PencilSquare,
         QueueList,
+        Window
     } from 'svelte-hero-icons'
 
 
     export let data
     let editCommunityGroup:boolean = false;
-
-    // Hack to deal with Svelte not returning to the correct spot when returning to the post.
-    /*
-    afterNavigate(() => {
-        let postID:number|undefined = getSessionStorage('lastClickedPost')?.postID
-        if (postID) {
-            let postDiv = document.getElementById(postID.toString())
-            if (postDiv) {
-                disableScrollHandling();
-                scrollToTop(postDiv, false);
-                setSessionStorage('lastClickedPost', undefined);
-            }
-        }
-        else {
-            // Use default scroll handling
-            disableScrollHandling();
-            window.scrollTo(0,0);
-        }
-    });
-    */
-    
-    
-
 </script>
+
 <svelte:head>
     <title>Feeds: {data.feedName}</title>
 </svelte:head>
@@ -141,21 +120,14 @@
                 
 
 
-                <span class="hidden md:flex md:flex-row gap-2 items-center">
-                    <!---Card/Compact Selection--->
-                    <SelectMenu
-                        alignment="bottom-right"
-                        title="Post Display Type"
-                        icon={QueueList}
-                        options={['Cards', 'Compact']}
-                        selected={$userSettings.showCompactPosts
-                            ? 'Compact'
-                            : 'Cards'
-                        }
-                        on:select={(e) => {
-                            $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                        }}
-                    />
+                <!---Card/Compact Selection--->
+                <span class="mt-[-6px] mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
+                    on:click={() => {
+                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                        window.scrollTo(0,0);
+                    }}
+                >
+                    <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={24} />
                 </span>
 
 

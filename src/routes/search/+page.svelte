@@ -49,7 +49,8 @@
         Cog,
         DocumentDuplicate,
         MagnifyingGlass,
-        QueueList
+        QueueList,
+        Window
     } from 'svelte-hero-icons'
     
     
@@ -196,19 +197,14 @@
         />
         
         <!---Card/Compact Selection--->
-        <SelectMenu
-            alignment="bottom-right"
-            title="Post Display Type"
-            icon={QueueList}
-            options={['Cards', 'Compact']}
-            selected={$userSettings.showCompactPosts
-                ? 'Compact'
-                : 'Cards'
-            }
-            on:select={(e) => {
+        <span class="mt-[-6px] mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
+            on:click={() => {
                 $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                window.scrollTo(0,0);
             }}
-        />
+        >
+            <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={24} />
+        </span>
     </span>
 
     <span class="flex flex-row flex-wrap gap-2 items-center text-sm text-center mx-auto mb-2">
