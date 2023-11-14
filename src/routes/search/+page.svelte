@@ -200,7 +200,6 @@
         <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
             on:click={() => {
                 $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                window.scrollTo(0,0);
             }}
         >
             <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={24} />
