@@ -199,10 +199,10 @@
                 
                 <hr class="border-slate-300/60"/>
                 <div class="flex flex-col gap-2">
-                    <div class="pl-2">
+                    <div class="pl-2 text-sm">
                         <Checkbox bind:checked={showEmptyGroups}>Show Empty Groups</Checkbox>
                     </div>
-                    
+                    <!--
                     <div class="mb-4 p-1 border border-slate-500/75 dark:border-zinc-500/75 rounded-md bg-white/50 dark:bg-black/50 hover:bg-white hover:dark:bg-black w-full items-center">
                         <span class="flex flex-row gap-2 text-xs font-bold cursor-pointer">
                             <span class="ml-auto"/>
@@ -210,8 +210,8 @@
                             Manage Groups
                             <span class="mr-auto"/>
                         </span>
-
                     </div>
+                    --->
                 </div>
             {/if}
             

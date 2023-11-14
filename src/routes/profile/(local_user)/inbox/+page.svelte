@@ -54,26 +54,13 @@
 <svelte:head>
     <title>Inbox</title>
 </svelte:head>
-<h1 class="flex flex-row justify-between">
-    <!--<span class="font-bold text-2xl">Inbox</span>--->
-    <span />
-    
-    <Button
-        on:click={markAllAsRead}
-        loading={markingAsRead}
-        disabled={markingAsRead}
-        size="md"
-    >
-        <Icon src={Check} width={16} mini slot="icon" />
-            Mark all as read
-    </Button>
-</h1>
 
-<div class="flex flex-row gap-4 flex-wrap">
+<div class="flex flex-row gap-4 w-full">
     <MultiSelect
         selected={data.unreadOnly}
         options={[false, true]}
         optionNames={['All', 'Unread']}
+        headless={true}
         on:select={(e) => {
             $page.url.searchParams.delete('page')
             $page.url.searchParams.set('unreadOnly', (e.detail ?? false).toString())
@@ -94,7 +81,21 @@
                 invalidateAll: true,
             })
         }}
+        headless={true}
+        items={0}
     />
+
+    <div class="ml-auto"/>
+
+    <Button
+        on:click={markAllAsRead}
+        loading={markingAsRead}
+        disabled={markingAsRead}
+        size="md"
+    >
+        <Icon src={Check} width={16} mini slot="icon" />
+            Mark all as read
+    </Button>
 </div>
 
 <div class="flex flex-col gap-4 list-none my-4 flex-1">

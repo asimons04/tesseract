@@ -813,7 +813,7 @@
                 </Button>
             {/if}
 
-            <!---Quick Actions Menu--->
+            <!---Quick Actions Menu
             {#if !resolved && open}
             <SelectMenu
                 alignment="bottom-right"
@@ -828,6 +828,7 @@
                 }}
             />
             {/if}
+            --->
 
 
             <!--- Resolve Button--->
