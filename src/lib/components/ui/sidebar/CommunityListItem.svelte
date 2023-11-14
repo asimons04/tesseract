@@ -65,7 +65,6 @@
         });
         // Hack to get the session storage to read on create post. "goto" wasn't picking up the change
         window.location.pathname='/create/post';
-        
     }
 
     let unsubscribing:boolean = false;

@@ -1,8 +1,11 @@
 import type { CommentView, GetPostsResponse, PersonView, PostView } from 'lemmy-js-client'
-import { YTFrontends } from '$lib/settings.js'
-import { lookup as MBFCLookup } from '$lib/MBFC/client'
-import { userSettings as UserSettings} from '$lib/settings.js'
+
 import { get } from 'svelte/store';
+import { goto } from '$app/navigation'
+import { lookup as MBFCLookup } from '$lib/MBFC/client'
+import { setSessionStorage } from '$lib/session.js'
+import { userSettings as UserSettings} from '$lib/settings.js'
+import { YTFrontends } from '$lib/settings.js'
 
 // Import user settings
 let userSettings: any = get(UserSettings);
@@ -11,7 +14,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    boolean | 'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' |
+    'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' |
     'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -32,9 +35,6 @@ export const imageSize = (displayType:PostDisplayType, ) => {
         return  userSettings.imageSize.post;
     }
 }
-
-
-
 
 // Check if the provided URL is an image
 export const isImage = (url: string | undefined) => {
@@ -434,4 +434,21 @@ export const addMBFCResults = function (posts:PostView[]):GetPostsResponse {
 
     return {posts: posts};
 
+}
+
+
+// Crosspost a post
+export const crossPost = function(post:PostView):void {
+    setSessionStorage('postDraft', {
+        body: `cross-posted from: ${post.post.ap_id}\n\n${
+            post.post.body || ''
+        }`,
+        url: post.post.url || '',
+        name: post.post.name,
+        loading: false,
+        nsfw: post.post.nsfw,
+        community: null,
+        image: null,
+    })
+    goto('/create/post?crosspost=true')
 }

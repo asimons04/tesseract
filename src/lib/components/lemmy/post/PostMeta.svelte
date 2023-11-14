@@ -79,16 +79,13 @@
     
      
     
-    let fediseer = {
-        loading: false,
-        modal: false,
-        data: undefined
-    }
-
+    let fediseerModal:boolean = false;
 
 </script>
 
-<Fediseer bind:open={fediseer.modal} data={fediseer.data} />
+{#if fediseerModal}
+    <Fediseer bind:open={fediseerModal} instance={new URL(post.community.actor_id).hostname} />
+{/if}
 
 
 
@@ -139,20 +136,12 @@
                 <!--- Fediseer Endorsement Badge--->
                 {#if showFediseer && $userSettings.uiState.fediseerBadges}
                     <span class="flex flex-row gap-2 items-center mr-2">
-                        <span class="items-center" class:hidden={!fediseer.loading}><Spinner width={14}/></span>
-                        
                         <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
                             class="cursor-pointer"
-                            class:hidden={fediseer.loading}
                             loading="lazy"
                             alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
                             title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
-                            on:click={async (e) => {
-                                fediseer.loading = true;
-                                fediseer.data = await fediseerLookup(new URL(community.actor_id).hostname);
-                                fediseer.loading = false;
-                                fediseer.modal = true;
-                            }}
+                            on:click={(e) => fediseerModal = true}
                         />
                     </span>
                 {/if}

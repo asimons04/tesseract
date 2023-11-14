@@ -1,8 +1,10 @@
-import { profile } from '$lib/auth.js'
-import { getClient } from '$lib/lemmy.js'
-import { trycatch } from '$lib/util.js'
-import type { Community, MyUserInfo, PersonView } from 'lemmy-js-client'
+import type { Community, MyUserInfo, PersonBlockView, PersonView } from 'lemmy-js-client'
+
 import { get } from 'svelte/store'
+import { getClient } from '$lib/lemmy.js'
+import { profile } from '$lib/auth.js'
+import { trycatch } from '$lib/util.js'
+
 
 export const blockUser = async (block: boolean, id: number) => {
   const auth = get(profile)?.jwt
@@ -16,8 +18,7 @@ export const blockUser = async (block: boolean, id: number) => {
   })
 }
 
-export const isBlocked = (me: MyUserInfo, user: number) =>
-    me.person_blocks.map((b) => b.target.id).includes(user)
+export const isBlocked = (me: MyUserInfo, user: number) => me.person_blocks.map((b:PersonBlockView) => b.target.id).includes(user)
 
 export const addSubscription = (community: Community, subscribe: boolean = true) => {
     const p = get(profile)
@@ -45,17 +46,17 @@ export const addSubscription = (community: Community, subscribe: boolean = true)
 }
 
 export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
-  trycatch(async () => {
-    const user = await getClient().resolveObject({
-      auth: jwt,
-      q: handle,
-    })
+    trycatch(async () => {
+            const user = await getClient().resolveObject({
+            auth: jwt,
+            q: handle,
+        })
 
-    if (!user.person) throw new Error('No user found')
+        if (!user.person) throw new Error('No user found')
 
-    return await getClient().addAdmin({
-      auth: jwt,
-      added: true,
-      person_id: user.person.person.id,
+        return await getClient().addAdmin({
+            auth: jwt,
+            added: true,
+            person_id: user.person.person.id,
+        })
     })
-  })

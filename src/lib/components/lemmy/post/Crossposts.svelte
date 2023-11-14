@@ -32,7 +32,7 @@
 </script>
 
 {#if post?.cross_posts?.length > 0}
-    <details class="{textSize} font-bold w-full cursor-pointer pl-2 pb-2 {$$props.class}" open={$userSettings.uiState.expandCrossPosts && post.cross_posts?.length <= 3}>
+    <details class="{textSize} font-bold w-full cursor-pointer pb-2 {$$props.class}" open={$userSettings.uiState.expandCrossPosts && post.cross_posts?.length <= 3}>
         <summary class="inline-block w-full">
             <SectionTitle class="{textSize} text-inherit dark:text-inherit">
                 Crossposts 

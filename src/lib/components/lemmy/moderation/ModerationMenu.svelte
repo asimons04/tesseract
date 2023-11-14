@@ -88,6 +88,7 @@
 <Menu alignment={alignment}>
     <Button
         on:click={toggleOpen}
+        class="hover:text-inherit !border-none"
         slot="button"
         title="Moderation Menu"
         size="square-md"
