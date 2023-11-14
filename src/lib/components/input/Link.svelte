@@ -11,7 +11,7 @@
 
 </script>
 {#if href}
-<a {href} 
+<a {href}
     id={id}
     class="{highlight ? 'text-blue-500' : ''} hover:underline max-w-full"
     target="{newtab

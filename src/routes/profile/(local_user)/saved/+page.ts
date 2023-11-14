@@ -50,9 +50,10 @@ export async function load({ url, fetch }) {
         comments = []
     }
     
-    console.log(posts, comments);
-
-    const everything = [...posts?.posts || [], ...comments?.comments || []]
+    const everything = [
+        ...posts?.posts || [], 
+        ...comments?.comments || []
+    ]
     
     if (sort == 'New') everything.sort( (a, b) => Date.parse(getSavedItemPublished(b)) - Date.parse(getSavedItemPublished(a)) )
     if (sort == 'Old') everything.sort( (a, b) => Date.parse(getSavedItemPublished(a)) - Date.parse(getSavedItemPublished(b)) )
