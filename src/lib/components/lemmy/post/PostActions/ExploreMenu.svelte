@@ -46,10 +46,12 @@
     >
         <Icon slot="icon" src={Map} width={16} mini />
     </Button>
-
-    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">Explore</li>
+        
+    <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+        <Icon slot="icon" src={Map} width={16} mini />
+        Explore
+    </li>
     
-
     <!---Actions for the instance the post was submitted to--->
     <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>
     <MenuButton

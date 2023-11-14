@@ -31,9 +31,9 @@
         Bars3,
         Minus,
         PencilSquare,
-        QueueList,
         Star,
-        Trash
+        Trash,
+        UserGroup
     } from 'svelte-hero-icons'
 
     export let community:Community
@@ -157,7 +157,7 @@
 
         <!---Add to Group--->
         <MenuButton title="Add/Remove to Group" on:click={(e) => {e.stopPropagation(); groupAddModal=!groupAddModal} }>
-            <Icon src={QueueList} mini size="16" />
+            <Icon src={UserGroup} mini size="16" />
             Add/Remove to Group(s)
         </MenuButton>
 

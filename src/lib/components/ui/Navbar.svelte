@@ -209,7 +209,7 @@
     <Menu
         alignment="bottom-right"
         itemsClass="h-8 md:h-8"
-        containerClass="!max-h-[90vh] !bg-slate-100/95 dark:!bg-zinc-950/95"
+        containerClass="!max-h-[90vh] !bg-slate-100 dark:!bg-zinc-950"
     >
         <!---Profile Button / Avatar Image--->
         <button

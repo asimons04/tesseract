@@ -115,9 +115,11 @@
     </Button>
 
     {#if ($profile?.user && amMod($profile.user, item.community)) || ($profile?.user && isAdmin($profile.user))}
-        <span class="px-4 py-1 my-1 text-xs font-bold text-slate-600 dark:text-zinc-400">
+        
+        <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+            <Icon slot="icon" src={ShieldExclamation} width={16} mini />
             Moderation
-        </span>
+        </li>
         
         <!--- Modlog filtered for this user--->
         <MenuButton link

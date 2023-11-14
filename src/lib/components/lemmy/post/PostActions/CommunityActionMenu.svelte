@@ -52,7 +52,10 @@
         <Icon slot="icon" src={UserGroup} width={16} mini />
     </Button>
 
-    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">{post.community.title?.trim() || post.community.name.trim()}@{new URL(post.community.actor_id).hostname}</li>
+    <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+        <Icon slot="icon" src={UserGroup} width={16} mini />
+        {post.community.title?.trim() || post.community.name.trim()}@{new URL(post.community.actor_id).hostname}
+    </li>
 
     <MenuButton on:click={() => createPost(post.community)} title="Create Post">
         <Icon src={PencilSquare} width={16} mini />

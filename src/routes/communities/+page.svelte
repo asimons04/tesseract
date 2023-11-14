@@ -52,6 +52,7 @@
 <svelte:head>
     <title>Communities</title>
 </svelte:head>
+
 <Modal bind:open={communityInfoModal}>
     <div class="flex flex-col gap-2 mx-auto">
         {#if selectedCommunity.community}
@@ -133,35 +134,36 @@
             </form>
 
 
+            <div class="flex flex-col-reverse md:flex-row gap-4">
+                <div class="flex flex-row justify-between w-full md:w-1/2">
+                    <MultiSelect
+                        options={['Subscribed', 'Local', 'All']}
+                        selected={$page.url.searchParams.get('type') ?? 'All'}
+                        on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+                        label="Type"
+                        items={0}
+                        headless={true}
+                        fullWidth={false}
+                    >
+                        <Icon src={Bars3} mini width={16} slot="icon"/>
+                        <span slot="label">List Type</span>
+                    </MultiSelect>
+                    
+                    <MultiSelect
+                        options={["asc", "desc", "posts_desc", "subscribers_desc"]}
+                        optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
+                        selected={$page.url.searchParams.get('sort') ?? 'asc'}
+                        on:select={(e) => { searchParam($page.url, 'sort', e.detail, 'page')} }
+                        items={0}
+                        headless={true}
+                        fullWidth={false}
+                    >
+                        <Icon src={ChartBar} mini width={16} slot="icon"/>
+                        <span slot="label">Sort Direction</span>
+                    </MultiSelect>
+                </div>
 
-            <div class="flex flex-row flex-wrap justify-between my-4">
-                <MultiSelect
-                    options={['Subscribed', 'Local', 'All']}
-                    selected={$page.url.searchParams.get('type') ?? 'All'}
-                    on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-                    label="Type"
-                    items={0}
-                    headless={true}
-                    fullWidth={true}
-                >
-                    <Icon src={Bars3} mini width={16} slot="icon"/>
-                    <span slot="label">List Type</span>
-                </MultiSelect>
-                
-                <MultiSelect
-                    options={["asc", "desc", "posts_desc", "subscribers_desc"]}
-                    optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
-                    selected={$page.url.searchParams.get('sort') ?? 'asc'}
-                    on:select={(e) => { searchParam($page.url, 'sort', e.detail, 'page')} }
-                    items={0}
-                    headless={true}
-                    fullWidth={true}
-                >
-                    <Icon src={ChartBar} mini width={16} slot="icon"/>
-                    <span slot="label">Sort Direction</span>
-                </MultiSelect>
-
-                <div class="flex flex-row gap-2 items-center">
+                <div class="flex flex-row gap-2 items-center w-full md:w-1/2 md:mt-[1.5rem]">
                     <TextInput
                         class="w-full"
                         bind:value={search}
@@ -188,11 +190,9 @@
                         Search
                     </Button>
                 </div>
-
             </div>
 
-            
-
+            <hr class="border-slate-300/50"/>
 
             <ul class="flex flex-col divide-y dark:divide-zinc-800">
                 {#if data.communities.length == 0}

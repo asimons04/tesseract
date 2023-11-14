@@ -99,7 +99,7 @@
                 
         </div>
 
-        <div class="mt-2 p-3">
+        <div class="mt-2 p-3 italic">
             <Markdown source={site.site.description} />
         </div>
        

@@ -30,6 +30,7 @@
         PencilSquare,
         Share,
         Trash,
+        Window
 
     } from 'svelte-hero-icons'
     export let post:PostView
@@ -87,7 +88,11 @@
     </Button>
 
     <!---Post Actions --->
-    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">Post</li>
+    <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+        <Icon slot="icon" src={Window} width={16} mini />
+        Post
+    </li>
+    
 
     <!---Edit if owned by self--->
     {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}

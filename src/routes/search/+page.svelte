@@ -113,7 +113,7 @@
 <header class="sticky top-16 w-full flex flex-col gap-4 backdrop-blur-3xl z-20 mt-[-0.5rem] px-2">
     <span class="flex flex-row gap-4 items-center font-bold text-sm text-center my-2">
         <!--Home Button-->
-        <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
+        <span class="mt-[-6px] mr-2 cursor-pointer" title="Reset Search"
             on:click={() => {
                 searchParams = {
                     query: '',
@@ -207,9 +207,10 @@
         </span>
     </span>
 
-    <span class="flex flex-row flex-wrap gap-2 items-center text-sm text-center mx-auto mb-2">
+    <span class="flex flex-col md:flex-row gap-2 items-center text-sm text-center mx-auto mb-2">
         <!---Filter by User--->
-        <div class="flex flex-row flex-wrap gap-2 items-center text-sm text-center" class:hidden={!advancedSearch}>
+        
+        <div class="flex flex-row gap-2 items-center text-sm text-center" class:hidden={!advancedSearch}>
             <ObjectAutocomplete
                 placeholder="User"
                 type="person"
@@ -241,22 +242,24 @@
 
         <div class="mx-auto" />
         
-        <TextInput
-            bind:value={searchParams.query}
-            placeholder="Search Term(s)"
-            type="search"
-        />
+        <div class="flex flex-row gap-2 items-center">
+            <TextInput
+                bind:value={searchParams.query}
+                placeholder="Search Term(s)"
+                type="search"
+            />
 
-        <Button
-            on:click={() => {
-                search();
-            }}
-            size="lg"
-            class="h-full"
-            icon={MagnifyingGlass} 
-        >
-            Search
-        </Button>
+            <Button
+                on:click={() => {
+                    search();
+                }}
+                size="lg"
+                class="h-full"
+                icon={MagnifyingGlass} 
+            >
+                Search
+            </Button>
+        </div>
     </span>
 </header>
 
