@@ -87,7 +87,7 @@
     </Button>
 
     <!---Post Actions --->
-    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">Post Actions</li>
+    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">Post</li>
 
     <!---Edit if owned by self--->
     {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}

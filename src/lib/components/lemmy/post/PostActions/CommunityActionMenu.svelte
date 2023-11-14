@@ -53,7 +53,7 @@
         <Icon slot="icon" src={UserGroup} width={16} mini />
     </Button>
 
-    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">Community Actions</li>
+    <li class="mx-4 text-xs opacity-80 text-left font-bold my-1 py-1">{post.community.title?.trim() || post.community.name.trim()}@{new URL(post.community.actor_id).hostname}</li>
 
     <MenuButton on:click={() => createPost(post.community)} title="Create Post">
         <Icon src={PencilSquare} width={16} mini />
@@ -62,7 +62,7 @@
 
     <MenuButton on:click={() => goto(`/c/${post.community.name}@${new URL(post.community.actor_id).hostname}`)} title="Browse {post.community.title || post.community.name}">
         <Icon src={Newspaper} width={16} mini />
-        Browse {post.community.title || post.community.name}
+        Browse Community
     </MenuButton>
 
     <!---Add/Remove to Favorites--->

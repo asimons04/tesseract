@@ -77,14 +77,14 @@
         <div class="flex flex-col gap-2 w-full">
             <!---Site logo, name, and instance domain--->
             {#if site}
-                <div class="flex flex-row gap-3 items-center p-3">
+                <div class="flex flex-col md:flex-row gap-3 items-center p-3">
                     {#if site.icon}
-                        <Avatar width={42} url={site.icon} alt={site.name} circle={false} />
+                        <Avatar width={64} url={site.icon} alt={site.name} circle={false} />
                     {/if}
                             
                     <div class="flex flex-col w-full">
                         
-                        <div class="flex flex-row items-center">
+                        <div class="flex flex-col md:flex-row items-center">
                             <h2 class="font-bold text-2xl">{site.name}</h2>
                             
                             <span class="px-4 text-sm italic">
