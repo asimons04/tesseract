@@ -15,7 +15,6 @@
         Minus,
         Newspaper,
         PencilSquare,
-        QueueList,
         Rss,
         Star,
         UserGroup,
@@ -79,7 +78,7 @@
 
     <!---Add to Group--->
     <MenuButton title="Add/Remove to Group" on:click={(e) => {groups.showModal=!groups.showModal} }>
-        <Icon src={QueueList} mini size="16" />
+        <Icon src={UserGroup} mini size="16" />
         Add/Remove to Group(s)
     </MenuButton>
 

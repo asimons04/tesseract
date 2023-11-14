@@ -114,14 +114,14 @@
                         editCommunityGroup = true;
                     }}
                 >
-                    <Icon src={PencilSquare} width={18} />
-                    <span class="hidden md:inline">Edit</span>
+                    <Icon src={PencilSquare} width={24} />
                 </span>
-                
+
+              
 
 
                 <!---Card/Compact Selection--->
-                <span class="mt-[-6px] mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
+                <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
                     on:click={() => {
                         $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                         window.scrollTo(0,0);

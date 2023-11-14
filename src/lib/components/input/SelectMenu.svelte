@@ -38,7 +38,9 @@
         
         <span class="flex flex-row items-center gap-1 font-bold text-sm cursor-pointer">
             {#if icon}
-                <Icon src={icon} mini width={16}/>
+                <span class="hidden sm:flex">
+                    <Icon src={icon} mini width={16}/>
+                </span>
             {/if}
 
             {#if label}
