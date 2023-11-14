@@ -129,20 +129,7 @@
 
 
             <div class="flex flex-col-reverse md:flex-row gap-4">
-                <div class="flex flex-row justify-between w-full md:w-1/2">
-                    <MultiSelect
-                        options={['Subscribed', 'Local', 'All']}
-                        selected={$page.url.searchParams.get('type') ?? 'All'}
-                        on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-                        label="Type"
-                        items={0}
-                        headless={true}
-                        fullWidth={false}
-                    >
-                        <Icon src={Bars3} mini width={16} slot="icon"/>
-                        <span slot="label">List Type</span>
-                    </MultiSelect>
-                    
+                <div class="flex flex-row justify-between w-full md:w-1/4">
                     <MultiSelect
                         options={["asc", "desc", "posts_desc", "subscribers_desc"]}
                         optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
@@ -157,7 +144,7 @@
                     </MultiSelect>
                 </div>
 
-                <div class="flex flex-row gap-2 items-center w-full md:w-1/2 md:mt-[1.5rem]">
+                <div class="flex flex-row gap-2 items-center w-full md:w-3/4 md:mt-[1.5rem]">
                     <TextInput
                         class="w-full"
                         bind:value={search}
@@ -186,7 +173,7 @@
                 </div>
             </div>
 
-            <hr class="border-slate-300/50"/>
+            <hr class="border-slate-300/50 my-2"/>
 
             
 

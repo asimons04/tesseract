@@ -192,7 +192,7 @@
                 </div>
             </div>
 
-            <hr class="border-slate-300/50"/>
+            <hr class="border-slate-300/50 my-2"/>
 
             <ul class="flex flex-col divide-y dark:divide-zinc-800">
                 {#if data.communities.length == 0}
