@@ -47,7 +47,7 @@
         <Icon slot="icon" src={Map} width={16} mini />
     </Button>
         
-    <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+    <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
         <Icon slot="icon" src={Map} width={16} mini />
         Explore
     </li>

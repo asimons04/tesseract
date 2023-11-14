@@ -116,7 +116,7 @@
 
     {#if ($profile?.user && amMod($profile.user, item.community)) || ($profile?.user && isAdmin($profile.user))}
         
-        <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+        <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
             <Icon slot="icon" src={ShieldExclamation} width={16} mini />
             Moderation
         </li>

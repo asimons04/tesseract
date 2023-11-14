@@ -88,7 +88,7 @@
     </Button>
 
     <!---Post Actions --->
-    <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+    <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
         <Icon slot="icon" src={Window} width={16} mini />
         Post
     </li>

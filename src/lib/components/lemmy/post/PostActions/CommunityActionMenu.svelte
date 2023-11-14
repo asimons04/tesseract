@@ -15,6 +15,7 @@
         Minus,
         Newspaper,
         PencilSquare,
+        QueueList,
         Rss,
         Star,
         UserGroup,
@@ -52,7 +53,7 @@
         <Icon slot="icon" src={UserGroup} width={16} mini />
     </Button>
 
-    <li class="flex flex-row gap-1 w-full items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
+    <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
         <Icon slot="icon" src={UserGroup} width={16} mini />
         {post.community.title?.trim() || post.community.name.trim()}@{new URL(post.community.actor_id).hostname}
     </li>
@@ -63,8 +64,14 @@
     </MenuButton>
 
     <MenuButton on:click={() => goto(`/c/${post.community.name}@${new URL(post.community.actor_id).hostname}`)} title="Browse {post.community.title || post.community.name}">
-        <Icon src={Newspaper} width={16} mini />
+        <Icon src={QueueList} width={16} mini />
         Browse Community
+    </MenuButton>
+
+    <!---Modlog--->
+    <MenuButton link href="/modlog?community={post.community.id}" title="Modlog for {post.community.title}" >
+        <Icon src={Newspaper} mini size="16" />
+        Community Modlog
     </MenuButton>
 
     <!---Add/Remove to Favorites--->
