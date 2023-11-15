@@ -48,55 +48,55 @@
 
     <!--- Link-style post without thumbnail URL--->
     {#if postType == "link" || postType == "thumbLink"}
-        <PostLink post={post} displayType={displayType} />
+        <PostLink bind:post={post} displayType={displayType} />
     {/if}
 
     <!--- Direct Image Post --->
     {#if postType == "image"}
-        <PostImage post={post} displayType={displayType}/>
+        <PostImage bind:post={post} displayType={displayType}/>
     {/if}
         
     <!--- Direct Video Post --->
     {#if postType == "video"}
-        <PostVideo post={post} displayType={displayType} autoplay={autoplay} loop={loop}/>
+        <PostVideo bind:post={post} displayType={displayType} autoplay={autoplay} loop={loop}/>
     {/if}
 
     <!--- Bandcamp Embed --->
     {#if postType == "bandcamp"}
-        <PostBandcamp post={post} displayType={displayType}/>
+        <PostBandcamp bind:post={post} displayType={displayType}/>
     {/if}
 
     <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
     {#if postType == "youtube"}
-        <PostYouTube post={post} displayType={displayType} autoplay={autoplay}/>
+        <PostYouTube bind:post={post} displayType={displayType} autoplay={autoplay}/>
     {/if}
 
     <!--- Spotify Embed --->
     {#if postType == "spotify"}
-        <PostSpotify post={post} displayType={displayType} />
+        <PostSpotify bind:post={post} displayType={displayType} />
     {/if}
 
     <!--- Soundcloud Embed --->
     {#if postType == "soundcloud"}
-        <PostSoundCloud post={post} displayType={displayType} />
+        <PostSoundCloud bind:post={post} displayType={displayType} />
     {/if}
 
     <!--- Vimeo Embed --->
     {#if postType == "vimeo"}
-        <PostVimeo post={post} displayType={displayType} />
+        <PostVimeo bind:post={post} displayType={displayType} />
     {/if}
 
     <!--- Odysee Embed --->
     {#if postType == "odysee"}
-        <PostOdysee post={post} displayType={displayType} />
+        <PostOdysee bind:post={post} displayType={displayType} />
     {/if}
 
     <!--- SongLink Embed --->
     {#if postType == "songlink"}
-        <PostSongLink post={post} displayType={displayType} />
+        <PostSongLink bind:post={post} displayType={displayType} />
     {/if}
 
-    <PostBody post={post} displayType={displayType} bind:expandPreviewText/>
+    <PostBody bind:post={post} displayType={displayType} bind:expandPreviewText/>
 
     <!--- Crossposts --->
     <Crossposts post={post} size={displayType=='feed' ? 'xs' : 'sm'}/>

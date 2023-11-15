@@ -92,7 +92,7 @@
             {/if}
             
             <div class="mt-1"/>
-            <PostBody post={post} displayType={displayType} previewLength={240} bind:expandPreviewText inline={!expandPreviewText}/>
+            <PostBody bind:post={post} displayType={displayType} previewLength={240} bind:expandPreviewText inline={!expandPreviewText}/>
 
             <!--- Crossposts --->
             <Crossposts post={post} size="xs" class="!pl-0"/>

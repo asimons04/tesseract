@@ -38,17 +38,12 @@ The picker can be toggled open/closed with the Emojis button in the editor toolb
 #### Inline NSFW Blur Removal
 Instead of clicking into a post to unblur NSFW content, you can unblur it by clicking it in the feed.  Works for all post types, including embedded media (the thumbnail image will be blurred and will load the embed when clicking to unblur).
 
-#### Favorite Communities
-You can now mark a community as a favorite and have it show up in your "Favorites" list in the sidebar for quick access.
+#### Community Groups and Custom Feeds
+You can create named groups and add communities to them. 
 
-#### Community Groups
-You can create named groups and add communities to them.  Access them from the sidebar.  Similar to favorites list, but more granular.
-
-#### Custom Feeds
 Finally, you can tame your subscriptions and bring some order to the chaos.  Sort your communities into groups and view them as individual feeds.
 
 Building from the favorites and community groups, Tesseract now has custom feeds based on the communities you place into those groups. 
-
 
 **Examples**:
 - Create a group called "News and Politics" and add your news and political communities to those.    
@@ -60,7 +55,6 @@ Then browse any/each of those as virtual feeds without any of the mood whiplash 
 
 The custom feeds have the same filtering capabilities as the regular feed: currently, that includes crosspost rollups, MBFC credibility filtering, and keyword filtering.
 
-While you don't _have_ to be subscribed to a community to add it to a group/favorite, it is recommended in case others unsubscribe; you would then stop receiving updates for it.
 
 #### New Setting: Open Posts in New Tab
 You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and expose it as a user setting.
@@ -98,8 +92,6 @@ I've submitted an RFC to see about getting a custom field for this purpose added
 If you rarely, if ever, use Lemmy-UI, then you can leave your profile data saved there and only clear it if you do need to use it (that's what I do :shrug:).
 
 
-
-
 ### Bugfixes and Misc Changes
 - [Bugfix] Fixed type on `restoreReplyToAuthor` in mod action object
 - [Bugfix] Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
@@ -117,6 +109,17 @@ If you rarely, if ever, use Lemmy-UI, then you can leave your profile data saved
 - [Modlog] Due to the above, modlog search/filtering now work in mobile
 - [Modlog] Filters remain present when there's a selection; avoid having to reload modlog just to switch filter params.
 - [Image Proxy] Added rule to bypass proxying for inline `data:` images.
+
+- [UI Tweak] Standardized the sub-navigation bar at the top of the feeds, posts, other areas. Standard functions are merely toggles and custom elements can be slotted in.
+- [UI Tweak] Added an expand/collapse button to the toolbar in the various feed pages (main, community, user) that will allow you to enable/disable the margins
+- [UI Tweak] Card/Compact switcher is just a toggle button
+- [UI Tweak] Updated NSFW post handing in the feed. Easier to un-blur on a case-by-case basis without having to go into the post
+- [UI Tweak] Added NSFW blur to post body text in the feed instead of hiding it completely. Expanding it will un-blur it.
+- [UI Tweak] Partially restored "scroll to top" behavior when collapsing post body text in feed. Now only scrolls when you collapse it back down (to save you having to scroll all the way back to your starting position).
+
+
+
+
 
 ## 1.2.8.99
 ### Bugfixes
