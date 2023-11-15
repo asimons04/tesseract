@@ -67,13 +67,9 @@
         }
     }
 
-    function showAsEmbed() {
-        if (!videoID) { return false;}
-        if (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) { return true;}
-        if (displayType == 'post' && $userSettings.embeddedMedia.post) { return true;}
-        
-        return false;
-    }
+    $: showAsEmbed = videoID &&
+        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'post' && $userSettings.embeddedMedia.post)
 </script>
 
 <style>
@@ -95,7 +91,7 @@
 
 
 
-{#if showAsEmbed()}
+{#if showAsEmbed}
     <Link 
         href={
             embedURL
@@ -146,11 +142,11 @@
             newtab={$userSettings.openInNewTab.links}
             highlight nowrap
         />
-        <PostImage post={post} displayType={displayType}/>
+        <PostImage bind:post={post} displayType={displayType}/>
     
     <!---Create PostLink to external link if user does not have embeds enaled for posts--->
     {:else}
-        <PostLink post={post} displayType={displayType}/>
+        <PostLink bind:post={post} displayType={displayType}/>
     {/if}
 
 {:else if !post.post.thumbnail_url}

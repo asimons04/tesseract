@@ -54,14 +54,22 @@
     <div class="m-1">
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
             <picture class="rounded-md overflow-hidden w-full max-h-[min(50vh,500px)]  max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
-                <source
-                    srcset="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
+                <source srcset="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
+                    media="(max-width: 768px)"
                 />
 
                 <source
                     srcset="{imageProxyURL(thumbnail_url, undefined, 'webp') ?? imageProxyURL(url, undefined, 'webp')}"
                     media="(max-width: 1024px)"
                 />
+                
+                {#if nsfw && $userSettings.nsfwBlur}
+                    <div class="absolute z-20 left-0 top-0 w-full h-full bg-white/75 dark:bg-black/75">  
+                        <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-lg font-bold border border-slate-500 whitespace-nowrap shadow-lg p-4">
+                            [Reveal NSFW Content]
+                        </div>
+                    </div>
+                {/if}
 
                 <img
                     src="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"

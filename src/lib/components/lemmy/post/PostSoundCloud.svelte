@@ -27,14 +27,10 @@
         embedURL = `https://w.soundcloud.com/player/?visual=true&url=${post.post.url.replace('m.soundcloud.com', 'soundcloud.com')}`
     }
 
-    function showAsEmbed() {
-        if (!embedURL) { return false;}
-        
-        if (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) { return true;}
-        if (displayType == 'post' && $userSettings.embeddedMedia.post) { return true;}
-        
-        return false;
-    }
+   $: showAsEmbed = embedURL &&
+        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'post' && $userSettings.embeddedMedia.post)
+
 </script>
 
 <style>
@@ -57,11 +53,7 @@
 
 
 <!--{#if showAsEmbed()}-->
-{#if 
-    embedURL &&
-    (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
-    (displayType == 'post' && $userSettings.embeddedMedia.post)
-}
+{#if showAsEmbed}
     
 
 <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
