@@ -41,6 +41,7 @@
     export let listingType:boolean              = false;
     export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All']
     export let listingTypeOptionNames:string[]  = listingTypeOptions
+    export let listingTypeOnSelect:Function     = (e) => { searchParam($page.url, 'type', e.detail, 'page') }
     export let selectedListingType:string       = ''
 
     // Sort menu
@@ -93,10 +94,7 @@
                 selected={selectedListingType}
                 title="Listing Type"
                 icon={Bars3}
-                on:select={(e) => {
-                    // @ts-ignore
-                    searchParam($page.url, 'type', e.detail, 'page')
-                }}
+                on:select={listingTypeOnSelect}
             />
         {/if}
 
@@ -143,53 +141,53 @@
         <!--- Custom Items to the left of the spacer--->
         <slot name="left"/>
         
-
+        <!---Left/Right Spacer--->
         <div class="mx-auto" />
         
         <!--- Custom Items to the right of the spacer--->
         <slot name="right"/>
 
-        <!--Jump to Bottom-->
+        <!--Jump to Top/Bottom-->
         {#if scrollButtons}
-        <span class="mr-2 cursor-pointer" title="Scroll to Bottom"
-            on:click={() => {
-                window.scrollTo(0,document.body.scrollHeight);
-            }}
-        >
-            <Icon src={ChevronDoubleDown} width={iconSize} />
-        </span>
-        
+            <span class="mr-2 cursor-pointer" title="Scroll to Bottom"
+                on:click={() => {
+                    window.scrollTo(0,document.body.scrollHeight);
+                }}
+            >
+                <Icon src={ChevronDoubleDown} width={iconSize} />
+            </span>
+            
 
-        <!--Jump to Top-->
-        <span class="mr-2 cursor-pointer" title="Scroll to Top"
-            on:click={() => {
-                window.scrollTo(0,0);
-            }}
-        >
-            <Icon src={ChevronDoubleUp} width={iconSize} />
-        </span>
+            <!--Jump to Top-->
+            <span class="mr-2 cursor-pointer" title="Scroll to Top"
+                on:click={() => {
+                    window.scrollTo(0,0);
+                }}
+            >
+                <Icon src={ChevronDoubleUp} width={iconSize} />
+            </span>
         {/if}
 
         <!--- Toggle Margins on/off (hide until medium width since the margins disappear at the 'sm' breakpoint anyway) --->
         {#if toggleMargins}
-        <span class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Enable margins' : 'Disable margins'}."
-            on:click={() => {
-                $userSettings.uiState.feedMargins = !$userSettings.uiState.feedMargins
-            }}
-            >
-            <Icon src={$userSettings.uiState.feedMargins ? ArrowsPointingOut : ArrowsPointingIn} width={iconSize} />
-        </span>
+            <span class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Enable margins' : 'Disable margins'}."
+                on:click={() => {
+                    $userSettings.uiState.feedMargins = !$userSettings.uiState.feedMargins
+                }}
+                >
+                <Icon src={$userSettings.uiState.feedMargins ? ArrowsPointingOut : ArrowsPointingIn} width={iconSize} />
+            </span>
         {/if}
 
         <!---Card/Compact Selection--->
         {#if compactSwitch}
-        <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
-            on:click={() => {
-                $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-            }}
-            >
-            <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />
-        </span>
+            <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
+                on:click={() => {
+                    $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                }}
+                >
+                <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />
+            </span>
         {/if}
 
         

@@ -50,12 +50,10 @@
             />
         {:else}
             <SubNavbar 
-                home={true} back={true}
+                home={true} back={true} compactSwitch={true} toggleMargins={true}
                 listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
                 sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
                 pageSelection={true} bind:currentPage={data.page}
-                compactSwitch={true} 
-                toggleMargins={true}
             />
             
             <div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">

@@ -14,6 +14,7 @@
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
 
@@ -60,65 +61,11 @@
 
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        
-        <header class="sticky top-16 w-full z-20 backdrop-blur-3xl mt-[-0.5rem] px-2">
-            <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
-                
-                <!--Home Button-->
-                <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
-                    on:click={() => {
-                        goto('/', {invalidateAll: true});
-                        window.scrollTo(0,0);
-                    }}
-                >
-                    <Icon src={Home} width={24} />
-                </span>
-                
-                <!---Sort Menu--->
-                <SelectMenu
-                    alignment="bottom-left"
-                    options={sortOptions}
-                    optionNames={sortOptionNames}
-                    selected={data.sort}
-                    title="Sort Direction"
-                    icon={ChartBar}
-                    on:select={(e) => {
-                        // @ts-ignore
-                        searchParam($page.url, 'sort', e.detail, 'page')
-                    }}
-                />
-                
-                                    
-                
-                <Icon src={ArrowSmallRight} mini width={24} />
-                
-                <!---Page Selection--->
-                <SelectMenu
-                    alignment="bottom-left"
-                    options={arrayRange(1, data.page +1)}
-                    selected={data.page}
-                    title="Page"
-                    icon={DocumentDuplicate}
-                    on:select={(e) => {
-                        // @ts-ignore
-                        searchParam($page.url, 'page', e.detail.toString())
-                    }}
-                />
-
-                <span class="ml-auto"/>
-                
-                <!---Card/Compact Selection--->
-                <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
-                    on:click={() => {
-                        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                    }}
-                >
-                    <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={24} />
-                </span>
-
-
-            </span>
-        </header>
+        <SubNavbar 
+            home={true} back={true} compactSwitch={true} toggleMargins={true}
+            sortMenu={true} bind:selectedSortOption={data.sort}
+            pageSelection={true} bind:currentPage={data.page}
+        />
         
         <PostFeed posts={data.posts.posts}/>
         
