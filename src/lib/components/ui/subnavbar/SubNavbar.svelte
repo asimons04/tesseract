@@ -53,8 +53,6 @@
     // Page Selection
     export let pageSelection:boolean            = false
     export let currentPage:number               = 1
-
-
 </script>
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
@@ -139,13 +137,13 @@
 
 
         <!--- Custom Items to the left of the spacer--->
-        <slot name="left"/>
+        <slot {iconSize} name="left"/>
         
         <!---Left/Right Spacer--->
         <div class="mx-auto" />
         
         <!--- Custom Items to the right of the spacer--->
-        <slot name="right"/>
+        <slot {iconSize} name="right"/>
 
         <!--Jump to Top/Bottom-->
         {#if scrollButtons}

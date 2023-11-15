@@ -52,13 +52,13 @@
             pageSelection={true} bind:currentPage={data.page}
         >
             <!--Edit Group Button-->
-            <span slot="right" class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" 
+            <span let:iconSize slot="right" class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" 
                 title="Edit Group"
                 on:click={() => {
                     editCommunityGroup = true;
                 }}
             >
-                <Icon src={PencilSquare} width={28} />
+                <Icon src={PencilSquare} width={iconSize} />
             </span>
         </SubNavbar>
 
