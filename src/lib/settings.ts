@@ -103,6 +103,7 @@ interface Settings {
     uiState: {
         expandSidebar: boolean
         expandCommunitySidebar: boolean
+        feedMargins:boolean
         postsPerPage: number
         fediseerBadges: boolean
         MBFCBadges: boolean
@@ -125,7 +126,7 @@ interface Settings {
 }
 
 export const defaultSettings: Settings = {
-    version: 0.3,
+    version: 0.4,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -147,8 +148,9 @@ export const defaultSettings: Settings = {
     highlightInlineCode: false,
     inlineImages: true,
     uiState: {
-        expandSidebar: true,
-        expandCommunitySidebar: true,
+        expandSidebar:                                                  true,
+        expandCommunitySidebar:                                         true,
+        feedMargins:                                                    true,
         postsPerPage:                                                   20,
         fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,
@@ -392,6 +394,12 @@ export function migrateSettings(old:any) {
     if (old.version == 0.2) {
         delete old.modlogCardView
         old.version = 0.3
+    }
+
+    // 0.3 -> 0.4
+    if (old.version == 0.3) {
+        if (!old.uiState.hasOwnProperty('feedMargins')) old.uiState.feedMargins = defaultSettings.uiState.feedMargins;
+        old.version = 0.4
     }
 
     return { ...defaultSettings, ...old }

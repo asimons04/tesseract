@@ -10,6 +10,7 @@
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
 
     import {
@@ -48,81 +49,16 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
-            <header class="sticky top-16 w-full backdrop-blur-3xl z-20 mt-[-0.5rem] px-2">
-                <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
-                        <!--Home Button-->
-                        <span class="mt-[-6px] mr-2 cursor-pointer" title="Frontpage"
-                            on:click={() => {
-                                goto('/', {invalidateAll: true});
-                                window.scrollTo(0,0);
-                            }}
-                        >
-                            <Icon src={Home} width={24} />
-                        </span>
-                        
-                        <!---Listing Type--->
-                        <SelectMenu
-                            alignment="bottom-left"
-                            options={['all', 'posts', 'comments']}
-                            optionNames={['All', 'Posts', 'Comments']}
-                            selected={data.type}
-                            title="Listing Type"
-                            icon={Bars3}
-                            on:select={(e) => {
-                                // @ts-ignore
-                                searchParam($page.url, 'type', e.detail, 'page')
-                            }}
-                        />
-                        
-                        <Icon src={ArrowSmallRight} mini width={24} />
-                        
-                        <!---Sort Menu--->
-                        <SelectMenu
-                            alignment="bottom-left"
-                            options={['New', 'TopAll', 'Old']}
-                            optionNames={['New', 'Top', 'Old']}
-                            selected={data.sort}
-                            title="Sort Direction"
-                            icon={ChartBar}
-                            on:select={(e) => {
-                                // @ts-ignore
-                                searchParam($page.url, 'sort', e.detail, 'page')
-                            }}
-                        />
-                        
-                        
-                        
-                        
-                        <Icon src={ArrowSmallRight} mini width={24} />
-                        
-                        <!---Page Selection--->
-                        <SelectMenu
-                            alignment="bottom-left"
-                            options={arrayRange(1, data.page +1)}
-                            selected={data.page}
-                            title="Page"
-                            icon={DocumentDuplicate}
-                            on:select={(e) => {
-                                // @ts-ignore
-                                searchParam($page.url, 'page', e.detail.toString())
-                            }}
-                        />
-
-                        <span class="ml-auto"/>
-                        
-                        <!---Card/Compact Selection--->
-                        <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
-                            on:click={() => {
-                                $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                            }}
-                        >
-                            <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={24} />
-                        </span>
-
-                    </span>
-            </header>
+            <SubNavbar 
+                home={true} back={true}
+                listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
+                sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
+                pageSelection={true} bind:currentPage={data.page}
+                compactSwitch={true} 
+                toggleMargins={true}
+            />
             
-            <div class="w-full sm:w-full md:w-[80%] lg:w-[90%] xl:w-[75%] flex flex-col gap-5 ml-auto mr-auto">
+            <div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">
                 {#each data.items as item (item.counts.id)}
                     {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
                         <CommentItem comment={item} />

@@ -4,10 +4,10 @@
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import { userSettings } from '$lib/settings.js'
     import type { PostView } from 'lemmy-js-client'
+    
     import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
 
     export let posts: PostView[]
-    export let margins:boolean = true
 </script>
 
 {#if posts.length == 0}
@@ -19,9 +19,8 @@
         >
         </Placeholder>
     </div>
-
 {:else}
-    <div class="w-full {margins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}
+    <div class="w-full {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}
         ml-auto mr-auto flex flex-col gap-5
         "
     >
@@ -31,7 +30,7 @@
                 !($userSettings.hidePosts.removed && post.post.removed) &&
                 !($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility')
         }
-            <Post post={post} displayType="feed"/>
+            <Post bind:post={post} displayType="feed"/>
         {/if}
     {/each}
     </div>

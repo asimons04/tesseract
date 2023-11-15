@@ -27,30 +27,31 @@
         Window,
     } from 'svelte-hero-icons'
 
-    export let iconSize:number = 24
+    export let iconSize:number = 28
 
     // Which standard buttons to show
     export let home:boolean = true              // Return to home
     export let back:boolean = false             // Back (literally emulates browser back button)
     export let scrollButtons:boolean = false    // Scroll to top/bottom buttons
+
     export let compactSwitch:boolean = false    // Switch between compact and card posts
-    
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
-    export let marginVar:boolean
     
     // Post Listing Type (Local, Subscribed, All)
-    export let listingType:boolean = false;
-    export let selectedListingType:string = ''
+    export let listingType:boolean              = false;
+    export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All']
+    export let listingTypeOptionNames:string[]  = listingTypeOptions
+    export let selectedListingType:string       = ''
 
     // Sort menu
-    export let sortMenu:boolean = false
-    export let sortOptions:string[] =  defaultSortOptions
-    export let sortOptionNames:string[] =  defaultSortOptionNames
-    export let selectedSortOption:string
+    export let sortMenu:boolean                 = false
+    export let sortOptions:string[]             =  defaultSortOptions
+    export let sortOptionNames:string[]         =  defaultSortOptionNames
+    export let selectedSortOption:string        = ''
 
     // Page Selection
-    export let pageSelection:boolean = false
-    export let currentPage:number = 1
+    export let pageSelection:boolean            = false
+    export let currentPage:number               = 1
 
 
 </script>
@@ -61,25 +62,25 @@
         
         <!--Home Button-->
         {#if home}
-        <span class="mr-2 cursor-pointer" title="Home"
-            on:click={() => {
-                goto('/', {invalidateAll: true});
-            }}
-        >
-            <Icon src={Home} width={iconSize} />
-        </span>
+            <span class="mr-2 cursor-pointer" title="Home"
+                on:click={() => {
+                    goto('/', {invalidateAll: true});
+                }}
+            >
+                <Icon src={Home} width={iconSize} />
+            </span>
         {/if}
 
         {#if back}
-        <!--Return to Feed Button-->
-        <span class="mr-2 cursor-pointer" title="Return to Feed"
-            class:hidden={history.length<2}
-            on:click={() => {
-                history.back();
-            }}
-        >
-            <Icon src={ArrowLeftCircle} width={iconSize} />
-        </span>
+            <!--Return to Feed Button-->
+            <span class="mr-2 cursor-pointer" title="Back"
+                class:hidden={history.length<2}
+                on:click={() => {
+                    history.back();
+                }}
+            >
+                <Icon src={ArrowLeftCircle} width={iconSize} />
+            </span>
         {/if}
         
         <!--- Post Listing Type--->
@@ -87,7 +88,8 @@
             <!---Listing Type--->
             <SelectMenu
                 alignment="bottom-left"
-                options={['Subscribed', 'Local', 'All']}
+                options={listingTypeOptions}
+                optionNames={listingTypeOptionNames}
                 selected={selectedListingType}
                 title="Listing Type"
                 icon={Bars3}
@@ -170,12 +172,12 @@
 
         <!--- Toggle Margins on/off (hide until medium width since the margins disappear at the 'sm' breakpoint anyway) --->
         {#if toggleMargins}
-        <span class="hidden md:flex mr-2 cursor-pointer" title="{marginVar ? 'Enable margins' : 'Disable margins'}."
+        <span class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Enable margins' : 'Disable margins'}."
             on:click={() => {
-                marginVar = !marginVar
+                $userSettings.uiState.feedMargins = !$userSettings.uiState.feedMargins
             }}
             >
-            <Icon src={marginVar ? ArrowsPointingOut : ArrowsPointingIn} width={iconSize} />
+            <Icon src={$userSettings.uiState.feedMargins ? ArrowsPointingOut : ArrowsPointingIn} width={iconSize} />
         </span>
         {/if}
 

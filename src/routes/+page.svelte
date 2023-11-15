@@ -39,17 +39,16 @@
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
         <SubNavbar 
-            iconSize={28} 
             home={true} 
             listingType={true} bind:selectedListingType={data.listingType}
             sortMenu={true} bind:selectedSortOption={data.sort}
             pageSelection={true} bind:currentPage={data.page}
             compactSwitch={true} 
-            toggleMargins={true} bind:marginVar={margins}
+            toggleMargins={true}
         />
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
-            <PostFeed bind:margins posts={data.posts.posts} />
+            <PostFeed posts={data.posts.posts} />
         </section>
 
         <div class="mt-auto px-2">
