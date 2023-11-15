@@ -163,16 +163,21 @@
         
 
 
-        <!--- Report Button -- Hide for self--->
+        <!--- Hide for Self--->
         {#if $profile.user?.local_user_view.person.id != post.creator.id}
+            
+            <!---Report Post--->
             <MenuButton on:click={() => report(post)} color="dangerSecondary" title="Report Post">
                 <Icon src={Flag} width={16} mini />
                 Report Post
             </MenuButton>
 
-            <MenuButton on:click={() => blockUser(post.creator.id)} color="dangerSecondary" title="Report Post">
-                <Icon src={Flag} width={16} mini />
-                {isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}
+            <!---Block User--->
+            <MenuButton on:click={() => blockUser(post.creator.id)} color="dangerSecondary" title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}">
+                <Icon src={NoSymbol} width={16} mini />
+                {isBlocked($profile?.user, post.creator.id) 
+                    ? `Unblock ${post.creator.display_name || post.creator.name}@${new URL(post.creator.actor_id).hostname}`
+                    : `Block ${post.creator.display_name || post.creator.name}@${new URL(post.creator.actor_id).hostname}`}
             </MenuButton>
         {/if}
 

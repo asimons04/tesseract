@@ -64,40 +64,50 @@ export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
     })
 
 
-export const blockUser = async function (block: number):Promise<void> {
-    let userProfile = get(profile)
-
-    if (!userProfile?.user || !userProfile?.jwt) throw new Error('Unauthenticated')
-
-    try {
-        const blocked = isBlocked(userProfile.user, block)
-
-        await getClient().blockPerson({
-            auth: userProfile.jwt,
-            block: !blocked,
-            person_id: block,
+export const blockUser = async function (personID: number, confirm:boolean=false):Promise<void> {
+    if (!confirm) {
+        toast({
+            content: "Are you sure you want to block this user?",
+            type: "warning",
+            action: () => blockUser(personID, true)
         })
+        return
+    }
+    else {
+        try {
+            const userProfile = get(profile)
+            if (!userProfile?.user || !userProfile?.jwt) throw new Error('Unauthenticated')
 
-        if (blocked) {
-            const index = userProfile.user.person_blocks
-                .map((p) => p.target.id)
-                .indexOf(block)
-            userProfile.user.person_blocks.splice(index, 1)
+            const blocked = isBlocked(userProfile.user, personID)
+
+            await getClient().blockPerson({
+                auth: userProfile.jwt,
+                block: !blocked,
+                person_id: personID,
+            })
+
+            if (blocked) {
+                const index = userProfile.user.person_blocks
+                    .map((p) => p.target.id)
+                    .indexOf(personID)
+                userProfile.user.person_blocks.splice(index, 1)
+            }
+            
+            toast({
+                content: `Successfully ${blocked ? 'unblocked' : 'blocked'} that user.`,
+                type: 'success',
+            })
+
+            // Refresh the page to effect the change in block status
+            goto(window.location.href, {
+                invalidateAll: true,
+            })
+
+        } catch (err) {
+            toast({
+                content: err as any,
+                type: 'error',
+            })
         }
-        
-        toast({
-            content: `Successfully ${blocked ? 'unblocked' : 'blocked'} that user.`,
-            type: 'success',
-        })
-
-        goto(window.location.href, {
-            invalidateAll: true,
-        })
-
-    } catch (err) {
-        toast({
-            content: err as any,
-            type: 'error',
-        })
     }
 }

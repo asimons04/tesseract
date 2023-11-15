@@ -2,7 +2,7 @@
     import type { PostView } from 'lemmy-js-client'
     
     import {addFavorite, isFavorite } from '$lib/favorites'
-    import { createPost, subscribe } from '$lib/components/lemmy/community/helpers'
+    import { blockCommunity, createPost, subscribe } from '$lib/components/lemmy/community/helpers'
     import { goto } from '$app/navigation'
 
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
@@ -14,6 +14,7 @@
         Icon,
         Minus,
         Newspaper,
+        NoSymbol,
         PencilSquare,
         QueueList,
         Rss,
@@ -103,6 +104,12 @@
     > 
         <Icon src={subscribed ? Minus : Rss} width={16} mini />
         {subscribed ? 'Unsubscribe' : 'Subscribe'}
+    </MenuButton>
+
+    <!---Block Community--->
+    <MenuButton title="Block Community" color="dangerSecondary" on:click={(e) =>  blockCommunity(post.community.id) } >
+        <Icon src={NoSymbol} mini size="16" />
+        Block {post.community.title || post.community.name}@{new URL(post.community.actor_id).hostname}
     </MenuButton>
 
 </Menu>
