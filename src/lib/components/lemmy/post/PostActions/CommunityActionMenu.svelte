@@ -56,7 +56,7 @@
 
     <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
         <Icon slot="icon" src={UserGroup} width={16} mini />
-        {post.community.title?.trim() || post.community.name.trim()}@{new URL(post.community.actor_id).hostname}
+        {post.community.name}@{new URL(post.community.actor_id).hostname}
     </li>
 
     <MenuButton on:click={() => createPost(post.community)} title="Create Post">
@@ -109,7 +109,7 @@
     <!---Block Community--->
     <MenuButton title="Block Community" color="dangerSecondary" on:click={(e) =>  blockCommunity(post.community.id) } >
         <Icon src={NoSymbol} mini size="16" />
-        Block {post.community.title || post.community.name}@{new URL(post.community.actor_id).hostname}
+        Block {post.community.name}@{new URL(post.community.actor_id).hostname}
     </MenuButton>
 
 </Menu>
