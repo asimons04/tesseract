@@ -66,7 +66,14 @@
     }
 </script>
 
-<div class="flex flex-row gap-2 items-center h-8 {displayType == 'post' ? 'mt-auto' : ''} {$userSettings.showCompactPosts && !expandCompact ? '' : 'mx-[-1rem]'}">
+<div 
+    class="flex flex-row gap-0 sm:gap-2 items-center h-8 
+    {displayType == 'post' ? 'mt-auto' : ''} 
+    {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'mx-[-1rem]'}
+    {displayType == 'post' ? 'ml-[-1.5rem]' : ''}
+    "
+>
+
     <!--- Post Vote Buttons--->
     <PostVote post={post.post} bind:vote={post.my_vote} bind:score={post.counts.score} />
 

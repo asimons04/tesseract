@@ -133,7 +133,7 @@
             </div>
 
         {:else}
-            <div class="flex flex-col">
+            <div class="flex flex-col px-1">
                 <!--Toolbar-->
                 <div class="[&>*]:flex-shrink-0 flex flex-row overflow-x-scroll overflow-y-hidden h-fit p-1.5 gap-1.5 mb-2 {$$props.disabled ? 'opacity-60 pointer-events-none' : ''}">
                     <!--Emoji Picker Button-->

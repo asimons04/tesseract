@@ -3,6 +3,7 @@
     
     import { afterUpdate, onMount } from 'svelte'
     import { get } from 'svelte/store'
+    import { inDarkTheme } from '$lib/ui/colors'
     import { site } from '$lib/lemmy'
 
     import EmojiMartData from '@emoji-mart/data/sets/14/google.json'
@@ -67,7 +68,7 @@
                 if (closeOnSelect) open = !open
             },
             set: 'google',
-            theme: dark() ? 'dark': 'auto',
+            theme: inDarkTheme() ? 'dark': 'light',
             previewPosition: 'none',
             navPosition: navButtons ? 'top' : 'none',
             dynamicWidth: true,

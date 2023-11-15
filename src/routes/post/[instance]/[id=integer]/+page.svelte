@@ -16,19 +16,13 @@
     import { userSettings } from '$lib/settings.js'
 
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     // Post Components
     import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
 
-    import {
-        Icon,
-        ArrowLeftCircle,
-        ChevronDoubleDown,
-        ChevronDoubleUp,
-        Home
-    } from 'svelte-hero-icons'
+
     
     export let data
 
@@ -117,51 +111,7 @@
    
 <div class="flex flex-col md:flex-row gap-4 w-full py-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
-        
-        <header class="sticky top-16 w-full backdrop-blur-3xl z-20 mt-[-0.9rem] px-2">
-            <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
-                
-                <!--Home Button-->
-                <span class="mt-[-6px] mr-2 cursor-pointer" title="Home"
-                    on:click={() => {
-                        goto('/', {invalidateAll: true});
-                    }}
-                >
-                    <Icon src={Home} width={24} />
-                </span>
-
-                <!--Return to Feed Button-->
-                <span class="mt-[-6px] mr-2 cursor-pointer" title="Return to Feed"
-                    class:hidden={history.length<2}
-                    on:click={() => {
-                        history.back();
-                    }}
-                >
-                    <Icon src={ArrowLeftCircle} width={24} />
-                </span>
-                
-                <div class="mx-auto" />
-
-                <!--Jump to Bottom-->
-                <span class="mt-[-6px] mr-2 cursor-pointer" title="Scroll to Bottom"
-                    on:click={() => {
-                        window.scrollTo(0,document.body.scrollHeight);
-                    }}
-                >
-                    <Icon src={ChevronDoubleDown} width={24} />
-                </span>
-
-                <!--Jump to Top-->
-                <span class="mt-[-6px] mr-2 cursor-pointer" title="Scroll to Top"
-                    on:click={() => {
-                        window.scrollTo(0,0);
-                    }}
-                >
-                    <Icon src={ChevronDoubleUp} width={24} />
-                </span>
-            
-            </span>
-        </header>
+        <SubNavbar iconSize={28} home={true} back={true} scrollButtons={true} />
         
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
             <!---Post--->
