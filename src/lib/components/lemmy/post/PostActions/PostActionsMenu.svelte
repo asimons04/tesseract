@@ -2,6 +2,8 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { blockUser, isBlocked } from '$lib/lemmy/user'
+
     import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
@@ -27,6 +29,7 @@
         EyeSlash,
         Flag,
         GlobeAlt,
+        NoSymbol,
         PencilSquare,
         Share,
         Trash,
@@ -165,6 +168,11 @@
             <MenuButton on:click={() => report(post)} color="dangerSecondary" title="Report Post">
                 <Icon src={Flag} width={16} mini />
                 Report Post
+            </MenuButton>
+
+            <MenuButton on:click={() => blockUser(post.creator.id)} color="dangerSecondary" title="Report Post">
+                <Icon src={Flag} width={16} mini />
+                {isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}
             </MenuButton>
         {/if}
 
