@@ -170,7 +170,7 @@
 
         <!--- Toggle Margins on/off (hide until medium width since the margins disappear at the 'sm' breakpoint anyway) --->
         {#if toggleMargins}
-            <span class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Enable margins' : 'Disable margins'}."
+            <span class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Disable margins' : 'Enable margins'}."
                 on:click={() => {
                     $userSettings.uiState.feedMargins = !$userSettings.uiState.feedMargins
                 }}
