@@ -150,7 +150,10 @@ export const postType = (post: PostView | undefined ) => {
     
     if (!post) return
     
-    if (post.post.url && isImage(post.post.url)) {
+    if ( 
+        (post.post.url && isImage(post.post.url) ) ||
+        (post.post.embed_video_url && isImage(post.post.embed_video_url))
+     ) {
         return "image"
     }
 

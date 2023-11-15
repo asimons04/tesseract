@@ -17,14 +17,20 @@
     let url:string|undefined                = post.post.url ?? undefined
     let thumbnail_url:string | undefined    = post.post.thumbnail_url ?? undefined
     let nsfw:boolean                        = post.post.nsfw ?? false
-    let nsfwBlur:boolean                    = $userSettings.nsfwBlur ?? true
     let loaded:boolean                      = false
-    
-    
+    let nsfwAcknowledge:boolean             = false
+
+    // Hack to get Imgur gifs to render without having to click through to the site.
+    if (!url?.endsWith('.gif') && post.post.embed_video_url && post.post.embed_video_url.endsWith('.gif')) {
+        url = post.post.embed_video_url
+    }
+
     // Hack to get GIFs to play in the feed.  Lemmy converts them to weird webm at best.
     if (displayType == 'feed' && url?.endsWith('.gif')) {
         thumbnail_url = url;
     }
+
+    
 </script>
 
 
@@ -36,6 +42,14 @@
     data-sveltekit-preload-data="off"
     aria-label={name}
     title={name}
+    on:click={(e)=> {
+        if (nsfw && !nsfwAcknowledge) {
+            e.preventDefault();
+            e.stopPropagation();
+            nsfwAcknowledge = true;
+            nsfw = post.post.nsfw = false;
+        }
+    }}
 >
     <div class="m-1">
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
