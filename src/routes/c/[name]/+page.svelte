@@ -69,10 +69,7 @@
         
         <PostFeed posts={data.posts.posts}/>
         
-        <Pageination
-            page={data.page}
-            on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-        />
+        <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
     </div>
 
     <div class="mt-[8px]">

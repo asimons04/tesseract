@@ -58,7 +58,7 @@
                     editCommunityGroup = true;
                 }}
             >
-                <Icon src={PencilSquare} width={24} />
+                <Icon src={PencilSquare} width={28} />
             </span>
         </SubNavbar>
 
