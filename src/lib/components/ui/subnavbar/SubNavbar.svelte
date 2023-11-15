@@ -15,6 +15,8 @@
         Icon,
         ArrowLeftCircle,
         ArrowSmallRight,
+        ArrowsPointingIn,
+        ArrowsPointingOut,
         Bars3,
         ChartBar,
         ChevronDoubleDown,
@@ -25,21 +27,28 @@
         Window,
     } from 'svelte-hero-icons'
 
-    // Which standard buttons to show
-    export let home:boolean = true
-    export let back:boolean = false
-    export let scrollButtons:boolean = false            
-    export let compactSwitch:boolean = false
     export let iconSize:number = 24
 
+    // Which standard buttons to show
+    export let home:boolean = true              // Return to home
+    export let back:boolean = false             // Back (literally emulates browser back button)
+    export let scrollButtons:boolean = false    // Scroll to top/bottom buttons
+    export let compactSwitch:boolean = false    // Switch between compact and card posts
+    
+    export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
+    export let marginVar:boolean
+    
+    // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean = false;
     export let selectedListingType:string = ''
 
+    // Sort menu
     export let sortMenu:boolean = false
     export let sortOptions:string[] =  defaultSortOptions
     export let sortOptionNames:string[] =  defaultSortOptionNames
     export let selectedSortOption:string
 
+    // Page Selection
     export let pageSelection:boolean = false
     export let currentPage:number = 1
 
@@ -47,11 +56,12 @@
 </script>
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
+    
     <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
         
         <!--Home Button-->
         {#if home}
-        <span class="mt-[-6px] mr-2 cursor-pointer" title="Home"
+        <span class="mr-2 cursor-pointer" title="Home"
             on:click={() => {
                 goto('/', {invalidateAll: true});
             }}
@@ -62,7 +72,7 @@
 
         {#if back}
         <!--Return to Feed Button-->
-        <span class="mt-[-6px] mr-2 cursor-pointer" title="Return to Feed"
+        <span class="mr-2 cursor-pointer" title="Return to Feed"
             class:hidden={history.length<2}
             on:click={() => {
                 history.back();
@@ -139,7 +149,7 @@
 
         <!--Jump to Bottom-->
         {#if scrollButtons}
-        <span class="mt-[-6px] mr-2 cursor-pointer" title="Scroll to Bottom"
+        <span class="mr-2 cursor-pointer" title="Scroll to Bottom"
             on:click={() => {
                 window.scrollTo(0,document.body.scrollHeight);
             }}
@@ -149,7 +159,7 @@
         
 
         <!--Jump to Top-->
-        <span class="mt-[-6px] mr-2 cursor-pointer" title="Scroll to Top"
+        <span class="mr-2 cursor-pointer" title="Scroll to Top"
             on:click={() => {
                 window.scrollTo(0,0);
             }}
@@ -158,6 +168,16 @@
         </span>
         {/if}
 
+        <!--- Toggle Margins on/off (hide until medium width since the margins disappear at the 'sm' breakpoint anyway) --->
+        {#if toggleMargins}
+        <span class="hidden md:flex mr-2 cursor-pointer" title="{marginVar ? 'Enable margins' : 'Disable margins'}."
+            on:click={() => {
+                marginVar = !marginVar
+            }}
+            >
+            <Icon src={marginVar ? ArrowsPointingOut : ArrowsPointingIn} width={iconSize} />
+        </span>
+        {/if}
 
         <!---Card/Compact Selection--->
         {#if compactSwitch}

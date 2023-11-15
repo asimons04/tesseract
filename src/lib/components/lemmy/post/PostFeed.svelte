@@ -7,6 +7,7 @@
     import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
 
     export let posts: PostView[]
+    export let margins:boolean = true
 </script>
 
 {#if posts.length == 0}
@@ -20,7 +21,7 @@
     </div>
 
 {:else}
-    <div class="w-full sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]
+    <div class="w-full {margins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}
         ml-auto mr-auto flex flex-col gap-5
         "
     >

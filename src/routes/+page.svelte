@@ -27,6 +27,8 @@
     } from 'svelte-hero-icons'
 
     export let data
+
+    let margins = true;
 </script>
 
 <svelte:head>
@@ -43,10 +45,11 @@
             sortMenu={true} bind:selectedSortOption={data.sort}
             pageSelection={true} bind:currentPage={data.page}
             compactSwitch={true} 
+            toggleMargins={true} bind:marginVar={margins}
         />
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
-            <PostFeed posts={data.posts.posts} />
+            <PostFeed bind:margins posts={data.posts.posts} />
         </section>
 
         <div class="mt-auto px-2">
