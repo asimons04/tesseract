@@ -75,7 +75,7 @@
                     src="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
                     class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
                     class:opacity-100={loaded}
-                    class:blur-3xl={(nsfw && $userSettings.nsfwBlur)}
+                    class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
                     on:load={() => (loaded = true)}
                 />
             </picture>
