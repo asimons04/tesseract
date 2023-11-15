@@ -21,11 +21,13 @@
     export let expandPreviewText:boolean = false
     export let previewLength:number = 250
     export let inline:boolean = false
+
+    
 </script>
 
 {#if (post.post.body || post.post.embed_description)}
-    <!--<div class="text-sm bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-md p-2" class:hidden={displayType=='feed' && post.post.nsfw}>-->
-    <div class="text-sm rounded-md" class:hidden={displayType=='feed' && post.post.nsfw}>    
+
+    <div class="text-sm rounded-md">    
         {#if displayType == 'post' }
             {#if post.post.body}                
                 <Markdown source={post.post.body} {inline}/>
@@ -38,38 +40,45 @@
 
 
         <!--- Show expandable preview in feed--->
-        {#if displayType=='feed' && !post.post.nsfw}
+        {#if displayType=='feed'}
             {#if post.post.body}    
-                <Markdown source={
-                        ( !expandPreviewText && post.post.body.length > previewLength)
-                            ? `${post.post.body.slice(0, previewLength)}`
+                <Markdown 
+                    class="{post.post.nsfw ? 'blur-sm' : ''}"
+                    source={
+                        !expandPreviewText && post.post.body.length > previewLength
+                            ? post.post.body.slice(0, previewLength)
                             : post.post.body
                     }
                     {inline}
                 />
-                {#if post.post.body.length > previewLength}
+
+                {#if (post.post.body.length > previewLength) || post.post.nsfw}
                     <Button
                         color="tertiary"
                         class="w-full !py-0"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
-                            //const element = document.getElementById(post.post.id);
-                            //if (element) scrollToTop(element);
+                            post.post.nsfw = !post.post.nsfw
+                            // Scroll top of post to top on close
+                            const element = document.getElementById(post.post.id);
+                            if (element && !expandPreviewText) scrollToTop(element);
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'}
+                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
                     </Button>
                 {/if}
         
             <!--- If no post body but there's an embed description avaialble, display that--->
             {:else if post.post.embed_description }
-                <Markdown source={
-                    ( !expandPreviewText && post.post.embed_description.length > previewLength)
-                        ? `${post.post.embed_description.slice(0, previewLength)}`
-                        : post.post.embed_description
+                <Markdown 
+                    class="{post.post.nsfw ? 'blur-sm' : ''}"
+                    source={
+                        !expandPreviewText && post.post.embed_description.length > previewLength
+                            ? post.post.embed_description.slice(0, previewLength)
+                            : post.post.embed_description
                     }
                     {inline}
                 />
@@ -77,15 +86,18 @@
                     <Button
                         color="secondary"
                         class="w-full !py-0"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
-                            //const element = document.getElementById(post.post.id);
-                            //if (element) scrollToTop(element);
+                            post.post.nsfw = !post.post.nsfw
+                            
+                            // Scroll top of post to top on close
+                            const element = document.getElementById(post.post.id);
+                            if (element && !expandPreviewText) scrollToTop(element);
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'}
+                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
                     </Button>
                 {/if}
