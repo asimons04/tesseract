@@ -26,4 +26,6 @@
             [Reveal NSFW Content]
         </div>
     </div>
+{:else}
+    <slot/>
 {/if}

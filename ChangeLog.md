@@ -23,32 +23,6 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.9
 
-### To Do
-- [X] Add favorities container to user profile store
-- [X] Create an interface for community groups
-- [ ] Add groups container to user profile store
-- [X] Write functions to add/remove favorities
-- [ ] Write functions to add/remove items to groups
-- [ ] Write a settings panel to create and manage groups
-    - [ ] Create new group
-    - [ ] Rename/delete groups
-    - [ ] Add/remove communities
-    - [ ] Use community autocomplete to assist in adding
-- [] Create a community button for the post action bar
-    - [ ] Add to Favorities
-    - [ ] Add to Group
-- [ ] Create a group management modal (e.g. to select which group to quick-add a community to or to create a new group to use)
-- [ ] Create 
-
-
-    
-- 
-
-
-
-
-
-
 ### New Features
 The last release was mostly for the mods/admins, so this release has something for the users.  Several somethings, actually.
 
@@ -61,6 +35,8 @@ The picker can be toggled open/closed with the Emojis button in the editor toolb
 #### HTML5 Media Embeds in Posts/Comments
  Added `markdown-it-html5-embed` so that inline videos and audio files can be embedded with the same syntax as an image tag.  This is one of the few, cross-compatible ways inline media can be shared between Tesseract and Lemmy-UI.
     
+#### Inline NSFW Blur Removal
+Instead of clicking into a post to unblur NSFW content, you can unblur it by clicking it in the feed.  Works for all post types, including embedded media (the thumbnail image will be blurred and will load the embed when clicking to unblur).
 
 #### Favorite Communities
 You can now mark a community as a favorite and have it show up in your "Favorites" list in the sidebar for quick access.
@@ -129,6 +105,8 @@ If you rarely, if ever, use Lemmy-UI, then you can leave your profile data saved
 - [Bugfix] Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
 - [Bugfix] Fixed race condition with displaying resolver on reports on initial resolve.
 - [Bugfix] Community and user links are now properly detected in markdown and will re-write to fetch locally within Tesseract.
+- [Bugfix] Certain post configurations were not respecting the "show full URL" setting
+- [Bugfix] Completely missed implementing NSFW blurring/hiding on inline videos. Added that
 
 - [UI] Added down chevron to SelectMenu component (forgot that on the last 2 releases)
 - [Infrastructure] Implemented versioning of the settings. Now that there are more user-defined things getting saved to local storage, I want to make sure settings can be migrated from version to version without losing anything as well as the ability to transfer those across devices.
