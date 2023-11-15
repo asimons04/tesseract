@@ -7,7 +7,8 @@
     import { userSettings } from '$lib/settings'
 
     import Link from '$lib/components/input/Link.svelte'
-
+    import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
+    
     export let post: PostView | undefined = undefined
     export let autoplay:boolean = false;
     export let loop:boolean = false;
@@ -36,23 +37,7 @@
 <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
     <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
         
-        {#if post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed'}
-            <!---Click to Remove Blur--->    
-            <div class="absolute z-20 left-0 top-0 w-full h-full bg-white/75 dark:bg-black/75">  
-                <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-lg font-bold border border-slate-500 whitespace-nowrap shadow-lg p-4 cursor-pointer"
-                    on:click={(e)=> {
-                        if (post.post.nsfw && !nsfwAcknowledge) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            nsfwAcknowledge = true;
-                            post.post.nsfw = false;
-                        }
-                    }}
-                >
-                    [Reveal NSFW Content]
-                </div>
-            </div>
-        {/if}
+        <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
         <video class="rounded-md max-w-full max-h-[75vh] max-w-[88vw] mx-auto" 
             class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed')}    

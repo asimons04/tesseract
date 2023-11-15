@@ -7,49 +7,36 @@
     import { userSettings } from '$lib/settings.js'
 
     import Link from '$lib/components/input/Link.svelte'
+    import NSFWOverlay from './utils/NSFWOverlay.svelte'
 
     export let post:PostView | undefined
     export let displayType: PostDisplayType
-    
-    export let url:string | undefined       = post?.post?.url ?? undefined;
 
-    let thumbnail_url:string | undefined    = post.post.thumbnail_url ?? undefined;
-    let nsfw:boolean | undefined            = post.post.nsfw ?? false;
-    let title:string | undefined            = post.post.name ?? ''
     let loaded                              = false;
     let size: string                        = imageSize(displayType);
  
-
-    // Show lower-res thumbnails in feed, full-res in posts. Convert both to webp
-    if (displayType == 'feed' && thumbnail_url) {
-        thumbnail_url += "?format=webp&thumbnail=768"
-    }
-    else if (thumbnail_url) {
-        thumbnail_url += "?format=webp"
-    }
 </script>
 
-{#if url}
-    <Link class="text-xs" href={url} newtab={$userSettings.openInNewTab.links} title={url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-
+{#if post.post?.url}
+    <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
 {/if}
 
-{#if thumbnail_url}
+{#if post.post?.thumbnail_url}
     <Link
-        href={url}
+        href={post.post?.url || undefined}
         newtab={$userSettings.openInNewTab.links}
-        title={title}
+        title={post.post?.name || ''}
     >
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
             <div class="m-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
+                    <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
                     <img
-                        src="{imageProxyURL(thumbnail_url)}"
+                        src="{imageProxyURL(post.post?.thumbnail_url, (displayType=='feed' ? 768 : undefined), 'webp')}"
                         class="max-w-full ml-auto mr-auto object-cover rounded-md opacity-0 transition-opacity duration-300"
-                        
                         class:opacity-100={loaded}
                         on:load={() => (loaded = true)}
-                        class:blur-3xl={nsfw && $userSettings.nsfwBlur && displayType==='feed'}
+                        class:blur-3xl={post.post.nsfw && $userSettings.nsfwBlur && displayType==='feed'}
                     />
                 </div>
             </div>

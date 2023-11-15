@@ -6,6 +6,8 @@
     import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
 
+    import NSFWOverlay from './utils/NSFWOverlay.svelte'
+    
     export let post:PostView | undefined
     export let displayType: PostDisplayType
     
@@ -16,9 +18,7 @@
     let id:number | undefined               = post.post.id ?? undefined
     let url:string|undefined                = post.post.url ?? undefined
     let thumbnail_url:string | undefined    = post.post.thumbnail_url ?? undefined
-    let nsfw:boolean                        = post.post.nsfw ?? false
     let loaded:boolean                      = false
-    let nsfwAcknowledge:boolean             = false
 
     // Hack to get Imgur gifs to render without having to click through to the site.
     if (!url?.endsWith('.gif') && post.post.embed_video_url && post.post.embed_video_url.endsWith('.gif')) {
@@ -42,14 +42,6 @@
     data-sveltekit-preload-data="off"
     aria-label={name}
     title={name}
-    on:click={(e)=> {
-        if (nsfw && !nsfwAcknowledge) {
-            e.preventDefault();
-            e.stopPropagation();
-            nsfwAcknowledge = true;
-            nsfw = post.post.nsfw = false;
-        }
-    }}
 >
     <div class="m-1">
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
@@ -63,19 +55,13 @@
                     media="(max-width: 1024px)"
                 />
                 
-                {#if nsfw && $userSettings.nsfwBlur}
-                    <div class="absolute z-20 left-0 top-0 w-full h-full bg-white/75 dark:bg-black/75">  
-                        <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-lg font-bold border border-slate-500 whitespace-nowrap shadow-lg p-4">
-                            [Reveal NSFW Content]
-                        </div>
-                    </div>
-                {/if}
-
+                <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
+                
                 <img
                     src="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
                     class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-300"
                     class:opacity-100={loaded}
-                    class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
+                    class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur)}
                     on:load={() => (loaded = true)}
                 />
             </picture>

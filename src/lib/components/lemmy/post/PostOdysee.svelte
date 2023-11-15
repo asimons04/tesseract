@@ -40,13 +40,9 @@
             }
     }
 
-    function showAsEmbed() {
-        if (!embedURL) { return false;}
-        if (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) { return true;}
-        if (displayType == 'post' && $userSettings.embeddedMedia.post) { return true;}
-        
-        return false;
-    }
+    $: showAsEmbed = embedURL &&
+        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'post' && $userSettings.embeddedMedia.post)
 </script>
 
 <style>
@@ -68,7 +64,7 @@
 
 
 
-{#if showAsEmbed()}
+{#if showAsEmbed}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links}  title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
         
@@ -100,11 +96,11 @@
             newtab={$userSettings.openInNewTab.links}
             highlight nowrap
         />
-        <PostImage post={post} displayType={displayType}/>
+        <PostImage bind:post={post} displayType={displayType}/>
     
     <!---Create PostLink to external link if user does not have embeds enaled for posts--->
     {:else}
-        <PostLink post={post} displayType={displayType}/>
+        <PostLink bind:post={post} displayType={displayType}/>
     {/if}
 
 {:else if !post?.post?.thumbnail_url}
