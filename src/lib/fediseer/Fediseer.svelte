@@ -59,16 +59,18 @@
     let admins:PersonView[] = []
 
     onMount(async ()=> {
-        fediseer.loading = true;
-        fediseer.data = await fediseerLookup(instance) 
-        fediseer.loading = false;
+        if (instance) {
+            fediseer.loading = true;
+            fediseer.data = await fediseerLookup(instance) 
+            fediseer.loading = false;
 
-        if (fediseer.data.success) {
-            if (fediseer.data?.site?.site_view?.site) {
-                site = fediseer.data.site.site_view.site
-                admins = fediseer.data.site.admins
+            if (fediseer.data.success) {
+                if (fediseer.data?.site?.site_view?.site) {
+                    site = fediseer.data.site.site_view.site
+                    admins = fediseer.data.site.admins
+                }
+                fediseer.ready = true;
             }
-            fediseer.ready = true;
         }
     })
 </script>
