@@ -4,6 +4,7 @@
     import {addFavorite, isFavorite } from '$lib/favorites'
     import { blockCommunity, createPost, subscribe } from '$lib/components/lemmy/community/helpers'
     import { goto } from '$app/navigation'
+    import { profile } from '$lib/auth'
 
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -58,11 +59,13 @@
         <Icon slot="icon" src={UserGroup} width={16} mini />
         {post.community.name}@{new URL(post.community.actor_id).hostname}
     </li>
-
+    
+    {#if $profile?.user}
     <MenuButton on:click={() => createPost(post.community)} title="Create Post">
         <Icon src={PencilSquare} width={16} mini />
         Create Post
     </MenuButton>
+    {/if}
 
     <MenuButton on:click={() => goto(`/c/${post.community.name}@${new URL(post.community.actor_id).hostname}`)} title="Browse {post.community.title || post.community.name}">
         <Icon src={QueueList} width={16} mini />
@@ -75,41 +78,43 @@
         Community Modlog
     </MenuButton>
 
-    <!---Add/Remove to Favorites--->
-    <MenuButton>
-        <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
-            //e.stopPropagation();
-            groups.favorite = !groups.favorite
-            addFavorite(post.community, groups.favorite)
-        }}>
-            <Icon src={Star} mini size="16" />
-            {groups.favorite ? 'Un-Favorite Community' : 'Favorite Community'}
-        </span>
-    </MenuButton>
+    {#if $profile?.user}
+        <!---Add/Remove to Favorites--->
+        <MenuButton>
+            <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+                //e.stopPropagation();
+                groups.favorite = !groups.favorite
+                addFavorite(post.community, groups.favorite)
+            }}>
+                <Icon src={Star} mini size="16" />
+                {groups.favorite ? 'Un-Favorite Community' : 'Favorite Community'}
+            </span>
+        </MenuButton>
 
-    <!---Add to Group--->
-    <MenuButton title="Add/Remove to Group" on:click={(e) => {groups.showModal=!groups.showModal} }>
-        <Icon src={UserGroup} mini size="16" />
-        Add/Remove to Group(s)
-    </MenuButton>
+        <!---Add to Group--->
+        <MenuButton title="Add/Remove to Group" on:click={(e) => {groups.showModal=!groups.showModal} }>
+            <Icon src={UserGroup} mini size="16" />
+            Add/Remove to Group(s)
+        </MenuButton>
 
-    <MenuButton title="{subscribed ? 'Unsubscribe' : 'Subscribe'}" 
-        on:click={async () => {
-            subscribed = await subscribe(post.community, subscribed, true)
-            subscribed = subscribed
-            subscribed
-                ? post.subscribed = 'Subscribed'
-                : post.subscribed = 'NotSubscribed'
-        }}
-    > 
-        <Icon src={subscribed ? Minus : Rss} width={16} mini />
-        {subscribed ? 'Unsubscribe' : 'Subscribe'}
-    </MenuButton>
+        <MenuButton title="{subscribed ? 'Unsubscribe' : 'Subscribe'}" 
+            on:click={async () => {
+                subscribed = await subscribe(post.community, subscribed, true)
+                subscribed = subscribed
+                subscribed
+                    ? post.subscribed = 'Subscribed'
+                    : post.subscribed = 'NotSubscribed'
+            }}
+        > 
+            <Icon src={subscribed ? Minus : Rss} width={16} mini />
+            {subscribed ? 'Unsubscribe' : 'Subscribe'}
+        </MenuButton>
 
-    <!---Block Community--->
-    <MenuButton title="Block Community" color="dangerSecondary" on:click={(e) =>  blockCommunity(post.community.id) } >
-        <Icon src={NoSymbol} mini size="16" />
-        Block {post.community.name}@{new URL(post.community.actor_id).hostname}
-    </MenuButton>
+        <!---Block Community--->
+        <MenuButton title="Block Community" color="dangerSecondary" on:click={(e) =>  blockCommunity(post.community.id) } >
+            <Icon src={NoSymbol} mini size="16" />
+            Block {post.community.name}@{new URL(post.community.actor_id).hostname}
+        </MenuButton>
+    {/if}
 
 </Menu>
