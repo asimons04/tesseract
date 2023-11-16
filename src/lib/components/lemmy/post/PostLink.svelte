@@ -22,11 +22,16 @@
     <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
 {/if}
 
+
 {#if post.post?.thumbnail_url}
     <!--href={post.post?.url || undefined}-->
-    <Link
-        href="/post/{getInstance()}/{id}"
-        newtab={$userSettings.openInNewTab.links}
+    <a 
+        href={displayType == 'feed' ? `/post/${getInstance()}/${post.post.id}` : `${post.post.url}`}
+        target={
+            (displayType== 'feed' && $userSettings.openInNewTab.posts) || (displayType == 'post' && $userSettings.openInNewTab.links)
+                ? '_blank'
+                : undefined
+        }
     >
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
             <div class="m-1">
@@ -44,6 +49,6 @@
             </div>
             
         </div>
-    </Link>
+    </a>
 {/if}
 
