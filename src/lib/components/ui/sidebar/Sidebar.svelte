@@ -208,7 +208,7 @@
                 
                 <hr class="border-slate-300/60"/>
 
-                {#if $profile.user.moderates?.length > 0}
+                {#if $profile.user.moderates?.length > 0 && $userSettings.uiState.expandSidebar}
                     <div class="flex flex-col gap-2 mb-1">
                         <div class="pl-2 text-sm flex flex-row items-center">
                             <span class="flex flex-col text-xs">
@@ -226,7 +226,7 @@
             {#if panel=='groups' && $userSettings.uiState.expandSidebar}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
                     
-                    {#if $profile?.groups}
+                    {#if $profile?.groups?.length > 1}
                         {#each $profile.groups.sort(sortGroups) as group}
                             <CommunityGroup group={group} bind:showEmptyGroups/>
                         {/each}
