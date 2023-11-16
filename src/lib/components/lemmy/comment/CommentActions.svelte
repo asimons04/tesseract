@@ -179,9 +179,7 @@
                 <Icon src={Flag} mini size="16" />
                 <span>Report</span>
             </MenuButton>
-            {/if}
 
-            {#if $profile.jwt}
             <!---Block User--->
             <MenuButton on:click={() => blockUser(comment.creator.id)} color="dangerSecondary" title="{isBlocked($profile?.user, comment.creator.id) ? 'Unblock' : 'Block'} {comment.creator.display_name || comment.creator.name}">
                 <Icon src={NoSymbol} width={16} mini />
