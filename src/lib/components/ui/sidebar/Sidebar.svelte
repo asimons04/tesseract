@@ -4,7 +4,7 @@
     import { expoOut } from 'svelte/easing'
     import { flip } from 'svelte/animate'
     import { profile, profileData } from '$lib/auth.js'
-    import { sortGroups } from '$lib/favorites'
+    import { getGroupIndex, sortGroups } from '$lib/favorites'
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
@@ -12,6 +12,7 @@
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
+    import Switch from '$lib/components/input/Switch.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
 
     import {
@@ -39,14 +40,16 @@
         UserGroup,
         XCircle
     } from 'svelte-hero-icons'
+
     import CommunityGroup from "./CommunityGroup.svelte";
     
-    let panel: 'groups' | 'subscribed' | 'moderating' = 'subscribed';
+    let panel: 'groups' | 'subscribed' | 'favorites' = 'subscribed';
     
-    // Support components for the community filter
-    let communityFilterTerm:string = '';
-    let communityFiltervalue:string = '';
-    let showEmptyGroups:boolean = false;
+    // Support components for the community filters
+    let communityFilterTerm:string = ''
+    let communityFiltervalue:string = ''
+    let showEmptyGroups:boolean = false
+    let onlyShowModerating:boolean = false
 
     let debounceTimer: ReturnType<typeof setTimeout>;
     function debounce(value:string,  timeout=300) {
@@ -135,20 +138,19 @@
             {#if $userSettings.uiState.expandSidebar}
                 <SidebarButton title="Groups" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='groups'}>
                     <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                        <Icon src={Star} mini size="18" title="Groups" />
+                        <Icon src={UserGroup} mini size="18" title="Groups" />
                         <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Groups</span>
                     </span>
                 </SidebarButton>
             {/if}
 
-            {#if $profile?.user.moderates.length > 0}
-                <SidebarButton title="Moderating" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='moderating'}>
-                    <span class="flex flex-col items-center {panel=='moderating' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                        <Icon src={HandRaised} mini size="18" title="Moderating" />
-                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">Moderating</span>
-                    </span>
-                </SidebarButton>
-            {/if}
+            
+            <SidebarButton title="Moderating" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='favorites'}>
+                <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                    <Icon src={Star} mini size="18" title="Moderating" />
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">Favorites</span>
+                </span>
+            </SidebarButton>
 
             <div class="mr-auto"/>
         </div>
@@ -180,7 +182,46 @@
         
         <div class="flex flex-col gap-1 h-full overflow-y-auto">
             
-            
+            <!--- Subscribed/Moderating Community list --->
+            {#if panel=='subscribed'}
+                <div class="flex flex-col gap-1 h-full overflow-y-auto">
+                    {#if $profile.user.follows.length > 0}
+                        
+                        <CommunityList
+                            expanded={$userSettings.uiState.expandSidebar}
+                            items={
+                                onlyShowModerating 
+                                ? $profile.user.moderates.map((i) => i.community)
+                                : $profile.user.follows.map((i) => i.community)
+                            }
+                            filter={communityFilterTerm}
+                        />
+                    {:else}
+                        {#if $userSettings.uiState.expandSidebar}
+                            <Placeholder size="22" icon={ArchiveBox} title="No Subscriptions" description="You're not subscribed to any communities. When you are, they will be listed here." />
+                        {/if}
+                    {/if}
+                </div>
+
+                <div class="mt-auto"/>
+                
+                
+                <hr class="border-slate-300/60"/>
+
+                {#if $profile.user.moderates?.length > 0}
+                    <div class="flex flex-col gap-2 mb-1">
+                        <div class="pl-2 text-sm flex flex-row items-center">
+                            <span class="flex flex-col text-xs">
+                                <span class="font-bold">Moderating</span>
+                                <span class="font-normal">Show only communities I moderate</span>
+                            </span>
+                            <span class="ml-auto"/>
+                            <Switch bind:enabled={onlyShowModerating}/>
+                        </div>
+                    </div>
+                {/if}
+            {/if}
+
             <!--- Groups--->
             {#if panel=='groups' && $userSettings.uiState.expandSidebar}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
@@ -190,7 +231,7 @@
                             <CommunityGroup group={group} bind:showEmptyGroups/>
                         {/each}
                     {:else}
-                        <Placeholder size="22" icon={ArchiveBox} title="No Groups" description="Your favoritie and grouped communities will appear here." />
+                        <Placeholder size="22" icon={UserGroup} title="No Groups" description="Your favoritie and grouped communities will appear here." />
                     {/if}
                 </div>
 
@@ -198,49 +239,36 @@
                 
                 
                 <hr class="border-slate-300/60"/>
-                <div class="flex flex-col gap-2">
-                    <div class="pl-2 text-sm">
-                        <Checkbox bind:checked={showEmptyGroups}>Show Empty Groups</Checkbox>
-                    </div>
-                    <!--
-                    <div class="mb-4 p-1 border border-slate-500/75 dark:border-zinc-500/75 rounded-md bg-white/50 dark:bg-black/50 hover:bg-white hover:dark:bg-black w-full items-center">
-                        <span class="flex flex-row gap-2 text-xs font-bold cursor-pointer">
-                            <span class="ml-auto"/>
-                            <Icon src={Cog6Tooth} mini size="18"/>
-                            Manage Groups
-                            <span class="mr-auto"/>
+                
+                <div class="flex flex-col gap-2 mb-1">
+                    <div class="pl-2 text-sm flex flex-row items-center">
+                        <span class="flex flex-col text-xs">
+                            <span class="font-bold">Show Empty Groups</span>
+                            <span class="font-normal">Empty groups are hidden by default.</span>
                         </span>
+                        <span class="ml-auto"/>
+                        <Switch bind:enabled={showEmptyGroups}/>
                     </div>
-                    --->
                 </div>
             {/if}
-            
-            
-            
-            <!--- Subscribed community list --->
-            {#if panel=='subscribed'}
-                {#if $profile.user.follows.length > 0}
-                    
-                    <CommunityList
-                        expanded={$userSettings.uiState.expandSidebar}
-                        items={$profile.user.follows.map((i) => i.community)}
-                        filter={communityFilterTerm}
-                    />
-                {:else}
-                    {#if $userSettings.uiState.expandSidebar}
-                        <Placeholder size="22" icon={ArchiveBox} title="No Subscriptions" description="You're not subscribed to any communities. When you are, they will be listed here." />
+
+            <!---Favorites--->
+            {#if panel == 'favorites'}
+                <div class="flex flex-col gap-1 h-full overflow-y-auto">
+                    {#if $profile?.groups[getGroupIndex('Favorites')]?.communities?.length > 0}
+                        <CommunityList 
+                            expanded={$userSettings.uiState.expandSidebar} 
+                            items={$profile?.groups[getGroupIndex('Favorites')]?.communities}
+                        />
+                    {:else if $userSettings.uiState.expandSidebar}
+                        <Placeholder size="22" icon={Star} title="No Favorites" description="You haven't favorited any communities yet. When you do, they will appear here" />
                     {/if}
-                {/if}
+                </div>
             {/if}
-        
-            <!--- Communities User is Moderating --->
-             {#if panel=='moderating' && $profile?.user.moderates.length > 0}
-                <CommunityList
-                    expanded={$userSettings.uiState.expandSidebar}
-                    items={$profile.user.moderates.map((i) => i.community)}
-                />
-            {/if}
+
         </div>
+
+    <!--- Sidebar options for non-authenticated users--->
     {:else}
         <Button
             class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"

@@ -14,6 +14,7 @@
         ChevronDown,
         ChevronUp
     } from 'svelte-hero-icons'
+    import { userSettings } from '../../../settings.js';
 
 
     export let post:PostView;
@@ -43,7 +44,7 @@
         {#if displayType=='feed'}
             {#if post.post.body}    
                 <Markdown 
-                    class="{post.post.nsfw ? 'blur-sm' : ''}"
+                    class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
                     source={
                         !expandPreviewText && post.post.body.length > previewLength
                             ? post.post.body.slice(0, previewLength)
@@ -56,7 +57,7 @@
                     <Button
                         color="tertiary"
                         class="w-full !py-0"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}"
+                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
                             post.post.nsfw = false
@@ -66,15 +67,18 @@
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}
+                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
                     </Button>
                 {/if}
         
+
+
+
             <!--- If no post body but there's an embed description avaialble, display that--->
             {:else if post.post.embed_description }
                 <Markdown 
-                    class="{post.post.nsfw ? 'blur-sm' : ''}"
+                    class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
                     source={
                         !expandPreviewText && post.post.embed_description.length > previewLength
                             ? post.post.embed_description.slice(0, previewLength)
@@ -86,7 +90,7 @@
                     <Button
                         color="secondary"
                         class="w-full !py-0"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}"
+                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
                             post.post.nsfw = false
@@ -97,7 +101,7 @@
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}
+                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
                     </Button>
                 {/if}
