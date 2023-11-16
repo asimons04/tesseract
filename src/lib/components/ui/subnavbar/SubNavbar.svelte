@@ -21,6 +21,7 @@
         Bars3,
         ChartBar,
         ChevronDoubleDown,
+        ChevronDoubleRight,
         ChevronDoubleUp,
         DocumentDuplicate,
         Home,
@@ -38,6 +39,7 @@
     export let compactSwitch:boolean = false    // Switch between compact and card posts
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
     export let refreshButton:boolean = false    // Button to refresh the current page
+    export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
 
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
@@ -57,7 +59,7 @@
     export let currentPage:number               = 1
 </script>
 
-<header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
+<header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 backdrop-blur-3xl z-50 mt-[-0.9rem] {$$props.class}">
     
     <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
         
@@ -197,6 +199,17 @@
                 }}
                 >
                 <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />
+            </span>
+        {/if}
+
+        <!---Community Sidebar Toggle (hide when screen width less than 'xl' breakpoint when the sidebar hides anyway)--->
+        {#if toggleCommunitySidebar}
+            <span class="hidden xl:flex mr-2 cursor-pointer" title="{$userSettings.uiState.expandCommunitySidebar ? 'Collapse': 'Expand'} Community Sidebar"
+                on:click={() => {
+                    $userSettings.uiState.expandCommunitySidebar = !$userSettings.uiState.expandCommunitySidebar
+                }}
+            >
+                <Icon src={ChevronDoubleRight} width={iconSize} class="transition-transform {$userSettings.uiState.expandCommunitySidebar ? '' : 'rotate-180'}" />
             </span>
         {/if}
 

@@ -40,7 +40,7 @@
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
             <div class="flex-none w-[20%] md:w-[15%] h-auto mr-2 mt-2">
-                <div class="grid justify-items-start">
+                <!--<div class="grid justify-items-start">-->
                     <!--- Expand the post in place when clicking thumbnail--->
                     <div 
                         role="button"
@@ -58,7 +58,7 @@
                             <img
                                 src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
                                 loading="lazy"
-                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
                                 class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
                             />
                         <!---Thumbnail for Image Post--->
@@ -66,14 +66,14 @@
                             <img
                                 src="{imageProxyURL(post.post.url, 256, 'webp')}"
                                 loading="lazy"
-                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700"
+                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
                                 class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
                             />
                         {/if}
                 
                     
                     </div>
-                </div>
+                <!--</div>-->
             </div>
         {/if}
         

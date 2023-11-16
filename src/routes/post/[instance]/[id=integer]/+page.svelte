@@ -108,10 +108,10 @@
     {/if}
 </svelte:head>
 
-   
+<SubNavbar iconSize={28} home back scrollButtons refreshButton toggleCommunitySidebar/>
 <div class="flex flex-col md:flex-row gap-4 w-full py-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
-        <SubNavbar iconSize={28} home={true} back={true} scrollButtons={true} />
+        
         
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
             <!---Post--->

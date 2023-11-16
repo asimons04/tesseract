@@ -50,7 +50,7 @@
             />
         {:else}
             <SubNavbar 
-                home={true} back={true} compactSwitch={true} toggleMargins={true}
+                home back compactSwitch toggleMargins refreshButton
                 listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
                 sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
                 pageSelection={true} bind:currentPage={data.page}

@@ -38,7 +38,7 @@
 
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         <SubNavbar 
-            home={true} back={true} compactSwitch={true} toggleMargins={true} refreshButton
+            home back compactSwitch toggleMargins refreshButton
             
             listingType={true} 
             listingTypeOptions = {[...$profile.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]} 

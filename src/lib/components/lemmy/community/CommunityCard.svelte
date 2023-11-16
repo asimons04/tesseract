@@ -204,7 +204,7 @@
 
 
 
-<!---Button to hide/show the community sidebar--->
+<!---Button to hide/show the community sidebar
 <aside class="sticky top-[5.1rem] flex flex-col pr-4 hidden xl:block">
     <div class="grid justify-items-end w-full mr-2">
         <Button
@@ -233,7 +233,7 @@
         </Button>
     </div>
 </aside>
-
+--->
 
 
 <!--- Hideable div to contain the main part of the community sidebar --->

@@ -18,13 +18,10 @@
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
         <SubNavbar 
-            home={true} 
-            listingType={true} bind:selectedListingType={data.listingType}
-            sortMenu={true} bind:selectedSortOption={data.sort}
-            pageSelection={true} bind:currentPage={data.page}
-            compactSwitch={true} 
-            toggleMargins={true}
-            refreshButton={true}
+            home compactSwitch toggleMargins refreshButton
+            listingType={true}      bind:selectedListingType={data.listingType}
+            sortMenu={true}         bind:selectedSortOption={data.sort}
+            pageSelection={true}    bind:currentPage={data.page}
         />
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
