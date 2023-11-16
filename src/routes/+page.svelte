@@ -24,6 +24,7 @@
             pageSelection={true} bind:currentPage={data.page}
             compactSwitch={true} 
             toggleMargins={true}
+            refreshButton={true}
         />
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">

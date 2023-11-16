@@ -59,7 +59,7 @@
                         title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
-                            post.post.nsfw = !post.post.nsfw
+                            post.post.nsfw = false
                             // Scroll top of post to top on close
                             const element = document.getElementById(post.post.id);
                             if (element && !expandPreviewText) scrollToTop(element);
@@ -89,7 +89,7 @@
                         title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw ? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
-                            post.post.nsfw = !post.post.nsfw
+                            post.post.nsfw = false
                             
                             // Scroll top of post to top on close
                             const element = document.getElementById(post.post.id);

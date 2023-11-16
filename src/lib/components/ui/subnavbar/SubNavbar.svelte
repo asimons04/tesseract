@@ -14,9 +14,10 @@
     import {
         Icon,
         ArrowLeftCircle,
-        ArrowSmallRight,
+        ArrowPath,
         ArrowsPointingIn,
         ArrowsPointingOut,
+        ArrowSmallRight,
         Bars3,
         ChartBar,
         ChevronDoubleDown,
@@ -36,7 +37,8 @@
 
     export let compactSwitch:boolean = false    // Switch between compact and card posts
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
-    
+    export let refreshButton:boolean = false    // Button to refresh the current page
+
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
     export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All']
@@ -99,7 +101,7 @@
         <!---Sort Menu--->
         {#if sortMenu && sortOptions && sortOptionNames && selectedSortOption}
             {#if listingType} 
-                <Icon src={ArrowSmallRight} mini width={24} /> 
+                <Icon src={ArrowSmallRight} mini width={24} class="hidden md:flex"/> 
             {/if}
             
             <SelectMenu
@@ -119,7 +121,7 @@
         <!---Page Selector--->
         {#if pageSelection && currentPage}
             {#if sortMenu}
-                <Icon src={ArrowSmallRight} mini width={24} />
+                <Icon src={ArrowSmallRight} mini width={24} class="hidden md:flex"/>
             {/if}
             
             <SelectMenu
@@ -144,6 +146,16 @@
         
         <!--- Custom Items to the right of the spacer--->
         <slot {iconSize} name="right"/>
+
+        {#if refreshButton}
+            <span class="mr-2 cursor-pointer" title="Refresh"
+                on:click={() => {
+                    goto(window.location.href, {invalidateAll: true});
+                }}
+                >
+                <Icon src={ArrowPath} width={iconSize}/>
+            </span>
+        {/if}
 
         <!--Jump to Top/Bottom-->
         {#if scrollButtons}
