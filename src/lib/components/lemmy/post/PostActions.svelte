@@ -69,8 +69,8 @@
 <div 
     class="flex flex-row gap-0 sm:gap-2 items-center h-8 
     {displayType == 'post' ? 'mt-auto' : ''} 
-    {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'mx-[-1rem]'}
-    {displayType == 'post' ? 'ml-[-1.5rem]' : ''}
+    {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'ml-[-0.5rem]'}
+    {displayType == 'post' ? 'ml-[-0.5rem]' : ''}
     "
 >
 

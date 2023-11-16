@@ -80,7 +80,7 @@
         {/if}
     </div>
 
-    <div class="mt-[-8px] mb-[-24px]">
+    <div class="mb-[-24px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>

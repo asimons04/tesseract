@@ -41,7 +41,7 @@
 
 </script>
 
-<Card class="flex flex-col w-full p-5 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''}" id={post.post.id}>
+<Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''}" id={post.post.id}>
     <div class="flex flex-row w-full gap-2.5">
         <PostMeta bind:post={post} moderators={moderators} {collapseBadges}/>
     </div>
