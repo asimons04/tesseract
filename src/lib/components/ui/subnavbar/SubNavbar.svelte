@@ -9,6 +9,7 @@
     } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
     
+    import Link from '$lib/components/input/Link.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
     import {
@@ -67,18 +68,14 @@
         
         <!--Home Button-->
         {#if home}
-            <span class="mr-2 cursor-pointer" title="Home"
-                on:click={() => {
-                    goto('/', {invalidateAll: true});
-                }}
-            >
+            <a href="/" class="mr-2 cursor-pointer" title="Home" data-sveltekit-preload-data="hover">
                 <Icon src={Home} width={iconSize} />
-            </span>
+            </a>
         {/if}
 
         {#if back}
             <!--Return to Feed Button-->
-            <span class="mr-2 cursor-pointer" title="Back"
+            <span class="mr-2 cursor-pointer" title="Back" data-sveltekit-preload-data="hover"
                 class:hidden={history.length<2}
                 on:click={() => {
                     history.back();

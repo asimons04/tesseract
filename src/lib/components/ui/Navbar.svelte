@@ -76,7 +76,7 @@
   
 <nav class="flex flex-row gap-2 items-center sticky top-0 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl w-full mx-auto px-4 py-2 z-50 box-border h-16">
     <!---Site Logo and Name on left--->
-    <div class="flex flex-row gap-2 items-center mr-auto">
+    <div data-sveltekit-preload-data="hover" class="flex flex-row gap-2 items-center mr-auto">
         <a href="/" class="flex flex-row items-center gap-2">
             {#if $site}
                 <Avatar
@@ -128,6 +128,7 @@
         {#if amModOfAny($profile?.user)}
             <Button
                 href="/moderation"
+                data-sveltekit-preload-data="hover"
                 aria-label="Moderation"
                 class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
             >
@@ -153,6 +154,7 @@
         <!--- Explore/Communities --->
         <Button
             href="/communities"
+            data-sveltekit-preload-data="hover"
             aria-label="Communities"
             class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
         >
@@ -164,6 +166,7 @@
         {#if $profile?.user}
         <Button
             href="/feeds/Favorites"
+            data-sveltekit-preload-data="hover"
             aria-label="Feeds"
             class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
         >
@@ -256,11 +259,11 @@
         </li>
         
         {#if $profile?.user}
-            <MenuButton link href="/profile/user" >
+            <MenuButton link href="/profile/user" data-sveltekit-preload-data="hover">
                     <Icon src={UserCircle} mini width={16} /> Profile
             </MenuButton>
         
-            <MenuButton link href="/profile/inbox" >
+            <MenuButton link href="/profile/inbox"data-sveltekit-preload-data="hover" >
                 <Icon src={Inbox} mini width={16} />
                 Inbox
 

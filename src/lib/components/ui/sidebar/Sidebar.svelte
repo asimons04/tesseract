@@ -95,25 +95,25 @@
     
 
     <!---Frontpage--->
-    <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home">
+    <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
         <Icon src={Home} mini size="18" title="Home" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
 
     <!---Popular --->
-    <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular">
+    <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="hover">
         <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
     </SidebarButton>
     
     <!---Communities--->
-    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities">
+    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Communities</span>
     </SidebarButton>
 
     <!---Feed Groups--->
-    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Feeds">
+    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="hover">
         <Icon src={Star} mini size="18" title="Feeds" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
     </SidebarButton>

@@ -2,6 +2,7 @@
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
+    import { getInstance } from '$lib/lemmy.js'
     import { imageSize} from './helpers.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
@@ -22,10 +23,10 @@
 {/if}
 
 {#if post.post?.thumbnail_url}
+    <!--href={post.post?.url || undefined}-->
     <Link
-        href={post.post?.url || undefined}
+        href="/post/{getInstance()}/{id}"
         newtab={$userSettings.openInNewTab.links}
-        title={post.post?.name || ''}
     >
         <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
             <div class="m-1">
@@ -37,6 +38,7 @@
                         class:opacity-100={loaded}
                         on:load={() => (loaded = true)}
                         class:blur-3xl={post.post.nsfw && $userSettings.nsfwBlur && displayType==='feed'}
+                        alt="{post.post.name}"
                     />
                 </div>
             </div>
