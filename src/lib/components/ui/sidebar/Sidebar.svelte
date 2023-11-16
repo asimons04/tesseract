@@ -111,8 +111,8 @@
 
     <!---Feed Groups--->
     <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Feeds">
-        <Icon src={QueueList} mini size="18" title="Feeds" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Feeds</span>
+        <Icon src={Star} mini size="18" title="Feeds" />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
     </SidebarButton>
 
 

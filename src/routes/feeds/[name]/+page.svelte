@@ -67,7 +67,13 @@
                 <Placeholder
                     icon={ArchiveBox}
                     title="No posts"
-                    description={`There's nothing here.  ${data.feed ? "You haven't added any communities to this group" : `The specified group does not seem to exist yet.`}`}
+                    description={
+                        `There's nothing here.  
+                        ${data.feed 
+                            ? "You haven't added any communities to this group. Add communities or select a different group from the dropdown."
+                             : `The specified group does not seem to exist yet.`
+                        }
+                    `}
                 />
             {/if}
             
@@ -80,7 +86,7 @@
         {/if}
     </div>
 
-    <div class="mb-[-24px]">
+    <div class="lg:mb-[-24px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>

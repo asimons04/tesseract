@@ -63,7 +63,7 @@
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
     
-    <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
+    <span class="flex flex-row gap-1 md:gap-2 items-center font-bold text-sm text-center mx-auto my-2 md:mr-2">
         
         <!--Home Button-->
         {#if home}
@@ -129,6 +129,7 @@
             {/if}
             
             <SelectMenu
+                class="hidden sm:flex"    
                 alignment="bottom-left"
                 options={arrayRange(1, currentPage +1)}
                 selected={currentPage}

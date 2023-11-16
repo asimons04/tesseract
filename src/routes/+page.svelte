@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <div class="mb-[-24px]">
+    <div class="lg:mb-[-24px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>
