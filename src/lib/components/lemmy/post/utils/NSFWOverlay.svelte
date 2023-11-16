@@ -4,9 +4,6 @@
     
     export let nsfw:boolean
     export let displayType:PostDisplayType = 'feed'
-
-    console.log("Overlay mounted", nsfw, displayType);
-    //let acknowledge:boolean = false
 </script>
 
 
@@ -18,7 +15,6 @@
                 if (nsfw) {
                     e.preventDefault();
                     e.stopPropagation();
-                    //acknowledge = true;
                     nsfw = nsfw = false;
                 }
             }}

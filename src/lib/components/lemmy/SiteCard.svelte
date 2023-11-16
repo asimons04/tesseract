@@ -34,39 +34,7 @@
 
 </script>
 
-<!--- Button to expand/collapse the site-info sidebar --->
-<aside class="hidden xl:block sticky top-[4.7rem] flex flex-col pr-4">
-    <div class="grid justify-items-end w-full mr-2">
-        <Button
-            alignment="right"
-            on:click={() =>
-                ($userSettings.uiState.expandCommunitySidebar = !$userSettings.uiState.expandCommunitySidebar)
-            }
-            class="w-max hover:bg-slate-200"
-            aria-label={$userSettings.uiState.expandCommunitySidebar
-                ? 'Collapse community sidebar'
-                : 'Expand community sidebar'
-            }
-            title={$userSettings.uiState.expandCommunitySidebar
-                ? 'Collapse community sidebar'
-                : 'Expand community sidebar'
-            }
-        >
-            <Icon
-                src={ChevronDoubleRight}
-                mini
-                size="16"
-                class="transition-transform {$userSettings.uiState.expandCommunitySidebar
-                    ? ''
-                    : 'rotate-180'}"
-            />
-        </Button>
-    </div>
-</aside>
-
-
-
-<StickyCard class="p-3 mb-3
+<StickyCard class="mb-3
     {$userSettings.uiState.expandCommunitySidebar
         ? 'block'
         : 'hidden'}

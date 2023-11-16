@@ -29,6 +29,7 @@
         Window,
     } from 'svelte-hero-icons'
 
+
     export let iconSize:number = 28
 
     // Which standard buttons to show
@@ -40,6 +41,7 @@
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
     export let refreshButton:boolean = false    // Button to refresh the current page
     export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
+    export let toggleSiteSidebar:boolean = false        // Toggle the right-side site sidebar open/closed
 
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
@@ -59,7 +61,7 @@
     export let currentPage:number               = 1
 </script>
 
-<header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 backdrop-blur-3xl z-50 mt-[-0.9rem] {$$props.class}">
+<header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
     
     <span class="flex flex-row gap-2 items-center font-bold text-sm text-center mx-auto my-2 mr-2">
         
@@ -212,6 +214,8 @@
                 <Icon src={ChevronDoubleRight} width={iconSize} class="transition-transform {$userSettings.uiState.expandCommunitySidebar ? '' : 'rotate-180'}" />
             </span>
         {/if}
+
+        
 
         
     </span>

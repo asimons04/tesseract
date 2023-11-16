@@ -204,40 +204,9 @@
 
 
 
-<!---Button to hide/show the community sidebar
-<aside class="sticky top-[5.1rem] flex flex-col pr-4 hidden xl:block">
-    <div class="grid justify-items-end w-full mr-2">
-        <Button
-            alignment="right"
-            on:click={() =>
-                ($userSettings.uiState.expandCommunitySidebar = !$userSettings.uiState.expandCommunitySidebar)
-            }
-            class="w-max hover:bg-slate-200"
-            aria-label={$userSettings.uiState.expandCommunitySidebar
-                ? 'Collapse community sidebar'
-                : 'Expand community sidebar'
-            }
-            title={$userSettings.uiState.expandCommunitySidebar
-                ? 'Collapse community sidebar'
-                : 'Expand community sidebar'
-            }
-        >
-            <Icon
-                src={ChevronDoubleRight}
-                mini
-                size="16"
-                class="transition-transform {$userSettings.uiState.expandCommunitySidebar
-                    ? ''
-                    : 'rotate-180'}"
-            />
-        </Button>
-    </div>
-</aside>
---->
-
 
 <!--- Hideable div to contain the main part of the community sidebar --->
-<StickyCard class="p-3 mb-3 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
+<StickyCard class="mb-3 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, '384', 'webp') : ''}>
         <div class="flex flex-col gap-2 h-full">
             <!--- Commuinity Avatar, display name, and federation name--->

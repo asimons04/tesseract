@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { arrayRange, searchParam } from '$lib/util.js'
-    import { goto } from '$app/navigation'
+    import { searchParam } from '$lib/util.js'
     import { isCommentView } from '$lib/lemmy/item.js'
     import { page } from '$app/stores'
     import { userSettings } from '$lib/settings.js'
@@ -9,22 +8,12 @@
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
 
     import {
-        ArrowSmallRight,
-        Bars3,
-        ChartBar,
-        DocumentDuplicate,
-        Home,
         Icon,
         PencilSquare,
-        ShieldCheck,
-        QueueList,
-        UserCircle,
-        Window
     } from 'svelte-hero-icons'
     
 
@@ -37,7 +26,15 @@
 </svelte:head>
 
 
-<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full">
+<SubNavbar 
+    home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
+    listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
+    sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
+    pageSelection={true} bind:currentPage={data.page}
+/>
+
+
+<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
 
 
@@ -49,13 +46,7 @@
                 description="This user has no submissions that match this filter."
             />
         {:else}
-            <SubNavbar 
-                home back compactSwitch toggleMargins refreshButton
-                listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
-                sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
-                pageSelection={true} bind:currentPage={data.page}
-            />
-            
+           
             <div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">
                 {#each data.items as item (item.counts.id)}
                     {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}

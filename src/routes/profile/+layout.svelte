@@ -3,7 +3,7 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
-
+    
     import {
         Icon,
         Cog6Tooth,
@@ -22,6 +22,7 @@
 </svelte:head>
 
 <div class="flex flex-col gap-4 h-full">
+   
     <div class="flex flex-row gap-1 p-2">
         <Button color="tertiary" alignment="left" title="Profile" class="hover:bg-slate-200" href="/profile/user">
             <span class="flex flex-col items-center {$page.url.pathname =='/profile/user' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
@@ -59,16 +60,19 @@
         </Button>
     </div>
     
+    <slot />
+    <!--
     <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full">
         <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
             <slot />
         </div>
 
-
+    
         <div>
             <UserCard person={data.user.person_view} />
         </div>
     </div>
+    -->
 
     
 </div>

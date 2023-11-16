@@ -227,8 +227,8 @@ export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolea
     if (!element) return;
     try {
             
-        // Offset = navbar height (-64) - sticky menu height (32)
-        let offset = 64 + 40;
+        // Offset = navbar height (-64) - sticky menu height (52) + 3 pixel gap
+        let offset = 64 + 55;
 
         let y = element.getBoundingClientRect().top + window.pageYOffset - offset;
 

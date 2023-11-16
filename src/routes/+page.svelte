@@ -14,15 +14,17 @@
     <title>{data.site.site_view.site.name}</title>
 </svelte:head>
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
+<SubNavbar
+    home compactSwitch toggleMargins refreshButton toggleCommunitySidebar
+    listingType={true}      bind:selectedListingType={data.listingType}
+    sortMenu={true}         bind:selectedSortOption={data.sort}
+    pageSelection={true}    bind:currentPage={data.page}
+/>
+
+<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
-        <SubNavbar 
-            home compactSwitch toggleMargins refreshButton
-            listingType={true}      bind:selectedListingType={data.listingType}
-            sortMenu={true}         bind:selectedSortOption={data.sort}
-            pageSelection={true}    bind:currentPage={data.page}
-        />
+        
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
             <PostFeed posts={data.posts.posts} />
@@ -36,7 +38,7 @@
         </div>
     </div>
 
-    <div class="mt-[-8px] mb-[-24px]">
+    <div class="mb-[-24px]">
         <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
     </div>
 </div>

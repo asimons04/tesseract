@@ -34,36 +34,32 @@
     <EditCommunityGroup bind:open={editCommunityGroup} group={getGroup(data.feedName)} />
 {/if}
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
+<SubNavbar 
+    home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
+    listingType={true} 
+    listingTypeOptions = {[...$profile.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]} 
+    listingTypeOptionNames = {[...$profile.groups?.map((cg) => cg.name)?.sort(sortGroups) ?? [] ]} 
+    listingTypeOnSelect={(e) => {
+        goto(`/feeds/${e.detail}?${new URL(window.location.href).searchParams.toString()}`)
+    }}
+    bind:selectedListingType={feed}
 
+    sortMenu={true} bind:selectedSortOption={data.sort}
+    pageSelection={true} bind:currentPage={data.page}
+>
+    <!--Edit Group Button-->
+    <span let:iconSize slot="right" class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" 
+        title="Edit Group"
+        on:click={() => {
+            editCommunityGroup = true;
+        }}
+    >
+        <Icon src={PencilSquare} width={iconSize} />
+    </span>
+</SubNavbar>
+
+<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        <SubNavbar 
-            home back compactSwitch toggleMargins refreshButton
-            
-            listingType={true} 
-            listingTypeOptions = {[...$profile.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]} 
-            listingTypeOptionNames = {[...$profile.groups?.map((cg) => cg.name)?.sort(sortGroups) ?? [] ]} 
-            listingTypeOnSelect={(e) => {
-                goto(`/feeds/${e.detail}?${new URL(window.location.href).searchParams.toString()}`)
-            }}
-            bind:selectedListingType={feed}
-
-            sortMenu={true} bind:selectedSortOption={data.sort}
-            pageSelection={true} bind:currentPage={data.page}
-        >
-            <!--Edit Group Button-->
-            <span let:iconSize slot="right" class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" 
-                title="Edit Group"
-                on:click={() => {
-                    editCommunityGroup = true;
-                }}
-            >
-                <Icon src={PencilSquare} width={iconSize} />
-            </span>
-        </SubNavbar>
-
-        
-        
         {#if data}
             {#if data.posts.length > 0}
                 <PostFeed posts={data.posts} />

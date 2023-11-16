@@ -64,7 +64,7 @@
     pageSelection={true} bind:currentPage={data.page}
 />
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full">
+<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
         <PostFeed posts={data.posts.posts}/>
