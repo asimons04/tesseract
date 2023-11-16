@@ -7,6 +7,7 @@
         report,
     } from '$lib/components/lemmy/moderation/moderation.js'
     
+    import { blockUser, isBlocked } from '$lib/lemmy/user'
     import { createEventDispatcher } from 'svelte'
     import { getFediseerInfo } from '$lib/fediseer/client.js'
     import { deleteItem, save } from '$lib/lemmy/contentview.js'
@@ -36,6 +37,7 @@
         Flag,
         GlobeAlt,
         Icon,
+        NoSymbol,
         PencilSquare,
         Square2Stack,
         Trash,
@@ -176,6 +178,16 @@
             <MenuButton on:click={() => report(comment)} color="dangerSecondary">
                 <Icon src={Flag} mini size="16" />
                 <span>Report</span>
+            </MenuButton>
+            {/if}
+
+            {#if $profile.jwt}
+            <!---Block User--->
+            <MenuButton on:click={() => blockUser(comment.creator.id)} color="dangerSecondary" title="{isBlocked($profile?.user, comment.creator.id) ? 'Unblock' : 'Block'} {comment.creator.display_name || comment.creator.name}">
+                <Icon src={NoSymbol} width={16} mini />
+                {isBlocked($profile?.user, comment.creator.id) 
+                    ? `Unblock ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`
+                    : `Block ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`}
             </MenuButton>
             {/if}
         {/if}
