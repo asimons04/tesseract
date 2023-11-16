@@ -20,8 +20,9 @@
         </Placeholder>
     </div>
 {:else}
-    <div class="w-full {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}
-        ml-auto mr-auto flex flex-col gap-5
+    <div data-sveltekit-preload-data="hover"
+        class="w-full {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}
+            ml-auto mr-auto flex flex-col gap-5
         "
     >
     {#each posts as post, index (post.post.id)}
