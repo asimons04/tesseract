@@ -44,12 +44,17 @@
     
     
     onMount(async () => {
-        if (!post.post_view.read && $profile?.jwt) {
-            getClient().markPostAsRead({
-                auth: $profile.jwt,
-                read: true,
-                post_id: post.post_view.post.id,
-            })
+        try {
+            if (!post.post_view.read && $profile?.jwt) {
+                getClient().markPostAsRead({
+                    auth: $profile.jwt,
+                    read: true,
+                    post_id: post.post_view.post.id,
+                })
+            }
+        }
+        catch {
+            // Do nothing.  Just don't throw an error if fail to mark as read
         }
 
         window.scrollTo(0,0);
