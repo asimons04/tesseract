@@ -117,7 +117,7 @@
 
         <!--- Moderation Menu--->
         {#if moderationMenu && $profile?.user && post && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-            <ModerationMenu bind:item={post} community={post.community} color="ghost" menuIconSize={iconSize-2} alignment="bottom-left"/>
+            <ModerationMenu bind:item={post} community={post.community} color="ghost" menuIconSize={iconSize-4} alignment="bottom-left"/>
         {/if}
 
         <!--- Post Community Actions Menu--->

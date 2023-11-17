@@ -134,7 +134,6 @@
 
         <!--- Mod Feature Post Community--->
         <MenuButton
-            color="success"
             on:click={() =>
                 pin(isPostView(item) ? !item.post.featured_community : false)
             }
@@ -151,7 +150,6 @@
         <!--- Admin Feature Post on Instance--->
         {#if isAdmin($profile.user)}
             <MenuButton
-                color="success"
                 on:click={() =>
                     pin(isPostView(item) ? !item.post.featured_local : false, true)
                 }
@@ -166,7 +164,6 @@
 
         <!--- Lock Post--->
         <MenuButton
-            color="warning"
             on:click={() => lock(!item.post.locked)}
             loading={locking}
             disabled={locking}
@@ -181,7 +178,7 @@
         </MenuButton>
 
         <!--- Mod/Admin Restore/Remove Post --->
-        <MenuButton color="dangerSecondary" on:click={() => remove(item, false, presetReason)}>
+        <MenuButton on:click={() => remove(item, false, presetReason)}>
             <Icon src={Trash} size="16" mini />
             {#if isCommentView(item)}
                 {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}
@@ -193,7 +190,6 @@
         <!---Hide ban option for own posts--->
         {#if $profile?.user && $profile.user.local_user_view.person.id != item.creator.id}
             <MenuButton
-                color="dangerSecondary"
                 on:click={() =>
                     ban(item.creator_banned_from_community, item.creator, item.community)
                 }
@@ -209,7 +205,7 @@
 
         <!--- Admin Only Options--->
         {#if isAdmin($profile.user)}
-            <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
+            <MenuButton on:click={() => remove(item, true)}>
                 <Icon src={Fire} size="16" mini />
                 Purge Post
             </MenuButton>
@@ -217,7 +213,6 @@
             <!--Hide ban button if viewing own profile--->
             {#if item.creator.id != $profile.user.local_user_view.person.id}
                 <MenuButton
-                    color="dangerSecondary"
                     on:click={() =>
                         ban(item.creator.banned, item.creator)
                     }

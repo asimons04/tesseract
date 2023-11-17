@@ -126,7 +126,7 @@
         </MenuButton>
 
         <!---Block Community--->
-        <MenuButton title="Block Community" color="dangerSecondary" on:click={(e) =>  blockCommunity(post.community.id) } >
+        <MenuButton title="Block Community" on:click={(e) =>  blockCommunity(post.community.id) } >
             <Icon src={NoSymbol} mini size="16" />
             Block {post.community.name}@{new URL(post.community.actor_id).hostname}
         </MenuButton>
