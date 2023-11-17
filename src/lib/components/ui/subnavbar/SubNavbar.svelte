@@ -82,7 +82,7 @@
 </script>
 
 <!---Hacks to launch the editor modals and keep them over the outer layout since they're inside a fixed element--->
-<!-- Note: Plan to add the modals to the layout and have them listen for events and data--->
+<!-- Note: Plan to add the modals to the layout pass data to them like the moderation modals--->
 {#if addCommunityGroup && post?.community}
     <AddCommunityGroup bind:open={addCommunityGroup} community={post.community} />
 {/if}
