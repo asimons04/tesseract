@@ -50,14 +50,20 @@
     const dispatcher = createEventDispatcher<{ edit: CommentView }>()
 
     let fediseer = {
-        loading: false,
+        instance: '',
         modal: false,
-        data: undefined
+    }
+    
+    function openFediseerModal(instance:string):void {
+        fediseer.instance = instance;
+        fediseer.modal = true;
     }
 </script>
 
-<Fediseer bind:open={fediseer.modal} data={fediseer.data} />
-        
+{#if fediseer.modal}
+    <Fediseer bind:open={fediseer.modal} instance={fediseer.instance} />
+{/if}
+      
 <div class="flex flex-row gap-2 items-center mt-1 h-7 w-full">
     <!---Comment Vote Buttons--->
     <CommentVote
@@ -202,23 +208,13 @@
         </MenuButton>
 
 
-        <MenuButton loading={fediseer.loading} disabled={fediseer.loading}>
+        <MenuButton>
             <span 
                 class="flex flex-row gap-2 items-center w-full text-sm"
-                title="Get Fediseer info for  {new URL(comment.creator.actor_id).hostname}"
-                on:click={async (e) => {
-                    e.stopPropagation();
-                    fediseer.loading = true;
-                    fediseer.data = await getFediseerInfo(new URL(comment.creator.actor_id).hostname);
-                    fediseer.loading = false;
-                    fediseer.modal = true;
-                    //@ts-ignore -- Once loaded, pass click event to menu button to close it.
-                    e.target?.parentElement?.dispatchEvent(e);
-                }}
+                title="Get Fediseer info for {new URL(comment.creator.actor_id).hostname}"
+                on:click={async (e) => {openFediseerModal(new URL(comment.creator.actor_id).hostname)}}
             >
-                <span class:hidden={fediseer.loading}>    
-                    <Icon src={Eye} width={16} mini />
-                </span>
+                <Icon src={Eye} width={16} mini />
                 <span>Fediseer</span>
             </span>
         </MenuButton>
