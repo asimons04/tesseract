@@ -30,17 +30,20 @@ The current method to sync your Tesseract settings, groups, and communities to L
 
 ### Moderation Presets and Report Handling
 The groundwork for this exists in the current release, but I didn't have time to fully flesh them out.
-- Set pre-defined actions (lock post, remove comment/post, ban community/instance, set reasons, etc.
-- Select from a list of presets
+- Set pre-defined actions (lock post, remove comment/post, ban community/instance, set reasons, etc.)
+- Select from a list of your presets which can be community-specific
 - Select multiple open reports to apply the preset to all (e.g. you have 7 spam reports that should all be handled the same way)
     - May or may not implement this or at least do it such that banning is not available to a mass-option.
     - The report revamp was to give additional insight to make more informed mod decisions. Adding the capability to mass ban without looking at the details thoroughly runs antiethical to that goal.
-    
-
 
 ### Under the Hood Stuff
 - Move all modals to a common modal container (similar to removal modals) as to allow calling them from anywhere without extra hacks to make sure they're not constrained by a fixed container div
-- 
+- Make preparations and lay initial foundation for offline support
+    - Re-implement profile to keep stored locally/persistently (rather than a background fetch to fill in the blanks).
+    - Decide if posts/comments should be stored in LocalStorage or IndexDB
+    - Create an action queue (upvote/downvote, reply, etc) to allow actions to be queued when offline and sent to API when online
+
+
 
 
 ## 1.2.9

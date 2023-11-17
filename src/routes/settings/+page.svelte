@@ -353,7 +353,7 @@
 
 <div class="flex flex-col md:flex-row gap-2">
     <!---Settings Section Menu--->
-    <div class="flex flex-row justify-center w-full md:flex-col md:max-w-[15%] md:justify-start gap-2">
+    <div class="flex flex-row w-full md:flex-col md:max-w-[15%] md:justify-start gap-2">
         <Button
             color="tertiary"
             title="General"
