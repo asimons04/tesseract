@@ -21,7 +21,26 @@ Based on user feedback and my own annoyances, here are the current goals to be i
 Replace the custom markdown editor with Toast-UI editor.  Not sure yet if I will replace `markdown-it` completely (may leave it for rendering), but the Toast-UI editor is much more user-friendly.
 
 ### Update Settings Cloud Sync
-The current method to sync your Tesseract settings, groups, and communities to Lemmy API is a one-off manual process.  This is intentional as it's basically an experimental feature that is abusing the `theme` field of your Lemmy profile (it's only used by Lemmy-UI and can hold arbitrary text).  The plan is to automate this and put it behind a user setting with appropriate warnings about how it will break Lemmy-UI's CSS.  When enabled, changes to your app settings will automatically sync to Lemmy.  Will update the "restore" button functionality to also disable sync.
+The current method to sync your Tesseract settings, groups, and communities to Lemmy API is a one-off manual process.  This is intentional as it's basically an experimental feature that is abusing the `theme` field of your Lemmy profile (it's only used by Lemmy-UI and can hold arbitrary text).  The plan is to automate this and put it behind a user setting with appropriate warnings about how it will break Lemmy-UI's CSS.  When enabled, changes to your app settings will automatically sync to/from Lemmy.  Will update the "restore" button functionality to also disable sync.
+
+### Moderation Templates
+- Replace the static user-defined template with the ability to have custom moderation presets
+- Add ability to make them community-specific
+- Save to profile and make exportable to JSON/API
+
+### Moderation Presets and Report Handling
+The groundwork for this exists in the current release, but I didn't have time to fully flesh them out.
+- Set pre-defined actions (lock post, remove comment/post, ban community/instance, set reasons, etc.
+- Select from a list of presets
+- Select multiple open reports to apply the preset to all (e.g. you have 7 spam reports that should all be handled the same way)
+    - May or may not implement this or at least do it such that banning is not available to a mass-option.
+    - The report revamp was to give additional insight to make more informed mod decisions. Adding the capability to mass ban without looking at the details thoroughly runs antiethical to that goal.
+    
+
+
+### Under the Hood Stuff
+- Move all modals to a common modal container (similar to removal modals) as to allow calling them from anywhere without extra hacks to make sure they're not constrained by a fixed container div
+- 
 
 
 ## 1.2.9
