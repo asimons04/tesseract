@@ -25,6 +25,7 @@
     export let color:string = "tertiary"
     export let alignment:string = 'side-left'
     export let presetReason:string = ''
+    export let menuIconSize:number = 16
 
     let locking = false
     let pinning = false
@@ -98,8 +99,8 @@
         {...$$restProps}
     >
         <svg
-            width="16"
-            height="16"
+            width="{menuIconSize.toString()}"
+            height="{menuIconSize.toString()}"
             viewBox="0 0 20 22"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

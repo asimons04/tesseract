@@ -2,23 +2,22 @@
 All major/minor changes between releases will be documented here.  
 
 
-## Immediate Roadmap:
 
-- Create an instance-specific `/about/{instance} page that will render just the site info that is typically in the sidebar
-- (0.19.x) Switch pagination param from `page={n+1}` to `page_cursor={x}`
-    - Has `next_page` but not cursor for current page.  Probably need to track these to enable returning to previous page.
-    - Waiting on 0.19.0 to stabilize a bit more before starting this
-    - _May_ wait until after 0.19 is released since the current `page={n}` will be supported.  This will allow better testing against my own instance.
+## Roadmap 1.2.9.1 through 1.2.3
+Here are the current goals to implement in the 1.2.9 release series. 
 
-- (0.19.x) Add `scaled` sort option to dropdowns
-    - Will add in first 0.19.0-specific release.  
+### Image Overlay / Gallery
+- Click images in the feed/post to enlarge them fullscreen and zoom.
+- Parse post body for image tags and add those to the gallery component
 
+### Re-write Post Creation Form
+- Semi-tabbed interface (similar to Reddit's) with form elements optimized for the post type
+- Post Types:
+  - Text Post (no URL, just text)
+  - Link (news articles, blog posts, etc).
+  - Images (Allow multiple images for a gallery. The first will be the post image and the rest will be in the body.  Gallery plugin will parse the ones in the body.
+  
 
-- (0.18.x and 0.19.x) Add Instances list
-    - Add handler to make each instance in the list clickable to load the site info, their local communities, etc.
-    - In the community list for the instance, add handler to search the community to view content/subscribe.
-
-- To do: When browsing remote communities, add additional validation step to see if the community you're browsing is blocked by your instance.  Since the API calls to browse those are coming from the client, you can end up browsing and trying to resolve communities your instance will not allow.  By cross-referencing against the `blocked` instance list for your site, a warning can be shown.
 
 
 ## 1.2.9

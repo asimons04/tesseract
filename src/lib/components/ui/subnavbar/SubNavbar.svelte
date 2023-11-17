@@ -1,9 +1,11 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
 
+    import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
     import { arrayRange, searchParam } from '$lib/util.js'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
+    import { profile } from '$lib/auth'
     import { 
         sortOptions as defaultSortOptions, 
         sortOptionNames as defaultSortOptionNames
@@ -12,7 +14,9 @@
     
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import CommunityActionMenu from '$lib/components/lemmy/post/PostActions/CommunityActionMenu.svelte'
+    import ModerationMenu       from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
     import PostActionsMenu from '$lib/components/lemmy/post/PostActions/PostActionsMenu.svelte'
+    import PostEditorModal from '$lib/components/lemmy/post/PostActions/PostEditorModal.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
     import {
@@ -64,23 +68,33 @@
     export let pageSelection:boolean            = false
     export let currentPage:number               = 1
 
-    // Post/Community Action Menus
+    // Post/Community/Moderator Action Menus
     export let postActionsMenu:boolean          = false
     export let communityActionsMenu:boolean     = false
+    export let moderationMenu:boolean           = false
     export let post:PostView | undefined        = undefined
 
 
     let addCommunityGroup:boolean               = false
+    let editPostModal:boolean                   = false
+
+   
 </script>
 
+<!---Hacks to launch the editor modals and keep them over the outer layout since they're inside a fixed element--->
+<!-- Note: Plan to add the modals to the layout and have them listen for events and data--->
 {#if addCommunityGroup && post?.community}
     <AddCommunityGroup bind:open={addCommunityGroup} community={post.community} />
+{/if}
+
+{#if editPostModal && post}
+    <PostEditorModal bind:open={editPostModal} bind:post on:openPostEditor1={(e) => { console.log(e) }}/>
 {/if}
 
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
     
-    <span class="flex flex-row gap-1 md:gap-2 items-center font-bold text-sm text-center mx-auto my-2 md:mr-2">
+    <span class="flex flex-row gap-2 md:gap-2 items-center text-sm text-center mx-auto my-2 md:mr-2">
         
         <!--Home Button-->
         {#if home}
@@ -101,17 +115,23 @@
             </span>
         {/if}
 
+        <!--- Moderation Menu--->
+        {#if moderationMenu && $profile?.user && post && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+            <ModerationMenu bind:item={post} community={post.community} color="ghost" menuIconSize={iconSize-2} alignment="bottom-left"/>
+        {/if}
+
         <!--- Post Community Actions Menu--->
         {#if communityActionsMenu}
-            <CommunityActionMenu bind:post alignment="bottom-left" menuIconSize={iconSize} 
-            disableGroupMenu on:addGroup={ () => { addCommunityGroup=true }}
+            <CommunityActionMenu bind:post alignment="bottom-left" menuIconSize={iconSize} suppressModal on:addGroup={()=>{ addCommunityGroup = true }}
             />
         {/if}
         
         <!-- Post Action Button (only used in posts)--->
         {#if postActionsMenu && post}
-            <PostActionsMenu bind:post alignment="bottom-left" menuIconSize={iconSize} icon={Window}/>
+            <PostActionsMenu bind:post alignment="bottom-left" menuIconSize={iconSize} icon={Window} suppressModal on:openPostEditor={()=> {editPostModal = true}}
+            />
         {/if}
+
         
         <!--- Post Listing Type--->
         {#if listingType && selectedListingType}
@@ -154,7 +174,7 @@
             {/if}
             
             <SelectMenu
-                class="hidden sm:flex"    
+                class="{$page.url.pathname.includes('/feeds') ? 'hidden sm:flex' : ''}"    
                 alignment="bottom-left"
                 options={arrayRange(1, currentPage +1)}
                 selected={currentPage}

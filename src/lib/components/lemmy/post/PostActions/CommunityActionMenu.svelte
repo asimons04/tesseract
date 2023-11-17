@@ -29,7 +29,7 @@
     export let menuIconSize:number  = 16
     export let alignment:string = 'top-right'
 
-    export let disableGroupMenu:boolean = false
+    export let suppressModal:boolean = false
 
     // Helpers for community groups
     let groups = {
@@ -44,7 +44,7 @@
 </script>
 
 <!---Community Group Modal--->
-{#if !disableGroupMenu}
+{#if !suppressModal}
     <AddCommunityGroup bind:open={groups.showModal} community={post.community} />
 {/if}
 
@@ -101,7 +101,7 @@
 
         <!---Add to Group--->
         <MenuButton title="Add/Remove to Group" on:click={(e) => {
-                if (!disableGroupMenu) {
+                if (!suppressModal) {
                     groups.showModal=!groups.showModal
                 } else {
                     dispatch('addGroup', true);

@@ -17,6 +17,7 @@
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import PostEditorModal from './PostEditorModal.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
     import {
@@ -43,43 +44,16 @@
     export let menuIconSize:number  = 16
     export let alignment:string = 'top-right'
     export let icon:IconSource = EllipsisHorizontal;
+    
+    // Allow importing this component just for the edit post modal
+    export let suppressModal:boolean = false;
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
     let editing:boolean = false;
     
     
 </script>
-
-<!--- Open a Modal containing the PostForm component pre-loaded with the post details--->
-{#if editing}
-    <Modal bind:open={editing} fullHeight={false} icon={PencilSquare} title="Editing {post.post.name}">
-        
-        {#await import('$lib/components/lemmy/post/PostForm.svelte')}
-            <div class="mx-auto flex justify-center items-center">
-                <Spinner width={32} />
-            </div>
-        {:then { default: PostForm }}
-            <PostForm
-                edit
-                editingPost={post}
-                on:submit={(e) => {
-                    editing = false
-                    post = e.detail
-                    dispatcher('edit', e.detail)
-                }}
-            >
-
-            <svelte:fragment slot="formtitle">
-                <!-- Have the title not exist at all -->
-                {''}
-            </svelte:fragment>
-            </PostForm>
-        {/await}
-    </Modal>
-{/if}
-
-
-
+<PostEditorModal bind:open={editing} bind:post />
 
 <Menu {alignment} containerClass="overflow-auto">
     <Button
@@ -104,7 +78,14 @@
 
     <!---Edit if owned by self--->
     {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}
-        <MenuButton on:click={() => (editing = true)} title="Edit Post">
+        <MenuButton  title="Edit Post"
+            on:click={() => {
+                if (!suppressModal) editing = true
+                else {
+                    dispatcher('openPostEditor', post);
+                }
+            }}
+        >
             <Icon src={PencilSquare} width={16} mini />
             Edit
         </MenuButton>
