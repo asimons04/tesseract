@@ -36,10 +36,13 @@
         Window
 
     } from 'svelte-hero-icons'
+    
+    
     export let post:PostView
+    export let menuIconSize:number  = 16
+    export let alignment:string = 'top-right'
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
-    
     let editing:boolean = false;
     
     
@@ -76,7 +79,7 @@
 
 
 
-<Menu alignment="top-right" containerClass="overflow-auto">
+<Menu {alignment} containerClass="overflow-auto">
     <Button
         slot="button"
         aria-label="Post actions"
@@ -87,7 +90,7 @@
         title="Post actions"
         color="ghost"
     >
-        <Icon slot="icon" src={EllipsisHorizontal} width={16} mini />
+        <Icon slot="icon" src={EllipsisHorizontal} width={menuIconSize} mini />
     </Button>
 
     <!---Post Actions --->

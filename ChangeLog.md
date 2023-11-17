@@ -23,41 +23,61 @@ All major/minor changes between releases will be documented here.
 
 ## 1.2.9
 
-### New Features
+### New Features and Notable Enhancements
 The last release was mostly for the mods/admins, so this release has something for the users.  Several somethings, actually.
 
-#### Emoji Picker and Custom Emoji Support
-Added Emoji picker to markdown editor toolbar.  It supports the instance-specific custom emojis but doesn't currently scale them down; they just appear as images.
+- Emoji Picker and support for your home instances's custom emojis.
+- HTML5 Media embeds in posts/comments. Uses the same syntax as Lemmy-UI / images
+- Ability to favorite communities
+- Ability to create groups of communities
+- View favorites or any of your groups as a custom feed
+- Option to open posts in a new tab (separate from outside links)
 
-The picker can be toggled open/closed with the Emojis button in the editor toolbar or with the Ctrl/Meta + E hotkey (while the editor is in focus).
+- Re-implemented the NSFW blur in the feed
+    - Can now reveal the blurred content with a click (formerly it would just load the post)
+    - Text blurs now instead of hiding
+    - NSFW-flagged embedded media will turn from a blurred thumbnail into the interactive player upon reveal
+    - Inline videos (mp4, webm, etc) can now blur (they didn't blur at all before)
 
-
-#### HTML5 Media Embeds in Posts/Comments
- Added `markdown-it-html5-embed` so that inline videos and audio files can be embedded with the same syntax as an image tag.  This is one of the few, cross-compatible ways inline media can be shared between Tesseract and Lemmy-UI.
-    
-#### Inline NSFW Blur Removal
-Instead of clicking into a post to unblur NSFW content, you can unblur it by clicking it in the feed.  Works for all post types, including embedded media (the thumbnail image will be blurred and will load the embed when clicking to unblur).
-
-#### Community Groups and Custom Feeds
-You can create named groups and add communities to them. 
-
-Finally, you can tame your subscriptions and bring some order to the chaos.  Sort your communities into groups and view them as individual feeds.
-
-Building from the favorites and community groups, Tesseract now has custom feeds based on the communities you place into those groups. 
-
-**Examples**:
-- Create a group called "News and Politics" and add your news and political communities to those.    
-- Create another group for memes and lulz
-- Put your music communities in one group/feed
-- Add all of the communities you moderate to a group, sort by new, and efficiently separate the wheat from the chaff.
-
-Then browse any/each of those as virtual feeds without any of the mood whiplash you get from browsing `Subscribed` or `All`.  Make sorting by `New` bearable again :)
-
-The custom feeds have the same filtering capabilities as the regular feed: currently, that includes crosspost rollups, MBFC credibility filtering, and keyword filtering.
+- Community and user links are now properly detected in markdown and will re-write to fetch locally and automatically within Tesseract.
+    - e.g. Someone comments `!communty@example.com` or `https://example.com/c/community` and Tesseract will detect and re-write those so that they will fetch locally at `https://tesseract.my-instance.com/c/community@example.com`.  
+    - **Combined with the automatic/transparent community resolution introduced in 1.2.69, this makes community links about as universal as they can be in the Fediverse.**
+- Export / Import Tesserct settings, groups, and favorites to a JSON file.
+- Upload/Download Tesseract settings, groups, and favorites to Lemmy
+- Re-implemented the breadcrumb navbar as a standard/modular component. Added more convenience buttons
+- Your saved posts/comments are now sortable, paginated, and can be returned individually. Was formerly all or nothing and sorted by new.
+- Can now toggle the margins in the feed on and off. (Arrows out/in button in the lower navbar)
+- Trimmed down the options in the post action menus and made two new menus on posts:
+    - **Post Menu**: Mark as (un)read, share, save, cross-post, report, and block the author. 
+    - **Community Menu**: Has options relevant to the community such as create post, browse posts, view its modlog, add to favorite or group, subscribe/unsubscribe, and block.
+    - **Explore Menu**: Helps you discover other communities and instances as well as request a Fediseer report for the instances involved with the post.
 
 
-#### New Setting: Open Posts in New Tab
-You can now enable the option to open posts in a new tab from the feed.  Disabled by default, and you'll likely want to have it disabled if you're using Tesseract as a PWA.  External links were already possible, but I had to do some extra plumbing to get the posts to work right.  That's been in place for a while, I just forgot to go back and expose it as a user setting.
+### Bugfixes and Misc Changes
+- [Bugfix] Fixed incorrect type on `restoreReplyToAuthor` in mod action object
+- [Bugfix] Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
+- [Bugfix] Fixed race condition with displaying resolver on reports on initial resolve.
+- [Bugfix] Certain post configurations were not respecting the "show full URL" setting
+- [Bugfix] Completely missed implementing NSFW blurring/hiding on inline videos. Added that.
+- [Bugfix] Fixed improper invalidations in multiple areas. Clicking from the feed into a post should now no longer invalidate if you click the comment button instead of the title or image.
+
+- [UI] Added down chevron to SelectMenu component (forgot that on the last 2 releases)
+- [Infrastructure] Implemented versioning of the settings. Now that there are more user-defined things getting saved to local storage, I want to make sure settings can be migrated from version to version without losing anything as well as the ability to transfer those across devices.
+- [Community Panels]Restored subscribe/unsubscribe button in community panel (was formerly only in the action menu)
+
+- [Modlog] Removed card view as an option.
+- [Modlog] Re-implemented table view to use flex and reflow into something resembling the old cards but more compact.  Works for desktop and mobile.
+- [Modlog] Due to the above, modlog search/filtering now work in mobile
+- [Modlog] Filters remain present when there's a selection; avoid having to reload modlog just to switch filter params.
+- [Image Proxy] Added rule to bypass proxying for inline `data:` images.
+
+- [UI Tweak] Standardized the sub-navigation bar at the top of the feeds, posts, other areas. Standard functions are merely toggles and custom elements can be slotted in.
+- [UI Tweak] Added an expand/collapse button to the toolbar in the various feed pages (main, community, user) that will allow you to enable/disable the margins
+- [UI Tweak] Card/Compact switcher is just a toggle button
+- [UI Tweak] Updated NSFW post handing in the feed. Easier to un-blur on a case-by-case basis without having to go into the post
+- [UI Tweak] Added NSFW blur to post body text in the feed instead of hiding it completely. Expanding it will un-blur it.
+- [UI Tweak] Partially restored "scroll to top" behavior when collapsing post body text in feed. Now only scrolls when you collapse it back down (to save you having to scroll all the way back to your starting position).
+
 
 #### Import/Export Tesseract Settings
 You can now export your Tesseract settings to a JSON file and import it again. New features are coming that will utilize settings storage for templates, favorite communities, community groups, and more. Having the ability to export/backup and restore is going to be a necessary feature, so getting this part out of the way first.
@@ -92,30 +112,6 @@ I've submitted an RFC to see about getting a custom field for this purpose added
 If you rarely, if ever, use Lemmy-UI, then you can leave your profile data saved there and only clear it if you do need to use it (that's what I do :shrug:).
 
 
-### Bugfixes and Misc Changes
-- [Bugfix] Fixed type on `restoreReplyToAuthor` in mod action object
-- [Bugfix] Fixed rare unhandled exception in UserLink if display name wasn't found on a user object
-- [Bugfix] Fixed race condition with displaying resolver on reports on initial resolve.
-- [Bugfix] Community and user links are now properly detected in markdown and will re-write to fetch locally within Tesseract.
-- [Bugfix] Certain post configurations were not respecting the "show full URL" setting
-- [Bugfix] Completely missed implementing NSFW blurring/hiding on inline videos. Added that
-
-- [UI] Added down chevron to SelectMenu component (forgot that on the last 2 releases)
-- [Infrastructure] Implemented versioning of the settings. Now that there are more user-defined things getting saved to local storage, I want to make sure settings can be migrated from version to version without losing anything as well as the ability to transfer those across devices.
-- [Community Panels]Restored subscribe/unsubscribe button in community panel (was formerly only in the action menu)
-
-- [Modlog] Removed card view as an option.
-- [Modlog] Re-implemented table view to use flex and reflow into something resembling the old cards but more compact.  Works for desktop and mobile.
-- [Modlog] Due to the above, modlog search/filtering now work in mobile
-- [Modlog] Filters remain present when there's a selection; avoid having to reload modlog just to switch filter params.
-- [Image Proxy] Added rule to bypass proxying for inline `data:` images.
-
-- [UI Tweak] Standardized the sub-navigation bar at the top of the feeds, posts, other areas. Standard functions are merely toggles and custom elements can be slotted in.
-- [UI Tweak] Added an expand/collapse button to the toolbar in the various feed pages (main, community, user) that will allow you to enable/disable the margins
-- [UI Tweak] Card/Compact switcher is just a toggle button
-- [UI Tweak] Updated NSFW post handing in the feed. Easier to un-blur on a case-by-case basis without having to go into the post
-- [UI Tweak] Added NSFW blur to post body text in the feed instead of hiding it completely. Expanding it will un-blur it.
-- [UI Tweak] Partially restored "scroll to top" behavior when collapsing post body text in feed. Now only scrolls when you collapse it back down (to save you having to scroll all the way back to your starting position).
 
 
 

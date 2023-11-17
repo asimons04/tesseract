@@ -80,7 +80,7 @@
 
     onMount(async () => {
         if (editingPost) {
-            console.log(editingPost)
+
             data.url = editingPost.post.url ?? ''
             data.body = editingPost.post.body ?? ''
             data.name = editingPost.post.name ?? ''

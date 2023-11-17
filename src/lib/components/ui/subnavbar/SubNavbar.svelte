@@ -1,5 +1,6 @@
 <script lang="ts">
-    
+    import type { PostView } from 'lemmy-js-client'
+
     import { arrayRange, searchParam } from '$lib/util.js'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
@@ -9,7 +10,8 @@
     } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
     
-    import Link from '$lib/components/input/Link.svelte'
+    
+    import PostActionsMenu from '$lib/components/lemmy/post/PostActions/PostActionsMenu.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
     import {
@@ -60,6 +62,9 @@
     // Page Selection
     export let pageSelection:boolean            = false
     export let currentPage:number               = 1
+
+    export let postActionsMenu:boolean          = false
+    export let post:PostView | undefined        = undefined
 </script>
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
@@ -211,6 +216,10 @@
             >
                 <Icon src={ChevronDoubleRight} width={iconSize} class="transition-transform {$userSettings.uiState.expandCommunitySidebar ? '' : 'rotate-180'}" />
             </span>
+        {/if}
+
+        {#if postActionsMenu}
+            <PostActionsMenu bind:post={post} alignment="bottom-right" menuIconSize={iconSize} />
         {/if}
 
         

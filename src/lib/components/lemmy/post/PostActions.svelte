@@ -24,37 +24,16 @@
     
 
     import {
-        ArrowTopRightOnSquare,
         ArrowsPointingIn,
         ArrowsPointingOut,
-        ArrowUturnLeft,
-        Bookmark,
-        BookmarkSlash,
-        BugAnt,
-        ChatBubbleOvalLeftEllipsis,
-        EllipsisHorizontal,
-        Eye,
-        EyeSlash,
-        Flag,
-        GlobeAlt,
         Icon,
-        Minus,
-        Newspaper,
-        PencilSquare,
-        QueueList,
         Tv,
-        Share,
-        Star,
-        Trash,
-        UserCircle,
-        UserGroup
     } from 'svelte-hero-icons'
     
     export let post: PostView
     export let postType: PostType
     export let displayType: PostDisplayType
     export let expandCompact: boolean
-    //export let debug: boolean = false
     export let showCommentForm:boolean = false;
 
     let theaterMode = false;
