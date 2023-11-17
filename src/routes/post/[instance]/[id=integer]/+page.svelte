@@ -113,7 +113,7 @@
     {/if}
 </svelte:head>
 
-<SubNavbar iconSize={28} home back scrollButtons refreshButton toggleCommunitySidebar postActionsMenu bind:post={post.post_view}/>
+<SubNavbar iconSize={28} home back scrollButtons refreshButton toggleCommunitySidebar postActionsMenu communityActionsMenu bind:post={post.post_view}/>
 <div class="flex flex-col md:flex-row gap-4 w-full py-2">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
@@ -138,7 +138,7 @@
     </div>
     
     <!--- Community Sidebar--->
-    <div class="hidden xl:block w-auto mt-[-8px]">
+    <div class="hidden xl:block w-auto">
         <CommunityCard bind:community_view={data.post.community_view} moderators={post.moderators}/>
     </div>
 </div>  

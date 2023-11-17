@@ -20,6 +20,7 @@
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
     import {
+        type IconSource,
         Icon,
         ArrowTopRightOnSquare,
         Bookmark,
@@ -41,6 +42,7 @@
     export let post:PostView
     export let menuIconSize:number  = 16
     export let alignment:string = 'top-right'
+    export let icon:IconSource = EllipsisHorizontal;
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
     let editing:boolean = false;
@@ -90,7 +92,7 @@
         title="Post actions"
         color="ghost"
     >
-        <Icon slot="icon" src={EllipsisHorizontal} width={menuIconSize} mini />
+        <Icon slot="icon" src={icon} width={menuIconSize} mini />
     </Button>
 
     <!---Post Actions --->

@@ -10,7 +10,8 @@
     } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
     
-    
+    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
+    import CommunityActionMenu from '$lib/components/lemmy/post/PostActions/CommunityActionMenu.svelte'
     import PostActionsMenu from '$lib/components/lemmy/post/PostActions/PostActionsMenu.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
@@ -63,9 +64,19 @@
     export let pageSelection:boolean            = false
     export let currentPage:number               = 1
 
+    // Post/Community Action Menus
     export let postActionsMenu:boolean          = false
+    export let communityActionsMenu:boolean     = false
     export let post:PostView | undefined        = undefined
+
+
+    let addCommunityGroup:boolean               = false
 </script>
+
+{#if addCommunityGroup && post?.community}
+    <AddCommunityGroup bind:open={addCommunityGroup} community={post.community} />
+{/if}
+
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
     
@@ -88,6 +99,18 @@
             >
                 <Icon src={ArrowLeftCircle} width={iconSize} />
             </span>
+        {/if}
+
+        <!--- Post Community Actions Menu--->
+        {#if communityActionsMenu}
+            <CommunityActionMenu bind:post alignment="bottom-left" menuIconSize={iconSize} 
+            disableGroupMenu on:addGroup={ () => { addCommunityGroup=true }}
+            />
+        {/if}
+        
+        <!-- Post Action Button (only used in posts)--->
+        {#if postActionsMenu && post}
+            <PostActionsMenu bind:post alignment="bottom-left" menuIconSize={iconSize} icon={Window}/>
         {/if}
         
         <!--- Post Listing Type--->
@@ -218,9 +241,7 @@
             </span>
         {/if}
 
-        {#if postActionsMenu}
-            <PostActionsMenu bind:post={post} alignment="bottom-right" menuIconSize={iconSize} />
-        {/if}
+        
 
         
 

@@ -3,9 +3,10 @@
     
     import {addFavorite, isFavorite } from '$lib/favorites'
     import { blockCommunity, createPost, subscribe } from '$lib/components/lemmy/community/helpers'
+    import { createEventDispatcher } from 'svelte'
     import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
-
+    
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -25,7 +26,10 @@
 
 
     export let post:PostView
+    export let menuIconSize:number  = 16
+    export let alignment:string = 'top-right'
 
+    export let disableGroupMenu:boolean = false
 
     // Helpers for community groups
     let groups = {
@@ -34,14 +38,18 @@
     }
     $: groups.favorite = isFavorite(post.community)
 
+    const dispatch = createEventDispatcher()
+
     let subscribed:boolean = ['Subscribed', 'Pending'].includes(post.subscribed)
 </script>
 
 <!---Community Group Modal--->
-<AddCommunityGroup bind:open={groups.showModal} community={post.community} />
+{#if !disableGroupMenu}
+    <AddCommunityGroup bind:open={groups.showModal} community={post.community} />
+{/if}
 
 <!---Community Actions Menu--->
-<Menu alignment="top-right" containerClass="overflow-auto">
+<Menu {alignment} containerClass="overflow-auto">
     <Button
         slot="button"
         aria-label="Community Actions"
@@ -52,7 +60,7 @@
         title="Community Actions"
         color="ghost"
     >
-        <Icon slot="icon" src={UserGroup} width={16} mini />
+        <Icon slot="icon" src={UserGroup} width={menuIconSize} mini />
     </Button>
 
     <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
@@ -92,7 +100,14 @@
         </MenuButton>
 
         <!---Add to Group--->
-        <MenuButton title="Add/Remove to Group" on:click={(e) => {groups.showModal=!groups.showModal} }>
+        <MenuButton title="Add/Remove to Group" on:click={(e) => {
+                if (!disableGroupMenu) {
+                    groups.showModal=!groups.showModal
+                } else {
+                    dispatch('addGroup', true);
+                }
+            }}
+        >
             <Icon src={UserGroup} mini size="16" />
             Add/Remove to Group(s)
         </MenuButton>

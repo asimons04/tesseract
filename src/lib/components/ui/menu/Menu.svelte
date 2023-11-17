@@ -76,9 +76,10 @@
             class="list-none absolute h-auto z-[90] overflow-auto 
                 {getOriginClass(alignment)}
                 rounded-lg py-1 w-max my-2 flex flex-col 
-                shadow-md backdrop-blur-3xl border
+                shadow-md  border
                 bg-white/90  border-slate-200 
-                dark:bg-zinc-950/80 dark:border-zinc-800
+                dark:bg-zinc-950/95 dark:border-zinc-800
+                backdrop-blur-3xl
                 {$$props.containerClass}
             "
         >
