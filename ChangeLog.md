@@ -3,8 +3,8 @@ All major/minor changes between releases will be documented here.
 
 
 
-## Roadmap 1.2.9.1 through 1.2.3
-Here are the current goals to implement in the 1.2.9 release series. 
+## Roadmap 1.2.9.x through 1.3.0
+Based on user feedback and my own annoyances, here are the current goals to be implemented in the 1.2.9.x release series. 
 
 ### Image Overlay / Gallery
 - Click images in the feed/post to enlarge them fullscreen and zoom.
@@ -17,7 +17,11 @@ Here are the current goals to implement in the 1.2.9 release series.
   - Link (news articles, blog posts, etc).
   - Images (Allow multiple images for a gallery. The first will be the post image and the rest will be in the body.  Gallery plugin will parse the ones in the body.
   
+### WYSIWYG Markdown Editor
+Replace the custom markdown editor with Toast-UI editor.  Not sure yet if I will replace `markdown-it` completely (may leave it for rendering), but the Toast-UI editor is much more user-friendly.
 
+### Update Settings Cloud Sync
+The current method to sync your Tesseract settings, groups, and communities to Lemmy API is a one-off manual process.  This is intentional as it's basically an experimental feature that is abusing the `theme` field of your Lemmy profile (it's only used by Lemmy-UI and can hold arbitrary text).  The plan is to automate this and put it behind a user setting with appropriate warnings about how it will break Lemmy-UI's CSS.  When enabled, changes to your app settings will automatically sync to Lemmy.  Will update the "restore" button functionality to also disable sync.
 
 
 ## 1.2.9
@@ -51,6 +55,7 @@ The last release was mostly for the mods/admins, so this release has something f
     - **Community Menu**: Has options relevant to the community such as create post, browse posts, view its modlog, add to favorite or group, subscribe/unsubscribe, and block.
     - **Explore Menu**: Helps you discover other communities and instances as well as request a Fediseer report for the instances involved with the post.
 
+- Added post actions and quick options to the navigation bar throughout the app
 
 ### Bugfixes and Misc Changes
 - [Bugfix] Fixed incorrect type on `restoreReplyToAuthor` in mod action object
