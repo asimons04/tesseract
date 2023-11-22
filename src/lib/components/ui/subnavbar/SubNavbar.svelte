@@ -115,11 +115,6 @@
             </span>
         {/if}
 
-        <!--- Moderation Menu--->
-        {#if moderationMenu && $profile?.user && post && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-            <ModerationMenu bind:item={post} community={post.community} color="ghost" menuIconSize={iconSize-4} alignment="bottom-left"/>
-        {/if}
-
         <!--- Post Community Actions Menu--->
         {#if communityActionsMenu}
             <CommunityActionMenu bind:post alignment="bottom-left" menuIconSize={iconSize} suppressModal on:addGroup={()=>{ addCommunityGroup = true }}
@@ -130,6 +125,11 @@
         {#if postActionsMenu && post}
             <PostActionsMenu bind:post alignment="bottom-left" menuIconSize={iconSize} icon={Window} suppressModal on:openPostEditor={()=> {editPostModal = true}}
             />
+        {/if}
+
+        <!--- Moderation Menu--->
+        {#if moderationMenu && $profile?.user && post && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+            <ModerationMenu bind:item={post} community={post.community} color="ghost" menuIconSize={iconSize-4} alignment="bottom-left"/>
         {/if}
 
         

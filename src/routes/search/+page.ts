@@ -51,7 +51,7 @@ export async function load({ url, fetch }) {
             community_name: community ?? undefined,
             results: everything,
             streamed: {
-                object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@')))
+                object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@') || query.startsWith('https://') ))
                 ? getClient(undefined, fetch).resolveObject({
                     auth: get(profile)!.jwt!,
                     q: query,
