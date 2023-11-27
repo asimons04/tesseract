@@ -7,21 +7,20 @@ import MBFCData from '$lib/MBFC/data/data.json'
 function normalizeDomain(domain:string):string {
     // Normalize domains to remove any "www', "amp", and other prefixes that trip up detection.  Also replace some subdomains with their main aliases
     domain = domain
-    .replace('www.', '')
-    .replace('amp.', '')
-    .replace(/^m\./,'')
-    .replace('bbc.co.uk', 'bbc.com')
-    .replace('mronline.org', 'monthlyreview.org')
-    .replace('bbc.in', 'bbc.com')
-    .replace('wapo.st', 'washingtonpost.com')
-    .replace(/.*\.antiwar\.com/, 'antiwar.com')
-    .replace(/.*\.apnews\.com/, 'apnews.com')
-    .replace(/.*\.businessinsider\.com/, 'businessinsider.com')
-    .replace(/.*\.cnn\.com/, 'cnn.com')
-    .replace(/.*\.elpais\.com/, 'elpais.com')
-    .replace(/.*\.medium\.com/, 'medium.com')
-    .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
-    
+        .replace('www.', '')
+        .replace('amp.', '')
+        .replace(/^m\./,'')
+        .replace('bbc.co.uk', 'bbc.com')
+        .replace('mronline.org', 'monthlyreview.org')
+        .replace('bbc.in', 'bbc.com')
+        .replace('wapo.st', 'washingtonpost.com')
+        .replace(/.*\.antiwar\.com/, 'antiwar.com')
+        .replace(/.*\.apnews\.com/, 'apnews.com')
+        .replace(/.*\.businessinsider\.com/, 'businessinsider.com')
+        .replace(/.*\.cnn\.com/, 'cnn.com')
+        .replace(/.*\.elpais\.com/, 'elpais.com')
+        .replace(/.*\.medium\.com/, 'medium.com')
+        .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
     
     return domain;
 }

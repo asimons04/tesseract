@@ -244,6 +244,8 @@
             <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
                 on:click={() => {
                     $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                    if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
+                    else $userSettings.uiState.feedMargins = true
                 }}
                 >
                 <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />
