@@ -2,6 +2,7 @@
     import {
         ArrowUp,
         Bookmark,
+        ChatBubbleLeftEllipsis,
         Icon,
         Minus,
         Pencil,
@@ -41,6 +42,8 @@
 {#if editing}
     <Modal
         bind:open={editing}
+        title="Editing comment"
+        icon={ChatBubbleLeftEllipsis}
         action="Save"
         on:action={async () => {
             if (!$profile?.jwt || newComment.length <= 0) return
@@ -66,7 +69,6 @@
             }
         }}
     >
-        <span slot="title">Edit comment</span>
         <CommentForm
             postId={node.comment_view.comment.id}
             bind:value={newComment}
