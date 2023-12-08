@@ -78,11 +78,8 @@ I realize that is less than professional, but this project is a hobby :shrug:.
 
 - Implement a public `/instances` page to render the linked, blocked, and allowed instances
 
-- Add a `jumptoComments` URL param for `/post/[instance]/[id]` route
-    - Will pre-empt autoplay setting for videos
-    - Scroll to comments div
 
-- Add emoji picker into post/comment markdown editor
+- ~~Add emoji picker into post/comment markdown editor~~
 
 
 #### Vote Buttons
@@ -93,7 +90,7 @@ I realize that is less than professional, but this project is a hobby :shrug:.
 
 - Add check to make sure the slur filter regex is valid before sending to API.
 
-- Add toggle to `/admin/instances` to select an operating mode: blocklist vs allow list and hide the non-selected 
+- ~~Add toggle to `/admin/instances` to select an operating mode: blocklist vs allow list and hide the non-selected ~~
 
 
 
