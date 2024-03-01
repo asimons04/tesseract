@@ -37,6 +37,7 @@
         NoSymbol,
         Newspaper,
         PencilSquare,
+        Share,
         ShieldCheck,
         ShieldExclamation,
         Trophy,
@@ -217,6 +218,21 @@
                                 >
                                     <Icon src={Home} mini size="16" />
                                     View on User's Home Instance
+                                </MenuButton>
+
+                                <!--- Copy Lemmyverse Link--->
+                                <MenuButton title="Copy Lemmyverse Link"
+                                on:click={() => {
+                                    navigator.clipboard.writeText(`https://lemmyverse.link/u/${person.person.name}@${new URL(person.person.actor_id).host}`)
+                                    toast({
+                                        type: 'success',
+                                        content: `Copied Lemmyverse Link to clipboard!`,
+                                    })
+                                    
+                                }}
+                                >
+                                    <Icon src={Share} width={16} mini />
+                                    Copy Lemmyverse Link
                                 </MenuButton>
                                 
                                 <!--- Actions for Logged-in <Users--->
