@@ -122,8 +122,7 @@
 </script>
 
 {#if $profile?.user}
-    <Modal bind:open={messaging}>
-        <h1 class="text-2xl font-bold" slot="title">Message</h1>
+    <Modal bind:open={messaging} title="Message">
         <form on:submit|preventDefault={sendMessage} class="flex flex-col gap-4">
             <p class="inline-flex flex-row gap-2 items-center">
                 Sending <UserLink avatar user={person.person} /> a message
@@ -226,7 +225,7 @@
                                     navigator.clipboard.writeText(`https://lemmyverse.link/u/${person.person.name}@${new URL(person.person.actor_id).host}`)
                                     toast({
                                         type: 'success',
-                                        content: `Copied Lemmyverse Link to clipboard!`,
+                                        content: `Copied Lemmyverse link to clipboard!`,
                                     })
                                     
                                 }}
