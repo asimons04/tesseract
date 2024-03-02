@@ -65,7 +65,7 @@ export interface ModLog {
     actionName: ActionName
     timestamp: number
     link?: string
-    expires?:number
+    expires?:string
 }
 
 export interface Filters {

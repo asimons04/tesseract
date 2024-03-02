@@ -82,7 +82,7 @@ profileData.subscribe(async (pd:ProfileData) => {
 
 export let profile = writable<Profile | undefined>(getProfile())
 
-profile.subscribe(async (p:Profile) => {
+profile.subscribe(async (p:Profile|undefined) => {
     // If profile ID is -1 (default), set the instnace to the currently selected guest instance or the system-defined DEFAULT_INSTANCE_URL
     if (p?.id == -1) {
         instance?.set(get(profileData).defaultInstance ?? DEFAULT_INSTANCE_URL)
@@ -233,7 +233,7 @@ export function saveProfileToProfileData() {
     
     profileData.update((pd:ProfileData) => {
         let newProfileData:ProfileData = {...pd}
-        newProfileData.profiles[pIndex] = {...get(profile)}
+        newProfileData.profiles[pIndex] = {...get(profile)!}
         return { ...newProfileData}
     })
 }

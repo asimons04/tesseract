@@ -42,6 +42,7 @@ const isBrowser = () => {
     return false;
 }
 
+export type FeedType = 'All' | 'Subscribed' | 'Local'
 
 interface Settings {
     version: number
@@ -50,7 +51,7 @@ interface Settings {
     showCompactPosts: boolean
     defaultSort: {
         sort: SortType
-        feed: 'All' | 'Subscribed' | 'Local'
+        feed: FeedType
         comments: CommentSortType
     }
     hidePosts: {
@@ -81,7 +82,7 @@ interface Settings {
     embeddedMedia: {
         feed: boolean
         post: boolean
-        YTFrontend: 'YouTube' | 'Invidious' 
+        YTFrontend: "YouTube" | "Invidious"
         customInvidious: string
         autoplay: boolean
         loop:boolean
@@ -166,9 +167,9 @@ export const defaultSettings: Settings = {
     showCompactPosts:   toBool(env.PUBLIC_SHOW_COMPACT_POSTS)           ??  false,
     
     defaultSort: {
-        sort:           env.PUBLIC_DEFAULT_FEED_SORT                    ??  ('Active' as any),
-        feed:           env.PUBLIC_DEFAULT_FEED                         ??  ('Local' as any),
-        comments:       env.PUBLIC_DEFAULT_COMMENT_SORT                 ??  ('Hot' as any),
+        sort:       env.PUBLIC_DEFAULT_FEED_SORT as SortType            ??  'Active',
+        feed:       env.PUBLIC_DEFAULT_FEED as FeedType                 ??  'Local',
+        comments:   env.PUBLIC_DEFAULT_COMMENT_SORT as CommentSortType  ??  'Hot'
     },
     hidePosts: {
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
@@ -185,7 +186,7 @@ export const defaultSettings: Settings = {
     nsfwBlur:       toBool(env.PUBLIC_NSFW_BLUR)                        ??  true,
     tagNSFWCommunities: toBool(env.PUBLIC_TAG_NSFW_COMMUNITIES)         ??  true,
     openInNewTab: {
-        links:  toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
+        links:      toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ??  false,
     },
     experimentalFeatures:                                               false,
@@ -193,7 +194,7 @@ export const defaultSettings: Settings = {
     embeddedMedia: {
         feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  true,
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
-        YTFrontend:     env.PUBLIC_YOUTUBE_FRONTEND                     ??  'YouTube',
+        YTFrontend: env.PUBLIC_YOUTUBE_FRONTEND as "YouTube" | "Invidious" ??  "YouTube" ,
         customInvidious:                                                    'yewtu.be',
         autoplay:                                                       false,
         loop:                                                           true,
@@ -218,17 +219,17 @@ export const defaultSettings: Settings = {
 
 
 // Global option environment flags
-export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                 ?? false
-export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)             ?? false
+export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                     ?? false
+export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)                 ?? false
 export const MEDIA_PROXY_BLACKLIST          = strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
-export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)           ?? true
+export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)               ?? true
 
-export const ENABLE_MEDIA_CACHE             = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE)                 ?? ENABLE_MEDIA_PROXY ? true : false;
-export const MEDIA_CACHE_DURATION           = parseInt(env.PUBLIC_MEDIA_CACHE_DURATION)             || 12*60    // Base unit: Minutes
-export const MEDIA_CACHE_MAX_SIZE           = parseInt(env.PUBLIC_MEDIA_CACHE_MAX_SIZE)             || 1000     // Base unit: MB (Minimum 100 MB will be used if lower than that)
-export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL)   || 5        //Minutes
-export const MEDIA_CACHE_HOUSEKEEP_STARTUP  = toBool(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP)      ?? true
-export const MEDIA_CACHE_KEEP_HOT_ITEMS     = toBool(env.PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS)         ?? true
+export const ENABLE_MEDIA_CACHE             = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE)                     ?? ENABLE_MEDIA_PROXY ? true : false;
+export const MEDIA_CACHE_DURATION           = parseInt(env.PUBLIC_MEDIA_CACHE_DURATION ?? '')           || 12*60    // Base unit: Minutes
+export const MEDIA_CACHE_MAX_SIZE           = parseInt(env.PUBLIC_MEDIA_CACHE_MAX_SIZE ?? '')           || 1000     // Base unit: MB (Minimum 100 MB will be used if lower than that)
+export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL ?? '') || 5        //Minutes
+export const MEDIA_CACHE_HOUSEKEEP_STARTUP  = toBool(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP)          ?? true
+export const MEDIA_CACHE_KEEP_HOT_ITEMS     = toBool(env.PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS)             ?? true
 
 // Import custom Invidious/Piped instances
 let custom_invidious_instances = strToArray(env.PUBLIC_CUSTOM_INVIDIOUS) as Array<string>
