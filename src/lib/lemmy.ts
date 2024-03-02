@@ -4,27 +4,18 @@ import { profile, profileData } from '$lib/auth.js'
 import { error } from '@sveltejs/kit'
 import { LINKED_INSTANCE_URL, instance } from '$lib/instance.js'
 
-async function customFetch(
-    func: (
-        input: RequestInfo | URL,
-        init?: RequestInit | undefined
-    ) => Promise<Response>,
-    input: RequestInfo | URL,
-    init?: RequestInit | undefined
-): Promise<Response> {
+interface CustomFetchFunction {
+    ( input: RequestInfo | URL, init?: RequestInit | undefined):  Promise<Response>
+}
+
+
+async function customFetch(func: CustomFetchFunction, input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
     const res = await func(input, init)
     if (!res.ok) throw error(res.status, await res.text())
     return res
 }
 
-export function getClient(instanceURL?: string,
-    func?: (
-        input: RequestInfo | URL,
-        init?: RequestInit | undefined
-    ) => Promise<Response>
-    
-    ,jwt?:string
-): LemmyHttp {
+export function getClient(instanceURL?: string, func?: CustomFetchFunction ,jwt?:string): LemmyHttp {
     if (!instanceURL)   instanceURL = get(instance)
     
     try {
