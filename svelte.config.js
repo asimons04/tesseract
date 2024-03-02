@@ -35,7 +35,7 @@ const config = {
                 'object-src':   ['none'],
             },
             mode: 'nonce'
-        }
+        }, 
 		
 	},
 };

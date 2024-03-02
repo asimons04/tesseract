@@ -26,7 +26,7 @@
     export let title:string = '';
     export let newtab:boolean = false;
     
-    export let toggleOpen:Function
+    //export let toggleOpen:Function|undefined
     
     const click = createEventDispatcher()
 </script>
@@ -44,7 +44,8 @@
             "
 
         >
-            <slot {toggleOpen}/>
+            <slot/>
+            <!----<slot {toggleOpen}/>-->
         </a>
     {:else}
         <button
@@ -62,7 +63,8 @@
             {:else}
                 <slot name="icon" />
             {/if}
-            <slot {toggleOpen}/>
+            <slot/>
+            <!--<slot {toggleOpen}/>-->
         </button>
     {/if}
 </div>
