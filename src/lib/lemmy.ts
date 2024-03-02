@@ -168,14 +168,7 @@ export let sortOptionNames:string[] = [
     'New Comments',
 ];
 
-
-if (LINKED_INSTANCE_URL) {
-    getClient(LINKED_INSTANCE_URL)
-      .getSite({})
-      .then((s) => site.set(s))
-}
-else {
-    getClient(getInstance())
+// Set the current site
+getClient(LINKED_INSTANCE_URL ? LINKED_INSTANCE_URL : getInstance())
     .getSite({})
     .then((s) => site.set(s))
-}
