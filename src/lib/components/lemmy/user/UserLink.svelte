@@ -9,7 +9,7 @@
     export let avatar: boolean = false
     export let avatarSize: number = 24
     export let badges: boolean = true
-    export let inComment: boolean = false
+    //export let inComment: boolean = false
     export let showInstance: boolean = true
     export let mod:boolean = false
     export let href:string | undefined = undefined
