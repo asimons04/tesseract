@@ -1,8 +1,8 @@
-import type { MBFCReport, MBFCDataSet } from './types'
+import type { MBFCBiases, MBFCCredibility, MBFCQuestionable, MBFCReport, MBFCReporting, MBFCDataSet } from './types'
 import type { PostView } from 'lemmy-js-client'
 
-import MBFCData from '$lib/MBFC/data/data.json'
-
+import data from '$lib/MBFC/data/data.json'
+const MBFCData = data as MBFCDataSet
 
 function normalizeDomain(domain:string):string {
     // Normalize domains to remove any "www', "amp", and other prefixes that trip up detection.  Also replace some subdomains with their main aliases
@@ -11,9 +11,11 @@ function normalizeDomain(domain:string):string {
         .replace('amp.', '')
         .replace(/^m\./,'')
         .replace('bbc.co.uk', 'bbc.com')
+        .replace('english.aawsat.com', 'aawsat.com')
         .replace('mronline.org', 'monthlyreview.org')
         .replace('bbc.in', 'bbc.com')
         .replace('wapo.st', 'washingtonpost.com')
+        .replace('yahoo.com', 'news.yahoo.com')
         .replace(/.*\.antiwar\.com/, 'antiwar.com')
         .replace(/.*\.apnews\.com/, 'apnews.com')
         .replace(/.*\.businessinsider\.com/, 'businessinsider.com')
