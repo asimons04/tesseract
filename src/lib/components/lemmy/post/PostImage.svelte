@@ -8,16 +8,16 @@
 
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
     
-    export let post:PostView | undefined
+    export let post:PostView 
     export let displayType: PostDisplayType
     
     
     
     let instance: string                    = getInstance()
-    let name:string | undefined             = post.post.name ?? undefined
+    let name:string                         = post.post.name
     let id:number | undefined               = post.post.id ?? undefined
-    let url:string|undefined                = post.post.url ?? undefined
-    let thumbnail_url:string | undefined    = post.post.thumbnail_url ?? undefined
+    let url:string                          = post.post.url as string
+    let thumbnail_url:string                = post.post.thumbnail_url as string ?? post.post.url as string
     let loaded:boolean                      = false
 
     // Hack to get Imgur gifs to render without having to click through to the site.
@@ -38,12 +38,12 @@
 {#if displayType == 'feed'}
 <a
     href="/post/{instance}/{id}"
-    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full m-1"
+    
     data-sveltekit-preload-data="off"
     aria-label={name}
     title={name}
 >
-    <div class="m-1">
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
             <picture class="rounded-md overflow-hidden w-full max-h-[min(50vh,500px)]  max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
                 <source srcset="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
@@ -63,6 +63,7 @@
                     class:opacity-100={loaded}
                     class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur)}
                     on:load={() => (loaded = true)}
+                    alt={name}
                 />
             </picture>
         </div>
@@ -73,11 +74,11 @@
 
 {#if displayType =='post'}
 <div
-    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full m-1"
+    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1"
     data-sveltekit-preload-data="off"
     aria-label={name}
 >
-    <div class="ml-auto mr-auto mt-1 mb-1 {$userSettings.imageSize.post ?? 'max-w-3xl'}">
+    <div class="ml-auto mr-auto {$userSettings.imageSize.post ?? 'max-w-3xl'}">
         <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
             <img
                 src="{imageProxyURL(url, undefined, 'webp')}"

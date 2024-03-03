@@ -11,7 +11,7 @@
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     
 
-    export let post: PostView | undefined
+    export let post: PostView
     export let displayType: PostDisplayType
 
     let embedURL:   string = ""
@@ -57,24 +57,22 @@
     
 
 <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
+<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
         
-        <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
-            <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
-                <iframe 
-                    class="flexiframe"
-                    src="{embedURL}" 
-                    allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
-                    loading="lazy"
-                    allowfullscreen 
-                    title="Sound Cloud: {post.post.name}"
-                >
-                </iframe>
-            </div>
+    <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
+        <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
+            <iframe 
+                class="flexiframe"
+                src="{embedURL}" 
+                allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
+                loading="lazy"
+                allowfullscreen 
+                title="Sound Cloud: {post.post.name}"
+            >
+            </iframe>
         </div>
-        
     </div>
+        
 </div>
 
 {:else if post.post.thumbnail_url}

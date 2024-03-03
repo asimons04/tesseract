@@ -9,14 +9,20 @@
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
     
-    export let post: PostView | undefined = undefined
+    export let post: PostView 
     export let autoplay:boolean = false;
     export let loop:boolean = false;
     export let displayType:PostDisplayType = 'feed'
     
     let source = isVideo(post.post.url) 
-                    ? imageProxyURL(post.post.url)
-                    : imageProxyURL(post.post.embed_video_url)
+                    ? post.post.url
+                    : post.post.embed_video_url
+    
+    source = source
+        ? imageProxyURL(source)
+        : undefined
+    //? imageProxyURL(post.post.url)
+    //: imageProxyURL(post.post.embed_video_url)
     let muted = autoplay
     let nsfwAcknowledge:boolean             = false
 
@@ -26,6 +32,7 @@
     )
 </script>
 
+{#if post && source}
 <Link 
     href={post.post.url}
     title={post.post.url}
@@ -34,7 +41,7 @@
     highlight nowrap 
         
 />
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
+<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full p-1">
     <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
         
         <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
@@ -55,3 +62,4 @@
         </video>
     </div>
 </div>
+{/if}

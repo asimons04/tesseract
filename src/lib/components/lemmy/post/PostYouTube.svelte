@@ -95,36 +95,33 @@
     <Link 
         href={
             embedURL
-            ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-            : post.post.url
+                ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+                : post.post.url
         }
         title={
             embedURL
-            ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-            : post.post.url
+                ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+                : post.post.url
         }
         highlight nowrap 
         domainOnly={!$userSettings.uiState.showFullURL}
         newtab={$userSettings.openInNewTab.links}  
         
     />
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
-        
-        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
-            
-            <div class="ml-auto mr-auto max-w-[88vw] w-full">
-                <div class="flexiframe-container rounded-md max-w-screen mx-auto">
-                    <iframe 
-                        id="video-{post.post.id}"
-                        class="flexiframe"
-                        src="{embedURL.href}" 
-                        allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
-                        loading="lazy"
-                        allowfullscreen
-                        title="YouTube: {post.post.name}"
-                    >
-                    </iframe>
-                </div>
+    
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+        <div class="ml-auto mr-auto max-w-[88vw] w-full">
+            <div class="flexiframe-container rounded-md max-w-screen mx-auto">
+                <iframe 
+                    id="video-{post.post.id}"
+                    class="flexiframe"
+                    src="{embedURL.href}" 
+                    allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
+                    loading="lazy"
+                    allowfullscreen
+                    title="YouTube: {post.post.name}"
+                >
+                </iframe>
             </div>
         </div>
     </div>

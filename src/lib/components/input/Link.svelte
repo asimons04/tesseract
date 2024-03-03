@@ -1,6 +1,6 @@
 <script lang="ts">
 
-  export let href: string
+  export let href: string|undefined
   export let highlight: boolean = false
   export let nowrap: boolean = false
   export let newtab: boolean = false

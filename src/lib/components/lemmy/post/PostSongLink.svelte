@@ -29,6 +29,7 @@
         embedURL += mediaID;
         
         // If UI theme is in dark mode, request dark mode embed.
+        // @ts-ignore (This function is in index.html)
         if (dark()) {
             embedURL += '&theme=dark'
         }
@@ -60,23 +61,20 @@
 
 {#if showAsEmbed}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
-        
-        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
+    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
             
-            <div class="ml-auto mr-auto max-w-[88vw] {size}">
-                <div class="flexiframe-container rounded-md max-w-screen mx-auto">
-                    <iframe 
-                        id="video-{post.post.id}"
-                        class="flexiframe"
-                        src="{embedURL}" 
-                        allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
-                        loading="lazy"
-                        allowfullscreen
-                        title="Odysee: {post.post.name}"
-                    >
-                    </iframe>
-                </div>
+        <div class="ml-auto mr-auto max-w-[88vw] {size}">
+            <div class="flexiframe-container rounded-md max-w-screen mx-auto">
+                <iframe 
+                    id="video-{post.post.id}"
+                    class="flexiframe"
+                    src="{embedURL}" 
+                    allow="accelerometer; autoplay; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
+                    loading="lazy"
+                    allowfullscreen
+                    title="Odysee: {post.post.name}"
+                >
+                </iframe>
             </div>
         </div>
     </div>

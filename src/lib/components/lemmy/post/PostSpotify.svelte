@@ -54,7 +54,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        height: 500px;
+        height: 491px;
         width: 100%;
         border:0;
     }
@@ -65,7 +65,7 @@
 {#if showAsEmbed}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
     <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'}">
-        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full">
+        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 p-1 rounded-md max-w-full">
             <div class="ml-auto mr-auto w-full">
                 <div class="flexiframe-container rounded-md max-w-screen {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'} mx-auto">
                     <iframe 

@@ -10,7 +10,7 @@
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
 
-    export let post:PostView | undefined
+    export let post:PostView
     export let displayType: PostDisplayType
 
     let loaded                              = false;
@@ -33,8 +33,7 @@
                 : undefined
         }
     >
-        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full">
-            <div class="m-1">
+        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
                     <img
@@ -46,7 +45,6 @@
                         alt="{post.post.name}"
                     />
                 </div>
-            </div>
             
         </div>
     </a>
