@@ -1,8 +1,7 @@
 import type { MBFCBiases, MBFCCredibility, MBFCQuestionable, MBFCReport, MBFCReporting, MBFCDataSet } from './types'
 import type { PostView } from 'lemmy-js-client'
 
-import data from '$lib/MBFC/data/data.json'
-const MBFCData = data as MBFCDataSet
+import MBFCData from '$lib/MBFC/data/data.json'
 
 function normalizeDomain(domain:string):string {
     // Normalize domains to remove any "www', "amp", and other prefixes that trip up detection.  Also replace some subdomains with their main aliases
@@ -56,7 +55,7 @@ export const lookup = function (url:string):MBFCReport|undefined {
         let info:MBFCReport = {} as MBFCReport
         let found:boolean = false;
 
-        MBFCData.sources.map((item:MBFCReport) => { 
+        (MBFCData as MBFCDataSet).sources.map((item:MBFCReport) => { 
             if (item.domain==domain) {
                 info=item
                 found = true
