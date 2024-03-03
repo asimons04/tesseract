@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it'
 import markdown_it_container from 'markdown-it-container'
+// @ts-ignore
 import markdown_it_html5_embed from 'markdown-it-html5-embed' 
 // @ts-ignore
 import markdown_it_sub from 'markdown-it-sub'

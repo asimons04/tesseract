@@ -13,7 +13,7 @@
     export let headless: boolean = false
     export let items: number = 4
     export let fullWidth: boolean = false 
-    export let selectedFunc: Function;
+    export let selectedFunc: Function|undefined = undefined;
 
 
     if (!selected && selectedFunc) {

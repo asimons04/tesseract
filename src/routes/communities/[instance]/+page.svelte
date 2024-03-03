@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Community} from 'lemmy-js-client'
+    import type { CommunityView } from 'lemmy-js-client'
 
     import { addSubscription } from '$lib/lemmy/user.js'
     import { goto } from '$app/navigation'
@@ -45,7 +45,7 @@
     let validating: boolean = false
     
     let communityInfoModal:boolean = false
-    let selectedCommunity:Community
+    let selectedCommunity:CommunityView
 
 </script>
 
@@ -284,7 +284,7 @@
                     </li>
                 {/each}
             </ul>
-            {#if data.communities.length > 0 || parseInt($page.url.searchParams.get('page')) > 1}
+            {#if data.communities.length > 0 || parseInt($page.url.searchParams.get('page') ?? '1') > 1}
                 <div class="mt-2 w-full">
                     <Pageination
                         page={Number($page.url.searchParams.get('page')) || 1}
@@ -301,6 +301,6 @@
     </div>
 
     <div class="hidden xl:block mt-[8px]">
-        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
+        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version}/>
     </div>
 </div>
