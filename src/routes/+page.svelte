@@ -39,6 +39,6 @@
     </div>
 
     <div class="lg:mb-[-24px]">
-        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
+        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} />
     </div>
 </div>

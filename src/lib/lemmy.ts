@@ -171,4 +171,7 @@ export let sortOptionNames:string[] = [
 // Set the current site
 getClient(LINKED_INSTANCE_URL ? LINKED_INSTANCE_URL : getInstance())
     .getSite({})
-    .then((s) => site.set(s))
+    .then((s) => {
+            site.set(s)
+        }
+    )

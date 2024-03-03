@@ -21,6 +21,7 @@
         Icon,
         Newspaper,
         PencilSquare,
+        Server,
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
@@ -29,6 +30,7 @@
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
     export let admins: PersonView[] = []
+    export let version: string
 
     let expandAdmins:boolean = false
 
@@ -40,7 +42,7 @@
         : 'hidden'}
     "
 >
-    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, '384', 'webp') : ''}>
+    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, 384, 'webp') : ''}>
         <div class="flex flex-row gap-3 items-center p-3">
             {#if site.site.icon}
                 <Avatar width={42} url={site.site.icon} alt={site.site.name} circle={false} />
@@ -49,19 +51,29 @@
             
             <div class="flex flex-col w-full">
                 <div class="flex flex-row">
-                    <h1 class="font-bold text-base">{site.site.name}</h1>
-                    
-                    <div class="ml-auto">
+                    <span class="flex flex-col">
+                        <h1 class="font-bold text-base">{site.site.name}</h1>
+                        <span class="text-sm opacity-60">
+                            {new URL(site.site.actor_id).hostname}
+                        </span>
+                    </span>
+                    <div class="ml-auto flex flex-col">
                         <span class="flex flex-row items-center gap-2 text-sm" title="Created">
                             <Icon src={Calendar} width={16} height={16} mini />
                             <RelativeDate date={site.site.published} />
                         </span>
+                        
+                        <span class="flex flex-row items-center gap-2 text-sm" title="Version">
+                            <Icon src={Server} width={16} height={16} mini />
+                            {version}
+                        </span>
                     </div>
                 </div>
-                
+                <!---
                 <span class="text-sm opacity-60">
                     {new URL(site.site.actor_id).hostname}
                 </span>
+                --->
             </div>
 
                 
