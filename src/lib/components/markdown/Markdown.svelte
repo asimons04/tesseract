@@ -21,7 +21,7 @@
         // If media proxying is enabled, rewrite image urls
         const images = node.querySelectorAll('img');
         images.forEach((i) => {
-            i.src = imageProxyURL(i.src);
+            i.src = imageProxyURL(i.src)!;
         })
     }
 
@@ -46,7 +46,8 @@
     let rendered:string
     
     $: try {
-        source ? source = fixLemmyEncodings(source) : source = ' ';
+        source ? source = fixLemmyEncodings(source)! : source = ' ';
+        
         if (inline) { rendered = mdInline.render(source) }
         else { rendered = md.render(source) }
     }

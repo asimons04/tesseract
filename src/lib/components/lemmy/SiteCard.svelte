@@ -25,7 +25,6 @@
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
-    
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
