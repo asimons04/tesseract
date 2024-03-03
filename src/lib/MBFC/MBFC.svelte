@@ -31,12 +31,14 @@
     export let collapseBadges:boolean = false;
 
     let open:boolean = false;
-    let results:MBFCReport|undefined = post.mbfc ?? lookup(post?.post?.url) ?? undefined
+    // @ts-ignore
+    let results:MBFCReport = post.mbfc ?? lookup(post?.post?.url)
 
 </script>
 
 {#if results}
     <!-- Create a badge based off the credibility score--->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <Badge color={
         results.credibility == "High Credibility"
         ? 'green'
@@ -46,6 +48,8 @@
                 ? 'red'
                 : 'gray'
         }>
+        
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
             title="Media Bias Fact Check: {results.credibility}"
             on:click={async () => {
@@ -60,7 +64,7 @@
                     : results.credibility == 'Low Credibility'
                         ? ExclamationTriangle
                         : QuestionMarkCircle
-            } mini size="12"/>
+            } mini size="16"/>
             
             {results.credibility.replace('Credibility', '')} <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">Credibility</span>
         </span>

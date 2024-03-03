@@ -20,22 +20,23 @@
 
     import {
         Bookmark,
-        BuildingOffice,
+        ExclamationCircle,
         Icon,
         LockClosed,
         Megaphone,
+        MinusCircle,
         Trash,
     } from 'svelte-hero-icons'
     
     
 
-    export let post: PostView | undefined       = undefined
+    export let post: PostView                   
     export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
     export let showFediseer:boolean             = true;
     export let collapseBadges:boolean           = false;
-    export let hideBadges:boolean               = false;
+    //export let hideBadges:boolean               = false;
 
 
     // Extract data from post object for easier reference
@@ -55,7 +56,7 @@
     let locked: boolean
     let read: boolean
     let userIsModerator:boolean
-    let url: string
+    let url: string | undefined
     
     // Make these variables reactive
     $: {
@@ -73,7 +74,7 @@
         removed                             = post.post.removed ?? false
         locked                              = post.post.locked ?? false
         read                                = post.read ?? false
-        userIsModerator                     = (moderators.filter((index) => index.moderator.id == user.id).length > 0)
+        userIsModerator                     = (moderators.filter((index) => index.moderator.id == user?.id).length > 0)
         url                                 = post.post.url ?? undefined
     }
     
@@ -129,13 +130,15 @@
             <!--- Post Badges --->
             <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
                 <!--- Media Bias Fact Check--->
-                {#if $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
+                {#if post && $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
 
                 <!--- Fediseer Endorsement Badge--->
-                {#if showFediseer && $userSettings.uiState.fediseerBadges}
+                {#if community && showFediseer && $userSettings.uiState.fediseerBadges}
                     <span class="flex flex-row gap-2 items-center mr-2">
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
                         <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
                             class="cursor-pointer"
                             loading="lazy"
@@ -147,44 +150,44 @@
                 {/if}
 
                 {#if nsfw}
-                    <Badge color="red">
-                        <Icon src={BuildingOffice} mini size="12"/>
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
+                    <Badge label="NSFW" color="red">
+                        <Icon src={ExclamationCircle} mini size="16"/>
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>-->
                     </Badge>
                 {/if}
 
                 {#if saved}
                     <Badge label="Saved" color="yellow">
-                        <Icon src={Bookmark} mini size="12" />
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>
+                        <Icon src={Bookmark} mini size="16" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>-->
                     </Badge>
                 {/if}
                 
                 {#if locked}
                     <Badge label="Locked" color="yellow">
-                        <Icon src={LockClosed} mini size="14" />
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>
+                        <Icon src={LockClosed} mini size="16" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>-->
                     </Badge>
                 {/if}
                 
                 {#if removed}
                     <Badge label="Removed" color="red">
-                        <Icon src={Trash} mini size="14" />
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>
+                        <Icon src={MinusCircle} mini size="16" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>-->
                     </Badge>
                 {/if}
                 
                 {#if deleted}
                     <Badge label="Deleted" color="red">
-                        <Icon src={Trash} mini size="14" />
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>
+                        <Icon src={Trash} mini size="16" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>-->
                     </Badge>
                 {/if}
                 
                 {#if featured}
                     <Badge label="Featured" color="green">
-                        <Icon src={Megaphone} mini size="14" />
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
+                        <Icon src={Megaphone} mini size="16" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>-->
                     </Badge>
                 {/if}
             </div>
