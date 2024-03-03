@@ -34,10 +34,10 @@
                 }}
             >
 
-            <svelte:fragment slot="formtitle">
-                <!-- Have the title not exist at all -->
-                {''}
-            </svelte:fragment>
+                <svelte:fragment slot="formtitle">
+                    <!-- Have the title not exist at all -->
+                    {''}
+                </svelte:fragment>
             </PostForm>
         {/await}
     </Modal>

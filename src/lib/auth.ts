@@ -24,7 +24,7 @@ export interface ProfileData {
     defaultInstance?: string
 }
 
-interface PersonData extends MyUserInfo {
+export interface PersonData extends MyUserInfo {
     unreads: number
     reports: number
 }

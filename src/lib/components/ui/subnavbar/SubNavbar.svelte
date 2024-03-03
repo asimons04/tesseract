@@ -44,18 +44,16 @@
     export let home:boolean = true              // Return to home
     export let back:boolean = false             // Back (literally emulates browser back button)
     export let scrollButtons:boolean = false    // Scroll to top/bottom buttons
-
     export let compactSwitch:boolean = false    // Switch between compact and card posts
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
     export let refreshButton:boolean = false    // Button to refresh the current page
     export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
-    export let toggleSiteSidebar:boolean = false        // Toggle the right-side site sidebar open/closed
 
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
     export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All']
     export let listingTypeOptionNames:string[]  = listingTypeOptions
-    export let listingTypeOnSelect:Function     = (e) => { searchParam($page.url, 'type', e.detail, 'page') }
+    export let listingTypeOnSelect              = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
     export let selectedListingType:string       = ''
 
     // Sort menu
@@ -88,7 +86,7 @@
 {/if}
 
 {#if editPostModal && post}
-    <PostEditorModal bind:open={editPostModal} bind:post on:openPostEditor1={(e) => { console.log(e) }}/>
+    <PostEditorModal bind:open={editPostModal} bind:post on:edit={(e) => { console.log(e) }}/>
 {/if}
 
 
@@ -105,25 +103,25 @@
 
         {#if back}
             <!--Return to Feed Button-->
-            <span class="mr-2 cursor-pointer" title="Back" data-sveltekit-preload-data="hover"
+            <button class="mr-2 cursor-pointer" title="Back" data-sveltekit-preload-data="hover"
                 class:hidden={history.length<2}
                 on:click={() => {
                     history.back();
                 }}
             >
                 <Icon src={ArrowLeftCircle} width={iconSize} />
-            </span>
+            </button>
         {/if}
 
         <!--- Post Community Actions Menu--->
-        {#if communityActionsMenu}
+        {#if communityActionsMenu && post}
             <CommunityActionMenu bind:post alignment="bottom-left" menuIconSize={iconSize} suppressModal on:addGroup={()=>{ addCommunityGroup = true }}
             />
         {/if}
         
         <!-- Post Action Button (only used in posts)--->
         {#if postActionsMenu && post}
-            <PostActionsMenu bind:post alignment="bottom-left" menuIconSize={iconSize} icon={Window} suppressModal on:openPostEditor={()=> {editPostModal = true}}
+            <PostActionsMenu bind:post alignment="bottom-left" menuIconSize={iconSize} icon={Window} suppressModal on:edit={()=> {editPostModal = true}}
             />
         {/if}
 
@@ -198,50 +196,50 @@
         <slot {iconSize} name="right"/>
 
         {#if refreshButton}
-            <span class="mr-2 cursor-pointer" title="Refresh"
+            <button class="mr-2 cursor-pointer" title="Refresh"
                 on:click={() => {
                     goto(window.location.href, {invalidateAll: true});
                 }}
                 >
                 <Icon src={ArrowPath} width={iconSize}/>
-            </span>
+            </button>
         {/if}
 
         <!--Jump to Top/Bottom-->
         {#if scrollButtons}
-            <span class="mr-2 cursor-pointer" title="Scroll to Bottom"
+            <button class="mr-2 cursor-pointer" title="Scroll to Bottom"
                 on:click={() => {
                     window.scrollTo(0,document.body.scrollHeight);
                 }}
             >
                 <Icon src={ChevronDoubleDown} width={iconSize} />
-            </span>
+            </button>
             
 
             <!--Jump to Top-->
-            <span class="mr-2 cursor-pointer" title="Scroll to Top"
+            <button class="mr-2 cursor-pointer" title="Scroll to Top"
                 on:click={() => {
                     window.scrollTo(0,0);
                 }}
             >
                 <Icon src={ChevronDoubleUp} width={iconSize} />
-            </span>
+            </button>
         {/if}
 
         <!--- Toggle Margins on/off (hide until medium width since the margins disappear at the 'sm' breakpoint anyway) --->
         {#if toggleMargins}
-            <span class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Disable margins' : 'Enable margins'}."
+            <button class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Disable margins' : 'Enable margins'}."
                 on:click={() => {
                     $userSettings.uiState.feedMargins = !$userSettings.uiState.feedMargins
                 }}
                 >
                 <Icon src={$userSettings.uiState.feedMargins ? ArrowsPointingOut : ArrowsPointingIn} width={iconSize} />
-            </span>
+            </button>
         {/if}
 
         <!---Card/Compact Selection--->
         {#if compactSwitch}
-            <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
+            <button class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
                 on:click={() => {
                     $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                     if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
@@ -249,18 +247,18 @@
                 }}
                 >
                 <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />
-            </span>
+            </button>
         {/if}
 
         <!---Community Sidebar Toggle (hide when screen width less than 'xl' breakpoint when the sidebar hides anyway)--->
         {#if toggleCommunitySidebar}
-            <span class="hidden xl:flex mr-2 cursor-pointer" title="{$userSettings.uiState.expandCommunitySidebar ? 'Collapse': 'Expand'} Community Sidebar"
+            <button class="hidden xl:flex mr-2 cursor-pointer" title="{$userSettings.uiState.expandCommunitySidebar ? 'Collapse': 'Expand'} Community Sidebar"
                 on:click={() => {
                     $userSettings.uiState.expandCommunitySidebar = !$userSettings.uiState.expandCommunitySidebar
                 }}
             >
                 <Icon src={ChevronDoubleRight} width={iconSize} class="transition-transform {$userSettings.uiState.expandCommunitySidebar ? '' : 'rotate-180'}" />
-            </span>
+            </button>
         {/if}
 
         

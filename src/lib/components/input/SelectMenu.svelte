@@ -19,13 +19,13 @@
     export let selected: T
     export let label: string | undefined = undefined
     export let alignment: Alignment = 'bottom-left'
-    export let selectedFunc: Function;
+    export let selectedFunc: Function = () => {};
     export let title:string = '';
     export let icon:any = undefined;
     
     let open = false
 
-    if (!selected) {
+    if (!selected && selectedFunc) {
         selected = selectedFunc();
     }
 
@@ -34,6 +34,8 @@
 
 
 <Menu {alignment} containerClass="!z-[30]" >
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
         
         <span class="flex flex-row items-center gap-0 md:gap-1 font-bold text-sm cursor-pointer {$$props.class}">

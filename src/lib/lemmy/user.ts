@@ -1,4 +1,5 @@
 import type { Community, MyUserInfo, PersonBlockView, PersonView } from 'lemmy-js-client'
+import type { PersonData } from '$lib/auth'
 
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
@@ -7,20 +8,8 @@ import { profile } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { trycatch } from '$lib/util.js'
 
-/*
-export const blockUser = async (block: boolean, id: number) => {
-  const auth = get(profile)?.jwt
 
-  if (!auth) throw new Error('Unauthorized')
-
-  const response = await getClient().blockPerson({
-    auth: auth,
-    block: block,
-    person_id: id,
-  })
-}
-*/
-export const isBlocked = (me: MyUserInfo, user: number) => me.person_blocks.map((b:PersonBlockView) => b.target.id).includes(user)
+export const isBlocked = (me: PersonData, user: number) => me.person_blocks.map((b:PersonBlockView) => b.target.id).includes(user)
 
 export const addSubscription = (community: Community, subscribe: boolean = true) => {
     const p = get(profile)

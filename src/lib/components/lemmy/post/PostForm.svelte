@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
-    import type { Community, CommunityView, Post, PostView } from 'lemmy-js-client'
+    import type { Community, CommunityView, GetCommunityResponse, Post, PostView } from 'lemmy-js-client'
 
     import TextInput from '$lib/components/input/TextInput.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
@@ -32,7 +32,7 @@
     export let edit = false
 
     // The post to edit, as passed from the PostActions component
-    export let editingPost: Post | undefined = undefined
+    export let editingPost: PostView | undefined = undefined
 
     // The community passed from sessionStorage via /create/post
     export let passedCommunity:
@@ -85,7 +85,6 @@
             data.body = editingPost.post.body ?? ''
             data.name = editingPost.post.name ?? ''
             data.nsfw = editingPost.post.nsfw ?? false
-            
             data.community = editingPost.community ?? undefined
             
            
@@ -94,7 +93,7 @@
         if (passedCommunity) {
             data.community = passedCommunity.id
             communitySearch = passedCommunity.name
-            communityDetails = await resolveCommunity(passedCommunity.id)
+            communityDetails = await resolveCommunity(passedCommunity.id) as Community
         } else {
             const list = await getClient().listCommunities({
                 auth: $profile?.jwt,
@@ -107,6 +106,7 @@
     })
 
     onDestroy(() => {
+        // @ts-ignore
         if (saveDraft) setSessionStorage('postDraft', data)
     })
 
@@ -158,7 +158,7 @@
                 data.url = image || data.url || undefined
                 const post = await getClient().createPost({
                     auth: $profile.jwt,
-                    community_id: data.community!,
+                    community_id: data.community! as number,
                     name: data.name,
                     body: data.body,
                     url: data.url,
@@ -177,7 +177,7 @@
     }
 
     async function resolveCommunity(id:number) {
-        const result:CommunityView = await getClient().getCommunity({
+        const result:GetCommunityResponse = await getClient().getCommunity({
             auth: $profile?.jwt,
             id: id
         })
@@ -222,8 +222,23 @@
         // If creating a post, add some dummy values so the Post component can handle it for preview rending
         if (!editingPost) {
             post = {
-                post: { ...data },
+                post: { 
+                    ...data,
+                    id: -1,
+                    creator_id: -1,
+                    community_id: -1,
+                    removed: false,
+                    locked: false,
+                    deleted: false,
+                    ap_id: 'none',
+                    local: false,
+                    featured_local: false,
+                    featured_community: false,
+                    language_id: -1,
+                    published: new Date().toISOString()
+                },
                 community:  communityDetails,
+                // @ts-ignore
                 counts: {
                     upvotes: 1,
                     downvotes: 0
@@ -236,6 +251,7 @@
                 removed: false
             }
         } 
+        // @ts-ignore
         return post;
     }
 </script>
@@ -282,6 +298,7 @@
                     draft.loading = false
                     // @ts-ignore
                     data = draft
+                    // @ts-ignore
                     communityDetails = await resolveCommunity(draft.community)
                     communitySearch = `${communityDetails.name}@${new URL(communityDetails.actor_id).hostname}`
                 }
@@ -321,12 +338,7 @@
                     Community <span class="text-red-500">*</span>
                 </span>
                 {#if data.community}
-                    <Icon
-                        src={Check}
-                        mini
-                        size="20"
-                        class="text-green-400 ml-auto inline"
-                    />
+                    <Icon src={Check} mini size="20" class="text-green-400 ml-auto inline"/>
                 {/if}
             </div>
 
@@ -342,6 +354,7 @@
                         return
                     }
                     data.community = c.id
+                    // @ts-ignore
                     communityDetails = c
                     communitySearch = `${c.name}@${new URL(c.actor_id).hostname}`
                 }}

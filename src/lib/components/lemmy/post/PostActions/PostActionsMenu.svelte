@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { PostView } from 'lemmy-js-client'
     
     import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
@@ -42,7 +43,7 @@
     
     export let post:PostView
     export let menuIconSize:number  = 16
-    export let alignment:string = 'top-right'
+    export let alignment:Alignment = 'top-right'
     export let icon:IconSource = EllipsisHorizontal;
     
     // Allow importing this component just for the edit post modal
@@ -82,7 +83,7 @@
             on:click={() => {
                 if (!suppressModal) editing = true
                 else {
-                    dispatcher('openPostEditor', post);
+                    dispatcher('edit', post);
                 }
             }}
         >
@@ -131,7 +132,7 @@
     {#if $profile?.jwt}
         <!--- Save/Unsave Post --->
         <MenuButton
-        title="{post.saved ? 'Unsave' : 'Save'} Post"
+            title="{post.saved ? 'Unsave' : 'Save'} Post"
             on:click={async () => {
                 if ($profile?.jwt) post.saved = await save(post, !post.saved, $profile.jwt)
             }}
@@ -150,7 +151,7 @@
 
 
         <!--- Hide for Self--->
-        {#if $profile.user?.local_user_view.person.id != post.creator.id}
+        {#if $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
             
             <!---Report Post--->
             <MenuButton on:click={() => report(post)}  title="Report Post">

@@ -15,10 +15,13 @@
     export let q: string = ''
     export let type: 'community' | 'person' = 'community'
     export let listing_type: ListingType = 'Subscribed'
-    export let items: Community[] | Person[] | undefined = []
+    export let items: Community[] | Person[]
     export let showWhenEmpty: boolean = false
     export let label:string = ''
     export let containerClass:string = ''
+
+    if (type == 'community') items = [] as Community[]
+    if (type == 'person') items = [] as Person[]
 
     let showNone: boolean = false
 
@@ -26,6 +29,7 @@
 </script>
 
 {#if type == 'community'}
+    <!-- svelte-ignore a11y-label-has-associated-control -->
     <label class="flex flex-col w-full {$$props.class}">
         {#if label != ''}
             <span class="font-bold text-sm text-left mb-1 w-max self-start">
