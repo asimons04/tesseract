@@ -19,7 +19,7 @@
     export let selected: T
     export let label: string | undefined = undefined
     export let alignment: Alignment = 'bottom-left'
-    export let selectedFunc: Function = () => {};
+    export let selectedFunc: Function | undefined = undefined
     export let title:string = '';
     export let icon:any = undefined;
     

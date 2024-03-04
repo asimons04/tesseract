@@ -90,7 +90,7 @@
 {/if}
 
 
-<header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] px-2 py-1 bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
+<header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] h-[4rem] px-2 py-1 bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
     
     <span class="flex flex-row gap-2 md:gap-2 items-center text-sm text-center mx-auto my-2 md:mr-2">
         
