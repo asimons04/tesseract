@@ -135,20 +135,7 @@
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
 
-                <!--- Fediseer Endorsement Badge--->
-                {#if community && showFediseer && $userSettings.uiState.fediseerBadges}
-                    <span class="flex flex-row gap-2 items-center mr-2">
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
-                            class="cursor-pointer"
-                            loading="lazy"
-                            alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
-                            title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
-                            on:click={(e) => fediseerModal = true}
-                        />
-                    </span>
-                {/if}
+                
 
                 {#if nsfw}
                     <Badge label="NSFW" color="red">
@@ -190,6 +177,21 @@
                         <Icon src={Megaphone} mini size="16" />
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>-->
                     </Badge>
+                {/if}
+
+                <!--- Fediseer Endorsement Badge--->
+                {#if community && showFediseer && $userSettings.uiState.fediseerBadges}
+                    <span class="flex flex-row gap-2 items-center mr-2">
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
+                            class="cursor-pointer"
+                            loading="lazy"
+                            alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
+                            title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
+                            on:click={(e) => fediseerModal = true}
+                        />
+                    </span>
                 {/if}
             </div>
             
