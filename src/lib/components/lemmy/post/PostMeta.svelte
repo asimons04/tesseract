@@ -135,7 +135,7 @@
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
 
-                <!---Badge accounts less than 24 hours old-->
+                <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
                 {#if post?.creator?.published && 
                     (
                         new Date().getTime()/1000/60 - (
@@ -143,7 +143,7 @@
                                 ? (new Date(post.creator.published).getTime()/1000/60) 
                                 : (new Date(post.creator.published + 'Z').getTime()/1000/60) 
                             )
-                            < 1440
+                            < 1440 * 5
                     )
                 }
                     <Badge label="New Account: {
@@ -156,7 +156,6 @@
                         <Icon src={ExclamationCircle} mini size="16"/>
                         <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">New Account</span>
                     </Badge>
-
                 {/if}
 
                 {#if nsfw}
