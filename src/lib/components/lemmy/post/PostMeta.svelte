@@ -146,7 +146,13 @@
                             < 1440
                     )
                 }
-                    <Badge label="New Account" color="gray">
+                    <Badge label="New Account: {
+                        post.creator.published.endsWith('Z')
+                            ? new Date(post.creator.published).toString()
+                            : new Date(post.creator.published + 'Z').toString()
+                        }" 
+                        color="gray"
+                    >
                         <Icon src={ExclamationCircle} mini size="16"/>
                         <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">New Account</span>
                     </Badge>
