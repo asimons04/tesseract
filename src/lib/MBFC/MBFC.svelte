@@ -79,7 +79,7 @@
     <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check">
         <div class="flex flex-col gap-4 w-full">
             <h2 class="flex flex-row items-center justify-between w-full">
-                <span class="font-bold text-lg">Report for {results.name}</span>
+                <span class="font-bold text-lg">{results.name}</span>
             </h2>
             
             

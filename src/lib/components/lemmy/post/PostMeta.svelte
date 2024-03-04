@@ -25,6 +25,7 @@
         LockClosed,
         Megaphone,
         MinusCircle,
+        NoSymbol,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -172,7 +173,7 @@
                 
                 {#if removed}
                     <Badge label="Removed" color="red">
-                        <Icon src={MinusCircle} mini size="16" />
+                        <Icon src={NoSymbol} mini size="16" />
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>-->
                     </Badge>
                 {/if}
