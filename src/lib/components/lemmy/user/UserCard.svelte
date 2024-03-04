@@ -321,11 +321,14 @@
                     <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
                     <FormattedNumber number={person.counts.comment_count} />
                 </span>
-            
+                
+                {#if person.counts.post_score && person.counts.comment_score}
                 <span class="flex flex-row items-center gap-2" title="Content Score">
                     <Icon src={Trophy} width={16} height={16} mini />
                     <FormattedNumber number={(person.counts.post_score + person.counts.comment_score)} />
                 </span>
+                {/if}
+                
             </div>
         </div>
     </Card>
