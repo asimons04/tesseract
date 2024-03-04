@@ -9,20 +9,24 @@
         Plus,
         ShieldCheck,
         Trash,
+        UserPlus,
     } from 'svelte-hero-icons'
     import type { CommentNodeI } from './comments'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import CommentForm from './CommentForm.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import Badge from '$lib/components/ui/Badge.svelte'
+    import Button from '$lib/components/input/Button.svelte'
     import CommentActions from '$lib/components/lemmy/comment/CommentActions.svelte'
+    import CommentForm from './CommentForm.svelte'
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    
+    
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import { getClient } from '$lib/lemmy.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { profile } from '$lib/auth.js'
     import { slide } from 'svelte/transition'
-    import Button from '$lib/components/input/Button.svelte'
-
+    
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     export let node: CommentNodeI
     export let postId: number
     export let op: boolean = false
@@ -40,11 +44,7 @@
 </script>
 
 {#if editing}
-    <Modal
-        bind:open={editing}
-        title="Editing comment"
-        icon={ChatBubbleLeftEllipsis}
-        action="Save"
+    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} action="Save"
         on:action={async () => {
             if (!$profile?.jwt || newComment.length <= 0) return
 
@@ -63,7 +63,7 @@
                 })
             } catch (err) {
                 toast({
-                    content: err,
+                    content: "Unable to edit comment",
                     type: 'error',
                 })
             }
@@ -74,7 +74,6 @@
             bind:value={newComment}
             rows={15}
             actions={false}
-            preview={true}
         />
     </Modal>
 {/if}
@@ -111,7 +110,7 @@
 
                 <RelativeDate date={node.comment_view.comment.published}/>
                 <span>•</span>
-                <span>
+                <span title="{node.comment_view.counts.upvotes} Upvotes, {node.comment_view.counts.downvotes} Downvotes">
                     {
                         Math.floor(
                             (node.comment_view.counts.upvotes /
@@ -128,41 +127,45 @@
                 {/if}
 
                 {#if node.comment_view.comment.deleted || node.comment_view.comment.removed}
-                    <Icon
-                        src={Trash}
-                        solid
-                        size="12"
-                        title="Deleted"
-                        class="text-red-600 dark:text-red-500"
-                    />
+                    <Icon src={Trash} solid size="12" title="Deleted" class="text-red-600 dark:text-red-500"/>
                 {/if}
 
                 {#if node.comment_view.saved}
-                    <Icon
-                        src={Bookmark}
-                        solid
-                        size="12"
-                        title="Saved"
-                        class="text-yellow-600 dark:text-yellow-500"
-                    />
+                    <Icon src={Bookmark} solid size="12" title="Saved" class="text-yellow-600 dark:text-yellow-500" />
+                {/if}
+
+                <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
+                {#if node.comment_view?.creator?.published && 
+                    (
+                        new Date().getTime()/1000/60 - (
+                            node.comment_view.creator.published.endsWith('Z')
+                                ? (new Date(node.comment_view.creator.published).getTime()/1000/60) 
+                                : (new Date(node.comment_view.creator.published + 'Z').getTime()/1000/60) 
+                            )
+                            < 1440 * 5
+                    )
+                }
+                    <Badge label="New Account: {
+                        node.comment_view.creator.published.endsWith('Z')
+                            ? new Date(node.comment_view.creator.published).toString()
+                            : new Date(node.comment_view.creator.published + 'Z').toString()
+                        }" 
+                        color="gray"
+                    >
+                        <Icon src={UserPlus} mini size="16"/>
+                        <span class="hidden md:block">New Account</span>
+                    </Badge>
                 {/if}
             </span>
             
-            <Button
+            <Button color="ghost" size="sm"
                 class="ml-auto translate-x-1 opacity-0 group-hover:translate-x-0
                 group-hover:opacity-100 text-xs !transition-all
                 pointer-events-none border-none"
-                color="ghost"
-
-                size="sm"
             >
-                {#if open}
-                    <Icon src={Minus} width={16} height={16} mini />
-                {:else}
-                    <Icon src={Plus} width={16} height={16} mini />
-                    {#if node.children.length > 0}
-                        <span class="text-xs opacity-50">+{node.children.length}</span>
-                    {/if}
+                <Icon src={open ? Minus : Plus} width={16} height={16} mini />
+                {#if !open && node.children.length > 0}
+                    <span class="text-xs opacity-50">+{node.children.length}</span>
                 {/if}
             </Button>
         </summary>

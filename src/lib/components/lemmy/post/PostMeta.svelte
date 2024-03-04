@@ -27,6 +27,7 @@
         MinusCircle,
         NoSymbol,
         Trash,
+        UserPlus
     } from 'svelte-hero-icons'
     
     
@@ -153,7 +154,7 @@
                         }" 
                         color="gray"
                     >
-                        <Icon src={ExclamationCircle} mini size="16"/>
+                        <Icon src={UserPlus} mini size="16"/>
                         <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">New Account</span>
                     </Badge>
                 {/if}
