@@ -51,7 +51,7 @@
         
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
-            title="Media Bias Fact Check: {results.credibility}"
+            title="Media Bias Fact Check: {results.credibility} - {results?.biases?.name}"
             on:click={async () => {
                 open=true;
             }}
@@ -66,7 +66,11 @@
                         : QuestionMarkCircle
             } mini size="16"/>
             
-            {results.credibility.replace('Credibility', '')} <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">Credibility</span>
+            <!--{results.credibility.replace('Credibility', '')} <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">Credibility</span>-->
+            {results.credibility.replace('Credibility', '')} 
+                <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">
+                     ({results?.biases?.name})
+                </span>
         </span>
         
     </Badge>
