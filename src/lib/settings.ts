@@ -140,7 +140,7 @@ export const defaultSettings: Settings = {
     },
     
     debugInfo: false,
-    systemUI: true,
+    systemUI: false,
     imageSize: {
         feed: 'max-w-3xl',
         post: 'w-full'
