@@ -140,6 +140,7 @@
         </span>
 
         <!---Create Post --->
+        {#if $profile?.user}
         <MenuButton link href="/create/post"
             disabled={(community.posting_restricted_to_mods && !amMod($profile.user, community)) || community.removed}
             on:click={createPost}
@@ -148,6 +149,7 @@
             <Icon src={PencilSquare} mini size="16" />
             Create Post
         </MenuButton>
+        {/if}
 
         <!---Favorite/Unfavorite--->
         <MenuButton title="{favorite ? 'Remove from Favorites' : 'Add to Favorites'}" on:click={(e) => {e.stopPropagation(); addFavorite(community, !favorite)} }>
@@ -171,7 +173,8 @@
 
         <!---Unsubscribe--->
         <MenuButton disabled={unsubscribing} loading={unsubscribing}>
-            <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <span class="flex flex-row gap-2 w-full" role="button" tabindex="0" on:click={ (e) => {
                 e.stopPropagation();
                 unsubscribe();
             }}>

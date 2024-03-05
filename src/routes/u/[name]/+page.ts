@@ -4,13 +4,18 @@ import { getItemPublished } from '$lib/lemmy/item.js'
 import type { SortType } from 'lemmy-js-client'
 import { get } from 'svelte/store'
 
-export async function load({ params, url, fetch }) {
+interface LoadParams {
+    params: any,
+    url: any,
+    fetch: any
+}
+export async function load({ params, url, fetch }: LoadParams) {
     const page = Number(url.searchParams.get('page')) || 1
     const type: 'comments' | 'posts' | 'all' = (url.searchParams.get('type') as 'comments' | 'posts' | 'all') || 'all'
     const sort: SortType = (url.searchParams.get('sort') as SortType) || 'New'
 
     const user = await getClient(undefined, fetch).getPersonDetails({
-        limit: 20,
+        limit: 50,
         page: page,
         username: params.name,
         sort: sort,
@@ -38,6 +43,7 @@ export async function load({ params, url, fetch }) {
     page: page,
     sort: sort,
     person_view: user.person_view,
+    moderates: user.moderates,
     items,
   }
 }

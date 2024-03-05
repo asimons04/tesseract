@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { LocalUserView, PersonView } from 'lemmy-js-client'
+    import type { CommunityModeratorView, LocalUserView, PersonView } from 'lemmy-js-client'
 
     import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { isBlocked } from '$lib/lemmy/user.js'
@@ -45,14 +45,15 @@
     } from 'svelte-hero-icons'
     
     
-
-    export let person:LocalUserView | PersonView
+    export let person: PersonView | LocalUserView
+    export let moderates: CommunityModeratorView[]
 
     let blocking = false
     let userBioModal = false;
     let loadingMessage = false
     let messaging = false
     let message = ''
+    let expandModerates = false
 
 
     async function blockUser(block: number) {
@@ -334,6 +335,53 @@
     </Card>
 
 
+    {#if moderates?.length > 0}
+    <div class="flex flex-col gap-1 mt-2 mb-4">
+        <Button
+            color="tertiary"
+            alignment="left"
+            on:click={ ()=> { expandModerates = !expandModerates}}
+        >
+            
+            <Icon src={ShieldCheck} mini size="18" />
+
+            <span class="w-full flex flex-row justify-between">
+                Moderates
+                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
+                    {moderates.length}
+                </span>
+            </span>
+        </Button>
+        
+        <div class="flex flex-col gap-2 pl-4" class:hidden={!expandModerates}>
+            {#each moderates as community}
+                <div class="inline-flex w-full">
+                    <Button
+                        class="hover:bg-slate-200 w-full h-max"
+                        color="tertiary"
+                        alignment="left"
+                        href="/c/{community.community.name}@{new URL(community.community.actor_id).hostname}"
+                        title="{community.community.title.replace('&amp;', '&')}@{new URL(community.community.actor_id).hostname}"
+                    >
+                        <div class="flex-none">
+                            <Avatar
+                                url={community.community.icon}
+                                alt={community.community.name}
+                                title={community.community.title}
+                                width={20}
+                                slot="icon"
+                            />
+                        </div>
+                        
+                        <span class="w-full break-words">
+                            {community.community.title.replace('&amp;', '&')}
+                        </span>
+                    </Button>
+                </div>
+            {/each}
+        </div>
+    </div>
+    {/if}
     
     {#if person.person.bio}
         <div class="hidden xl:block">

@@ -66,7 +66,7 @@
     
     {#if userSideCard}
         <div>
-            <UserCard person={data.person_view} />
+            <UserCard person={data.person_view} moderates={data.moderates} />
         </div>
     {/if}
 </div>
