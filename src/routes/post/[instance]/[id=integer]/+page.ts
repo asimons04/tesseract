@@ -5,7 +5,12 @@ import { SSR_ENABLED, userSettings } from '$lib/settings.js'
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 
-export async function load({ params, url, fetch }) {
+interface LoadParams {
+    params: any,
+    url: any,
+    fetch: any
+}
+export async function load({ params, url, fetch }: LoadParams) {
     try {
         const post = await getClient(params.instance.toLowerCase(), fetch).getPost({
             id: Number(params.id),

@@ -3,7 +3,12 @@ import { getClient } from '$lib/lemmy.js'
 import { redirect } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 
-export async function load({ params, fetch }) {
+interface loadParams {
+    params: any,
+    fetch: any
+}
+
+export async function load({ params, fetch }:loadParams) {
   const comment = await getClient(undefined, fetch).getComment({
     id: Number(params.id),
     auth: get(profile)?.jwt,

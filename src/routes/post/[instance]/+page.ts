@@ -2,8 +2,11 @@ import { instance } from '$lib/instance.js'
 import { error, redirect } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 
-
-export function load({ params, url }) {
+interface LoadParams {
+    params: any,
+    url: any
+}
+export function load({ params, url }:LoadParams) {
     // If url parameter is a number, assume it is a post id and redirect (/post/12345 -> /post/{instance}/12345
     if (Number(params.instance)) {
         const split = url.pathname.split('/')
