@@ -90,7 +90,13 @@ export interface Filters {
 
 const fullUserName = (user: Person) => `${user.name}@${new URL(user.actor_id).hostname}`
 
-const timestamp = (when: string) => Date.parse(`${when}Z`)
+function timestamp (when: string) {
+    if (!when.endsWith('Z')) {
+        when += 'Z'
+    }
+    return Date.parse(when)
+}
+//const timestamp = (when: string) => Date.parse(`${when}Z`)
 
 export const _toModLog = (item: ModAction): ModLog => {
     if ('mod_ban_from_community' in item) {
@@ -222,7 +228,11 @@ export const _toModLog = (item: ModAction): ModLog => {
     }
 }
 
-export async function load({ url }) {
+interface LoadParams {
+    url: any
+}
+
+export async function load({ url }: LoadParams) {
     const community   = Number(url.searchParams.get('community')) || undefined
     const personId    = Number(url.searchParams.get('other_person_id')) || undefined
     const modId       = Number(url.searchParams.get('mod_id')) || undefined
