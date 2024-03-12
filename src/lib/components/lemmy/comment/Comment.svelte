@@ -99,7 +99,7 @@
                 {/if}
             </span>
 
-            <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-1">
+            <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-1 items-center">
                 {#if !open}
                     <div class="flex items-center gap-0.5 mr-1 text-slate-800 dark:text-zinc-200">
                         <Icon src={ArrowUp} mini size="14" title="Moderator" />
@@ -118,18 +118,17 @@
                         ) || 0
                     }%
                 </span>
-            </span>
-
-            <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-2 ml-1">
                 {#if node.comment_view.comment.updated}
-                    <span title="Edited {
-                        node.comment_view.comment.updated.endsWith('Z')
-                            ? new Date(node.comment_view.comment.updated).toString()
-                            : new Date(node.comment_view.comment.updated + 'Z').toString()
-                    }">
+                    <span class="flex flex-row items-center gap-1 ml-1">•
                         <Icon src={Pencil} solid size="12" title="Edited" />
+                        <RelativeDate date={node.comment_view.comment.updated}/>
                     </span>
                 {/if}
+                
+            </span>
+
+            <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-2 ml-1 items-center">
+                
 
                 {#if node.comment_view.comment.deleted || node.comment_view.comment.removed}
                     <Icon src={Trash} solid size="12" title="Deleted" class="text-red-600 dark:text-red-500"/>
