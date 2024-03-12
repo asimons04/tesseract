@@ -13,6 +13,7 @@ function normalizeDomain(domain:string):string {
         .replace('english.aawsat.com', 'aawsat.com')
         .replace('mronline.org', 'monthlyreview.org')
         .replace('bbc.in', 'bbc.com')
+        .replace('tvpworld.com', 'tvp.info')
         .replace('wapo.st', 'washingtonpost.com')
         .replace('yahoo.com', 'news.yahoo.com')
         .replace(/.*\.antiwar\.com/, 'antiwar.com')
@@ -20,7 +21,6 @@ function normalizeDomain(domain:string):string {
         .replace(/.*\.businessinsider\.com/, 'businessinsider.com')
         .replace(/.*\.cnn\.com/, 'cnn.com')
         .replace(/.*\.ctvnews\.ca/, 'ctvnews.ca')
-        
         .replace(/.*\.elpais\.com/, 'elpais.com')
         .replace(/.*\.medium\.com/, 'medium.com')
         .replace(/.*\.yahoo\.com/, 'news.yahoo.com')

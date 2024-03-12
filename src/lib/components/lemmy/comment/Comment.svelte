@@ -88,7 +88,6 @@
         ">
             <span class:font-bold={op} class="flex flex-row gap-1 items-center">
                 <UserLink
-                    inComment
                     avatarSize={20}
                     avatar
                     user={node.comment_view.creator}
@@ -123,7 +122,13 @@
 
             <span class="text-slate-600 dark:text-zinc-400 flex flex-row gap-2 ml-1">
                 {#if node.comment_view.comment.updated}
-                    <Icon src={Pencil} solid size="12" title="Edited" />
+                    <span title="Edited {
+                        node.comment_view.comment.updated.endsWith('Z')
+                            ? new Date(node.comment_view.comment.updated).toString()
+                            : new Date(node.comment_view.comment.updated + 'Z').toString()
+                    }">
+                        <Icon src={Pencil} solid size="12" title="Edited" />
+                    </span>
                 {/if}
 
                 {#if node.comment_view.comment.deleted || node.comment_view.comment.removed}
@@ -139,8 +144,8 @@
                     (
                         new Date().getTime()/1000/60 - (
                             node.comment_view.creator.published.endsWith('Z')
-                                ? (new Date(node.comment_view.creator.published).getTime()/1000/60) 
-                                : (new Date(node.comment_view.creator.published + 'Z').getTime()/1000/60) 
+                                ? (Date.parse(node.comment_view.creator.published)/1000/60) 
+                                : (Date.parse(node.comment_view.creator.published + 'Z')/1000/60) 
                             )
                             < 1440 * 5
                     )

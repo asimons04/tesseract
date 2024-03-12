@@ -90,7 +90,7 @@ export interface Filters {
 
 const fullUserName = (user: Person) => `${user.name}@${new URL(user.actor_id).hostname}`
 
-function timestamp (when: string) {
+function timestamp (when: string): number {
     if (!when.endsWith('Z')) {
         when += 'Z'
     }
