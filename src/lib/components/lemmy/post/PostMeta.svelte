@@ -141,8 +141,8 @@
                     (
                         new Date().getTime()/1000/60 - (
                             post.creator.published.endsWith('Z')
-                                ? (new Date(post.creator.published).getTime()/1000/60) 
-                                : (new Date(post.creator.published + 'Z').getTime()/1000/60) 
+                                ? (Date.parse(post.creator.published)/1000/60) 
+                                : (Date.parse(post.creator.published + 'Z')/1000/60) 
                             )
                             < 1440 * 5
                     )
@@ -154,8 +154,8 @@
                         }" 
                         color="gray"
                     >
-                        <Icon src={UserPlus} mini size="16"/>
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">New Account</span>
+                        <Icon src={UserPlus} mini size="16"/>New
+                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}"> Account</span>
                     </Badge>
                 {/if}
 

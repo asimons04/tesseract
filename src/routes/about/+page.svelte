@@ -21,16 +21,19 @@
 
     <p class="my-3">
         <strong>Tesseract</strong> is a Lemmy client designed for media-rich content and aims to provide a comparable experience to 
-        the alien site.  
+        the alien site.  The reason it exists is because I wanted to fix a lot of things about Lemmy that annoyed me.  Of all the third
+        party frontends out there, Photon was the closest but wasn't quite what I wanted.  So, Tesseract was forked and took on a new
+        life of its own.
     </p>
 
-    <p class="my-3">
-        
-    </p>    
-    
+   
        
     <h2 class="text-2xl font-bold leading-8 ">Features Unique to Tesseract</h2>
-    
+    <p class="my-3">
+        I think Photon has adopted some of these, at least YouTube, but I'm unsure if any of the others are supported.  As far as I know, most of these
+        are still unique to Tesseract.
+    </p>
+
     <ul class="list-disc pl-4 my-3 text-base">
         <li class="mt-2">
             <p class="font-bold">Full media support in feed and posts</p>
@@ -105,6 +108,12 @@
         <li class="mt-2">
             <p class="font-bold">Distinguished and Sticky Comments</p>
             <p>
+                This no longer works on 0.19.x versions of Lemmy because the Lemmy developers are awful and short-sighted. They weren't even using the distinguished
+                flag and still decided to make it so that admins/mods could only distinguish their own comments.  Screw the Lemmy devs.  Eventually this feature
+                will be removed once 0.18.x support is dropped.  
+            </p>
+
+            <p>
                 Mods/Admins can distinguish and sticky comments.  Comments that are distinguished will always display at the top of the comment list 
                 regardless of sort order.
             </p>
@@ -113,6 +122,8 @@
                 Note that the way distinguished comments are handled only applies to Tesseract.  The comments will be marked as distinguished at the API 
                 level, but it's up to individual clients/UIs to handle how to render comments with the distinguished flag set.
             </p>
+
+            
         </li>
 
 
@@ -137,7 +148,57 @@
         The project has a <Link href="https://github.com/asimons04/Tesseract" newtab={true} title="ChangeLog.md" highlight>GitHub page.</Link>
         with more details, a detailed change log, and documentation.
     </p>
-   
+
+    <h2 class="text-2xl font-bold leading-8">Credits and Acknowledgements</h2>
+    <ul class="list-disc pl-4 my-3 text-base">
+        <li class="mt-2">
+            <Link href="https://github.com/Xyphyn/photon" newtab={true} title="Photon" highlight>Xylight</Link> for creating Photon.  Tesseract began life as a fork of a very early version of that and likely would not exist (or would exist very differently)
+            without that base.  
+        </li>
+
+        <li class="mt-2">
+            <Link href="https://mediabiasfactcheck.com/" newtab={true} title="Media Bias Fact Check" highlight>Media Bias Fact Check</Link> is an invaluable tool when, if you're like me,
+            using Lemmy as a news aggregator.  Through their efforts, Tesseract is able to show credibility badges on news posts to help combat disinformation. I cannot
+            thank them enough for their work.
+        </li>
+
+        <li class="mt-2">
+            <Link href="https://lemmy.max-p.me/u/Max_P" newtab={true} title="Max_P" highlight>Max_P@lemmy.max-p.me</Link> and 
+            <Link href="https://discuss.online/u/jgrim" newtab={true} title="jgrim" highlight>jgrim@discuss.online</Link> for both being early adopters of 0.19
+            and allowing me to use their instances as testbeds for Tesseract development.
+        </li>
+
+        <li class="mt-2">
+            All of the users on Github and in the Lemmy Admin chat who suggested and tested features.
+        </li>
+    </ul>
+
+    <h2 class="text-2xl font-bold leading-8">Donations</h2>
+    <p class="my-2">
+        I built Tesseract in my spare time as a hobby, learning excercise for SvelteKit, and to address my own personal annoyances with Lemmy and other
+        Lemmy UIs.  That said, I do not feel the need to accept donations for its development.
+    </p>
+
+    <p class="my-2">However, if you really want to donate, please consider donating to one of the following:</p>
+
+    <ul class="list-disc pl-4 my-3 text-base">
+        <li class="mt-2">
+            <Link href="https://www.buymeacoffee.com/xylight" newtab={true} title="Donate to Xylight" highlight>Xylight</Link>: 
+            They are the author of Photon from which Tesseract was forked who also did a lot of the heavy lifting for much of the core.  While I've replaced a lot of it, none of my work would
+            have been possible without theirs.
+        </li>
+
+        <li class="mt-2">
+            <Link href="https://mediabiasfactcheck.com/support-media-bias-fact-check/" newtab={true} title="Donate to Media Bias Fact Check" highlight>Media Bias Fact Check</Link>: 
+                Tesseract embeds a subset of a dump of their dataset in itself in order to provide the bias and credibility badges and reports. This dump comes from their browser extension.  Without this,
+                it would be impossible to have this feature.  MBFC is 100% independent and relies on memberships and donations to do their work. Please consider donating to them so they can continue
+                the amazing work they do.
+        </li>
+
+        
+
+    </ul>
+    
 
 </div>
 
