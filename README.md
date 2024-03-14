@@ -1,20 +1,4 @@
 # Tesseract
-## 12/1/2023: Development of Tesseract for Lemmy has Ended
-I'm tired of dealing with the arrogant, tone-deaf Lemmy developers and their utter disdain for moderators and anyone else working within the ecosystem.  To that end, development of and support for Tesseract for Lemmy has ceased.
-
-The latest release version, 1.2.9, is available here for posterity and if anyone would like to adopt and fork it.  If you do, please re-name it so I will not be associated with it.
-
-As of the date of abandonment, 1.2.9 has "backwards compatible" support for both 0.18.x and 0.19.x but does not support any new 0.19.x features as it is still using the 0.18.x JS client. 
-
-The Lemmy devs refused to provide any backwards-compatible support in the 0.19 client despite encouraging alternate frontend devs to provide backwards-compaible support (which they themselves do not). This is one of *many* reasons I'm done developing for Lemmy. 
-
-### Future Plans
-Tesseract for Lemmy may be dead, but the project is not.  There is another Lemmy-like platform being developed, and I'm excited to announce that all future Tesseract development will be focused there.  One of the goals of that project is initial Lemmy API compatibility, so Tesseract may still work with Lemmy for a while, but that will only be a side effect.  
-
-I may also rename the project to further distance it from Lemmy, but that is yet to be determined.
-
-Thank you all for your support, awesome suggestions, and for sharing my dream of an awesome client. I hope to see you in the future once the Lemmy-like platform is released (it's not public yet, so I do not want to reveal anything further at this time).
-
 # About
 Tesseract was Lemmy client designed for media-rich feeds and content.  It was probably the best Lemmy client no one was using :-P
 
