@@ -12,6 +12,7 @@
     import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
@@ -161,11 +162,7 @@
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, 384, 'webp') : ''}>
         <div class="flex flex-row gap-3 items-start p-3">
             <div class="flex-shrink-0">
-                <Avatar
-                    width={48}
-                    url={person.person.avatar}
-                    alt={person.person.name}
-                />
+                <Avatar width={48} url={person.person.avatar} alt={person.person.name} />
             </div>
 
             <div class="flex flex-col gap-0 w-full">
@@ -174,6 +171,7 @@
                         <span class="font-bold text-lg">
                             <UserLink badges user={person.person} showInstance={false} />
                         </span>
+
                         
                         <!--- Person Action Menu --->
                         <div class="ml-auto">

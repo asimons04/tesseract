@@ -3,7 +3,7 @@
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import { userSettings } from '$lib/settings.js'
     import type { Person } from 'lemmy-js-client'
-    import { Icon, NoSymbol, ShieldCheck } from 'svelte-hero-icons'
+    import { Icon, NoSymbol, ShieldCheck, Trash } from 'svelte-hero-icons'
 
     export let user: Person
     export let avatar: boolean = false
@@ -42,7 +42,7 @@
         {/if}
     </span>
   
-    {#if badges && (user.admin || user.banned || user.bot_account || mod)}
+    {#if badges && (user.admin || user.banned || user.bot_account || user.deleted || mod )}
         <span class="flex flex-row gap-1">
             {#if distinguishAdminsMods && user.admin}
                 <div class="text-red-500" title="Admin">
@@ -65,6 +65,13 @@
             {#if user.bot_account}
                 <div class="text-blue-500 font-bold" title="Bot">BOT</div>
             {/if}
+
+            {#if user.deleted}
+                <div class="text-red-500" title="Deleted">
+                    <Icon src={Trash} mini size="12" />
+                </div>
+                
+                {/if}
         </span>
     {/if}
 </a>
