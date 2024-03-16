@@ -10,18 +10,20 @@ import {
 import { get } from 'svelte/store'
 
 // Alphabetically sorts either an array of group names or an array of CommunityGroups objects
-export function sortGroups(a:string|CommunityGroup|Community, b:string|CommunityGroup|Community) {
+export function sortGroups(a:string|CommunityGroup|Community, b:string|CommunityGroup|Community): number {
+    
     if (typeof a == 'string') {
-        if (a.toLowerCase() < b.toLowerCase()) return -1
-        if (a.toLowerCase() > b.toLowerCase()) return 1
-        if (a.toLowerCase() == b.toLowerCase()) return 0
+        if ((a as string).toLowerCase() < (b as string).toLowerCase()) return -1
+        if ((a as string).toLowerCase() > (b as string).toLowerCase()) return 1
+        if ((a as string).toLowerCase() == (b as string).toLowerCase()) return 0
     }
 
     if (typeof a == 'object') {
-        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
-        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
-        if (a.name.toLowerCase() == b.name.toLowerCase()) return 0
+        if ((a as CommunityGroup|Community).name.toLowerCase() < (b as CommunityGroup|Community).name.toLowerCase()) return -1
+        if ((a as CommunityGroup|Community).name.toLowerCase() > (b as CommunityGroup|Community).name.toLowerCase()) return 1
+        if ((a as CommunityGroup|Community).name.toLowerCase() == (b as CommunityGroup|Community).name.toLowerCase()) return 0
     }
+    return 0
 }
 
 export function sortCommunities(a:Community, b:Community) {
@@ -34,13 +36,14 @@ export const getGroupIndex = function (groupName:string):number {
     const userProfile = get(profile)
 
     if (!groupName) return -1
-    if (!userProfile.groups) return -1
+    if (!userProfile?.groups) return -1
 
     return userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == groupName.toLowerCase())
 }
 
 export const getGroup = function (group:number|string): CommunityGroup|undefined {
     const userProfile = get(profile)
+    if (!userProfile?.groups) return undefined
 
     if (typeof group == 'number' && userProfile.groups[group]) return userProfile.groups[group]
     if (typeof group == 'number') return undefined
@@ -69,7 +72,7 @@ export const isFavorite = function(community:Community):boolean {
 
 
 // Create a group and optionally add communities to it.
-export const addGroup = function(name:string, communities:Community[] = [] as CommunityGroup):void {
+export const addGroup = function(name:string, communities:Community[] = [] as Community[]):void {
     // Read the current user profile
     const userProfile = get(profile)
     
@@ -148,7 +151,7 @@ export const removeCommunityFromGroup = function(community:Community, groupName:
 
 export const updateGroup = function(oldGroup:CommunityGroup, newGroup:CommunityGroup):boolean {
     const userProfile = get(profile)
-    if(!profile || !oldGroup || !newGroup) return false
+    if(!userProfile || !userProfile.groups || !oldGroup || !newGroup) return false
     
     let index = getGroupIndex(oldGroup.name);
     if (index < 0) return false
@@ -165,7 +168,7 @@ export const updateGroup = function(oldGroup:CommunityGroup, newGroup:CommunityG
 // Removes a group and all of its communities
 export const removeGroup = function (groupName:string):void {
     const userProfile = get(profile)
-    if (!groupName || !userProfile?.jwt) return
+    if (!groupName || !userProfile?.jwt || !userProfile.groups ) return
 
     let groupIndex = userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == groupName.toLowerCase())
     if (groupIndex < 0) return
