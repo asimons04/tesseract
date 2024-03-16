@@ -53,7 +53,7 @@
         </Button>
 
         <Button color="tertiary" alignment="left" title="Saved" class="hover:bg-slate-200" href="/profile/saved">
-            <span class="flex flex-col items-center {$page.url.pathname =='/profile/saved' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+            <span class="flex flex-col items-center {$page.url.pathname.startsWith('/profile/saved') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                 <Icon src={Bookmark} mini size="18" title="Saved" />
                 <span class="text-xs">Saved</span>
             </span>            
