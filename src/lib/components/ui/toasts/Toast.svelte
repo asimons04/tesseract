@@ -25,7 +25,7 @@
     export let toast: Toast
 </script>
 
-<div class="{toastColors[toast.type]} relative w-120 rounded-md overflow-hidden flex flex-row items-center"
+<div class="{toastColors[toast.type]} relative w-96 rounded-md overflow-hidden flex flex-row items-center"
     transition:fly={{
         duration: 300,
         y: 8,
