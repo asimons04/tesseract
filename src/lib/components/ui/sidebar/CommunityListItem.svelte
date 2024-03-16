@@ -49,6 +49,7 @@
         if (!confirm) {
             toast({
                 type: "warning",
+                title: "Confirm Remove",
                 content: `Are you sure you want to remove ${community.title || community.name} from ${group}?`,
                 action: () => removeFromCurrentGroup(true),
             })
@@ -74,6 +75,7 @@
         if (!confirm) {
             toast({
                 type: "warning",
+                title: "Confirm Unsubscribe",
                 content: `Are you sure you want to unsubscribe from ${community.title || community.name}?`,
                 action: () => unsubscribe(true),
             })
@@ -88,7 +90,7 @@
                 follow: false,
             })
         } catch (error) {
-            toast({ content: error as any, type: 'error' })
+            toast({ title: 'Error', content: error as any, type: 'error' })
         }
         
         addSubscription(community, false)
