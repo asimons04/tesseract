@@ -37,8 +37,8 @@
 <SubNavbar 
     home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
     listingType={true} 
-    listingTypeOptions = {[...$profile.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]} 
-    listingTypeOptionNames = {[...$profile.groups?.map((cg) => cg.name)?.sort(sortGroups) ?? [] ]} 
+    listingTypeOptions = {[...$profile?.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]} 
+    listingTypeOptionNames = {[...$profile?.groups?.map((cg) => cg.name)?.sort(sortGroups) ?? [] ]} 
     listingTypeOnSelect={(e) => {
         goto(`/feeds/${e.detail}?${new URL(window.location.href).searchParams.toString()}`)
     }}
@@ -48,14 +48,14 @@
     pageSelection={true} bind:currentPage={data.page}
 >
     <!--Edit Group Button-->
-    <span let:iconSize slot="right" class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" 
+    <button let:iconSize slot="right" class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" 
         title="Edit Group"
         on:click={() => {
             editCommunityGroup = true;
         }}
     >
         <Icon src={PencilSquare} width={iconSize} />
-    </span>
+    </button>
 </SubNavbar>
 
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
@@ -87,6 +87,6 @@
     </div>
 
     <div class="lg:mb-[-24px]">
-        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins}/>
+        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version}/>
     </div>
 </div>

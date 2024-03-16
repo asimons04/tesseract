@@ -1,15 +1,10 @@
-import type { Community, GetPostsResponse, ListingType, SortType } from 'lemmy-js-client'
+import type { Community, GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
 import { addMBFCResults, filterKeywords, findCrossposts } from '$lib/components/lemmy/post/helpers'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
-import { goto } from '$app/navigation'
 
 import { type CommunityGroup, profile } from '$lib/auth.js'
-
-import { addFavorite } from '$lib/favorites'
-
-import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'
 
 
@@ -26,18 +21,10 @@ export async function load(req: any) {
     // Get the named feed from the request 
     let feed        = req.params.name?.toLowerCase() || 'favorites'
     let feedName    = ''
-    let communities = [] as Community[];
+    let communities = [] as number[];
 
-    /*
-    // Get a list of communities based on the supplied feed name.
-    if (feed == 'favorites') {
-        communities = userProfile.favorites?.map((c:Community) => c.id) ?? []
-        feedName = "My Favorites"
-    }
-    else 
-    */
     
-    if (userProfile.groups) {
+    if (userProfile?.groups) {
         // Search the user's defined groups to see if the supplied feed name matches a group
         let index = userProfile.groups.findIndex((cg:CommunityGroup) => cg.name.toLowerCase() == feed)
         if (index >=0) {
@@ -45,13 +32,13 @@ export async function load(req: any) {
             feedName    = userProfile.groups[index].name
         }
         else {
-            communities = [] as Community[]
+            communities = [] as number[]
             feedName = 'Feed Not Found'
             feed = ''
         }
     }
     else {
-        communities = [] as Community[]
+        communities = [] as number[]
         feedName = 'Feed Not Found'
         feed = ''
     }
@@ -70,7 +57,7 @@ export async function load(req: any) {
     // Setup the arrays to run the tasks and hold the results
     let tasks:Array<Promise<any>> = []
     let tasksResult:GetPostsResponse[]
-    let combinedPosts:GetPostsResponse[] = []
+    let combinedPosts:PostView[] = [] as PostView[]
 
     // Instantiate a Lemmy client and parameters to use for each community fetch.
     const client = getClient(undefined, fetch)
@@ -82,7 +69,7 @@ export async function load(req: any) {
     }
 
     // Grab the site info to populate the sidebar
-    let site = client.getSite();
+    let site = await client.getSite();
 
     // Loop over the communities array and call getPosts for each. Store each promise in the tasks array.
     for (let i:number=0; i< communities.length; i++) {
@@ -98,14 +85,14 @@ export async function load(req: any) {
     
     // Loop over tasksResults and join the posts it returned into the combinedPosts array
     for (let i:number=0; i< tasksResult.length; i++) {
-        let posts = tasksResult[i];
+        let posts = tasksResult[i] as GetPostsResponse;
         combinedPosts = [...combinedPosts, ...posts.posts]
     }
 
     // Sort the posts however
     if (sort == 'New')          combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
     if (sort == 'Old')          combinedPosts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-    if (sort == 'NewComments')  combinedPosts.sort((a, b) => Date.parse(b.counts.newest_commentTime) - Date.parse(a.counts.newest_comment_time))
+    if (sort == 'NewComments')  combinedPosts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
     if (sort == 'Active')       combinedPosts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
     if (sort == 'Hot')          combinedPosts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
     if (sort == 'MostComments') combinedPosts.sort((a, b) => b.counts.comments - a.counts.comments)
