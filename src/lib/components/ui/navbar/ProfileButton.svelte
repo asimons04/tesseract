@@ -5,6 +5,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import ProfileAvatar from '$lib/lemmy/ProfileAvatar.svelte'
     import {Icon, Trash} from 'svelte-hero-icons'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     export let prof: Profile
     export let index: number
@@ -53,7 +54,12 @@
         <Button
                 on:click={(e) => {
                     e.stopPropagation();
-                    deleteProfile(prof.id)
+                    toast({
+                        type: 'warning',
+                        title: "Confirm Account Removal",
+                        content: "Are you sure you want to delete this profile?",
+                        action: () => deleteProfile(prof.id)
+                    })
                 }}
                 size="sm"
                 color="danger"

@@ -25,7 +25,7 @@
     export let toast: Toast
 </script>
 
-<div class="{toastColors[toast.type]} relative w-80 rounded-md overflow-hidden flex flex-row items-center"
+<div class="{toastColors[toast.type]} relative w-120 rounded-md overflow-hidden flex flex-row items-center"
     transition:fly={{
         duration: 300,
         y: 8,
@@ -37,10 +37,7 @@
             <Spinner width={20} />
         </div>
     {:else}
-        <Icon
-            size="20"
-            mini
-            class="relative m-2 ml-4 flex-shrink-0"
+        <Icon size="20" mini class="relative m-2 ml-4 flex-shrink-0"
             src={
                 toast.type == 'info'
                     ? InformationCircle

@@ -31,6 +31,8 @@
         Bars3,
         Bookmark,
         BuildingOffice,
+        ChevronDown,
+        ChevronUp,
         Cog6Tooth,
         CommandLine,
         ComputerDesktop,
@@ -254,10 +256,49 @@
         </button>
 
         <!--- User-Specific Options--->
-        <li class="text-xs opacity-80 text-left mx-4 my-1 py-1">
-            {$profile?.user ? $profile.user.local_user_view.person.display_name ?? $profile.user.local_user_view.person.name : 'Profile'}
-        </li>
+
+        <!--- Account Selection Submenu--->
+        {#if $profileData?.profiles?.length > 0}
+        <MenuButton>
+            <div class="flex flex-row gap-2 font-bold items-center w-full text-sm transition-colors"
+                aria-role="button"
+                on:click={(e) => {
+                    e.stopPropagation();
+                    expandAccountsMenu = !expandAccountsMenu;
+                }}
+            >
+                <Icon src={UserGroup} mini width={16} />
+                {$profile?.user ? $profile.user.local_user_view.person.display_name ?? $profile.user.local_user_view.person.name : 'Profiles'}
+                <span class="text-xs font-bold px-1 py-0.5 ml-auto">
+                    <Icon src={expandAccountsMenu ? ChevronUp : ChevronDown} mini width={16}  />
+                </span>
+            </div>
+        </MenuButton>
+        <!---If no profiles defined, show "Manage Accounts" button instead--->
+        {:else}
+            <MenuButton link href="/accounts">
+                <Icon src={AdjustmentsHorizontal} mini width={16} />
+                Manage Accounts
+            </MenuButton>
+        {/if}
         
+        <!--- Accounts List --->
+        {#if expandAccountsMenu}
+            <div class="flex flex-col w-full">
+                <div class="flex flex-col items-start w-full">
+                    {#each $profileData.profiles as prof, index (prof.id)}
+                        <ProfileButton {index} {prof}/>
+                    {/each}
+                </div>
+
+                <MenuButton link href="/accounts">
+                    <Icon src={AdjustmentsHorizontal} mini width={16} />
+                    Manage Accounts
+                </MenuButton>
+            </div>
+        {/if}
+
+
         {#if $profile?.user}
             <MenuButton link href="/profile/user" data-sveltekit-preload-data="hover">
                     <Icon src={UserCircle} mini width={16} /> Profile
@@ -279,36 +320,7 @@
             </MenuButton>
         {/if}
       
-        <!--- Account Selection Submenu--->
-        <MenuButton>
-            <div class="flex flex-row gap-2 items-center w-full text-sm transition-colors"
-                aria-role="button"
-                on:click={(e) => {
-                    e.stopPropagation();
-                    expandAccountsMenu = !expandAccountsMenu;
-                }}
-            >
-                <Icon src={UserGroup} mini width={16} />
-                Accounts
-                <span class="text-xs font-bold bg-slate-100 dark:bg-zinc-700 px-2 py-0.5 rounded-md ml-auto">
-                    {$profileData.profiles.length}
-                </span>
-            </div>
-        </MenuButton>
         
-        <!--- Accounts List --->
-        <div class="flex flex-col w-full" class:hidden={!expandAccountsMenu}>
-            <div class="flex flex-col items-start w-full">
-                {#each $profileData.profiles as prof, index (prof.id)}
-                    <ProfileButton {index} {prof}/>
-                {/each}
-            </div>
-
-            <MenuButton link href="/accounts">
-                <Icon src={AdjustmentsHorizontal} mini width={16} />
-                Manage Accounts
-            </MenuButton>
-        </div>
         
 
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
