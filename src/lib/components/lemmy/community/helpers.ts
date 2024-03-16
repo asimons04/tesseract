@@ -49,6 +49,7 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
     
     if (!confirm) {
         toast({
+            title: "Confirm Community Block",
             content: "Are you sure you want to block and unsubscribe from this community?",
             type: "warning",
             action: () => blockCommunity(communityID, true)

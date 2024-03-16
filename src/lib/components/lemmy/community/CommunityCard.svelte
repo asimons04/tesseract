@@ -32,7 +32,8 @@
     import {
         Calendar,
         ChatBubbleOvalLeftEllipsis,
-        ChevronDoubleRight,
+        ChevronDown,
+        ChevronUp,
         Cog6Tooth,
         EllipsisHorizontal,
         EllipsisVertical,
@@ -159,8 +160,7 @@
 
 
 <!---Community Info Modal--->
-<Modal bind:open={sidebar}>
-    <span slot="title">{community_view.community.title.replace('&amp;', '&')}</span>
+<Modal bind:open={sidebar} title={community_view.community.title.replace('&amp;', '&')}>
     <div class="mx-auto">
 
         {#if moderators.length > 0}
@@ -207,7 +207,7 @@
 
 <!--- Hideable div to contain the main part of the community sidebar --->
 <StickyCard class="mb-3 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
-    <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, '384', 'webp') : ''}>
+    <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, 384, 'webp') : ''}>
         <div class="flex flex-col gap-2 h-full">
             <!--- Commuinity Avatar, display name, and federation name--->
             <div class="flex flex-row gap-3 items-start p-3">
@@ -244,7 +244,7 @@
                                     Community Actions
                                 </span>
 
-                                {#if $profile?.jwt}
+                                {#if $profile?.jwt && $profile?.user}
                                 <!---Create Post --->
                                 <MenuButton link href="/create/post"
                                     disabled={
@@ -281,7 +281,7 @@
                                 {#if $profile?.jwt}
                                     <!--- Subscribe/Unsubscribe--->
                                     <MenuButton disabled={loading.subscribing || community_view.community.removed } loading={loading.subscribing}>
-                                        <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+                                        <button class="flex flex-row gap-2 w-full" on:click={ (e) => {
                                             e.stopPropagation();
                                             subscribe();
                                         }}>
@@ -291,19 +291,19 @@
                                                 ? 'Unsubscribe'
                                                 : 'Subscribe'
                                             }
-                                        </span>
+                                        </button>
                                     </MenuButton>
 
                                     <!--- Add/Remove Favorite--->
                                     <MenuButton>
-                                        <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
+                                        <button class="flex flex-row gap-2 w-full" on:click={ (e) => {
                                             e.stopPropagation();
                                             favorite = !favorite
                                             addFavorite(community_view.community, favorite)
                                         }}>
                                             <Icon src={Star} mini size="16" />
                                             {favorite ? 'Remove Favorite' : 'Add Favorite'}
-                                        </span>
+                                    </button>
                                     </MenuButton>
 
                                     <!---Add to Group--->
@@ -314,48 +314,45 @@
                                     
                                     <!--- Block/Unblock Community --->
                                     <MenuButton disabled={loading.blocking || community_view.community.removed} loading={loading.blocking} color="dangerSecondary">
-                                        <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
+                                        <button class="flex flex-row gap-2 w-full" on:click={(e) => { 
                                             e.stopPropagation(); 
                                             block(); 
                                         }}>
                                             <Icon src={community_view.blocked  ? ShieldCheck : ShieldExclamation} mini size="16" />
                                             {community_view.blocked ? 'Unblock' : 'Block'} Community
-                                        </span>
+                                        </button>
                                     </MenuButton>
                                 {/if}
                                 
                                 <!--- Admin-Remove-Community--->
-                                {#if $profile.user && isAdmin($profile.user)}
+                                {#if $profile?.user && isAdmin($profile.user)}
                                     <MenuButton disabled={loading.removing} loading={loading.removing} color="dangerSecondary">
-                                        <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
+                                        <button class="flex flex-row gap-2 w-full" on:click={(e) => { 
                                             e.stopPropagation(); 
                                             remove(); 
                                         }}>
 
                                             <Icon src={community_view.community.removed  ? PlusCircle : MinusCircle} mini size="16" />
                                             {community_view.community.removed ? 'Restore' : 'Remove'} Community
-                                        </span>
+                                        </button>
                                     </MenuButton>
 
                                     <!--- Hide/Unhide Community --->
                                     <MenuButton disabled={loading.hiding} loading={loading.hiding} color="dangerSecondary">
-                                        <span class="flex flex-row gap-2 w-full" on:click={(e) => { 
+                                        <button class="flex flex-row gap-2 w-full" on:click={(e) => { 
                                             e.stopPropagation(); 
                                             hide();
                                         }}>
                                             <Icon src={community_view.community.hidden  ? Eye : EyeSlash} mini size="16" />
                                             {community_view.community.hidden ? 'Unhide' : 'Hide'} Community
-                                        </span>
+                                        </button>
                                     </MenuButton>
                                 {/if}
                                 
                                 <!--- Settings --->
-                                {#if $profile.user && amMod($profile.user, community_view.community)}
+                                {#if $profile?.user && amMod($profile.user, community_view.community)}
                                     <MenuButton link
-                                        href="/c/{fullCommunityName(
-                                            community_view.community.name,
-                                            community_view.community.actor_id
-                                        )}/settings"
+                                        href="/c/{fullCommunityName(community_view.community.name,community_view.community.actor_id)}/settings"
                                         title="Edit Community"
                                     >
                                         <Icon src={Cog6Tooth} mini size="16" />
@@ -407,7 +404,7 @@
         
     <!--- Convenience button to create post --->
     <div class="w-full mt-2 mb-2 flex flex-col gap-2 hidden xl:flex">
-        {#if $profile?.jwt}
+        {#if $profile?.jwt && $profile?.user}
             <Button
                 href="/create/post"
                 color="primary"
@@ -432,11 +429,7 @@
                     subscribe();
                 }}
             >
-                <Icon
-                    src={community_view.subscribed == 'Subscribed' ? Minus : Rss}
-                    mini
-                    size="16"
-                />
+                <Icon src={community_view.subscribed == 'Subscribed' ? Minus : Rss} mini size="16"/>
                 {
                     (community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending')
                         ? 'Unsubscribe'
@@ -449,18 +442,12 @@
     <div class="hidden  xl:block">
         {#if moderators.length > 0}
             <div class="flex flex-col gap-1 mt-2 mb-4">
-                <Button
-                    color="tertiary"
-                    alignment="left"
-                    on:click={ ()=> { expandModerators = !expandModerators}}
-                 >
-                    
+                <Button color="tertiary" alignment="left" on:click={ ()=> { expandModerators = !expandModerators}}>
                     <Icon src={HandRaised} mini size="18" />
-        
                     <span class="w-full flex flex-row justify-between">
                         Moderators
-                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
-                            {moderators.length}
+                        <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
+                            <Icon src={expandModerators ? ChevronUp : ChevronDown} mini height={18} width={18} />
                         </span>
                     </span>
                 </Button>

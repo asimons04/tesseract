@@ -29,6 +29,8 @@
     import {
         Cake,
         ChatBubbleOvalLeftEllipsis,
+        ChevronDown,
+        ChevronUp,
         EllipsisVertical,
         Envelope,
         Hashtag,
@@ -345,8 +347,8 @@
 
             <span class="w-full flex flex-row justify-between">
                 Moderates
-                <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
-                    {moderates.length}
+                <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
+                    <Icon src={expandModerates ? ChevronUp : ChevronDown} mini height={18} width={18} />
                 </span>
             </span>
         </Button>

@@ -18,6 +18,8 @@
         Calendar,
         ChatBubbleOvalLeftEllipsis,
         ChevronDoubleRight,
+        ChevronUp,
+        ChevronDown,
         Icon,
         Newspaper,
         PencilSquare,
@@ -127,8 +129,8 @@
 
                     <span class="w-full flex flex-row justify-between">
                         Admins
-                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
-                            {admins.length}
+                        <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
+                            <Icon src={expandAdmins ? ChevronUp : ChevronDown} mini height={18} width={18} />
                         </span>
                     </span>
                 </Button>

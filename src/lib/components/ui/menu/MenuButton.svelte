@@ -44,8 +44,8 @@
             "
 
         >
+
             <slot/>
-            <!----<slot {toggleOpen}/>-->
         </a>
     {:else}
         <button
@@ -63,6 +63,7 @@
             {:else}
                 <slot name="icon" />
             {/if}
+
             <slot/>
             <!--<slot {toggleOpen}/>-->
         </button>

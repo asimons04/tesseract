@@ -260,14 +260,24 @@
         <!--- Account Selection Submenu--->
         {#if $profileData?.profiles?.length > 0}
         <MenuButton>
-            <div class="flex flex-row gap-2 font-bold items-center w-full text-sm transition-colors"
-                aria-role="button"
+            <!-- svelte-ignore a11y-interactive-supports-focus -->
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div class="flex flex-row gap-2 font-bold items-center w-full py-1 text-sm transition-colors"
+                role="button"
                 on:click={(e) => {
                     e.stopPropagation();
                     expandAccountsMenu = !expandAccountsMenu;
                 }}
             >
-                <Icon src={UserGroup} mini width={16} />
+                {#if $profile?.user}
+                    <Avatar width={28}
+                        url={$profile.user.local_user_view.person.avatar}
+                        alt={$profile.user.local_user_view.person.name}
+                    />
+                {:else}
+                    <Icon src={UserGroup} mini width={16} />
+                {/if}
+
                 {$profile?.user ? $profile.user.local_user_view.person.display_name ?? $profile.user.local_user_view.person.name : 'Profiles'}
                 <span class="text-xs font-bold px-1 py-0.5 ml-auto">
                     <Icon src={expandAccountsMenu ? ChevronUp : ChevronDown} mini width={16}  />
@@ -377,9 +387,10 @@
         </MenuButton>
 
         <MenuButton>
-            <span class="flex flex-row w-full gap-2"
+            <span class="flex flex-row w-full gap-2" role="button"
             on:click={ (e) => {
                 e.stopPropagation();
+                //@ts-ignore
                 $theme = dark() ? 'light' : 'dark'
             }}
             >

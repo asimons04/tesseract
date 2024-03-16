@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { PostView } from 'lemmy-js-client'
     
     import {addFavorite, isFavorite } from '$lib/favorites'
@@ -27,7 +28,7 @@
 
     export let post:PostView
     export let menuIconSize:number  = 16
-    export let alignment:string = 'top-right'
+    export let alignment:Alignment = 'top-right'
 
     export let suppressModal:boolean = false
 
@@ -89,6 +90,8 @@
     {#if $profile?.user}
         <!---Add/Remove to Favorites--->
         <MenuButton>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
                 //e.stopPropagation();
                 groups.favorite = !groups.favorite
@@ -114,7 +117,7 @@
 
         <MenuButton title="{subscribed ? 'Unsubscribe' : 'Subscribe'}" 
             on:click={async () => {
-                subscribed = await subscribe(post.community, subscribed, true)
+                subscribed = await subscribe(post.community, subscribed)
                 subscribed = subscribed
                 subscribed
                     ? post.subscribed = 'Subscribed'
