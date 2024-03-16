@@ -7,8 +7,12 @@ import { error } from '@sveltejs/kit'
 import { profile } from '$lib/auth.js'
 import { userSettings } from '$lib/settings.js'
 
+interface LoadParams {
+    url: any,
+    fetch: any
+}
 
-export async function load({ url, fetch }) {
+export async function load({ url, fetch }: LoadParams) {
     const page = Number(url.searchParams.get('page') || 1) || 1
     const sort: SortType = (url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     const listingType: ListingType = (url.searchParams.get('type') as ListingType) || get(userSettings).defaultSort.feed

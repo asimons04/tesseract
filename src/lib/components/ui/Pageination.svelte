@@ -21,11 +21,7 @@
         }}
         disabled={page <= 1}
     >
-        <Icon
-            src={ChevronDoubleLeft}
-            mini
-            size="18"
-        />
+        <Icon src={ChevronDoubleLeft} mini size="18"/>
         Back
     </Button>
 
