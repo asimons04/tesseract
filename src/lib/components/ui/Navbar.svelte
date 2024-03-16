@@ -81,13 +81,7 @@
     <div data-sveltekit-preload-data="hover" class="flex flex-row gap-2 items-center mr-auto">
         <a href="/" class="flex flex-row items-center gap-2">
             {#if $site}
-                <Avatar
-                    url={$site.site_view.site.icon}
-                    alt={$site.site_view.site.name}
-                    width={32}
-                    res={64}
-                    circle={false}
-                />
+                <Avatar url={$site.site_view.site.icon} alt={$site.site_view.site.name} width={32} res={64} circle={false}/>
                 <div class="flex flex-row items-center gap-2 max-[500px]:hidden">
                     <!--<span class="opacity-30 text-xl">/</span>-->
                     <div class="text-base font-bold inline-flex flex-col">
@@ -260,10 +254,7 @@
         <!--- Account Selection Submenu--->
         {#if $profileData?.profiles?.length > 0}
         <MenuButton>
-            <!-- svelte-ignore a11y-interactive-supports-focus -->
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div class="flex flex-row gap-2 font-bold items-center w-full py-1 text-sm transition-colors"
-                role="button"
+            <button class="flex flex-row gap-2 font-bold items-center w-full py-1 text-sm transition-colors"
                 on:click={(e) => {
                     e.stopPropagation();
                     expandAccountsMenu = !expandAccountsMenu;
@@ -282,7 +273,7 @@
                 <span class="text-xs font-bold px-1 py-0.5 ml-auto">
                     <Icon src={expandAccountsMenu ? ChevronUp : ChevronDown} mini width={16}  />
                 </span>
-            </div>
+            </button>
         </MenuButton>
         <!---If no profiles defined, show "Manage Accounts" button instead--->
         {:else}
@@ -306,6 +297,8 @@
                     Manage Accounts
                 </MenuButton>
             </div>
+
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         {/if}
 
 
@@ -327,6 +320,10 @@
         
             <MenuButton link href="/profile/saved" >
                 <Icon src={Bookmark} mini width={16} /> Saved
+            </MenuButton>
+
+            <MenuButton link href="/profile/settings" >
+                <Icon src={Cog6Tooth} mini width={16} /> User Settings
             </MenuButton>
         {/if}
       
@@ -378,23 +375,23 @@
         <li class="text-xs px-4 py-1 my-1 opacity-80">App</li>
         <MenuButton link href="/settings">
             <Icon src={Cog6Tooth} mini width={16} />
-            Settings
+            App Settings
         </MenuButton>
 
         <MenuButton link href="/about">
             <Icon src={InformationCircle} mini width={16} />
-            About
+            About Tesseract
         </MenuButton>
 
         <MenuButton>
-            <span class="flex flex-row w-full gap-2" role="button"
+            <button class="flex flex-row w-full gap-2"
             on:click={ (e) => {
                 e.stopPropagation();
                 //@ts-ignore
                 $theme = dark() ? 'light' : 'dark'
             }}
             >
-                <Icon
+                <Icon mini size="16"
                     src={$theme == 'system'
                         ? ComputerDesktop
                         : $theme == 'light'
@@ -403,8 +400,6 @@
                                 ? Moon
                                 : Moon
                     }
-                    mini
-                    size="16"
                     />
                 <div class="flex flex-row gap-2 justify-between w-full">
                     <span class="mr-4">Theme</span>
@@ -418,7 +413,7 @@
                         <option value="dark">Dark</option>
                     </select>
                 </div>
-            </span>
+            </button>
         </MenuButton>
 
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />

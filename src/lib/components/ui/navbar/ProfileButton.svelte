@@ -43,6 +43,7 @@
 >
     
     <ProfileAvatar profile={prof} {index} selected={$profile?.id == prof.id} slot="icon" />
+    
     <span class="flex flex-col gap-0">
         {prof.username ?? prof.user?.local_user_view.person.name}
         <span class="text-slate-500 dark:text-zinc-400 font-normal text-xs">
@@ -51,8 +52,7 @@
     </span>
     
     <span class="ml-auto">
-        <Button
-                on:click={(e) => {
+        <Button on:click={(e) => {
                     e.stopPropagation();
                     toast({
                         type: 'warning',
