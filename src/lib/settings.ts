@@ -12,28 +12,28 @@ const toBool = (str: string | undefined) => {
   return str.toLowerCase() === 'true'
 }
 
-const strToArray = (str:string | undefined) => {
+const strToArray = (str:string | undefined): string[] => {
     if (!str) { return [] }
 
     // Reject empty strings
     if (str.trim() == "") { return [] }
     
     // Convert non-empty string into array, convert newlines into commas, remove scheme and slashes
-    let arr:Array<String> =  str.split(',');
+    let arr:Array<string> =  str.split(',');
     
     // Deduplicate and sort the array of instances
-    let uniqArr:Array<String> = [...new Set(arr)].sort();
+    let uniqArr:Array<string> = [...new Set(arr)].sort();
     
     // Remove empty string elements and trim whitespace from each domain entry
-    let trimmedArr:Array<String> = [];
+    let trimmedArr:Array<string> = [];
     
     for (let i=0; i< uniqArr.length; i++) {
-        let item:String = uniqArr[i].trim();
+        let item:string = uniqArr[i].trim();
         if (item.length > 0) {
             trimmedArr.push(item);
         }
     }
-    trimmedArr.sort();
+    trimmedArr.sort()
     return trimmedArr;
 }
 
