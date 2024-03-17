@@ -29,11 +29,11 @@
     export let autoplay:boolean|undefined = undefined;
     export let loop:boolean | undefined = undefined
     export let displayType: PostDisplayType = "feed"
-    export let expandCompact: boolean;
+    export let expandCompact: boolean = false;
     export let post: PostView
     export let moderators: Array<CommunityModeratorView> = [];
     export let showCommentForm:boolean = false;
-    export let expandPreviewText:boolean
+    export let expandPreviewText:boolean = false
     export let collapseBadges:boolean = false;
 
     // Determe post type based on its attributes

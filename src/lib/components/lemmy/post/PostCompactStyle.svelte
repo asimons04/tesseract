@@ -18,7 +18,7 @@
 
     export let post: PostView
     export let actions: boolean = true
-    export let autoplay:boolean|undefined = undefined;
+    export let autoplay:boolean|undefined = false;
     export let displayType: PostDisplayType = "feed"
     export let forceCompact:boolean = false;
     export let expandCompact: boolean;
@@ -32,8 +32,6 @@
 <Card class="bg-white flex flex-col w-full p-2 gap-0 " id={post.post.id}>
 
     <PostMeta bind:post={post} displayType={displayType} showTitle={true} {collapseBadges}/>
-
-
 
     <!--- Post Link, Body, and Thumbnail  --->
     <div class="flex flex-row w-full {disablePostLinks ? 'pointer-events-none list-none' : ''}">

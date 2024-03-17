@@ -27,12 +27,6 @@
     title="Comments"
     color="ghost"
 >
-    <Icon
-        slot="icon"
-        src={ChatBubbleOvalLeftEllipsis}
-        mini
-        width={16}
-        height={16}
-    />
+    <Icon slot="icon" src={ChatBubbleOvalLeftEllipsis} mini width={16} height={16} />
     <FormattedNumber number={post.counts.comments} />
 </Button>

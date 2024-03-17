@@ -31,7 +31,7 @@
     } from 'svelte-hero-icons'
     
     export let post: PostView
-    export let postType: PostType
+    export let postType: PostType = 'text'
     export let displayType: PostDisplayType
     export let expandCompact: boolean
     export let showCommentForm:boolean = false;

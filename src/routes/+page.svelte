@@ -24,6 +24,7 @@
         ...nextBatch
     ];
 
+    // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
 		capture: () => JSON.stringify(data),
 		restore: (value) => (data = JSON.parse(value)),
