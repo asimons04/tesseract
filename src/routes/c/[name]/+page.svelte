@@ -35,33 +35,32 @@
 <svelte:head>
     <title>{data?.community?.community_view.community.title ?? "Community Not Found"}</title>
 
-    <meta
-        name="og:title"
+    <meta name="og:title"
         content={data?.community?.community_view.community.title ?? "Community Not Found"}
     />
     {#if data?.community?.community_view.community.description}
-        <meta
-            name="og:description"
+        <meta name="og:description"
             content={data.community.community_view.community.description}
         />
     {/if}
 </svelte:head>
 
-<SubNavbar home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
+<SubNavbar home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     sortMenu={true} bind:selectedSortOption={data.sort}
     pageSelection={true} bind:currentPage={data.page}
 />
-{#if data?.posts && data?.community}
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
-    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        
-        <PostFeed posts={data.posts.posts}/>
-        
-        <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
-    </div>
 
-    <div class="mt-[8px]">
-        <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators}/>
+{#if data?.posts && data?.community}
+    <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
+        <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
+            
+            <PostFeed posts={data.posts.posts}/>
+            
+            <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
+        </div>
+
+        <div class="mt-[8px]">
+            <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators}/>
+        </div>
     </div>
-</div>
 {/if}
