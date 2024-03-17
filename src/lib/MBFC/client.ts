@@ -10,6 +10,7 @@ function normalizeDomain(domain:string):string {
         .replace('amp.', '')
         .replace(/^m\./,'')
         .replace('bbc.co.uk', 'bbc.com')
+        .replace('presstv.co.uk', 'presstv.ir')
         .replace('english.aawsat.com', 'aawsat.com')
         .replace('mronline.org', 'monthlyreview.org')
         .replace('bbc.in', 'bbc.com')
