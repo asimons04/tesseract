@@ -74,7 +74,7 @@
         <Button  color="ghost" class="hover:text-inherit border-none" title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
                 expandCompact = !expandCompact; 
-                const element = document.getElementById(post.post.id);
+                const element = document.getElementById(post.post.id.toString());
                 if (element) scrollToTop(element);
             }}
         >

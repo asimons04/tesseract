@@ -9,7 +9,7 @@ import {
 } from '$lib/settings.js'
 
 // Accepts an image URL as input and determines whether to convert it into a proxied image URL or keep the original
-export function imageProxyURL(url:string, size:number|undefined = undefined, format:string|undefined = undefined): string|undefined {
+export function imageProxyURL(url:string|undefined, size:number|undefined = undefined, format:string|undefined = undefined): string|undefined {
     
     if (!url) return undefined
     

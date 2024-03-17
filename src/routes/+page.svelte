@@ -1,6 +1,14 @@
 <script lang="ts">
+    import type { PostView } from 'lemmy-js-client'
+    import type { Snapshot } from './$types';
+
+    import { addMBFCResults, findCrossposts, filterKeywords } from '$lib/components/lemmy/post/helpers'
+    
+    import { getClient } from '$lib/lemmy.js'
     import { page } from '$app/stores'
+    import { profile } from '$lib/auth.js'
     import { searchParam } from '$lib/util.js'
+    import { userSettings } from '$lib/settings.js'
 
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
@@ -8,6 +16,40 @@
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     export let data
+
+    let nextBatch = [] as PostView[]
+    
+    $: data.posts.posts = [
+		...data.posts.posts,
+        ...nextBatch
+    ];
+
+    export const snapshot: Snapshot<string> = {
+		capture: () => JSON.stringify(data),
+		restore: (value) => (data = JSON.parse(value)),
+	};
+
+    async function loadPosts() {
+        // Fetch posts
+        let posts = await getClient().getPosts({
+            limit: $userSettings?.uiState.postsPerPage || 20,
+            page: ++data.page,
+            sort: data.sort,
+            type_: data.listingType,
+            auth: $profile?.jwt,
+        });
+
+        // Apply MBFC data object to post
+        posts = addMBFCResults(posts.posts);
+
+        // Filter the posts for keywords
+        posts = filterKeywords(posts.posts);
+
+        // Roll up any duplicate posts/crossposts
+        posts = findCrossposts(posts.posts);
+        //return posts.posts
+        nextBatch = posts.posts
+    }
 </script>
 
 <svelte:head>
@@ -15,7 +57,7 @@
 </svelte:head>
 
 <SubNavbar
-    home compactSwitch toggleMargins refreshButton toggleCommunitySidebar
+    home compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     listingType={true}      bind:selectedListingType={data.listingType}
     sortMenu={true}         bind:selectedSortOption={data.sort}
     pageSelection={true}    bind:currentPage={data.page}
@@ -29,6 +71,12 @@
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
             <PostFeed posts={data.posts.posts} />
         </section>
+
+        <button on:click={async () => {
+            await loadPosts()
+        }}>
+            Test
+        </button>
 
         <div class="mt-auto px-2">
             <Pageination

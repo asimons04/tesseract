@@ -12,14 +12,14 @@ interface LoadParams {
     fetch: any
 }
 
-export async function load({ url, fetch }: LoadParams) {
+export async function load({ url }: LoadParams) {
     const page = Number(url.searchParams.get('page') || 1) || 1
     const sort: SortType = (url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     const listingType: ListingType = (url.searchParams.get('type') as ListingType) || get(userSettings).defaultSort.feed
    
     try {
         // Fetch posts
-        let posts = await getClient(undefined, fetch).getPosts({
+        let posts = await getClient().getPosts({
             limit: get(userSettings)?.uiState.postsPerPage || 20,
             page: page,
             sort: sort,

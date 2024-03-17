@@ -40,40 +40,39 @@
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
             <div class="flex-none w-[20%] md:w-[15%] h-auto mr-2 mt-2">
-                <!--<div class="grid justify-items-start">-->
-                    <!--- Expand the post in place when clicking thumbnail--->
-                    <div 
-                        role="button"
-                        title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                        class="cursor-pointer"
-                        on:click={() => {  
-                            expandCompact = !expandCompact; 
-                            const element = document.getElementById(post.post.id);
-                            if (element) scrollToTop(element);
+                <!--- Expand the post in place when clicking thumbnail--->
+                <button 
+                    title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                    class="cursor-pointer"
+                    on:click={() => {  
+                        expandCompact = !expandCompact; 
+                        const element = document.getElementById(post.post.id.toString());
+                        if (element) scrollToTop(element);
 
-                        }}
-                    >
-                        <!--- Thumbnail for Link Post--->
-                        {#if post.post.thumbnail_url}
-                            <img
-                                src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
-                                loading="lazy"
-                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
-                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                            />
-                        <!---Thumbnail for Image Post--->
-                        {:else}
-                            <img
-                                src="{imageProxyURL(post.post.url, 256, 'webp')}"
-                                loading="lazy"
-                                class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
-                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                            />
-                        {/if}
+                    }}
+                >
+                    <!--- Thumbnail for Link Post--->
+                    {#if post.post.thumbnail_url}
+                        <img
+                            src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
+                            loading="lazy"
+                            alt={post.post.name}
+                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
+                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                        />
+                    <!---Thumbnail for Image Post--->
+                    {:else}
+                        <img
+                            src="{imageProxyURL(post.post.url, 256, 'webp')}"
+                            loading="lazy"
+                            alt={post.post.name}
+                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
+                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                        />
+                    {/if}
+            
                 
-                    
-                    </div>
-                <!--</div>-->
+                </button>
             </div>
         {/if}
         
@@ -114,6 +113,7 @@
                     displayType={displayType}
                     on:edit={(e) => {
                         toast({
+                            title: 'Confirmation',
                             content: 'The post was edited successfully.',
                             type: 'success',
                         })

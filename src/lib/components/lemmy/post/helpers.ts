@@ -148,7 +148,7 @@ export const isSongLink = (url:string):boolean => {
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
 export const postType = (post: PostView | undefined ) => {
     
-    if (!post) return
+    if (!post) return 'text'
     
     if ( 
         (post.post.url && isImage(post.post.url) ) ||
@@ -223,7 +223,7 @@ export const fixLemmyEncodings = function (content:string|undefined):string|unde
     }
 }
 
-export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolean=true):void {
+export const scrollToTop = function(element:HTMLElement|undefined|null, smooth:boolean=true):void {
     if (!element) return;
     try {
             
@@ -425,6 +425,7 @@ export const addMBFCResults = function (posts:PostView[]):GetPostsResponse {
             let post = posts[i];
 
             if (post.post?.url) {
+                // @ts-ignore
                 post.mbfc = MBFCLookup(post.post.url);
             }
 

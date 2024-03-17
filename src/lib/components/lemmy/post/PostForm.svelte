@@ -86,8 +86,6 @@
             data.name = editingPost.post.name ?? ''
             data.nsfw = editingPost.post.nsfw ?? false
             data.community = editingPost.community ?? undefined
-            
-           
         }
 
         if (passedCommunity) {

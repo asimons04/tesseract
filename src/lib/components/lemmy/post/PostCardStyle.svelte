@@ -37,7 +37,7 @@
     export let collapseBadges:boolean = false;
 
     // Determe post type based on its attributes
-    let postType:PostType|undefined  = identifyPostType(post)
+    let postType:PostType  = identifyPostType(post)
 
 </script>
 
@@ -105,6 +105,7 @@
         <PostActions  bind:post bind:expandCompact displayType={displayType} postType={postType} bind:showCommentForm
             on:edit={(e) => {
                 toast({
+                    title: 'Confirmation',
                     content: 'The post was edited successfully.',
                     type: 'success',
                 })
