@@ -62,7 +62,7 @@
                             expandPreviewText = !expandPreviewText
                             post.post.nsfw = false
                             // Scroll top of post to top on close
-                            const element = document.getElementById(post.post.id);
+                            const element = document.getElementById(post.post.id.toString());
                             if (element && !expandPreviewText) scrollToTop(element);
                         }}
                     >
@@ -96,7 +96,7 @@
                             post.post.nsfw = false
                             
                             // Scroll top of post to top on close
-                            const element = document.getElementById(post.post.id);
+                            const element = document.getElementById(post.post.id.toString());
                             if (element && !expandPreviewText) scrollToTop(element);
                         }}
                     >
