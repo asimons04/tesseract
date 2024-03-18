@@ -44,6 +44,18 @@ The groundwork for this exists in the current release, but I didn't have time to
     - Create an action queue (upvote/downvote, reply, etc) to allow actions to be queued when offline and sent to API when online
 
 
+## 1.2.3
+- [Media] Add support for detecting and rendering Peertube embeds
+- [0.19.x Support] Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.
+- [Bugfixes] General Typescript and a11y fixes
+- [UI] Reimplemented account switching menu
+- [Feeds] Switched pagination to infinite scroll 
+- [Feeds] Removed feed setting for number of posts per page
+  - Hard coded at 20 with infinite scrolling
+  - Too many and infinite scrolling became sluggish
+  - The initial fetch and infinite scroll "fetch  more" functions need to match 
+
+
 
 
 ## 1.2.9
