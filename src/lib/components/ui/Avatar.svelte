@@ -18,7 +18,7 @@
 
 {#if url}
     <img
-        src="{imageProxyURL(url, findClosestNumber(sizes,res||width*2), 'webp')}"
+        src="{imageProxyURL(url, findClosestNumber(sizes,res||width*3), 'webp')}"
         {alt}
         {width}
         {title}

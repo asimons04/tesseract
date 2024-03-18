@@ -43,7 +43,7 @@
     export let iconSize:number = 28
 
     // Which standard buttons to show
-    export let home:boolean = true              // Return to home
+    export let home:boolean = false             // Return to home
     export let back:boolean = false             // Back (literally emulates browser back button)
     export let scrollButtons:boolean = false    // Scroll to top/bottom buttons
     export let compactSwitch:boolean = false    // Switch between compact and card posts
@@ -99,13 +99,13 @@
     <span class="flex flex-row gap-2 md:gap-2 items-center text-sm text-center mx-auto my-2 md:mr-2">
         
         <!--Home Button-->
-        {#if home}
+        {#if home || history.length < 2}
             <a href="/" class="mr-2 cursor-pointer" title="Home" data-sveltekit-preload-data="hover">
                 <Icon src={Home} width={iconSize} />
             </a>
         {/if}
 
-        {#if back}
+        {#if back && history.length > 1}
             <!--Return to Feed Button-->
             <button class="mr-2 cursor-pointer" title="Back" data-sveltekit-preload-data="hover"
                 class:hidden={history.length<2}
@@ -202,9 +202,9 @@
         <!--- Refresh Button--->
         {#if refreshButton}
             <button class="mr-2 cursor-pointer" title="Refresh"
-                on:click={() => {
+                on:click={async () => {
                     setSessionStorage('lastClickedPost', undefined)
-                    goto(window.location.href, {invalidateAll: true});
+                    await goto(window.location.href, {invalidateAll: true});
                 }}
                 >
                 <Icon src={ArrowPath} width={iconSize}/>

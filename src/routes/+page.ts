@@ -21,8 +21,9 @@ export async function load({ url }: LoadParams) {
         // Fetch posts
         let [ posts, siteData ] = await Promise.all([
             getClient().getPosts({
-                limit: get(userSettings)?.uiState.postsPerPage || 20,
+                //limit: get(userSettings)?.uiState.postsPerPage || 20,
                 //page: page,
+                limit: 20,
                 sort: sort,
                 type_: listingType,
                 auth: get(profile)?.jwt,
@@ -45,7 +46,6 @@ export async function load({ url }: LoadParams) {
             sort: sort,
             listingType: listingType,
             page: page,
-            
             posts: posts,
             site: siteData,
         }

@@ -68,7 +68,9 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
     }
 
     // Refresh the page to effect the block
+    /*
     goto(window.location.href, {
         invalidateAll: true,
     })
+    */
 }

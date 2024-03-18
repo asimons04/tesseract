@@ -18,55 +18,41 @@
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte';
 
+    import { 
+        Icon, 
+        ChevronDown
+    } from 'svelte-hero-icons'
+
     export let data
 
     console.log(data)
 
     let nextBatch = [] as PostView[]
-    
     // @ts-ignore since using 0.18.x lemmy-js-client
     let nextPage: string|undefined = data.posts.next_page
     let nextBatchLoading = false
 
-    $: data.posts.posts = [
-		...data.posts.posts,
-        ...nextBatch
-    ];
-
     //@ts-ignore
-    $: data.posts.next_page = nextPage
+    //$: data.posts.next_page = nextPage
 
     // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
 		capture: () => JSON.stringify(data),
-		restore: (value) => (data = JSON.parse(value)),
+		
+        restore: (value) => {
+            nextBatch = [] as PostView[]
+            data = JSON.parse(value)
+        },
 	};
 
     afterNavigate(async() => {
         await scrollToLastSeenPost()
-        
-        /*
-        let lastClickedPost = getSessionStorage('lastClickedPost') as { postID?: number }
-        
-        if (lastClickedPost?.postID) {
-            let postID = lastClickedPost.postID
-            await sleep(100)
-
-            let postElement = document.getElementById(postID.toString())
-            if (postElement) {
-                disableScrollHandling()
-                scrollToTop(postElement, false)
-                //setSessionStorage('lastClickedPost', undefined)
-            }
-        }
-        */
-        
-
     })
 
     async function loadPosts() {
         const params = {
-            limit: $userSettings?.uiState.postsPerPage || 20,
+            //limit: $userSettings?.uiState.postsPerPage || 20,
+            limit: 20,
             page: undefined,
             next_page: undefined,
             sort: data.sort,
@@ -86,8 +72,6 @@
         // Fetch posts
         let posts = await getClient().getPosts(params);
         
-        
-        
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
 
@@ -97,10 +81,14 @@
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
 
-        nextBatch = posts.posts
-        nextBatchLoading  = false
+        data.posts.posts = [
+		    ...data.posts.posts,
+            ...posts.posts
+        ];
+        
         //@ts-ignore
-        nextPage = posts.next_page
+        data.posts.next_page = posts.next_page
+        nextBatchLoading  = false
     }
 </script>
 
@@ -108,26 +96,15 @@
     <title>{data?.site?.site_view?.site?.name ?? "Tesseract"}</title>
 </svelte:head>
 
-<!---If next_page is available, don't show pagination selector--->
-{#if data?.posts?.next_page}
-    <SubNavbar
-        home compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
-        listingType={true}      bind:selectedListingType={data.listingType}
-        sortMenu={true}         bind:selectedSortOption={data.sort}
-    />
-{:else}
 <SubNavbar
-        home compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
-        listingType={true}      bind:selectedListingType={data.listingType}
-        sortMenu={true}         bind:selectedSortOption={data.sort}
-        pageSelection={true}    bind:currentPage={data.page}
-    />
-{/if}
+    home compactSwitch refreshButton toggleMargins toggleCommunitySidebar scrollButtons
+    listingType={true}      bind:selectedListingType={data.listingType}
+    sortMenu={true}         bind:selectedSortOption={data.sort}
+/>
+
 
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        
-        
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
             <PostFeed posts={data.posts.posts} />
@@ -138,14 +115,27 @@
             <Spinner width={24} />
         </div>
         {/if}
+        
+        <Button color="secondary" class="w-full"
+            title="Load More Posts"
+            on:click={() => {
+                nextBatchLoading  = true
+                loadPosts()
+            }}
+        >
+            <Icon src={ChevronDown} mini size="16" />
+            Load More Posts
+            <Icon src={ChevronDown} mini size="16" />
+        </Button>
 
+        <!--
         <Button color="secondary" on:click={() => {
             nextBatchLoading  = true
             loadPosts()
-        }}>
-            
+        }}>            
             Next Page
         </Button>
+        -->
         <!--
         <div class="mt-auto px-2">
             <Pageination
