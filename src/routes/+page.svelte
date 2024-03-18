@@ -127,23 +127,6 @@
             Load More Posts
             <Icon src={ChevronDown} mini size="16" />
         </Button>
-
-        <!--
-        <Button color="secondary" on:click={() => {
-            nextBatchLoading  = true
-            loadPosts()
-        }}>            
-            Next Page
-        </Button>
-        -->
-        <!--
-        <div class="mt-auto px-2">
-            <Pageination
-                page={data.page}
-                on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-            />
-        </div>
-        -->
     </div>
 
     <div class="lg:mb-[-24px]">

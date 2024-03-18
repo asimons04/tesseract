@@ -48,7 +48,8 @@ export const isVideo = (inputUrl: string | undefined) => {
 
   const url = new URL(inputUrl).pathname.toLowerCase()
 
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
+  // (/videos/embed) is for Peertube embed video detection
+  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.includes('/videos/embed')
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
