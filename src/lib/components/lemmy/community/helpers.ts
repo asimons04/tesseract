@@ -27,12 +27,19 @@ export const subscribe = async function(community:Community, subscribed:boolean)
     if (!userProfile?.jwt) return subscribed
    
     try {
-        await getClient().followCommunity({
+        const followResponse = await getClient().followCommunity({
             auth: userProfile.jwt,
             community_id: community.id,
             follow: !subscribed,
         })
         subscribed = !subscribed
+        
+        toast({
+            title: "Success",
+            content: `Successfully ${subscribed ? 'subscribed to' : 'unsubscribed from'} ${followResponse.community_view.community.title ?? followResponse.community_view.community.name}`,
+            type: "success",
+        })
+
     } catch (error) {
         toast({ content: error as any, type: 'error' })
     }
@@ -58,19 +65,19 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
     }
     
     try {
-        await getClient().blockCommunity({
+        const blockedCommunity = await getClient().blockCommunity({
             auth: userProfile.jwt,
             community_id: communityID,
             block: true,
         })
+        
+
+        toast({
+            title: "Success",
+            content: `Successfully blocked ${blockedCommunity.community_view.community.title ?? blockedCommunity.community_view.community.name}`,
+            type: "success",
+        })
     } catch (error) {
         toast({ content: error as any, type: 'error' })
     }
-
-    // Refresh the page to effect the block
-    /*
-    goto(window.location.href, {
-        invalidateAll: true,
-    })
-    */
 }
