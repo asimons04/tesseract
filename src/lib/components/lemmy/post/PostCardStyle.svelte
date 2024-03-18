@@ -18,6 +18,7 @@
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
+    import PostPeerTube from '$lib/components/lemmy/post/PostPeerTube.svelte'
     import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
     import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
     import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
@@ -94,6 +95,11 @@
     <!--- SongLink Embed --->
     {#if postType == "songlink"}
         <PostSongLink bind:post={post} displayType={displayType} />
+    {/if}
+
+    <!---Peertube Embed--->
+    {#if postType == 'peertube'}
+        <PostPeerTube bind:post={post} displayType={displayType} />
     {/if}
 
     <PostBody bind:post={post} displayType={displayType} bind:expandPreviewText/>

@@ -15,7 +15,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' |
+    'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' | 'peertube' |
     'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -49,7 +49,7 @@ export const isVideo = (inputUrl: string | undefined) => {
   const url = new URL(inputUrl).pathname.toLowerCase()
 
   // (/videos/embed) is for Peertube embed video detection
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.includes('/videos/embed')
+  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
@@ -60,6 +60,14 @@ export const isEmbeddableVideo = (url: string | undefined):boolean => {
         isYouTube(url) ||
         isPiped(url)
     )
+}
+
+// Check if URL is a peerTube embed
+export const isPeertube = (embed_video_url:string): boolean => {
+    const regex = `\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
+    const found = embed_video_url.match(regex)
+    if (found) return true
+    return false
 }
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
@@ -193,6 +201,9 @@ export const postType = (post: PostView | undefined ) => {
         return "songlink"
     }
 
+    if (post.post.embed_video_url && isPeertube(post.post.embed_video_url)) {
+        return "peertube"
+    }
 
 
     // These need to be last
