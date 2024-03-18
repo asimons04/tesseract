@@ -24,10 +24,10 @@ export async function load(req: any) {
         });
         
         // Apply MBFC data object to post
-        posts = addMBFCResults(posts.posts);
+        posts.posts = addMBFCResults(posts.posts);
         
         // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
+        posts.posts = filterKeywords(posts.posts);
 
         return {
             sort: sort,
@@ -44,6 +44,7 @@ export async function load(req: any) {
     catch {
         if (!get(profile)?.jwt) {
             toast({
+                title: "Notice",
                 content: `You must be logged in to resolve communities not currently known to this instance.`,
                 type: 'warning',
             })
@@ -54,6 +55,7 @@ export async function load(req: any) {
         toast({
             content: `This community is not known to your instance. Fetching community from its home instance. This may take a moment...`,
             type: 'success',
+            title: "Please Wait",
             loading: true,
             duration: 15000
         })
@@ -72,7 +74,10 @@ export async function load(req: any) {
         })
         
         // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
+        posts.posts = filterKeywords(posts.posts);
+
+        // Apply MBFC data object to post
+        posts.posts = addMBFCResults(posts.posts);
 
 
         return {

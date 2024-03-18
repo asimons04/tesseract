@@ -39,13 +39,14 @@
         post_view.cross_posts = data.post.cross_posts;
         community_view = data.post.community_view;
         moderators = data.post.moderators
-        setSessionStorage('lastSeenCommunity', { id: community_view.community.id, name: `${community_view.community.name}@${new URL(community_view.community.actor_id).hostname}` })
-        setSessionStorage('lastClickedPost', { postID: post_view.post.id} );
+        
     }
     
     
     
     onMount(async () => {
+        setSessionStorage('lastSeenCommunity', { id: community_view.community.id, name: `${community_view.community.name}@${new URL(community_view.community.actor_id).hostname}` })
+        //setSessionStorage('lastClickedPost', { postID: post_view.post.id} );
         try {
             if (!post_view.read && $profile?.jwt) {
                 getClient().markPostAsRead({

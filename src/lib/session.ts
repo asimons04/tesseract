@@ -25,6 +25,6 @@ export const setSessionStorage = (key: keyof SessionStorage, value: SessionStora
     }
 }
 
-export const getSessionStorage = (key: keyof SessionStorage): SessionStorage[typeof key] => {
+export const getSessionStorage = (key: keyof SessionStorage): SessionStorage => {
     return JSON.parse(sessionStorage.getItem(key)!)
 }

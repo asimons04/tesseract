@@ -2,6 +2,7 @@
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
     
+    import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { userSettings } from '$lib/settings.js'
     
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
@@ -17,37 +18,44 @@
     
     let expandCompact: boolean;
     let expandPreviewText:boolean
-   
+    function setLastSeen() {
+        if (displayType == 'feed') {
+            setSessionStorage('lastClickedPost', { postID: post.post.id} );
+        }
+    }
 </script>
 
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<div on:mouseover={() => setLastSeen()} on:touchstart={() => setLastSeen()}>
+    <!--- Compact Posts --->
+    {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
+        <PostCompactStyle 
+            bind:post={post} 
+            actions={actions} 
+            bind:expandCompact={expandCompact} 
+            bind:expandPreviewText 
+            displayType={displayType}
+            {disablePostLinks}
+            {collapseBadges}
+        />
 
-<!--- Compact Posts --->
-{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
-    <PostCompactStyle 
-        bind:post={post} 
-        actions={actions} 
-        bind:expandCompact={expandCompact} 
-        bind:expandPreviewText 
-        displayType={displayType}
-        {disablePostLinks}
-        {collapseBadges}
-    />
 
-
-<!--- Card Posts --->
-{:else}
-    <PostCardStyle 
-        bind:post={post} 
-        actions={actions} 
-        bind:expandCompact={expandCompact} 
-        bind:expandPreviewText 
-        displayType={displayType} 
-        autoplay={false}
-        loop={$userSettings.embeddedMedia.loop}
-        {collapseBadges}
-    />
-{/if}
+    <!--- Card Posts --->
+    {:else}
+        <PostCardStyle 
+            bind:post={post} 
+            actions={actions} 
+            bind:expandCompact={expandCompact} 
+            bind:expandPreviewText 
+            displayType={displayType} 
+            autoplay={false}
+            loop={$userSettings.embeddedMedia.loop}
+            {collapseBadges}
+        />
+    {/if}
+</div>
 
 
 

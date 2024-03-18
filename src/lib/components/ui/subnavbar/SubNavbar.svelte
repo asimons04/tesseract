@@ -3,9 +3,11 @@
 
     import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
     import { arrayRange, searchParam } from '$lib/util.js'
+    import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
+    import { scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { 
         sortOptions as defaultSortOptions, 
         sortOptionNames as defaultSortOptionNames
@@ -76,6 +78,8 @@
     let addCommunityGroup:boolean               = false
     let editPostModal:boolean                   = false
 
+    
+    
    
 </script>
 
@@ -195,9 +199,11 @@
         <!--- Custom Items to the right of the spacer--->
         <slot {iconSize} name="right"/>
 
+        <!--- Refresh Button--->
         {#if refreshButton}
             <button class="mr-2 cursor-pointer" title="Refresh"
                 on:click={() => {
+                    setSessionStorage('lastClickedPost', undefined)
                     goto(window.location.href, {invalidateAll: true});
                 }}
                 >
@@ -229,8 +235,9 @@
         <!--- Toggle Margins on/off (hide until medium width since the margins disappear at the 'sm' breakpoint anyway) --->
         {#if toggleMargins}
             <button class="hidden md:flex mr-2 cursor-pointer" title="{$userSettings.uiState.feedMargins ? 'Disable margins' : 'Enable margins'}."
-                on:click={() => {
+                on:click={async () => {
                     $userSettings.uiState.feedMargins = !$userSettings.uiState.feedMargins
+                    await scrollToLastSeenPost()
                 }}
                 >
                 <Icon src={$userSettings.uiState.feedMargins ? ArrowsPointingOut : ArrowsPointingIn} width={iconSize} />
@@ -240,10 +247,11 @@
         <!---Card/Compact Selection--->
         {#if compactSwitch}
             <button class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
-                on:click={() => {
+                on:click={async () => {
                     $userSettings.showCompactPosts = !$userSettings.showCompactPosts
                     if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
                     else $userSettings.uiState.feedMargins = true
+                    await scrollToLastSeenPost()
                 }}
                 >
                 <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />

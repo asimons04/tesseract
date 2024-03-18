@@ -1,9 +1,10 @@
 import type { CommentView, GetPostsResponse, PersonView, PostView } from 'lemmy-js-client'
 
+import { disableScrollHandling } from '$app/navigation'
 import { get } from 'svelte/store';
+import { getSessionStorage, setSessionStorage } from '$lib/session'
 import { goto } from '$app/navigation'
 import { lookup as MBFCLookup } from '$lib/MBFC/client'
-import { setSessionStorage } from '$lib/session.js'
 import { userSettings as UserSettings} from '$lib/settings.js'
 import { YTFrontends } from '$lib/settings.js'
 
@@ -222,13 +223,14 @@ export const fixLemmyEncodings = function (content:string|undefined):string|unde
         return content;
     }
 }
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export const scrollToTop = function(element:HTMLElement|undefined|null, smooth:boolean=true):void {
     if (!element) return;
     try {
             
         // Offset = navbar height (-64) - sticky menu height (52) + 3 pixel gap
-        let offset = 64 + 55;
+        let offset = 64 + 64 + 3;
 
         let y = element.getBoundingClientRect().top + window.pageYOffset - offset;
 
@@ -243,15 +245,34 @@ export const scrollToTop = function(element:HTMLElement|undefined|null, smooth:b
     catch {}
 }
 
+export async function scrollToLastSeenPost() {
+    let lastClickedPost = getSessionStorage('lastClickedPost')
+                
+    //@ts-ignore
+    if (lastClickedPost?.postID) {
+        //@ts-ignore
+        let postID = lastClickedPost.postID
+        await sleep(100)
+
+        let postElement = document.getElementById(postID.toString())
+        if (postElement) {
+            disableScrollHandling()
+            scrollToTop(postElement, false)
+            //setSessionStorage('lastClickedPost', undefined)
+        }
+    }
+}
+
+
 
 // Used in post fetch loader to filter posts by keywords
-export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
+export const filterKeywords = function (posts:PostView[]):PostView[] {
     try {
         let filteredPosts: PostView[] = [];
         let filterWords = get(UserSettings)?.hidePosts?.keywordList ?? [] as string[];
 
         // Bypass filtering if keyword filtering is disabled by user
-        if (!get(UserSettings)?.hidePosts?.keywords) return {posts: posts};
+        if (!get(UserSettings)?.hidePosts?.keywords) return posts;
 
         // Loop over posts and check for any keywords that should be filtered out
         for(let i:number=0; i<posts.length; i++) {
@@ -329,18 +350,20 @@ export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
         }
         console.log(filteredPosts);
         
-        return { posts: posts };
+        return posts
+        //return { posts: posts };
     }
     catch (err) {
         console.log("filterKeywords():  An error has occurred. Returning unfiltered posts list");
         console.log(err);
-        return { posts: posts}
+        return posts
+        //return { posts: posts}
     }
 
 }
 
 // Used in post fetch loader to detect and "roll up" crossposts
-export const findCrossposts = function (posts:PostView[]):GetPostsResponse {
+export const findCrossposts = function (posts:PostView[]):PostView[] {
     try {
         let uniquePosts: PostView[] = [];
 
@@ -409,17 +432,19 @@ export const findCrossposts = function (posts:PostView[]):GetPostsResponse {
             }
         }
 
-        return { posts: uniquePosts };
+        return posts
+        //return { posts: uniquePosts };
     }
     catch (err) {
         console.log("findCrossposts():  An error has occurred. Returning unfiltered posts list");
         console.log(err);
-        return { posts: posts }
+        return posts
+        //return { posts: posts }
     }
 }
 
 //Used in post fetch loader to add MBFC report info to post objects (if found)
-export const addMBFCResults = function (posts:PostView[]):GetPostsResponse {
+export const addMBFCResults = function (posts:PostView[]):PostView[] {
     try {
         for (let i:number=0; i<posts.length; i++) {
             let post = posts[i];
@@ -436,7 +461,8 @@ export const addMBFCResults = function (posts:PostView[]):GetPostsResponse {
         console.log(err);
     }
 
-    return {posts: posts};
+    return posts
+    //return {posts: posts};
 
 }
 

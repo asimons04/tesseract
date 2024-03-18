@@ -160,7 +160,12 @@
             </MenuButton>
 
             <!---Block User--->
-            <MenuButton on:click={() => blockUser(post.creator.id)}  title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}">
+            <MenuButton on:click={async () => {
+                    blockUser(post.creator.id, true)
+                    post.creator_blocked = !post.creator_blocked
+                }}
+                title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}"
+            >
                 <Icon src={NoSymbol} width={16} mini />
                 {isBlocked($profile?.user, post.creator.id) 
                     ? `Unblock ${post.creator.display_name || post.creator.name}@${new URL(post.creator.actor_id).hostname}`

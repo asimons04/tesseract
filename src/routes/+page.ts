@@ -19,34 +19,33 @@ export async function load({ url }: LoadParams) {
    
     try {
         // Fetch posts
-        let posts = await getClient().getPosts({
-            limit: get(userSettings)?.uiState.postsPerPage || 20,
-            page: page,
-            sort: sort,
-            type_: listingType,
-            auth: get(profile)?.jwt,
-        });
-
-        // Fetch site data
-        let siteData = await getClient(undefined, fetch).getSite({});
-        site.set(siteData)
+        let [ posts, siteData ] = await Promise.all([
+            getClient().getPosts({
+                limit: get(userSettings)?.uiState.postsPerPage || 20,
+                //page: page,
+                sort: sort,
+                type_: listingType,
+                auth: get(profile)?.jwt,
+            }),
+            getClient().getSite({})
+        ])
         
-        // Apply MBFC data object to post
-        posts = addMBFCResults(posts.posts);
-
+        site.set(siteData)
         // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
+        posts.posts = filterKeywords(posts.posts);
 
         // Roll up any duplicate posts/crossposts
-        posts = findCrossposts(posts.posts);
+        posts.posts = findCrossposts(posts.posts);
 
-        
+        // Apply MBFC data object to post
+        posts.posts = addMBFCResults(posts.posts);
         
         // Return the data to the frontend
         return {
             sort: sort,
             listingType: listingType,
             page: page,
+            
             posts: posts,
             site: siteData,
         }

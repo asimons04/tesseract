@@ -27,8 +27,10 @@
     >
     {#each posts as post, index (post.post.id)}
         {#if 
+                !(post.creator_blocked) && 
                 !($userSettings.hidePosts.deleted && post.post.deleted) && 
                 !($userSettings.hidePosts.removed && post.post.removed) &&
+                //@ts-ignore
                 !($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility')
         }
             <Post bind:post={post} displayType="feed"/>
