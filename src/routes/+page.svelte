@@ -25,22 +25,12 @@
 
     export let data
 
-    console.log(data)
-
-    let nextBatch = [] as PostView[]
-    // @ts-ignore since using 0.18.x lemmy-js-client
-    let nextPage: string|undefined = data.posts.next_page
     let nextBatchLoading = false
-
-    //@ts-ignore
-    //$: data.posts.next_page = nextPage
 
     // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
 		capture: () => JSON.stringify(data),
-		
         restore: (value) => {
-            nextBatch = [] as PostView[]
             data = JSON.parse(value)
         },
 	};
@@ -81,10 +71,16 @@
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
 
+        /*
         data.posts.posts = [
 		    ...data.posts.posts,
             ...posts.posts
         ];
+        */
+
+        for (let i:number=0; i < posts.posts.length; i++) {
+            data.posts.posts.push(posts.posts[i])
+        }
         
         //@ts-ignore
         data.posts.next_page = posts.next_page
@@ -97,7 +93,7 @@
 </svelte:head>
 
 <SubNavbar
-    home compactSwitch refreshButton toggleMargins toggleCommunitySidebar scrollButtons
+    compactSwitch refreshButton toggleMargins toggleCommunitySidebar scrollButtons
     listingType={true}      bind:selectedListingType={data.listingType}
     sortMenu={true}         bind:selectedSortOption={data.sort}
 />
