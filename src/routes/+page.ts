@@ -23,7 +23,7 @@ export async function load({ url }: LoadParams) {
             getClient().getPosts({
                 //limit: get(userSettings)?.uiState.postsPerPage || 20,
                 //page: page,
-                limit: 20,
+                limit: 10,
                 sort: sort,
                 type_: listingType,
                 auth: get(profile)?.jwt,
@@ -32,6 +32,7 @@ export async function load({ url }: LoadParams) {
         ])
         
         site.set(siteData)
+        
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
 

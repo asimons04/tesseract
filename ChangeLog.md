@@ -3,52 +3,19 @@ All major/minor changes between releases will be documented here.
 
 
 
-## Feature Ideas (not guaranteed to be implemented, just ideas)
-Based on user feedback and my own annoyances, here are the current goals to be implemented in the 1.2.9.x release series. 
-
-### Image Overlay / Gallery
-- Click images in the feed/post to enlarge them fullscreen and zoom.
-- Parse post body for image tags and add those to the gallery component
-
-### Re-write Post Creation Form
-- Semi-tabbed interface (similar to Reddit's) with form elements optimized for the post type
-- Post Types:
-  - Text Post (no URL, just text)
-  - Link (news articles, blog posts, etc).
-  - Images (Allow multiple images for a gallery. The first will be the post image and the rest will be in the body.  Gallery plugin will parse the ones in the body.
-  
-### WYSIWYG Markdown Editor
-Replace the custom markdown editor with Toast-UI editor.  Not sure yet if I will replace `markdown-it` completely (may leave it for rendering), but the Toast-UI editor is much more user-friendly.
-
-### Update Settings Cloud Sync
-The current method to sync your Tesseract settings, groups, and communities to Lemmy API is a one-off manual process.  This is intentional as it's basically an experimental feature that is abusing the `theme` field of your Lemmy profile (it's only used by Lemmy-UI and can hold arbitrary text).  The plan is to automate this and put it behind a user setting with appropriate warnings about how it will break Lemmy-UI's CSS.  When enabled, changes to your app settings will automatically sync to/from Lemmy.  Will update the "restore" button functionality to also disable sync.
-
-### Moderation Templates
-- Replace the static user-defined template with the ability to have custom moderation presets
-- Add ability to make them community-specific
-- Save to profile and make exportable to JSON/API
-
-### Moderation Presets and Report Handling
-The groundwork for this exists in the current release, but I didn't have time to fully flesh them out.
-- Set pre-defined actions (lock post, remove comment/post, ban community/instance, set reasons, etc.)
-- Select from a list of your presets which can be community-specific
-- Select multiple open reports to apply the preset to all (e.g. you have 7 spam reports that should all be handled the same way)
-    - May or may not implement this or at least do it such that banning is not available to a mass-option.
-    - The report revamp was to give additional insight to make more informed mod decisions. Adding the capability to mass ban without looking at the details thoroughly runs antiethical to that goal.
-
-### Under the Hood Stuff
-- Move all modals to a common modal container (similar to removal modals) as to allow calling them from anywhere without extra hacks to make sure they're not constrained by a fixed container div
-- Make preparations and lay initial foundation for offline support
-    - Re-implement local profile to keep stored locally/persistently (rather than a background fetch to fill in the blanks).
-    - Decide if posts/comments should be stored in LocalStorage or IndexDB
-    - Create an action queue (upvote/downvote, reply, etc) to allow actions to be queued when offline and sent to API when online
-
-
 ## 1.3.0
 - [Media] Add support for detecting and rendering Peertube embeds
+
 - [0.19.x Support] Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.
-- [Bugfixes] General Typescript and a11y fixes
+
+- [Bugfixes] General Typescript and a11y fixes (too numerous to list individually)
+
 - [UI] Reimplemented account switching menu
+- [UI] Add "Copy Lemmyverse Link" to user profile menu.
+
+- [Feeds] Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 
+  - Now will keep your place when changing post/compact view and changing margins
+  - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
 - [Feeds] Switched pagination to infinite scroll 
 - [Feeds] Removed feed setting for number of posts per page
   - Hard coded at 20 with infinite scrolling

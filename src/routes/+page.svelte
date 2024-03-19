@@ -12,6 +12,7 @@
     import { userSettings } from '$lib/settings.js'
 
     import Button from '$lib/components/input/Button.svelte'
+    import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
@@ -26,7 +27,17 @@
     export let data
 
     let nextBatchLoading = false
+    let maxPosts = 100
 
+    // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
+    $: {
+        if (data.posts.posts.length > maxPosts) {
+            let diff = data.posts.posts.length - maxPosts
+            for (let i:number = 0; i < diff; i++) {
+                data.posts.posts.shift()
+            }
+        }
+    }
     // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
 		capture: () => JSON.stringify(data),
@@ -42,7 +53,7 @@
     async function loadPosts() {
         const params = {
             //limit: $userSettings?.uiState.postsPerPage || 20,
-            limit: 20,
+            limit: 10,
             page: undefined,
             next_page: undefined,
             sort: data.sort,
@@ -112,8 +123,13 @@
         </div>
         {/if}
         
+        <InfiniteScroll bind:loading={nextBatchLoading} threshold={250} on:loadMore={() => {
+            nextBatchLoading = true
+            loadPosts()
+        }} />
+
         <Button color="secondary" class="w-full"
-            title="Load More Posts"
+            title="Load More Posts" id="loadmore"
             on:click={() => {
                 nextBatchLoading  = true
                 loadPosts()

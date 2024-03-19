@@ -20,6 +20,7 @@
 
     import {
         Bookmark,
+        Cake,
         ExclamationCircle,
         Icon,
         LockClosed,
@@ -27,7 +28,6 @@
         MinusCircle,
         NoSymbol,
         Trash,
-        UserPlus
     } from 'svelte-hero-icons'
     
     
@@ -154,7 +154,7 @@
                         }" 
                         color="gray"
                     >
-                        <Icon src={UserPlus} mini size="16"/>New
+                        <Icon src={Cake} mini size="16"/>New
                         <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}"> Account</span>
                     </Badge>
                 {/if}
