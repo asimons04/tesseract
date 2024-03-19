@@ -1,6 +1,6 @@
 # Tesseract
 # About
-Tesseract was Lemmy client designed for media-rich feeds and content.  It was probably the best Lemmy client no one was using :-P
+Tesseract is a Sublinks/Lemmy client designed for media-rich feeds and content.  
 
 It started out as my personal, custom build of Photon, but it got exhausting porting over my bells and whistles each release. To that end, I finally decided to make it an official fork.
 
@@ -23,10 +23,12 @@ The following features are unique to Tesseract:
   - Odysee
   - [Song Link](https://odesli.co/)
   - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
+  - Peertube Embeds (new as of 1.3.0)
 
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
   - Post and comment menus let you browse the communities of the originating instance
+  - Note:  This only works for Lemmy instances. Kbin, Mastadon, etc are not currently supported for remote community browsing.  
 
 
 ### Image/Media Proxying and Caching
@@ -59,14 +61,14 @@ Posts with URLs can have a MBFC badge in the corner which will lookup the publis
 - Code syntax highlighting in code and inline code blocks.
 
 ### Distinguished and Sticky Comments
-Mods/Admins can distinguish and sticky comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.
+Mods/Admins can distinguish and sticky their own comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.  
 
 The handling of the `distinguished` flag is different in Tesseract than in Lemmy-UI:
 
 **Tesseract**
 - Distinguished comments will be given a green background and border
 - Distinguished comments are pinned at the top of the comments list.
-- Any comment can be distinguished by a mod/admin.
+- ~~Any comment can be distinguished by a mod/admin.~~ Sigh.  The Lemmy devs broke this capability for dumb "bUt LemMy UI dOEs iT tHIs waY!" reasons.  Fuck them and their shitty frontend.
 
 **Lemmy-UI**
 - Distinguished comments just have an "admin" badge next to them.   
@@ -143,12 +145,13 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 
 - Bandcamp tracks and albums.  
 
+- Peertube embeds
 
 - TikTok is not currently supported. I don't have TikTok, and no one has asked for it, so I'm content not supporting that unless there's demand and someone is able to provide me some sample links (TT does have an embed API, so at least limited support possible).
 
 
 ## Support
-I created a public Matrix support space you can join.  General discussion, flesh out ideas, or ask for support.  [Tesseract Support](https://matrix.to/#/#tesseract-support:ptznetwork.org)
+I created a public Matrix support space you can join.  General discussion, flesh out ideas, or ask for support.  [Tesseract Support](https://matrix.to/#/#tesseract:ptznetwork.org)
 
 There is also a Lemmy community where you can get the latest announcements and post questions related to Tesseract.  Find us at https://dubvee.org/c/tesseract
 

@@ -3,7 +3,7 @@ All major/minor changes between releases will be documented here.
 
 
 
-## Roadmap 1.2.9.x through 1.3.0
+## Feature Ideas (not guaranteed to be implemented, just ideas)
 Based on user feedback and my own annoyances, here are the current goals to be implemented in the 1.2.9.x release series. 
 
 ### Image Overlay / Gallery
@@ -44,7 +44,7 @@ The groundwork for this exists in the current release, but I didn't have time to
     - Create an action queue (upvote/downvote, reply, etc) to allow actions to be queued when offline and sent to API when online
 
 
-## 1.2.3
+## 1.3.0
 - [Media] Add support for detecting and rendering Peertube embeds
 - [0.19.x Support] Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.
 - [Bugfixes] General Typescript and a11y fixes
