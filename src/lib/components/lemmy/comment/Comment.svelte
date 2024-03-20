@@ -2,6 +2,7 @@
     import {
         ArrowUp,
         Bookmark,
+        Cake,
         ChatBubbleLeftEllipsis,
         Icon,
         Minus,
@@ -9,7 +10,6 @@
         Plus,
         ShieldCheck,
         Trash,
-        UserPlus,
     } from 'svelte-hero-icons'
     import type { CommentNodeI } from './comments'
     import Badge from '$lib/components/ui/Badge.svelte'
@@ -156,7 +156,7 @@
                         }" 
                         color="gray"
                     >
-                        <Icon src={UserPlus} mini size="16"/>
+                        <Icon src={Cake} mini size="16"/>
                         <span class="hidden md:block">New Account</span>
                     </Badge>
                 {/if}
