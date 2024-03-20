@@ -39,13 +39,13 @@
     </div>
 {/if}
 
-<Button color="secondary" class="w-full" title="Load More Posts"
+<Button color="secondary" class="w-full" title="Load More"
     on:click={async () => {
         noMorePosts = false
         dispatcher('loadMore')
     }}
 >
     <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
-    {noMorePosts ? 'No More Posts to Load' : 'Load More Posts'}
+    {noMorePosts ? 'No More Results to Load' : 'Load More'}
     <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
 </Button>
