@@ -3,6 +3,7 @@
 
     import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
     import { arrayRange, searchParam } from '$lib/util.js'
+    import { createEventDispatcher } from 'svelte'
     import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
@@ -78,6 +79,7 @@
     let addCommunityGroup:boolean               = false
     let editPostModal:boolean                   = false
 
+    const dispatcher = createEventDispatcher();
     
     
    
@@ -110,6 +112,7 @@
             <button class="mr-2 cursor-pointer" title="Back" data-sveltekit-preload-data="hover"
                 class:hidden={history.length<2}
                 on:click={() => {
+                    dispatcher('navBack')
                     history.back();
                 }}
             >
@@ -203,6 +206,7 @@
         {#if refreshButton}
             <button class="mr-2 cursor-pointer" title="Refresh"
                 on:click={async () => {
+                    dispatcher('navRefresh')
                     setSessionStorage('lastClickedPost', undefined)
                     await goto(window.location.href, {invalidateAll: true});
                 }}

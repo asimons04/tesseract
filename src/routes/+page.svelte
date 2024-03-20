@@ -13,7 +13,6 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
-    import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
@@ -27,17 +26,9 @@
     export let data
 
     let nextBatchLoading = false
-    let maxPosts = 100
+    const maxPosts = 100
 
-    // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
-    $: {
-        if (data.posts.posts.length > maxPosts) {
-            let diff = data.posts.posts.length - maxPosts
-            for (let i:number = 0; i < diff; i++) {
-                data.posts.posts.shift()
-            }
-        }
-    }
+   
     // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
 		capture: () => JSON.stringify(data),
@@ -82,15 +73,11 @@
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
 
-        /*
-        data.posts.posts = [
-		    ...data.posts.posts,
-            ...posts.posts
-        ];
-        */
 
         for (let i:number=0; i < posts.posts.length; i++) {
             data.posts.posts.push(posts.posts[i])
+            // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
+            if (data.posts.posts.length > maxPosts) data.posts.posts.shift()    
         }
         
         //@ts-ignore
