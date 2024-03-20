@@ -15,6 +15,7 @@
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import { load } from './+page';
     
 
 
@@ -24,7 +25,7 @@
     let noMorePosts = !data.refresh // Flags that no more posts are available from the API
     const maxPosts = 100            // Maximum number of posts to keep in memory before the oldest start getting ejected in FIFO method.
 
-    $: noMorePosts = !data.refresh
+    $: noMorePosts = !data.refresh  // Hack to clear the no more posts flag when data is refreshed through invalidation
 
     // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
@@ -104,8 +105,7 @@
             <PostFeed posts={data.posts.posts} />
         </section>
         
-        <InfiniteScroll bind:loading={nextBatchLoading} bind:noMorePosts bind:nextBatchLoading
-            threshold={500} 
+        <InfiniteScroll bind:loading={nextBatchLoading} bind:noMorePosts threshold={500} 
             on:loadMore={ () => {
                 if (!noMorePosts) {
                     nextBatchLoading = true
