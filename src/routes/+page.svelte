@@ -25,10 +25,12 @@
 
     export let data
 
-    let nextBatchLoading = false
-    const maxPosts = 100
+    let nextBatchLoading = false    // Controls whether to show the loading spinner
+    let noMorePosts = !data.refresh // Flags that no more posts are available from the API
+    const maxPosts = 100            // Maximum number of posts to keep in memory before the oldest start getting ejected in FIFO method.
 
-   
+    $: noMorePosts = !data.refresh
+
     // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
 		capture: () => JSON.stringify(data),
@@ -63,7 +65,10 @@
 
         // Fetch posts
         let posts = await getClient().getPosts(params);
-        
+
+        if (posts.posts.length < 1) noMorePosts = true
+        else noMorePosts = false
+
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
 
@@ -81,7 +86,7 @@
         }
         
         //@ts-ignore
-        data.posts.next_page = posts.next_page
+        if (posts.next_page) data.posts.next_page = posts.next_page
         nextBatchLoading  = false
     }
 </script>
@@ -110,20 +115,23 @@
         </div>
         {/if}
         
-        <InfiniteScroll bind:loading={nextBatchLoading} threshold={250} on:loadMore={() => {
-            nextBatchLoading = true
-            loadPosts()
+        <InfiniteScroll bind:loading={nextBatchLoading} threshold={500} on:loadMore={async () => {
+            if (!noMorePosts) {
+                nextBatchLoading = true
+                await loadPosts()
+            }
         }} />
-
+        
         <Button color="secondary" class="w-full"
             title="Load More Posts" id="loadmore"
-            on:click={() => {
+            on:click={async () => {
                 nextBatchLoading  = true
-                loadPosts()
+                noMorePosts = false
+                await loadPosts()
             }}
         >
             <Icon src={ChevronDown} mini size="16" />
-            Load More Posts
+            {noMorePosts ? 'No More Posts to Load' : 'Load More Posts'}
             <Icon src={ChevronDown} mini size="16" />
         </Button>
     </div>

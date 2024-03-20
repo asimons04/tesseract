@@ -32,7 +32,7 @@ export async function load({ url }: LoadParams) {
         ])
         
         site.set(siteData)
-        
+
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
 
@@ -49,6 +49,7 @@ export async function load({ url }: LoadParams) {
             page: page,
             posts: posts,
             site: siteData,
+            refresh: true,
         }
     } catch (err) {
         console.log(err)

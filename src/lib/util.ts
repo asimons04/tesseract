@@ -1,9 +1,9 @@
 import { goto } from '$app/navigation'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
-import { crypto} from 'crypto'
+//import { crypto} from 'crypto'
 
 import { userSettings } from '$lib/settings.js'
-import { get, writeable } from 'svelte/store'
+import { get, writable } from 'svelte/store'
 
 export const findClosestNumber = (numbers: number[], target: number): number =>
   numbers.reduce((prev, curr) =>
