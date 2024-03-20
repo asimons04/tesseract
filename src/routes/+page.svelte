@@ -83,6 +83,7 @@
         
         //@ts-ignore
         if (posts.next_page) data.posts.next_page = posts.next_page
+        data.posts.posts = data.posts.posts
         nextBatchLoading  = false
     }
 </script>
@@ -105,7 +106,7 @@
             <PostFeed posts={data.posts.posts} />
         </section>
         
-        <InfiniteScroll bind:loading={nextBatchLoading} bind:noMorePosts threshold={500} 
+        <InfiniteScroll bind:loading={nextBatchLoading} bind:noMorePosts threshold={250} automatic={true}
             on:loadMore={ () => {
                 if (!noMorePosts) {
                     nextBatchLoading = true

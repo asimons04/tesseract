@@ -12,7 +12,8 @@
     export let threshold: number = 500              // Number of pixels from the bottom before dispatching the load more event
     export let loading: boolean = false             // Disable events when a loading event is already processing
     export let noMorePosts:boolean = false          // Flag to disable automatic loading if API returns no more data
-    
+    export let automatic:boolean = true             // Automatically load new content. False will require clicking load more button manually
+
     const dispatcher = createEventDispatcher();
 
     //$: window.addEventListener("scroll", onScroll)
@@ -22,7 +23,7 @@
 
     function onScroll(e:any) {
         const offset = document.documentElement.scrollHeight - (window.innerHeight + window.scrollY)
-        if (offset <= threshold && !loading) {
+        if (automatic && offset <= threshold && !loading) {
             dispatcher('loadMore')
         }
     }
@@ -40,7 +41,7 @@
 {/if}
 
 <Button color="secondary" class="w-full" title="Load More"
-    on:click={async () => {
+    on:click={() => {
         noMorePosts = false
         dispatcher('loadMore')
     }}
