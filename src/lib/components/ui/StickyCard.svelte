@@ -4,7 +4,7 @@
     md:w-[80%] md:mx-auto
     lg:w-[70%] lg:mx-auto 
     xl:w-[25rem] xl:overflow-auto
-    max-h-[calc(100svh-128px)]
+    max-h-[calc(100svh-11rem)]
     text-sm border-slate-200 dark:border-zinc-800 {$$props.class}"
 >
   <slot />

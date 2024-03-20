@@ -106,7 +106,7 @@
             <PostFeed posts={data.posts.posts} />
         </section>
         
-        <InfiniteScroll bind:loading={nextBatchLoading} bind:noMorePosts threshold={250} automatic={true}
+        <InfiniteScroll bind:loading={nextBatchLoading} bind:noMorePosts threshold={500} automatic={true}
             on:loadMore={ () => {
                 if (!noMorePosts) {
                     nextBatchLoading = true
