@@ -20,6 +20,7 @@
 
     import { 
         Icon, 
+        ArchiveBoxXMark,
         ChevronDown
     } from 'svelte-hero-icons'
 
@@ -115,10 +116,10 @@
         </div>
         {/if}
         
-        <InfiniteScroll bind:loading={nextBatchLoading} threshold={500} on:loadMore={async () => {
+        <InfiniteScroll bind:loading={nextBatchLoading} threshold={500} on:loadMore={ () => {
             if (!noMorePosts) {
                 nextBatchLoading = true
-                await loadPosts()
+                loadPosts()
             }
         }} />
         
@@ -130,9 +131,9 @@
                 await loadPosts()
             }}
         >
-            <Icon src={ChevronDown} mini size="16" />
+            <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
             {noMorePosts ? 'No More Posts to Load' : 'Load More Posts'}
-            <Icon src={ChevronDown} mini size="16" />
+            <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
         </Button>
     </div>
 
