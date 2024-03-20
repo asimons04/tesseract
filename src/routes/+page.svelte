@@ -1,28 +1,22 @@
 <script lang="ts">
     import type { GetPosts, PostView } from 'lemmy-js-client'
     import type { Snapshot } from './$types';
-    import { afterNavigate, disableScrollHandling } from '$app/navigation'
+    import { afterNavigate } from '$app/navigation'
     
     import { addMBFCResults, findCrossposts, filterKeywords, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { getClient } from '$lib/lemmy.js'
-    import { getSessionStorage, setSessionStorage } from '$lib/session'
-    import { page } from '$app/stores'
+    //import { getSessionStorage, setSessionStorage } from '$lib/session'
+    //import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    import { searchParam } from '$lib/util.js'
-    import { userSettings } from '$lib/settings.js'
+    //import { searchParam } from '$lib/util.js'
+    //import { userSettings } from '$lib/settings.js'
 
-    import Button from '$lib/components/input/Button.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
+    
 
-    import { 
-        Icon, 
-        ArchiveBoxXMark,
-        ChevronDown
-    } from 'svelte-hero-icons'
 
     export let data
 
@@ -109,32 +103,18 @@
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
             <PostFeed posts={data.posts.posts} />
         </section>
-
-        {#if nextBatchLoading}
-        <div class="mx-auto">
-            <Spinner width={24} />
-        </div>
-        {/if}
         
-        <InfiniteScroll bind:loading={nextBatchLoading} threshold={500} on:loadMore={ () => {
-            if (!noMorePosts) {
-                nextBatchLoading = true
-                loadPosts()
-            }
-        }} />
-        
-        <Button color="secondary" class="w-full"
-            title="Load More Posts" id="loadmore"
-            on:click={async () => {
-                nextBatchLoading  = true
-                noMorePosts = false
-                await loadPosts()
+        <InfiniteScroll bind:loading={nextBatchLoading} bind:noMorePosts bind:nextBatchLoading
+            threshold={500} 
+            on:loadMore={ () => {
+                if (!noMorePosts) {
+                    nextBatchLoading = true
+                    loadPosts()
+                }
             }}
-        >
-            <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
-            {noMorePosts ? 'No More Posts to Load' : 'Load More Posts'}
-            <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
-        </Button>
+        />
+        
+        
     </div>
 
     <div class="lg:mb-[-24px]">
