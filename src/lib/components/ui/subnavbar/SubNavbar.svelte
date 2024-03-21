@@ -34,6 +34,8 @@
         ChevronDoubleDown,
         ChevronDoubleRight,
         ChevronDoubleUp,
+        ChevronDown,
+        ChevronUp,
         DocumentDuplicate,
         Home,
         QueueList,
@@ -47,6 +49,7 @@
     export let home:boolean = false             // Return to home
     export let back:boolean = false             // Back (literally emulates browser back button)
     export let scrollButtons:boolean = false    // Scroll to top/bottom buttons
+    export let pageUpDownButtons:boolean = false // Page up/down
     export let compactSwitch:boolean = false    // Switch between compact and card posts
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
     export let refreshButton:boolean = false    // Button to refresh the current page
@@ -215,6 +218,30 @@
             </button>
         {/if}
 
+        <!---Page Up/Down Buttons--->
+
+        {#if pageUpDownButtons}
+            <!--Page Down-->
+            <button class="mr-2 cursor-pointer" title="Page Down"
+                on:click={() => {
+                    
+                    window.scrollBy(0, (window.visualViewport?.height ?? 628) - 128)
+                }}
+            >
+                <Icon src={ChevronDown} width={iconSize} />
+            </button>
+            
+
+            <!--Page Up-->
+            <button class="mr-2 cursor-pointer" title="Page Up"
+                on:click={() => {
+                    window.scrollBy(0, -(window.visualViewport?.height ?? 628 - 128))
+                }}
+            >
+                <Icon src={ChevronUp} width={iconSize} />
+            </button>
+
+        {/if}
         <!--Jump to Top/Bottom-->
         {#if scrollButtons}
             <button class="mr-2 cursor-pointer" title="Scroll to Bottom"

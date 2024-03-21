@@ -11,7 +11,7 @@
     
     export let threshold: number = 500              // Number of pixels from the bottom before dispatching the load more event
     export let loading: boolean = false             // Disable events when a loading event is already processing
-    export let noMorePosts:boolean = false          // Flag to disable automatic loading if API returns no more data
+    export let exhausted:boolean = false          // Flag to disable automatic loading if API returns no more data
     export let automatic:boolean = true             // Automatically load new content. False will require clicking load more button manually
 
     const dispatcher = createEventDispatcher();
@@ -42,11 +42,11 @@
 
 <Button color="secondary" class="w-full" title="Load More"
     on:click={() => {
-        noMorePosts = false
+        exhausted = false
         dispatcher('loadMore')
     }}
 >
-    <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
-    {noMorePosts ? 'No More Results to Load' : 'Load More'}
-    <Icon src={noMorePosts ? ArchiveBoxXMark : ChevronDown} mini size="16" />
+    <Icon src={exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
+    {exhausted ? 'No More Results to Load' : 'Load More'}
+    <Icon src={exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
 </Button>
