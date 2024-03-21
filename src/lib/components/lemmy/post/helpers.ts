@@ -8,6 +8,8 @@ import { lookup as MBFCLookup } from '$lib/MBFC/client'
 import { userSettings as UserSettings} from '$lib/settings.js'
 import { YTFrontends } from '$lib/settings.js'
 
+import { page } from '$app/stores'
+
 // Import user settings
 let userSettings: any = get(UserSettings);
 
@@ -257,20 +259,39 @@ export const scrollToTop = function(element:HTMLElement|undefined|null, smooth:b
     catch {}
 }
 
-export async function scrollToLastSeenPost() {
-    let lastClickedPost = getSessionStorage('lastClickedPost')
-                
-    //@ts-ignore
-    if (lastClickedPost?.postID) {
-        //@ts-ignore
-        let postID = lastClickedPost.postID
-        await sleep(100)
 
-        let postElement = document.getElementById(postID.toString())
-        if (postElement) {
+
+export function setLastSeenPost(postID: number) {
+    const Page = get(page)
+    const key = `lastSeenPost_${Page.url.pathname}`
+
+    if (postID > 0) {
+        sessionStorage.setItem(key, postID.toString())
+    }
+    else {
+        sessionStorage.removeItem(key)
+    }
+}
+
+export function getLastSeenPost() {
+    const Page = get(page)
+    const key = `lastSeenPost_${Page.url.pathname}`
+    return sessionStorage.getItem(key)
+}
+
+export async function scrollToLastSeenPost(pathname:string = '/') {
+    const lastSeenPost = getLastSeenPost()
+    
+    if (lastSeenPost) {
+        await sleep(100)
+        const element = document.getElementById(lastSeenPost)
+        
+        if (element) {
             disableScrollHandling()
-            scrollToTop(postElement, false)
-            //setSessionStorage('lastClickedPost', undefined)
+            scrollToTop(element, false)
+        }
+        else {
+            window.scrollTo(0,0)
         }
     }
 }
@@ -478,6 +499,36 @@ export const addMBFCResults = function (posts:PostView[]):PostView[] {
 
 }
 
+// Fix one hour ahead posts
+export const fixHourAheadPosts = function(posts:PostView[]): PostView[] {
+    try {
+        for (let i:number=0; i<posts.length; i++) {
+            let published = posts[i].post.published.endsWith('Z')
+                ? new Date(posts[i].post.published)
+                : new Date(posts[i].post.published + 'Z')
+            
+            let now = new Date()
+
+            if (published > now) {
+                console.log("Fixing post pub time")
+                console.log(`Old: ${posts[i].post.published}`)
+                posts[i].post.published = new Date(published.setHours(published.getHours() - 1)).toISOString()
+                console.log(`New: ${posts[i].post.published}`)
+
+            }
+        }
+        return posts
+    }
+    catch (err) {
+        console.log('fixHourAheadPosts(): An error has occurred. Returning original posts list');
+        console.log(err)
+        return posts
+    }
+
+
+    
+
+}
 
 // Crosspost a post
 export const crossPost = function(post:PostView):void {

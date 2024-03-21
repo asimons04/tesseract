@@ -1,6 +1,6 @@
 import type { GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
-import { addMBFCResults, findCrossposts, filterKeywords } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts } from '$lib/components/lemmy/post/helpers'
 import { getClient, site } from '$lib/lemmy.js'
 import { get } from 'svelte/store'
 import { error } from '@sveltejs/kit'
@@ -33,6 +33,9 @@ export async function load({ url }: LoadParams) {
         
         site.set(siteData)
 
+        // Fix posts that come in an hour ahead
+        posts.posts = fixHourAheadPosts(posts.posts)
+
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
 
@@ -42,6 +45,14 @@ export async function load({ url }: LoadParams) {
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
         
+        if (sort == 'New')          posts.posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+        if (sort == 'Old')          posts.posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
+        if (sort == 'NewComments')  posts.posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+        if (sort == 'Active')       posts.posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+        if (sort == 'Hot')          posts.posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+        if (sort == 'MostComments') posts.posts.sort((a, b) => b.counts.comments - a.counts.comments)
+        if (sort.startsWith('Top')) posts.posts.sort((a, b) => b.counts.score - a.counts.score)
+
         // Return the data to the frontend
         
         return {
@@ -50,7 +61,6 @@ export async function load({ url }: LoadParams) {
             page: page,
             posts: posts,
             site: siteData,
-            refresh: true,
         }
         
     } catch (err) {

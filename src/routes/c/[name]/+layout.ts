@@ -15,8 +15,9 @@ export async function load(req: any) {
     
     
     try {
-        let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: get(userSettings)?.uiState.postsPerPage || 40,
+        let posts = await getClient().getPosts({
+            //limit: get(userSettings)?.uiState.postsPerPage || 40,
+            limit: 10,
             community_name: req.params.name,
             page: page,
             sort: sort,
@@ -33,7 +34,7 @@ export async function load(req: any) {
             sort: sort,
             page: page,
             posts: posts,
-            community: await getClient(undefined, req.fetch).getCommunity({
+            community: await getClient().getCommunity({
                 name: req.params.name,
                 auth: get(profile)?.jwt,
             }),
@@ -60,13 +61,14 @@ export async function load(req: any) {
             duration: 15000
         })
 
-        await getClient(undefined, fetch).resolveObject({
+        await getClient().resolveObject({
             auth: get(profile)!.jwt!,
             q: '!' + req.params.name,
         })
         
-        let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: get(userSettings)?.uiState.postsPerPage || 40,
+        let posts = await getClient().getPosts({
+            //limit: get(userSettings)?.uiState.postsPerPage || 40,
+            limit: 10,
             community_name: req.params.name,
             page: page,
             sort: sort,
@@ -84,7 +86,7 @@ export async function load(req: any) {
             sort: sort,
             page: page,
             posts: posts,
-            community: await getClient(undefined, req.fetch).getCommunity({
+            community: await getClient().getCommunity({
                 name: req.params.name,
                 auth: get(profile)?.jwt,
             }),

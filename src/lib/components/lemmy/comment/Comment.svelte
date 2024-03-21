@@ -157,7 +157,7 @@
                         color="gray"
                     >
                         <Icon src={Cake} mini size="16"/>
-                        <span class="hidden md:block">New Account</span>
+                        New
                     </Badge>
                 {/if}
             </span>

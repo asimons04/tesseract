@@ -1,23 +1,16 @@
 <script lang="ts">
     import type { GetPosts, PostView } from 'lemmy-js-client'
     import type { Snapshot } from './$types';
+
     import { afterNavigate, beforeNavigate } from '$app/navigation'
-    
-    import { addMBFCResults, findCrossposts, filterKeywords, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, scrollToLastSeenPost, setLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { getClient } from '$lib/lemmy.js'
-    //import { getSessionStorage, setSessionStorage } from '$lib/session'
-    //import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    //import { searchParam } from '$lib/util.js'
-    //import { userSettings } from '$lib/settings.js'
-    //import { load } from './+page'
 
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import { afterAll } from 'vitest';
-
 
     export let data
 
@@ -28,9 +21,6 @@
         automatic: true,
         enabled: true,
     }
-
-    // Hack to clear the no more posts flag when data is refreshed through invalidation
-    //$: infiniteScroll.exhausted = !data.refresh  
 
     // Store and reload the page data between navigations
     export const snapshot: Snapshot<string> = {
@@ -49,7 +39,8 @@
     })
 
     async function refresh() {
-        //data = await load({url: new URL(window.location.href)})
+        setLastSeenPost(-1)
+        window.scrollTo(0,0)
     }
 
     async function loadPosts(params: GetPosts =  {
@@ -73,6 +64,9 @@
         if (posts.posts.length < 1) infiniteScroll.exhausted = true
         else infiniteScroll.exhausted = false
 
+        // Fix posts that come in an hour ahead
+        posts.posts = fixHourAheadPosts(posts.posts)
+
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
 
@@ -81,7 +75,17 @@
 
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
-
+        
+        // Sort the new result set based on the selected sort method
+        if (data.sort == 'New')          posts.posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+        if (data.sort == 'Old')          posts.posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
+        if (data.sort == 'NewComments')  posts.posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+        if (data.sort == 'Active')       posts.posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+        if (data.sort == 'Hot')          posts.posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+        if (data.sort == 'MostComments') posts.posts.sort((a, b) => b.counts.comments - a.counts.comments)
+        if (data.sort.startsWith('Top')) posts.posts.sort((a, b) => b.counts.score - a.counts.score)
+        
+        
         // Loop over the new posts
         for (let i:number=0; i < posts.posts.length; i++) {
             

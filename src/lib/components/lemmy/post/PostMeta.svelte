@@ -155,7 +155,6 @@
                         color="gray"
                     >
                         <Icon src={Cake} mini size="16"/>New
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}"> Account</span>
                     </Badge>
                 {/if}
 

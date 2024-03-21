@@ -1,7 +1,9 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
-    
+
+    import { setLastSeenPost } from './helpers.js'
+
     import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { userSettings } from '$lib/settings.js'
     
@@ -18,17 +20,12 @@
     
     let expandCompact: boolean;
     let expandPreviewText:boolean
-    function setLastSeen() {
-        if (displayType == 'feed') {
-            setSessionStorage('lastClickedPost', { postID: post.post.id} );
-        }
-    }
 </script>
 
-
+{#if post?.post?.id}
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div on:mouseover={() => setLastSeen()} on:touchstart={() => setLastSeen()}>
+<div on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)}>
     <!--- Compact Posts --->
     {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
         <PostCompactStyle 
@@ -56,9 +53,4 @@
         />
     {/if}
 </div>
-
-
-
-
-
-
+{/if}

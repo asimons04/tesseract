@@ -1,23 +1,24 @@
 <script lang="ts">
+    import type { Snapshot } from './$types';
+    import type { GetPosts } from 'lemmy-js-client'
     
-    //import { afterNavigate, disableScrollHandling, goto } from '$app/navigation';
-    import { arrayRange, fullCommunityName, searchParam } from '$lib/util.js'
-    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
-    import { onDestroy, onMount } from 'svelte'
+    import { addMBFCResults,  filterKeywords,  scrollToLastSeenPost, setLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { afterNavigate, beforeNavigate } from '$app/navigation'
+    import { fullCommunityName, searchParam } from '$lib/util.js'
+    import { getClient } from '$lib/lemmy.js'
+    import { setSessionStorage } from '$lib/session.js'
+    import { onMount } from 'svelte'
     import { page } from '$app/stores'
-    //import { scrollToTop } from '$lib/components/lemmy/post/helpers'
-    //import { sortOptions, sortOptionNames } from '$lib/lemmy'
-    //import { userSettings } from '$lib/settings.js'
-    
+    import { profile } from '$lib/auth.js'
     
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import Pageination from '$lib/components/ui/Pageination.svelte'
+    import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
+    //import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
 
     export let data
-    
     
     onMount(() => {
         if (data?.community) {
@@ -30,6 +31,99 @@
             })
         }
     })
+
+    let infiniteScroll = {
+        loading: false,
+        exhausted: false,
+        maxPosts: 100,
+        automatic: true,
+        enabled: true,
+    }
+
+    // Store and reload the page data between navigations
+    export const snapshot: Snapshot<string> = {
+		capture: () => JSON.stringify(data),
+        restore: (value) => {
+            data = JSON.parse(value)
+        },
+	};
+
+    beforeNavigate(() => {
+        infiniteScroll.exhausted = false
+    })
+
+    afterNavigate(async() => {
+        await scrollToLastSeenPost()
+    })
+
+    async function refresh() {
+        setLastSeenPost(-1)
+        window.scrollTo(0,0)
+    }
+
+    async function loadPosts(params: GetPosts =  {
+            //limit: $userSettings?.uiState.postsPerPage || 20,
+            limit: 10,
+            community_name: $page.params.name,
+            page: undefined,
+            next_page: undefined,
+            sort: data.sort,
+            auth: $profile?.jwt,
+        } as GetPosts): Promise<void> {
+        
+        if (!data?.posts) return
+
+        //@ts-ignore
+        if (!data?.posts?.next_page && !data?.page) data.page = 1
+
+        //@ts-ignore
+        if (data.posts.next_page) params.page_cursor = data.posts.next_page;
+        else params.page = ++data.page!
+
+        // Fetch posts
+        let posts = await getClient().getPosts(params);
+
+        if (posts.posts.length < 1) infiniteScroll.exhausted = true
+        else infiniteScroll.exhausted = false
+
+        // Filter the posts for keywords
+        posts.posts = filterKeywords(posts.posts);
+
+        // Apply MBFC data object to post
+        posts.posts = addMBFCResults(posts.posts);
+        
+        // Sort the new result set based on the selected sort method
+        if (data.sort == 'New')          posts.posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+        if (data.sort == 'Old')          posts.posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
+        if (data.sort == 'NewComments')  posts.posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+        if (data.sort == 'Active')       posts.posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+        if (data.sort == 'Hot')          posts.posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+        if (data.sort == 'MostComments') posts.posts.sort((a, b) => b.counts.comments - a.counts.comments)
+        if (data?.sort?.startsWith('Top')) posts.posts.sort((a, b) => b.counts.score - a.counts.score)
+        
+        
+        // Loop over the new posts
+        for (let i:number=0; i < posts.posts.length; i++) {
+            
+            // Check if the current new post already exists in the existing array of posts
+            let exists = false
+            for (let j:number=0; j < data.posts.posts.length; j++) {
+                if (posts.posts[i].post.id == data.posts.posts[j].post.id) exists = true
+            }
+
+            // Only add the new post if it doesn't already exist in the post array
+            if (!exists) data.posts.posts.push(posts.posts[i])
+            
+            // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
+            if (data.posts.posts.length > infiniteScroll.maxPosts) data.posts.posts.shift()    
+        }
+
+        //@ts-ignore
+        if (posts.next_page) data.posts.next_page = posts.next_page
+        
+        data.posts.posts = data.posts.posts
+        infiniteScroll.loading  = false
+    }
 </script>
 
 <svelte:head>
@@ -45,9 +139,10 @@
     {/if}
 </svelte:head>
 
-<SubNavbar home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
-    sortMenu={true} bind:selectedSortOption={data.sort}
-    pageSelection={true} bind:currentPage={data.page}
+<SubNavbar home back compactSwitch toggleMargins toggleCommunitySidebar scrollButtons
+    sortMenu={true}         bind:selectedSortOption={data.sort}
+    pageSelection={true}    bind:currentPage={data.page}
+    refreshButton           on:navRefresh={()=> refresh()}
 />
 
 {#if data?.posts && data?.community}
@@ -56,7 +151,15 @@
             
             <PostFeed posts={data.posts.posts}/>
             
-            <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
+            <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
+                on:loadMore={ () => {
+                    if (!infiniteScroll.exhausted) {
+                        infiniteScroll.loading = true
+                        loadPosts()
+                    }
+                }}
+            />
+            <!--<Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />-->
         </div>
 
         <div class="mt-[8px]">
