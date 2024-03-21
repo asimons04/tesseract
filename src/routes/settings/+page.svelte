@@ -626,13 +626,13 @@
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
                                 <Icon src={TableCells} mini width={16}/>
-                                Posts per Page
+                                Posts per Fetch
                             </p>
-                            <p class="text-xs font-normal">The number of posts to request on each page of the feed.</p>
+                            <p class="text-xs font-normal">The number of posts to request at a time.</p>
                         </div>
                         <div class="mx-auto"/>
                         <MultiSelect
-                            options={[20, 30, 40, 50]}
+                            options={[10, 20, 30]}
                             bind:selected={$userSettings.uiState.postsPerPage}
                             items={0}
                             headless={true}

@@ -224,7 +224,7 @@ export const postType = (post: PostView | undefined ) => {
 }
 
 
-export const fixLemmyEncodings = function (content:string|undefined):string|undefined {
+export const fixLemmyEncodings = function (content:string|undefined):string {
     if (!content) return ' '
     
     try {

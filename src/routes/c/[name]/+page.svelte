@@ -10,6 +10,7 @@
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { userSettings } from '$lib/settings'
     
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
@@ -62,8 +63,8 @@
     }
 
     async function loadPosts(params: GetPosts =  {
-            //limit: $userSettings?.uiState.postsPerPage || 20,
-            limit: 10,
+            limit: $userSettings?.uiState.postsPerPage || 10,
+            //limit: 10,
             community_name: $page.params.name,
             page: undefined,
             next_page: undefined,

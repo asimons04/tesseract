@@ -127,7 +127,7 @@ interface Settings {
 }
 
 export const defaultSettings: Settings = {
-    version: 0.4,
+    version: 0.5,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -401,6 +401,16 @@ export function migrateSettings(old:any) {
     if (old.version == 0.3) {
         if (!old.uiState.hasOwnProperty('feedMargins')) old.uiState.feedMargins = defaultSettings.uiState.feedMargins;
         old.version = 0.4
+    }
+
+    // 0.4 - 0.5
+    if (old.version == 0.4) {
+        // Match new posts per fetch setting to new range of 10, 20, or 30
+        if (old.uiState.postsPerPage >=30) old.uiState.postsPerPage = 30
+        else if (old.uiState.postsPerPage == 20) old.uiState.postsPerPage = 30
+        else old.uiState.postsPerPage = 10
+
+        old.version = 0.5
     }
 
     return { ...defaultSettings, ...old }

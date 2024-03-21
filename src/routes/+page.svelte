@@ -6,7 +6,8 @@
     import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, scrollToLastSeenPost, setLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
-
+    import { userSettings } from '$lib/settings'
+    
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
@@ -40,12 +41,12 @@
 
     async function refresh() {
         setLastSeenPost(-1)
+        infiniteScroll.exhausted = false
         window.scrollTo(0,0)
     }
 
     async function loadPosts(params: GetPosts =  {
-                //limit: $userSettings?.uiState.postsPerPage || 20,
-                limit: 10,
+                limit: $userSettings?.uiState.postsPerPage || 10,
                 page: undefined,
                 next_page: undefined,
                 sort: data.sort,
@@ -129,7 +130,7 @@
             <PostFeed posts={data.posts.posts} />
         </section>
         
-        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted) {
                     infiniteScroll.loading = true
