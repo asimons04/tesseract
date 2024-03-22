@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CommentView } from 'lemmy-js-client'
+    import type { CommentAggregates, CommentView } from 'lemmy-js-client'
     import {
         ArrowUp,
         ArrowDown,
@@ -20,9 +20,8 @@
         return ''
     }
 
-    async function vote(vote:number) {
+    async function vote(vote:number): Promise<CommentAggregates> {
         if (!$profile?.jwt) return comment.counts
-        
         try {
             return (await getClient().likeComment({
                     auth: $profile.jwt,

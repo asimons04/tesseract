@@ -23,8 +23,8 @@
     size="sm"
     href={`/post/${getInstance()}/${post.post.id}`}
     newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
-    class="!text-inherit h-8 px-3 border-none"
-    title="Comments"
+    class="!text-inherit h-8 px-3 border-none relative"
+    title="{post.counts.comments} Comments {post.unread_comments > 0 ? `(${post.unread_comments} new)` : ''}"
     color="ghost"
 >
     <Icon slot="icon" src={ChatBubbleOvalLeftEllipsis} mini width={16} height={16} />

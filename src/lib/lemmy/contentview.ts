@@ -114,6 +114,7 @@ export async function deleteItem(
   return deleted
 }
 
+/* Deprecated
 export async function vote(item: ContentView | Submission, vote: number, jwt: string): Promise<number> {
   if (isSubmission(item)) item = contentItem(item)
 
@@ -136,12 +137,9 @@ export async function vote(item: ContentView | Submission, vote: number, jwt: st
   }
   return 0
 }
+*/
 
-export async function markAsRead(
-  item: ContentView | Submission,
-  read: boolean,
-  jwt: string
-): Promise<boolean> {
+export async function markAsRead(item: ContentView | Submission, read: boolean, jwt: string): Promise<boolean> {
   if (isSubmission(item)) item = contentItem(item)
 
   if (item.type == 'post') {

@@ -28,6 +28,7 @@
         ArrowsPointingOut,
         Icon,
     } from 'svelte-hero-icons'
+    import Comment from '../comment/Comment.svelte';
     
     export let post: PostView
     export let postType: PostType = 'text'

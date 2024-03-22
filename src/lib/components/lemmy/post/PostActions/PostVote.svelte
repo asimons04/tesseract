@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { 
+        PostAggregates,
         PostView 
     } from 'lemmy-js-client'
     
@@ -26,7 +27,7 @@
         return ''
     }
 
-    async function vote(vote:number) {
+    async function vote(vote:number): Promise<PostAggregates> {
         if (!$profile?.jwt) return post.counts
         
         try {
