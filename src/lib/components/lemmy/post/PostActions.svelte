@@ -45,11 +45,10 @@
 >
 
     <!--- Post Vote Buttons--->
-    <PostVote bind:post={post}  />
-    <!--<PostVote post={post.post} bind:vote={post.my_vote} bind:score={post.counts.score} />-->
+    <PostVote bind:post  />
 
     <!--- Comment Count and Link to Post--->
-    <CommentCountButton post={post} displayType={displayType} />
+    <CommentCountButton bind:post displayType={displayType} />
 
     <!---Reply Button that enables the comment form--->
     <PostReplyButton displayType={displayType} bind:showCommentForm bind:post/>

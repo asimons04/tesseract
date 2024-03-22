@@ -66,7 +66,6 @@
         aria-label="Downvote"
         class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
         on:click={async () => {
-            if (!$profile?.jwt) return
             post.counts = await vote(post.my_vote == -1 ? 0 : -1)
             post.my_vote = post.my_vote == -1 ? 0 : -1
         }}
