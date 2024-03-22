@@ -118,13 +118,6 @@
                     <span class="flex flex-row gap-1">
                         <span class="pl-1 hidden sm:block">•</span>
                         <RelativeDate date={published} />
-                        
-                        {#if upvotes != undefined && downvotes != undefined}
-                            <span>•</span>
-                            <span title="{upvotes.toString()} Upvotes / {downvotes.toString()} Downvotes">
-                                {Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%
-                            </span>
-                        {/if}
                     </span>
                 </span>
             </div>

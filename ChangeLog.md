@@ -5,22 +5,37 @@ All major/minor changes between releases will be documented here.
 
 ## 1.3.0
 - [Media] Add support for detecting and rendering Peertube embeds
+    - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
+    - Votes on Peertube videos will translate to thumbs-up on PT's end
 
 - [0.19.x Support] Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.
 
 - [Bugfixes] General Typescript and a11y fixes (too numerous to list individually)
+- [Bugfixes] Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote.
+- [Bugfixes] Reimplemented vote functions for comments and posts.
 
 - [UI] Reimplemented account switching menu
 - [UI] Add "Copy Lemmyverse Link" to user profile menu.
+- [UI] Reimplemented vote buttons
+    - Shows upvote and downvote counts
+- [UI] Some of y'all's community names are *too damn long*.  Long community names are now split on colon and hyphen characters and only the text to the left are shown on posts.  
+    - **Alternative Nation: The Fediverse's Alternative and Indie Music Community** -> Alternative Nation
+    - **Climate - truthful information about climate, related activism and politics.** -> Climate
+    - Considering other ways to handle those, but this was a quick fix that seems to cover most cases well enough
+    - Full name still shown in community sidebar
+
+
+ 
+    
+    
 
 - [Feeds] Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 
   - Now will keep your place when changing post/compact view and changing margins
   - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
 - [Feeds] Switched pagination to infinite scroll 
 - [Feeds] Removed feed setting for number of posts per page
-  - Hard coded at 20 with infinite scrolling
-  - Too many and infinite scrolling became sluggish
-  - The initial fetch and infinite scroll "fetch  more" functions need to match 
+  - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
+
 
 
 

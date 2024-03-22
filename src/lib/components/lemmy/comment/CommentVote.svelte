@@ -7,6 +7,8 @@
     } from 'svelte-hero-icons'
     import { getClient } from '$lib/lemmy'
     import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
 
@@ -30,13 +32,18 @@
                 ).comment_view.counts
         }
         catch (err) {
+            toast({
+                type: 'error',
+                title: "Error",
+                content: `Unable to process your vote.`,
+            })
             return comment.counts
         }
     }
 
 </script>
 
-<div class="flex flex-row items-center rounded-md gap-1 transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800 border-none">
+<div class="flex flex-row items-center rounded-md gap-0 transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800 border-none">
     <Button disabled={!$profile?.user} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
         class="px-1.5 {comment.my_vote == 1 ? voteColor() : ''}"
         on:click={async () => {

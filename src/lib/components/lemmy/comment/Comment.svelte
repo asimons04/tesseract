@@ -108,16 +108,7 @@
                 {/if}
 
                 <RelativeDate date={node.comment_view.comment.published}/>
-                <span>•</span>
-                <span title="{node.comment_view.counts.upvotes} Upvotes, {node.comment_view.counts.downvotes} Downvotes">
-                    {
-                        Math.floor(
-                            (node.comment_view.counts.upvotes /
-                                (node.comment_view.counts.upvotes + node.comment_view.counts.downvotes)
-                            ) * 100
-                        ) || 0
-                    }%
-                </span>
+
                 {#if node.comment_view.comment.updated}
                     <span class="flex flex-row items-center gap-1 ml-1">•
                         <Icon src={Pencil} solid size="12" title="Edited" />
