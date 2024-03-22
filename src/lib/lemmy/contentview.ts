@@ -114,11 +114,7 @@ export async function deleteItem(
   return deleted
 }
 
-export async function vote(
-  item: ContentView | Submission,
-  vote: number,
-  jwt: string
-): Promise<number> {
+export async function vote(item: ContentView | Submission, vote: number, jwt: string): Promise<number> {
   if (isSubmission(item)) item = contentItem(item)
 
   if (item.type == 'post') {

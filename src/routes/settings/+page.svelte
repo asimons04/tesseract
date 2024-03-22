@@ -135,6 +135,8 @@
     }
 
     const exportSettings = function():void {
+        if (!$profile?.groups) return
+
         let exportData = {
             groups:     [...$profile.groups],
             settings:   {...$userSettings}
@@ -156,36 +158,42 @@
     }
 
     const importSettings = function(upload:FileList): void {
+        if (!$profile) return
+
         try {
             let file = upload[0];
             let reader = new FileReader();
             
             reader.readAsText(file);
             reader.onload = function() {
+                if (!$profile) return
                 try {
                     let uploadedSettings = JSON.parse(reader.result as string);
                     
                     if (uploadedSettings.settings || uploadedSettings.groups) {
-                        if (uploadedSettings.settings) $userSettings = migrateSettings(uploadedSettings.settings, defaultSettings);
+                        if (uploadedSettings.settings) $userSettings = migrateSettings(uploadedSettings.settings);
                         if (uploadedSettings.groups) $profile.groups = [...uploadedSettings.groups];
 
                         if (uploadedSettings.groups) saveProfile($profile);
 
                         toast({
                             type: 'success',
-                            content: "Successfully uploaded and applied settings."
+                            content: "Successfully uploaded and applied settings.",
+                            title: 'Success'
                         });
                     }
                     else {
                         toast({
                         type: 'error',
-                        content: "No settings found in JSON upload."
+                        content: "No settings found in JSON upload.",
+                        title: 'Error'
                     });
                     }
                 } catch (err) {
                     toast({
                         type: 'error',
-                        content: "Failed to parse uploaded settings."
+                        content: "Failed to parse uploaded settings.",
+                        title: 'Error'
                     });
                 }
             }
@@ -193,7 +201,8 @@
         catch (err) {
             toast({
                 type: 'error',
-                content: "Catch: Failed to read uploaded file."
+                content: "Catch: Failed to read uploaded file.",
+                title: 'Error'
             });
         }
     }
@@ -201,6 +210,7 @@
     // Abuse the fuck out of the Lemmy API by storing our settings in the theme field
     const saveToLemmy = async function():Promise<void> {
         data.saving = true;
+        if (!$profile) return
 
         try {
             let oldSettings = {}
@@ -210,6 +220,8 @@
             
 
             // In case old settings are still the default 'theme' values.
+            if (!myProfile?.my_user?.local_user_view?.local_user?.theme) throw new Error("Unable to load profile from server")
+
             if (typeof myProfile.my_user.local_user_view.local_user.theme == 'string') oldSettings = {}
             else oldSettings = JSON.parse(myProfile.my_user.local_user_view.local_user.theme)
             
@@ -227,21 +239,23 @@
 
             // Save the updated settings object back to the 'theme' field. (for some reason, the local user 'person' object is required)
             const res = await getClient().saveUserSettings({
-                auth: $profile.jwt,
-                ...$profile.user.local_user_view.person,
+                auth: $profile.jwt ?? ' ',
+                ...$profile.user?.local_user_view.person,
                 theme: JSON.stringify(settings)
             })
             
             toast({
                 type: 'success',
-                content: "Successfully uploaded and saved settings to Lemmy."
+                content: "Successfully uploaded and saved settings to Lemmy.",
+                title: 'Success'
             });
         }
         catch (err) {
             console.log(err);
             toast({
                 type: 'error',
-                content: "Failed to save settings to Lemmy profile."
+                content: "Failed to save settings to Lemmy profile.",
+                title: 'Error'
             });
         }
         data.saving = false;
@@ -250,15 +264,18 @@
     // Load the settings from the Lemmy profile's `theme` field
     const loadFromLemmy = async function():Promise<void> {
         data.saving = true;
+        if (!$profile) return
+        
         try {
             const res = await getClient().getSite({auth: $profile?.jwt})
-            let mySettings = JSON.parse(res.my_user.local_user_view.local_user.theme)
+            let mySettings
+            if (res?.my_user?.local_user_view?.local_user?.theme) mySettings = JSON.parse(res.my_user.local_user_view.local_user.theme)
 
             if (mySettings && mySettings.tesseract && (mySettings.tesseract.settings || mySettings.tesseract.groups)) {
                 mySettings = mySettings.tesseract;
 
                 // Import settings
-                if (mySettings.settings) $userSettings = migrateSettings(mySettings.settings, defaultSettings);
+                if (mySettings.settings) $userSettings = migrateSettings(mySettings.settings);
                 
                 // Fix the stupid sanitizaiton Lemmy does to ampersands and such
                 if (mySettings.groups) {
@@ -271,13 +288,15 @@
 
                 toast({
                     type: 'success',
-                    content: "Successfully loaded settings from Lemmy profile."
+                    content: "Successfully loaded settings from Lemmy profile.",
+                    title: 'Success'
                 });
             }
             else {
                 toast({
                     type: 'warning',
-                    content: "Loaded data from profile but unable to parse it.  See console log."
+                    content: "Loaded data from profile but unable to parse it.  See console log.",
+                    title: 'Warning'
                 });
                 console.log(res)
             }
@@ -286,7 +305,8 @@
         catch (err) {
             toast({
                 type: 'error',
-                content: "Failed to load settings from Lemmy profile."
+                content: "Failed to load settings from Lemmy profile.",
+                title: 'Error'
             });
             console.log(err)
         }
@@ -302,13 +322,14 @@
 
         try {
             const res = await getClient().saveUserSettings({
-                auth: $profile.jwt,
-                ...$profile.user.local_user_view.person,
+                auth: $profile?.jwt ?? ' ',
+                ...$profile?.user?.local_user_view?.person,
                 theme: 'browser'
             })
             
             toast({
                 type: 'success',
+                title: "Success",
                 content: "Successfully restored valid value to profile 'theme' key."
             });
         }
@@ -1099,9 +1120,11 @@
                             <p class="text-xs font-normal">Hide posts that link to low credibility sources as reported by Media Bias Fact Check.</p>
                             <p class="text-xs font-normal" class:hidden={$userSettings.uiState.MBFCBadges}>
                                 You must 
-                                <a class="text-blue-500 hover:underline max-w-full cursor-pointer" title="Enable MBFC badges on posts" on:click={()=> {$userSettings.uiState.MBFCBadges = true}}>
+                                <button class="text-blue-500 hover:underline max-w-full cursor-pointer" title="Enable MBFC badges on posts" 
+                                    on:click={()=> {$userSettings.uiState.MBFCBadges = true}}
+                                >
                                     enable MBFC badges
-                                </a>
+                                </button>
                                 to use this feature.
                             </p>
                         </div>

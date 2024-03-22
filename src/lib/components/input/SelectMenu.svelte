@@ -22,6 +22,7 @@
     export let selectedFunc: Function | undefined = undefined
     export let title:string = '';
     export let icon:any = undefined;
+    export let iconSize:number = 16
     
     let open = false
 
@@ -34,15 +35,13 @@
 
 
 <Menu {alignment} containerClass="!z-[30]" >
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
+    <button slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
         
-        <span class="flex flex-row items-center gap-0 md:gap-1 font-bold text-sm cursor-pointer {$$props.class}">
+        <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer {$$props.class}">
             {#if icon}
-                <span class="hidden sm:flex">
-                    <Icon src={icon} mini width={16}/>
-                </span>
+                <!--<span class="hidden sm:flex">-->
+                    <Icon src={icon} mini width={iconSize}/>
+                <!--</span>-->
             {/if}
 
             {#if label}
@@ -57,7 +56,7 @@
             <Icon src={ChevronDown} mini width={14}/>
         </span>
         
-    </div>
+    </button>
 
     {#each options as option, index}
         <MenuButton

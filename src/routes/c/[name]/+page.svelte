@@ -64,7 +64,6 @@
 
     async function loadPosts(params: GetPosts =  {
             limit: $userSettings?.uiState.postsPerPage || 10,
-            //limit: 10,
             community_name: $page.params.name,
             page: undefined,
             next_page: undefined,
@@ -92,16 +91,6 @@
 
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
-        
-        // Sort the new result set based on the selected sort method
-        if (data.sort == 'New')          posts.posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
-        if (data.sort == 'Old')          posts.posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-        if (data.sort == 'NewComments')  posts.posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
-        if (data.sort == 'Active')       posts.posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
-        if (data.sort == 'Hot')          posts.posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
-        if (data.sort == 'MostComments') posts.posts.sort((a, b) => b.counts.comments - a.counts.comments)
-        if (data?.sort?.startsWith('Top')) posts.posts.sort((a, b) => b.counts.score - a.counts.score)
-        
         
         // Loop over the new posts
         for (let i:number=0; i < posts.posts.length; i++) {

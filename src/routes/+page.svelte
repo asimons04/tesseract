@@ -116,7 +116,7 @@
 </svelte:head>
 
 <SubNavbar
-    compactSwitch  toggleMargins toggleCommunitySidebar scrollButtons pageUpDownButtons
+    compactSwitch  toggleMargins toggleCommunitySidebar scrollButtons 
     listingType={true}      bind:selectedListingType={data.listingType}
     sortMenu={true}         bind:selectedSortOption={data.sort}
     refreshButton           on:navRefresh={()=> refresh()}

@@ -151,6 +151,7 @@
                 selected={selectedListingType}
                 title="Listing Type"
                 icon={Bars3}
+                iconSize={iconSize}
                 on:select={listingTypeOnSelect}
             />
         {/if}
@@ -168,6 +169,7 @@
                 selected={selectedSortOption}
                 title="Sort Direction"
                 icon={ChartBar}
+                iconSize={iconSize}
                 on:select={(e) => {
                     // @ts-ignore
                     searchParam($page.url, 'sort', e.detail, 'page')
