@@ -13,19 +13,22 @@
         Star,
     } from 'svelte-hero-icons'
 
+    export let size:number = 28
+
 </script>
 
 {#if $profile && $profile.user}
-<Menu alignment="bottom-center" itemsClass="h-8 md:h-8" containerClass="!bg-slate-100 dark:!bg-zinc-950 !max-w-fit overflow-y-auto">
+<Menu alignment="bottom-center" containerClass="!max-w-fit overflow-y-auto">
     <Button
         color="tertiary"
         slot="button"
         aria-label="Favorites"
+        title="Favorites"
         let:toggleOpen
         on:click={toggleOpen}
         class="max-md:w-9 max-md:h-8 max-md:!p-0"
     >
-        <Icon src={Star} width={32} mini slot="icon" />
+        <Icon src={Star} width={size} mini slot="icon" />
     </Button>
     
     <li class="text-xs font-bold opacity-80 text-left mx-4 my-1 py-1 w-48">Favorites</li>
@@ -38,10 +41,10 @@
                     items={$profile?.groups[getGroupIndex('Favorites')]?.communities}
                     menu={false}
                 />
+            {:else}
+                No favorites
             {/if}
         </div>
-    {:else}
-        No favorites
     {/if}
 
 </Menu>

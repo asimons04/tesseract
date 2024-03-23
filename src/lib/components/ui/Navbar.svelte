@@ -13,17 +13,17 @@
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
+    import CreateButton from './navbar/CreateButton.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Logo from '$lib/components/ui/Logo.svelte'
-    
     import FavoritesButton from '$lib/components/ui/navbar/FavoritesButton.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import NotificationButton from '$lib/components/ui/navbar/NotificationButton.svelte'
     import ProfileButton from '$lib/components/ui/navbar/ProfileButton.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    //import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    //import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
+    //import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     import {
@@ -51,7 +51,7 @@
         UserCircle,
         UserGroup,
     } from 'svelte-hero-icons'
-    import { searchParam } from '../../util';
+    //import { searchParam } from '../../util';
   
     let scrollY = 0
     
@@ -120,111 +120,41 @@
     </form>
 
     <!---Right-side Buttons--->
-    <div class="flex flex-row gap-2 py-2 px-2">
-        
-        
-        <!--- Show Reports Button if Mod --->
-        <!--
-        {#if amModOfAny($profile?.user)}
-            <Button
-                href="/moderation"
-                data-sveltekit-preload-data="hover"
-                aria-label="Moderation"
-                class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
-            >
-                {#if $profile?.user?.reports ?? 0 > 0}
-                    <div class="rounded-full w-2 h-2 bg-red-500 absolute -top-1 -left-1"/>
-                {/if}
-
-                <ShieldIcon filled width={15} />
-                <span class="hidden md:inline">Reports</span>
-            </Button>
-        {/if}
-        -->
-        
+    <div class="flex flex-row gap-2 py-2 px-2 items-center">
+       
         <!--- Search (Hide in large width since inline search is present--->
         <Button
             href="/search"
+            color="tertiary"
             aria-label="Search"
+            title="Search"
             class="lg:hidden max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
         >
-            <Icon mini src={MagnifyingGlass} width={16} slot="icon" />
+            <Icon mini src={MagnifyingGlass} width={24} slot="icon" />
             <span class="hidden md:inline">Search</span>
         </Button>
       
         <!--- Explore/Communities --->
         <Button
             href="/communities"
+            color="tertiary"
             data-sveltekit-preload-data="hover"
-            aria-label="Communities"
-            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
+            aria-label="Explore Communities"
+            title="Explore Communities"
+            class="max-md:w-9 max-md:h-8 max-md:!p-0"
         >
-            <Icon mini src={GlobeAlt} size="16" slot="icon" />
-            <span class="hidden md:inline">Explore</span>
+            <Icon mini src={GlobeAlt} width={24} slot="icon" />
         </Button>
-
-        <!--- View Custom Feeds
-        {#if $profile?.user}
-        <Button
-            href="/feeds/Favorites"
-            data-sveltekit-preload-data="hover"
-            aria-label="Feeds"
-            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
-        >
-            <Icon mini src={Star} size="16" slot="icon" />
-            <span class="hidden md:inline">Favorites</span>
-        </Button>
-        {/if}
-        --->
-
-        <FavoritesButton />
+        
+        
+        <!--- Favorites Menu--->
+        <FavoritesButton size={24}/>
       
         <!--- 'Create' Menu--->
-        <Menu alignment="bottom-right">
-            <Button
-                color="tertiary"
-                slot="button"
-                aria-label="Create"
-                let:toggleOpen
-                on:click={toggleOpen}
-                class="max-md:w-9 max-md:h-8 max-md:!p-0"
-            >
-                <Icon src={Plus} width={32} mini slot="icon" />
-                <!--<span class="hidden md:inline">Create</span>-->
-            </Button>
-        
-            <li class="text-xs font-bold opacity-80 text-left mx-4 my-1 py-1 w-48">Create</li>
-            <MenuButton
-                link
-                href="/create/post"
-                disabled={$profile?.jwt == undefined}
-            >
-                <Icon src={PencilSquare} mini width={16} />
-                Post
-            </MenuButton>
-
-            <MenuButton
-                link
-                href="/create/community"
-                disabled={
-                    !$profile?.jwt ||
-                    !$profile?.user ||
-                    ($site?.site_view.local_site.community_creation_admin_only && !isAdmin($profile.user))
-                }
-            >
-                <Icon src={Newspaper} mini width={16} />
-                Community
-            </MenuButton>
-        
-            {#if !$profile?.jwt}
-            <span class="text-sm mx-4 my-1 py-1">
-                <Link highlight href="/login">Log in</Link> to create content.
-            </span>
-            {/if}
-        </Menu>
+        <CreateButton size={24} />
 
         <!---Notification Menu--->
-        <NotificationButton />
+        <NotificationButton size={24}/>
     </div>
 
     <!--- Profile Menu --->
@@ -250,11 +180,6 @@
                     />
                 </div>
 
-                <!---Old Notification Dot
-                {#if $profile.user.unreads > 0}
-                    <div class="rounded-full w-2 h-2 bg-red-500 absolute top-0 left-0 z-10"/>
-                {/if}
-                --->
             {:else}
                 <div class="w-full h-full grid place-items-center">
                     <Icon src={Bars3} mini size="18" />

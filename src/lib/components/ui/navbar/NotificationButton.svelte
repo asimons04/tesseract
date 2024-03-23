@@ -14,19 +14,22 @@
         InboxArrowDown,
     } from 'svelte-hero-icons'
 
+    export let size:number = 28
+
 </script>
 
 {#if $profile && $profile.user}
-<Menu alignment="bottom-right" itemsClass="h-8 md:h-8" containerClass="!bg-slate-100 dark:!bg-zinc-950">
+<Menu alignment="bottom-right">
     <Button
         color="tertiary"
         slot="button"
         aria-label="Notificatoins"
+        title="Notifications"
         let:toggleOpen
         on:click={toggleOpen}
         class="max-md:w-9 max-md:h-8 max-md:!p-0"
     >
-        <Icon src={Bell} width={32} mini slot="icon" />
+        <Icon src={Bell} width={size} mini slot="icon" />
         
         <!---Notification Dots for Reports and Inbox--->
         {#if $profile?.user?.reports ?? 0 > 0}
