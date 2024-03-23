@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { amModOfAny,isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getGroupIndex, sortGroups } from '$lib/favorites'
-    import { profile } from '$lib/auth'
+    import { profile, type CommunityGroup } from '$lib/auth'
 
     
     import Button from '$lib/components/input/Button.svelte'
@@ -20,7 +19,14 @@
 
     export let size:number = 28
     let editCommunityGroup = false
-    let favoritesGroup = $profile?.groups![getGroupIndex('Favorites')]
+    
+    let favoritesGroup: CommunityGroup 
+    $: favoritesGroup = ($profile?.groups && $profile.groups.length > 0)
+        ? $profile?.groups[getGroupIndex('Favorites')]
+        : {
+            name: "Favorites",
+            communities: [],
+        } as CommunityGroup
 
 </script>
 
@@ -47,6 +53,12 @@
     
     {#if $profile?.groups}
         <div class="flex flex-col gap-1 h-full overflow-y-auto">
+            <MenuButton title="Edit Group" on:click={()=> editCommunityGroup = !editCommunityGroup}>
+                <Icon src={PencilSquare} mini size="16" />
+                Edit Favorites
+            </MenuButton>
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+            
             {#if $profile?.groups[getGroupIndex('Favorites')]?.communities?.length > 0}
                 <CommunityList 
                     expanded={true}  hidden={false} group='Favorites'
@@ -57,11 +69,8 @@
                 <li class="text-xs opacity-80 text-left mx-4 my-1 py-1 w-48">Favorites group is empty.</li>
             {/if}
             
-            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-            <MenuButton title="Edit Group" on:click={()=> editCommunityGroup = !editCommunityGroup}>
-                <Icon src={PencilSquare} mini size="16" />
-                Edit Group
-            </MenuButton>
+            
+            
         </div>
     {/if}
 

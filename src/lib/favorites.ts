@@ -154,7 +154,11 @@ export const updateGroup = function(oldGroup:CommunityGroup, newGroup:CommunityG
     if(!userProfile || !userProfile.groups || !oldGroup || !newGroup) return false
     
     let index = getGroupIndex(oldGroup.name);
-    if (index < 0) return false
+    //if (index < 0) return false
+    if (index < 0) {
+        addGroup(oldGroup.name)
+        index = getGroupIndex(oldGroup.name)
+    }
 
     userProfile.groups[index] = {...newGroup}
     profile.set({...userProfile})
