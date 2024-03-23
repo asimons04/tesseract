@@ -168,13 +168,13 @@
                     }}
                     class="h-8 w-full"
                 />
-                <span class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
+                <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
                         debounce('');
                         communityFiltervalue = '';
                     }}
                 >
                     <Icon src={XCircle} mini size="22"/>
-                </span>
+                </button>
             </div>
         {/if}
         
