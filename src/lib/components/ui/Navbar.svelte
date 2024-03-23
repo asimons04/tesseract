@@ -16,9 +16,10 @@
     import Link from '$lib/components/input/Link.svelte'
     import Logo from '$lib/components/ui/Logo.svelte'
     
-    
+    import FavoritesButton from '$lib/components/ui/navbar/FavoritesButton.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import NotificationButton from '$lib/components/ui/navbar/NotificationButton.svelte'
     import ProfileButton from '$lib/components/ui/navbar/ProfileButton.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
@@ -120,7 +121,10 @@
 
     <!---Right-side Buttons--->
     <div class="flex flex-row gap-2 py-2 px-2">
+        
+        
         <!--- Show Reports Button if Mod --->
+        <!--
         {#if amModOfAny($profile?.user)}
             <Button
                 href="/moderation"
@@ -136,6 +140,7 @@
                 <span class="hidden md:inline">Reports</span>
             </Button>
         {/if}
+        -->
         
         <!--- Search (Hide in large width since inline search is present--->
         <Button
@@ -158,7 +163,7 @@
             <span class="hidden md:inline">Explore</span>
         </Button>
 
-        <!--- View Custom Feeds --->
+        <!--- View Custom Feeds
         {#if $profile?.user}
         <Button
             href="/feeds/Favorites"
@@ -170,22 +175,25 @@
             <span class="hidden md:inline">Favorites</span>
         </Button>
         {/if}
+        --->
+
+        <FavoritesButton />
       
         <!--- 'Create' Menu--->
         <Menu alignment="bottom-right">
             <Button
-                color="primary"
+                color="tertiary"
                 slot="button"
                 aria-label="Create"
                 let:toggleOpen
                 on:click={toggleOpen}
                 class="max-md:w-9 max-md:h-8 max-md:!p-0"
             >
-                <Icon src={Plus} width={18} mini slot="icon" />
-                <span class="hidden md:inline">Create</span>
+                <Icon src={Plus} width={32} mini slot="icon" />
+                <!--<span class="hidden md:inline">Create</span>-->
             </Button>
         
-            <li class="text-xs opacity-80 text-left mx-4 my-1 py-1">Create</li>
+            <li class="text-xs font-bold opacity-80 text-left mx-4 my-1 py-1 w-48">Create</li>
             <MenuButton
                 link
                 href="/create/post"
@@ -214,6 +222,9 @@
             </span>
             {/if}
         </Menu>
+
+        <!---Notification Menu--->
+        <NotificationButton />
     </div>
 
     <!--- Profile Menu --->
@@ -239,9 +250,11 @@
                     />
                 </div>
 
+                <!---Old Notification Dot
                 {#if $profile.user.unreads > 0}
                     <div class="rounded-full w-2 h-2 bg-red-500 absolute top-0 left-0 z-10"/>
                 {/if}
+                --->
             {:else}
                 <div class="w-full h-full grid place-items-center">
                     <Icon src={Bars3} mini size="18" />

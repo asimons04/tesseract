@@ -6,8 +6,9 @@
     export let items: Community[]
     export let expanded: boolean
     export let hidden: boolean
-    export let filter: string
+    export let filter: string | undefined = undefined
     export let group:string = ''
+    export let menu = true
 
 </script>
 
@@ -18,7 +19,7 @@
             community={community} 
             group={group}
             hidden={(filter && !community.title.toLowerCase().trim().includes(filter.toLowerCase().trim())) || false }
-            {expanded}
+            {expanded} {menu}
         />
     {/each}
 </div>

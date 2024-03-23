@@ -146,7 +146,7 @@
             title={title}
             class:hidden={hidden}
     >
-        <div class="flex flex-row items-center gap-1.5 {buttonAlignment[alignment]}">
+        <div class="flex flex-row items-center gap-1.5 relative {buttonAlignment[alignment]}">
             {#if loading}
                 <Spinner
                     width={loaderWidth

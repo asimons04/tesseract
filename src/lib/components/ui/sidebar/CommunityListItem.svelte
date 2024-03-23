@@ -40,6 +40,7 @@
     export let hidden:boolean = false
     export let expanded:boolean = true;
     export let group:string = ''
+    export let menu:boolean = false
     
     let isGroupMember:boolean = false;
     $: favorite = isFavorite(community)
@@ -100,9 +101,11 @@
     let groupAddModal:boolean = false;
 </script>
 
+{#if menu}
 <div class="z-20">
     <AddCommunityGroup bind:open={groupAddModal} community={community} />
 </div>
+{/if}
 
 <div class="inline-flex w-full" class:hidden={hidden}>
     <Button
@@ -130,9 +133,9 @@
 
     </Button>
     
-    {#if expanded}
+    {#if expanded && menu}
     <Menu alignment="bottom-right" itemsClass="h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[19rem]">
-        <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
+        <Button color="tertiary" slot="button" let:toggleOpen on:click={(e) => { e.stopPropagation(); toggleOpen() }} title="Community Options">
             <Icon src={Bars3} mini size="16" slot="icon" />
         </Button>
         

@@ -67,6 +67,7 @@
         <FormattedNumber number={post.counts.upvotes} />
     </Button>
     
+    <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
    
     <Button
         disabled={!$profile?.user}

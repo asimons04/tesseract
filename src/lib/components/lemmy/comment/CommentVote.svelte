@@ -55,11 +55,7 @@
         <FormattedNumber number={comment.counts.upvotes} />
     </Button>
     
-    <!--
-    <span class="text-sm font-medium {voteColor(vote)}">
-        <FormattedNumber number={comment.counts.score} />
-    </span>
-    -->
+    <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
 
     <Button disabled={!$profile?.user} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
         class="px-1.5 {comment.my_vote == -1 ? voteColor() : ''}"

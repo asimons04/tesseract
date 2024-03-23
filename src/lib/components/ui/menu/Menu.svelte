@@ -30,7 +30,7 @@
                 return 'bottom-[100%] -left-[50%] origin-bottom'
 
             case 'bottom-center':
-                return 'top-[100%] -left-[50%] origin-top'
+                return 'top-[100%] -left-[200%] origin-top'
 
             case 'side-left':
                 return 'bottom-[-500%] right-[120%]'
