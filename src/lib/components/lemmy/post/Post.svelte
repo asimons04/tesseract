@@ -1,12 +1,11 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
+    import { fade } from 'svelte/transition'
 
     import { setLastSeenPost } from './helpers.js'
-
-    import { getSessionStorage, setSessionStorage } from '$lib/session'
     import { userSettings } from '$lib/settings.js'
-    
+
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
 
@@ -25,7 +24,7 @@
 {#if post?.post?.id}
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)}>
+<div on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)} transition:fade>
     <!--- Compact Posts --->
     {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
         <PostCompactStyle 

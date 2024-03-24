@@ -37,7 +37,11 @@
 <Menu {alignment} containerClass="!z-[30]" >
     <button slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
         
-        <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer {$$props.class}">
+        <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer p-2
+            border border-slate-200 dark:border-zinc-700 rounded-lg bg-transparent 
+            hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none 
+            {$$props.class}
+        ">
             {#if icon}
                 <!--<span class="hidden sm:flex">-->
                     <Icon src={icon} mini width={iconSize}/>

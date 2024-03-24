@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from '$lib/components/input/Button.svelte'
 
-  export let expanded: boolean
+  export let expanded: boolean = true
   export let title: string = ''
 </script>
 

@@ -151,16 +151,18 @@
                 selected={selectedListingType}
                 title="Listing Type"
                 icon={Bars3}
-                iconSize={iconSize}
+                iconSize={18}
                 on:select={listingTypeOnSelect}
             />
         {/if}
 
         <!---Sort Menu--->
         {#if sortMenu && sortOptions && sortOptionNames && selectedSortOption}
+            <!--
             {#if listingType} 
-                <Icon src={ArrowSmallRight} mini width={24} class="hidden md:flex"/> 
+                <Icon src={ArrowSmallRight} mini width={18} class="hidden md:flex"/> 
             {/if}
+            -->
             
             <SelectMenu
                 alignment="bottom-left"
@@ -169,7 +171,7 @@
                 selected={selectedSortOption}
                 title="Sort Direction"
                 icon={ChartBar}
-                iconSize={iconSize}
+                iconSize={18}
                 on:select={(e) => {
                     // @ts-ignore
                     searchParam($page.url, 'sort', e.detail, 'page')

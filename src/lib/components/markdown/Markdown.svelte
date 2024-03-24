@@ -4,7 +4,7 @@
     import { imageProxyURL } from '$lib/image-proxy'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import markdown_it_highlightjs from 'markdown-it-highlightjs'
-    
+
     export let source: string = ''
     export let inline: boolean = false
     export let images:boolean = true;
@@ -57,7 +57,6 @@
         catch { rendered = "<p>Failed to render the markdown</p>"; }
     }
 </script>
-
 
 <div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5] overflow-hidden {$$props.class}">
     {@html rendered}

@@ -132,7 +132,7 @@
     <Modal bind:open={open} icon={UserGroup} fullHeight title="Edit Group: {group.name}">
         <div class="flex flex-col h-full gap-2 pr-2">
             
-            <TextInput bind:value={formData.name} label="Group Name"/>
+            <TextInput bind:value={formData.name} readonly={group.name == 'Favorites'} label="Group Name" class="{group.name == 'Favorites' ? 'hidden' : ''}"/>
             
             <ObjectAutocomplete
                 label="Add Member"

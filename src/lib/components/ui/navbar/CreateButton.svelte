@@ -31,7 +31,13 @@
         <Icon src={Plus} width={size} mini slot="icon" />
     </Button>
 
-    <li class="text-xs font-bold opacity-80 text-left mx-4 my-1 py-1 w-48">Create</li>
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 w-48">
+        Create
+        <span class="ml-auto"/>
+        <Icon src={Plus} width={16} mini />
+    </li>
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+
     <MenuButton
         link
         href="/create/post"

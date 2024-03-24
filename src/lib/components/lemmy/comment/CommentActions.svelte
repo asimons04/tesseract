@@ -69,7 +69,8 @@
     <CommentVote bind:comment />
     
     <!---Comment Reply Button--->
-    <Button size="sm" color="tertiary" disabled={comment.post.locked || !$profile?.user} hidden={comment.post.locked || !$profile?.user}
+    <Button size="sm" color="tertiary-border"
+        disabled={comment.post.locked || !$profile?.user} hidden={comment.post.locked || !$profile?.user}
         on:click={() => (replying = !replying)}
     >
         <Icon src={ArrowUturnLeft} width={14} height={14} mini />

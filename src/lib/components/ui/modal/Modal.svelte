@@ -1,6 +1,7 @@
 <script lang="ts">
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+
     import { createEventDispatcher } from 'svelte'
     import { Icon, XMark } from 'svelte-hero-icons'
     import { expoOut } from 'svelte/easing'
@@ -13,28 +14,23 @@
 
     export let fullHeight:boolean = false
     export let height:string = ''
-
+    
     const dispatcher = createEventDispatcher()
 </script>
 
 {#if open}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!---Div to blur background. Diabled click event that closes modal --->
-    <div
-        class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal"
+    <div class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] 
+        flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal"
         transition:fade={{ duration: 200 }}
     >
   
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div transition:scale={{ start: 0.9, easing: expoOut }}
             class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-full' : height} {$$props.class}"
         >
-            <div
-                class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : height}"
-                on:click={() => {}}
-            >
+            <div class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : height}">
                 <div
-                    on:click|stopPropagation={() => {}}
                     class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
                     dark:bg-zinc-950 dark:border-zinc-800
                     bg-white border border-slate-200  {fullHeight ? 'h-full' : ''}"
@@ -66,6 +62,7 @@
                     </div>
 
                 </div>
+                
                 {#if action}
                 <div class="border-x border-b bg-slate-100 dark:bg-zinc-950 dark:border-zinc-800 p-3 py-2 flex justify-end rounded-b-xl">
                     <slot name="action">

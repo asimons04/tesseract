@@ -11,6 +11,7 @@
     import {
         Icon,
         Bell,
+        Clipboard,
         InboxArrowDown,
     } from 'svelte-hero-icons'
 
@@ -32,39 +33,63 @@
         <Icon src={Bell} width={size} mini slot="icon" />
         
         <!---Notification Dots for Reports and Inbox--->
+        {#if $profile?.user?.registration_applications ?? 0 > 0}
+            <div class="rounded-full w-2 h-2 bg-sky-800 absolute top-0 left-0 z-10"/>
+        {/if}
+
         {#if $profile?.user?.reports ?? 0 > 0}
             <div class="rounded-full w-2 h-2 bg-green-700 absolute bottom-0 right-0 z-10"/>
         {/if}
         
         {#if $profile.user.unreads > 0}
-            <div class="rounded-full w-2 h-2 bg-red-500 absolute top-0 right-0 z-10"/>
+            <div class="rounded-full w-2 h-2 bg-red-800 absolute top-0 right-0 z-10"/>
         {/if}   
 
     </Button>
     
-    <li class="text-xs font-bold opacity-80 text-left mx-4 my-1 py-1 w-48">Notifications</li>
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
+        Notifications
+        <span class="ml-auto"/>
+        <Icon src={Bell} width={16} mini />
+    </li>
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
+    <!---Reports--->
     {#if amModOfAny($profile?.user)}
     <MenuButton link href="/moderation" data-sveltekit-preload-data="hover" aria-label="Moderation"
         class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
     >
         <ShieldIcon filled width={16} />
         Reports
-        <span class="text-xs font-bold bg-green-700 px-2 py-0.5 rounded-md ml-auto">
+        <span class="text-xs font-bold text-zinc-100 bg-green-700 px-2 py-0.5 rounded-md ml-auto">
             {$profile?.user?.reports ?? 0}
         </span>
     </MenuButton>
     {/if}
 
+    <!----Messages--->
     <MenuButton link href="/profile/inbox" data-sveltekit-preload-data="hover" aria-label="Moderation"
         class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
     >
         <Icon src={InboxArrowDown} mini size="16" />
         Inbox
-        <span class="text-xs font-bold bg-red-500 px-2 py-0.5 rounded-md ml-auto">
+        <span class="text-xs font-bold text-zinc-100 bg-red-800 px-2 py-0.5 rounded-md ml-auto">
             {$profile.user.unreads ?? 0}
         </span>
     </MenuButton>
+
+    <!---Registration Applications--->
+    {#if isAdmin($profile.user)}
+    <MenuButton link href="/admin/applications/" data-sveltekit-preload-data="hover" aria-label="Registration Applications"
+        class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
+    >
+        <Icon src={Clipboard} mini size="16" />
+        Registration Applications
+        <span class="text-xs font-bold text-zinc-100 bg-sky-800 px-2 py-0.5 rounded-md ml-auto">
+            {$profile.user.registration_applications ?? 0}
+        </span>
+    </MenuButton>
+    {/if}
 
 
 </Menu>

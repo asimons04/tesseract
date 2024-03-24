@@ -112,6 +112,7 @@ interface Settings {
         showFullURL: boolean
         expandCrossPosts: boolean
         showBannersInCards: boolean
+        modalOpen: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -159,6 +160,7 @@ export const defaultSettings: Settings = {
         showFullURL:                                                    false,
         expandCrossPosts:                                               true,
         showBannersInCards:                                             true,
+        modalOpen:                                                      false,
 
     },
 

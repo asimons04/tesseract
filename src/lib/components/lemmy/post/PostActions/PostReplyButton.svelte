@@ -14,23 +14,22 @@
 </script>
 
 {#if displayType == 'post'}
-    <Button
-        size="sm"
-        color="tertiary"
-        disabled={post.post.locked || !$profile?.user}
-        hidden={post.post.locked || !$profile?.user}
-        on:click={() => {
-            showCommentForm = !showCommentForm;
-            // Interval to deal with animiation delay
-            setTimeout(() => {
-                let commentForm = document.getElementById(`commentForm-${post.post.id}`);
-                commentForm?.focus()
-            }, 250);
+<Button
+    size="sm"
+    color="tertiary-border"
+    disabled={post.post.locked || !$profile?.user}
+    hidden={post.post.locked || !$profile?.user}
+    on:click={() => {
+        showCommentForm = !showCommentForm;
+        // Interval to deal with animiation delay
+        setTimeout(() => {
+            let commentForm = document.getElementById(`commentForm-${post.post.id}`);
+            commentForm?.focus()
+        }, 250);
 
-        }}
-    >
-        <Icon src={ArrowUturnLeft} width={14} height={14} mini />
-        <span class="text-sm">Reply</span>
-    </Button>
-
+    }}
+>
+    <Icon src={ArrowUturnLeft} width={14} height={14} mini />
+    <span class="text-sm">Reply</span>
+</Button>
 {/if}

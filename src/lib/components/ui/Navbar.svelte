@@ -77,14 +77,15 @@
   
 <svelte:window bind:scrollY />
   
-<nav class="flex flex-row gap-2 items-center sticky top-0 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl w-full mx-auto px-4 py-2 z-50 box-border h-16">
+
+<nav class="flex flex-row gap-2 items-center sticky top-0 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl w-full z-50 mx-auto px-4 py-2  box-border h-16">
     <!---Site Logo and Name on left--->
     <div data-sveltekit-preload-data="hover" class="flex flex-row gap-2 items-center mr-auto">
         <a href="/" class="flex flex-row items-center gap-2">
             {#if $site}
                 <Avatar url={$site.site_view.site.icon} alt={$site.site_view.site.name} width={32} res={64} circle={false}/>
                 <div class="flex flex-row items-center gap-2 max-[500px]:hidden">
-                    <!--<span class="opacity-30 text-xl">/</span>-->
+                    
                     <div class="text-base font-bold inline-flex flex-col">
                         <span>{$site.site_view.site.name}</span>
                     </div>

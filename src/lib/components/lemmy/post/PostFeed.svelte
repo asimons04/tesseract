@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { fade } from 'svelte/transition'
+    
     import Button from '$lib/components/input/Button.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
@@ -33,7 +35,9 @@
                 //@ts-ignore
                 !($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility')
         }
-            <Post bind:post={post} displayType="feed"/>
+            <div transition:fade>
+                <Post bind:post={post} displayType="feed" />
+            </div>
         {/if}
     {/each}
     </div>

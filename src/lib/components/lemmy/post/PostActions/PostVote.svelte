@@ -4,9 +4,10 @@
         PostView 
     } from 'lemmy-js-client'
     
+    
     import { getClient } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
 
@@ -50,11 +51,11 @@
 </script>
 
 
-<div class="flex items-center text-sm gap-0 rounded-md border border-slate-200 dark:border-zinc-700 px-1 h-full duration-200 border-none">
+<div class="flex items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-700 h-full duration-200">
     <Button
         disabled={!$profile?.user}
         aria-label="Upvote"
-        class={post.my_vote == 1 ? voteColor(post.my_vote) : ''}
+        class="{post.my_vote == 1 ? voteColor(post.my_vote) : ''}"
         on:click={async () => {
             post.counts = await vote(post.my_vote == 1 ? 0 : 1)
             post.my_vote = post.my_vote == 1 ? 0 : 1

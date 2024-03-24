@@ -15,10 +15,7 @@
         Star,
     } from 'svelte-hero-icons'
     
-    
-
     export let size:number = 28
-    let editCommunityGroup = false
     
     let favoritesGroup: CommunityGroup 
     $: favoritesGroup = ($profile?.groups && $profile.groups.length > 0)
@@ -29,10 +26,6 @@
         } as CommunityGroup
 
 </script>
-
-{#if editCommunityGroup}
-    <EditCommunityGroup bind:open={editCommunityGroup} bind:group={favoritesGroup} />
-{/if}
 
 
 {#if $profile && $profile.user}
@@ -49,16 +42,17 @@
         <Icon src={Star} width={size} mini slot="icon" />
     </Button>
     
-    <li class="text-xs font-bold opacity-80 text-left mx-4 my-1 py-1 w-48">Favorites</li>
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
+        Favorites
+        <span class="ml-auto"/>
+        <Icon src={Star} width={16} mini />
+    </li>
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+
     
     {#if $profile?.groups}
         <div class="flex flex-col gap-1 h-full overflow-y-auto">
-            <MenuButton title="Edit Group" on:click={()=> editCommunityGroup = !editCommunityGroup}>
-                <Icon src={PencilSquare} mini size="16" />
-                Edit Favorites
-            </MenuButton>
-            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-            
+                       
             {#if $profile?.groups[getGroupIndex('Favorites')]?.communities?.length > 0}
                 <CommunityList 
                     expanded={true}  hidden={false} group='Favorites'
@@ -68,9 +62,6 @@
             {:else}
                 <li class="text-xs opacity-80 text-left mx-4 my-1 py-1 w-48">Favorites group is empty.</li>
             {/if}
-            
-            
-            
         </div>
     {/if}
 

@@ -226,7 +226,7 @@
             {#if panel=='groups' && $userSettings.uiState.expandSidebar}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
                     
-                    {#if $profile?.groups?.length > 1}
+                    {#if $profile?.groups && $profile?.groups?.length > 1}
                         {#each $profile.groups.sort(sortGroups) as group}
                             <CommunityGroup group={group} bind:showEmptyGroups/>
                         {/each}
@@ -255,7 +255,7 @@
             <!---Favorites--->
             {#if panel == 'favorites'}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
-                    {#if $profile?.groups[getGroupIndex('Favorites')]?.communities?.length > 0}
+                    {#if $profile?.groups && $profile?.groups[getGroupIndex('Favorites')]?.communities?.length > 0}
                         <CommunityList 
                             expanded={$userSettings.uiState.expandSidebar} 
                             items={$profile?.groups[getGroupIndex('Favorites')]?.communities}

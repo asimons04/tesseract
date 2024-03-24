@@ -4,8 +4,8 @@
     import CommunityListItem from './CommunityListItem.svelte'
 
     export let items: Community[]
-    export let expanded: boolean
-    export let hidden: boolean
+    export let expanded: boolean = true
+    export let hidden: boolean = false
     export let filter: string | undefined = undefined
     export let group:string = ''
     export let menu = true

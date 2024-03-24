@@ -6,4 +6,4 @@
   }
 </script>
 
-<span title="{number.toString()}">{Intl.NumberFormat(locale, options).format(number)}</span>
+<span class="max-w-fit" title="{number.toString()}">{Intl.NumberFormat(locale, options).format(number)}</span>

@@ -4,7 +4,7 @@
         type PostDisplayType,
         scrollToTop
     } from './helpers.js'
-    
+
     import Button from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
 
