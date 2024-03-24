@@ -15,8 +15,8 @@
     export let comment: CommentView
 
     const voteColor = () => {
-        if (comment.my_vote == 1) return '!text-blue-500 dark:!text-blue-400'
-        if (comment.my_vote == -1) return '!text-red-500'
+        if (comment.my_vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'
+        if (comment.my_vote == -1) return '!text-red-500 font-bold'
         return ''
     }
 

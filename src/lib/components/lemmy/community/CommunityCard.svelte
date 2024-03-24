@@ -213,7 +213,7 @@
             <div class="flex flex-row gap-3 items-start p-3">
                 <div class="flex-shrink-0">
                     <Avatar
-                        width={48}
+                        width={64}
                         url={community_view.community.icon}
                         alt={community_view.community.name}
                     />

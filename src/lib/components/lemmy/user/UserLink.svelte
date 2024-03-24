@@ -33,7 +33,9 @@
         class:text-red-500={distinguishAdminsMods && user.admin}
         class:font-bold={distinguishAdminsMods && user.admin}
     >
-        {$userSettings.displayNames ? user.display_name || user.name : user.name}
+        <span class="font-bold">
+            {$userSettings.displayNames ? user.display_name || user.name : user.name}
+        </span>
 
         {#if $userSettings.uiState.showInstances && showInstance}
             <span class="text-slate-500 dark:text-zinc-500 font-normal">

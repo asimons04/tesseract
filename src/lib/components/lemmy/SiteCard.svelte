@@ -21,6 +21,7 @@
         ChevronUp,
         ChevronDown,
         Icon,
+        InformationCircle,
         Newspaper,
         PencilSquare,
         Server,
@@ -33,7 +34,8 @@
     export let admins: PersonView[] = []
     export let version: string
 
-    let expandAdmins:boolean = false
+    let expandAdmins = false
+    let expandSiteInfo = true
 
 </script>
 
@@ -46,7 +48,7 @@
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, 384, 'webp') : ''}>
         <div class="flex flex-row gap-3 items-center p-3">
             {#if site.site.icon}
-                <Avatar width={42} url={site.site.icon} alt={site.site.name} circle={false} />
+                <Avatar width={64} url={site.site.icon} alt={site.site.name} circle={false} />
             {/if}
             
             
@@ -116,16 +118,13 @@
         <hr class="border-slate-300 dark:border-zinc-700" />
     {/if}
 
-    <div class="hidden xl:block">
+    <div class="hidden xl:block flex flex-col gap-2 w-full">
         {#if admins.length > 0}
             <div class="flex flex-col gap-1 mt-2 mb-4">
-                <Button
-                    color="tertiary"
-                    alignment="left"
+                <Button color="tertiary" alignment="left"
                     on:click={ ()=> { expandAdmins = !expandAdmins}}
                 >
-                    
-                    <Icon src={ShieldCheck} mini size="18" />
+                    <Icon src={ShieldCheck} mini size="24" />
 
                     <span class="w-full flex flex-row justify-between">
                         Admins
@@ -143,6 +142,25 @@
             </div>
         {/if}
         
-        <Markdown source={site.site.sidebar} />
+        
+        <Button color="tertiary" alignment="left" class="w-full"
+            on:click={ ()=> { expandSiteInfo = !expandSiteInfo}}
+        >
+            <Icon src={InformationCircle} mini size="24" />
+
+            <span class="w-full flex flex-row justify-between">
+                Site Info
+                <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
+                    <Icon src={expandSiteInfo ? ChevronUp : ChevronDown} mini height={18} width={18} />
+                </span>
+            </span>
+        </Button>
+
+        {#if expandSiteInfo}
+            <div class="px-2.5">
+                <Markdown source={site.site.sidebar} />
+            </div>
+        {/if}
+
     </div>
 </StickyCard>

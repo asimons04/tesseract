@@ -47,13 +47,24 @@
 
     </Button>
     
-    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
         Notifications
         <span class="ml-auto"/>
         <Icon src={Bell} width={16} mini />
     </li>
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-    
+
+    <!----Messages--->
+    <MenuButton link href="/profile/inbox" data-sveltekit-preload-data="hover" aria-label="Moderation"
+        class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
+    >
+        <Icon src={InboxArrowDown} mini size="16" />
+        Inbox
+        <span class="text-xs font-bold text-zinc-100 bg-red-800 px-2 py-0.5 rounded-md ml-auto">
+            {$profile.user.unreads ?? 0}
+        </span>
+    </MenuButton>
+
     <!---Reports--->
     {#if amModOfAny($profile?.user)}
     <MenuButton link href="/moderation" data-sveltekit-preload-data="hover" aria-label="Moderation"
@@ -66,17 +77,6 @@
         </span>
     </MenuButton>
     {/if}
-
-    <!----Messages--->
-    <MenuButton link href="/profile/inbox" data-sveltekit-preload-data="hover" aria-label="Moderation"
-        class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
-    >
-        <Icon src={InboxArrowDown} mini size="16" />
-        Inbox
-        <span class="text-xs font-bold text-zinc-100 bg-red-800 px-2 py-0.5 rounded-md ml-auto">
-            {$profile.user.unreads ?? 0}
-        </span>
-    </MenuButton>
 
     <!---Registration Applications--->
     {#if isAdmin($profile.user)}

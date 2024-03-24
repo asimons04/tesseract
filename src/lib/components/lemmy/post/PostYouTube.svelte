@@ -15,7 +15,8 @@
     
     let videoID:    string | null | undefined
     let embedURL:   URL = new URL('https://localhost');
-    
+    let clickView:  boolean = false
+
     if (post?.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
         videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
@@ -91,7 +92,7 @@
 
 
 
-{#if showAsEmbed}
+{#if showAsEmbed || clickView}
     <Link 
         href={
             embedURL
@@ -139,11 +140,12 @@
             newtab={$userSettings.openInNewTab.links}
             highlight nowrap
         />
-        <PostImage bind:post={post} displayType={displayType}/>
+
+        <PostImage bind:post displayType={displayType} />
     
     <!---Create PostLink to external link if user does not have embeds enaled for posts--->
     {:else}
-        <PostLink bind:post={post} displayType={displayType}/>
+        <PostLink bind:post displayType={displayType}/>
     {/if}
 
 {:else if !post.post.thumbnail_url}

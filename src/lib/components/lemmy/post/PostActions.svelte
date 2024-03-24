@@ -28,8 +28,7 @@
         ArrowsPointingOut,
         Icon,
     } from 'svelte-hero-icons'
-    import Comment from '../comment/Comment.svelte';
-    
+   
     export let post: PostView
     export let postType: PostType = 'text'
     export let displayType: PostDisplayType
@@ -39,7 +38,7 @@
 
 <div 
     class="flex flex-row gap-1 sm:gap-2 items-center h-8 
-    {displayType == 'post' ? 'mt-auto' : ''} 
+    {displayType == 'post' ? 'mt-auto' : 'mt-1'} 
     {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'ml-[-0.5rem]'}
     {displayType == 'post' ? 'ml-[-0.5rem]' : ''}
     "
@@ -49,7 +48,10 @@
     <PostVote bind:post  />
 
     <!--- Comment Count and Link to Post--->
-    <CommentCountButton bind:post displayType={displayType} />
+    {#if displayType == 'feed'}
+        <CommentCountButton bind:post displayType={displayType} />
+    {/if}
+    
 
     <!---Reply Button that enables the comment form--->
     <PostReplyButton displayType={displayType} bind:showCommentForm bind:post/>

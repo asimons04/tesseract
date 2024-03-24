@@ -23,8 +23,8 @@
     export let post:    PostView
 
     const voteColor = (vote: number) => {
-        if (vote == 1) return '!text-blue-500 dark:!text-blue-400'
-        if (vote == -1) return '!text-red-500'
+        if (vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'
+        if (vote == -1) return '!text-red-500 font-bold'
         return ''
     }
 

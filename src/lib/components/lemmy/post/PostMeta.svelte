@@ -6,6 +6,7 @@
     import { fediseerLookup } from '$lib/fediseer/client.js'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { imageProxyURL } from '$lib/image-proxy'
+    import { page } from '$app/stores'
     import { postType } from './helpers'
     import { userSettings } from '$lib/settings.js'
     
@@ -80,10 +81,15 @@
         url                                 = post.post.url ?? undefined
     }
     
-     
+    let inCommunity:boolean = false
+    $: inCommunity = ($page.url.pathname.startsWith("/c/"))
     
     let fediseerModal:boolean = false;
-
+    
+    function linkFromCommunity(community: Community) {
+        const domain = new URL(community.actor_id).hostname
+        return `/c/${community.name}@${domain}`
+    }
 </script>
 
 {#if fediseerModal}
@@ -98,8 +104,11 @@
     <div class="flex flex-col gap-1">
 
         <span class="flex flex-row gap-2 text-sm items-center">
-            {#if community}
-                <Avatar url={community.icon} width={32} alt={community.name} />
+            <!---Show user's avatar if viewing posts in a community--->
+            {#if community && !inCommunity}
+                <Avatar url={community.icon} width={48} alt={community.name} />
+            {:else if inCommunity && user}
+                <Avatar url={user.avatar} width={48} alt={user.name} />
             {/if}
 
             <div class="flex flex-col text-xs">
@@ -116,10 +125,13 @@
                     {/if}
 
                     <span class="flex flex-row gap-1">
-                        <span class="pl-1 hidden sm:block">•</span>
-                        <RelativeDate date={published} />
+                        
                     </span>
                 </span>
+                
+                <!--<span class="pl-1 hidden sm:block">•</span>-->
+                <RelativeDate date={published} />
+
             </div>
 
             <!--- Post Badges --->
@@ -195,17 +207,14 @@
 
                 <!--- Fediseer Endorsement Badge--->
                 {#if community && showFediseer && $userSettings.uiState.fediseerBadges}
-                    <span class="flex flex-row gap-2 items-center mr-2">
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+                    <button class="flex flex-row gap-2 items-center mr-2" on:click={(e) => fediseerModal = true}>
                         <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
                             class="cursor-pointer"
                             loading="lazy"
                             alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
                             title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
-                            on:click={(e) => fediseerModal = true}
                         />
-                    </span>
+                    </button>
                 {/if}
             </div>
             

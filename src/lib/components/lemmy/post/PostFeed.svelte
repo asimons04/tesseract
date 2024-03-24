@@ -23,7 +23,7 @@
     </div>
 {:else}
     <div data-sveltekit-preload-data="hover"
-        class="w-full {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}
+        class="w-full {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[80%]' : ''}
             ml-auto mr-auto flex flex-col gap-5
         "
     >

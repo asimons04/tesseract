@@ -2,25 +2,34 @@
     import type { GetPosts, PostView } from 'lemmy-js-client'
     import type { Snapshot } from './$types';
 
-    import { afterNavigate, beforeNavigate } from '$app/navigation'
+    import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
     import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, scrollToLastSeenPost, setLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings'
     
+    import Button from '$lib/components/input/Button.svelte';
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    
+    import {
+        Icon,
+        ChevronDoubleUp,
+        ChevronDoubleDown
+    } from 'svelte-hero-icons'
 
     export let data
 
     let infiniteScroll = {
-        loading: false,
-        exhausted: false,
-        maxPosts: 100,
-        automatic: true,
-        enabled: true,
+        loading: false,     // Used to toggle loading indicator
+        exhausted: false,   // Sets to true if the API returns 0 posts
+        maxPosts: 100,      // Maximum number of posts to keep in the FIFO
+        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
+        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
+        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+
     }
 
     // Store and reload the page data between navigations
@@ -42,6 +51,7 @@
     async function refresh() {
         setLastSeenPost(-1)
         infiniteScroll.exhausted = false
+        infiniteScroll.truncated = false
         window.scrollTo(0,0)
     }
 
@@ -100,7 +110,10 @@
             if (!exists) data.posts.posts.push(posts.posts[i])
             
             // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
-            if (data.posts.posts.length > infiniteScroll.maxPosts) data.posts.posts.shift()    
+            if (data.posts.posts.length > infiniteScroll.maxPosts) {
+                data.posts.posts.shift()    
+                infiniteScroll.truncated = true
+            }
         }
 
         //@ts-ignore
@@ -125,6 +138,21 @@
 
 <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
+        
+        {#if infiniteScroll.truncated}
+        <div class="my-4">
+            <Button color="tertiary-border" class="w-full" title="Load Older Posts"
+                on:click={() => {
+                    goto(window.location.href, {invalidateAll: true})
+                    refresh()
+                }}
+            >
+                <Icon src={ChevronDoubleUp} mini size="16" />
+                Refresh to See Oldest Posts 
+                <Icon src={ChevronDoubleUp} mini size="16" />
+            </Button>
+        </div>
+        {/if}
 
         <section class="flex flex-col gap-3 sm:gap-4 h-full">
             <PostFeed posts={data.posts.posts} />
