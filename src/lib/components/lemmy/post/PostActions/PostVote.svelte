@@ -51,7 +51,7 @@
 </script>
 
 
-<div class="flex items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-700 h-full duration-200">
+<div class="flex items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-800 h-full duration-200">
     <Button
         disabled={!$profile?.user}
         aria-label="Upvote"
