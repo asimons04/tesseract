@@ -21,7 +21,7 @@
     export let nodes: CommentNodeI[]
     export let isParent: boolean
     export let post: Post
-    export let community: CommunityView
+    //export let community: CommunityView
     export let moderators: Array<CommunityModeratorView>
 
 
@@ -57,6 +57,7 @@
                 toast({
                     content: 'The API returned no comments.',
                     type: 'error',
+                    title: "Error"
                 })
                 return
             }

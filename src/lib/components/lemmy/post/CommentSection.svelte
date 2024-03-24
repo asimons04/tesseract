@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type {PageData} from '$types'
-    import type { PostView, CommentSortType } from 'lemmy-js-client'
+    import type { GetPostResponse, CommentSortType } from 'lemmy-js-client'
 
 
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
@@ -23,11 +22,11 @@
     } from 'svelte-hero-icons'
     
 
-    export let data:PageData
+    export let data:any
     export let showCommentForm:boolean = true;
 
 
-    let post:PostView
+    let post:GetPostResponse
     let commentSort: CommentSortType = data.commentSort;
     let commentsPage:number
     
@@ -72,7 +71,7 @@
             headless={true}
         />
 
-        <Button class="font-normal" title="Reload comments"
+        <Button class="font-normal" title="Reload comments" color="tertiary-border"
             on:click={() => {
                 reloadComments();
             }}

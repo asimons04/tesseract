@@ -61,6 +61,7 @@
         on:click={toggleOpen}
         slot="button"
         color="tertiary-border"
+        size="square-sm"
         let:toggleOpen
         {...$$restProps}
     >

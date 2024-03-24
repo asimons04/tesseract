@@ -88,11 +88,11 @@ pre {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 9999px;
-  @apply bg-slate-200;
+  @apply bg-zinc-800;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-800;
+  @apply bg-slate-200
 }
 
 

@@ -64,7 +64,7 @@
     <Fediseer bind:open={fediseer.modal} instance={fediseer.instance} />
 {/if}
       
-<div class="flex flex-row gap-2 items-center mt-1 h-7 w-full">
+<div class="flex flex-row gap-2 items-center mt-1 h-8 w-full">
     <!---Comment Vote Buttons--->
     <CommentVote bind:comment />
     
@@ -88,7 +88,7 @@
             {/await}
         {/if}
 
-        <Button on:click={() => (debug = true)} class="!py-1.5" size="sm" color="tertiary-border" title="Debug Info">
+        <Button on:click={() => (debug = true)} size="square-sm" color="tertiary-border" title="Debug Info">
             <Icon src={BugAnt} mini  width={14} height={14} slot="icon" />
         </Button>
     {/if}
@@ -105,6 +105,7 @@
             on:click={toggleOpen}
             aria-label="Comment actions"
             color="tertiary-border"
+            size="square-sm"
             let:toggleOpen
         >
             <Icon src={EllipsisHorizontal} width={16} height={16} mini slot="icon" />
