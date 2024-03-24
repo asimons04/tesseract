@@ -56,13 +56,11 @@
     }
   </script>
 
-<Menu alignment="top-right" class="top-0 h-[26px] w-[26px] ">
+<Menu alignment="top-right" >
     <Button
-        class="w-[26px] h-[26px] hover:!text-green-500 dark:text-zinc-400 text-slate-600"
-        size="square-md"
         on:click={toggleOpen}
         slot="button"
-        color="tertiary"
+        color="tertiary-border"
         let:toggleOpen
         {...$$restProps}
     >
@@ -70,9 +68,12 @@
     </Button>
 
     {#if ($profile?.user && amMod($profile.user, item.community)) || ($profile?.user && isAdmin($profile.user))}
-        <li class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
+        <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
             Moderation
+            <span class="ml-auto" />
+            <ShieldIcon filled width={14} />
         </li>
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!--- Distinguish Comment --->
         <MenuButton  on:click={async () => distinguish(item)}>

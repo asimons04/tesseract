@@ -63,7 +63,7 @@
     
     <!--- Expand Compact Post to Card--->
     {#if displayType == 'feed' && $userSettings.showCompactPosts}
-        <Button  color="ghost" class="hover:text-inherit border-none" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+        <Button  color="tertiary-border" title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
                 expandCompact = !expandCompact; 
                 const element = document.getElementById(post.post.id.toString());
@@ -76,7 +76,7 @@
 
     <!--- Moderation Menu--->
     {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <ModerationMenu bind:item={post} color="ghost" alignment="top-right"/>
+        <ModerationMenu bind:item={post} color="tertiary-border" alignment="top-right"/>
     {/if}
 
     <!---Explore Menu--->

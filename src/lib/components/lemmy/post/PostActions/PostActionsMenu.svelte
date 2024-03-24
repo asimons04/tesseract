@@ -62,19 +62,21 @@
         aria-label="Post actions"
         let:toggleOpen
         on:click={toggleOpen}
-        class="hover:text-inherit !border-none"
+        
         size="square-md"
         title="Post actions"
-        color="ghost"
+        color="tertiary-border"
     >
         <Icon slot="icon" src={icon} width={menuIconSize} mini />
     </Button>
 
     <!---Post Actions --->
-    <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
-        <Icon slot="icon" src={Window} width={16} mini />
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
         Post
+        <span class="ml-auto"/>
+        <Icon slot="icon" src={Window} width={16} mini />
     </li>
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
 
     <!---Edit if owned by self--->

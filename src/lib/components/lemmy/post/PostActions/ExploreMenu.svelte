@@ -39,18 +39,20 @@
         aria-label="Explore"
         let:toggleOpen
         on:click={toggleOpen}
-        class="hover:text-inherit !border-none"
+        
         size="square-md"
         title="Explore"
-        color="ghost"
+        color="tertiary-border"
     >
         <Icon slot="icon" src={Map} width={16} mini />
     </Button>
         
-    <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
-        <Icon slot="icon" src={Map} width={16} mini />
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
         Explore
+        <span class="ml-auto" />
+        <Icon slot="icon" src={Map} width={16} mini />
     </li>
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
     <!---Actions for the instance the post was submitted to--->
     <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>

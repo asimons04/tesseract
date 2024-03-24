@@ -22,7 +22,7 @@
     import { profile } from '$lib/auth.js'
 
     export let item: PostView | CommentView
-    export let color:string = "tertiary"
+    export let color:string = "tertiary-border"
     export let alignment:string = 'side-left'
     export let presetReason:string = ''
     export let menuIconSize:number = 16
@@ -89,7 +89,6 @@
 <Menu alignment={alignment}>
     <Button
         on:click={toggleOpen}
-        class="hover:text-inherit !border-none"
         slot="button"
         title="Moderation Menu"
         size="square-md"
@@ -117,10 +116,12 @@
 
     {#if ($profile?.user && amMod($profile.user, item.community)) || ($profile?.user && isAdmin($profile.user))}
         
-        <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
-            <Icon slot="icon" src={ShieldExclamation} width={16} mini />
+        <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
             Moderation
+            <span class="ml-auto" />
+            <Icon slot="icon" src={ShieldExclamation} width={16} mini />
         </li>
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!--- Modlog filtered for this user--->
         <MenuButton link

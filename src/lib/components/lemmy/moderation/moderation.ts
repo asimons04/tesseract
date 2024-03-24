@@ -6,6 +6,7 @@ interface Modals {
   reporting: {
     open: boolean
     item: SubmissionView | undefined
+    reason: string | undefined
   }
   removing: {
     open: boolean

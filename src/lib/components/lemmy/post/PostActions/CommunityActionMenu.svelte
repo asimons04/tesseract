@@ -56,18 +56,20 @@
         aria-label="Community Actions"
         let:toggleOpen
         on:click={toggleOpen}
-        class="hover:text-inherit !border-none"
+        
         size="square-md"
         title="Community Actions"
-        color="ghost"
+        color="tertiary-border"
     >
         <Icon slot="icon" src={UserGroup} width={menuIconSize} mini />
     </Button>
 
-    <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
-        <Icon slot="icon" src={UserGroup} width={16} mini />
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
         {post.community.name}@{new URL(post.community.actor_id).hostname}
+        <span class="ml-auto"/>
+        <Icon slot="icon" src={UserGroup} width={16} mini />
     </li>
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
     {#if $profile?.user}
     <MenuButton on:click={() => createPost(post.community)} title="Create Post">

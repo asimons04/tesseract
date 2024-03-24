@@ -88,7 +88,7 @@
             {/await}
         {/if}
 
-        <Button on:click={() => (debug = true)} size="sm" color="tertiary" title="Debug Info">
+        <Button on:click={() => (debug = true)} class="!py-1.5" size="sm" color="tertiary-border" title="Debug Info">
             <Icon src={BugAnt} mini  width={14} height={14} slot="icon" />
         </Button>
     {/if}
@@ -99,19 +99,25 @@
     {/if}
   
     <!---Comment Action Menu --->
-    <Menu class="top-0 leading-3" alignment="top-right">
+    <Menu  alignment="top-right">
         <Button
             slot="button"
             on:click={toggleOpen}
-            class="!p-1"
             aria-label="Comment actions"
-            color="tertiary"
+            color="tertiary-border"
             let:toggleOpen
         >
             <Icon src={EllipsisHorizontal} width={16} height={16} mini slot="icon" />
         </Button>
         
-        <span class="text-xs opacity-80 py-1 my-1 px-4">Comment actions</span>
+        <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
+            Comment Actions
+            <span class="ml-auto" />
+            <Icon src={ChatBubbleOvalLeft} width={16} mini />
+        </li>
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+        
+        
         <!--- Share Comment / Copy URL to Clipboard--->
         <MenuButton
             on:click={() => {
