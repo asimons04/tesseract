@@ -34,24 +34,17 @@
 
     {#if name}
         <span class="flex flex-wrap gap-0 {boldCommunityName ? 'font-bold' : 'font-normal'}">
-            
-            
                 
-                {$userSettings.displayNames 
-                    ? fixLemmyEncodings(community.title).split(':')[0].split('-')[0].trim()
-                    : `/c/${community.name}`
-                }
+            {$userSettings.displayNames 
+                ? fixLemmyEncodings(community.title).split(':')[0].split('-')[0].trim()
+                : `/c/${community.name}`
+            }
 
-                {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
-                <span class="text-slate-500 dark:text-zinc-500 font-normal">
-                    @{new URL(community.actor_id).hostname}
-                </span>
-                {/if}
-            <!--
-            {:else}
-                {$userSettings.displayNames ? fixLemmyEncodings(community.title) : `/c/${community.name}`}
+            {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
+            <span class="text-slate-500 dark:text-zinc-500 font-normal">
+                @{new URL(community.actor_id).hostname}
+            </span>
             {/if}
-            -->
         </span>
     {/if}
 </a>
