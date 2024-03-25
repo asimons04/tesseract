@@ -27,29 +27,12 @@
 <div on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)} transition:fade>
     <!--- Compact Posts --->
     {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
-        <PostCompactStyle 
-            bind:post={post} 
-            actions={actions} 
-            bind:expandCompact={expandCompact} 
-            bind:expandPreviewText 
-            displayType={displayType}
-            {disablePostLinks}
-            {collapseBadges}
-        />
+        <PostCompactStyle bind:post {actions}  bind:expandCompact bind:expandPreviewText  {displayType} {disablePostLinks} {collapseBadges} />
 
 
     <!--- Card Posts --->
     {:else}
-        <PostCardStyle 
-            bind:post={post} 
-            actions={actions} 
-            bind:expandCompact={expandCompact} 
-            bind:expandPreviewText 
-            displayType={displayType} 
-            autoplay={false}
-            loop={$userSettings.embeddedMedia.loop}
-            {collapseBadges}
-        />
+        <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  {displayType}  autoplay={false} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
     {/if}
 </div>
 {/if}

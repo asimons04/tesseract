@@ -1,7 +1,15 @@
 <script lang="ts">
-    import { getClient } from '$lib/lemmy'
+    
+    import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { CommentView, Community, PostView } from 'lemmy-js-client'
+    
     import { amMod, ban, isAdmin, remove } from './moderation'
+    import type { Color } from '$lib/ui/colors.js'
+    import { getClient } from '$lib/lemmy'
+    import { isCommentView, isPostView } from '$lib/lemmy/item.js'
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -16,14 +24,12 @@
         ShieldExclamation,
         Trash,
     } from 'svelte-hero-icons'
-    import { Color } from '$lib/ui/colors.js'
-    import { isCommentView, isPostView } from '$lib/lemmy/item.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { profile } from '$lib/auth.js'
+    
+    
 
     export let item: PostView | CommentView
     export let color:string = "tertiary-border"
-    export let alignment:string = 'side-left'
+    export let alignment:Alignment = 'side-left'
     export let presetReason:string = ''
     export let menuIconSize:number = 16
 

@@ -105,10 +105,7 @@
     <div class="flex flex-row w-full mt-1">
         {#if actions}
             <div class="w-full h-full grid items-end">
-                <PostActions 
-                    bind:post 
-                    bind:expandCompact
-                    displayType={displayType}
+                <PostActions  bind:post  bind:expandCompact displayType={displayType}
                     on:edit={(e) => {
                         toast({
                             title: 'Confirmation',

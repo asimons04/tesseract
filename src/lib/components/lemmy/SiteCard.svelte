@@ -159,7 +159,7 @@
         </Button>
 
         {#if expandSiteInfo}
-            <div class="pl-8" transition:slide>
+            <div class="mt-2 pl-8" transition:slide>
                 <Markdown source={site.site.sidebar} />
             </div>
         {/if}

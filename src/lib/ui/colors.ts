@@ -16,7 +16,7 @@ export enum Color {
 import { get, writable } from 'svelte/store'
 import { env } from '$env/dynamic/public'
 
-const configuredTheme = env.PUBLIC_THEME ?? 'system'
+const configuredTheme = (env.PUBLIC_THEME ?? 'system') as 'system' | 'light' | 'dark' | undefined
 export const theme = writable<'system' | 'light' | 'dark'>(configuredTheme)
 
 

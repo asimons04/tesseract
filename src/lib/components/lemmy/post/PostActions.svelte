@@ -30,14 +30,13 @@
     } from 'svelte-hero-icons'
    
     export let post: PostView
-    export let postType: PostType = 'text'
+    //export let postType: PostType = 'text'
     export let displayType: PostDisplayType
     export let expandCompact: boolean
     export let showCommentForm:boolean = false;
 </script>
 
-<div 
-    class="flex flex-row gap-1 sm:gap-2 items-center h-8 
+<div  class="flex flex-row gap-1 sm:gap-2 items-center h-8 
     {displayType == 'post' ? 'mt-auto' : 'mt-1'} 
     {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'ml-[-0.5rem]'}
     {displayType == 'post' ? 'ml-[-0.5rem]' : ''}

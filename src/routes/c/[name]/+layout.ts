@@ -68,7 +68,6 @@ export async function load(req: any) {
         
         let posts = await getClient().getPosts({
             limit: get(userSettings)?.uiState.postsPerPage || 10,
-            //limit: 10,
             community_name: req.params.name,
             page: page,
             sort: sort,

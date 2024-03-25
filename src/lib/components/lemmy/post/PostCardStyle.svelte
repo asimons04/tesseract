@@ -108,7 +108,7 @@
     <Crossposts post={post} size={displayType=='feed' ? 'xs' : 'sm'}/>
 
     {#if actions}
-        <PostActions  bind:post bind:expandCompact displayType={displayType} postType={postType} bind:showCommentForm
+        <PostActions  bind:post bind:expandCompact displayType={displayType} bind:showCommentForm
             on:edit={(e) => {
                 toast({
                     title: 'Confirmation',
