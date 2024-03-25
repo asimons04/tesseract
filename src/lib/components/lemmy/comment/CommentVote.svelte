@@ -6,6 +6,8 @@
         Icon,
     } from 'svelte-hero-icons'
     import { getClient } from '$lib/lemmy'
+    import { instance } from '$lib/instance'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
@@ -13,6 +15,9 @@
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
 
     export let comment: CommentView
+
+    let onHomeInstance: boolean = true
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
     const voteColor = () => {
         if (comment.my_vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'
@@ -43,7 +48,7 @@
 </script>
 
 <div class="flex flex-row items-center rounded-md gap-0 transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800  border rounded-lg">
-    <Button disabled={!$profile?.user} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
+    <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
         class="{comment.my_vote == 1 ? voteColor() : ''} !gap-0.5"
         on:click={async () => {
             comment.counts = await vote(comment.my_vote == 1 ? 0 : 1)
@@ -57,7 +62,7 @@
     
     <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
 
-    <Button disabled={!$profile?.user} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
+    <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
         class="{comment.my_vote == -1 ? voteColor() : ''} !gap-0.5"
         on:click={async () => {
             comment.counts = await vote(comment.my_vote == -1 ? 0 : -1)

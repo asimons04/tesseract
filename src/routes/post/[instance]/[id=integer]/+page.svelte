@@ -14,7 +14,8 @@
     import { profile } from '$lib/auth.js'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
-
+    
+    import Button from '$lib/components/input/Button.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
@@ -22,6 +23,11 @@
     import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
 
+    import {
+        Icon, 
+        ExclamationTriangle,
+        Home
+    } from 'svelte-hero-icons'
 
     
     export let data
@@ -63,7 +69,7 @@
     })
 
     afterNavigate(async () => {
-
+        /*
         if ($page.params.instance.toLowerCase() != $instance.toLowerCase()) {
             if (!$profile?.jwt) return
             toast({
@@ -74,17 +80,20 @@
                 duration: 9999 * 1000,
             })
         }
+        */
     })
 
-    const fetchOnHome = async (jwt: string) => {
+    const fetchOnHome = async () => {
+        if (!$profile?.jwt) return
         const id = toast({
             content: 'Attempting to fetch this post on your home instance...',
             loading: true,
+            title: "Please wait..."
         })
 
         try {
             const res = await getClient().resolveObject({
-                auth: jwt,
+                auth: $profile.jwt,
                 q: post_view.post.ap_id,
             })
 
@@ -115,10 +124,41 @@
 
 <SubNavbar iconSize={28} back scrollButtons refreshButton toggleCommunitySidebar bind:post={post_view}/>
 <!--postActionsMenu communityActionsMenu moderationMenu-->
+
+
 <div class="flex flex-col md:flex-row gap-4 w-full">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
+        <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
+        {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
+            
+            <div class="flex flex-col p-2 gap-4 bg-amber-500/30 text-zinc-950 dark:text-slate-100 rounded-md">
+                <span class="text-sm font-normal">
+                    <span class="flex flex-row gap-2 items-center">
+                        <Icon src={ExclamationTriangle} mini width={28}/>
+                        <p class="font-bold">You are viewing this post on a remote instance</p>
+                    </span>
+                    
+                    <span class="flex flex-row gap-1 pl-[2.3rem]">
+                        <p>
+                            This post is fetched from a remote instance, and you will not be able to interact with it.  In order to reply or vote,
+                            you will need to fetch this post on your home instance.
+                        </p>
+                        
+                        <span class="ml-auto"/>
+                        
+                        <Button size="lg" color="warning" class="whitespace-nowrap h-10" on:click={() => {
+                            fetchOnHome()
+                        }} >
+                            <Icon src={Home} mini width={18} />
+                            <span class="font-bold">Load on Home</span>
+                        </Button>
+                    </span>
+                </span>
+            </div>
+        {/if}
         
+
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
             <!---Post--->
             <PostCardStyle 

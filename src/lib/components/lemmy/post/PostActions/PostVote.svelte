@@ -6,8 +6,9 @@
     
     
     import { getClient } from '$lib/lemmy'
+    import { instance } from '$lib/instance'
+    import { page } from '$app/stores'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
 
@@ -21,6 +22,9 @@
 
 
     export let post:    PostView
+
+    let onHomeInstance: boolean = true
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
     const voteColor = (vote: number) => {
         if (vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'
@@ -53,7 +57,7 @@
 
 <div class="flex items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-800 h-full duration-200">
     <Button
-        disabled={!$profile?.user}
+        disabled={!$profile?.user || !onHomeInstance}
         aria-label="Upvote"
         class="{post.my_vote == 1 ? voteColor(post.my_vote) : ''}"
         size="sm"
@@ -72,7 +76,7 @@
     <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
    
     <Button
-        disabled={!$profile?.user}
+        disabled={!$profile?.user || !onHomeInstance}
         aria-label="Downvote"
         class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
         size="sm"
