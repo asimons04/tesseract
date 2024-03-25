@@ -10,14 +10,14 @@ interface LoadParams {
     url: any,
     fetch: any
 }
-export async function load({ params, url, fetch }: LoadParams) {
+export async function load({ params, url }: LoadParams) {
     try {
-        const post = await getClient(params.instance.toLowerCase(), fetch).getPost({
+        const post = await getClient(params.instance.toLowerCase()).getPost({
             id: Number(params.id),
             auth: get(profile)?.jwt,
         })
 
-        let max_depth = post.post_view.counts.comments > 100 ? 2 : 5
+        let max_depth = post.post_view.counts.comments > 50 ? 2 : 3
 
         const thread = url.searchParams.get('thread')
         let parentId: number | undefined
@@ -39,8 +39,6 @@ export async function load({ params, url, fetch }: LoadParams) {
         const commentParams: any = {
             post_id: Number(params.id),
             type_: 'All',
-            limit: 50,
-            page: 1,
             max_depth: max_depth,
             saved_only: false,
             sort: sort,
@@ -53,9 +51,7 @@ export async function load({ params, url, fetch }: LoadParams) {
             post: post,
             commentSort: sort,
             streamed: {
-                comments: SSR_ENABLED
-                    ? await getClient(params.instance, fetch).getComments(commentParams)
-                    : getClient(params.instance, fetch).getComments(commentParams),
+                comments: getClient(params.instance, fetch).getComments(commentParams),
             },
         }
     }

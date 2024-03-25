@@ -174,9 +174,8 @@
         >
             {#if $profile?.user}
                 <div class="w-8 h-8 aspect-square object-cover rounded-full">
-                    <Avatar
+                    <Avatar width={32} ring={true}
                         url={$profile.user.local_user_view.person.avatar}
-                        width={32}
                         alt={$profile.user.local_user_view.person.name}
                     />
                 </div>
@@ -200,9 +199,10 @@
                 }}
             >
                 {#if $profile?.user}
-                    <Avatar width={28}
+                    <Avatar width={28} 
                         url={$profile.user.local_user_view.person.avatar}
                         alt={$profile.user.local_user_view.person.name}
+                        
                     />
                 {:else}
                     <Icon src={UserGroup} mini width={16} />

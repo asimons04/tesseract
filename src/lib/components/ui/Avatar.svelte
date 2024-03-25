@@ -10,6 +10,7 @@
     export let alt: string = ''
     export let title: string = ''
     export let circle: boolean = true
+    export let ring: boolean = false
 
     export let width: number
     export let res: number | undefined = undefined
@@ -23,13 +24,13 @@
         {width}
         {title}
         loading="lazy"
-        class="aspect-square object-cover overflow-hidden {$$props.class}"
+        class="aspect-square object-cover overflow-hidden {ring ? 'ring-2 ring-sky-700' : ''} {$$props.class} "
         class:rounded-full={circle}
     />
 {:else}
     <div
         style="width: {width}px; height: {width}px;"
-        class="aspect-square object-cover overflow-hidden {$$props.class}"
+        class="aspect-square object-cover overflow-hidden {ring ? 'ring-2 ring-sky-700' : ''} {$$props.class}"
         class:rounded-full={circle}
     >
         {@html createAvatar(initials, {

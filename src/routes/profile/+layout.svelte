@@ -1,7 +1,9 @@
 <script>
     import { page } from '$app/stores'
+    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
     
     import {
@@ -12,6 +14,7 @@
         NoSymbol,
         Bookmark
     } from 'svelte-hero-icons'
+    
 
 
     export let data;
@@ -60,19 +63,46 @@
         </Button>
     </div>
     
-    <slot />
-    <!--
+    <!--<slot />-->
+    <!---Use Different navigation bars depending on which profile page is active--->
+    
+    <!--- /profile/user--->
+    {#if $page.url.pathname.startsWith('/profile/user') || $page.url.pathname.startsWith('/u/')}
+    <SubNavbar 
+        home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+        listingType={true} listingTypeOptions={['posts', 'comments']} listingTypeOptionNames={['Posts', 'Comments']} bind:selectedListingType={data.type}
+        sortMenu sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
+    />
+    {/if}
+    
+    {#if $page.url.pathname.startsWith('/profile/inbox') || $page.url.pathname.startsWith('/profile/settings') || $page.url.pathname.startsWith('/profile/blocks')}
+    <SubNavbar 
+        home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+    />
+    {/if}
+
+    {#if $page.url.pathname.startsWith('/profile/saved')}
+    <SubNavbar 
+        home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+        listingType={true} listingTypeOptions={['posts', 'comments']} listingTypeOptionNames={['Saved Posts', 'Saved Comments']} bind:selectedListingType={data.type}
+        sortMenu sortOptions={['New', 'Hot', 'Top', 'Old']} sortOptionNames={['New', 'Hot', 'Top', 'Old']} bind:selectedSortOption={data.sort}
+    />
+    {/if}
+
+
+
     <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full">
         <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
             <slot />
         </div>
 
-    
+        {#if $userSettings.uiState.expandCommunitySidebar}
         <div>
-            <UserCard person={data.user.person_view} />
+            <UserCard person={data.user.person_view} moderates={data.user.moderates}/>
         </div>
+        {/if}
     </div>
-    -->
+    
 
     
 </div>

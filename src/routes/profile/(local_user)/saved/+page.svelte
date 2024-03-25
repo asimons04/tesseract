@@ -41,17 +41,19 @@
     <title>Saved</title>
 </svelte:head>
 
+<!--
 <SubNavbar 
     home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
     listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All Saved', 'Saved Posts', 'Saved Comments']} bind:selectedListingType={data.type}
     sortMenu={true} sortOptions={['New', 'Old']} sortOptionNames={['New', 'Old']} bind:selectedSortOption={data.sort}
     pageSelection={true} bind:currentPage={data.page}
 />
-
+-->
 
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        {#if data.data?.length > 0}
+        
+        {#if data?.data && data.data.length > 0}
             <div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">
                 {#each data.data as item, index}
                     <div in:fly={{ opacity: 0, y: -4, delay: index * 50 }}>
@@ -96,12 +98,13 @@
             }}
         />
     </div>
-    
+    <!--
     {#if $profile?.user?.local_user_view}
         <div>
             <UserCard person={$profile.user.local_user_view} />
         </div>
     {/if}
+    -->
 </div>
 
 

@@ -10,9 +10,10 @@
     } from 'svelte-hero-icons'
     
     export let threshold: number = 500              // Number of pixels from the bottom before dispatching the load more event
-    export let loading: boolean = false             // Disable events when a loading event is already processing
-    export let exhausted:boolean = false          // Flag to disable automatic loading if API returns no more data
+    export let loading: boolean  = false            // Disable events when a loading event is already processing
+    export let exhausted:boolean = false            // Flag to disable automatic loading if API returns no more data
     export let automatic:boolean = true             // Automatically load new content. False will require clicking load more button manually
+    export let manual:boolean    = false            // Whether to automatically load next page or require button click
 
     const dispatcher = createEventDispatcher();
 
@@ -23,7 +24,7 @@
 
     function onScroll(e:any) {
         const offset = document.documentElement.scrollHeight - (window.innerHeight + window.scrollY)
-        if (automatic && offset <= threshold && !loading) {
+        if (automatic && !manual && offset <= threshold && !loading) {
             dispatcher('loadMore')
         }
     }

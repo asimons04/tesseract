@@ -4,6 +4,7 @@
     import { page } from '$app/stores'
     import { userSettings } from '$lib/settings.js'
 
+    import Button from '$lib/components/input/Button.svelte';
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
@@ -13,28 +14,50 @@
 
     import {
         Icon,
+        ChatBubbleOvalLeftEllipsis,
         PencilSquare,
+        Window,
     } from 'svelte-hero-icons'
     
 
     export let data
     export let userSideCard = true
+
+    let show: 'posts' | 'comments'  = 'posts'
 </script>
 
 <svelte:head>
   <title>{data.person_view.person.name}</title>
 </svelte:head>
 
-
+<!--listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}-->
+{#if $page.url.pathname.startsWith('/u/')}
 <SubNavbar 
-    home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
-    listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
+    home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
-    pageSelection={true} bind:currentPage={data.page}
 />
+{/if}
+<!---Post/Comment Switcher Buttons--->
+<div class="flex flex-row w-full m-1 gap-4">
+    
+    <Button on:click={() => { show = 'posts'}} class="w-full">
+        <span class="flex flex-col items-center {show=='posts' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+            <Icon src={Window} mini size="18" title="Posts" />
+            <span class="text-xs">Posts</span>
+        </span>
+    </Button>
 
+    <Button on:click={() => { show = 'comments'}} class="w-full">
+        <span class="flex flex-col items-center {show=='comments' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+            <Icon src={ChatBubbleOvalLeftEllipsis} mini size="18" title="Comments" />
+            <span class="text-xs">Comments</span>
+        </span>
+    </Button>
+</div>
 
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full py-2">
+    
+    
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
 
 
@@ -64,9 +87,12 @@
         />
     </div>
     
-    {#if userSideCard}
+    <!---User Card Sidebar--->
+    <!---Don't show on /profile/user since it's i the layout there--->
+    {#if $userSettings.uiState.expandCommunitySidebar && $page.url.pathname.startsWith('/u/')}
         <div>
             <UserCard person={data.person_view} moderates={data.moderates} />
         </div>
     {/if}
+    
 </div>

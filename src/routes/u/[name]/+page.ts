@@ -22,7 +22,8 @@ export async function load({ params, url, fetch }: LoadParams) {
         auth: get(profile)?.jwt,
     })
 
-  const items = [...user.posts, ...user.comments]
+    
+    const items = [...user.posts, ...user.comments]
 
   if (sort == 'TopAll') {
     items.sort(
@@ -45,5 +46,7 @@ export async function load({ params, url, fetch }: LoadParams) {
     person_view: user.person_view,
     moderates: user.moderates,
     items,
+    posts: user.posts,
+    comments: user.comments
   }
 }
