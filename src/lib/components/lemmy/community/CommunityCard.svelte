@@ -11,6 +11,7 @@
     import {imageProxyURL} from '$lib/image-proxy'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
     
@@ -451,12 +452,13 @@
                         </span>
                     </span>
                 </Button>
-                
-                <div class="flex flex-col gap-2 pl-4" class:hidden={!expandModerators}>
+                {#if expandModerators}
+                <div class="flex flex-col gap-2 pl-8" transition:slide>
                     {#each moderators as moderator}
                         <UserLink user={moderator.moderator} avatar={true} />
                     {/each}
                 </div>
+                {/if}
             </div>
         {/if}
         

@@ -232,7 +232,7 @@
         class:dark:text-zinc-400={read && $userSettings.markReadPosts}
         title="{title}"
     >
-        <h1 class="text-base md:text-lg" class:font-bold={displayType==='post'}>{title}</h1>    
+        <h1 class="text-base md:text-lg font-bold">{title}</h1>    
     
     </a>
     {/if}

@@ -3,6 +3,7 @@
     import type { SiteView, PersonView, Tagline } from 'lemmy-js-client'
     import { getClient } from '$lib/lemmy.js'
     import {imageProxyURL} from '$lib/image-proxy'
+    import { slide } from 'svelte/transition'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -133,12 +134,13 @@
                         </span>
                     </span>
                 </Button>
-                
-                <div class="flex flex-col gap-2 pl-4" class:hidden={!expandAdmins}>
+                {#if expandAdmins}
+                <div class="flex flex-col gap-2 pl-8" transition:slide>
                     {#each admins as admin}
                         <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
                     {/each}
                 </div>
+                {/if}
             </div>
         {/if}
         
@@ -157,7 +159,7 @@
         </Button>
 
         {#if expandSiteInfo}
-            <div class="px-2.5">
+            <div class="pl-8" transition:slide>
                 <Markdown source={site.site.sidebar} />
             </div>
         {/if}

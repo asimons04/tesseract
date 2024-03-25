@@ -43,9 +43,9 @@
             {$$props.class}
         ">
             {#if icon}
-                <span class="hidden sm:flex">
+                <!--<span class="hidden sm:flex">-->
                     <Icon src={icon} mini width={iconSize}/>
-                </span>
+                <!--</span>-->
             {/if}
 
             {#if label}

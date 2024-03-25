@@ -56,13 +56,14 @@
         disabled={!$profile?.user}
         aria-label="Upvote"
         class="{post.my_vote == 1 ? voteColor(post.my_vote) : ''}"
+        size="sm"
+        color="tertiary"
+        alignment="center"
         on:click={async () => {
             post.counts = await vote(post.my_vote == 1 ? 0 : 1)
             post.my_vote = post.my_vote == 1 ? 0 : 1
         }}
-        size="sm"
-        color="tertiary"
-        alignment="center"
+
     >
         <Icon src={ArrowUp} mini size="18" />
         <FormattedNumber number={post.counts.upvotes} />
@@ -74,12 +75,13 @@
         disabled={!$profile?.user}
         aria-label="Downvote"
         class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
+        size="sm"
+        color="tertiary"
         on:click={async () => {
             post.counts = await vote(post.my_vote == -1 ? 0 : -1)
             post.my_vote = post.my_vote == -1 ? 0 : -1
         }}
-        size="sm"
-        color="tertiary"
+
     >
         <Icon src={ArrowDown} mini size="18" />
         <FormattedNumber number={post.counts.downvotes} />
