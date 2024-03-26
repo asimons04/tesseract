@@ -8,7 +8,7 @@
     export let hidden: boolean = false
     export let filter: string | undefined = undefined
     export let group:string = ''
-    export let menu = true
+    export let menu:boolean = true
 
 </script>
 

@@ -34,6 +34,7 @@ All major/minor changes between releases will be documented here.
     - Posts in the feed, when browsing a community, now show the creator's avatar instead of the community's
     - Deprecated and removed "Theater Mode" button on videos.  Was somewhat ill-conceived when I created it, and maintaining it is annoying.
 
+- Shamelessly stole the post body preview fade from Photon (ok, I reimplemented it but it does the exact same thing but with better contrast)
 
 - Reimplemented vote buttons
     - Shows upvote and downvote counts
