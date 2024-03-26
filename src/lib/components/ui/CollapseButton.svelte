@@ -5,12 +5,11 @@
         Icon,
         ChevronUp,
         ChevronDown,
-        Folder,
         type IconSource
     } from 'svelte-hero-icons'
     
     export let expanded:boolean = false
-    export let icon:IconSource = Folder
+    export let icon:IconSource | undefined = undefined
     export let title:string = ' '
 </script>
 
@@ -19,7 +18,11 @@
         on:click={ ()=> { expanded = !expanded}}
     >
         <span class="mr-[0.5rem]">
-            <Icon src={icon} mini size="24" />
+            <slot name="icon" />
+            
+            {#if icon}
+                <Icon src={icon} mini size="24" />
+            {/if}
         </span>
 
         <span class="w-full flex flex-row justify-between">
