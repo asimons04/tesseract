@@ -37,33 +37,8 @@
     sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
 />
 {/if}
-<!---Post/Comment Switcher Buttons--->
-<div class="flex flex-row w-full m-1 gap-4">
-    
-    <Button on:click={() => { show = 'all'}} class="w-full">
-        <span class="flex flex-col items-center {show=='posts' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-            <Icon src={BookOpen} mini size="18" title="Posts" />
-            <span class="text-xs">All</span>
-        </span>
-    </Button>
-
-    <Button on:click={() => { show = 'posts'}} class="w-full">
-        <span class="flex flex-col items-center {show=='posts' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-            <Icon src={Window} mini size="18" title="Posts" />
-            <span class="text-xs">Posts</span>
-        </span>
-    </Button>
-
-    <Button on:click={() => { show = 'comments'}} class="w-full">
-        <span class="flex flex-col items-center {show=='comments' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-            <Icon src={ChatBubbleOvalLeftEllipsis} mini size="18" title="Comments" />
-            <span class="text-xs">Comments</span>
-        </span>
-    </Button>
-</div>
 
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full py-2">
-    
     
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
 
