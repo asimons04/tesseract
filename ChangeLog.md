@@ -4,36 +4,60 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.3.0
-- [Media] Add support for detecting and rendering Peertube embeds
+### Media
+- Add support for detecting and rendering Peertube embeds
     - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
     - Votes on Peertube videos will translate to thumbs-up on PT's end
 
-- [0.19.x Support] Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.
+### 0.19.x Features
+- Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.  Will prefer cursor-based pagination if available and fall back to offset based if using < 0.19.0 instance (maintains backwards compatibility with 0.18.x)
 
-- [Bugfixes] General Typescript and a11y fixes (too numerous to list individually)
-- [Bugfixes] Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote.
-- [Bugfixes] Reimplemented vote functions for comments and posts.
+### Bugfixes
+- General Typescript and a11y fixes (too numerous to list individually)
+- Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote.
+- Reimplemented vote functions for comments and posts.
+- Added more forwards/backwards-compatible date format checks (to work with both 0.18.x and 0.19.x)
 
-- [UI] Reimplemented account switching menu
-- [UI] Add "Copy Lemmyverse Link" to user profile menu.
-- [UI] Reimplemented vote buttons
+### UI
+- Reimplemented account switching menu
+- Add "Copy Lemmyverse Link" to user profile menu.
+- Site, community, and user info are now collapsible
+- Added transition effects in more places, removed from others
+- Reimplemented vote buttons
     - Shows upvote and downvote counts
-- [UI] Some of y'all's community names are *too damn long*.  Long community names are now split on colon and hyphen characters and only the text to the left are shown on posts.  
+    - Now disabled when non-applicable (viewing post on non-home instance, not logged in, etc)
+- Un-flattened buttons    
+- Long community names are now split on colon and hyphen characters and only the text to the left are shown on posts.  
     - **Alternative Nation: The Fediverse's Alternative and Indie Music Community** -> Alternative Nation
     - **Climate - truthful information about climate, related activism and politics.** -> Climate
     - Considering other ways to handle those, but this was a quick fix that seems to cover most cases well enough
     - Full name still shown in community sidebar
 
+- Cleaned up top navigation bar
+    - Using icons instead of text+icons
+    - Most are now dropdown menus (community/explore is still just a link)
+    - Profile avatar now has a ring effect
 
- 
-    
-    
+- Added notification center in nav bar
+    - Replaces the "Reports" button as well as the notification dot on the profile menu
+    - Has three color-coded notification dots for inbox (red), reports (green), and registration applications (blue)
+    - Dropdown shows counts for each of inbox, reports, and applications
+    - Hidden if not logged in
+    - Users will just see "Inbox"
+    - Mods will see Inbox and Reports
+    - Admins will see Inbox, Reports, and Registration Applications
 
-- [Feeds] Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 
+- Reimplemented the dropdown menus
+    - Looks a lot cleaner
+    - Hide the currently selected label on mobile (to not overflow the navbar)
+    - Add menu label to top of dropdown and check icon indicator to currently selected option
+
+### Post Feeds    
+- Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 
   - Now will keep your place when changing post/compact view and changing margins
   - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
-- [Feeds] Switched pagination to infinite scroll 
-- [Feeds] Removed feed setting for number of posts per page
+- Switched pagination to infinite scroll 
+- Removed feed setting for number of posts per page
   - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
 
 
