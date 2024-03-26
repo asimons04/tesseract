@@ -43,7 +43,11 @@
         <!--- Show expandable preview in feed--->
         {#if displayType=='feed'}
             {#if post.post.body}    
-                <div class="{expandPreviewText ? '' : 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'}">
+                <div class="
+                    {!expandPreviewText && !post.post.nsfw && post.post.body.length > previewLength
+                        ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
+                        : ''
+                }">
                     <Markdown 
                         class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
                         source={
@@ -79,7 +83,11 @@
 
             <!--- If no post body but there's an embed description avaialble, display that--->
             {:else if post.post.embed_description }
-                <div class="{expandPreviewText ? '' : 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'}">
+                <div class="
+                    {!expandPreviewText && !post.post.nsfw && post.post.embed_description.length > previewLength
+                        ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
+                        : ''
+                }">
                     <Markdown 
                         class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
                         source={

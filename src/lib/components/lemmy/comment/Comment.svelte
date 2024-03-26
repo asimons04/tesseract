@@ -165,7 +165,6 @@
             </Button>
         </summary>
 
-        <!--whitespace-pre-wrap-->
         <div class="{node.comment_view.comment.distinguished ? distinguishedClassContent : ''} flex flex-col gap-1">
             <div class="max-w-full mt-0.5 break-words text-sm">
                 <Markdown source={node.comment_view.comment.content} />

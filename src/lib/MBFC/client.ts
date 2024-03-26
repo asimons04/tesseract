@@ -12,6 +12,7 @@ function normalizeDomain(domain:string):string {
         .replace('bbc.co.uk', 'bbc.com')
         .replace('bbc.in', 'bbc.com')
         .replace('english.aawsat.com', 'aawsat.com')
+        .replace('eu.usatoday.com', 'usatoday.com')
         .replace('mronline.org', 'monthlyreview.org')
         .replace('presstv.co.uk', 'presstv.ir') 
         .replace('reutersagency.com', 'reuters.com')

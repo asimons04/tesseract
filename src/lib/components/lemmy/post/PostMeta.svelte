@@ -33,7 +33,7 @@
     
     
 
-    export let post: PostView                   
+    export let post: PostView                 
     export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];

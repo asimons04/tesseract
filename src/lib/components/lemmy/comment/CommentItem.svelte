@@ -6,15 +6,17 @@
     import Card from '$lib/components/ui/Card.svelte'
     
     import type { CommentView } from 'lemmy-js-client'
+    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
+    
     import {
         Icon,
         ArrowTopRightOnSquare
     } from 'svelte-hero-icons'
 
-  export let comment: CommentView
-  export let actions:boolean = true
-  export let collapseBadges:boolean = false;
+    export let comment: CommentView
+    export let actions:boolean = true
+    export let collapseBadges:boolean = false;
 
 </script>
 
@@ -33,7 +35,9 @@
         </Button>
     </div>
     
-    <Link href="/post/{getInstance()}/{comment.post.id}"><span class="text-sm font-bold">{comment.post.name}</span></Link>  
+    <Link href="/post/{getInstance()}/{comment.post.id}">
+        <span class="text-sm font-bold">{fixLemmyEncodings(comment.post.name)}</span>
+    </Link>  
     
     <div class="list-none">
         <Comment
