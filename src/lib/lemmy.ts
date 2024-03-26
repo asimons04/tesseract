@@ -155,17 +155,17 @@ export let sortOptionNames:string[] = [
     'New',
     'Old',
     'Top All',
-    'Top 9 Mon.',
-    'Top 6 Mon.',
-    'Top 3 Mon.',
+    'Top 9 Months',
+    'Top 6 Months',
+    'Top 3 Months',
     'Top Month',
     'Top Week',
     'Top Day',
     'Top 12 Hour',
     'Top 6 Hour',
     'Top Hour',
-    'Most Cmnts',
-    'New Cmnts',
+    'Most Comments',
+    'New Comments',
 ];
 
 // Set the current site

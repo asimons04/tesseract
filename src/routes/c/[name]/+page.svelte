@@ -128,10 +128,9 @@
         />
     {/if}
 </svelte:head>
-
+<!--pageSelection={true}    bind:currentPage={data.page}-->
 <SubNavbar home back compactSwitch toggleMargins toggleCommunitySidebar scrollButtons
     sortMenu={true}         bind:selectedSortOption={data.sort}
-    pageSelection={true}    bind:currentPage={data.page}
     refreshButton           on:navRefresh={()=> refresh()}
 />
 

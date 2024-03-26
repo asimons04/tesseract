@@ -107,7 +107,7 @@
         
         <!--Home Button-->
         {#if home || history.length < 2}
-            <Button link href="/" class="mr-2 cursor-pointer" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary">
+            <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary">
                 <Icon src={Home} width={iconSize} />
             </Button>
         {/if}

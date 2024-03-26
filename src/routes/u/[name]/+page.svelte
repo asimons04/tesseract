@@ -22,19 +22,18 @@
     
 
     export let data
-
-    let show: 'posts' | 'comments' | 'all'  = 'all'
 </script>
 
 <svelte:head>
-  <title>{data.person_view.person.name}</title>
+  <title>Profile | {data.person_view.person.name}</title>
 </svelte:head>
 
-<!--listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}-->
+<!---Only show on /u/{username} routes since the /profile/user route will use the navbar from its layout page--->
 {#if $page.url.pathname.startsWith('/u/')}
 <SubNavbar 
     home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
+    listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
 />
 {/if}
 
