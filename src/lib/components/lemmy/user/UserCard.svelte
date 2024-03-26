@@ -15,6 +15,7 @@
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -29,8 +30,6 @@
     import {
         Cake,
         ChatBubbleOvalLeftEllipsis,
-        ChevronDown,
-        ChevronUp,
         EllipsisVertical,
         Envelope,
         Hashtag,
@@ -44,7 +43,7 @@
         ShieldCheck,
         ShieldExclamation,
         Trophy,
-        UserPlus,
+        UserCircle,
     } from 'svelte-hero-icons'
     
     
@@ -52,12 +51,9 @@
     export let moderates: CommunityModeratorView[]
 
     let blocking = false
-    let userBioModal = false;
     let loadingMessage = false
     let messaging = false
     let message = ''
-    let expandModerates = false
-
 
     async function blockUser(block: number) {
         if (!$profile?.user || !$profile?.jwt) throw new Error('Unauthenticated')
@@ -150,14 +146,6 @@
 {/if}
 
 
-<Modal bind:open ={userBioModal} >
-    <h1 class="font-bold text-lg">About Me</h1>
-    
-    {#if person.person.bio}
-        <Markdown source={person.person.bio} />
-    {/if}
-</Modal>
-
 
 
 <StickyCard class="mb-3 {$userSettings.uiState.expandCommunitySidebar ? 'block' : 'hidden'}">
@@ -190,16 +178,6 @@
                                     User Actions
                                 </span>
                                 
-                                <!--- User Bio --->
-                                <span class="xl:hidden">
-                                    <MenuButton
-                                        on:click={() => (userBioModal = !userBioModal)} 
-                                        title="About User"
-                                    >
-                                        <Icon src={InformationCircle} mini width={16}/>
-                                        About User
-                                    </MenuButton>
-                                </span>
 
                                 <!--- User Modlog--->
                                 <MenuButton link
@@ -336,24 +314,7 @@
 
 
     {#if moderates?.length > 0}
-    <div class="flex flex-col gap-1 mt-2 mb-4">
-        <Button
-            color="tertiary"
-            alignment="left"
-            on:click={ ()=> { expandModerates = !expandModerates}}
-        >
-            
-            <Icon src={ShieldCheck} mini size="18" />
-
-            <span class="w-full flex flex-row justify-between">
-                Moderates
-                <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
-                    <Icon src={expandModerates ? ChevronUp : ChevronDown} mini height={18} width={18} />
-                </span>
-            </span>
-        </Button>
-        
-        <div class="flex flex-col gap-2 pl-4" class:hidden={!expandModerates}>
+        <CollapseButton icon={ShieldCheck} title="Moderates">
             {#each moderates as community}
                 <div class="inline-flex w-full">
                     <Button
@@ -379,15 +340,14 @@
                     </Button>
                 </div>
             {/each}
-        </div>
-    </div>
+        </CollapseButton>
     {/if}
     
-    {#if person.person.bio}
-        <div class="hidden xl:block">
+    {#if person?.person?.bio}
+        <CollapseButton icon={UserCircle} title="About Me">
             <h1 class="font-bold text-lg">About Me</h1>
             <Markdown source={person.person.bio} />
-        </div>
+        </CollapseButton>
     {/if}
     
     <!-- Spacer block to give user action menu room to expand --->

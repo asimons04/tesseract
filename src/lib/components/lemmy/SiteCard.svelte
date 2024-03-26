@@ -9,6 +9,7 @@
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    import CollapseButton from '../ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
@@ -119,50 +120,21 @@
         <hr class="border-slate-300 dark:border-zinc-700" />
     {/if}
 
+    <!--- Collapsible buttons for admins and site info --->
     <div class="hidden xl:block flex flex-col gap-2 w-full">
         {#if admins.length > 0}
-            <div class="flex flex-col gap-1 mt-2 mb-4">
-                <Button color="tertiary" alignment="left"
-                    on:click={ ()=> { expandAdmins = !expandAdmins}}
-                >
-                    <Icon src={ShieldCheck} mini size="24" />
-
-                    <span class="w-full flex flex-row justify-between">
-                        Admins
-                        <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
-                            <Icon src={expandAdmins ? ChevronUp : ChevronDown} mini height={18} width={18} />
-                        </span>
-                    </span>
-                </Button>
-                {#if expandAdmins}
-                <div class="flex flex-col gap-2 pl-8" transition:slide>
-                    {#each admins as admin}
-                        <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
-                    {/each}
-                </div>
-                {/if}
-            </div>
+           <CollapseButton icon={ShieldCheck} title="Admins">
+                {#each admins as admin}
+                    <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
+                {/each}
+           </CollapseButton>
         {/if}
         
-        
-        <Button color="tertiary" alignment="left" class="w-full"
-            on:click={ ()=> { expandSiteInfo = !expandSiteInfo}}
-        >
-            <Icon src={InformationCircle} mini size="24" />
-
-            <span class="w-full flex flex-row justify-between">
-                Site Info
-                <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
-                    <Icon src={expandSiteInfo ? ChevronUp : ChevronDown} mini height={18} width={18} />
-                </span>
-            </span>
-        </Button>
-
-        {#if expandSiteInfo}
-            <div class="mt-2 pl-8" transition:slide>
+        {#if site?.site?.sidebar}
+            <CollapseButton icon={InformationCircle} title="Site Info" expanded={true}>
                 <Markdown source={site.site.sidebar} />
-            </div>
+            </CollapseButton>
         {/if}
-
     </div>
+
 </StickyCard>

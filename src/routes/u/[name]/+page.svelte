@@ -21,7 +21,6 @@
     
 
     export let data
-    export let userSideCard = true
 
     let show: 'posts' | 'comments'  = 'posts'
 </script>

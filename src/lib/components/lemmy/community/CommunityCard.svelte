@@ -11,15 +11,14 @@
     import {imageProxyURL} from '$lib/image-proxy'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
     
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -33,8 +32,6 @@
     import {
         Calendar,
         ChatBubbleOvalLeftEllipsis,
-        ChevronDown,
-        ChevronUp,
         Cog6Tooth,
         EllipsisHorizontal,
         EllipsisVertical,
@@ -63,7 +60,6 @@
     export let moderators: Array<CommunityModeratorView> = []
     
     
-    let sidebar: boolean = false
     let groupAddModal:boolean = false
     let expandModerators:boolean = false
 
@@ -160,44 +156,6 @@
 </script>
 
 
-<!---Community Info Modal--->
-<Modal bind:open={sidebar} title={community_view.community.title.replace('&amp;', '&')}>
-    <div class="mx-auto">
-
-        {#if moderators.length > 0}
-            <div class="flex flex-col gap-1 mt-2 mb-4">
-                <Button
-                    color="tertiary"
-                    alignment="left"
-                    on:click={ ()=> { expandModerators = !expandModerators}}
-                 >
-                    
-                    <Icon src={HandRaised} mini size="18" />
-        
-                    <span class="w-full flex flex-row justify-between">
-                        Moderators
-                        <span class="bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800  text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 rounded-full">
-                            {moderators.length}
-                        </span>
-                    </span>
-                </Button>
-                
-                <div class="flex flex-col gap-2 pl-4" class:hidden={!expandModerators}>
-                    {#each moderators as moderator}
-                        <UserLink user={moderator.moderator} avatar={true} />
-                    {/each}
-                </div>
-            </div>
-        {/if}
-        
-        {#if community_view.community.description}
-            <h1 class="font-bold text-xl">About Community</h1>
-            <hr class="border-slate-300 dark:border-zinc-800 my-1" />
-            <Markdown source={community_view.community.description} />
-        {/if}
-    </div>
-</Modal>
-
 <!---Modal to Add Community to a Group--->
 <div class="z-20">
     <AddCommunityGroup bind:open={groupAddModal} community={community_view.community} />
@@ -258,17 +216,6 @@
                                     Create Post
                                 </MenuButton>
                                 {/if}
-
-                                <!---Community Info Modal--->
-                                <span class="xl:hidden">
-                                    <MenuButton
-                                        on:click={() => (sidebar = !sidebar)} 
-                                        title="Community Info"
-                                    >
-                                        <Icon src={InformationCircle} mini width={16}/>
-                                        Community Info
-                                    </MenuButton>
-                                </span>
 
                                 <!---Modlog--->
                                 <MenuButton link
@@ -440,37 +387,24 @@
         {/if}
     </div>
 
-    <div class="hidden  xl:block">
+    <div class="hidden xl:block flex flex-col gap-2 w-full">
         {#if moderators.length > 0}
-            <div class="flex flex-col gap-1 mt-2 mb-4">
-                <Button color="tertiary" alignment="left" on:click={ ()=> { expandModerators = !expandModerators}}>
-                    <Icon src={HandRaised} mini size="18" />
-                    <span class="w-full flex flex-row justify-between">
-                        Moderators
-                        <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
-                            <Icon src={expandModerators ? ChevronUp : ChevronDown} mini height={18} width={18} />
-                        </span>
-                    </span>
-                </Button>
-                {#if expandModerators}
-                <div class="flex flex-col gap-2 pl-8" transition:slide>
-                    {#each moderators as moderator}
-                        <UserLink user={moderator.moderator} avatar={true} />
-                    {/each}
-                </div>
-                {/if}
-            </div>
+            <CollapseButton icon={HandRaised} title="Moderators">
+                {#each moderators as moderator}
+                    <UserLink user={moderator.moderator} avatar={true} />
+                {/each}
+            </CollapseButton>
         {/if}
         
-        {#if community_view.community.description}
-            <div class="flex flex-col gap-1">
+        {#if community_view?.community?.description}
+            <CollapseButton icon={InformationCircle} title="Community Details">
                 <Markdown source={community_view.community.description} />
-            </div>
+            </CollapseButton>
         {/if}
-        
+    
         <!-- Spacer block to give community action menu room to expand --->
         <div class="hidden xl:block h-[150px]" />
-
     </div>
+
 
 </StickyCard>

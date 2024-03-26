@@ -68,21 +68,7 @@
         window.scrollTo(0,0);
     })
 
-    afterNavigate(async () => {
-        /*
-        if ($page.params.instance.toLowerCase() != $instance.toLowerCase()) {
-            if (!$profile?.jwt) return
-            toast({
-                content: 'Do you want to open this post on your home instance?',
-                action: () => {
-                    if ($profile?.jwt) fetchOnHome($profile.jwt)
-                },
-                duration: 9999 * 1000,
-            })
-        }
-        */
-    })
-
+    
     const fetchOnHome = async () => {
         if (!$profile?.jwt) return
         const id = toast({
@@ -141,18 +127,19 @@
                     
                     <span class="flex flex-row gap-1 pl-[2.3rem]">
                         <p>
-                            This post is fetched from a remote instance, and you will not be able to interact with it.  In order to reply or vote,
+                            You are viewing this post on a remote instance, and you will not be able to interact with it.  In order to reply or vote,
                             you will need to fetch this post on your home instance.
                         </p>
                         
                         <span class="ml-auto"/>
                         
-                        <Button size="lg" color="warning" class="whitespace-nowrap h-10" on:click={() => {
-                            fetchOnHome()
-                        }} >
-                            <Icon src={Home} mini width={18} />
-                            <span class="font-bold">Load on Home</span>
+                        <Button on:click={() => { fetchOnHome() }} color="warning" class="whitespace-nowrap">
+                            <span class="flex flex-col items-center">
+                                <Icon src={Home} mini size="18" title="Posts" />
+                                <span class="text-xs">Fetch on Home</span>
+                            </span>
                         </Button>
+
                     </span>
                 </span>
             </div>

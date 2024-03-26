@@ -63,7 +63,7 @@
         </Button>
     </div>
     
-    <!--<slot />-->
+    
     <!---Use Different navigation bars depending on which profile page is active--->
     
     <!--- /profile/user--->
@@ -89,7 +89,7 @@
     />
     {/if}
 
-
+    <!--<slot />-->
 
     <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full">
         <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
