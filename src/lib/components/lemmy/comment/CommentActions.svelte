@@ -11,7 +11,9 @@
     import { createEventDispatcher } from 'svelte'
     import { getFediseerInfo } from '$lib/fediseer/client.js'
     import { deleteItem, save } from '$lib/lemmy/contentview.js'
+    import { instance } from '$lib/instance'
     import { isCommentMutable } from '$lib/components/lemmy/post/helpers.js'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
@@ -47,6 +49,9 @@
     export let replying: boolean = false
     export let debug: boolean = false
 
+    let onHomeInstance: boolean = true
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
+
     const dispatcher = createEventDispatcher<{ edit: CommentView }>()
 
     let fediseer = {
@@ -70,7 +75,7 @@
     
     <!---Comment Reply Button--->
     <Button size="sm" color="tertiary-border"
-        disabled={comment.post.locked || !$profile?.user} hidden={comment.post.locked || !$profile?.user}
+        disabled={comment.post.locked || !$profile?.user || !onHomeInstance} hidden={comment.post.locked || !$profile?.user}
         on:click={() => (replying = !replying)}
     >
         <Icon src={ArrowUturnLeft} width={14} height={14} mini />

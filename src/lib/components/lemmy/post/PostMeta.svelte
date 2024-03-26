@@ -159,7 +159,8 @@
                         }" 
                         color="gray"
                     >
-                        <Icon src={Cake} mini size="16"/>New
+                        <Icon src={Cake} mini size="16"/>
+                        <RelativeDate date={post.creator.published} />
                     </Badge>
                 {/if}
 
