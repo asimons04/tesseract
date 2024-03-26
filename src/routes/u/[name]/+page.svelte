@@ -14,6 +14,7 @@
 
     import {
         Icon,
+        BookOpen,
         ChatBubbleOvalLeftEllipsis,
         PencilSquare,
         Window,
@@ -22,7 +23,7 @@
 
     export let data
 
-    let show: 'posts' | 'comments'  = 'posts'
+    let show: 'posts' | 'comments' | 'all'  = 'all'
 </script>
 
 <svelte:head>
@@ -39,6 +40,13 @@
 <!---Post/Comment Switcher Buttons--->
 <div class="flex flex-row w-full m-1 gap-4">
     
+    <Button on:click={() => { show = 'all'}} class="w-full">
+        <span class="flex flex-col items-center {show=='posts' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+            <Icon src={BookOpen} mini size="18" title="Posts" />
+            <span class="text-xs">All</span>
+        </span>
+    </Button>
+
     <Button on:click={() => { show = 'posts'}} class="w-full">
         <span class="flex flex-col items-center {show=='posts' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
             <Icon src={Window} mini size="18" title="Posts" />

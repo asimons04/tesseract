@@ -30,6 +30,7 @@
         ArrowsPointingIn,
         ArrowsPointingOut,
         ArrowSmallRight,
+        BarsArrowDown,
         Bars3,
         ChartBar,
         ChevronDoubleDown,
@@ -173,7 +174,7 @@
                     optionNames={sortOptionNames}
                     selected={selectedSortOption}
                     title="Sort Direction"
-                    icon={ChartBar}
+                    icon={BarsArrowDown}
                     iconSize={18}
                     on:select={(e) => {
                         // @ts-ignore

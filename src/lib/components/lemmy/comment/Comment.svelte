@@ -148,7 +148,7 @@
                         color="gray"
                     >
                         <Icon src={Cake} mini size="16"/>
-                        New
+                        <RelativeDate date={node.comment_view.creator.published}/>
                     </Badge>
                 {/if}
             </span>
