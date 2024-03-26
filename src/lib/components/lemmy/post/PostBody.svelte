@@ -20,7 +20,7 @@
     export let post:PostView;
     export let displayType:PostDisplayType = 'post'
     export let expandPreviewText:boolean = false
-    export let previewLength:number = 250
+    export let previewLength:number = 300
     export let inline:boolean = false
 
     
@@ -43,15 +43,17 @@
         <!--- Show expandable preview in feed--->
         {#if displayType=='feed'}
             {#if post.post.body}    
-                <Markdown 
-                    class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
-                    source={
-                        !expandPreviewText && post.post.body.length > previewLength
-                            ? post.post.body.slice(0, previewLength)
-                            : post.post.body
-                    }
-                    {inline}
-                />
+                <div class="{expandPreviewText ? '' : 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'}">
+                    <Markdown 
+                        class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
+                        source={
+                            !expandPreviewText && post.post.body.length > previewLength
+                                ? post.post.body.slice(0, previewLength)
+                                : post.post.body
+                        }
+                        {inline}
+                    />
+                </div>
 
                 {#if (post.post.body.length > previewLength) || post.post.nsfw}
                     <Button
@@ -77,15 +79,18 @@
 
             <!--- If no post body but there's an embed description avaialble, display that--->
             {:else if post.post.embed_description }
-                <Markdown 
-                    class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
-                    source={
-                        !expandPreviewText && post.post.embed_description.length > previewLength
-                            ? post.post.embed_description.slice(0, previewLength)
-                            : post.post.embed_description
-                    }
-                    {inline}
-                />
+                <div class="{expandPreviewText ? '' : 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'}">
+                    <Markdown 
+                        class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
+                        source={
+                            !expandPreviewText && post.post.embed_description.length > previewLength
+                                ? post.post.embed_description.slice(0, previewLength)
+                                : post.post.embed_description
+                        }
+                        {inline}
+                    />
+                </div>
+                
                 {#if post.post.embed_description.length > previewLength}
                     <Button
                         color="secondary"

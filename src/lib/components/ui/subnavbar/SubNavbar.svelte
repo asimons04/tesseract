@@ -103,7 +103,7 @@
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] h-[3rem] px-2 py-1 bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
     
-    <span class="flex flex-row gap-0 items-center text-sm text-center mx-auto md:mr-2">
+    <span class="flex flex-row gap-0 md:gap-1 items-center text-sm text-center mx-auto md:mr-2">
         
         <!--Home Button-->
         {#if home || history.length < 2}

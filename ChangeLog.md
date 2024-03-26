@@ -14,18 +14,32 @@ All major/minor changes between releases will be documented here.
 
 ### Bugfixes
 - General Typescript and a11y fixes (too numerous to list individually)
-- Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote.
+- Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote one one of the newly loaded ones.
 - Reimplemented vote functions for comments and posts.
 - Added more forwards/backwards-compatible date format checks (to work with both 0.18.x and 0.19.x)
+- Deprecated several old functions that were holdovers from the original Photon code
+
 
 ### UI
 - Reimplemented account switching menu
 - Add "Copy Lemmyverse Link" to user profile menu.
 - Site, community, and user info are now collapsible
 - Added transition effects in more places, removed from others
+
+- Various visual tweaks to posts, comments, and badges
+    - Post titles are now bolded
+    - New user badges now show the relative age of the account (5m, 1h, 2d, etc)
+    - Deleted accounts are now indicated with a trash can
+    - Increase icon/avatar size -- rather than reflow to 3 rows from two + column (community, user, published), always display in a column
+    - Posts in the feed, when browsing a community, now show the creator's avatar instead of the community's
+    - Deprecated and removed "Theater Mode" button on videos.  Was somewhat ill-conceived when I created it, and maintaining it is annoying.
+
+
 - Reimplemented vote buttons
     - Shows upvote and downvote counts
     - Now disabled when non-applicable (viewing post on non-home instance, not logged in, etc)
+    - To do:  Add addional check against current site config to disable downvote button if instance has downvotes disabled
+
 - Un-flattened buttons    
 - Long community names are now split on colon and hyphen characters and only the text to the left are shown on posts.  
     - **Alternative Nation: The Fediverse's Alternative and Indie Music Community** -> Alternative Nation
@@ -46,6 +60,8 @@ All major/minor changes between releases will be documented here.
     - Users will just see "Inbox"
     - Mods will see Inbox and Reports
     - Admins will see Inbox, Reports, and Registration Applications
+
+- Removed "Favorites" button from Navigation bar and replaced with dropdown menu
 
 - Reimplemented the dropdown menus
     - Looks a lot cleaner
