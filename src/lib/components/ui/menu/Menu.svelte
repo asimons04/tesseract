@@ -85,7 +85,7 @@
         >
 
             {#if open}
-                <div on:click={toggleOpen} class="flex flex-col gap-0" role="button" tabindex=0>
+                <div on:click={toggleOpen} class="flex flex-col gap-0 min-w-[155px]" role="button" tabindex=0>
                     <slot {toggleOpen} />
                 </div>
             {/if}

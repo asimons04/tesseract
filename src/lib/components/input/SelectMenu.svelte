@@ -8,6 +8,7 @@
     
     import { 
         Icon,
+        Check,
         ChevronDown
     } from 'svelte-hero-icons'
     
@@ -43,9 +44,7 @@
             {$$props.class}
         ">
             {#if icon}
-                <!--<span class="hidden sm:flex">-->
-                    <Icon src={icon} mini width={iconSize}/>
-                <!--</span>-->
+                <Icon src={icon} mini width={iconSize}/>
             {/if}
 
             {#if label}
@@ -53,7 +52,10 @@
             {/if}
             
             <slot>
-                {optionNames[options.findIndex((o) => selected == o)] || selected}
+                <!--Hide selected text in mobile view or until width is at least 'large'--->
+                <span class="hidden lg:flex">
+                    {optionNames[options.findIndex((o) => selected == o)] || selected}
+                </span>
             </slot>
             
             <span class="ml-auto"/>
@@ -61,6 +63,14 @@
         </span>
         
     </button>
+    
+    {#if title}
+        <li class="flex flex-row w-full text-left items-center justify-between text-xs font-bold px-4 py-1 my-1 opacity-80">
+            {title}
+            <Icon src={icon} mini width={iconSize}/>
+        </li>
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+    {/if}
 
     {#each options as option, index}
         <MenuButton
@@ -68,8 +78,18 @@
                 selected = option
                 dispatcher('select', option)
             }}
-        >
-            {optionNames[index] || option}
+        >   
+            <span class="flex flex-row w-full text-left justify-between">
+                {optionNames[index] || option}
+                
+                <!---Show an indicator icon next to the selected option--->
+                {#if (optionNames[options.findIndex((o) => selected == o)] || selected) == (optionNames[index] || option)}
+                <span>    
+                    <Icon src={Check} mini width={12}/>
+                </span>
+                {/if}
+
+            </span>
         </MenuButton>
     {/each}
 </Menu>
