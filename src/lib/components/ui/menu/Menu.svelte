@@ -77,7 +77,7 @@
                 {getOriginClass(alignment)}
                 rounded-lg py-1 w-max my-2 flex flex-col 
                 shadow-md  border
-                bg-white/90  border-slate-200 
+                bg-white/95  border-slate-200 
                 dark:bg-zinc-950/95 dark:border-zinc-800
                 backdrop-blur-3xl
                 {$$props.containerClass}
