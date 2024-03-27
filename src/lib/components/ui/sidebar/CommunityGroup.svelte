@@ -2,6 +2,7 @@
     import type { CommunityGroup } from '$lib/auth'
     import { goto } from '$app/navigation'
     import { removeGroup } from '$lib/favorites'
+    import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts';
 
     import Button from '$lib/components/input/Button.svelte'
@@ -98,7 +99,7 @@
         </div>
         
         {#if open}
-            <div class="flex flex-col gap-2 pl-1 pr-2">
+            <div class="flex flex-col gap-2 pl-1 pr-2" transition:slide>
                 <CommunityList {expanded} items={group.communities} group={group.name}/>
             </div>
         {/if}

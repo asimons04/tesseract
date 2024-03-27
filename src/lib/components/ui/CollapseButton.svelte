@@ -29,7 +29,7 @@
             {title}
             
             <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
-                <Icon src={expanded ? ChevronUp : ChevronDown} mini height={18} width={18} />
+                <Icon src={ChevronUp} mini height={18} width={18} class="transition-transform {expanded ? '' : 'rotate-180'}"/>
             </span>
         </span>
     </Button>
