@@ -8,6 +8,7 @@
     import { page } from '$app/stores'
     import { profile, profileData, setUserID } from '$lib/auth.js'
     import { site } from '$lib/lemmy.js'
+    import { slide} from 'svelte/transition'
     import { theme } from '$lib/ui/colors.js'
     import { userSettings } from '$lib/settings.js'
 
@@ -224,7 +225,7 @@
         
         <!--- Accounts List --->
         {#if expandAccountsMenu}
-            <div class="flex flex-col w-full">
+            <div class="flex flex-col w-full" transition:slide>
                 <div class="flex flex-col items-start w-full">
                     {#each $profileData.profiles as prof, index (prof.id)}
                         <ProfileButton {index} {prof}/>
