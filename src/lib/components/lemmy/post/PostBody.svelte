@@ -28,7 +28,7 @@
 
 {#if (post.post.body || post.post.embed_description)}
 
-    <div class="text-sm rounded-md">    
+    <div class="flex flex-col text-sm rounded-md">    
         {#if displayType == 'post' }
             {#if post.post.body}                
                 <Markdown source={post.post.body} {inline}/>
@@ -62,14 +62,14 @@
                 {#if (post.post.body.length > previewLength) || post.post.nsfw}
                     <Button
                         color="tertiary"
-                        class="w-full !py-0"
+                        class="mx-auto w-fit !py-0"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
                             post.post.nsfw = false
                             // Scroll top of post to top on close
-                            const element = document.getElementById(post.post.id.toString());
-                            if (element && !expandPreviewText) scrollToTop(element);
+                            //const element = document.getElementById(post.post.id.toString());
+                            //if (element && !expandPreviewText) scrollToTop(element);
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
@@ -102,15 +102,15 @@
                 {#if post.post.embed_description.length > previewLength}
                     <Button
                         color="secondary"
-                        class="w-full !py-0"
+                        class="mx-auto w-fit !py-0"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
                             post.post.nsfw = false
                             
                             // Scroll top of post to top on close
-                            const element = document.getElementById(post.post.id.toString());
-                            if (element && !expandPreviewText) scrollToTop(element);
+                            //const element = document.getElementById(post.post.id.toString());
+                            //if (element && !expandPreviewText) scrollToTop(element);
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
