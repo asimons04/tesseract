@@ -1,10 +1,10 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import  { 
-        type PostDisplayType,
-        scrollToTop
-    } from './helpers.js'
-
+    import type { PostDisplayType } from './helpers'
+    
+    import  { scrollToTop } from './helpers.js'
+    import { userSettings } from '$lib/settings.js';
+    
     import Button from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
 
@@ -14,7 +14,7 @@
         ChevronDown,
         ChevronUp
     } from 'svelte-hero-icons'
-    import { userSettings } from '../../../settings.js';
+    
 
 
     export let post:PostView;
