@@ -4,7 +4,6 @@
     import { imageProxyURL } from '$lib/image-proxy'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import markdown_it_highlightjs from 'markdown-it-highlightjs'
-    import { fade, slide } from 'svelte/transition'
 
     export let source: string = ''
     export let inline: boolean = false
@@ -59,11 +58,10 @@
     }
 </script>
 
-{#key rendered}
-<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5]  {$$props.class}" in:slide out:fade={{duration:1}}>
+<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5]  {$$props.class}">
     {@html rendered}
 </div>
-{/key}
+
 
 <style lang="postcss">
     .markdown :global(h1) {
