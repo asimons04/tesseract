@@ -219,7 +219,7 @@
                 {/if}
             </Button>
             
-            <div class="pointer-events-none list-none">
+            <div class="pointer-events-none list-none overflow-x-hidden">
                 {#if isCommentView(item)}
                     <Comment
                         node={{
