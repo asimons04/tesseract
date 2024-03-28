@@ -34,6 +34,8 @@
     export let displayType: PostDisplayType
     export let expandCompact: boolean
     export let showCommentForm:boolean = false;
+    export let postContainer: HTMLDivElement
+
 </script>
 
 <div  class="flex flex-row gap-1 sm:gap-2 items-center h-8 
@@ -67,8 +69,9 @@
         <Button  color="tertiary-border" title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
                 expandCompact = !expandCompact; 
-                const element = document.getElementById(post.post.id.toString());
-                if (element) scrollToTop(element);
+                //const element = document.getElementById(post.post.id.toString());
+                //if (element) scrollToTop(element);
+                scrollToTop(postContainer)
             }}
         >
             <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />

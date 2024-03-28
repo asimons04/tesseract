@@ -19,20 +19,22 @@
     
     let expandCompact: boolean;
     let expandPreviewText:boolean
+    let postContainer: HTMLDivElement
+
 </script>
 
 {#if post?.post?.id}
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)} transition:fade>
+<div id={post.post.id.toString()} on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)} bind:this={postContainer} transition:fade>
     <!--- Compact Posts --->
     {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
-        <PostCompactStyle bind:post {actions}  bind:expandCompact bind:expandPreviewText  {displayType} {disablePostLinks} {collapseBadges} />
+        <PostCompactStyle bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType} {disablePostLinks} {collapseBadges} />
 
 
     <!--- Card Posts --->
     {:else}
-        <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  {displayType}  autoplay={false} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
+        <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType}  autoplay={false} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
     {/if}
 </div>
 {/if}

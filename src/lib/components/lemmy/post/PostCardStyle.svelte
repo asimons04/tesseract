@@ -36,13 +36,14 @@
     export let showCommentForm:boolean = false;
     export let expandPreviewText:boolean = false
     export let collapseBadges:boolean = false;
+    export let postContainer: HTMLDivElement
 
     // Determe post type based on its attributes
     let postType:PostType  = identifyPostType(post)
 
 </script>
 
-<Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''}" id={post.post.id}>
+<Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''}">
     <div class="flex flex-row w-full gap-2.5">
         <PostMeta bind:post={post} moderators={moderators} {collapseBadges}/>
     </div>
@@ -102,13 +103,13 @@
         <PostPeerTube bind:post={post} displayType={displayType} />
     {/if}
 
-    <PostBody bind:post={post} displayType={displayType} bind:expandPreviewText/>
+    <PostBody bind:post bind:postContainer displayType={displayType} bind:expandPreviewText/>
 
     <!--- Crossposts --->
     <Crossposts post={post} size={displayType=='feed' ? 'xs' : 'sm'}/>
 
     {#if actions}
-        <PostActions  bind:post bind:expandCompact displayType={displayType} bind:showCommentForm
+        <PostActions  bind:post bind:expandCompact bind:postContainer displayType={displayType} bind:showCommentForm
             on:edit={(e) => {
                 toast({
                     title: 'Confirmation',

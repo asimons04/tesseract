@@ -25,11 +25,12 @@
     export let expandPreviewText:boolean 
     export let disablePostLinks:boolean = false
     export let collapseBadges:boolean = false;
+    export let postContainer: HTMLDivElement
 
 </script>
 
 
-<Card class="bg-white flex flex-col w-full p-2 gap-0 " id={post.post.id}>
+<Card class="bg-white flex flex-col w-full p-2 gap-0 " >
 
     <PostMeta bind:post={post} displayType={displayType} showTitle={true} {collapseBadges}/>
 
@@ -39,14 +40,12 @@
         {#if post.post.thumbnail_url || isImage(post.post.url)}
             <div class="flex-none w-[20%] md:w-[15%] xl:w-[10%] h-auto mx-auto mt-2">
                 <!--- Expand the post in place when clicking thumbnail--->
-                <button 
-                    title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                    class="cursor-pointer"
+                <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                     on:click={() => {  
                         expandCompact = !expandCompact; 
-                        const element = document.getElementById(post.post.id.toString());
-                        if (element) scrollToTop(element);
-
+                        //const element = document.getElementById(post.post.id.toString());
+                        //if (element) scrollToTop(element);
+                        scrollToTop(postContainer)
                     }}
                 >
                     <!--- Thumbnail for Link Post--->
@@ -89,7 +88,7 @@
             {/if}
             
             <div class="mt-1"/>
-            <PostBody bind:post={post} displayType={displayType} previewLength={240} bind:expandPreviewText inline={!expandPreviewText}/>
+            <PostBody bind:post bind:postContainer displayType={displayType} previewLength={240} bind:expandPreviewText inline={!expandPreviewText}/>
 
             <!--- Crossposts --->
             <Crossposts post={post} size="xs" class="!pl-0"/>
@@ -105,7 +104,7 @@
     <div class="flex flex-row w-full mt-1">
         {#if actions}
             <div class="w-full h-full grid items-end">
-                <PostActions  bind:post  bind:expandCompact displayType={displayType}
+                <PostActions  bind:post  bind:expandCompact bind:postContainer displayType={displayType}
                     on:edit={(e) => {
                         toast({
                             title: 'Confirmation',

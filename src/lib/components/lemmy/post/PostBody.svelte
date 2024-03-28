@@ -4,7 +4,7 @@
     
     import  { scrollToTop } from './helpers.js'
     import { userSettings } from '$lib/settings.js';
-    
+
     import Button from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
 
@@ -22,6 +22,7 @@
     export let expandPreviewText:boolean = false
     export let previewLength:number = 300
     export let inline:boolean = false
+    export let postContainer: HTMLDivElement
 
     
 </script>
@@ -70,6 +71,7 @@
                             // Scroll top of post to top on close
                             //const element = document.getElementById(post.post.id.toString());
                             //if (element && !expandPreviewText) scrollToTop(element);
+                            scrollToTop(postContainer)
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
@@ -111,6 +113,7 @@
                             // Scroll top of post to top on close
                             //const element = document.getElementById(post.post.id.toString());
                             //if (element && !expandPreviewText) scrollToTop(element);
+                            scrollToTop(postContainer)
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
