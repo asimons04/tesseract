@@ -61,17 +61,14 @@
                 </div>
 
                 {#if (post.post.body.length > previewLength) || post.post.nsfw}
-                    <Button
-                        color="tertiary"
-                        class="mx-auto w-fit !py-0"
+                    <Button color="tertiary" class="mx-auto w-fit text-xs font-bold !py-0"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
                             post.post.nsfw = false
+
                             // Scroll top of post to top on close
-                            //const element = document.getElementById(post.post.id.toString());
-                            //if (element && !expandPreviewText) scrollToTop(element);
-                            scrollToTop(postContainer)
+                            if (!expandPreviewText) scrollToTop(postContainer)
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
@@ -104,16 +101,14 @@
                 {#if post.post.embed_description.length > previewLength}
                     <Button
                         color="secondary"
-                        class="mx-auto w-fit !py-0"
+                        class="mx-auto w-fit text-xs font-bold !py-0"
                         title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
                         on:click={() => {
                             expandPreviewText = !expandPreviewText
                             post.post.nsfw = false
                             
                             // Scroll top of post to top on close
-                            //const element = document.getElementById(post.post.id.toString());
-                            //if (element && !expandPreviewText) scrollToTop(element);
-                            scrollToTop(postContainer)
+                            if (!expandPreviewText) scrollToTop(postContainer)
                         }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />

@@ -39,7 +39,7 @@
 </script>
 
 <div  class="flex flex-row gap-1 sm:gap-2 items-center h-8 
-    {displayType == 'post' ? 'mt-auto' : 'mt-1'} 
+    {displayType == 'post' ? 'mt-auto' : 'mt-2'} 
     {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'ml-[-0.5rem]'}
     {displayType == 'post' ? 'ml-[-0.5rem]' : ''}
     "
