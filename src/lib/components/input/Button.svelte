@@ -29,6 +29,10 @@
     "tertiary-border":
       'border border-slate-200 dark:border-zinc-800 rounded-lg bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none',
 
+    "tertiary-border-bottom":
+        'border-b border-slate-200 dark:border-zinc-800 bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200',
+
+
     danger:
       'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',
 
@@ -47,6 +51,7 @@
         dark:border-zinc-800 hover:bg-slate-200 hover:dark:bg-zinc-800 hover:border-slate-300
         hover:dark:border-zinc-700`,
 
+    
     none: '',
   }
 
