@@ -2,6 +2,7 @@
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
     
+    
     import { imageProxyURL } from '$lib/image-proxy'
     import {isImage, postType as identifyPostType} from './helpers.js'
     import { scrollToTop } from './helpers.js'
@@ -14,6 +15,7 @@
     import Link from '$lib/components/input/Link.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
+    import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
 
     export let post: PostView
@@ -32,7 +34,7 @@
 
 <Card class="bg-white flex flex-col w-full p-2 gap-0 " >
 
-    <PostMeta bind:post={post} displayType={displayType} showTitle={true} {collapseBadges}/>
+    <PostMeta bind:post={post} displayType={displayType} showTitle={false} {collapseBadges}/>
 
     <!--- Post Link, Body, and Thumbnail  --->
     <div class="flex flex-row w-full gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}">
@@ -76,6 +78,9 @@
         
         <!---Post body and link--->
         <div class="flex flex-col gap-0 {post.post.thumbnail_url || isImage(post.post.url) ? 'w-[80%] md:w-[85%] xl:w-[90%]' : 'w-full'}">
+            <!---Post title--->
+            <PostTitle bind:post />
+
             {#if post.post.url && !isImage(post.post.url)}
                 <Link
                     href={post.post.url}

@@ -15,6 +15,7 @@
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import MBFC from '$lib/MBFC/MBFC.svelte'
+    import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -224,18 +225,7 @@
     </div>
 
     {#if showTitle}
-    <a
-        href="/post/{getInstance()}/{id}"
-        target="{$userSettings.openInNewTab.posts ? '_blank' : undefined}"
-        class="font-medium max-w-full w-full break-words"
-        style="word-break: break-word;"
-        class:text-slate-500={read && $userSettings.markReadPosts}
-        class:dark:text-zinc-400={read && $userSettings.markReadPosts}
-        title="{title}"
-    >
-        <h1 class="text-base md:text-lg {!read || !$userSettings.markReadPosts ? 'font-bold' : ''}">{title}</h1>    
-    
-    </a>
+        <PostTitle bind:post />
     {/if}
 
 
