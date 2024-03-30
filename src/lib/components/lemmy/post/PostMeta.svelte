@@ -118,7 +118,7 @@
                 
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
                     {#if user}
-                        <div class="flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
+                        <div class="flex flex-wrap items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'}">Posted by&nbsp;</span>
                             <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
                         </div>

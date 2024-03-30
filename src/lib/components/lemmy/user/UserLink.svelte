@@ -28,7 +28,7 @@
         <Avatar url={user.avatar} alt={user.name} width={avatarSize} />
     {/if}
     <span
-        class="flex flex-row gap-0"
+        class="flex flex-row flex-wrap gap-0"
         class:ml-0.5={avatar}
         class:text-red-500={distinguishAdminsMods && user.admin}
         class:font-bold={distinguishAdminsMods && user.admin}
