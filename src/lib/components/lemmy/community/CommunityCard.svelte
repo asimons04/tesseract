@@ -356,9 +356,8 @@
             
             <!---Create Post--->
             <Button href="/create/post" color="tertiary-border" class="w-full" size="lg"
-                disabled={
-                    (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
-                    community_view.community.removed
+                hidden={
+                    (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || community_view.community.removed
                 }
             >
                 <Icon src={PencilSquare} mini size="16" slot="icon" />

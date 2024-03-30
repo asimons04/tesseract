@@ -198,7 +198,7 @@
                     <MarkdownEditor
                         bind:value={replyReason}
                         placeholder={replyReason}
-                        rows={3}
+                        rows={5}
                         label="Reply"
                     />
                 {/if}

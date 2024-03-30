@@ -17,6 +17,7 @@
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
+        BuildingOffice,
         Calendar,
         ChatBubbleOvalLeftEllipsis,
         ChevronDoubleRight,
@@ -133,6 +134,12 @@
         {#if site?.site?.sidebar}
             <CollapseButton icon={InformationCircle} title="Site Info" expanded={false}>
                 <Markdown source={site.site.sidebar} />
+            </CollapseButton>
+        {/if}
+
+        {#if site?.local_site?.legal_information}
+            <CollapseButton icon={BuildingOffice} title="Legal" expanded={false}>
+                <Markdown source={site.local_site.legal_information} />
             </CollapseButton>
         {/if}
     </div>
