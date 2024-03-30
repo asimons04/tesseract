@@ -109,7 +109,7 @@
 
 <div class="inline-flex w-full" class:hidden={hidden}>
     <Button
-        class="hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
+        class="!text-xs hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
         color="tertiary"
         alignment="left"
         href="/c/{community.name}@{new URL(community.actor_id).hostname}"

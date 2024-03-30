@@ -27,7 +27,7 @@
     >
   
         <div transition:scale={{ start: 0.9, easing: expoOut }}
-            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-full' : height} {$$props.class}"
+            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[95svh]' : height} {$$props.class}"
         >
             <div class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : height}">
                 <div
