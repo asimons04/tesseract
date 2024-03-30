@@ -99,7 +99,7 @@
             {buttonColor[color]}
             {buttonSize[size]}
             {buttonRoundness[rounded]}
-            text-sm transition-colors disabled:!opacity-70 disabled:!pointer-events-none
+            text-xs transition-colors disabled:!opacity-70 disabled:!pointer-events-none
             disabled:!border disabled:!border-slate-300 disabled:!bg-slate-200 disabled:dark:!border-zinc-700 disabled:dark:!bg-zinc-800
             {$$props.class}
             {loading
@@ -140,7 +140,7 @@
             {buttonColor[color]}
             {buttonSize[size]}
             {buttonRoundness[rounded]}
-            text-sm transition-colors disabled:!opacity-70 disabled:!pointer-events-none
+            text-xs transition-colors disabled:!opacity-70 disabled:!pointer-events-none
             disabled:!border disabled:!border-slate-300 disabled:!bg-slate-200
             disabled:dark:!border-zinc-700 disabled:dark:!bg-zinc-800 disabled:text-inherit
             {$$props.class}

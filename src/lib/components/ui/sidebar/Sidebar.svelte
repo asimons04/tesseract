@@ -145,7 +145,7 @@
             {/if}
 
             
-            <SidebarButton title="Moderating" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='favorites'}>
+            <SidebarButton title="Favorites" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='favorites'}>
                 <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                     <Icon src={Star} mini size="18" title="Favorites" />
                     <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">Favorites</span>
