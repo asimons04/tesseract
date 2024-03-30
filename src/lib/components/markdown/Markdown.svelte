@@ -47,7 +47,7 @@
     
     $: try {
         source 
-            ? source = fixLemmyEncodings(source)! 
+            ? source = fixLemmyEncodings(source)
             : source = ' ';
         if (inline) { rendered = mdInline.render(source) }
         else { rendered = md.render(source) }

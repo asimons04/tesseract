@@ -48,7 +48,8 @@
                     {!expandPreviewText && !post.post.nsfw && post.post.body.length > previewLength
                         ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
                         : ''
-                }">
+                    }
+                ">
                     <Markdown 
                         class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
                         source={

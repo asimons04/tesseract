@@ -77,12 +77,20 @@ export function ban(banned: boolean, item: Person, community?: Community) {
   }))
 }
 
-export const amMod = (me: MyUserInfo, community: Community) =>
-  me.moderates.map((c) => c.community.id).includes(community.id) || (community.local && isAdmin(me))
+export function amMod(me: MyUserInfo|undefined, community: Community):boolean {
+    if (!me) return false
+    return me.moderates.map((c) => c.community.id).includes(community.id) || (community.local && isAdmin(me))
+}
 
-export const amModOfAny = (me?: MyUserInfo) => me && (me.moderates.length > 0 || isAdmin(me))
+export function amModOfAny (me?: MyUserInfo):boolean {
+    if (!me) return false
+    return me && (me.moderates.length > 0 || isAdmin(me))
+}
 
-export const isAdmin = (me: MyUserInfo) => me?.local_user_view?.person?.admin
+export function isAdmin (me?: MyUserInfo):boolean {
+    if (!me) return false
+    return me.local_user_view?.person?.admin
+}
 
 export const removalTemplate = (
     input: string,
