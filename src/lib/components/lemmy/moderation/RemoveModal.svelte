@@ -175,8 +175,8 @@
         <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
             
 
-            <TextArea
-                rows={5}
+            <MarkdownEditor
+                rows={4}
                 label="Reason"
                 placeholder="Optional"
                 bind:value={reason}
@@ -219,6 +219,7 @@
                 {/if}
             </Button>
             
+            <!---
             <div class="pointer-events-none list-none overflow-x-hidden">
                 {#if isCommentView(item)}
                     <Comment
@@ -234,7 +235,7 @@
                     <Post actions={false} post={item} forceCompact={true}/>
                 {/if}
             </div>
-
+            --->
         </form>
     {/if}
 </Modal>

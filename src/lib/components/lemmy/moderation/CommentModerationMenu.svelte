@@ -27,7 +27,7 @@
         Trash 
     } from 'svelte-hero-icons'
 
-    export let item: PostView | CommentView
+    export let item: CommentView
 
 
     const distinguish = async function(comment:CommentView) {
@@ -93,14 +93,10 @@
             User Modlog
         </MenuButton>
 
-        <!---Remove/Restore Post--->
+        <!---Remove/Restore Comment--->
         <MenuButton color={item.comment.removed ? 'success' : 'dangerSecondary'} on:click={() => remove(item)}>
             <Icon src={Trash} size="16" mini />
-            {#if isCommentView(item)}
                 {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}
-            {:else}
-                {item.post.removed ? 'Restore Comment' : 'Remove Comment'}
-            {/if}
         </MenuButton>
     
         <!--- Ban User--->
