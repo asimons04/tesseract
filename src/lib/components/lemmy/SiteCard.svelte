@@ -131,7 +131,7 @@
         {/if}
         
         {#if site?.site?.sidebar}
-            <CollapseButton icon={InformationCircle} title="Site Info" expanded={true}>
+            <CollapseButton icon={InformationCircle} title="Site Info" expanded={false}>
                 <Markdown source={site.site.sidebar} />
             </CollapseButton>
         {/if}

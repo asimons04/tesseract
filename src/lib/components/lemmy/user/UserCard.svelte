@@ -344,7 +344,7 @@
     {/if}
     
     {#if person?.person?.bio}
-        <CollapseButton icon={UserCircle} title="About Me" expanded={true}>
+        <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
             <Markdown source={person.person.bio} />
         </CollapseButton>
     {/if}

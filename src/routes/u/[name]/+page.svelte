@@ -31,7 +31,7 @@
 <!---Only show on /u/{username} routes since the /profile/user route will use the navbar from its layout page--->
 {#if $page.url.pathname.startsWith('/u/')}
 <SubNavbar 
-    home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+    back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
     listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
 />
@@ -44,13 +44,8 @@
 
 
         {#if data.items.length == 0}
-            <Placeholder
-                icon={PencilSquare}
-                title="No submissions"
-                description="This user has no submissions that match this filter."
-            />
+            <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions that match this filter."/>
         {:else}
-           
             <div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">
                 {#each data.items as item (item.counts.id)}
                     {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}

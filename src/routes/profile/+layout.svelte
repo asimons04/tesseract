@@ -69,21 +69,23 @@
     <!--- /profile/user--->
     {#if $page.url.pathname.startsWith('/profile/user') || $page.url.pathname.startsWith('/u/')}
     <SubNavbar 
-        home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+        home compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
         listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
         sortMenu sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
     />
     {/if}
     
+    <!---Inbox, Settings, Blocks --->
     {#if $page.url.pathname.startsWith('/profile/inbox') || $page.url.pathname.startsWith('/profile/settings') || $page.url.pathname.startsWith('/profile/blocks')}
     <SubNavbar 
         home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     />
     {/if}
 
+    <!---Saved--->
     {#if $page.url.pathname.startsWith('/profile/saved')}
     <SubNavbar 
-        home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+        home compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
         listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Saved Posts', 'Saved Comments']} bind:selectedListingType={data.type}
         sortMenu sortOptions={['New', 'Old']} sortOptionNames={['New', 'Old']} bind:selectedSortOption={data.sort}
     />

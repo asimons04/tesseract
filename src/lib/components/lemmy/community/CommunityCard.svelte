@@ -351,27 +351,23 @@
     </Card>
         
     <!--- Convenience button to create post --->
-    <div class="w-full mt-2 mb-2 flex flex-col gap-2 hidden xl:flex">
+    <div class="border-b border-slate-200 dark:border-zinc-800 w-full mt-2 pb-2 flex flex-row gap-2 hidden xl:flex">
         {#if $profile?.jwt && $profile?.user}
-            <Button
-                href="/create/post"
-                color="primary"
-                size="lg"
-                hidden={
+            
+            <!---Create Post--->
+            <Button href="/create/post" color="tertiary-border" class="w-full" size="lg"
+                disabled={
                     (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
                     community_view.community.removed
                 }
-                
             >
                 <Icon src={PencilSquare} mini size="16" slot="icon" />
                 Create Post
             </Button>
 
-            <Button 
-                color="primary"
-                size="lg"
+            <!---Subscrube/UnSubscribe--->
+            <Button color="tertiary-border" class="w-full" size="lg" loading={loading.subscribing}
                 disabled={loading.subscribing || community_view.community.removed } 
-                loading={loading.subscribing}
                 on:click={ (e) => {
                     e.stopPropagation();
                     subscribe();
