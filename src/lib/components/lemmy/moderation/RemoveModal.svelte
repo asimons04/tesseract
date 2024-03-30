@@ -176,7 +176,7 @@
             
 
             <MarkdownEditor
-                rows={4}
+                rows={8}
                 label="Reason"
                 placeholder="Optional"
                 bind:value={reason}
