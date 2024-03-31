@@ -140,8 +140,8 @@
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         
         {#if infiniteScroll.truncated}
-        <div class="my-4">
-            <Button color="tertiary-border" class="w-full" title="Load Older Posts"
+        <div class="flex my-4">
+            <Button color="tertiary-border" class="w-fit mx-auto" title="Load Older Posts"
                 on:click={() => {
                     goto(window.location.href, {invalidateAll: true})
                     refresh()

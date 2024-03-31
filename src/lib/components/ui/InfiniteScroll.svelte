@@ -41,7 +41,7 @@
     </div>
 {/if}
 
-<Button color="secondary" class="w-full" title="Load More"
+<Button color="secondary" class="w-fit mx-auto" title="Load More"
     on:click={() => {
         exhausted = false
         dispatcher('loadMore')
