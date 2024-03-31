@@ -405,7 +405,7 @@
     </div>
 
     <div class="hidden xl:flex w-full justify-between mt-auto">
-        <p class="flex flex-row gap-2 py-2 text-xs font-normal mx-auto items-center">
+        <p class="flex flex-row gap-2 text-xs font-normal mx-auto items-center">
             <Logo width={40} />
             Tesseract v{__VERSION__}
         </p>
