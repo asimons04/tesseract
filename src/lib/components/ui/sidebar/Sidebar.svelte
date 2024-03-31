@@ -270,36 +270,21 @@
 
     <!--- Sidebar options for non-authenticated users--->
     {:else}
-        <Button
-            class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
-            href="/login"
-            color="tertiary"
-            alignment="left"
-        >
-            <Icon mini src={ArrowLeftOnRectangle} size="18" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Log in</span>
-        </Button>
+        <SidebarButton href="/login" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+            <Icon src={ArrowLeftOnRectangle} mini size="18" title="Login" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Login</span>
+        </SidebarButton>
 
-        <Button
-            class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
-            href="/signup"
-            color="tertiary"
-            alignment="left"
-        >
-            <Icon mini src={Identification} size="18" title="Sign Up"/>
+        <SidebarButton href="/signup" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+            <Icon src={Identification} mini size="18" title="Sign Up" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Sign Up</span>
-        </Button>
+        </SidebarButton>
         
         {#if !LINKED_INSTANCE_URL}
-            <Button
-                class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
-                href="/accounts"
-                color="tertiary"
-                alignment="left"
-            >
-                <Icon mini src={BuildingOffice} size="18" />
+            <SidebarButton href="/accounts" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+                <Icon src={BuildingOffice} mini size="18" title="Change Guest Instance" />
                 <span class:hidden={!$userSettings.uiState.expandSidebar}>Change Guest Instance</span>
-            </Button>
+            </SidebarButton>
         {/if}
     {/if}
     

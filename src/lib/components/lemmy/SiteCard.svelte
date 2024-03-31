@@ -7,14 +7,12 @@
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '../ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    import Logo from '$lib/components/ui/Logo.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
@@ -33,6 +31,7 @@
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
+    
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
@@ -142,30 +141,6 @@
         {/if}
     </div>
 
-    <div class="hidden xl:flex w-full justify-between mt-auto">
-        
-        <span class="flex flex-row gap-2 text-xs font-normal items-center">
-            <Logo width={40} />
-            <span class="flex flex-col gap-0.5">
-                <span class="font-bold">Tesseract</span>
-                <span>v{__VERSION__}</span>
-            </span>
-        </span>
-
-        <span class="flex flex-row gap-4 items-center">
-            <Link href="https://dubvee.org/c/tesseract" newtab={true} title="Lemmy">
-                <Logo url="/img/lemmy.svg" rounded={false} width={24}/>
-            </Link>
-            
-            <Link href="https://matrix.to/#/#tesseract:ptznetwork.org" newtab={true} title="Matrix">
-                <Logo url="/img/matrix.svg" rounded={false} width={24}/>
-            </Link>
-            
-            <Link href="https://github.com/asimons04/Tesseract/" newtab={true} title="Github">
-                <Logo url="/img/github.svg" width={24} />
-            </Link>
-        </span>
-
-    </div>
+    <SidebarFooter />
 
 </StickyCard>

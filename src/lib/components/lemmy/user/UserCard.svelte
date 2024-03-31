@@ -12,18 +12,16 @@
     import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import Logo from '$lib/components/ui/Logo.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
+    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -353,12 +351,7 @@
     <!-- Spacer block to give user action menu room to expand --->
     <!--<div class="hidden xl:block h-[150px]" />-->
 
-    <div class="hidden xl:flex w-full justify-between mt-auto">
-        <p class="flex flex-row gap-2 text-xs font-normal mx-auto items-center">
-            <Logo width={40} />
-            Tesseract v{__VERSION__}
-        </p>
-    </div>
+    <SidebarFooter />
 
     
     

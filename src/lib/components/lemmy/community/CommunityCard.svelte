@@ -26,6 +26,7 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     
@@ -404,12 +405,7 @@
         
     </div>
 
-    <div class="hidden xl:flex w-full justify-between mt-auto">
-        <p class="flex flex-row gap-2 text-xs font-normal mx-auto items-center">
-            <Logo width={40} />
-            Tesseract v{__VERSION__}
-        </p>
-    </div>
+    <SidebarFooter />
 
 
 </StickyCard>
