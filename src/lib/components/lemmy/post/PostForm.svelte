@@ -116,6 +116,7 @@
             toast({
                 type: 'warning',
                 content: 'You need to set a community.',
+                title: "No Community Chosen"
             })
             return
         }

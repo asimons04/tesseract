@@ -22,7 +22,6 @@ const FAKE_NEWS = [
 const LINK_SHORTENERS = [
     'apple.news',
     'archive.is',
-    'archive.org',
     'archive.ph',
     'bit.ly',
     'bl.ink',
@@ -32,6 +31,7 @@ const LINK_SHORTENERS = [
     'rb.gy',
     'short.cm',
     'tinyurl.com',
+    'web.archive.org',
     'zpr.io'
 ]
 
