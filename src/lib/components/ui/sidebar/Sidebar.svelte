@@ -96,18 +96,24 @@
 
 
     
-    <!---Communities--->
-    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
-        <Icon src={GlobeAlt} mini size="18" title="Communities" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Communities</span>
-    </SidebarButton>
+    
 
-    <!---Feed Groups--->
-    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="hover">
-        <Icon src={Star} mini size="18" title="Feeds" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
-    </SidebarButton>
+    <!--- Explore Communities / Favorites --->
+    <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+    <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
+        <!---Communities--->
+        <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
+            <Icon src={GlobeAlt} mini size="18" title="Communities" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Browse Communities</span>
+        </SidebarButton>
 
+        <!---Favorites Feed--->
+        <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="hover">
+            <Icon src={Star} mini size="18" title="Feeds" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
+        </SidebarButton>
+
+    </span>
     
     <!--- Feed Sort Convenience Buttons--->
     <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
