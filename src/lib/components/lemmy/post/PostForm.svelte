@@ -1,6 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { validateURL } from '$lib/blacklists'
+
     import type { Community, CommunityView, GetCommunityResponse, Post, PostView } from 'lemmy-js-client'
 
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -36,9 +38,9 @@
 
     // The community passed from sessionStorage via /create/post
     export let passedCommunity:
-    | {
-        id: number
-        name: string
+    |   {
+            id: number
+            name: string
         }
     | undefined = undefined
 
@@ -108,6 +110,7 @@
         if (saveDraft) setSessionStorage('postDraft', data)
     })
 
+    
     async function submit() {
         if ((!data.community || communitySearch == '') && !edit) {
             toast({
@@ -119,13 +122,16 @@
 
         if (!data.name || !$profile?.jwt) return
         
+        // Validate the post URL if supplied
         if (data.url && data.url != '') {
-            try {
-                new URL(data.url)
-            } catch (err) {
+            let { allowed, reason } = validateURL(data.url)
+            
+            if (!allowed) {
                 toast({
-                    content: 'Invalid URL',
-                    type: 'warning',
+                    content: reason,
+                    type: 'error',
+                    title: 'Invalid URL',
+                    duration: 15000
                 })
                 return
             }
@@ -193,17 +199,20 @@
         
         // Validate URL
         if (data.url && data.url != '') {
-            try {
-                new URL(data.url)
-            } catch (err) {
+            let { allowed, reason } = validateURL(data.url)
+            
+            if (!allowed) {
                 toast({
-                    content: `Invalid URL ${data.url} has been removed.`,
-                    type: 'warning',
+                    content: reason,
+                    type: 'error',
+                    title: 'Invalid URL',
+                    duration: 15000
                 })
                 data.url = ''
             }
         }
 
+        
         // If editing a post and the post details were passed, add them to the preview
         if (editingPost) {
             post =  {
