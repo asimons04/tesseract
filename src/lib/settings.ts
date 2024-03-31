@@ -219,11 +219,13 @@ export const defaultSettings: Settings = {
 }
 
 
-
 // Global option environment flags
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                     ?? false
 export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)                 ?? false
-export const MEDIA_PROXY_BLACKLIST          = strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
+export const MEDIA_PROXY_BLACKLIST          = [
+    'img.shields.io',
+    ...strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
+]
 export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)               ?? true
 
 export const ENABLE_MEDIA_CACHE             = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE)                     ?? ENABLE_MEDIA_PROXY ? true : false;

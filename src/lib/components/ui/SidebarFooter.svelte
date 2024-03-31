@@ -8,7 +8,7 @@
 <div class="{autohide ? 'hidden xl:flex' : 'flex'} w-full justify-between mt-auto">
     <span class="flex flex-row gap-2 text-xs font-normal items-center">
         <Logo width={40} />
-        <span class="flex flex-col gap-0.5">
+        <span class="flex flex-col gap-0">
             <span class="font-bold">Tesseract</span>
             <span>v{__VERSION__}</span>
         </span>

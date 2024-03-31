@@ -16,26 +16,17 @@
     import TextInput from '$lib/components/input/TextInput.svelte'
 
     import {
-        AdjustmentsHorizontal,
         ArchiveBox,
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
-        Bars3,
         BuildingOffice,
         ChevronDoubleLeft,
-        ChevronDoubleDown,
-        Cog6Tooth,
+        Fire,
         GlobeAlt,
-        HandRaised,
         Home,
         Icon,
         InboxArrowDown,
-        InformationCircle,
         Identification,
-        MagnifyingGlass,
-        Minus,
-        Plus,
-        QueueList,
         Star,
         UserGroup,
         XCircle
@@ -100,11 +91,19 @@
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
 
-    <!---Popular --->
-    <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="hover">
-        <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
-    </SidebarButton>
+    <span class="flex flex-row gap-2">
+        <!---Popular --->
+        <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="hover">
+            <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
+        </SidebarButton>
+
+        <!---Hot --->
+        <SidebarButton href="/?sort=Hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="hover">
+            <Icon src={Fire} mini size="18" title="Hot" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Hot</span>
+        </SidebarButton>
+    </span>
     
     <!---Communities--->
     <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
