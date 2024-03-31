@@ -19,7 +19,9 @@
         ArchiveBox,
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
+        Bolt,
         BuildingOffice,
+        CalendarDays,
         ChevronDoubleLeft,
         Fire,
         GlobeAlt,
@@ -29,7 +31,7 @@
         Identification,
         Star,
         UserGroup,
-        XCircle
+        XCircle,
     } from 'svelte-hero-icons'
 
     import CommunityGroup from "./CommunityGroup.svelte";
@@ -91,7 +93,15 @@
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
 
-    <span class="flex flex-row gap-2">
+    <!--- Feed Sort Convenience Buttons--->
+    <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
+        <!---New 
+        <SidebarButton href="/?sort=New" expanded={$userSettings.uiState.expandSidebar} title="New" data-sveltekit-preload-data="hover">
+            <Icon src={Bolt} mini size="18" title="New" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>New</span>
+        </SidebarButton>
+        --->
+        
         <!---Popular --->
         <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="hover">
             <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
@@ -102,6 +112,12 @@
         <SidebarButton href="/?sort=Hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="hover">
             <Icon src={Fire} mini size="18" title="Hot" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Hot</span>
+        </SidebarButton>
+
+        <!---Top Day --->
+        <SidebarButton href="/?sort=TopDay" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="hover">
+            <Icon src={CalendarDays} mini size="18" title="Top Day" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Top Day</span>
         </SidebarButton>
     </span>
     
