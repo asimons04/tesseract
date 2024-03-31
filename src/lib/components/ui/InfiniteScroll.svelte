@@ -47,7 +47,9 @@
         dispatcher('loadMore')
     }}
 >
-    <Icon src={exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
-    {exhausted ? 'No More Results to Load' : 'Load More'}
-    <Icon src={exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
+    <div class="flex flex-row gap-2 items-center">
+        <Icon src={exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
+        {exhausted ? 'No More Results to Load' : 'Load More'}
+        <Icon src={exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
+    </div>
 </Button>

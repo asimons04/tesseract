@@ -147,9 +147,11 @@
                     refresh()
                 }}
             >
-                <Icon src={ChevronDoubleUp} mini size="16" />
-                Refresh to See Oldest Posts 
-                <Icon src={ChevronDoubleUp} mini size="16" />
+                <div class="flex flex-row gap-2 items-center">
+                    <Icon src={ChevronDoubleUp} mini size="16" />
+                    Refresh to See Oldest Posts 
+                    <Icon src={ChevronDoubleUp} mini size="16" />
+                </div>
             </Button>
         </div>
         {/if}

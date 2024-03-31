@@ -11,6 +11,7 @@
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '../ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import Link from '$lib/components/input/Link.svelte'
     import Logo from '$lib/components/ui/Logo.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
@@ -142,10 +143,22 @@
     </div>
 
     <div class="hidden xl:flex w-full justify-between mt-auto">
-        <p class="flex flex-row gap-2 text-xs font-normal mx-auto items-center">
+        
+        <span class="flex flex-row gap-2 text-xs font-normal items-center">
             <Logo width={40} />
             Tesseract v{__VERSION__}
-        </p>
+        </span>
+
+        <span class="flex flex-row gap-4 items-center">
+            <Link href="https://matrix.to/#/#tesseract:ptznetwork.org" newtab={true} title="Matrix">
+                <Logo url="/img/matrix.svg" rounded={false} width={24}/>
+            </Link>
+            
+            <Link href="https://github.com/asimons04/Tesseract/" newtab={true} title="Github">
+                <Logo url="/img/github.svg" width={24} />
+            </Link>
+        </span>
+
     </div>
 
 </StickyCard>
