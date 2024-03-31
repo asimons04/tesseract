@@ -146,10 +146,17 @@
         
         <span class="flex flex-row gap-2 text-xs font-normal items-center">
             <Logo width={40} />
-            Tesseract v{__VERSION__}
+            <span class="flex flex-col gap-0.5">
+                <span class="font-bold">Tesseract</span>
+                <span>v{__VERSION__}</span>
+            </span>
         </span>
 
         <span class="flex flex-row gap-4 items-center">
+            <Link href="https://dubvee.org/c/tesseract" newtab={true} title="Lemmy">
+                <Logo url="/img/lemmy.svg" rounded={false} width={24}/>
+            </Link>
+            
             <Link href="https://matrix.to/#/#tesseract:ptznetwork.org" newtab={true} title="Matrix">
                 <Logo url="/img/matrix.svg" rounded={false} width={24}/>
             </Link>
