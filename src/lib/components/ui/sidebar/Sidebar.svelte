@@ -35,6 +35,7 @@
     } from 'svelte-hero-icons'
 
     import CommunityGroup from "./CommunityGroup.svelte";
+    import { goto } from "$app/navigation";
     
     let panel: 'groups' | 'subscribed' | 'favorites' = 'subscribed';
     
@@ -88,20 +89,14 @@
     
 
     <!---Frontpage--->
-    <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+    <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Home" on:click={() => { goto('/', {invalidateAll: true}) }}>
         <Icon src={Home} mini size="18" title="Home" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
 
     <!--- Feed Sort Convenience Buttons--->
     <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
-        <!---New 
-        <SidebarButton href="/?sort=New" expanded={$userSettings.uiState.expandSidebar} title="New" data-sveltekit-preload-data="hover">
-            <Icon src={Bolt} mini size="18" title="New" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>New</span>
-        </SidebarButton>
-        --->
-        
+         
         <!---Popular --->
         <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="hover">
             <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />

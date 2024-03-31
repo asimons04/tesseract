@@ -35,6 +35,7 @@
     let post_view:PostView;
     let community_view:CommunityView
     let moderators: CommunityModeratorView[]
+    let postContainer: HTMLDivElement
     
     // Defined here and bound to both PostCardStyle (to pass to post actions for the reply button) and CommentSection (to control visibility of the comment form)
     let showCommentForm:boolean = false;
@@ -112,7 +113,7 @@
 <!--postActionsMenu communityActionsMenu moderationMenu-->
 
 
-<div class="flex flex-col md:flex-row gap-4 w-full">
+<div class="flex flex-col md:flex-row gap-4 w-full h-full">
     <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
         
         <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
@@ -146,11 +147,12 @@
         {/if}
         
 
-        <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
+        <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]" bind:this={postContainer}>
             <!---Post--->
             <PostCardStyle 
                 bind:post={post_view} 
                 bind:showCommentForm={showCommentForm}
+                bind:postContainer
                 displayType="post" 
                 actions={true} 
                 moderators={moderators} 

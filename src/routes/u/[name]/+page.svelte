@@ -13,11 +13,7 @@
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
 
     import {
-        Icon,
-        BookOpen,
-        ChatBubbleOvalLeftEllipsis,
         PencilSquare,
-        Window,
     } from 'svelte-hero-icons'
     
 
@@ -37,9 +33,9 @@
 />
 {/if}
 
-<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full py-2">
+<div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full h-full py-2">
     
-    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
+    <div class="flex flex-col gap-4 max-w-full w-full h-full min-w-0">
 
 
 

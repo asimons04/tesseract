@@ -98,7 +98,7 @@
     </Button>
 </div>
 
-<div class="flex flex-col gap-4 list-none my-4 flex-1">
+<div class="flex flex-col gap-4 list-none my-4 w-full h-full flex-1">
     {#if !data.data || (data.data?.length ?? 0) == 0}
         <div class="my-auto">
             <Placeholder
