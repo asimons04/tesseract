@@ -83,7 +83,9 @@
     }
     
     let inCommunity:boolean = false
+    let inProfile:boolean = false
     $: inCommunity = ($page.url.pathname.startsWith("/c/"))
+    $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     
     let fediseerModal:boolean = false;
     
@@ -108,17 +110,18 @@
             <!---Show user's avatar if viewing posts in a community--->
             {#if community && !inCommunity}
                 <Avatar url={community.icon} width={48} alt={community.name} />
+            
             {:else if inCommunity && user}
                 <Avatar url={user.avatar} width={48} alt={user.name} />
             {/if}
 
             <div class="flex flex-col text-xs">
-                {#if community}
+                {#if !inCommunity && community}
                     <CommunityLink {community} />
                 {/if}
                 
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
-                    {#if user}
+                    {#if !inProfile && user}
                         <div class="flex flex-wrap items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'}">Posted by&nbsp;</span>
                             <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
