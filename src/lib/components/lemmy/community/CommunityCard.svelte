@@ -20,6 +20,7 @@
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import Logo from '$lib/components/ui/Logo.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -392,13 +393,22 @@
         {/if}
         
         {#if community_view?.community?.description}
-            <CollapseButton icon={InformationCircle} title="Community Details" expanded={true}>
+            <CollapseButton icon={InformationCircle} title="Community Details" expanded={false}>
                 <Markdown source={community_view.community.description} />
             </CollapseButton>
         {/if}
     
         <!-- Spacer block to give community action menu room to expand --->
-        <div class="hidden xl:block h-[150px]" />
+        <!--<div class="hidden xl:block h-[150px]" />-->
+
+        
+    </div>
+
+    <div class="hidden xl:flex w-full justify-between mt-auto">
+        <p class="flex flex-row gap-2 py-2 text-xs font-normal mx-auto items-center">
+            <Logo width={40} />
+            Tesseract v{__VERSION__}
+        </p>
     </div>
 
 

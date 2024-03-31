@@ -11,6 +11,7 @@
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '../ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import Logo from '$lib/components/ui/Logo.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
@@ -142,6 +143,13 @@
                 <Markdown source={site.local_site.legal_information} />
             </CollapseButton>
         {/if}
+    </div>
+
+    <div class="hidden xl:flex w-full justify-between mt-auto">
+        <p class="flex flex-row gap-2 py-2 text-xs font-normal mx-auto items-center">
+            <Logo width={40} />
+            Tesseract v{__VERSION__}
+        </p>
     </div>
 
 </StickyCard>

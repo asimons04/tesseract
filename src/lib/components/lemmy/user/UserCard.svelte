@@ -17,6 +17,7 @@
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import Logo from '$lib/components/ui/Logo.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -148,7 +149,7 @@
 
 
 
-<StickyCard class="mb-3 {$userSettings.uiState.expandCommunitySidebar ? 'block' : 'hidden'}">
+<StickyCard class="mb-3 {$userSettings.uiState.expandCommunitySidebar ? 'block' : 'hidden'} {$$props.class}">
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, 384, 'webp') : ''}>
         <div class="flex flex-row gap-3 items-start p-3">
             <div class="flex-shrink-0">
@@ -318,7 +319,7 @@
             {#each moderates as community}
                 <div class="inline-flex w-full">
                     <Button
-                        class="hover:bg-slate-200 w-full h-max"
+                        class="hover:bg-slate-200 w-full h-max !px-0"
                         color="tertiary"
                         alignment="left"
                         href="/c/{community.community.name}@{new URL(community.community.actor_id).hostname}"
@@ -350,7 +351,16 @@
     {/if}
     
     <!-- Spacer block to give user action menu room to expand --->
-    <div class="hidden xl:block h-[150px]" />
+    <!--<div class="hidden xl:block h-[150px]" />-->
+
+    <div class="hidden xl:flex w-full justify-between mt-auto">
+        <p class="flex flex-row gap-2 py-2 text-xs font-normal mx-auto items-center">
+            <Logo width={40} />
+            Tesseract v{__VERSION__}
+        </p>
+    </div>
+
+    
     
 
 </StickyCard>

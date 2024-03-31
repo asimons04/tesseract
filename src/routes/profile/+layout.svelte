@@ -15,8 +15,6 @@
         Bookmark
     } from 'svelte-hero-icons'
     
-
-
     export let data;
 </script>
 
@@ -100,7 +98,8 @@
 
         {#if $userSettings.uiState.expandCommunitySidebar}
         <div>
-            <UserCard person={data.user.person_view} moderates={data.user.moderates}/>
+            <UserCard person={data.user.person_view} moderates={data.user.moderates} />
+            <!--class="!max-h-[calc(100svh-13rem)]"-->
         </div>
         {/if}
     </div>
