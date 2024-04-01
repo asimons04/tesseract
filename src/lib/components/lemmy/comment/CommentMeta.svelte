@@ -3,22 +3,39 @@
     import { page } from '$app/stores'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
+    import {
+        Icon,
+        Bookmark,
+        Cake,
+        NoSymbol,
+        Trash
+    } from 'svelte-hero-icons'
     
 
     export let comment: CommentView                 
-    export let moderators: Array<CommunityModeratorView> = [];
-    export let avatarSize:number = 48;
-
+    export let moderators = [] as Array<CommunityModeratorView>;
+    export let avatarSize = 48;
+    export let hideBadges = false
+    
     let inCommunity:boolean = false
     let inProfile:boolean = false
 
     $: inCommunity = ($page.url.pathname.startsWith("/c/"))
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     
+    function isNewAccount():boolean {
+        return new Date().getTime()/1000/60 - (
+        comment.creator.published.endsWith('Z')
+            ? (Date.parse(comment.creator.published)/1000/60) 
+            : (Date.parse(comment.creator.published + 'Z')/1000/60) 
+        )
+        < 1440 * 5
+    }
 </script>
 
 
@@ -53,8 +70,45 @@
                 </span>
                 
                 <RelativeDate date={comment.comment.published} />
-
             </div>
-        </span>
+
+            <!--- Badges --->
+            {#if !hideBadges}
+            <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
+                
+                <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
+                {#if comment?.creator?.published && isNewAccount()}
+                    <Badge label="New Account" color="gray">
+                        <Icon src={Cake} mini size="14"/>
+                        <RelativeDate date={comment.creator.published} />
+                    </Badge>
+                {/if}
+
+
+                {#if comment.saved}
+                    <Badge label="Saved" color="yellow">
+                        <Icon src={Bookmark} mini size="14" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>-->
+                    </Badge>
+                {/if}
+                
+                
+                {#if comment.comment.removed}
+                    <Badge label="Removed" color="red">
+                        <Icon src={NoSymbol} mini size="14" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>-->
+                    </Badge>
+                {/if}
+                
+                {#if comment.comment.deleted}
+                    <Badge label="Deleted" color="red">
+                        <Icon src={Trash} mini size="14" />
+                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>-->
+                    </Badge>
+                {/if}
+                
+            </div>
+            {/if}
+</span>
     </div>
 </div>

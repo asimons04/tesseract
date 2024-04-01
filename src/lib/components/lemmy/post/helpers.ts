@@ -1,4 +1,10 @@
-import type { CommentView, GetPostsResponse, PersonView, PostView } from 'lemmy-js-client'
+import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView } from 'lemmy-js-client'
+import type { MBFCReport } from '$lib/MBFC/types'
+
+export interface PostView extends LemmyPostView {
+    mbfc?: MBFCReport,
+    cross_posts?: PostView[]
+}
 
 import { disableScrollHandling } from '$app/navigation'
 import { get } from 'svelte/store';
@@ -302,7 +308,7 @@ export async function scrollToLastSeenPost(pathname:string = '/') {
 // Used in post fetch loader to filter posts by keywords
 export const filterKeywords = function (posts:PostView[]):PostView[] {
     try {
-        let filteredPosts: PostView[] = [];
+        let filteredPosts: PostView[] = [] as PostView[];
         let filterWords = get(UserSettings)?.hidePosts?.keywordList ?? [] as string[];
 
         // Bypass filtering if keyword filtering is disabled by user
@@ -324,7 +330,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.embed_description?.toLowerCase().startsWith(word.toLowerCase())
                     ) {
                         
-                        filteredPosts.push(posts.splice(i, 1));
+                        //filteredPosts.push(posts.splice(i, 1));
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it starts with the keyword '${word}'`);
                         break;
@@ -339,7 +345,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.body?.includes(word) || 
                         post?.post?.embed_description?.includes(word)
                     ) {
-                        filteredPosts.push(posts.splice(i, 1));
+                        //filteredPosts.push(posts.splice(i, 1));
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -356,7 +362,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.body?.includes(word) || 
                         post?.post?.embed_description?.includes(word)
                     ) {
-                        filteredPosts.push(posts.splice(i, 1));
+                        //filteredPosts.push(posts.splice(i, 1));
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -373,7 +379,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.body?.toLowerCase().includes(word.toLowerCase()) || 
                         post?.post?.embed_description?.toLowerCase().includes(word.toLowerCase())
                     ) {
-                        filteredPosts.push(posts.splice(i, 1));
+                        //filteredPosts.push(posts.splice(i, 1));
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -382,7 +388,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
 
             }
         }
-        console.log(filteredPosts);
+        //console.log(filteredPosts);
         
         return posts
         //return { posts: posts };
@@ -484,7 +490,6 @@ export const addMBFCResults = function (posts:PostView[]):PostView[] {
             let post = posts[i];
 
             if (post.post?.url) {
-                // @ts-ignore
                 post.mbfc = MBFCLookup(post.post.url);
             }
 
@@ -534,11 +539,9 @@ export const fixHourAheadPosts = function(posts:PostView[]): PostView[] {
 // Crosspost a post
 export const crossPost = function(post:PostView):void {
     setSessionStorage('postDraft', {
-        body: `cross-posted from: ${post.post.ap_id}\n\n${
-            post.post.body || ''
-        }`,
+        body: `cross-posted from: ${post.post.ap_id}\n\n${post.post.body || ''}`,
         url: post.post.url || '',
-        name: post.post.name,
+        title: post.post.name,
         loading: false,
         nsfw: post.post.nsfw,
         community: null,

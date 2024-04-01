@@ -53,6 +53,15 @@
     $: userIsModerator = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
 
     let fediseerModal:boolean = false;
+
+    function isNewAccount():boolean {
+        return new Date().getTime()/1000/60 - (
+        post.creator.published.endsWith('Z')
+            ? (Date.parse(post.creator.published)/1000/60) 
+            : (Date.parse(post.creator.published + 'Z')/1000/60) 
+        )
+        < 1440 * 5
+    }
 </script>
 
 {#if fediseerModal}
@@ -102,23 +111,8 @@
                 {/if}
 
                 <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
-                {#if post?.creator?.published && 
-                    (
-                        new Date().getTime()/1000/60 - (
-                            post.creator.published.endsWith('Z')
-                                ? (Date.parse(post.creator.published)/1000/60) 
-                                : (Date.parse(post.creator.published + 'Z')/1000/60) 
-                            )
-                            < 1440 * 5
-                    )
-                }
-                    <Badge label="New Account: {
-                        post.creator.published.endsWith('Z')
-                            ? new Date(post.creator.published).toString()
-                            : new Date(post.creator.published + 'Z').toString()
-                        }" 
-                        color="gray"
-                    >
+                {#if post?.creator?.published && isNewAccount() }
+                    <Badge label="New Account" color="gray">
                         <Icon src={Cake} mini size="16"/>
                         <RelativeDate date={post.creator.published} />
                     </Badge>
@@ -127,42 +121,42 @@
                 {#if post.post.nsfw}
                     <Badge label="NSFW" color="red">
                         <Icon src={ExclamationCircle} mini size="16"/>
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
                     </Badge>
                 {/if}
 
                 {#if post.saved}
                     <Badge label="Saved" color="yellow">
                         <Icon src={Bookmark} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.locked}
                     <Badge label="Locked" color="yellow">
                         <Icon src={LockClosed} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.removed}
                     <Badge label="Removed" color="red">
                         <Icon src={NoSymbol} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.deleted}
                     <Badge label="Deleted" color="red">
                         <Icon src={Trash} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>
                     </Badge>
                 {/if}
                 
                 {#if (post.post.featured_local || post.post.featured_community)}
                     <Badge label="Featured" color="green">
                         <Icon src={Megaphone} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
                     </Badge>
                 {/if}
 
