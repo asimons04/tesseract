@@ -61,7 +61,7 @@
 </script>
 
 <nav
-    class="hidden sm:flex flex-col pl-4 pr-4 pt-[1.2rem] overflow-auto sticky top-16 bottom-0
+    class="hidden sm:flex flex-col pl-4 pr-4 overflow-auto sticky top-16 bottom-0
         gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black z-50
         {$userSettings.uiState.expandSidebar
             ? `max-w-[25%] lg:max-w-[20%] xl:max-w-[18%] min-w-[20rem]`
@@ -69,54 +69,7 @@
         }
     "
 >
-
-    <Button
-        alignment="left"
-        on:click={() =>
-            ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
-        }
-        class="w-max !p-2 hover:bg-slate-200"
-        aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-        title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-    >
-        <Icon
-            src={ChevronDoubleLeft}
-            mini
-            size="16"
-            class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"
-        />
-    </Button>
-    
-
-    <!---Frontpage--->
-    <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Home" on:click={() => { goto('/', {invalidateAll: true}) }}>
-        <Icon src={Home} mini size="18" title="Home" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
-    </SidebarButton>
-
-
-    
-    
-
-    <!--- Explore Communities / Favorites --->
-    <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
-    <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
-        <!---Communities--->
-        <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
-            <Icon src={GlobeAlt} mini size="18" title="Communities" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Browse Communities</span>
-        </SidebarButton>
-
-        <!---Favorites Feed--->
-        <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="hover">
-            <Icon src={Star} mini size="18" title="Feeds" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
-        </SidebarButton>
-
-    </span>
-    
     <!--- Feed Sort Convenience Buttons--->
-    <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
     <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Popular --->
@@ -137,6 +90,50 @@
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Top Day</span>
         </SidebarButton>
     </span>
+    <hr class="border-slate-300 dark:border-zinc-800 mt-2"/>
+
+    <!---
+    <Button
+        alignment="left"
+        on:click={() =>
+            ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
+        }
+        class="w-max !p-2 hover:bg-slate-200"
+        aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
+        title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
+    >
+        <Icon
+            src={ChevronDoubleLeft}
+            mini
+            size="16"
+            class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"
+        />
+    </Button>
+    --->
+    
+
+    <!---Frontpage--->
+    <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Home" on:click={() => { goto('/', {invalidateAll: true}) }}>
+        <Icon src={Home} mini size="18" title="Home" />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
+    </SidebarButton>
+
+    <!--- Explore Communities / Favorites --->
+    
+    <!---Communities--->
+    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
+        <Icon src={GlobeAlt} mini size="18" title="Communities" />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>Browse Communities</span>
+    </SidebarButton>
+
+    <!---Favorites Feed--->
+    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="hover">
+        <Icon src={Star} mini size="18" title="Feeds" />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
+    </SidebarButton>
+
+    
+
 
     {#if $profile?.user}
         <!--- Favorites, Subscribed, and Moderating Communities--->
