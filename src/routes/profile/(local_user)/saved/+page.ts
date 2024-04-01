@@ -1,4 +1,15 @@
-import type { CommentSortType, CommentView, ListingType, PostView, SortType } from 'lemmy-js-client'
+import type { 
+    CommentView, 
+    GetComments,
+    GetCommentsResponse,
+    GetPosts,
+    GetPostsResponse,
+    ListingType, 
+    PostView, 
+    SortType 
+} from 'lemmy-js-client'
+
+export type SavedItemType = 'comments' | 'posts'| 'all'
 
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
@@ -7,21 +18,18 @@ import { userSettings } from '$lib/settings'
 
 
 function getSavedItemPublished(item: PostView | CommentView) {
-    if ('comment' in item) {
-        return item.comment.published
-    } else {
-        return item.post.published
-    }
+    if ('comment' in item) return item.comment.published
+    else return item.post.published
 }
 
 export async function load({ url, fetch }) {
     if (!get(profile)) return { posts: [] }
 
     const page = Number(url.searchParams.get('page')) || 1
-    const type: 'comments' | 'posts'| 'all' = url.searchParams.get('type') || 'all'
-    const sort: SortType = (url.searchParams.get('sort') as SortType) || 'New'
+    const type: SavedItemType = (url.searchParams.get('type') || 'all') as SavedItemType
+    const sort: SortType = (url.searchParams.get('sort') || 'New') as SortType
 
-    const client = getClient(undefined, fetch)
+    const client = getClient()
 
     const params = {
         auth: get(profile)!.jwt!,
@@ -32,22 +40,21 @@ export async function load({ url, fetch }) {
         type_: 'All' as ListingType
     }
 
-    let posts:PostView[] = []
-    let comments:CommentView[] = []
+    let posts:GetPostsResponse = { posts: [] }
+    let comments:GetCommentsResponse = { comments: [] }
 
 
     if (type == 'all') {
         [posts, comments] = await Promise.all([
-            client.getPosts(params),
-            client.getComments(params),
+            client.getPosts(params as GetPosts),
+            client.getComments(params as GetComments),
         ])
     }
     else if (type=='comments') {
-        comments = await client.getComments(params);
+        comments = await client.getComments(params as GetComments);
     }
     else if (type =='posts') {
-        posts = await client.getPosts(params);
-        comments = []
+        posts = await client.getPosts(params as GetPosts);
     }
     
     const everything = [

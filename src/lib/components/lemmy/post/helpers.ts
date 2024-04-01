@@ -93,7 +93,8 @@ export const isYouTube = (url:string):boolean => {
         url.startsWith('https://www.youtube.com') || 
         url.startsWith('http://www.youtube.com') || 
         url.startsWith('https://youtube.com') || 
-        url.startsWith('http://youtube.com')
+        url.startsWith('http://youtube.com') ||
+        url.startsWith('https://y2u.be/')
     )
 }
 

@@ -5,7 +5,7 @@
     max-h-[calc(100svh-9rem)]
     text-sm border-slate-200 dark:border-zinc-800 {$$props.class}"
 >
-  <slot />
+    <slot />
 </aside>
 <!---
     md:w-[80%] md:mx-auto

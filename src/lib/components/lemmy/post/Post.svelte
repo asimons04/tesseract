@@ -11,7 +11,7 @@
 
     export let post: PostView
     export let actions: boolean = true
-    export let autoplay:boolean|undefined = undefined;
+    export let autoplay:boolean = false;
     export let displayType: PostDisplayType = "feed"
     export let forceCompact:boolean = false;
     export let disablePostLinks:boolean = false
@@ -34,7 +34,7 @@
 
     <!--- Card Posts --->
     {:else}
-        <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType}  autoplay={false} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
+        <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
     {/if}
 </div>
 {/if}

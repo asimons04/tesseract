@@ -20,9 +20,7 @@
 
     export let post: PostView
     export let actions: boolean = true
-    export let autoplay:boolean|undefined = false;
     export let displayType: PostDisplayType = "feed"
-    export let forceCompact:boolean = false;
     export let expandCompact: boolean;
     export let expandPreviewText:boolean 
     export let disablePostLinks:boolean = false
@@ -34,7 +32,7 @@
 
 <Card class="bg-white flex flex-col w-full p-2 gap-0 " >
 
-    <PostMeta bind:post={post} displayType={displayType} showTitle={false} {collapseBadges}/>
+    <PostMeta bind:post={post} showTitle={false} {collapseBadges}/>
 
     <!--- Post Link, Body, and Thumbnail  --->
     <div class="flex flex-row w-full gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}">
@@ -45,8 +43,6 @@
                 <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                     on:click={() => {  
                         expandCompact = !expandCompact; 
-                        //const element = document.getElementById(post.post.id.toString());
-                        //if (element) scrollToTop(element);
                         scrollToTop(postContainer)
                     }}
                 >
@@ -78,25 +74,21 @@
         
         <!---Post body and link--->
         <div class="flex flex-col gap-0 {post.post.thumbnail_url || isImage(post.post.url) ? 'w-[80%] md:w-[85%] xl:w-[90%]' : 'w-full'}">
+            
             <!---Post title--->
             <PostTitle bind:post />
 
             {#if post.post.url && !isImage(post.post.url)}
-                <Link
-                    href={post.post.url}
-                    title={post.post.url}
-                    newtab={$userSettings.openInNewTab.links}
-                    highlight
-                >
+                <Link highlight href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}>
                     <span class="text-xs">{new URL(post.post.url).host}</span>
                 </Link>
             {/if}
             
             <div class="mt-1"/>
-            <PostBody bind:post bind:postContainer displayType={displayType} previewLength={240} bind:expandPreviewText inline={!expandPreviewText}/>
+            <PostBody bind:post bind:postContainer {displayType} previewLength={240} bind:expandPreviewText inline={!expandPreviewText}/>
 
             <!--- Crossposts --->
-            <Crossposts post={post} size="xs" class="!pl-0"/>
+            <Crossposts bind:post size="xs" class="!pl-0"/>
 
         </div>
         
@@ -109,7 +101,7 @@
     <div class="flex flex-row w-full mt-1">
         {#if actions}
             <div class="w-full h-full grid items-end">
-                <PostActions  bind:post  bind:expandCompact bind:postContainer displayType={displayType}
+                <PostActions  bind:post  bind:expandCompact bind:postContainer {displayType}
                     on:edit={(e) => {
                         toast({
                             title: 'Confirmation',

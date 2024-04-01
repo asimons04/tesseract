@@ -35,64 +35,24 @@
     
 
     export let post: PostView                 
-    export let displayType: PostDisplayType     = 'feed';
+    //export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
     export let showFediseer:boolean             = true;
     export let collapseBadges:boolean           = false;
-    //export let hideBadges:boolean               = false;
-
-
-    // Extract data from post object for easier reference
-    // These values are mutable so define them and bind them reactively
-    let id: number |undefined
-    let community: Community | undefined
-    let user: Person | undefined
-    let published:string
-    let title: string | undefined
-    let upvotes: number | undefined
-    let downvotes: number | undefined
-    let nsfw: boolean
-    let saved: boolean
-    let featured: boolean
-    let deleted: boolean
-    let removed: boolean
-    let locked: boolean
-    let read: boolean
-    let userIsModerator:boolean
-    let url: string | undefined
+    export let hideBadges:boolean               = false;
+    export let avatarSize:number                = 48;
     
-    // Make these variables reactive
-    $: {
-        community                           = post.community ?? undefined
-        user                                = post.creator ?? undefined
-        id                                  = post.post.id ?? undefined
-        published                           = post.post.published
-        title                               = fixLemmyEncodings(post.post.name) ?? undefined
-        upvotes                             = post.counts.upvotes ?? undefined
-        downvotes                           = post.counts.downvotes ?? undefined
-        nsfw                                = post.post.nsfw ?? false
-        saved                               = post.saved ?? false
-        featured                            = (post.post.featured_local || post.post.featured_community) ?? false
-        deleted                             = post.post.deleted ?? false
-        removed                             = post.post.removed ?? false
-        locked                              = post.post.locked ?? false
-        read                                = post.read ?? false
-        userIsModerator                     = (moderators.filter((index) => index.moderator.id == user?.id).length > 0)
-        url                                 = post.post.url ?? undefined
-    }
     
     let inCommunity:boolean = false
     let inProfile:boolean = false
+    let userIsModerator:boolean =false 
+
     $: inCommunity = ($page.url.pathname.startsWith("/c/"))
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
-    
+    $: userIsModerator = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
+
     let fediseerModal:boolean = false;
-    
-    function linkFromCommunity(community: Community) {
-        const domain = new URL(community.actor_id).hostname
-        return `/c/${community.name}@${domain}`
-    }
 </script>
 
 {#if fediseerModal}
@@ -108,40 +68,36 @@
 
         <span class="flex flex-row gap-2 text-sm items-center">
             <!---Show user's avatar if viewing posts in a community--->
-            {#if community && !inCommunity}
-                <Avatar url={community.icon} width={48} alt={community.name} />
+            {#if post.community && !inCommunity}
+                <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
             
-            {:else if inCommunity && user}
-                <Avatar url={user.avatar} width={48} alt={user.name} />
+            {:else if inCommunity && post.creator}
+                <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.name} />
             {/if}
 
             <div class="flex flex-col text-xs">
-                {#if !inCommunity && community}
-                    <CommunityLink {community} />
+                {#if !inCommunity && post.community}
+                    <CommunityLink bind:community={post.community} {avatarSize} />
                 {/if}
                 
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
-                    {#if !inProfile && user}
-                        <div class="flex flex-wrap items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
+                    {#if !inProfile && post.creator}
+                        <div class="flex flex-wrap items-center" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'}">Posted by&nbsp;</span>
-                            <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
+                            <UserLink avatarSize={20} bind:user={post.creator} mod={userIsModerator} avatar={!post.community} />
                         </div>
                     {/if}
-
-                    <span class="flex flex-row gap-1">
-                        
-                    </span>
                 </span>
                 
-                <!--<span class="pl-1 hidden sm:block">•</span>-->
-                <RelativeDate date={published} />
+                <RelativeDate date={post.post.published} />
 
             </div>
 
             <!--- Post Badges --->
+            {#if !hideBadges}
             <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
                 <!--- Media Bias Fact Check--->
-                {#if post && $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
+                {#if post && $userSettings.uiState.MBFCBadges && post.post.url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
 
@@ -168,42 +124,42 @@
                     </Badge>
                 {/if}
 
-                {#if nsfw}
+                {#if post.post.nsfw}
                     <Badge label="NSFW" color="red">
                         <Icon src={ExclamationCircle} mini size="16"/>
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>-->
                     </Badge>
                 {/if}
 
-                {#if saved}
+                {#if post.saved}
                     <Badge label="Saved" color="yellow">
                         <Icon src={Bookmark} mini size="16" />
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>-->
                     </Badge>
                 {/if}
                 
-                {#if locked}
+                {#if post.post.locked}
                     <Badge label="Locked" color="yellow">
                         <Icon src={LockClosed} mini size="16" />
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>-->
                     </Badge>
                 {/if}
                 
-                {#if removed}
+                {#if post.post.removed}
                     <Badge label="Removed" color="red">
                         <Icon src={NoSymbol} mini size="16" />
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>-->
                     </Badge>
                 {/if}
                 
-                {#if deleted}
+                {#if post.post.deleted}
                     <Badge label="Deleted" color="red">
                         <Icon src={Trash} mini size="16" />
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>-->
                     </Badge>
                 {/if}
                 
-                {#if featured}
+                {#if (post.post.featured_local || post.post.featured_community)}
                     <Badge label="Featured" color="green">
                         <Icon src={Megaphone} mini size="16" />
                         <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>-->
@@ -211,17 +167,18 @@
                 {/if}
 
                 <!--- Fediseer Endorsement Badge--->
-                {#if community && showFediseer && $userSettings.uiState.fediseerBadges}
+                {#if post.community && showFediseer && $userSettings.uiState.fediseerBadges}
                     <button class="flex flex-row gap-2 items-center mr-2" on:click={(e) => fediseerModal = true}>
-                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
+                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(post.community.actor_id).hostname}.svg?style=ICON`)} 
                             class="cursor-pointer"
                             loading="lazy"
-                            alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
-                            title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
+                            alt="{`Fediseer endorsement badge for ${new URL(post.community.actor_id).hostname}`}"
+                            title="{`Fediseer endorsements for ${new URL(post.community.actor_id).hostname}`}"
                         />
                     </button>
                 {/if}
             </div>
+            {/if}
             
             
         </span>
