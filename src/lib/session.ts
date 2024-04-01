@@ -5,7 +5,7 @@ interface SessionStorage {
     }
     postDraft?:{
         community: number | null
-        title: string
+        name: string
         body: string
         image: FileList | null
         url: string | undefined

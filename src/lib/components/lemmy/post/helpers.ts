@@ -308,7 +308,7 @@ export async function scrollToLastSeenPost(pathname:string = '/') {
 // Used in post fetch loader to filter posts by keywords
 export const filterKeywords = function (posts:PostView[]):PostView[] {
     try {
-        let filteredPosts: PostView[] = [] as PostView[];
+        let filteredPosts = [] as PostView[];
         let filterWords = get(UserSettings)?.hidePosts?.keywordList ?? [] as string[];
 
         // Bypass filtering if keyword filtering is disabled by user
@@ -330,7 +330,8 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.embed_description?.toLowerCase().startsWith(word.toLowerCase())
                     ) {
                         
-                        //filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
+                        //posts.splice(i, 1)
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it starts with the keyword '${word}'`);
                         break;
@@ -345,7 +346,8 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.body?.includes(word) || 
                         post?.post?.embed_description?.includes(word)
                     ) {
-                        //filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
+                        //posts.splice(i, 1)
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -362,7 +364,8 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.body?.includes(word) || 
                         post?.post?.embed_description?.includes(word)
                     ) {
-                        //filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
+                        //posts.splice(i, 1)
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -379,7 +382,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
                         post?.post?.body?.toLowerCase().includes(word.toLowerCase()) || 
                         post?.post?.embed_description?.toLowerCase().includes(word.toLowerCase())
                     ) {
-                        //filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -388,7 +391,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
 
             }
         }
-        //console.log(filteredPosts);
+        console.log(filteredPosts);
         
         return posts
         //return { posts: posts };
@@ -541,7 +544,7 @@ export const crossPost = function(post:PostView):void {
     setSessionStorage('postDraft', {
         body: `cross-posted from: ${post.post.ap_id}\n\n${post.post.body || ''}`,
         url: post.post.url || '',
-        title: post.post.name,
+        name: post.post.name,
         loading: false,
         nsfw: post.post.nsfw,
         community: null,
