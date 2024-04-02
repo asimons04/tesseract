@@ -80,6 +80,8 @@
   
 
 <nav class="flex flex-row gap-2 items-center sticky top-0 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl w-full z-50 mx-auto px-4 py-2  box-border h-16">
+    
+    <div class="hidden md:flex mr-4">
     <Button
         alignment="left"
         on:click={() =>
@@ -91,6 +93,7 @@
     >
         <Icon src={ChevronDoubleLeft} mini size="16" class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"/>
     </Button>
+    </div>
     
     <!---Site Logo and Name on left--->
     <div data-sveltekit-preload-data="hover" class="flex flex-row gap-2 items-center mr-auto">

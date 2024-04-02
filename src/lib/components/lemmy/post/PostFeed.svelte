@@ -1,7 +1,6 @@
 <script lang="ts">
     import { fade } from 'svelte/transition'
     
-    import Button from '$lib/components/input/Button.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import { userSettings } from '$lib/settings.js'
