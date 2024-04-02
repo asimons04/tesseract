@@ -31,29 +31,20 @@
 
     
     export let data
-
-    let post_view:PostView;
-    let community_view:CommunityView
-    let moderators: CommunityModeratorView[]
+   
+    let showCommentForm:boolean = false;
     let postContainer: HTMLDivElement
     
-    // Defined here and bound to both PostCardStyle (to pass to post actions for the reply button) and CommentSection (to control visibility of the comment form)
-    let showCommentForm:boolean = false;
-    
-    $: {
-        post_view = data.post.post_view;
-        // @ts-ignore Add the crossposts to the post_view object for use in the PostCardStyle component since we're passing post_view to it.
-        post_view.cross_posts = data.post.cross_posts;
-        community_view = data.post.community_view;
-        moderators = data.post.moderators
-        
-    }
+    let post_view = data.post.post_view
+    let community_view = data.post.community_view
+    let moderators = data.post.moderators
     
     
     
     onMount(async () => {
         setSessionStorage('lastSeenCommunity', { id: community_view.community.id, name: `${community_view.community.name}@${new URL(community_view.community.actor_id).hostname}` })
-        //setSessionStorage('lastClickedPost', { postID: post_view.post.id} );
+        
+        // Mark post as read when viewed
         try {
             if (!post_view.read && $profile?.jwt) {
                 getClient().markPostAsRead({
@@ -66,7 +57,8 @@
         // Do nothing.  Just don't throw an error if fail to mark as read
         catch {}
 
-        window.scrollTo(0,0);
+        // Scroll to top unless jumping to a comment
+        if (!$page.url.searchParams.get('thread')) window.scrollTo(0,0);
     })
 
     
@@ -100,6 +92,7 @@
     <title>{post_view.post.name}</title>
     <meta property="og:title" content={post_view.post.name} />
     <meta property="og:url" content={$page.url.toString()} />
+    
     {#if isImage(post_view.post.url)}
         <meta property="og:image" content={post_view.post.url} />
     {/if}
