@@ -10,6 +10,7 @@
     
     import Button from '$lib/components/input/Button.svelte';
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
+    import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
@@ -142,22 +143,13 @@
 </SubNavbar>
 
 <MainContentArea>
-    {#if infiniteScroll.truncated}
-    <div class="flex my-4">
-        <Button color="tertiary-border" class="w-fit mx-auto" title="Load Older Posts"
-            on:click={() => {
-                goto(window.location.href, {invalidateAll: true})
-                refresh()
-            }}
-        >
-            <div class="flex flex-row gap-2 items-center">
-                <Icon src={ChevronDoubleUp} mini size="16" />
-                Refresh to See Oldest Posts 
-                <Icon src={ChevronDoubleUp} mini size="16" />
-            </div>
-        </Button>
-    </div>
-    {/if}
+    <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
+    <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
+        on:click={() => {
+            goto(window.location.href, {invalidateAll: true})
+            refresh()
+        }}
+    />
     
     <PostFeed bind:posts={data.posts.posts} />
     
