@@ -211,7 +211,9 @@
         <slot {iconSize} name="left"/>
         
         <!---Left/Right Spacer--->
-        <div class="mx-auto" />
+        <div class="mx-auto">
+            <slot name="center" />
+        </div>
         
         <!--- Custom Items to the right of the spacer--->
         <slot {iconSize} name="right"/>

@@ -73,7 +73,6 @@
         goto(url, {
             invalidateAll: true,
         })
-        
     }
 </script>
   
@@ -116,6 +115,7 @@
     </div>
 
     <!---Inline Search in Middle--->
+    <!---
     <form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
         class:lg:hidden={$page.url.pathname.includes('/search')}
         on:submit={(e) => {
@@ -133,6 +133,7 @@
             <Icon src={MagnifyingGlass} mini width={18} />
         </Button>
     </form>
+    --->
 
     <!---Right-side Buttons--->
     <div class="flex flex-row gap-2 py-2 px-2 items-center">
@@ -143,10 +144,9 @@
             color="tertiary"
             aria-label="Search"
             title="Search"
-            class="lg:hidden max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300"
+            class="max-md:w-9 max-md:h-8 max-md:!p-0"
         >
             <Icon mini src={MagnifyingGlass} width={24} slot="icon" />
-            <span class="hidden md:inline">Search</span>
         </Button>
       
         <!--- Explore/Communities --->

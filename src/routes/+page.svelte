@@ -10,15 +10,17 @@
     
     import Button from '$lib/components/input/Button.svelte';
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
+    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    
+
     import {
         Icon,
-        ChevronDoubleUp,
-        ChevronDoubleDown
+        ChevronDoubleUp
     } from 'svelte-hero-icons'
+    
 
     export let data
 
@@ -133,46 +135,41 @@
     listingType={true}      bind:selectedListingType={data.listingType}
     sortMenu={true}         bind:selectedSortOption={data.sort}
     refreshButton           on:navRefresh={()=> refresh()}
-/>
+>
+    <!---Inline Search in Middle--->
+    <SiteSearch slot="center"/>
 
+</SubNavbar>
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-4">
-    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        
-        {#if infiniteScroll.truncated}
-        <div class="flex my-4">
-            <Button color="tertiary-border" class="w-fit mx-auto" title="Load Older Posts"
-                on:click={() => {
-                    goto(window.location.href, {invalidateAll: true})
-                    refresh()
-                }}
-            >
-                <div class="flex flex-row gap-2 items-center">
-                    <Icon src={ChevronDoubleUp} mini size="16" />
-                    Refresh to See Oldest Posts 
-                    <Icon src={ChevronDoubleUp} mini size="16" />
-                </div>
-            </Button>
-        </div>
-        {/if}
-
-        <section class="flex flex-col gap-3 sm:gap-4 h-full">
-            <PostFeed posts={data.posts.posts} />
-        </section>
-        
-        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
-            on:loadMore={ () => {
-                if (!infiniteScroll.exhausted) {
-                    infiniteScroll.loading = true
-                    loadPosts()
-                }
+<MainContentArea>
+    {#if infiniteScroll.truncated}
+    <div class="flex my-4">
+        <Button color="tertiary-border" class="w-fit mx-auto" title="Load Older Posts"
+            on:click={() => {
+                goto(window.location.href, {invalidateAll: true})
+                refresh()
             }}
-        />
-        
-        
+        >
+            <div class="flex flex-row gap-2 items-center">
+                <Icon src={ChevronDoubleUp} mini size="16" />
+                Refresh to See Oldest Posts 
+                <Icon src={ChevronDoubleUp} mini size="16" />
+            </div>
+        </Button>
     </div>
+    {/if}
+    
+    <PostFeed bind:posts={data.posts.posts} />
+    
+    <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
+        on:loadMore={ () => {
+            if (!infiniteScroll.exhausted) {
+                infiniteScroll.loading = true
+                loadPosts()
+            }
+        }}
+    />
 
-    <div class="lg:mb-[-24px]">
-        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} />
-    </div>
-</div>
+    <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} slot="right-panel"/>
+
+</MainContentArea>

@@ -41,18 +41,21 @@
             toast({
                 content: 'Saved your user settings.',
                 type: 'success',
+                title: "Success"
             })
     
             if (res.verify_email_sent) {
                 toast({
                     content: 'A verification email was sent.',
                     type: 'info',
+                    title: "Notice"
                 })
             }
         } catch (err) {
             toast({
                 content: err as any,
                 type: 'error',
+                title: "Error"
             })
         }
 
@@ -210,6 +213,7 @@
                     <Checkbox bind:checked={formData.bot_account}>Bot Account</Checkbox>
                     <Checkbox bind:checked={formData.show_bot_accounts}>Show Bot Accounts</Checkbox>
                     <Checkbox bind:checked={formData.show_read_posts}>Show Read Posts</Checkbox>
+                    <Checkbox bind:checked={formData.send_notifications_to_email}>Send Notifications to Email</Checkbox>
                 </div>
 
             </div>
