@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { GetPosts, PostView } from 'lemmy-js-client'
+    import type { GetPosts } from 'lemmy-js-client'
     import type { Snapshot } from './$types';
 
     import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
@@ -8,7 +8,6 @@
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings'
     
-    import Button from '$lib/components/input/Button.svelte';
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
@@ -16,12 +15,6 @@
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-
-    import {
-        Icon,
-        ChevronDoubleUp
-    } from 'svelte-hero-icons'
-    
 
     export let data
 
@@ -151,6 +144,7 @@
         }}
     />
     
+    <!---The actual feed--->
     <PostFeed bind:posts={data.posts.posts} />
     
     <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
@@ -162,6 +156,7 @@
         }}
     />
 
+    <!---Show the site card on the right side--->
     <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} slot="right-panel"/>
 
 </MainContentArea>
