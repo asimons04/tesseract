@@ -35,8 +35,8 @@
 {/if}
 
 <SubNavbar 
-    home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
-    listingType={true} 
+    home compactSwitch toggleMargins refreshButton toggleCommunitySidebar
+    listingType={true} listingTypeTitle="Custom Feed"
     listingTypeOptions = {[...$profile?.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]} 
     listingTypeOptionNames = {[...$profile?.groups?.map((cg) => cg.name)?.sort(sortGroups) ?? [] ]} 
     listingTypeOnSelect={(e) => {

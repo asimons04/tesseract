@@ -1,4 +1,4 @@
-import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView } from 'lemmy-js-client'
+import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType } from 'lemmy-js-client'
 import type { MBFCReport } from '$lib/MBFC/types'
 
 export interface PostView extends LemmyPostView {
@@ -551,4 +551,17 @@ export const crossPost = function(post:PostView):void {
         image: null,
     })
     goto('/create/post?crosspost=true')
+}
+
+// Sort an array of posts
+export const sortPosts = function(posts:PostView[], direction:SortType): PostView[] {
+    if (direction == 'New')          posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+    if (direction == 'Old')          posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
+    if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+    if (direction == 'Active')       posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+    if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+    if (direction == 'MostComments') posts.sort((a, b) => b.counts.comments - a.counts.comments)
+    if (direction.startsWith('Top')) posts.sort((a, b) => b.counts.score - a.counts.score)
+
+    return posts
 }

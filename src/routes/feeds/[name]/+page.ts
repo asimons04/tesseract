@@ -1,6 +1,6 @@
 import type { Community, GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
-import { addMBFCResults, filterKeywords, findCrossposts } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, filterKeywords, findCrossposts, sortPosts } from '$lib/components/lemmy/post/helpers'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 
@@ -89,22 +89,12 @@ export async function load(req: any) {
         combinedPosts = [...combinedPosts, ...posts.posts]
     }
 
-    // Sort the posts however
-    if (sort == 'New')          combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
-    if (sort == 'Old')          combinedPosts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-    if (sort == 'NewComments')  combinedPosts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
-    if (sort == 'Active')       combinedPosts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
-    if (sort == 'Hot')          combinedPosts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
-    if (sort == 'MostComments') combinedPosts.sort((a, b) => b.counts.comments - a.counts.comments)
-    if (sort.startsWith('Top')) combinedPosts.sort((a, b) => b.counts.score - a.counts.score)
-    
-
-
-    
-    
     // Load the posts into a posts object
     let posts = { posts: [...combinedPosts] }
     
+    // Sort the posts however
+    posts.posts = sortPosts(posts.posts, sort)
+
     // Filter the posts for keywords
     posts.posts = filterKeywords(posts.posts);
     

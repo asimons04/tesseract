@@ -63,6 +63,7 @@
     export let listingTypeOptionNames:string[]  = listingTypeOptions
     export let listingTypeOnSelect              = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
     export let selectedListingType:string       = ''
+    export let listingTypeTitle:string          = 'Listing Type'
 
     // Sort menu
     export let sortMenu:boolean                 = false
@@ -155,7 +156,7 @@
                     options={listingTypeOptions}
                     optionNames={listingTypeOptionNames}
                     selected={selectedListingType}
-                    title="Listing Type"
+                    title={listingTypeTitle}
                     icon={Bars3}
                     iconSize={18}
                     on:select={listingTypeOnSelect}
