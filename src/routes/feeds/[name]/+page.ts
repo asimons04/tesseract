@@ -106,13 +106,13 @@ export async function load(req: any) {
     let posts = { posts: [...combinedPosts] }
     
     // Filter the posts for keywords
-    posts = filterKeywords(posts.posts);
+    posts.posts = filterKeywords(posts.posts);
     
     // Roll up crossposts
-    posts = findCrossposts(posts.posts);
+    posts.posts = findCrossposts(posts.posts);
 
     // Apply MBFC data object to post
-    posts = addMBFCResults(posts.posts);
+    posts.posts = addMBFCResults(posts.posts);
         
     //console.log(tasks)
     //console.log(tasksResult);
