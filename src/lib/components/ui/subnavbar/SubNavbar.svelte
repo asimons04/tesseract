@@ -80,7 +80,7 @@
     export let communityActionsMenu:boolean     = false
     export let moderationMenu:boolean           = false
     export let post:PostView | undefined        = undefined
-
+    export let postTitle:boolean                = false     // Post title in center of bar
 
     let addCommunityGroup:boolean               = false
     let editPostModal:boolean                   = false
@@ -211,8 +211,17 @@
         <!--- Custom Items to the left of the spacer--->
         <slot {iconSize} name="left"/>
         
+        
+        
+
         <!---Left/Right Spacer--->
-        <div class="mx-auto">
+        <div class="mx-auto w-1/2">
+            
+            <!--- Post Title In Center (Cannot be used if using center slot for something)--->
+            {#if post && postTitle}
+                <span class="hidden md:block  text-lg font-bold whitespace-nowrap text-ellipsis overflow-hidden">{post.post.name}</span>
+            {/if}
+
             <slot name="center" />
         </div>
         
