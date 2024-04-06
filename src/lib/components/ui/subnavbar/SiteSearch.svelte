@@ -8,23 +8,24 @@
 let searchTerm:string
 
 </script>
+<div class="flex mx-auto">
+    <form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
+        on:submit={(e) => {
+            e.preventDefault();
+            let url = new URL(window.location.href);
+            url.pathname = '/search';
+            url.searchParams.set('type', 'All')
+            url.searchParams.set('q', searchTerm);
+            goto(url, {
+                invalidateAll: true,
+            })
+        }}
+    >
 
-<form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
-    on:submit={(e) => {
-        e.preventDefault();
-        let url = new URL(window.location.href);
-        url.pathname = '/search';
-        url.searchParams.set('type', 'All')
-        url.searchParams.set('q', searchTerm);
-        goto(url, {
-            invalidateAll: true,
-        })
-    }}
->
+        <TextInput type="search" placeholder="Search" bind:value={searchTerm}/>
 
-    <TextInput type="search" placeholder="Search" bind:value={searchTerm}/>
-
-    <Button submit color="tertiary">
-        <Icon src={MagnifyingGlass} mini width={24} />
-    </Button>
-</form>
+        <Button submit color="tertiary">
+            <Icon src={MagnifyingGlass} mini width={24} />
+        </Button>
+    </form>
+</div>
