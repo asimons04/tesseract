@@ -384,7 +384,7 @@
         {/if}
     </div>
 
-    <div class="hidden xl:block flex flex-col gap-2 w-full">
+    <div class="hidden xl:block w-full">
         {#if moderators.length > 0}
             <CollapseButton icon={HandRaised} title="Moderators">
                 {#each moderators as moderator}

@@ -313,7 +313,7 @@
             </div>
         </Card>
 
-
+        <div class="hidden xl:block w-full">
         {#if moderates?.length > 0}
             <CollapseButton icon={ShieldCheck} title="Moderates">
                 {#each moderates as community}
@@ -348,9 +348,8 @@
             <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
                 <Markdown source={person.person.bio} />
             </CollapseButton>
-        {:else}
-            <div class="hidden xl:block h-[150px]" />
         {/if}
+        </div>
         
         <!-- Spacer block to give user action menu room to expand --->
         <!--<div class="hidden xl:block h-[150px]" />-->
