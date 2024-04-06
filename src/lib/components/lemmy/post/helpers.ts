@@ -11,10 +11,11 @@ import { get } from 'svelte/store';
 import { getSessionStorage, setSessionStorage } from '$lib/session'
 import { goto } from '$app/navigation'
 import { lookup as MBFCLookup } from '$lib/MBFC/client'
+import { page } from '$app/stores'
 import { userSettings as UserSettings} from '$lib/settings.js'
 import { YTFrontends } from '$lib/settings.js'
 
-import { page } from '$app/stores'
+
 
 // Import user settings
 let userSettings: any = get(UserSettings);
@@ -252,6 +253,12 @@ export const scrollToTop = function(element:HTMLElement|undefined|null, smooth:b
             
         // Offset = navbar height (-64) - sticky menu height (52) + 3 pixel gap
         let offset = 64 + 64 + 3;
+
+        // Account for the profile button bar (height=58px) in the offset calculation
+        if (get(page) && get(page).url.pathname.startsWith('/profile/')) {
+            offset = offset + 58;
+        } 
+        
 
         let y = element.getBoundingClientRect().top + window.pageYOffset - offset;
 

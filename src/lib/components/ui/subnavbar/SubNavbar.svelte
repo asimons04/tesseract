@@ -215,7 +215,7 @@
         
 
         <!---Left/Right Spacer--->
-        <div class="mx-auto w-1/2">
+        <div class="mx-auto w-1/2 xl:w-3/4">
             
             <!--- Post Title In Center (Cannot be used if using center slot for something)--->
             {#if post && postTitle}
