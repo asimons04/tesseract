@@ -21,7 +21,7 @@
         <span class="block my-1 text-sm font-bold">{label}</span>
     {/if}
     <label
-        class="flex flex-col items-center px-8 py-4 mx-auto w-full rounded-lg
+        class="flex flex-col items-center px-8 py-8 mx-auto w-full rounded-lg
             border border-slate-300 dark:border-zinc-700 bg-white dark:bg-black
             cursor-pointer min-h-36 transition-colors 
             {
