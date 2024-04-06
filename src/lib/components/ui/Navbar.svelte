@@ -87,7 +87,7 @@
         on:click={() =>
             ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
         }
-        class="w-max !p-2 hover:bg-slate-200"
+        color="tertiary"
         aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
         title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
     >
