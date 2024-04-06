@@ -43,7 +43,7 @@ export const md = new MarkdownIt({
 
 
 export const mdInline: MarkdownIt = new MarkdownIt('zero')
-    .enable(['emphasis', 'backticks', 'strikethrough', 'link'])
+    //.enable(['emphasis', 'backticks', 'strikethrough', 'link'])
     .use(markdown_it_container, 'spoiler', {
         validate: (params: string) => {
             return params.trim().match(/^spoiler+(.*)/)

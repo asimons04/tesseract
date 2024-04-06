@@ -44,6 +44,7 @@
         <!--- Show expandable preview in feed--->
         {#if displayType=='feed'}
             {#if post.post.body}    
+                
                 <div class="
                     {!expandPreviewText && !post.post.nsfw && post.post.body.length > previewLength
                         ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
@@ -57,7 +58,7 @@
                                 ? post.post.body.slice(0, previewLength)
                                 : post.post.body
                         }
-                        {inline}
+                        inline={!expandPreviewText && post.post.body.length > previewLength}
                     />
                 </div>
 
@@ -95,7 +96,7 @@
                                 ? post.post.embed_description.slice(0, previewLength)
                                 : post.post.embed_description
                         }
-                        {inline}
+                        inline={!expandPreviewText && post.post.embed_description.length > previewLength}
                     />
                 </div>
                 
