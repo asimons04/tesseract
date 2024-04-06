@@ -13,7 +13,7 @@
     export let icon:any = undefined;
 
     export let fullHeight:boolean = false
-    export let height:string = ''
+    export let height:string = 'h-auto'
     
     const dispatcher = createEventDispatcher()
 </script>
@@ -33,7 +33,7 @@
                 <div
                     class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
                     dark:bg-zinc-950 dark:border-zinc-800
-                    bg-white border border-slate-200  {fullHeight ? 'h-full' : ''}"
+                    bg-white border border-slate-200  {fullHeight ? 'h-full' : 'h-auto'}"
                     class:rounded-b-none={action}
                     class:border-b-0={action}
                 >

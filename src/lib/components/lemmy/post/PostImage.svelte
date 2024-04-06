@@ -43,7 +43,7 @@
     aria-label={name}
     title={name}
 >
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+    <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
             <picture class="rounded-md overflow-hidden w-full max-h-[min(50vh,500px)]  max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
                 <source srcset="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
@@ -74,7 +74,7 @@
 
 {#if displayType =='post'}
 <div
-    class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1"
+    class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1"
     data-sveltekit-preload-data="off"
     aria-label={name}
 >

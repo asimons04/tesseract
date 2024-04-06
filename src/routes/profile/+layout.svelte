@@ -56,7 +56,7 @@
         <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
             
             <!---Profile Sub-Page Buttons--->
-            <div class="flex flex-row gap-1 p-2">
+            <div class="sticky top-[7rem] flex flex-row gap-1 -ml-2 px-2 py-1 bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10">
                 <Button color="tertiary" alignment="left" title="Profile" class="hover:bg-slate-200" href="/profile/user">
                     <span class="flex flex-col items-center {$page.url.pathname.startsWith('/profile/user') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={UserCircle} mini size="18" title="Profile" />

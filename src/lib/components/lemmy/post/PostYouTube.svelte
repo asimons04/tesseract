@@ -110,7 +110,7 @@
         
     />
     
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+    <div class="overflow-hidden relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
         <div class="ml-auto mr-auto max-w-[88vw] w-full">
             <div class="flexiframe-container rounded-md max-w-screen mx-auto">
                 <iframe 

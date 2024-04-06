@@ -54,7 +54,7 @@
 {#if showAsEmbed}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
 
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+    <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
         
         <!--- Album Art from Thumbnail --->
         {#if post.post.thumbnail_url}
@@ -75,7 +75,7 @@
         <!--- End Album Art from Thumbnail--->
         
         <!---Iframe with player--->
-        <div class="overflow-hidden z-10 relative mt-[-120px]  max-w-full max-h-[128px]">
+        <div class="overflow-hidden  relative mt-[-120px]  max-w-full max-h-[128px]">
             <div class="ml-auto mr-auto w-full}">
                 <div class="flexiframe-container  max-w-screen max-h-[128px] mx-auto">
                     <iframe 

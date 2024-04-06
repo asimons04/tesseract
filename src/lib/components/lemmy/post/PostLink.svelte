@@ -33,7 +33,7 @@
                 : undefined
         }
     >
-        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+        <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
                     <img

@@ -41,7 +41,7 @@
     highlight nowrap 
         
 />
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full p-1">
+<div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full p-1">
     <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
         
         <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
