@@ -29,7 +29,7 @@ export function getClient(instanceURL?: string, func?: CustomFetchFunction ,jwt?
             fetchFunction: func
                 ? (input: RequestInfo | URL, init: RequestInit | undefined) => customFetch(func, input, init)
                 : undefined,
-            headers: { 'Authorization': `Bearer ${jwt}`}
+            headers: jwt ? { 'Authorization': `Bearer ${jwt}`} : undefined
         }
     )
 }
