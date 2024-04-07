@@ -112,6 +112,7 @@ interface Settings {
         showFullURL: boolean
         expandCrossPosts: boolean
         showBannersInCards: boolean
+        stretchCardBanner: boolean
         modalOpen: boolean
     }
     highlightCode: boolean
@@ -160,6 +161,7 @@ export const defaultSettings: Settings = {
         showFullURL:                                                    false,
         expandCrossPosts:                                               true,
         showBannersInCards:                                             true,
+        stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
         modalOpen:                                                      false,
 
     },

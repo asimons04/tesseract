@@ -23,6 +23,7 @@
         ArrowUpTray,
         ArrowPath,
         ArrowPathRoundedSquare,
+        ArrowsPointingOut,
         ArrowUturnDown,
         Icon,
         Bars3,
@@ -524,6 +525,24 @@
                         </div>
                         <div class="mx-auto"/>
                         <Switch bind:enabled={$userSettings.uiState.showBannersInCards} />
+                    </div>
+
+                    <!---Stretch Banners--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={ArrowsPointingOut} mini width={16}/>
+                                Stretch Banners
+                            </p>
+                            <p class="text-xs font-normal">
+                                Stretch banner images in the sidebar cards to fill the card without cropping.
+                                Disable to have them cover the card which may crop them.
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.stretchCardBanner} />
                     </div>
 
                     <!---Enable Debug Buttons--->

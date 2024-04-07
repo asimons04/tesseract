@@ -36,7 +36,7 @@
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
 
-    // Determe post type based on its attributes
+    // Determine post type based on its attributes
     const postType:PostType  = identifyPostType(post)
 
 </script>

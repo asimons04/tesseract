@@ -1,5 +1,7 @@
 <script lang="ts">
+    import { userSettings } from '$lib/settings'
     type CardColor = 'default' | 'warning' | 'error'
+    
     export let cardColor: CardColor = 'default'
     export let backgroundImage:string = ''
     export let elevation: 0 | 1 = 1
@@ -20,7 +22,12 @@
 </script>
 
 {#if backgroundImage}
-    <div class="flex items-stretch rounded-lg" style="background-image: url('{backgroundImage}'); background-size: 100% 100%; background-repeat: no-repeat;">
+    <div class="flex items-stretch rounded-lg" 
+        style="background-image: url('{backgroundImage}'); 
+            background-size: {$userSettings.uiState.stretchCardBanner ? '100% 100%' : 'auto'}; 
+            background-position: center center;
+            background-repeat: no-repeat;
+    ">
         <div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-white/[.85] dark:bg-zinc-900/[.85] rounded-lg {clazz}" {...$$restProps}>
             <slot />
         </div>

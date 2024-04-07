@@ -26,8 +26,6 @@
 
     export let data
 
-    //$: data.posts.posts
-
     let infiniteScroll = {
         loading: false,     // Used to toggle loading indicator
         exhausted: false,   // Sets to true if the API returns 0 posts
@@ -87,9 +85,6 @@
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
 
-        // Roll up any duplicate posts/crossposts
-        //posts.posts = findCrossposts(posts.posts);
-
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
         
@@ -119,9 +114,10 @@
         //@ts-ignore
         if (posts.next_page) data.posts.next_page = posts.next_page
         
-        // Run crosspost detection
+        // Run crosspost detection on the full result set
         data.posts.posts = findCrossposts(data.posts.posts);
-        data.posts.posts = data.posts.posts
+        data = data
+        //data.posts.posts = data.posts.posts
         
         infiniteScroll.loading  = false
     }

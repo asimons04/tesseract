@@ -11,8 +11,8 @@
 
     export let post:PostView
     export let size:string = "xs"
-    let textSize:string
     
+    let textSize:string
     let iconSize:number
 
     switch(size) {

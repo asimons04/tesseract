@@ -24,17 +24,18 @@
 </script>
 
 {#if post?.post?.id}
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div id={post.post.id.toString()} on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)} bind:this={postContainer} transition:fade>
-    <!--- Compact Posts --->
-    {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
-        <PostCompactStyle bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType} {disablePostLinks} {collapseBadges} />
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+    <div id={post.post.id.toString()} on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)} bind:this={postContainer} transition:fade>
+        
+        <!--- Compact Posts --->
+        {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
+            <PostCompactStyle bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType} {disablePostLinks} {collapseBadges} />
 
 
-    <!--- Card Posts --->
-    {:else}
-        <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
-    {/if}
-</div>
+        <!--- Card Posts --->
+        {:else}
+            <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
+        {/if}
+    </div>
 {/if}
