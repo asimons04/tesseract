@@ -528,6 +528,7 @@
                     </div>
 
                     <!---Stretch Banners--->
+                    {#if $userSettings.uiState.showBannersInCards}
                     <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">
@@ -544,6 +545,7 @@
                         
                         <Switch bind:enabled={$userSettings.uiState.stretchCardBanner} />
                     </div>
+                    {/if}
 
                     <!---Enable Debug Buttons--->
                     <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
@@ -739,7 +741,7 @@
                         
                         <Switch bind:enabled={$userSettings.markReadPosts} />
                     </div>
-                    
+
                     <!---Expand Crosspost List--->
                     <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
