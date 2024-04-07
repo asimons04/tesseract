@@ -23,6 +23,7 @@
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import Post from '$lib/components/lemmy/post/Post.svelte';
 
     export let data
 
@@ -33,7 +34,6 @@
         truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
         automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
-
     }
 
     // Store and reload the page data between navigations
@@ -83,11 +83,14 @@
         posts.posts = fixHourAheadPosts(posts.posts)
 
         // Filter the posts for keywords
-        posts.posts = filterKeywords(posts.posts);
+        posts.posts = filterKeywords(posts.posts)
 
         // Apply MBFC data object to post
-        posts.posts = addMBFCResults(posts.posts);
+        posts.posts = addMBFCResults(posts.posts)
         
+        // Roll up crossposts
+        posts.posts = findCrossposts(posts.posts)
+
         // Sort the new result set based on the selected sort method
         posts.posts = sortPosts(posts.posts, data.sort)
         
@@ -114,10 +117,8 @@
         //@ts-ignore
         if (posts.next_page) data.posts.next_page = posts.next_page
         
-        // Run crosspost detection on the full result set
-        data.posts.posts = findCrossposts(data.posts.posts);
         data = data
-        //data.posts.posts = data.posts.posts
+
         
         infiniteScroll.loading  = false
     }
