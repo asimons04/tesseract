@@ -208,7 +208,24 @@ server {
 
 
   location / {
-    proxy_pass http://127.0.0.1:8080;
+    # Adjust as needed, but these are what I have in my dev server
+    proxy_http_version              1.1;
+    send_timeout                    5m;
+    proxy_read_timeout              360;
+    proxy_send_timeout              360;
+    proxy_connect_timeout           360;
+    proxy_max_temp_file_size        0;
+
+    # Set headers to send to backend server
+    proxy_set_header  Host                  $host;
+    proxy_set_header  X-Forwarded-Host      $host;
+    proxy_set_header  X-Forwarded-For       $remote_addr;
+    proxy_set_header  X-Forwarded-Proto     $scheme;
+    proxy_set_header  X-Forwarded-Uri       $request_uri;
+    proxy_set_header  X-Forwarded-Ssl       on;
+
+    # Update this to match the IP/port you are mapping from Docker.
+    proxy_pass http://127.0.0.1:3000;
   }
 
 }
