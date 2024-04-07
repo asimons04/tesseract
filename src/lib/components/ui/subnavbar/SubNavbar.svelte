@@ -165,12 +165,6 @@
 
             <!---Sort Menu--->
             {#if sortMenu && sortOptions && sortOptionNames && selectedSortOption}
-                <!--
-                {#if listingType} 
-                    <Icon src={ArrowSmallRight} mini width={18} class="hidden md:flex"/> 
-                {/if}
-                -->
-                
                 <SelectMenu
                     alignment="bottom-left"
                     options={sortOptions}
@@ -212,17 +206,18 @@
         <slot {iconSize} name="left"/>
         
         
-        
 
-        <!---Left/Right Spacer--->
+        <!---Center Slot--->
         <div class="mx-auto w-1/2 xl:w-3/4">
             
             <!--- Post Title In Center (Cannot be used if using center slot for something)--->
             {#if post && postTitle}
-                <span class="hidden md:block  text-lg font-bold whitespace-nowrap text-ellipsis overflow-hidden">{post.post.name}</span>
+                <span class="hidden md:block text-lg font-bold text-slate-600 dark:text-zinc-400 whitespace-nowrap text-ellipsis overflow-hidden">
+                    {post.post.name}
+                </span>
             {/if}
 
-            <slot name="center" />
+            <slot {iconSize} name="center" />
         </div>
         
         <!--- Custom Items to the right of the spacer--->

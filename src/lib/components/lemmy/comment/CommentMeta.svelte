@@ -13,6 +13,7 @@
         Bookmark,
         Cake,
         NoSymbol,
+        Pencil,
         Trash
     } from 'svelte-hero-icons'
     
@@ -24,10 +25,12 @@
     
     let inCommunity:boolean = false
     let inProfile:boolean = false
+    let userIsModerator:boolean = false
 
     $: inCommunity = ($page.url.pathname.startsWith("/c/"))
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
-    
+    $: userIsModerator = (moderators.filter((index) => index.moderator.id == comment.creator.id).length > 0)
+
     function isNewAccount():boolean {
         return new Date().getTime()/1000/60 - (
         comment.creator.published.endsWith('Z')
@@ -62,14 +65,23 @@
                         <div class="flex flex-wrap items-center" class:text-slate-900={!comment.community} class:dark:text-zinc-100={!comment.community}>
                             <span class="hidden md:block'">Commented by&nbsp;</span>
                             <UserLink avatarSize={20} user={comment.creator} 
-                                mod={(moderators.filter((index) => index.moderator.id == comment.creator.id).length > 0)} 
+                                mod={userIsModerator} 
                                 avatar={!comment.community} />
                         </div>
                     {/if}
 
                 </span>
                 
-                <RelativeDate date={comment.post.published} />
+                <div class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
+                    <RelativeDate date={comment.post.published} />
+
+                    {#if comment.post.updated}
+                        <span class="flex flex-row items-center gap-1 ml-1">•
+                            <Icon src={Pencil} solid size="12" title="Edited" />
+                            <RelativeDate date={comment.post.updated}/>
+                        </span>
+                    {/if}
+                </div>
             </div>
 
             <!--- Badges --->
