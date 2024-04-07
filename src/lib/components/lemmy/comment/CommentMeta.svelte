@@ -69,7 +69,7 @@
 
                 </span>
                 
-                <RelativeDate date={comment.comment.published} />
+                <RelativeDate date={comment.post.published} />
             </div>
 
             <!--- Badges --->
