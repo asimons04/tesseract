@@ -34,7 +34,7 @@
     
 
     export let open:boolean = false;
-    export let group:CommunityGroup 
+    export let group:CommunityGroup = {} as CommunityGroup
     
 
     let formData:CommunityGroup = {
@@ -120,7 +120,7 @@
             return
         }
         removeGroup(group.name)
-        formData = undefined;
+        formData = {} as CommunityGroup;
         open = false;
     }
     
