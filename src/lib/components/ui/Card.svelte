@@ -24,7 +24,7 @@
 {#if backgroundImage}
     <div class="flex items-stretch rounded-lg" 
         style="background-image: url('{backgroundImage}'); 
-            background-size: {$userSettings.uiState.stretchCardBanner ? '100% 100%' : 'auto'}; 
+            background-size: {$userSettings.uiState.stretchCardBanner ? 'cover' : 'auto'}; 
             background-position: center center;
             background-repeat: no-repeat;
     ">

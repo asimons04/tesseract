@@ -111,6 +111,7 @@ interface Settings {
         showInstances: boolean
         showFullURL: boolean
         expandCrossPosts: boolean
+        matchCrossPostOnTitle: boolean
         showBannersInCards: boolean
         stretchCardBanner: boolean
         modalOpen: boolean
@@ -160,6 +161,7 @@ export const defaultSettings: Settings = {
         showInstances:                                                  true,
         showFullURL:                                                    false,
         expandCrossPosts:                                               true,
+        matchCrossPostOnTitle: toBool(env.PUBLIC_MATCH_XPOST_TITLE)     ?? true,
         showBannersInCards:                                             true,
         stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
         modalOpen:                                                      false,

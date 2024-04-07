@@ -422,7 +422,7 @@ export const findCrossposts = function (posts:PostView[]):PostView[] {
                     !post.post.removed && !otherPost.post.removed &&
                     ( 
                         (post.post.url && otherPost.post.url && post.post.url == otherPost.post.url) || 
-                        post.post.name.toLowerCase().trim() == otherPost.post.name.toLowerCase().trim()
+                        (userSettings?.uiState?.matchCrossPostOnTitle && post.post.name.toLowerCase().trim() == otherPost.post.name.toLowerCase().trim())
                     ) 
             ){
                 return true;

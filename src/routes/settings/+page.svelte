@@ -739,6 +739,39 @@
                         
                         <Switch bind:enabled={$userSettings.markReadPosts} />
                     </div>
+                    
+                    <!---Expand Crosspost List--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={BarsArrowDown} mini width={16}/>
+                                Expand Crosspost List
+                            </p>
+                            <p class="text-xs font-normal">Expand the crosspost list automatically. Disable to collapse it by default. Will be collapsed regardless of settings if there are more than 3.</p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.expandCrossPosts} />
+                    </div>
+
+                    <!---Match Crosspost on Title--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={BarsArrowDown} mini width={16}/>
+                                Match Crossposts on Title
+                            </p>
+                            <p class="text-xs font-normal">
+                                By default, crossposts are only detected based on having the same URL. Enable this option to also match the title (case-insensitive). This may
+                                cause undesirable rollups for communities that require post titles be fixed strings (e.g. me_irl, thelyicsgame, etc).
+                            </p>
+                        </div>
+                        
+                        <div class="mx-auto"/>
+                        
+                        <Switch bind:enabled={$userSettings.uiState.matchCrossPostOnTitle} />
+                    </div>
 
                     <!---Blur NSFW Images--->
                     <div class="flex flex-row w-full gap-2 py-2">
@@ -879,20 +912,7 @@
                         <Switch bind:enabled={$userSettings.uiState.showFullURL} />
                     </div>
 
-                    <!---Expand Crosspost List--->
-                    <div class="flex flex-row w-full gap-2 py-2">
-                        <div class="flex flex-col">
-                            <p class="text-sm font-bold flex flex-row gap-2">
-                                <Icon src={BarsArrowDown} mini width={16}/>
-                                Expand Crosspost List
-                            </p>
-                            <p class="text-xs font-normal">Expand the crosspost list automatically. Disable to collapse it by default. Will be collapsed regardless of settings if there are more than 3.</p>
-                        </div>
-                        
-                        <div class="mx-auto"/>
-                        
-                        <Switch bind:enabled={$userSettings.uiState.expandCrossPosts} />
-                    </div>
+                    
 
                     <!---Fediseer Badges--->
                     <div class="flex flex-row w-full gap-2 py-2">
