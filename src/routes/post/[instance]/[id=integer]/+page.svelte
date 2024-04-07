@@ -39,8 +39,9 @@
     let community_view = data.post.community_view
     let moderators = data.post.moderators
     
-    
-    
+    //@ts-ignore (Add cross posts to post_view object for sanity
+    data.post.post_view.cross_posts = data.post.cross_posts;
+
     onMount(async () => {
         setSessionStorage('lastSeenCommunity', { id: community_view.community.id, name: `${community_view.community.name}@${new URL(community_view.community.actor_id).hostname}` })
         
@@ -104,8 +105,6 @@
 
 <SubNavbar iconSize={28} back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={post_view} />
     
-
-<!--postActionsMenu communityActionsMenu moderationMenu-->
 
 
 <div class="flex flex-col md:flex-row gap-4 w-full h-full">

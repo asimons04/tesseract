@@ -1,10 +1,11 @@
 <script lang="ts">
+    import type { PostView } from 'lemmy-js-client'
     import { fade } from 'svelte/transition'
     
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import { userSettings } from '$lib/settings.js'
-    import type { PostView } from 'lemmy-js-client'
+    
     
     import { ArchiveBox, Icon, Plus } from 'svelte-hero-icons'
 
@@ -15,12 +16,7 @@
 <section class="flex flex-col gap-3 sm:gap-4 h-full">
     {#if posts.length == 0}
         <div class="h-full grid place-items-center">
-            <Placeholder
-                icon={ArchiveBox}
-                title="No posts"
-                description="There are no posts that match this filter."
-            >
-            </Placeholder>
+            <Placeholder icon={ArchiveBox} title="No posts" description="There are no posts that match this filter." />
         </div>
     {:else}
         <div data-sveltekit-preload-data="hover"

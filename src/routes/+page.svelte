@@ -3,7 +3,15 @@
     import type { Snapshot } from './$types';
 
     import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
-    import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, scrollToLastSeenPost, setLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { 
+        addMBFCResults, 
+        findCrossposts, 
+        filterKeywords, 
+        fixHourAheadPosts, 
+        scrollToLastSeenPost, 
+        setLastSeenPost, 
+        sortPosts 
+    } from '$lib/components/lemmy/post/helpers'
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings'
@@ -17,6 +25,8 @@
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     export let data
+
+    //$: data.posts.posts
 
     let infiniteScroll = {
         loading: false,     // Used to toggle loading indicator
@@ -59,7 +69,7 @@
                 type_: data.listingType,
                 auth: $profile?.jwt,
             } as GetPosts
-        ){
+        ) {
         
         //@ts-ignore
         if (data.posts.next_page) params.page_cursor = data.posts.next_page;
@@ -78,19 +88,13 @@
         posts.posts = filterKeywords(posts.posts);
 
         // Roll up any duplicate posts/crossposts
-        posts.posts = findCrossposts(posts.posts);
+        //posts.posts = findCrossposts(posts.posts);
 
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
         
         // Sort the new result set based on the selected sort method
-        if (data.sort == 'New')          posts.posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
-        if (data.sort == 'Old')          posts.posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-        if (data.sort == 'NewComments')  posts.posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
-        if (data.sort == 'Active')       posts.posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
-        if (data.sort == 'Hot')          posts.posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
-        if (data.sort == 'MostComments') posts.posts.sort((a, b) => b.counts.comments - a.counts.comments)
-        if (data.sort.startsWith('Top')) posts.posts.sort((a, b) => b.counts.score - a.counts.score)
+        posts.posts = sortPosts(posts.posts, data.sort)
         
         
         // Loop over the new posts
@@ -115,7 +119,10 @@
         //@ts-ignore
         if (posts.next_page) data.posts.next_page = posts.next_page
         
+        // Run crosspost detection
+        data.posts.posts = findCrossposts(data.posts.posts);
         data.posts.posts = data.posts.posts
+        
         infiniteScroll.loading  = false
     }
 </script>

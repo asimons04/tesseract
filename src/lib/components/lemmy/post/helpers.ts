@@ -401,13 +401,11 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
         console.log(filteredPosts);
         
         return posts
-        //return { posts: posts };
     }
     catch (err) {
         console.log("filterKeywords():  An error has occurred. Returning unfiltered posts list");
         console.log(err);
         return posts
-        //return { posts: posts}
     }
 
 }
@@ -482,14 +480,12 @@ export const findCrossposts = function (posts:PostView[]):PostView[] {
             }
         }
 
-        return posts
-        //return { posts: uniquePosts };
+        return uniquePosts
     }
     catch (err) {
         console.log("findCrossposts():  An error has occurred. Returning unfiltered posts list");
         console.log(err);
         return posts
-        //return { posts: posts }
     }
 }
 
@@ -562,6 +558,9 @@ export const crossPost = function(post:PostView):void {
 
 // Sort an array of posts
 export const sortPosts = function(posts:PostView[], direction:SortType): PostView[] {
+    const Page = get(page)
+    const inCommunity = (Page?.url?.pathname && Page.url.pathname.startsWith('/c/')) ?? false
+    
     if (direction == 'New')          posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
     if (direction == 'Old')          posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
     if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
@@ -569,6 +568,13 @@ export const sortPosts = function(posts:PostView[], direction:SortType): PostVie
     if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
     if (direction == 'MostComments') posts.sort((a, b) => b.counts.comments - a.counts.comments)
     if (direction.startsWith('Top')) posts.sort((a, b) => b.counts.score - a.counts.score)
+    
+    // Move featured posts to the beginning of the arrray
+    posts.sort((a,b) => Number(b.post.featured_local) - Number(a.post.featured_local))
 
+    // Move community featured posts to beginning if browsing community page
+    if (inCommunity) posts.sort((a,b) => Number(b.post.featured_community) - Number(a.post.featured_community))
+    
+    
     return posts
 }
