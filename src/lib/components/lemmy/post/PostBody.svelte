@@ -20,6 +20,7 @@
     export let post:PostView;
     export let displayType:PostDisplayType = 'post'
     export let expandPreviewText:boolean = false
+    export let expandCompact:boolean = false
     export let previewLength:number = 300
     export let inline:boolean = false
     export let postContainer: HTMLDivElement
@@ -58,7 +59,9 @@
                                 ? post.post.body.slice(0, previewLength)
                                 : post.post.body
                         }
-                        inline={!expandPreviewText && post.post.body.length > previewLength}
+                        inline={
+                            (!expandPreviewText && post.post.body.length > previewLength) || (!expandPreviewText && $userSettings.showCompactPosts && !expandCompact)
+                        }
                     />
                 </div>
 

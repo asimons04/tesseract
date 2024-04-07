@@ -101,7 +101,7 @@
         <PostPeerTube bind:post {displayType} />
     {/if}
 
-    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText/>
+    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText bind:expandCompact/>
 
     <!--- Crossposts --->
     <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'}/>
