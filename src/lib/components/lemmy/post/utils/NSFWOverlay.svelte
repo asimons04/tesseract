@@ -20,7 +20,7 @@
             }
         }}
     >  
-        <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-lg font-bold border border-slate-500 whitespace-nowrap shadow-lg p-4 cursor-pointer">
+        <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-lg font-bold rounded-lg border border-slate-500 whitespace-nowrap shadow-lg p-4 cursor-pointer">
             [Reveal NSFW Content]
         </div>
     </div>
