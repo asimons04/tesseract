@@ -129,7 +129,7 @@
         />
 
         <!--- Modlog Filter Menu --->
-        <SubnvarbarMenu alignment="bottom-center" title="Modlog Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[170%] md:!-left-[50%]">
+        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[170%] md:!-left-[50%]">
             <!--- Lookup a Community to Filter--->
             <MenuButton>
                 <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
