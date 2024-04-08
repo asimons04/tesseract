@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PostView } from 'lemmy-js-client'
+    import type { PostView, SortType } from 'lemmy-js-client'
 
     import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
     import { arrayRange, searchParam } from '$lib/util.js'
@@ -85,7 +85,14 @@
     let addCommunityGroup:boolean               = false
     let editPostModal:boolean                   = false
 
-    const dispatcher = createEventDispatcher();
+    //const dispatcher = createEventDispatcher();
+    const dispatcher = createEventDispatcher< 
+        { 
+            navChangeSort?: string,
+            navBack?: null,
+            navRefresh?: null
+        }
+    >()
     
     
    
@@ -178,7 +185,8 @@
                     iconSize={18}
                     on:select={(e) => {
                         // @ts-ignore
-                        searchParam($page.url, 'sort', e.detail, 'page')
+                        //searchParam($page.url, 'sort', e.detail, 'page')
+                        dispatcher('navChangeSort', e.detail)
                     }}
                 />
             {/if}
@@ -228,8 +236,8 @@
             <Button title="Refresh" size="sm" color="tertiary"
                 on:click={async () => {
                     dispatcher('navRefresh')
-                    setSessionStorage('lastClickedPost', undefined)
-                    await goto(window.location.href, {invalidateAll: true});
+                    //setSessionStorage('lastClickedPost', undefined)
+                    //await goto(window.location.href, {invalidateAll: true});
                 }}
                 >
                 <Icon src={ArrowPath} width={iconSize}/>

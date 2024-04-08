@@ -1,6 +1,8 @@
 <script lang="ts">
     import type { GetPosts } from 'lemmy-js-client'
-    import type { Snapshot } from './$types';
+    //import type { Snapshot } from './$types';
+
+    import { snapshot } from '$lib/storage'
 
     import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
     import { 
@@ -12,8 +14,11 @@
         setLastSeenPost, 
         sortPosts 
     } from '$lib/components/lemmy/post/helpers'
+    
     import { getClient } from '$lib/lemmy.js'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { searchParam } from '$lib/util.js'
     import { userSettings } from '$lib/settings'
     
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
@@ -35,28 +40,40 @@
         automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
     }
+    let refreshing = false
 
     // Store and reload the page data between navigations
+    /*
     export const snapshot: Snapshot<string> = {
 		capture: () => JSON.stringify(data),
         restore: (value) => {
             data = JSON.parse(value)
         },
 	};
+    */
 
     beforeNavigate(() => {
+        if (!refreshing) snapshot.capture(data)
         infiniteScroll.exhausted = false
     })
 
     afterNavigate(async() => {
+        if (!refreshing) {
+            const restoreData = snapshot.restore()
+            if (restoreData) data = restoreData
+        }
         await scrollToLastSeenPost()
     })
 
-    async function refresh() {
+    async function refresh(url:string = window.location.href) {
+        refreshing = true
+        snapshot.clear()
         setLastSeenPost(-1)
         infiniteScroll.exhausted = false
         infiniteScroll.truncated = false
+        goto(url, {invalidateAll: true})
         window.scrollTo(0,0)
+        refreshing = false
     }
 
     async function loadPosts(params: GetPosts =  {
@@ -133,6 +150,17 @@
     listingType={true}      bind:selectedListingType={data.listingType}
     sortMenu={true}         bind:selectedSortOption={data.sort}
     refreshButton           on:navRefresh={()=> refresh()}
+    
+    on:navChangeSort={(e) => {
+        //refreshing = true 
+        if (e && e.detail) {
+            let url = $page.url
+            url.searchParams.set('sort', e.detail)
+            //searchParam($page.url, 'sort', e.detail, 'page')
+            refresh(url.toString())
+        }
+        //refreshing = false
+    }}
 >
     <!---Inline Search in Middle--->
     <SiteSearch slot="center"/>

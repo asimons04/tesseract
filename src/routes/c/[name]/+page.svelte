@@ -22,7 +22,9 @@
     export let data
     
     onMount(() => {
+        console.log("running onMount");
         if (data?.community) {
+            console.log("Setting last seen community")
             setSessionStorage('lastSeenCommunity', {
                 id: data.community.community_view.community.id,
                 name: fullCommunityName(
