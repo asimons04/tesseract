@@ -11,8 +11,6 @@ The full list of changes can be found in the [change log](./ChangeLog.md).
 ## 0.19.x Support
 Tesseract supports 0.19.x and has since version 1.2.something.  
 
-**Note**:  Tesseract is not compatible with 0.19.2 beacuse of a stupid thing the Lemmy devs did (I'm sure you're just as not shocked as I'm not).  That was fixed in 0.19.3.  AFAIK, that only affects remote community browsing, so if you're running 0.19.2, Tesseract _should_ work for your local users.
-
 None of the 0.19 features (such as instance block) are plumbed in yet.  As of the latest release, 1.2.9.31, the only 0.19 support is with the auth module.  There are things I'd like to do with those features, but of freaking course, the Lemmy API leaves me hanging by not providing the needed data. That's all to say those features are in the works, but I'm not going to release anything until I can make them behave like I want them.
 
 Version 1.3.0, currently in development, is adding support for cursor-based pagination since the old offset-based method is deprecated.  As a side-effect, I've switched to infinite scroll (ugh) as the pagination method.
@@ -22,7 +20,7 @@ Version 1.3.0, currently in development, is adding support for cursor-based pagi
 - People were asking for infinite scroll anyway
 - I'm implementing a setting to infinite scroll or load next posts manually
 
-No release date has been set as I'm still working out one last bug with the infinite scroll before replacing the pagination elsewhere with that module.
+No release date has been set yet, but the 1.3.0 branch is relatively stable since I use the dev branch as my daily driver for Lemmy usage.
 
 
 
