@@ -154,6 +154,7 @@
                         <span class="flex flex-row gap-2 w-full">
                             
                             <CommunityAutocomplete
+                                containerClass="!w-full"
                                 placeholder="Community"
                                 listing_type="All"
                                 on:select={(e) => {
@@ -190,6 +191,7 @@
                         <span class="flex flex-row gap-2 w-full">
                             
                             <PersonAutocomplete
+                                containerClass="!w-full"    
                                 placeholder="Moderator"
                                 on:select={(e) => {
                                     filter.moderator.person = e.detail
@@ -224,6 +226,7 @@
                     {:else}
                         <span class="flex flex-row gap-2 w-full">
                             <PersonAutocomplete
+                                containerClass="!w-full"
                                 placeholder="Moderatee"
                                 on:select={(e) => {
                                     filter.moderatee.person = e.detail
