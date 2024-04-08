@@ -259,7 +259,7 @@ export async function load({ url }: LoadParams) {
     const results = await getClient().getModlog({
         auth: get(profile)?.jwt,
         community_id: community,
-        limit: 50,
+        limit: 20,
         type_: type,
         page: page,
         mod_person_id: modId,
