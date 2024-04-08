@@ -185,7 +185,7 @@
                     iconSize={18}
                     on:select={(e) => {
                         // @ts-ignore
-                        //searchParam($page.url, 'sort', e.detail, 'page')
+                        searchParam($page.url, 'sort', e.detail, 'page')
                         dispatcher('navChangeSort', e.detail)
                     }}
                 />
@@ -236,8 +236,8 @@
             <Button title="Refresh" size="sm" color="tertiary"
                 on:click={async () => {
                     dispatcher('navRefresh')
-                    //setSessionStorage('lastClickedPost', undefined)
-                    //await goto(window.location.href, {invalidateAll: true});
+                    setSessionStorage('lastClickedPost', undefined)
+                    await goto(window.location.href, {invalidateAll: true});
                 }}
                 >
                 <Icon src={ArrowPath} width={iconSize}/>

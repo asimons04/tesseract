@@ -12,11 +12,12 @@ interface LoadParams {
     fetch?: any
 }
 
+
 export async function load({ url }: LoadParams) {
     const page = Number(url.searchParams.get('page') || 1) || 1
     const sort: SortType = (url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     const listingType: ListingType = (url.searchParams.get('type') as ListingType) || get(userSettings).defaultSort.feed
-
+    
     try {
         // Fetch posts
         let [ posts, siteData ] = await Promise.all([
@@ -46,8 +47,9 @@ export async function load({ url }: LoadParams) {
         posts.posts = sortPosts(posts.posts, sort)
     
 
-        // Return the data to the frontend
         
+
+        // Return the data to the frontend
         return {
             sort: sort,
             listingType: listingType,

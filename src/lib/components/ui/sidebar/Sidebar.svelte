@@ -73,47 +73,28 @@
     <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Popular --->
-        <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="hover">
+        <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="off">
             <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
         </SidebarButton>
 
         <!---Hot --->
-        <SidebarButton href="/?sort=Hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="hover">
+        <SidebarButton href="/?sort=Hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="off">
             <Icon src={Fire} mini size="18" title="Hot" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Hot</span>
         </SidebarButton>
 
         <!---Top Day --->
-        <SidebarButton href="/?sort=TopDay" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="hover">
+        <SidebarButton href="/?sort=TopDay" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="off">
             <Icon src={CalendarDays} mini size="18" title="Top Day" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Top Day</span>
         </SidebarButton>
     </span>
+
     <hr class="border-slate-300 dark:border-zinc-800 mt-2"/>
 
-    <!---
-    <Button
-        alignment="left"
-        on:click={() =>
-            ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
-        }
-        class="w-max !p-2 hover:bg-slate-200"
-        aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-        title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-    >
-        <Icon
-            src={ChevronDoubleLeft}
-            mini
-            size="16"
-            class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"
-        />
-    </Button>
-    --->
-    
-
     <!---Frontpage--->
-    <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Home" on:click={() => { goto('/', {invalidateAll: true}) }}>
+    <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Home" on:click={() => { goto('/', {invalidateAll: true}) }} data-sveltekit-preload-data="off">
         <Icon src={Home} mini size="18" title="Home" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
@@ -128,7 +109,7 @@
 
     <!---Favorites Feed--->
     {#if $profile?.user}
-    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="hover">
+    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="off">
         <Icon src={Star} mini size="18" title="Feeds" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
     </SidebarButton>

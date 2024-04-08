@@ -2,21 +2,21 @@ import { page } from '$app/stores'
 import { get } from 'svelte/store'
 
 /** Store data for the current page + params to localStorage */
-export const snapshot = {
+export const PageSnapshot = {
+   
     /** Stores the provided data object to localStorage under the key of the current page route + params */
     capture: function(data:any):void {
-        console.log("Capturing snapshot")
         const Page = get(page)
-        if (!page) return
+        if (!page) return 
 
         const key = `snapshot_${Page.url.pathname}`
         // ?${Page.url.searchParams.toString()}`
         storage.set(key, data)
+        return
     },
 
     /** Clears the current page's data from localStorage */
     clear: function(): void {
-        console.log("Clearing snapshot")
         const Page = get(page)
         if (!page) return undefined
         
@@ -27,9 +27,8 @@ export const snapshot = {
 
     /** Returns the stored data object from localStorage for the key of the current page route + params */
     restore: function(): any {
-        console.log("Restoring snapshot")
         const Page = get(page)
-        if (!page) return undefined
+        if (!page) return {}
         
         const key = `snapshot_${Page.url.pathname}`
         //?${Page.url.searchParams.toString()}`

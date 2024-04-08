@@ -22,7 +22,7 @@
     <title>Profile</title>
 </svelte:head>
 
-<div class="flex flex-col gap-4 h-full">
+<div class="flex flex-col gap-0 h-full w-full">
    
     
     <!---Use Different navigation bars depending on which profile page is active--->

@@ -301,10 +301,12 @@ export async function scrollToLastSeenPost(pathname:string = '/') {
         const element = document.getElementById(lastSeenPost)
         
         if (element) {
+            console.log("Scrolling to post")
             disableScrollHandling()
             scrollToTop(element, false)
         }
         else {
+            console.log("Scrolling to top")
             window.scrollTo(0,0)
         }
     }

@@ -2,27 +2,29 @@
     import type { Snapshot } from './$types';
     import type { GetPosts } from 'lemmy-js-client'
     
-    import { addMBFCResults,  filterKeywords,  scrollToLastSeenPost, setLastSeenPost } from '$lib/components/lemmy/post/helpers'
-    import { afterNavigate, beforeNavigate } from '$app/navigation'
+    import { addMBFCResults,  filterKeywords,  scrollToLastSeenPost, setLastSeenPost, sortPosts } from '$lib/components/lemmy/post/helpers'
     import { fullCommunityName, searchParam } from '$lib/util.js'
     import { getClient } from '$lib/lemmy.js'
+    import { goto } from '$app/navigation'
     import { setSessionStorage } from '$lib/session.js'
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
+    import { PageSnapshot } from '$lib/storage'
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings'
     
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
-    //import Pageination from '$lib/components/ui/Pageination.svelte'
+    import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    
 
 
     export let data
     
     onMount(() => {
-        console.log("running onMount");
+
         if (data?.community) {
             console.log("Setting last seen community")
             setSessionStorage('lastSeenCommunity', {
@@ -36,31 +38,30 @@
     })
 
     let infiniteScroll = {
-        loading: false,
-        exhausted: false,
-        maxPosts: 100,
-        automatic: true,
-        enabled: true,
+        loading: false,     // Used to toggle loading indicator
+        exhausted: false,   // Sets to true if the API returns 0 posts
+        maxPosts: 100,      // Maximum number of posts to keep in the FIFO
+        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
+        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
+        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
     }
 
-    // Store and reload the page data between navigations
-    export const snapshot: Snapshot<string> = {
-		capture: () => JSON.stringify(data),
-        restore: (value) => {
-            data = JSON.parse(value)
+    // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
+    export const snapshot: Snapshot<void> = {
+		capture: () => {
+            PageSnapshot.capture(data)
+            infiniteScroll.exhausted=false
         },
+        restore: async () => {
+            data = PageSnapshot.restore()
+            await scrollToLastSeenPost()
+        }
 	};
-
-    beforeNavigate(() => {
-        infiniteScroll.exhausted = false
-    })
-
-    afterNavigate(async() => {
-        await scrollToLastSeenPost()
-    })
 
     async function refresh() {
         setLastSeenPost(-1)
+        infiniteScroll.exhausted = false
+        infiniteScroll.truncated = false
         window.scrollTo(0,0)
     }
 
@@ -93,6 +94,9 @@
 
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
+
+        // Sort the new result set based on the selected sort method
+        posts.posts = sortPosts(posts.posts, data.sort)
         
         // Loop over the new posts
         for (let i:number=0; i < posts.posts.length; i++) {
@@ -107,7 +111,10 @@
             if (!exists) data.posts.posts.push(posts.posts[i])
             
             // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
-            if (data.posts.posts.length > infiniteScroll.maxPosts) data.posts.posts.shift()    
+            if (data.posts.posts.length > infiniteScroll.maxPosts) {
+                data.posts.posts.shift()
+                infiniteScroll.truncated = true  
+            }
         }
 
         //@ts-ignore
@@ -139,7 +146,13 @@
 {#if data?.posts && data?.community}
     <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full h-full py-2">
         <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-            
+            <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
+            <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
+                on:click={() => {
+                    goto(window.location.href, {invalidateAll: true})
+                    refresh()
+                }}
+            />
             <PostFeed posts={data.posts.posts}/>
             
             <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
