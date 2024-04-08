@@ -72,19 +72,19 @@ export interface Filters {
     title?: string,
     moderator: {
         set: boolean,
-        person?: Person | undefined
+        person?: Person 
     },
     moderatee: {
         set: boolean,
-        person?: Person | undefined
+        person?: Person 
     },
     community: {
         set: boolean,
-        community?: Community | undefined
+        community?: Community
     },
     action: {
         set: boolean,
-        action?: ModlogActionType | undefined
+        action?: ModlogActionType 
     }
 }
 

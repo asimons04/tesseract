@@ -19,7 +19,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
+    import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
 
@@ -134,11 +134,10 @@
             
             <TextInput bind:value={formData.name} readonly={group.name == 'Favorites'} label="Group Name" class="{group.name == 'Favorites' ? 'hidden' : ''}"/>
             
-            <ObjectAutocomplete
+            <CommunityAutocomplete
                 label="Add Member"
                 placeholder="Add a community to '{formData.name}'"
                 listing_type="All"
-                showWhenEmpty={false}
                 containerClass="!max-h-[50vh]"
                 bind:q={communitySearchInput}
                 on:select={(e) => {

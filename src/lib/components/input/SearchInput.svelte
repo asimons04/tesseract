@@ -47,18 +47,20 @@
         {...$$restProps}
     />
 
-    <Menu
-        open={((options.length > 0 && query != '') || showWhenEmpty) }
+    <Menu open={((options.length > 0 && query != '') || showWhenEmpty) }
         alignment="bottom-left"
-        containerClass="{containerClass}"
+        containerClass="!max-h-[50vh] {containerClass}"
     >
         {#if query == '' && showWhenEmpty}
             <slot {extractName} {extractSelected} {query} />
         
         {:else if query!=''}
             {#each options as option}
-                <slot {extractName} {extractSelected} {option} {query}>
-                    <MenuButton on:click={() => extractSelected(option)}>
+                <slot {extractName} {extractSelected} {query} {option}>
+                    <MenuButton on:click={() => {
+                        extractSelected(option)
+                        query=''
+                    }}>
                         {extractName(option)}
                     </MenuButton>
                 </slot>

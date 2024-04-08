@@ -180,7 +180,7 @@
                 />
             {/if}
             
-            <!---Page Selector--->
+            <!---Page Selector (Deprecated)--->
             {#if pageSelection && currentPage}
                 {#if sortMenu}
                     <Icon src={ArrowSmallRight} mini width={24} class="hidden md:flex"/>

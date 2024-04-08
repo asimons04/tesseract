@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {Filters, ModLog} from '../page.js'
+    import type {Filters, ModLog} from '../+page.js'
     
     import { page } from '$app/stores'
     import { searchParam } from '$lib/util.js'
@@ -21,82 +21,79 @@
 <div class="flex flex-col gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full" >
     
     <div class="flex flex-col text-xs w-full lg:w-[5%]">
-        <RelativeDate date={item.timestamp} />
+        <RelativeDate date={item.timestamp.toString()} />
     </div>
 
     <div class="flex flex-row gap-1 text-xs w-full lg:w-[15%] items-center">
         {#if item.community}
-            <span class="lg:hidden text-xs font-bold">Community:</span>
-            <CommunityLink
-                showInstance={false}
-                avatar={false}
-                avatarSize={20}
-                community={item.community}
-            />
-            
-            <span class="ml-auto cursor-pointer" title="Filter modlog for {item.community.name}" on:click={() => {
-                filter.community.set = !filter.community.set;
-                if (filter.community.set) {
-                    searchParam($page.url, 'community', item.community.id, 'page');
-                } else {
-                    searchParam($page.url, 'community', '', 'community');
-                }
+            <span class="flex flex-row gap-2 items-center w-full">
+                <span class="lg:hidden text-xs font-bold">Community:</span>
                 
-            }}>
-                <Icon src={filter.community.set ? MinusCircle : PlusCircle} mini width={24} />
+                <button class="cursor-pointer" title="Filter modlog for {item.community.name}" on:click={() => {
+                    filter.community.set = !filter.community.set;
+                    if (item?.community?.id && filter.community.set) {
+                        searchParam($page.url, 'community', item.community.id.toString(), 'page');
+                    } else {
+                        searchParam($page.url, 'community', '', 'community');
+                    }
+                    
+                }}>
+                    <Icon src={filter.community.set ? MinusCircle : PlusCircle} mini width={24} />
+                </button>
+
+                <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community}/>
             </span>
-        
         {/if}
     </div>
     
 
     <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
         {#if item.moderator}
-            <span class="lg:hidden text-xs font-bold">Moderator:</span>    
-            <UserLink
-                showInstance={true}
-                avatar={false}
-                avatarSize={20}
-                user={item.moderator}
-            />
-
-            <span class="ml-auto cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
+        <span class="flex flex-row gap-2 items-center w-full">    
+            <span class="lg:hidden text-xs font-bold">Moderator:</span>
+            
+            <button class="cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
                 filter.moderator.set = !filter.moderator.set;
-                if (filter.moderator.set) {
-                    searchParam($page.url, 'mod_id', item.moderator.id, 'page');
+                if (item?.moderator && filter.moderator.set) {
+                    searchParam($page.url, 'mod_id', item.moderator.id.toString(), 'page');
                 } else {
                     searchParam($page.url, 'mod_id', '', 'mod_id');
                 }
                 
             }}>
                 <Icon src={filter.moderator.set ? MinusCircle : PlusCircle} mini width={24} />
-            </span>
+            </button>
+
+            <UserLink showInstance={true} avatar={false} avatarSize={20} user={item.moderator} />
+        </span>
         {/if}
     </div>
 
     <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
         {#if item.moderatee}
+        <span class="flex flex-row gap-2 items-center w-full">        
             <span class="lg:hidden text-xs font-bold">Moderatee:</span>
-            <UserLink avatar={false} showInstance={true} user={item.moderatee} />
             
-            <span class="ml-auto cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
+            <button class="cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
                 filter.moderatee.set = !filter.moderatee.set;
-                if (filter.moderatee.set) {
-                    searchParam($page.url, 'other_person_id', item.moderatee.id, 'page');
+                if (item?.moderatee && filter.moderatee.set) {
+                    searchParam($page.url, 'other_person_id', item.moderatee.id.toString(), 'page');
                 } else {
                     searchParam($page.url, 'other_person_id', '', 'other_person_id');
                 }
                 
             }}>
                 <Icon src={filter.moderatee.set ? MinusCircle : PlusCircle} mini width={24} />
-            </span>
-            
+            </button>
+
+            <UserLink avatar={false} showInstance={true} user={item.moderatee} />
+        </span>
         {/if}
 
     </div>
     
     <div class="flex flex-col gap-1 text-xs w-full lg:w-[40%]">
-        <ModlogAction action={item.actionName} expires={item.expires ?? undefined} />
+        <ModlogAction action={item.actionName} expires={item.expires} />
 
         <ul class="pl-4 text-xs">
             {#if item.expires}

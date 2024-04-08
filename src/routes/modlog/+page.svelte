@@ -1,23 +1,38 @@
 <script lang="ts">
-    import type { Filters} from './page.js'
+    import type { Filters} from './+page.js'
     
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
     import { searchParam } from '$lib/util.js'
-    import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
+    import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ModlogItemTable from './item/ModlogItemTable.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
+    import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import { Icon, ArrowPathRoundedSquare, ExclamationTriangle, XCircle } from 'svelte-hero-icons'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import SubnvarbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
+    import { 
+        Icon, 
+        ArrowPathRoundedSquare, 
+        ExclamationTriangle, 
+        Funnel, 
+        HandRaised, 
+        ShieldCheck,        
+        UserGroup,
+        User,
+        XCircle 
+    } from 'svelte-hero-icons'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte';
+    
+    
 
     export let data
-
-
     
     // Setup Filter object    
     let filter: Filters = {
@@ -62,75 +77,10 @@
 <svelte:head>
     <title>Modlog</title>
 </svelte:head>
-
-<div class="flex flex-col gap-4 p-2">
-    <div class="flex flex-row w-full flex-wrap justify-between">
-        <div class="flex flex-col">
-            <h1 class="font-bold text-2xl">Modlog</h1>
-            
-            {#if filter.community.set || filter.moderator.set || filter.moderatee.set}
-                <h2 class="font-bold text-lg">Filters</h2>    
-                
-                <div class="text-xs ml-4 flex flex-col gap-2">
-                    {#if filter.community.set}
-                        <div class="flex flex-row gap-2">
-                            <span>
-                                <strong>Community ID</strong>: {
-                                    filter.community.community
-                                        ? filter.community.community.name + '@' + new URL(filter.community.community.actor_id).host
-                                        : new URLSearchParams(window.location.search).get('community')
-                                    }
-                            </span>
-                            
-                            <span class="cursor-pointer" on:click={() => {
-                                searchParam($page.url, 'community', '', 'community');
-                            }}>
-                                <Icon src={XCircle} mini size="16"/>
-                            </span>
-                        </div>
-                    {/if}
-
-                    {#if filter.moderator.set}
-                        <div class="flex flex-row gap-2">
-                            <span>
-                                <strong>Moderator ID</strong>: {
-                                    filter.moderator.person 
-                                        ? filter.moderator.person.name + '@' + new URL(filter.moderator.person.actor_id).host
-                                        : new URLSearchParams(window.location.search).get('mod_id')
-                                    }
-                            </span>
-
-                            <span class="cursor-pointer" on:click={() => {
-                                searchParam($page.url, 'mod_id', '', 'mod_id');
-                            }}>
-                                <Icon src={XCircle} mini size="16"/>
-                            </span>
-                        </div>
-                    {/if}
-
-                    {#if filter.moderatee.set}
-                        <div class="flex flex-row gap-2">
-                            <span>    
-                                <strong>Moderatee ID</strong>: {
-                                    filter.moderatee.person 
-                                        ? filter.moderatee.person.name + '@' + new URL(filter.moderatee.person.actor_id).host
-                                        : new URLSearchParams(window.location.search).get('other_person_id')
-                                    }
-                                
-                            </span>
-                        
-                            <span class="cursor-pointer" on:click={() => {
-                                searchParam($page.url, 'other_person_id', '', 'other_person_id');
-                            }}>
-                                <Icon src={XCircle} mini size="16"/>
-                            </span>
-                        </div>
-                    {/if}
-                </div>
-            {/if}
-        </div>
-        
-        <MultiSelect
+<SubNavbar home  refreshButton toggleCommunitySidebar scrollButtons >
+    
+    <span class="flex flex-row gap-0 md:gap-1 items-center" slot="left" let:iconSize>
+        <SelectMenu
             options={[
                 'All',
                 'ModRemovePost',
@@ -169,71 +119,141 @@
                 'Purge Comment',
             ]}
             selected={data.type}
-            items={2}
             on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+            icon={HandRaised}
+            title="Modlog Action"
         />
-    </div>
-        
-    <div class="flex flex-row w-full flex-wrap items-center justify-between">
 
-        <div class="max-w-sm" >
-            <div class="block my-1 font-bold text-sm">Community</div>
-            <ObjectAutocomplete
-                placeholder="Filter by community"
-                jwt={$profile?.jwt}
-                listing_type="All"
-                showWhenEmpty={true}
-                on:select={(e) =>
-                    searchParam($page.url, 'community', e.detail?.id.toString(), 'page')}
-            />
-
+        <SubnvarbarMenu alignment="bottom-center" title="Modlog Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[170%] md:!-left-[50%]">
             
-        </div>
-        
-        <div class="max-w-sm">
-            <div class="block my-1 font-bold text-sm">Moderator</div>
-            <ObjectAutocomplete
-                placeholder="Filter by Moderator"
-                jwt={$profile?.jwt}
-                showWhenEmpty={false}
-                type="person"
-                on:select={(e) =>
-                    searchParam($page.url, 'mod_id', e.detail?.id.toString(), 'page')}
-            />
-        </div>
+            
+            <!--- Lookup a Community to Filter--->
+            <MenuButton>
+                <button class="flex flex-row gap-2 w-full" on:click|stopPropagation>
+                    <Icon mini src={UserGroup} width={iconSize-2} />
+                    
+                    {#if filter.community.set}
+                        <div class="flex flex-row w-full justify-between">
+                            
+                            {#if filter.community.community}
+                                <CommunityLink avatar={true} avatarSize={iconSize} community={filter.community.community} />
+                            {:else}
+                                <span>
+                                    { new URLSearchParams(window.location.search).get('community') }
+                                </span>
+                            {/if}
+                            
+                            
+                            <button class="cursor-pointer" on:click={() => {
+                                searchParam($page.url, 'community', '', 'community');
+                            }}>
+                                <Icon src={XCircle} mini width={iconSize-2}/>
+                            </button>
+                        </div>
+                    {:else}
+                        <span class="flex flex-row gap-2 w-full">
+                            
+                            <CommunityAutocomplete
+                                placeholder="Community"
+                                listing_type="All"
+                                on:select={(e) => {
+                                    filter.community.community = e.detail
+                                    searchParam($page.url, 'community', e.detail?.id.toString(), 'page')
+                                }}
+                            />
+                        </span>
+                    {/if}
+                </button>
+            </MenuButton>
+            
+            <!---Lookup a moderator to filter--->
+            <MenuButton>
+                <button class="flex flex-row gap-2 w-full" on:click|stopPropagation>
+                    <Icon mini src={ShieldCheck} width={iconSize-2} />    
+                    
+                    {#if filter.moderator.set}
+                        <div class="flex flex-row w-full justify-between">
+                            {#if filter.moderator.person}
+                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderator.person} />
+                            {:else}
+                                <span>
+                                    { new URLSearchParams(window.location.search).get('mod_id') }
+                                </span>
+                            {/if}
+                            
+                            <button class="cursor-pointer" on:click={() => searchParam($page.url, 'mod_id', '', 'mod_id')}>
+                                <Icon src={XCircle} mini width={iconSize-2}/>
+                            </button>
+                        </div>
+                    {:else}
+                        <span class="flex flex-row gap-2 w-full">
+                            
+                            <PersonAutocomplete
+                                placeholder="Moderator"
+                                on:select={(e) => {
+                                    filter.moderator.person = e.detail
+                                    searchParam($page.url, 'mod_id', e.detail?.id.toString(), 'page')
+                                }}
+                            />
+                        </span>
+                    {/if}
+                </button>
+            </MenuButton>
 
-        <div class="max-w-sm">
-            <div class="block my-1 font-bold text-sm">Moderatee</div>
-            <ObjectAutocomplete
-                placeholder="Filter by Moderatee"
-                jwt={$profile?.jwt}
-                showWhenEmpty={false}
-                type="person"
-                on:select={(e) =>
-                    searchParam($page.url, 'other_person_id', e.detail?.id.toString(), 'page')}
-            />
-        </div>
-    </div>
-    
-    <div class="flex flex-row w-full flex-wrap items-center justify-between">
-        <div class="ml-auto"/>
+            <!---Filter for a Moderatee--->
+            <MenuButton>
+                <button class="flex flex-row gap-2 w-full" on:click|stopPropagation>
+                    <Icon mini src={User} width={iconSize-2} />
 
-        <Button color="primary" on:click={() => goto('/modlog') }>
-            <Icon src={ArrowPathRoundedSquare} class="h-8" mini size="16"/>
-            Reset Modlog Filters
-        </Button>
-        
-    </div>
+                    {#if filter.moderatee.set}
+                        <div class="flex flex-row w-full justify-between">
+                            {#if filter.moderatee.person}
+                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} />
+                            {:else}
+                                <span>
+                                    { new URLSearchParams(window.location.search).get('other_person_id') }
+                                </span>
+                            {/if}
+                        
+                            <button class="cursor-pointer" on:click={() => searchParam($page.url, 'other_person_id', '', 'other_person_id')}>
+                                <Icon src={XCircle} mini width={iconSize-2}/>
+                            </button>
+                        </div>
+                    {:else}
+                        <span class="flex flex-row gap-2 w-full">
+                            <PersonAutocomplete
+                                placeholder="Moderatee"
+                                on:select={(e) => {
+                                    filter.moderatee.person = e.detail
+                                    searchParam($page.url, 'other_person_id', e.detail?.id.toString(), 'page')
+                                }}
+                            />
+                        </span>
+                    {/if}
+                </button>
+            </MenuButton>
+            
+            
 
+
+        </SubnvarbarMenu>
+    </span>
+
+</SubNavbar>
+
+
+<MainContentArea>
+    <div class="flex flex-row w-full flex-wrap justify-between">
+  
     {#if data.modlog && data.modlog.length > 0}
         <div class="flex flex-col gap-2 divide-y w-full">
             
-            <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-16 text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-20">
-                <div class="w-[5%]">Time</div>
-                <div class="w-[15%]">Community</div>
-                <div class="w-[20%]">Moderator</div>
-                <div class="w-[20%]">Moderatee</div>
-                <div class="w-[40%]">Details</div>
+            <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-28 text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-5">
+                <div class="w-[5%] flex justify-center">Time</div>
+                <div class="w-[15%] flex justify-center">Community</div>
+                <div class="w-[20%] flex justify-center">Moderator</div>
+                <div class="w-[20%] flex justify-center">Moderatee</div>
+                <div class="w-[40%] flex justify-center">Details</div>
             </div>
             
             {#each data.modlog as modlog}
@@ -257,10 +277,8 @@
     
     {/if}
 
+</MainContentArea>
 
-
-    
-</div>
 
 <style lang="postcss">
     :global(.table thead tr th) {
