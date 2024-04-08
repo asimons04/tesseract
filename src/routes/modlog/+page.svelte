@@ -3,6 +3,7 @@
     
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
+    import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
     
     import Button from '$lib/components/input/Button.svelte'
@@ -77,7 +78,7 @@
 <svelte:head>
     <title>Modlog</title>
 </svelte:head>
-<SubNavbar home  refreshButton toggleCommunitySidebar scrollButtons >
+<SubNavbar home  refreshButton scrollButtons >
     
     <span class="flex flex-row gap-0 md:gap-1 items-center" slot="left" let:iconSize>
         <SelectMenu
@@ -124,12 +125,11 @@
             title="Modlog Action"
         />
 
+        <!--- Modlog Filter Menu --->
         <SubnvarbarMenu alignment="bottom-center" title="Modlog Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[170%] md:!-left-[50%]">
-            
-            
             <!--- Lookup a Community to Filter--->
             <MenuButton>
-                <button class="flex flex-row gap-2 w-full" on:click|stopPropagation>
+                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
                     <Icon mini src={UserGroup} width={iconSize-2} />
                     
                     {#if filter.community.set}
@@ -167,8 +167,9 @@
             </MenuButton>
             
             <!---Lookup a moderator to filter--->
+            {#if $profile?.user}
             <MenuButton>
-                <button class="flex flex-row gap-2 w-full" on:click|stopPropagation>
+                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
                     <Icon mini src={ShieldCheck} width={iconSize-2} />    
                     
                     {#if filter.moderator.set}
@@ -199,10 +200,11 @@
                     {/if}
                 </button>
             </MenuButton>
+            {/if}
 
             <!---Filter for a Moderatee--->
             <MenuButton>
-                <button class="flex flex-row gap-2 w-full" on:click|stopPropagation>
+                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
                     <Icon mini src={User} width={iconSize-2} />
 
                     {#if filter.moderatee.set}
@@ -233,9 +235,12 @@
                 </button>
             </MenuButton>
             
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
             
-
-
+            <MenuButton class="!gap-4" on:click={() => goto('/modlog') }>
+                <Icon src={ArrowPathRoundedSquare} class="h-8" mini width={iconSize-2}/>
+                Reset Modlog Filters
+            </MenuButton>
         </SubnvarbarMenu>
     </span>
 
@@ -251,13 +256,15 @@
             <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-28 text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-5">
                 <div class="w-[5%] flex justify-center">Time</div>
                 <div class="w-[15%] flex justify-center">Community</div>
-                <div class="w-[20%] flex justify-center">Moderator</div>
+                {#if $profile?.user}
+                    <div class="w-[20%] flex justify-center">Moderator</div>
+                {/if}
                 <div class="w-[20%] flex justify-center">Moderatee</div>
-                <div class="w-[40%] flex justify-center">Details</div>
+                <div class="{$profile?.user ? 'w-[40%]' : 'w-[60%]'} flex justify-center">Details</div>
             </div>
             
             {#each data.modlog as modlog}
-                <ModlogItemTable item={modlog} filter={filter} />
+                <ModlogItemTable item={modlog} bind:filter />
             {/each}
         </div>
         

@@ -41,6 +41,7 @@
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm transition-colors 
                 {buttonColors[color]} 
                 {disabled ? 'opacity-50 pointer-events-none' : ''}
+                {$$props.class}
             "
 
         >
@@ -55,6 +56,7 @@
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm
                 transition-colors {buttonColors[color]} 
                 disabled:opacity-50 disabled:pointer-events-none
+                {$$props.class}
             "
             {disabled}
         >
