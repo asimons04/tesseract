@@ -17,14 +17,19 @@
     
 
 
-    export let post:PostView;
-    export let displayType:PostDisplayType = 'post'
-    export let expandPreviewText:boolean = false
-    export let expandCompact:boolean = false
-    export let previewLength:number = 300
-    export let inline:boolean = false
+    export let post:PostView
     export let postContainer: HTMLDivElement
+    export let displayType:PostDisplayType  = 'post'
+    export let expandPreviewText:boolean    = false
+    export let expandCompact:boolean        = false
+    export let previewLength:number         = 300
+    export let inline:boolean               = false
+    
 
+    // Cut the preview length in half for compact posts
+    $: previewLength = ($userSettings.showCompactPosts && !expandCompact)
+        ? Math.floor(previewLength/2)
+        : previewLength
     
 </script>
 
