@@ -129,6 +129,9 @@
                 <Icon src={ArrowLeftCircle} width={iconSize} />
             </Button>
         {/if}
+        
+        <!--- Custom Items to the left of the spacer--->
+        <slot {iconSize} name="far-left"/>
 
         <!--- Post Community Actions Menu--->
         {#if communityActionsMenu && post}
@@ -182,10 +185,7 @@
             
             <!---Page Selector (Deprecated)--->
             {#if pageSelection && currentPage}
-                {#if sortMenu}
-                    <Icon src={ArrowSmallRight} mini width={24} class="hidden md:flex"/>
-                {/if}
-                
+               
                 <SelectMenu
                     class="{$page.url.pathname.includes('/feeds') ? 'hidden sm:flex' : ''}"    
                     alignment="bottom-left"
@@ -196,7 +196,7 @@
                     on:select={(e) => {
                         // @ts-ignore
                         searchParam($page.url, 'page', e.detail.toString())
-                    }}`
+                    }}
                 />
             {/if}
         </span>

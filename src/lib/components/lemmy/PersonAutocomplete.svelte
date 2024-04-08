@@ -41,7 +41,7 @@
                 q: q || ' ',
                 auth: $profile?.jwt || undefined,
                 type_: 'Users',
-                limit: 20,
+                limit: 50,
             })
             items = results.users.map((u) => u.person)
         }}

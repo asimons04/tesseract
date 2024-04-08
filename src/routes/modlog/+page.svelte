@@ -78,9 +78,12 @@
 <svelte:head>
     <title>Modlog</title>
 </svelte:head>
-<SubNavbar home  refreshButton scrollButtons >
+<SubNavbar home pageSelection bind:currentPage={data.page} refreshButton scrollButtons >
     
-    <span class="flex flex-row gap-0 md:gap-1 items-center" slot="left" let:iconSize>
+    <!---Custom Sub-Navbar Buttons for Modlog--->
+    <span class="flex flex-row gap-0 md:gap-1 items-center" slot="far-left" let:iconSize>
+        
+        <!---Modlog Action Select Menu--->
         <SelectMenu
             options={[
                 'All',
@@ -277,7 +280,7 @@
             on:change={(e) => searchParam($page.url, 'page', e.detail.toString())}
         />
     {:else}
-        <div class="my-auto">
+        <div class="mx-auto my-auto">
             <Placeholder
                 title="No Results"    
                 description="There are no modlog results for the provided query."
