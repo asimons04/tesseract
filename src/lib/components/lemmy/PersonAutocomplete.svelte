@@ -63,9 +63,9 @@
             <MenuButton on:click={() => extractSelected(option)}>
                 <Avatar url={option.avatar} alt={option.name} width={24} />
                 <div class="flex flex-col text-left">
-                    <span>{option.name}</span>
+                    <span class="font-bold">{option.display_name ?? option.name}</span>
                     <span class="text-xs opacity-80">
-                        {new URL(option.actor_id).hostname}
+                        {option.name}@{new URL(option.actor_id).hostname}
                     </span>
                 </div>
             </MenuButton>
