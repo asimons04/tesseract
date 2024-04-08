@@ -8,7 +8,7 @@
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
-    import { scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { fixLemmyEncodings, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { 
         sortOptions as defaultSortOptions, 
         sortOptionNames as defaultSortOptionNames
@@ -213,7 +213,7 @@
             <!--- Post Title In Center (Cannot be used if using center slot for something)--->
             {#if post && postTitle}
                 <span class="hidden md:block text-lg font-bold text-slate-600 dark:text-zinc-400 whitespace-nowrap text-ellipsis overflow-hidden">
-                    {post.post.name}
+                    {fixLemmyEncodings(post.post.name)}
                 </span>
             {/if}
 
