@@ -2,26 +2,33 @@
 # About
 Tesseract is a Sublinks/Lemmy client designed for media-rich feeds and content.  
 
-It started out as my personal, custom build of Photon, but it got exhausting porting over my bells and whistles each release. To that end, I finally decided to make it an official fork.
-
-You can't really call this a Photon fork anymore.  Deep down, yeah, there's still some Photon left, but much of it has been re-implemented as I've added new features and rewritten various components.
+In addition to the user experience, care has also been taken to enhance the default experience for moderators and instance admins. 
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
+## 0.18.x Support
+Lemmy API version 0.18.x is still fully supported.  No date has been set yet for sunsetting that support.
+
 ## 0.19.x Support
-Tesseract supports 0.19.x and has since version 1.2.something.  
+Tesseract has supported 0.19.x since version 1.2 point something.  
 
-None of the 0.19 features (such as instance block) are plumbed in yet.  As of the latest release, 1.2.9.31, the only 0.19 support is with the auth module.  There are things I'd like to do with those features, but of freaking course, the Lemmy API leaves me hanging by not providing the needed data. That's all to say those features are in the works, but I'm not going to release anything until I can make them behave like I want them.
+None of the 0.19 features (such as instance block) are plumbed in yet.  As of the latest release, 1.2.9.31, the only 0.19 support is with the auth module.  There are things I'd like to do with those features, but of freaking course, the Lemmy API leaves me hanging by not providing the needed data without making another API call to get the needed data. That's all to say those features are in the works, but I'm not going to release anything until I can make them behave like I want them.
 
-Version 1.3.0, currently in development, is adding support for cursor-based pagination since the old offset-based method is deprecated.  As a side-effect, I've switched to infinite scroll (ugh) as the pagination method.
+Version 1.3.0, currently in development, is adding full support for cursor-based pagination since the old offset-based method is deprecated.  As a side-effect, I've switched to infinite scroll as the pagination method.
 
 - The cursor pagination in 0.19 only gives you the next page's cursor
 - I didn't want to track cursors in the pagination component
 - People were asking for infinite scroll anyway
 - I'm implementing a setting to infinite scroll or load next posts manually
+- I hated the idea of infinite scroll at first, but after driving my dev branch with it for a  few weeks, it's starting to grow on me.
 
 No release date has been set yet, but the 1.3.0 branch is relatively stable since I use the dev branch as my daily driver for Lemmy usage.
 
+## Guiding Principles
+- As much media should be embeddable in the app as possible/practical. 
+- Apps should be responsive and work well on desktop/mobile without requiring separate interfaces
+- The UI should be flexible and configurable
+- 
 
 
 
@@ -37,7 +44,7 @@ The following features are unique to Tesseract:
   - Odysee
   - [Song Link](https://odesli.co/)
   - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
-  - Peertube Embeds (new as of 1.3.0)
+  - Peertube Embeds (new as of 1.3.0).  PT support is kind of cool because you can already follow PeerTube channels in Lemmy. With the addition of support for their embeds, this makes following your favorite creator even easier. Upvotes/downvotes to a Peertube post will federate out to thumbs-up/thumbs-down on PT's side.
 
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
@@ -56,7 +63,9 @@ Privacy conscious users have long requested media be proxied through Lemmy.  Whi
 Read more: [Media Proxy/Cache Docs](docs/MediaProxy.md)
 
 ### Media Bias Fact Check (MBFC) Integration
-Posts with URLs can have a MBFC badge in the corner which will lookup the publisher in the MBFC database and return their bias and credibility information.  The MBFC results are also integrated into the reporting and moderation tools.
+Misinformation is rampant on the internet, and the Fediverse is, perhaps, more susceptible to it due to its open and distributed nature.  To help combat this, Media Bias Fact Check has been integrated into the UI.
+
+Posts with URLs are checked against the MBFC dataset.  If a record is found, an MBFC badge will be added in the corner. Clicking the badge brings up an abridged report for the publisher containing their credibility, factual reporting history, and bias information; a link to the full report is also provided.  The MBFC results are also integrated into the reporting and moderation tools.
 
 **For Users**:
 - Easily see where the news stories in your feed are coming from and what their sources' credibility ratings are.  
@@ -71,27 +80,14 @@ Posts with URLs can have a MBFC badge in the corner which will lookup the publis
 
 
 ### Fediseer Integration
-- See any endorsements, hesitations, and censures given to instances you're interacting with.
-- Code syntax highlighting in code and inline code blocks.
+See any endorsements, hesitations, and censures given to instances you're interacting with.
+
+### Syntax Highlighting
+Code syntax highlighting in code and inline code blocks.
 
 ### Distinguished and Sticky Comments
 Mods/Admins can distinguish and sticky their own comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.  
 
-The handling of the `distinguished` flag is different in Tesseract than in Lemmy-UI:
-
-**Tesseract**
-- Distinguished comments will be given a green background and border
-- Distinguished comments are pinned at the top of the comments list.
-- ~~Any comment can be distinguished by a mod/admin.~~ Sigh.  The Lemmy devs broke this capability for dumb "bUt LemMy UI dOEs iT tHIs waY!" reasons.  Fuck them and their shitty frontend.
-
-**Lemmy-UI**
-- Distinguished comments just have an "admin" badge next to them.   
-- Only admin/mod comments can be distinguished with the "Speak as moderator" option. (which is redundant because mod accounts already have moderator badges).  
-
-Note that the way distinguished comments are handled only applies to Tesseract.  The comments will be marked as distinguished at the API level, but it's up to individual clients/UIs to handle how to render comments with the `distinguished` flag set.
-
-
-## Additional Features
 ### Keyword Filtering
 Sick of hearing about a particular topic?  Add keyword filters to keep posts containg those terms from appearing in your feed.  By default, keywords are compared case-insensitively, checked as whole-words, and only checked for presence within the post title, body, or embed description.  
 
@@ -101,9 +97,6 @@ You can add modifiers to fine tune this somewhat:
 - `*term`: An asterisk disabled whole word checking will filter a post if the keyword is contained within other words.
 
 At this time, modifiers cannot be combined. Perhaps that is something that will be implemented later.
-
-
-
 
 ### Designed for desktop and mobile.
 Install as a PWA on either or just use it through the web.
@@ -129,9 +122,8 @@ Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with 
 - Communities and users have "moglog" links in their action menus.  Those will take you to a pre-filtered modlog for just actions related to them.
 - Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
 
-### Committed Developer
-Tesseract is maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  
-
+### Multi-Role Developer
+Tesseract is maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  Each of those roles requires different considerations, and Tesseract is being built to accommodate them all.
 
 
 
@@ -154,6 +146,7 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 - Spotify tracks, albums, and playlists will embed a player right in the feed or post.
   - (Optional) To enable full track playback rather than previews, you will need to either allow 3rd party cookies for the Tesseract domain or whitelist cookies for `open.spotify.com`. This is to allow the Spotify iframe to detect your login.
     - On mobile browsers, Spotify will only allow track previews regardless of login state so don't bother allowing 3rd party cookies.
+    - With the push to end 3rd party cookies (which is ultimately a good thing since advertisers can't be trusted), playing full tracks may no longer be possible due to not being able to associate the iframe player with your logged-in account.
 
 
 
@@ -161,7 +154,7 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 
 - Peertube embeds
 
-- TikTok is not currently supported. I don't have TikTok, and no one has asked for it, so I'm content not supporting that unless there's demand and someone is able to provide me some sample links (TT does have an embed API, so at least limited support possible).
+- TikTok is not currently supported. I don't have TikTok, and no one has asked for it, so I'm content not supporting that unless there's demand and someone is able to provide me some sample links (I think TT does have an embed API, so at least limited support possible).
 
 
 ## Support
@@ -178,7 +171,9 @@ Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 The changelog also contains an informal list of items I _hope_ to add to the next few upcoming releases.
 
 ## Public Hosted Demo Instance
-An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
+An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.  
+
+Ideally, you would either host it yourself and point it to your home Lemmy instance or ask your instance admins to offer it as an alternative frontend. The VPS I have the demo running on is potato-class and unable to handle a massive number of users.
 
 
 ## Self-Hosting
@@ -186,7 +181,7 @@ Tesseract is designed to be self hosted.  You can even run it from localhost if 
 
 
 ### Deploying the Image
-Replace `example.com` in the line below with the base URL of your instance.  
+Replace `example.com` in the line below with the base URL of your instance.  This example exposes the container's port on `8080` but you can/should change that to whatever port you need or have free on your host.  
 
 Additional environment variables for configuring Tesseract can be found further down in the README.
 
@@ -232,8 +227,7 @@ server {
 ```
 **Running Tesseract In Place Of Lemmy-UI**
 
-If you want to run Tesseract in place of Lemmy-UI, just replace the proxy pass that goes to your current Lemmy-UI with the IP/port of Tesseract.
-
+If you want to run Tesseract in place of Lemmy-UI, just replace the proxy pass that goes to your current Lemmy-UI with the IP/port of Tesseract.  Be sure to keep the conditionals that separate the ActivityPub ld+json out to the API's container.
 
 
 ### Configuring default settings
@@ -337,6 +331,4 @@ _ | _
 ![Spotify Playlist Embed](./screenshots/Tesseract-Screenshot-2.png) Spotify playlist embedded| ![Desktop PWA](./screenshots/Tesseract-Screenshot-6.png) Running as a desktop PWA
 
 ## Donate
-Donate to Xylight, not me.  It's their baby, and I'm just building on top of it. You can donate at [Buy me a Coffee](https://buymeacoffee.com/xylight)
-
-<a href="https://www.buymeacoffee.com/xylight"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=xylight&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" /></a>
+I'm not accepting donations at this time.  
