@@ -246,7 +246,6 @@ The following environment variables can be set to override the default settings.
 | ------------------------------- | ------------------- | -------------------------------------- |
 | PUBLIC_INSTANCE_URL             | URL                 | `lemmy.world`                          |
 | PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
-| PUBLIC_SSR_ENABLED              | `bool`              | `false`                                |
 | PUBLIC_THEME                    | system\|dark\|light | system                                 |
 | PUBLIC_DISABLE_MODLOG_USERS     | `bool`              | false                                  |
 | PUBLIC_MARK_READ_POSTS          | `bool`              | true                                   |
@@ -271,6 +270,8 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_ENABLE_USER_MEDIA_PROXY  | `bool`              | false                                  |
 | PUBLIC_ENABLE_FEDISEER_BADGES   | `bool`              | false                                  |
 | PUBLIC_ENABLE_MBFC_BADGES       | `bool`              | true                                   |
+| PUBLIC_STRETCH_CARD_BANNERS     | `bool`              | false                                  |
+| PUBLIC_MATCH_XPOST_TITLE        | `bool`              | true                                   |
 
 ### Configuration Options for Media Proxying and Caching
 Descriptions of the config options and what they do are covered in the [Media Proxy Cache](docs/MediaProxy.md) module documentation.
