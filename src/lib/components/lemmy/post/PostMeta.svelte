@@ -52,7 +52,8 @@
     $: inCommunity = ($page.url.pathname.startsWith("/c/"))
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: userIsModerator = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
-
+    $: post
+    
     let fediseerModal:boolean = false;
 
     function isNewAccount():boolean {

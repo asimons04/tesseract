@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostType, PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
-    import type { CommunityModeratorView, PostView, CommunityView} from 'lemmy-js-client'
+    import type { CommunityModeratorView, GetPostResponse, PostView, CommunityView} from 'lemmy-js-client'
 
     
 
@@ -35,12 +35,12 @@
     let showCommentForm:boolean = false;
     let postContainer: HTMLDivElement
     
-    let post_view = data.post.post_view
-    let community_view = data.post.community_view
-    let moderators = data.post.moderators
+    $: post_view = data.post.post_view
+    $: community_view = data.post.community_view
+    $: moderators = data.post.moderators
     
-    //@ts-ignore (Add cross posts to post_view object for sanity
-    data.post.post_view.cross_posts = data.post.cross_posts;
+    //@ts-ignore (Add cross posts to post_view object for sanity)
+    $: post_view.cross_posts = data.post.cross_posts
 
     onMount(async () => {
         setSessionStorage('lastSeenCommunity', { id: community_view.community.id, name: `${community_view.community.name}@${new URL(community_view.community.actor_id).hostname}` })

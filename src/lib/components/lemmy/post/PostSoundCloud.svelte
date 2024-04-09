@@ -19,7 +19,7 @@
     let size: string = imageSize(displayType);
 
     // Check for a defined embed URL and use that if available
-    if (post.post && post.post.embed_video_url) {
+    $: if (post.post && post.post.embed_video_url) {
         embedURL = post.post.embed_video_url;
     }
     // If embed URL isn't provided, make our own!

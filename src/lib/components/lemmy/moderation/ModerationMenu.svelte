@@ -196,12 +196,7 @@
     
         <!---Hide ban from community option for own posts--->
         {#if $profile?.user && $profile.user.local_user_view.person.id != item.creator.id}
-            <MenuButton
-                on:click={() =>
-                    //ban(item.creator_banned_from_community, item.creator, item.community)
-                    banningCommunity = true
-                }
-            >
+            <MenuButton on:click={() => banningCommunity = true} >
                 <Icon src={ShieldExclamation} size="16" mini />
                 {
                     item.creator_banned_from_community
@@ -220,12 +215,7 @@
 
             <!--Hide ban button if viewing own profile--->
             {#if item.creator.id != $profile.user.local_user_view.person.id}
-                <MenuButton
-                    on:click={() =>
-                        //ban(item.creator.banned, item.creator)
-                        banningInstance = true
-                    }
-                >
+                <MenuButton on:click={() => banningInstance = true } >
                     <Icon slot="icon" mini size="16" src={ShieldExclamation} />
                     {item.creator.banned ? 'Unban from Instance' : 'Ban from Instance'}
                 </MenuButton>
