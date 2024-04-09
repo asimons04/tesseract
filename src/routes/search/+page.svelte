@@ -16,7 +16,10 @@
         PersonView,
         PostView,
     } from 'lemmy-js-client'
-    
+
+    import type { Snapshot } from './$types';
+    import { PageSnapshot } from '$lib/storage'
+
     import { expoInOut, expoOut } from 'svelte/easing'
     import { fly, slide } from 'svelte/transition'
     import {
@@ -30,6 +33,7 @@
     import { goto } from '$app/navigation'
     import { load } from './+page'
     import { page } from '$app/stores'
+    import { scrollTo } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
     
@@ -71,8 +75,39 @@
     type Result = PostView | CommentView | PersonView | CommunityView
 
     export let data
+    
+    let pageState = {
+        scrollY: 0
+    }
 
-    //let pageNum = data.page
+    // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
+    export const snapshot: Snapshot<void> = {
+        capture: () => {
+            pageState.scrollY = window.scrollY
+            PageSnapshot.capture(
+                {
+                    data: data, 
+                    state: pageState,
+                    filter: filter
+                }
+            )
+        },
+        restore: async () => {
+            try { 
+                let snapshot = PageSnapshot.restore() 
+                if (snapshot.data)  data = snapshot.data
+                if (snapshot.state) pageState = snapshot.state
+                if (snapshot.filter) filter = snapshot.filter
+            }
+            catch { 
+                PageSnapshot.clear() 
+            }
+            
+            // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms)
+            if (pageState.scrollY) await scrollTo(pageState.scrollY)
+            else window.scrollTo(0,0)
+        }
+    }
     
     async function search() {
         searching = true
