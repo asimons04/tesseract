@@ -35,7 +35,7 @@ interface Hesitations extends FediseerResponse {
 
 // What gets returned to the client on calls to /lookup
 interface FediseerInfo {
-    site?: SiteView | undefined
+    site?: GetSiteResponse | undefined
     censures?: Array<Censures>,
     endorsements?: Array<Endorsements>
     hesitations?: Array<Hesitations>
@@ -47,7 +47,7 @@ interface FediseerInfo {
     success:boolean
 }
 
-import type { SiteView } from 'lemmy-js-client'
+import type { GetSiteResponse, SiteView } from 'lemmy-js-client'
 import { getClient } from '$lib/lemmy.js'
 
 
@@ -77,7 +77,7 @@ export async function fediseerLookup(instance:string){
 
 // Fetch the Fediseer info directly from the Fediseer API
 export async function getFediseerInfo(instance:string) {
-    let siteInfo: SiteView | undefined
+    let siteInfo: GetSiteResponse | undefined
     
     try {
         siteInfo = await getClient(instance, undefined).getSite({})
