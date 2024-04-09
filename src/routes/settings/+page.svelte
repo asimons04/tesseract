@@ -681,6 +681,28 @@
                         />
                     </div>
 
+                    <!---Posts Per Page--->
+                    <div class="flex flex-row w-full gap-2 py-2">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-bold flex flex-row gap-2">
+                                <Icon src={TableCells} mini width={16}/>
+                                Infinite Scroll Size
+                            </p>
+                            <p class="text-xs font-normal">
+                                How many posts should be rendered before the oldest in the feed are removed (off-screen). Increasing this will
+                                increase memory consumption and may also reduce performance depending on your device.
+
+                            </p>
+                        </div>
+                        <div class="mx-auto"/>
+                        <MultiSelect
+                            options={[50, 75, 100, 125, 150]}
+                            bind:selected={$userSettings.uiState.maxScrollPosts}
+                            items={0}
+                            headless={true}
+                        />
+                    </div>
+
 
                     <!---Post Style--->
                     <div class="flex flex-row w-full gap-2 py-2">

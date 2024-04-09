@@ -1,6 +1,5 @@
-/**
- * This enum represents a UI color as tailwind classes.
- */
+import { get, writable } from 'svelte/store'
+import { env } from '$env/dynamic/public'
 
 export enum Color {
   'accent' = 'border border-black dark:border-white bg-black text-white\
@@ -13,8 +12,49 @@ export enum Color {
   'borderDark' = 'border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 hover:dark:bg-zinc-800',
 }
 
-import { get, writable } from 'svelte/store'
-import { env } from '$env/dynamic/public'
+// Button colors
+export type ButtonColor = keyof typeof buttonColor
+export const buttonColor = {
+    primary: `border border-slate-900 bg-slate-900 dark:bg-zinc-100
+        dark:border-zinc-100 dark:text-black hover:text-inherit hover:dark:text-inherit text-slate-100
+        hover:bg-transparent hover:dark:bg-transparent
+        active:bg-black/10 active:dark:bg-white/10`,
+
+    secondary: `border border-slate-200 dark:border-zinc-700 dark:bg-zinc-900
+        hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 dark:text-zinc-400 hover:text-inherit
+        hover:dark:text-inherit border-none`,
+
+    tertiary:
+      'border border-transparent bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none',
+    
+    "tertiary-border":
+      'border border-slate-200 dark:border-zinc-800 rounded-lg bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none',
+
+    "tertiary-border-bottom":
+        'border-b border-slate-200 dark:border-zinc-800 bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200',
+
+    danger:
+      'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',
+
+    warning:
+      'border border-amber-500 bg-amber-500 hover:text-amber-500 hover:bg-transparent text-black',
+
+    ghost: `border border-slate-200 dark:border-zinc-800 bg-transparent
+        hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 dark:text-zinc-400 hover:text-inherit
+        hover:dark:text-inherit`,
+
+    elevated: `bg-slate-100 dark:bg-zinc-800 border border-slate-200
+        dark:border-zinc-700 hover:bg-slate-200 hover:dark:bg-zinc-700 hover:border-slate-300
+        hover:dark:border-zinc-600`,
+
+    elevatedLow: `bg-slate-100 dark:bg-zinc-900 border border-slate-200
+        dark:border-zinc-800 hover:bg-slate-200 hover:dark:bg-zinc-800 hover:border-slate-300
+        hover:dark:border-zinc-700`,
+
+    
+    none: '',
+  }
+
 
 const configuredTheme = (env.PUBLIC_THEME ?? 'system') as 'system' | 'light' | 'dark' | undefined
 export const theme = writable<'system' | 'light' | 'dark'>(configuredTheme)

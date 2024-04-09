@@ -2,7 +2,7 @@
     import { createEventDispatcher } from 'svelte'
   
     export let label: string | number | undefined = ''
-    export let value: number
+    export let value: string
     export let required = false
   
   

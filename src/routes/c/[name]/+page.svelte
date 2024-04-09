@@ -44,7 +44,7 @@
     let infiniteScroll = {
         loading: false,     // Used to toggle loading indicator
         exhausted: false,   // Sets to true if the API returns 0 posts
-        maxPosts: 100,      // Maximum number of posts to keep in the FIFO
+        maxPosts: $userSettings.uiState.maxScrollPosts,      // Maximum number of posts to keep in the FIFO
         truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
         automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
@@ -71,8 +71,8 @@
                 PageSnapshot.clear() 
             }
             
-            // Scroll to last stored position if found in snapshot data
-            if (pageState.scrollY) await scrollTo(pageState.scrollY)
+            // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms)
+            if (pageState.scrollY) await scrollTo(pageState.scrollY, infiniteScroll.maxPosts + 200)
             else window.scrollTo(0,0)
         }
     }

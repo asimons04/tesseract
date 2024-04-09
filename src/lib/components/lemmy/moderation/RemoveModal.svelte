@@ -175,32 +175,19 @@
         <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
             
 
-            <MarkdownEditor
-                rows={8}
-                label="Reason"
-                placeholder="Optional"
-                bind:value={reason}
-            />
+            <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={reason} />
             
             <!--- Only show "Reply with reason" if you're a mod of the community or an admin and the content is local--->
             {#if !removed && ( amMod($profile?.user, item.community) || (isAdmin($profile?.user) && item.community.local))}
                 <div class="flex flex-row gap-2 items-center justify-between">
                     <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>
                     {#if commentReason}
-                        <MultiSelect
-                            options={[false, true]}
-                            optionNames={['Comment', 'Message']}
-                            bind:selected={privateMessage}
-                        />
+                        <MultiSelect options={[false, true]} optionNames={['Comment', 'Message']} bind:selected={privateMessage} />
                     {/if}
                 </div>
+                
                 {#if commentReason}
-                    <MarkdownEditor
-                        bind:value={replyReason}
-                        placeholder={replyReason}
-                        rows={5}
-                        label="Reply"
-                    />
+                    <MarkdownEditor previewButton images={false} bind:value={replyReason} placeholder={replyReason} rows={6} label="Reply"/>
                 {/if}
             {/if}
 

@@ -310,9 +310,9 @@ export async function scrollToLastSeenPost(pathname:string = '/') {
     }
 }
 
-export async function scrollTo(pos:number) {
+export async function scrollTo(pos:number, delay=100) {
     if (!pos) return
-    await sleep(200)
+    await sleep(delay)
     disableScrollHandling()
     window.scrollTo(0, pos)
 }

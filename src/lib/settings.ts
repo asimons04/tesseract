@@ -106,6 +106,7 @@ interface Settings {
         expandCommunitySidebar: boolean
         feedMargins:boolean
         postsPerPage: number
+        maxScrollPosts: number
         fediseerBadges: boolean
         MBFCBadges: boolean
         showInstances: boolean
@@ -156,6 +157,7 @@ export const defaultSettings: Settings = {
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,
         postsPerPage:                                                   20,
+        maxScrollPosts:                                                 100,
         fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,
         showInstances:                                                  true,

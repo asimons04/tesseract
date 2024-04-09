@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Community, Person, PersonView } from 'lemmy-js-client'
+    import type { Community, Person } from 'lemmy-js-client'
 
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
@@ -9,20 +9,17 @@
     import Button from '$lib/components/input/Button.svelte'
     import Checkbox from '$lib/components/input/Checkbox.svelte'
     import DateInput from '$lib/components/input/DateInput.svelte'
+    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
-    import UserItem from '$lib/components/lemmy/user/UserItem.svelte'
     
     import {
-        Icon,
         Check,
         NoSymbol
     } from 'svelte-hero-icons'
 
-    let item: Person | undefined
 
     export let open = false
-    export { item as user }
+    export let user: Person
     export let community: Community | undefined = undefined
     export let banned: boolean
 
@@ -37,7 +34,7 @@
         deleteData = false
         expires = ''
     }
-    $: if (item) resetReason()
+    $: if (user) resetReason()
 
     function invalidDateErrorToast() {
         toast({
@@ -48,7 +45,7 @@
     }
 
     async function submit() {
-        if (!item || !$profile?.user || !$profile?.jwt) return
+        if (!user || !community || !$profile?.user || !$profile?.jwt) return
         
         loading = true
 
@@ -64,74 +61,63 @@
                 }
             }
 
-            if (community) {
-                await getClient().banFromCommunity({
-                    auth: $profile.jwt,
-                    ban: !banned,
-                    community_id: community.id,
-                    person_id: item.id,
-                    reason: reason || undefined,
-                    remove_data: deleteData,
-                    expires: date ? Math.floor(date / 1000) : undefined,
-                })
-            } else {
-                await getClient().banPerson({
-                    auth: $profile.jwt,
-                    ban: !banned,
-                    person_id: item.id,
-                    reason: reason || undefined,
-                    remove_data: deleteData,
-                    expires: date ? Math.floor(date / 1000) : undefined,
-                })
-            }
+            
+            await getClient().banFromCommunity({
+                auth: $profile.jwt,
+                ban: !banned,
+                community_id: community.id,
+                person_id: user.id,
+                reason: reason || undefined,
+                remove_data: deleteData,
+                expires: date ? Math.floor(date / 1000) : undefined,
+            })
+             
             open = false
+            banned = !banned
+            
             toast({
-                content: `Successfully 
-                    ${ banned ? 'unbanned' : 'banned'} 
-                    that user. You may need to refresh to see changes.
-                `,
+                content: `Successfully ${ banned ? 'unbanned' : 'banned'} that user from the community.`,
                 type: 'success',
                 title: 'Success'
             })
-            //item.banned = !banned
-            banned = !banned
+            
         } catch (err) {
             toast({
                 content: err as any,
                 type: 'error',
+                title: "Error"
             })
         }
         loading = false
     }
 </script>
 
-<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User" icon={banned ? Check : NoSymbol}>
+<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User From Community" icon={banned ? Check : NoSymbol}>
     
-    {#if item}
+    {#if user && community}
         <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>
             <div class="flex items-center gap-1">
-                <Avatar url={item.avatar} alt={item.name} width={24} />
-                <span class="font-bold">{item.name}</span>
+                <Avatar url={user.avatar} alt={user.name} width={24} />
+                <span class="font-bold">{user.name}@{new URL(user.actor_id).hostname}</span>
             </div>
+            
             <p>
                 {banned ? 'Unbanning' : 'Banning'} from
-                <span class="font-bold">{community ? community.name : 'site'}</span>
+                <span class="font-bold">{community.name}@{new URL(community.actor_id).hostname}</span>
             </p>
+                
+            <MarkdownEditor required previewButton images={false} label="Reason" rows={6}
+                bind:value={reason}
+                placeholder="Why are you {banned ? 'unbanning' : 'banning'} {user.name}@{new URL(user.actor_id).hostname} from {community.title ?? community.name}?"
+            >
+                <div class="flex flex-row flex-wrap w-full items-center justify-between" slot="actions">
+                    {#if !banned}
+                        <Checkbox bind:checked={deleteData} class="mx-auto">Remove Content</Checkbox>
+                        <DateInput bind:value={expires} label="Ban Expires" />
+                    {/if}
+                </div>
+            </MarkdownEditor>
 
-            <TextArea required bind:value={reason} label="Reason"
-                placeholder="Why are you {banned
-                    ? 'unbanning'
-                    : 'banning'} {item.name}?"
-            />
-
-            {#if !banned}
-                <Checkbox bind:checked={deleteData}>Delete data</Checkbox>
-                <DateInput
-                    bind:value={expires}
-                    label="Ban Expires (Leave blank for permanent ban)"
-                />
-            {/if}
-        
             <Button submit color="primary" {loading} disabled={loading} size="lg">
                 Submit
             </Button>

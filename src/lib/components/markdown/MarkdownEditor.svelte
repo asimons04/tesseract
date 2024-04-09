@@ -35,11 +35,11 @@
     export let id:string = '';
     export let resizeable:boolean = true;
 
+    /*
     export let previewContainerClass:string = '';
     export let previewContainerStyle:string = '';
-  
     export let beforePreview: (input: string) => string = (input) => input
-
+    */
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
     let textArea: HTMLTextAreaElement
@@ -110,8 +110,8 @@
 </script>
 
 {#if uploadingImage && images}
-    <Modal bind:open={uploadingImage}>
-        <span slot="title">Upload image</span>
+    <Modal bind:open={uploadingImage} title="Upload Image" icon={Photo}>
+        
         <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
             <FileInput image bind:files={image} />
             <Button {loading} disabled={loading} submit color="primary" size="lg">
@@ -279,7 +279,7 @@
         
         {#if $$slots.actions || previewButton}
             <!---Bottom Toolbar (edit/preview button, submit button--->
-            <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center
+            <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center justify-between
                 {$$props.disabled
                     ? 'opacity-60 pointer-events-none'
                     : ''
