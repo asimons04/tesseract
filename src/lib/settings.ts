@@ -227,7 +227,10 @@ export const defaultSettings: Settings = {
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                     ?? false
 export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)                 ?? false
 export const MEDIA_PROXY_BLACKLIST          = [
+    'burgit.moe',
+    'iili.io',
     'img.shields.io',
+    'mintboard.org',
     ...strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
 ]
 export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)               ?? true
@@ -255,6 +258,7 @@ export const YTFrontends = {
     invidious: [
         'yewtu.be',
         'vid.puffyan.us',
+        'i.devol.it',
         'invidious.lunar.icu',
         'invidious.privacydev.net',
         'invidious.slipfox.xyz',
@@ -275,7 +279,9 @@ export const YTFrontends = {
     ],
 
     piped: [
+        'cf.piped.video',
         'piped.video',
+        'piped.adminforge.de',
         'pipedapi.tokhmi.xyz',
         'pipedapi.moomoo.me',
         'pipedapi.syncpundit.io',
