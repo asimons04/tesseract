@@ -37,7 +37,9 @@
     export let postContainer: HTMLDivElement
 
     // Determine post type based on its attributes
-    const postType:PostType  = identifyPostType(post)
+    let postType:PostType  = identifyPostType(post)
+
+    $: if (post) postType = identifyPostType(post)
 
 </script>
 

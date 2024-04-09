@@ -121,6 +121,9 @@
         }
         
         const results = await load({url: searchURL} as LoadEvent<RouteParams, null, {}, "/search">)
+        data.results = undefined
+        data.fullResults = undefined
+        
         data = results
         searching = false
     }
@@ -401,38 +404,38 @@
 
             {#if pageState.panel == 'Posts' || filter.type == 'Posts'}
                 {#each data.fullResults.posts as post}
-                    <Post post={post} />
+                    <Post bind:post={post}  displayType='feed'/>
                 {/each}
             {/if}
 
             {#if pageState.panel == 'Comments' || filter.type == 'Comments'}
                 {#each data.fullResults.comments as comment}    
-                    <CommentItem comment={comment} />
+                    <CommentItem bind:comment={comment} />
                 {/each}
             {/if}
 
             {#if pageState.panel == 'Communities'|| filter.type == 'Communities' }
                 {#each data.fullResults.communities as community}    
-                    <CommunityItem community={community} />
+                    <CommunityItem bind:community={community} />
                 {/each}
             {/if}
 
             {#if pageState.panel == 'Users' || filter.type == 'Users'}
                 {#each data.fullResults.users as user}
-                    <UserItem user={user} />
+                    <UserItem bind:user={user} />
                 {/each}
             {/if}
             
             {#if pageState.panel == 'All' && filter.type == 'All'}
                 {#each data.results as result}
                     {#if isPostView(result)}
-                        <Post post={result} />
+                        <Post bind:post={result} displayType='feed' />
                     {:else if isCommentView(result)}
-                        <CommentItem comment={result} />
+                        <CommentItem bind:comment={result} />
                     {:else if isCommunityView(result)}
-                        <CommunityItem community={result} />
+                        <CommunityItem bind:community={result} />
                     {:else if isUser(result)}
-                        <UserItem user={result} />
+                        <UserItem bind:user={result} />
                     {/if}
                 {/each}
             {/if}
