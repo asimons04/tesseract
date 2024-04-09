@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Community, Person, PersonView } from 'lemmy-js-client'
+    import type { Person } from 'lemmy-js-client'
 
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
@@ -21,7 +21,6 @@
 
     export let open = false
     export let user: Person | undefined
-    export let community: Community | undefined = undefined
     export let banned: boolean
 
     let reason = ''

@@ -26,7 +26,7 @@
 <a 
     class="items-center flex flex-row gap-2 hover:underline {heading ? 'font-bold text-2xl' : ''}" 
     href={href ?? linkFromCommunity(community)} 
-    title={community.title.replace('&amp;', '&')}
+    title={fixLemmyEncodings(community.title)}
 >
     {#if avatar}
         <Avatar url={community.icon} alt={community.name} width={avatarSize} />
@@ -34,9 +34,11 @@
 
     {#if name}
         <span class="flex flex-wrap gap-0 {boldCommunityName ? 'font-bold' : 'font-normal'}">
-                
+            
             {$userSettings.displayNames 
-                ? fixLemmyEncodings(community.title).split(':')[0].split('-')[0].trim()
+                ? fixLemmyEncodings(community.title).length > 40
+                    ? fixLemmyEncodings(community.title).split(':')[0].split('-')[0].trim()
+                    : fixLemmyEncodings(community.title)
                 : `/c/${community.name}`
             }
 

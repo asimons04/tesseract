@@ -72,7 +72,7 @@
             }
             
             // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms)
-            if (pageState.scrollY) await scrollTo(pageState.scrollY, infiniteScroll.maxPosts + 200)
+            if (pageState.scrollY) await scrollTo(pageState.scrollY, infiniteScroll.maxPosts + 300)
             else window.scrollTo(0,0)
         }
     }

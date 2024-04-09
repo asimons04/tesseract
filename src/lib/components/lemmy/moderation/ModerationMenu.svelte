@@ -1,7 +1,7 @@
 <script lang="ts">
     
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
-    import type { CommentView, Community, PostView } from 'lemmy-js-client'
+    import type { CommentView, PostView } from 'lemmy-js-client'
     
     import { amMod, isAdmin, remove } from './moderation'
     import type { ButtonColor } from '$lib/ui/colors.js'
@@ -34,7 +34,6 @@
     export let item: PostView | CommentView
     export let color:ButtonColor = "tertiary-border"
     export let alignment:Alignment = 'side-left'
-    export let presetReason:string = ''
     export let menuIconSize:number = 16
 
     let locking = false
@@ -44,7 +43,7 @@
     let banningInstance = false
     let banningCommunity = false
 
-    $: acting = locking || pinning
+    $: acting = locking || pinning || removing || purging || banningInstance || banningCommunity
 
     async function lock(lock: boolean) {
         if (!$profile?.jwt || !isPostView(item)) return
