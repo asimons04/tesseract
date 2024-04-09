@@ -70,6 +70,7 @@
     export let sortOptions:string[]             =  defaultSortOptions
     export let sortOptionNames:string[]         =  defaultSortOptionNames
     export let selectedSortOption:string        = ''
+    export let sortPreventDefault:boolean       = false
 
     // Page Selection
     export let pageSelection:boolean            = false
@@ -185,7 +186,7 @@
                     iconSize={18}
                     on:select={(e) => {
                         // @ts-ignore
-                        searchParam($page.url, 'sort', e.detail, 'page')
+                        if (!sortPreventDefault) searchParam($page.url, 'sort', e.detail, 'page')
                         dispatcher('navChangeSort', e.detail)
                     }}
                 />

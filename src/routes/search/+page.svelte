@@ -1,12 +1,22 @@
 <script lang="ts">
+    interface SearchFilter {
+        person?: Person,
+        community?: Community
+        sort?: string
+        type?: string    
+        query?: string
+        page?: number
+    }
+
     import type {
         CommentView,
+        Community,
         CommunityView,
+        Person,
         PersonView,
         PostView,
     } from 'lemmy-js-client'
     
-    import { arrayRange } from '$lib/util.js'
     import { expoInOut, expoOut } from 'svelte/easing'
     import { fly, slide } from 'svelte/transition'
     import {
@@ -18,40 +28,43 @@
     
     
     import { goto } from '$app/navigation'
+    import { load } from './+page'
     import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
-    import { sortOptions, sortOptionNames } from '$lib/lemmy'
+    import { site } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
     
-    
-    
     import Button from '$lib/components/input/Button.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
+    import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
     import CommunityItem from '$lib/components/lemmy/community/CommunityItem.svelte'
-    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import UserItem from '$lib/components/lemmy/user/UserItem.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    
+    import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+
     import { searchParam } from '$lib/util.js'
     
     import { 
         Icon, 
-        ArrowSmallRight,
+        ArrowPathRoundedSquare,
         Bars3,
-        ChartBar,
-        Cog,
-        DocumentDuplicate,
+        Funnel,
         MagnifyingGlass,
-        QueueList,
-        Window
+        User,
+        UserGroup,
+        XCircle
     } from 'svelte-hero-icons'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     
     
 
@@ -59,225 +72,207 @@
 
     export let data
 
-    let pageNum = data.page
-    let searchParams = {
-        query: '',
-        community_name: data.community_name ?? '',
-        sort: data.sort ?? 'New',
-        type: data.type ?? 'All',
-        person: undefined,
-        limit: 40
-
-    }
-    let advancedSearch:boolean = false;
-
-    let searchURL = new URL($page.url);
-
-    function search() {
-        searchParams.community_name
-            ? searchURL.searchParams.set('community_name', searchParams.community_name)
-            : searchURL.searchParams.delete('community_name')
-        
-        searchParams.query
-            ? searchURL.searchParams.set('q', searchParams.query)
-            : searchURL.searchParams.delete('q')
-        
-        searchParams.sort
-            ? searchURL.searchParams.set('sort', searchParams.sort)
-            : searchURL.searchParams.delete('sort')
-        
-        searchParams.type
-            ? searchURL.searchParams.set('type', searchParams.type)
-            : searchURL.searchParams.delete('type');
-
-        searchParams.person
-            ? searchURL.searchParams.set('person', searchParams.person)
-            : searchURL.searchParams.delete('person')
-
-        searchParams.limit
-            ? searchURL.searchParams.set('limit', searchParams.limit.toString())
-            : searchURL.searchParams.delete('limit')
-        
-        goto(searchURL, {
-            invalidateAll: true,
-        })
-    }
+    //let pageNum = data.page
     
+    async function search() {
+        searching = true
+        let searchURL = new URL($page.url);
+        if (filter.person)      searchURL.searchParams.set('person', filter.person.id.toString())
+        if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
+        if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
+        if (filter.type)        searchURL.searchParams.set('type', filter.type)
+        if (filter.page)        searchURL.searchParams.set('page', filter.page.toString())
+        if (filter.query)       searchURL.searchParams.set('q', filter.query)
+        else {
+            // Search for anything if person or community is selected but no term is given
+            if (filter.person || filter.community) searchURL.searchParams.set('q', ' ')
+        }
+        
+        //@ts-ignore
+        const results = await load({url: searchURL})
+        data = results
+        searching = false
+    }
+
+    function resetSearch() {
+        filter = default_filter
+        filter.type = 'All'
+        filter.query = ''
+        data.results = []
+        goto('/search')
+    }
+
     
+    let searching = false
+    let default_filter: SearchFilter = {
+        sort: data.sort,
+        type: data.type,
+        query: data.query,
+        page: data.page
+    }
+
+    let filter = default_filter
 </script>
 
 <svelte:head>
     <title>Search</title>
 </svelte:head>
 
-<header class="sticky top-16 w-full flex flex-col gap-4 backdrop-blur-3xl z-20 mt-[-0.5rem] px-2">
-    <span class="flex flex-row gap-4 items-center font-bold text-sm text-center my-2">
-        <!--Home Button-->
-        <span class="mt-[-6px] mr-2 cursor-pointer" title="Reset Search"
-            on:click={() => {
-                searchParams = {
-                    query: '',
-                    community_name: '',
-                    sort: data.sort ?? 'New',
-                    type: data.type ?? 'All',
-                    person: undefined,
-                    limit: 40
 
-                }
-                goto(window.location.pathname);
-            }}
-        >
-            <Icon src={MagnifyingGlass} width={24} />
-        </span>
-        
+<SubNavbar home scrollButtons   toggleMargins compactSwitch toggleCommunitySidebar
+    pageSelection bind:currentPage={data.page}
+    sortMenu sortPreventDefault bind:selectedSortOption={filter.sort} 
+    on:navChangeSort={(e) => {
+        if (e && e.detail) filter.sort = e.detail
+    }}
+>
+
+    <!---Custom Sub-Navbar Buttons for Search--->
+    <span class="flex flex-row gap-0 md:gap-1 items-center" slot="far-left" let:iconSize>
         <SelectMenu
-            alignment="bottom-left"
             options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
-            selected={searchParams.type}
-            items={0}
+            selected={filter.type}
             icon={Bars3}
-            headless={true}
-            class="pb-2"
+            title="Search Type"
             on:select={(e) => {
-                searchParams.type = e.detail;
-            }}
-        />
-        
-        <Icon src={ArrowSmallRight} mini width={24} />
-        
-        <!---Sort Menu--->
-        <SelectMenu
-            alignment="bottom-left"
-            options={sortOptions}
-            optionNames={sortOptionNames}
-            selected={searchParams.sort}
-            title="Sorting"
-            icon={ChartBar}
-            on:select={(e) => {
-                // @ts-ignore
-                searchParams.sort = e.detail;
+                filter.type = e.detail
             }}
         />
 
-        <span class="hidden lg:flex lg:flex-row gap-2 items-center">
-            <Icon src={ArrowSmallRight} mini width={24} />
+        <!--- Search Filter Menu --->
+        <SubnavbarMenu alignment="bottom-center" title="Search Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[170%] md:!-left-[50%]">
+            
+            <!--- Lookup a Community to Filter--->
+            <MenuButton>
+                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
+                    <Icon mini src={UserGroup} width={iconSize-2} />
+                    
+                    {#if filter.community?.id}
+                        <div class="flex flex-row w-full justify-between">
+                            <CommunityLink avatar={true} avatarSize={iconSize} community={filter.community} />
+                            
+                            <button class="cursor-pointer" on:click={() => filter.community = undefined }>
+                                <Icon src={XCircle} mini width={iconSize-2}/>
+                            </button>
+                        </div>
+                    {:else}
+                        <span class="flex flex-row gap-2 w-full">
+                            <CommunityAutocomplete
+                                containerClass="!w-full"
+                                placeholder="Community"
+                                listing_type="All"
+                                on:select={(e) => {
+                                    filter.community = e.detail
+                                    //searchParam($page.url, 'community', e.detail?.id.toString(), 'page')
+                                }}
+                            />
+                        </span>
+                    {/if}
+                </button>
+            </MenuButton>
+            
+
+            <!---Filter for a Person--->
+            <MenuButton>
+                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
+                    <Icon mini src={User} width={iconSize-2} />
+
+                    {#if filter.person}
+                        <div class="flex flex-row w-full justify-between">
+                            <UserLink avatar={true} avatarSize={iconSize} user={filter.person} />
                         
-            <!---Page Selection--->
-            <SelectMenu
-                alignment="bottom-left"
-                options={arrayRange(1, data.page +1)}
-                selected={data.page}
-                title="Page"
-                icon={DocumentDuplicate}
-                on:select={(e) => {
-                    // @ts-ignore
-                    searchParam($page.url, 'page', e.detail.toString())
-                }}
-            />
-            </span>
-        
-
-        <div class="ml-auto"/>
-
-        <!---Simple/Advanced Search Switcher--->
-        <SelectMenu
-            alignment="bottom-right"
-            title="Toggle simple/advanced ssearch"
-            icon={Cog}
-            options={['Advanced Search', 'Simple Search']}
-            selected={advancedSearch
-                ? 'Advanced'
-                : 'Simple'
-            }
-            on:select={(e) => {
-                e.detail == 'Advanced Search'
-                    ? advancedSearch = true
-                    : advancedSearch = false
+                            <button class="cursor-pointer" on:click={() => filter.person = undefined}>
+                                <Icon src={XCircle} mini width={iconSize-2}/>
+                            </button>
+                        </div>
+                    {:else}
+                        <span class="flex flex-row gap-2 w-full">
+                            <PersonAutocomplete
+                                containerClass="!w-full"
+                                placeholder="Creator"
+                                on:select={(e) => {
+                                    filter.person = e.detail
+                                }}
+                            />
+                        </span>
+                    {/if}
+                </button>
+            </MenuButton>
+            
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+            <!--- Reset Search Filters--->
+            <MenuButton class="!gap-4" on:click={() => {
+                filter = default_filter
+                filter.type = 'All'
+                data.results = []
             }}
-        />
-        
-        <!---Card/Compact Selection--->
-        <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
-            on:click={() => {
-                $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+            >
+                <Icon src={ArrowPathRoundedSquare} class="h-8" mini width={iconSize-2}/>
+                Reset Search Filters
+            </MenuButton>
+        </SubnavbarMenu>
+
+    </span>
+    
+    <!---Search Input in Subnavbar-->
+    <span class="hidden xl:flex flex-row gap-0" let:iconSize slot="center">
+        <form class="flex flex-row gap-0 items-center mr-auto"
+            on:submit={(e) => {
+                e.preventDefault();
+                search()
             }}
         >
-            <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={24} />
-        </span>
-    </span>
+            <TextInput type="search" placeholder="Search" bind:value={filter.query}/>
 
-    <span class="flex flex-col md:flex-row gap-2 items-center text-sm text-center mx-auto mb-2">
-        <!---Filter by User--->
-        
-        <div class="flex flex-row gap-2 items-center text-sm text-center" class:hidden={!advancedSearch}>
-            <ObjectAutocomplete
-                placeholder="User"
-                type="person"
-                jwt={$profile?.jwt}
-                listing_type="All"
-                showWhenEmpty={false}
-                bind:q={searchParams.person}
-
-                on:select={ (e) => {
-                    searchParams.person = e.detail.id;
-                }}
-            />
-
-            <!---Filter by Community--->
-            <ObjectAutocomplete
-                placeholder="Community"
-                jwt={$profile?.jwt}
-                listing_type="All"
-                showWhenEmpty={false}
-                bind:q={searchParams.community_name}
-                
-                on:select={ (e) => {
-                    let communityURL = `${e.detail?.name}@${new URL(e.detail?.actor_id).host}`
-                    searchParams.community_name = communityURL;
-                }}
-            />
-        </div>
-
-
-        <div class="mx-auto" />
-        
-        <div class="flex flex-row gap-2 items-center">
-            <TextInput
-                bind:value={searchParams.query}
-                placeholder="Search Term(s)"
-                type="search"
-            />
-
-            <Button
-                on:click={() => {
-                    search();
-                }}
-                size="lg"
-                class="h-full"
-                icon={MagnifyingGlass} 
-            >
-                Search
+            <Button submit color="tertiary">
+                <Icon src={MagnifyingGlass} mini width={iconSize} />
             </Button>
-        </div>
+
+            <!---Reset Search Button--->
+            <Button color="tertiary" size="sm" title="Clear Search" on:click={() => resetSearch() } >
+                <Icon src={XCircle} mini width={iconSize-2}/>
+            </Button>
+        </form>
+
+        
     </span>
-</header>
+</SubNavbar>
 
-<div class="p-2 mt-4">
-    <h1 class="font-bold text-2xl">Search</h1>
-
-
-    {#if !data.results}
-        <Placeholder
-            icon={MagnifyingGlass}
-            title="No results"
-            description="Search across the fediverse"
-        />
+<MainContentArea>
+    <!---Search Input Outside of Subnavbar for Views Smaller than XL--->
+    <div class="flex xl:hidden w-full mx-auto">
+        <form class="flex flex-row gap-1 items-center ml-auto mr-auto"
+            on:submit={(e) => {
+                e.preventDefault();
+                search()
+            }}
+        >
+            <TextInput type="search" placeholder="Search" bind:value={filter.query}/>
+            <Button submit color="tertiary">
+                <Icon src={MagnifyingGlass} mini width={24} />
+            </Button>
+            
+            <!---Reset Search Button--->
+            <Button color="tertiary" size="sm" title="Clear Search" on:click={() => resetSearch() }>
+                <Icon src={XCircle} mini width={24}/>
+            </Button>
+        </form>
+    </div>
+    
+    <!--- Display Results or No Results or Searching Spinner--->
+    {#if !data.results || (data?.results && data.results.length < 1)}
+        {#if searching}
+            <div class="flex gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
+                <Spinner width={48} />
+                <span>Searching...</span>
+            </div>
+        {:else}
+            <Placeholder icon={MagnifyingGlass} title="No results" />
+        {/if}
+        
     {:else}
         {#await data.streamed.object}
-            <div
-                class="flex gap-2 items-center mt-4"
-                out:slide={{ axis: 'y', easing: expoOut }}
-            >
+            <div class="flex flex-col gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
                 <Spinner width={24} />
                 <span>Federating...</span>
             </div>
@@ -304,7 +299,10 @@
             {/if}
         {/await}
 
-        <div class="flex flex-col gap-4 mt-4 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto">
+        <div data-sveltekit-preload-data="hover" class="w-full 
+            {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[80%]' : ''}
+            ml-auto mr-auto flex flex-col gap-5"
+        >
             {#each data.results as result}
                 {#if isPostView(result)}
                     <Post post={result} />
@@ -317,12 +315,27 @@
                 {/if}
             {/each}
         </div>
-        <div class="mt-4" />
-        {#if data.results.length > 0}
-            <Pageination
-                bind:page={pageNum}
-                on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-            />
-        {/if}
     {/if}
-</div>
+
+    <div class="mt-4" />
+    {#if data?.results && data.results.length > 0 || data.page > 1}
+        <Pageination bind:page={data.page} on:change={(p) => {
+            filter.page = p.detail
+            window.scrollTo(0,0)
+            search()
+            //searchParam($page.url, 'page', p.detail.toString())
+        }}/>
+    {/if}
+
+
+    <!--- Site Sidebar--->
+    <div class="flex h-full" slot="right-panel">
+        {#if $site}
+            <SiteCard site={$site.site_view} taglines={$site.taglines} admins={$site.admins} version={$site.version} />
+        {/if}
+    </div>
+</MainContentArea>
+
+
+
+

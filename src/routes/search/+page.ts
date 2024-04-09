@@ -12,20 +12,20 @@ import type {
 } from 'lemmy-js-client'
 import { get } from 'svelte/store'
 
-export async function load({ url, fetch }) {
+export async function load({ url }) {
     const query = url.searchParams.get('q')
     const page = Number(url.searchParams.get('page')) || 1
-    const community = url.searchParams.get('community_name')
-    const sort = url.searchParams.get('sort')
-    const type = url.searchParams.get('type')
-    const person = url.searchParams.get('person');
-    const limit = url.searchParams.get('limit') || 40;
+    const community = Number(url.searchParams.get('community_id'))
+    const sort = url.searchParams.get('sort') ?? 'New'
+    const type = url.searchParams.get('type') ?? 'All'
+    const person = Number(url.searchParams.get('person'));
+    const limit = Number(url.searchParams.get('limit')) || 50;
 
     if (query) {
-        const results = await getClient(getInstance(), fetch).search({
-            q: query,
+        const results = await getClient().search({
+            q: query ?? ' ',
             auth: get(profile)?.jwt,
-            community_name: community ?? undefined,
+            community_id: community ?? undefined,
             creator_id: person ?? undefined,
             limit: limit,
             page: page,
@@ -48,11 +48,14 @@ export async function load({ url, fetch }) {
         return {
             page: page,
             sort: sort,
-            community_name: community ?? undefined,
+            type: type,
+            community_id: community ?? undefined,
+            person: person ?? undefined,
+            query: query ?? ' ',
             results: everything,
             streamed: {
                 object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@') || query.startsWith('https://') ))
-                ? getClient(undefined, fetch).resolveObject({
+                ? getClient().resolveObject({
                     auth: get(profile)!.jwt!,
                     q: query,
                 })
@@ -64,6 +67,9 @@ export async function load({ url, fetch }) {
     return {
         page: 1,
         sort: sort,
+        type: type,
+        query: '',
+
         community_name: community ?? undefined
     }
 }

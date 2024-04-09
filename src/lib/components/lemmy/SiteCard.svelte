@@ -42,7 +42,9 @@
 <StickyCard class="mb-3
     {$userSettings.uiState.expandCommunitySidebar
         ? 'block'
-        : 'hidden'}
+        : 'hidden'
+    }
+    {$$props.class}
     "
 >
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, 384, 'webp') : ''}>
