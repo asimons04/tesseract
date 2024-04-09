@@ -17,7 +17,7 @@
     let embedURL:   URL = new URL('https://localhost');
     let clickView:  boolean = false
 
-    if (post?.post?.url) {
+    $: if (post?.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
         videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
         

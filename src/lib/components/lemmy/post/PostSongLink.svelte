@@ -20,7 +20,7 @@
     let size: string = imageSize(displayType);
 
     
-    if (post.post?.url) {
+    $: if (post.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
         let mediaID = encodeURIComponent(post.post.url);
         embedURL = "https://odesli.co/embed/?url=";

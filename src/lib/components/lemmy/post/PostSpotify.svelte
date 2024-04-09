@@ -16,7 +16,7 @@
     let extraParams:string = ""
 
     // Generate the embed URL for the given post URL
-    if (post.post && post.post.url) {
+    $: if (post.post && post.post.url) {
         // e.g. https://open.spotify.com/embed/track/2RUs0cO0KpvuZJ0J4hqFFC
         if (post.post.url.startsWith('https://open.spotify.com/embed')) {
             embedURL = post.post.url;

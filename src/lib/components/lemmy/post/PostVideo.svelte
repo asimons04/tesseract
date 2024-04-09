@@ -14,22 +14,11 @@
     export let loop:boolean = false;
     export let displayType:PostDisplayType = 'feed'
     
-    let source = isVideo(post.post.url) 
-                    ? post.post.url
-                    : post.post.embed_video_url
+    $: source = isVideo(post.post.url) 
+                    ? imageProxyURL(post.post.url)
+                    : imageProxyURL(post.post.embed_video_url)
     
-    source = source
-        ? imageProxyURL(source)
-        : undefined
-    //? imageProxyURL(post.post.url)
-    //: imageProxyURL(post.post.embed_video_url)
     let muted = autoplay
-    let nsfwAcknowledge:boolean             = false
-
-    $: showAsEmbed = (
-        (displayType == 'feed' && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
-        (displayType == 'post')
-    )
 </script>
 
 {#if post && source}

@@ -19,7 +19,7 @@
     let size: string = imageSize(displayType);
 
     
-    if (post.post?.url) {
+    $: if (post.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
         videoID = new URL(post.post.url).pathname.replace('/','')
         embedURL = "https://odysee.com/$/embed";
@@ -28,7 +28,7 @@
         embedURL += `/${videoID}`
     }
 
-    if (embedURL) {
+    $: if (embedURL) {
         if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
             extraParams += "&autoplay=1";
         }

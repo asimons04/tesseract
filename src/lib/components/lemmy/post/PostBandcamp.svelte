@@ -16,7 +16,7 @@
     let embedURL:   string = ""
 
     // Generate the embed URL for the given post URL
-    if (post.post && post.post.embed_video_url) {
+    $: if (post.post && post.post.embed_video_url) {
         embedURL = post.post.embed_video_url
 
         let opts = "/bgcol=1F1F24/";

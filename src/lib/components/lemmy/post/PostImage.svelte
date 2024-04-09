@@ -21,12 +21,12 @@
     let loaded:boolean                      = false
 
     // Hack to get Imgur gifs to render without having to click through to the site.
-    if (!url?.endsWith('.gif') && post.post.embed_video_url && post.post.embed_video_url.endsWith('.gif')) {
+    $: if (!url?.endsWith('.gif') && post.post.embed_video_url && post.post.embed_video_url.endsWith('.gif')) {
         url = post.post.embed_video_url
     }
 
     // Hack to get GIFs to play in the feed.  Lemmy converts them to weird webm at best.
-    if (displayType == 'feed' && url?.endsWith('.gif')) {
+    $: if (displayType == 'feed' && url?.endsWith('.gif')) {
         thumbnail_url = url;
     }
 
