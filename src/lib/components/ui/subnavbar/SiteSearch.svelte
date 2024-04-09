@@ -14,7 +14,7 @@ let searchTerm:string
             e.preventDefault();
             let url = new URL(window.location.href);
             url.pathname = '/search';
-            url.searchParams.set('type', 'All')
+            url.searchParams.set('type', 'Posts')
             url.searchParams.set('q', searchTerm);
             goto(url, {
                 invalidateAll: true,
