@@ -7,6 +7,7 @@
         query?: string
         page?: number
     }
+    type Result = PostView | CommentView | PersonView | CommunityView
 
     import type {
         CommentView,
@@ -16,8 +17,9 @@
         PersonView,
         PostView,
     } from 'lemmy-js-client'
-
-    import type { Snapshot } from './$types';
+    
+    import type { LoadEvent } from '@sveltejs/kit';
+    import type { RouteParams, Snapshot } from './$types';
     import { PageSnapshot } from '$lib/storage'
 
     import { expoInOut, expoOut } from 'svelte/easing'
@@ -52,33 +54,28 @@
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
-    import { searchParam } from '$lib/util.js'
-    
     import { 
         Icon, 
         ArrowPathRoundedSquare,
         Bars3,
+        ChatBubbleOvalLeftEllipsis,
         Funnel,
         MagnifyingGlass,
         User,
+        UserCircle,
         UserGroup,
+        Window,
         XCircle
     } from 'svelte-hero-icons'
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    
-    
-
-    type Result = PostView | CommentView | PersonView | CommunityView
 
     export let data
     
-    let pageState = {
-        scrollY: 0
-    }
+   
 
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {
@@ -104,14 +101,14 @@
             }
             
             // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms)
-            if (pageState.scrollY) await scrollTo(pageState.scrollY)
+            if (pageState.scrollY) await scrollTo(pageState.scrollY, 300)
             else window.scrollTo(0,0)
         }
     }
     
     async function search() {
         searching = true
-        let searchURL = new URL($page.url);
+        const searchURL = new URL($page.url);
         if (filter.person)      searchURL.searchParams.set('person', filter.person.id.toString())
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
         if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
@@ -123,8 +120,7 @@
             if (filter.person || filter.community) searchURL.searchParams.set('q', ' ')
         }
         
-        //@ts-ignore
-        const results = await load({url: searchURL})
+        const results = await load({url: searchURL} as LoadEvent<RouteParams, null, {}, "/search">)
         data = results
         searching = false
     }
@@ -134,11 +130,14 @@
         filter.type = 'All'
         filter.query = ''
         data.results = []
+        pageState.scrollY = 0
+        pageState.panel = 'All'
         goto('/search')
+        PageSnapshot.clear() 
     }
 
     
-    let searching = false
+    
     let default_filter: SearchFilter = {
         sort: data.sort,
         type: data.type,
@@ -146,7 +145,13 @@
         page: data.page
     }
 
+    let pageState = {
+        scrollY: 0,
+        panel: 'All'
+    }
+
     let filter = default_filter
+    let searching = false
 </script>
 
 <svelte:head>
@@ -154,8 +159,14 @@
 </svelte:head>
 
 
-<SubNavbar home scrollButtons   toggleMargins compactSwitch toggleCommunitySidebar
-    pageSelection bind:currentPage={data.page}
+<SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
+    pageSelection bind:currentPage={data.page} pageSelectPreventDefault on:navPageSelect={(e) => {
+        if (e) {
+            filter.page = e.detail
+            window.scrollTo(0,0)
+            search()
+        }
+    }}
     sortMenu sortPreventDefault bind:selectedSortOption={filter.sort} 
     on:navChangeSort={(e) => {
         if (e && e.detail) filter.sort = e.detail
@@ -302,7 +313,11 @@
                 <span>Searching...</span>
             </div>
         {:else}
-            <Placeholder icon={MagnifyingGlass} title="No results" />
+            <div class="flex h-full w-full">
+                <div class="mx-auto my-auto">
+                    <Placeholder icon={MagnifyingGlass} title="No results" />
+                </div>
+            </div>
         {/if}
         
     {:else}
@@ -333,26 +348,98 @@
                 </div>
             {/if}
         {/await}
+        
+        <!--- Result Type Buttons--->
+        {#if filter.type == 'All'}
+        <div class="flex flex-col gap-4 max-w-full w-full min-w-0" data-sveltekit-preload-data="false">
+            <div class="flex flex-row gap-1 mx-auto bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10">
+                
+                <Button color="tertiary" alignment="left" title="All" class="hover:bg-slate-200" on:click={() => pageState.panel='All'}>
+                    <span class="flex flex-col items-center {pageState.panel=="All" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={MagnifyingGlass} mini size="18" title="All" />
+                        <span class="text-center text-xs">All ({data.results.length})</span>
+                    </span>            
+                </Button>
 
-        <div data-sveltekit-preload-data="hover" class="w-full 
+                <Button color="tertiary" alignment="left" title="Posts" class="hover:bg-slate-200" on:click={() => pageState.panel='Posts'}>
+                    <span class="flex flex-col items-center {pageState.panel=="Posts" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={Window} mini size="18" title="Posts" />
+                        <span class="text-center text-xs">Posts ({data.fullResults.posts.length})</span>
+                    </span>            
+                </Button>
+
+                <Button color="tertiary" alignment="left" title="Comments" class="hover:bg-slate-200" on:click={() => pageState.panel='Comments'}>
+                    <span class="flex flex-col items-center {pageState.panel=="Comments" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={ChatBubbleOvalLeftEllipsis} mini size="18" title="Comments" />
+                        <span class="text-center text-xs">Comments ({data.fullResults.comments.length})</span>
+                    </span>            
+                </Button>
+
+                <Button color="tertiary" alignment="left" title="Communities" class="hover:bg-slate-200" on:click={() => pageState.panel='Communities'}>
+                    <span class="flex flex-col items-center {pageState.panel=="Communities" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={UserGroup} mini size="18" title="Communities" />
+                        <span class="text-center text-xs">Communities ({data.fullResults.communities.length})</span>
+                    </span>            
+                </Button>
+
+                <Button color="tertiary" alignment="left" title="Users" class="hover:bg-slate-200" on:click={() => pageState.panel='Users'}>
+                    <span class="flex flex-col items-center {pageState.panel=="Users" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={UserCircle} mini size="18" title="Users" />
+                        <span class="text-center text-xs">Users ({data.fullResults.users.length})</span>
+                    </span>            
+                </Button>
+            </div>
+        </div>
+        {/if}
+        
+
+        <div data-sveltekit-preload-data="false" class="w-full 
             {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[80%]' : ''}
             ml-auto mr-auto flex flex-col gap-5"
+            
         >
-            {#each data.results as result}
-                {#if isPostView(result)}
-                    <Post post={result} />
-                {:else if isCommentView(result)}
-                    <CommentItem comment={result} />
-                {:else if isCommunityView(result)}
-                    <CommunityItem community={result} />
-                {:else if isUser(result)}
-                    <UserItem user={result} />
-                {/if}
-            {/each}
+
+            {#if pageState.panel == 'Posts' || filter.type == 'Posts'}
+                {#each data.fullResults.posts as post}
+                    <Post post={post} />
+                {/each}
+            {/if}
+
+            {#if pageState.panel == 'Comments' || filter.type == 'Comments'}
+                {#each data.fullResults.comments as comment}    
+                    <CommentItem comment={comment} />
+                {/each}
+            {/if}
+
+            {#if pageState.panel == 'Communities'|| filter.type == 'Communities' }
+                {#each data.fullResults.communities as community}    
+                    <CommunityItem community={community} />
+                {/each}
+            {/if}
+
+            {#if pageState.panel == 'Users' || filter.type == 'Users'}
+                {#each data.fullResults.users as user}
+                    <UserItem user={user} />
+                {/each}
+            {/if}
+            
+            {#if pageState.panel == 'All' && filter.type == 'All'}
+                {#each data.results as result}
+                    {#if isPostView(result)}
+                        <Post post={result} />
+                    {:else if isCommentView(result)}
+                        <CommentItem comment={result} />
+                    {:else if isCommunityView(result)}
+                        <CommunityItem community={result} />
+                    {:else if isUser(result)}
+                        <UserItem user={result} />
+                    {/if}
+                {/each}
+            {/if}
         </div>
     {/if}
 
-    <div class="mt-4" />
+    <div class="mt-auto" />
     {#if data?.results && data.results.length > 0 || data.page > 1}
         <Pageination bind:page={data.page} on:change={(p) => {
             filter.page = p.detail

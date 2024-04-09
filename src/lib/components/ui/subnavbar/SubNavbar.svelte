@@ -75,6 +75,7 @@
     // Page Selection
     export let pageSelection:boolean            = false
     export let currentPage:number               = 1
+    export let pageSelectPreventDefault:boolean = false
 
     // Post/Community/Moderator Action Menus
     export let postActionsMenu:boolean          = false
@@ -91,7 +92,8 @@
         { 
             navChangeSort?: string,
             navBack?: null,
-            navRefresh?: null
+            navRefresh?: null,
+            navPageSelect?: number
         }
     >()
     
@@ -204,7 +206,8 @@
                     icon={DocumentDuplicate}
                     on:select={(e) => {
                         // @ts-ignore
-                        searchParam($page.url, 'page', e.detail.toString())
+                        if (!pageSelectPreventDefault) searchParam($page.url, 'page', e.detail.toString())
+                        dispatcher('navPageSelect', e.detail)
                     }}
                 />
             {/if}
