@@ -297,7 +297,7 @@ export async function scrollToLastSeenPost(pathname:string = '/') {
     const lastSeenPost = getLastSeenPost()
     
     if (lastSeenPost) {
-        await sleep(100)
+        await sleep(200)
         const element = document.getElementById(lastSeenPost)
         
         if (element) {
@@ -312,7 +312,7 @@ export async function scrollToLastSeenPost(pathname:string = '/') {
 
 export async function scrollTo(pos:number) {
     if (!pos) return
-    await sleep(100)
+    await sleep(200)
     disableScrollHandling()
     window.scrollTo(0, pos)
 }
