@@ -5,7 +5,7 @@
     import { PageSnapshot } from '$lib/storage'
     
 
-    import { goto } from '$app/navigation'
+    import { beforeNavigate, goto } from '$app/navigation'
     import { 
         addMBFCResults, 
         findCrossposts, 
@@ -31,11 +31,12 @@
 
     export let data
     
-    
+    // Page state that will persist in snapshots
     let pageState = {
         scrollY: 0,
     }
-
+    
+    // Infinite scroll object to hold config parms
     let infiniteScroll = {
         loading: false,     // Used to toggle loading indicator
         exhausted: false,   // Sets to true if the API returns 0 posts
@@ -46,6 +47,11 @@
     }
 
     $: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
+    
+    // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
+    beforeNavigate(() => {
+        infiniteScroll.exhausted = false
+    })
 
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {

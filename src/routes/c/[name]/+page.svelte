@@ -5,7 +5,7 @@
     import { addMBFCResults,  filterKeywords,  scrollTo, scrollToLastSeenPost, setLastSeenPost, sortPosts } from '$lib/components/lemmy/post/helpers'
     import { fullCommunityName, searchParam } from '$lib/util.js'
     import { getClient } from '$lib/lemmy.js'
-    import { goto } from '$app/navigation'
+    import { beforeNavigate, goto } from '$app/navigation'
     import { setSessionStorage } from '$lib/session.js'
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
@@ -50,6 +50,10 @@
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
     }
     $: infiniteScroll.truncated = (data?.posts?.posts && data.posts.posts.length > infiniteScroll.maxPosts-2) ?? false
+    
+    beforeNavigate(() => {
+        infiniteScroll.exhausted = false
+    })
 
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {

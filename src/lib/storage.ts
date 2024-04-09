@@ -11,7 +11,8 @@ export const PageSnapshot = {
         const Page = get(page)
         if (!page) return 
         
-        const key = Page.url.pathname + '?' + Page.url.searchParams.toString()
+        const key = Page.url.pathname 
+        //+ '?' + Page.url.searchParams.toString()
 
         let snapshots = storage.get(LS_KEY)
         
@@ -31,10 +32,16 @@ export const PageSnapshot = {
         const Page = get(page)
         if (!page) return undefined
         
-        const key = Page.url.pathname + '?' + Page.url.searchParams.toString()
+        const key = Page.url.pathname 
+        // + '?' + Page.url.searchParams.toString()
         
         let snapshots = storage.get(LS_KEY)
         if (snapshots) delete snapshots[key]
+    },
+
+    /** Deletes all Tesseract snapshots in LocalStorage */
+    clearAll: function(): void {
+        storage.remove(LS_KEY)
     },
 
     /** Returns the stored data object from localStorage for the key of the current page route + params */
@@ -42,7 +49,8 @@ export const PageSnapshot = {
         const Page = get(page)
         if (!page) return {}
         
-        const key = Page.url.pathname + '?' + Page.url.searchParams.toString()
+        const key = Page.url.pathname 
+        // + '?' + Page.url.searchParams.toString()
         let snapshots = storage.get(LS_KEY)
         
         if (snapshots && key in snapshots) return snapshots[key]
@@ -50,7 +58,7 @@ export const PageSnapshot = {
     }
 }
 
-
+// Low-level basic local storage functions. 
 export const storage = {
     remove: function (key:string): void {
         try {
@@ -87,7 +95,4 @@ export const storage = {
             return false
         }
     }
-
-
-
 }
