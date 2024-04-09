@@ -241,12 +241,6 @@ export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HO
 export const MEDIA_CACHE_HOUSEKEEP_STARTUP  = toBool(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP)          ?? true
 export const MEDIA_CACHE_KEEP_HOT_ITEMS     = toBool(env.PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS)             ?? true
 
-// Import custom Invidious/Piped instances
-let custom_invidious_instances = strToArray(env.PUBLIC_CUSTOM_INVIDIOUS) as Array<string>
-let custom_piped_instances = strToArray(env.PUBLIC_CUSTOM_PIPED) as Array<string>
-
-
-
 
 // Define Invidious and Piped instances to determine if embedded media is a Youtube et al video.
 // Invidious Instance List:  https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest
@@ -275,7 +269,8 @@ export const YTFrontends = {
         'iv.nboeck.de',
         'yt.oelrichsgarcia.de',
         'yt.artemislena.eu',
-        'yt.whateveritworks.org'
+        'yt.whateveritworks.org',
+        ...strToArray(env.PUBLIC_CUSTOM_INVIDIOUS)
     ],
 
     piped: [
@@ -316,21 +311,10 @@ export const YTFrontends = {
         'piapi.ggtyler.dev',
         'watchapi.pluto.lat',
         'piped.syncpundit.io',
-        'piped.yt'
-
+        'piped.yt',
+        ...strToArray(env.PUBLIC_CUSTOM_PIPED)
     ]
 }
-
-// Import custom Invidious/Piped instances
-if (custom_invidious_instances.length > 0) {
-    YTFrontends.invidious.push(...custom_invidious_instances);
-}
-
-// Add user-defined Piped instances
-if (custom_piped_instances.length > 0) {
-    YTFrontends.piped.push(...custom_piped_instances);
-}
-
 
 // Create a writable store for the user settings
 export const userSettings = writable(defaultSettings)
