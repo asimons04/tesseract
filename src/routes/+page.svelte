@@ -12,6 +12,7 @@
         filterKeywords, 
         fixHourAheadPosts, 
         scrollToLastSeenPost, 
+        scrollTo,
         setLastSeenPost, 
         sortPosts 
     } from '$lib/components/lemmy/post/helpers'
@@ -29,6 +30,11 @@
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     export let data
+    
+    
+    let pageState = {
+        scrollY: 0,
+    }
 
     let infiniteScroll = {
         loading: false,     // Used to toggle loading indicator
@@ -39,21 +45,32 @@
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
     }
 
-     
-   // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
-     export const snapshot: Snapshot<void> = {
-		capture: () => {
-            PageSnapshot.capture(data)
-            infiniteScroll.exhausted=false
+    $: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
+
+    // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
+    export const snapshot: Snapshot<void> = {
+        capture: () => {
+            pageState.scrollY = window.scrollY
+            PageSnapshot.capture({data: data, state: pageState})
         },
         restore: async () => {
-            data = PageSnapshot.restore()
-            await scrollToLastSeenPost()
+            try { 
+                let snapshot = PageSnapshot.restore() 
+                if (snapshot.data)  data = snapshot.data
+                if (snapshot.state) pageState = snapshot.state
+            }
+            catch { 
+                PageSnapshot.clear() 
+            }
+            
+            // Scroll to last stored position if found in snapshot data
+            if (pageState.scrollY) await scrollTo(pageState.scrollY)
+            else window.scrollTo(0,0)
         }
-	};
+    }
     
     async function refresh() {
-        setLastSeenPost(-1)
+        PageSnapshot.clear()
         infiniteScroll.exhausted = false
         infiniteScroll.truncated = false
         window.scrollTo(0,0)

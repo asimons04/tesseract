@@ -2,7 +2,7 @@
     import type { Snapshot } from './$types';
     import type { GetPosts } from 'lemmy-js-client'
     
-    import { addMBFCResults,  filterKeywords,  scrollToLastSeenPost, setLastSeenPost, sortPosts } from '$lib/components/lemmy/post/helpers'
+    import { addMBFCResults,  filterKeywords,  scrollTo, scrollToLastSeenPost, setLastSeenPost, sortPosts } from '$lib/components/lemmy/post/helpers'
     import { fullCommunityName, searchParam } from '$lib/util.js'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
@@ -19,7 +19,7 @@
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     
-
+    import { load } from './+layout'
 
     export let data
     
@@ -37,6 +37,10 @@
         }
     })
 
+    let pageState = {
+        scrollY: 0,
+    }
+
     let infiniteScroll = {
         loading: false,     // Used to toggle loading indicator
         exhausted: false,   // Sets to true if the API returns 0 posts
@@ -45,21 +49,32 @@
         automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
     }
+    $: infiniteScroll.truncated = (data?.posts?.posts && data.posts.posts.length > infiniteScroll.maxPosts-2) ?? false
 
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {
-		capture: () => {
-            PageSnapshot.capture(data)
-            infiniteScroll.exhausted=false
+        capture: () => {
+            pageState.scrollY = window.scrollY
+            PageSnapshot.capture({data: data, state: pageState})
         },
         restore: async () => {
-            data = PageSnapshot.restore()
-            await scrollToLastSeenPost()
+            try { 
+                let snapshot = PageSnapshot.restore() 
+                if (snapshot.data)  data = snapshot.data
+                if (snapshot.state) pageState = snapshot.state
+            }
+            catch { 
+                PageSnapshot.clear() 
+            }
+            
+            // Scroll to last stored position if found in snapshot data
+            if (pageState.scrollY) await scrollTo(pageState.scrollY)
+            else window.scrollTo(0,0)
         }
-	};
+    }
 
     async function refresh() {
-        setLastSeenPost(-1)
+        PageSnapshot.clear()
         infiniteScroll.exhausted = false
         infiniteScroll.truncated = false
         window.scrollTo(0,0)
@@ -137,6 +152,7 @@
         />
     {/if}
 </svelte:head>
+
 <!--pageSelection={true}    bind:currentPage={data.page}-->
 <SubNavbar home back compactSwitch toggleMargins toggleCommunitySidebar scrollButtons
     sortMenu={true}         bind:selectedSortOption={data.sort}
@@ -163,7 +179,6 @@
                     }
                 }}
             />
-            <!--<Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />-->
         </div>
 
         <div class="mt-[8px]">

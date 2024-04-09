@@ -1,6 +1,8 @@
 import { page } from '$app/stores'
 import { get } from 'svelte/store'
 
+const LS_KEY = 'tesseract_snapshots'
+
 /** Store data for the current page + params to localStorage */
 export const PageSnapshot = {
    
@@ -8,11 +10,20 @@ export const PageSnapshot = {
     capture: function(data:any):void {
         const Page = get(page)
         if (!page) return 
+        
+        const key = Page.url.pathname + '?' + Page.url.searchParams.toString()
 
-        const key = `snapshot_${Page.url.pathname}`
-        // ?${Page.url.searchParams.toString()}`
-        storage.set(key, data)
-        return
+        let snapshots = storage.get(LS_KEY)
+        
+        if (snapshots) {
+            snapshots[key] = data
+            storage.set(LS_KEY, snapshots)
+        }
+        else {
+            snapshots = {}
+            snapshots[key] = data
+            storage.set(LS_KEY, snapshots)
+        }
     },
 
     /** Clears the current page's data from localStorage */
@@ -20,9 +31,10 @@ export const PageSnapshot = {
         const Page = get(page)
         if (!page) return undefined
         
-        const key = `snapshot_${Page.url.pathname}`
-        //?${Page.url.searchParams.toString()}`
-        storage.remove(key)
+        const key = Page.url.pathname + '?' + Page.url.searchParams.toString()
+        
+        let snapshots = storage.get(LS_KEY)
+        if (snapshots) delete snapshots[key]
     },
 
     /** Returns the stored data object from localStorage for the key of the current page route + params */
@@ -30,9 +42,11 @@ export const PageSnapshot = {
         const Page = get(page)
         if (!page) return {}
         
-        const key = `snapshot_${Page.url.pathname}`
-        //?${Page.url.searchParams.toString()}`
-        return storage.get(key)
+        const key = Page.url.pathname + '?' + Page.url.searchParams.toString()
+        let snapshots = storage.get(LS_KEY)
+        
+        if (snapshots && key in snapshots) return snapshots[key]
+        else return {}
     }
 }
 
