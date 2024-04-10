@@ -8,6 +8,10 @@ All major/minor changes between releases will be documented here.
 - Add support for detecting and rendering Peertube embeds
     - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
     - Votes on Peertube videos will translate to thumbs-up on PT's end
+- Media embeds now only render when the post is actually in the viewport. 
+    - This should keep memory from ballooning in embed-heavy feeds. Before, all iframes were kept in the DOM
+    - Will show as thumbnail art until 10% of the post is in the viewport and then automatically switch to embed (if embeds enabled)
+
 
 ### 0.19.x Features
 - Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.  Will prefer cursor-based pagination if available and fall back to offset based if using < 0.19.0 instance (maintains backwards compatibility with 0.18.x)
@@ -41,7 +45,7 @@ All major/minor changes between releases will be documented here.
     - Now disabled when non-applicable (viewing post on non-home instance, not logged in, etc)
     - To do:  Add addional check against current site config to disable downvote button if instance has downvotes disabled
 
-- Un-flattened buttons    
+- Un-flattened all other buttons    
 - Long community names are now split on colon and hyphen characters and only the text to the left are shown on posts.  
     - **Alternative Nation: The Fediverse's Alternative and Indie Music Community** -> Alternative Nation
     - **Climate - truthful information about climate, related activism and politics.** -> Climate
@@ -68,6 +72,9 @@ All major/minor changes between releases will be documented here.
     - Looks a lot cleaner
     - Hide the currently selected label on mobile (to not overflow the navbar)
     - Add menu label to top of dropdown and check icon indicator to currently selected option
+
+- Revamped the search page
+- Revamped the modlog
 
 ### Post Feeds    
 - Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 

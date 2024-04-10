@@ -13,11 +13,27 @@
 
     export let post: PostView
     export let displayType: PostDisplayType
+    export let postContainer: HTMLDivElement
 
     let embedURL:   string = ""
     
     let size: string = imageSize(displayType);
+    
+    // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
+    // Should reduce memory consumption by a lot on video-heavy feeds.
+    let inViewport = false
+    const observer = new window.IntersectionObserver( ([entry]) => {
+        if (entry.isIntersecting) {
+            inViewport = true
+            return
+        }
+        inViewport = false
+        }, 
+        { root: null, threshold: 0,}
+    )
+    $: if (postContainer) observer.observe(postContainer);
 
+    
     // Check for a defined embed URL and use that if available
     $: if (post.post && post.post.embed_video_url) {
         embedURL = post.post.embed_video_url;
@@ -28,7 +44,7 @@
     }
 
    $: showAsEmbed = embedURL &&
-        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 
 </script>

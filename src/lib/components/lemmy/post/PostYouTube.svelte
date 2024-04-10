@@ -28,7 +28,7 @@
         }
         inViewport = false
         }, 
-        { root: null, threshold: 0.1,}
+        { root: null, threshold: 0,}
     )
     $: if (postContainer) observer.observe(postContainer);
 

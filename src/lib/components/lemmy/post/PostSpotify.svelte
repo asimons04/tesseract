@@ -10,10 +10,26 @@
 
     export let post: PostView
     export let displayType: PostDisplayType
+    export let postContainer: HTMLDivElement
     
     let trackID:    string = ""
     let embedURL:   string = ""
     let extraParams:string = ""
+
+    // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
+    // Should reduce memory consumption by a lot on video-heavy feeds.
+    let inViewport = false
+    const observer = new window.IntersectionObserver( ([entry]) => {
+        if (entry.isIntersecting) {
+            inViewport = true
+            return
+        }
+        inViewport = false
+        }, 
+        { root: null, threshold: 0,}
+    )
+    $: if (postContainer) observer.observe(postContainer);
+
 
     // Generate the embed URL for the given post URL
     $: if (post.post && post.post.url) {
@@ -39,7 +55,7 @@
     }
 
     $: showAsEmbed = embedURL &&
-        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 </script>
 

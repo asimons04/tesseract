@@ -65,7 +65,7 @@
 
     <!--- Bandcamp Embed --->
     {#if postType == "bandcamp"}
-        <PostBandcamp bind:post {displayType}/>
+        <PostBandcamp bind:post bind:postContainer {displayType}/>
     {/if}
 
     <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
@@ -75,32 +75,32 @@
 
     <!--- Spotify Embed --->
     {#if postType == "spotify"}
-        <PostSpotify bind:post {displayType} />
+        <PostSpotify bind:post bind:postContainer {displayType} />
     {/if}
 
     <!--- Soundcloud Embed --->
     {#if postType == "soundcloud"}
-        <PostSoundCloud bind:post {displayType} />
+        <PostSoundCloud bind:post bind:postContainer {displayType} />
     {/if}
 
     <!--- Vimeo Embed --->
     {#if postType == "vimeo"}
-        <PostVimeo bind:post {displayType} />
+        <PostVimeo bind:post bind:postContainer {displayType} />
     {/if}
 
     <!--- Odysee Embed --->
     {#if postType == "odysee"}
-        <PostOdysee bind:post {displayType} />
+        <PostOdysee bind:post bind:postContainer {displayType} />
     {/if}
 
     <!--- SongLink Embed --->
     {#if postType == "songlink"}
-        <PostSongLink bind:post {displayType} />
+        <PostSongLink bind:post bind:postContainer {displayType} />
     {/if}
 
     <!---Peertube Embed--->
     {#if postType == 'peertube'}
-        <PostPeerTube bind:post {displayType} />
+        <PostPeerTube bind:post bind:postContainer {displayType} />
     {/if}
 
     <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText bind:expandCompact/>
