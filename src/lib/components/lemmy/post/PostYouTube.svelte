@@ -1,7 +1,7 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings.js'
     import { getInstance } from '$lib/lemmy.js'
-    import type { PostDisplayType } from './helpers.js'
+    import type {PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
     import Link from '$lib/components/input/Link.svelte'
@@ -12,15 +12,33 @@
     export let post: PostView
     export let displayType: PostDisplayType
     export let autoplay:boolean|undefined = undefined;
-    
+    export let postContainer: HTMLDivElement
+
     let videoID:    string | null | undefined
-    let embedURL:   URL = new URL('https://localhost');
-    let clickView:  boolean = false
+    let embedURL:   URL = new URL('https://localhost') // Fake URL used to build with query params. Host will be changed to whatever YT frontend user specified.
+    
+    
+    // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
+    // Should reduce memory consumption by a lot on video-heavy feeds.
+    let inViewport = false
+    const observer = new window.IntersectionObserver( ([entry]) => {
+        if (entry.isIntersecting) {
+            inViewport = true
+            return
+        }
+        inViewport = false
+        }, 
+        { root: null, threshold: 0.1,}
+    )
+    $: if (postContainer) observer.observe(postContainer);
+
+   
 
     $: if (post?.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
         videoID = new URL(post.post.url).searchParams.get('v');
         
+        // If 'v' video ID param not found, check for older /watch/ABCDEFG format
         if (!videoID) {
             videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
         }
@@ -69,7 +87,7 @@
     }
 
     $: showAsEmbed = videoID &&
-        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 </script>
 
@@ -92,7 +110,7 @@
 
 
 
-{#if showAsEmbed || clickView}
+{#if showAsEmbed }
     <Link 
         href={
             embedURL

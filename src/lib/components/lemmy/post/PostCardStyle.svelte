@@ -70,7 +70,7 @@
 
     <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
     {#if postType == "youtube"}
-        <PostYouTube bind:post {displayType} {autoplay}/>
+        <PostYouTube bind:post bind:postContainer {displayType} {autoplay}/>
     {/if}
 
     <!--- Spotify Embed --->
