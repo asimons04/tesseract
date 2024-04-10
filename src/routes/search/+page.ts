@@ -54,6 +54,7 @@ export async function load({ url }) {
             query: query ?? ' ',
             fullResults: results,
             results: everything,
+            limit: limit,
             streamed: {
                 object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@') || query.startsWith('https://') ))
                 ? getClient().resolveObject({

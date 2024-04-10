@@ -160,24 +160,33 @@
 <svelte:head>
     <title>Search</title>
 </svelte:head>
+<!---
 
+
+--->
 
 <SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
-    pageSelection bind:currentPage={data.page} pageSelectPreventDefault on:navPageSelect={(e) => {
+    
+    pageSelection={data?.results && data.results.length >= data.limit || data.page > 1}
+    bind:currentPage={data.page} pageSelectPreventDefault on:navPageSelect={(e) => {
         if (e) {
             filter.page = e.detail
             window.scrollTo(0,0)
             search()
         }
     }}
-    sortMenu sortPreventDefault bind:selectedSortOption={filter.sort} 
+    
+    sortMenu sortPreventDefault
+    sortOptions={['New', 'Old']} 
+    sortOptionNames={['New', 'Old']} 
+    bind:selectedSortOption={filter.sort} 
     on:navChangeSort={(e) => {
         if (e && e.detail) filter.sort = e.detail
     }}
 >
 
     <!---Custom Sub-Navbar Buttons for Search--->
-    <span class="flex flex-row gap-0 md:gap-1 items-center" slot="far-left" let:iconSize>
+    <span class="flex flex-row gap-1 md:gap-2 items-center" slot="far-left" let:iconSize>
         <SelectMenu
             options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
             selected={filter.type}
@@ -265,7 +274,7 @@
     
     <!---Search Input in Subnavbar-->
     <span class="hidden xl:flex flex-row gap-0" let:iconSize slot="center">
-        <form class="flex flex-row gap-0 items-center mr-auto"
+        <form class="flex flex-row gap-0 items-center mx-auto"
             on:submit={(e) => {
                 e.preventDefault();
                 search()
@@ -443,7 +452,7 @@
     {/if}
 
     <div class="mt-auto" />
-    {#if data?.results && data.results.length > 0 || data.page > 1}
+    {#if data?.results && data.results.length >= data.limit || data.page > 1}
         <Pageination bind:page={data.page} on:change={(p) => {
             filter.page = p.detail
             window.scrollTo(0,0)

@@ -116,7 +116,7 @@
     
     <slot name="above" />
     
-    <span class="flex flex-row gap-0 md:gap-1 items-center text-sm text-center mx-auto md:mr-2">
+    <span class="flex flex-row gap-1 md:gap-2 items-center text-sm text-center mx-auto md:mr-2">
         
         <!--Home Button-->
         {#if home || history.length < 2}
