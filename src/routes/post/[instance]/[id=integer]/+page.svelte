@@ -35,10 +35,6 @@
     let showCommentForm:boolean = false;
     let postContainer: HTMLDivElement
     
-    //$: post_view = data.post.post_view
-    //$: community_view = data.post.community_view
-    //$: moderators = data.post.moderators
-    
     //@ts-ignore (Add cross posts to post_view object for sanity)
     $: data.post.post_view.cross_posts = data.post.cross_posts
 
