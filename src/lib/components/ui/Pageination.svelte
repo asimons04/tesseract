@@ -13,7 +13,7 @@
     const dispatcher = createEventDispatcher<{ change: number }>()
 </script>
 
-<div class="flex flex-row w-full gap-4">
+<div class="flex flex-row w-full h-8 mt-auto gap-4">
     
     <Button  class="flex-1 font-normal w-full" title="Previous Page"
         on:click={() => {

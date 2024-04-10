@@ -275,10 +275,9 @@
         </div>
         
 
-        <Pageination
-            page={data.page}
-            on:change={(e) => searchParam($page.url, 'page', e.detail.toString())}
-        />
+        {#if data.page != 1 || data.modlog.length > 1 }
+            <Pageination page={data.page} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
+        {/if}
     {:else}
         <div class="mx-auto my-auto">
             <Placeholder
