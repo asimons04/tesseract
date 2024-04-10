@@ -67,6 +67,7 @@
             ? `max-w-[25%] lg:max-w-[20%] xl:max-w-[18%] min-w-[20rem]`
             : "w-max max-w-max min-w-max"
         }
+        -mb-4
     "
 >
     <!--- Feed Sort Convenience Buttons--->

@@ -308,7 +308,7 @@
 
 <MainContentArea>
     <!---Search Input Outside of Subnavbar for Views Smaller than XL--->
-    <div class="flex xl:hidden w-full mx-auto mb-4">
+    <div class="flex xl:hidden w-full mx-auto">
         <form class="flex flex-row gap-1 items-center ml-auto mr-auto"
             on:submit={(e) => {
                 e.preventDefault();
@@ -373,7 +373,7 @@
         
         <!--- Result Type Buttons--->
         {#if filter.type == 'All'}
-        <div class="sticky top-[6.8rem] xl:top-[7rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10 mb-4" data-sveltekit-preload-data="false">
+        <div class="sticky top-[6.8rem] xl:top-[7rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10" data-sveltekit-preload-data="false">
             <div class="flex flex-row gap-1 mx-auto">
                 
                 <Button color="tertiary" alignment="left" title="All" class="hover:bg-slate-200" on:click={() => pageState.panel='All'}>
