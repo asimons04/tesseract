@@ -30,12 +30,12 @@
     highlight nowrap 
         
 />
-<div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-md max-w-full p-1">
+<div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl max-w-full p-1">
     <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
         
         <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-        <video class="rounded-md max-w-full max-h-[75vh] max-w-[88vw] mx-auto" 
+        <video class="rounded-2xl max-w-full max-h-[75vh] max-w-[88vw] mx-auto" 
             class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed')}    
             controls playsinline {muted} {autoplay}  {loop}
         >

@@ -57,10 +57,10 @@
     
 
 <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-<div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+<div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full p-1">
         
     <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
-        <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
+        <div class="flexiframe-container rounded-2xl max-w-screen max-h-[480px] mx-auto">
             <iframe 
                 class="flexiframe"
                 src="{embedURL}" 

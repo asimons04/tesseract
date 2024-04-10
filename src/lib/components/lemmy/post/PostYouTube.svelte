@@ -110,9 +110,9 @@
         
     />
     
-    <div class="overflow-hidden relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+    <div class="overflow-hidden relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full p-1">
         <div class="ml-auto mr-auto max-w-[88vw] w-full">
-            <div class="flexiframe-container rounded-md max-w-screen mx-auto">
+            <div class="flexiframe-container rounded-2xl max-w-screen mx-auto">
                 <iframe 
                     id="video-{post.post.id}"
                     class="flexiframe"
