@@ -110,13 +110,18 @@
     async function search() {
         searching = true
         data.results = []
-        data.fullResults = {} as SearchResponse
+        data.counts = {posts:0, comments:0, users:0,communities:0,total:0}
+        //data.fullResults = {} as SearchResponse
+        
 
         const searchURL = new URL($page.url);
         if (filter.person)      searchURL.searchParams.set('person', filter.person.id.toString())
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
         if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
-        if (filter.type)        searchURL.searchParams.set('type', filter.type)
+        if (filter.type) {
+            searchURL.searchParams.set('type', filter.type)
+            pageState.panel = filter.type
+        }
         if (filter.page)        searchURL.searchParams.set('page', filter.page.toString())
         if (filter.query)       searchURL.searchParams.set('q', filter.query)
         else {
@@ -125,8 +130,8 @@
         }
         
         const results = await load({url: searchURL} as LoadEvent<RouteParams, null, {}, "/search">)
-        data.results = undefined
-        data.fullResults = undefined
+        //data.results = undefined
+        //data.fullResults = undefined
         
         data = results
         searching = false
@@ -137,7 +142,7 @@
         filter.type = 'All'
         filter.query = ''
         data.results = []
-        data.fullResults = {} as SearchResponse
+        //data.fullResults = {} as SearchResponse
         pageState.scrollY = 0
         pageState.panel = 'All'
         goto('/search')
@@ -165,9 +170,7 @@
 <svelte:head>
     <title>Search</title>
 </svelte:head>
-
-<SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
-    
+<!---
     pageSelection={data?.results && data.results.length >= data.limit || data.page > 1}
     bind:currentPage={data.page} pageSelectPreventDefault on:navPageSelect={async (e) => {
         if (e) {
@@ -176,13 +179,16 @@
             await search()
         }
     }}
-    
+--->
+<SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
     sortMenu sortPreventDefault
     sortOptions={['New', 'Old']} 
     sortOptionNames={['New', 'Old']} 
     bind:selectedSortOption={filter.sort} 
     on:navChangeSort={(e) => {
-        if (e && e.detail) filter.sort = e.detail
+        if (e && e.detail) {
+            filter.sort = e.detail
+        }
     }}
 >
 
@@ -194,7 +200,10 @@
             icon={Bars3}
             title="Search Type"
             on:select={(e) => {
-                filter.type = e.detail
+                if (e.detail) {
+                    filter.type = e.detail
+                    pageState.panel = e.detail
+                }
             }}
         />
 
@@ -299,7 +308,7 @@
 
 <MainContentArea>
     <!---Search Input Outside of Subnavbar for Views Smaller than XL--->
-    <div class="flex xl:hidden w-full mx-auto">
+    <div class="flex xl:hidden w-full mx-auto mb-4">
         <form class="flex flex-row gap-1 items-center ml-auto mr-auto"
             on:submit={(e) => {
                 e.preventDefault();
@@ -364,41 +373,41 @@
         
         <!--- Result Type Buttons--->
         {#if filter.type == 'All'}
-        <div class="flex flex-col gap-4 max-w-full w-full min-w-0" data-sveltekit-preload-data="false">
-            <div class="flex flex-row gap-1 mx-auto bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10">
+        <div class="sticky top-[6.8rem] xl:top-[7rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10 mb-4" data-sveltekit-preload-data="false">
+            <div class="flex flex-row gap-1 mx-auto">
                 
                 <Button color="tertiary" alignment="left" title="All" class="hover:bg-slate-200" on:click={() => pageState.panel='All'}>
                     <span class="flex flex-col items-center {pageState.panel=="All" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={MagnifyingGlass} mini size="18" title="All" />
-                        <span class="text-center text-xs">All ({data.results.length})</span>
+                        <span class="text-center text-xs">All ({data.counts.total})</span>
                     </span>            
                 </Button>
 
                 <Button color="tertiary" alignment="left" title="Posts" class="hover:bg-slate-200" on:click={() => pageState.panel='Posts'}>
                     <span class="flex flex-col items-center {pageState.panel=="Posts" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={Window} mini size="18" title="Posts" />
-                        <span class="text-center text-xs">Posts ({data.fullResults.posts.length})</span>
+                        <span class="text-center text-xs">Posts ({data.counts.posts})</span>
                     </span>            
                 </Button>
 
                 <Button color="tertiary" alignment="left" title="Comments" class="hover:bg-slate-200" on:click={() => pageState.panel='Comments'}>
                     <span class="flex flex-col items-center {pageState.panel=="Comments" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={ChatBubbleOvalLeftEllipsis} mini size="18" title="Comments" />
-                        <span class="text-center text-xs">Comments ({data.fullResults.comments.length})</span>
+                        <span class="text-center text-xs">Comments ({data.counts.comments})</span>
                     </span>            
                 </Button>
 
                 <Button color="tertiary" alignment="left" title="Communities" class="hover:bg-slate-200" on:click={() => pageState.panel='Communities'}>
                     <span class="flex flex-col items-center {pageState.panel=="Communities" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={UserGroup} mini size="18" title="Communities" />
-                        <span class="text-center text-xs">Communities ({data.fullResults.communities.length})</span>
+                        <span class="text-center text-xs">Communities ({data.counts.communities})</span>
                     </span>            
                 </Button>
 
                 <Button color="tertiary" alignment="left" title="Users" class="hover:bg-slate-200" on:click={() => pageState.panel='Users'}>
                     <span class="flex flex-col items-center {pageState.panel=="Users" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={UserCircle} mini size="18" title="Users" />
-                        <span class="text-center text-xs">Users ({data.fullResults.users.length})</span>
+                        <span class="text-center text-xs">Users ({data.counts.users})</span>
                     </span>            
                 </Button>
             </div>
@@ -411,44 +420,31 @@
             ml-auto mr-auto flex flex-col gap-5"
             
         >
-
-            {#if pageState.panel == 'Posts' || filter.type == 'Posts'}
-                {#each data.fullResults.posts as post}
-                    <Post bind:post={post}  displayType='feed'/>
-                {/each}
-            {/if}
-
-            {#if pageState.panel == 'Comments' || filter.type == 'Comments'}
-                {#each data.fullResults.comments as comment}    
-                    <CommentItem bind:comment={comment} />
-                {/each}
-            {/if}
-
-            {#if pageState.panel == 'Communities'|| filter.type == 'Communities' }
-                {#each data.fullResults.communities as community}    
-                    <CommunityItem bind:community={community} />
-                {/each}
-            {/if}
-
-            {#if pageState.panel == 'Users' || filter.type == 'Users'}
-                {#each data.fullResults.users as user}
-                    <UserItem bind:user={user} />
-                {/each}
-            {/if}
             
-            {#if pageState.panel == 'All' && filter.type == 'All'}
+            <!---{#if filter.type == 'All'}--->
                 {#each data.results as result}
                     {#if isPostView(result)}
-                        <Post bind:post={result} displayType='feed' />
-                    {:else if isCommentView(result)}
-                        <CommentItem bind:comment={result} />
-                    {:else if isCommunityView(result)}
-                        <CommunityItem bind:community={result} />
-                    {:else if isUser(result)}
-                        <UserItem bind:user={result} />
+                        {#if (pageState.panel == 'Posts' || pageState.panel =='All' || filter.type == 'Posts')}
+                            <Post bind:post={result} displayType='feed' />
+                        {/if}
+                    
+                    {:else if isCommentView(result) }
+                        {#if (pageState.panel == 'Comments' || pageState.panel =='All' || filter.type == 'Comments')}    
+                            <CommentItem bind:comment={result} />
+                        {/if}
+                    
+                    {:else if isCommunityView(result) }
+                        {#if (pageState.panel == 'Communities' || pageState.panel =='All' || filter.type == 'Communities')}    
+                            <CommunityItem bind:community={result} />
+                        {/if}
+                    
+                    {:else if isUser(result) }
+                        {#if (pageState.panel == 'Users' || pageState.panel =='All' || filter.type == 'Users')}
+                            <UserItem bind:user={result} />
+                        {/if}
                     {/if}
                 {/each}
-            {/if}
+            <!---{/if}--->
         </div>
     {/if}
 
@@ -464,7 +460,7 @@
 
 
     <!--- Site Sidebar--->
-    <div class="flex h-full" slot="right-panel">
+    <div class="hidden xl:flex h-full" slot="right-panel">
         {#if $site}
             <SiteCard site={$site.site_view} taglines={$site.taglines} admins={$site.admins} version={$site.version} />
         {/if}

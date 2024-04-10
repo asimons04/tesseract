@@ -45,6 +45,14 @@ export async function load({ url }) {
             (a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a))
         )
 
+        const counts = {
+            posts: results.posts.length,
+            comments: results.comments.length,
+            users: results.users.length,
+            communities: results.communities.length,
+            total: everything.length
+        }
+
         return {
             page: page,
             sort: sort,
@@ -52,7 +60,8 @@ export async function load({ url }) {
             community_id: community ?? undefined,
             person: person ?? undefined,
             query: query ?? ' ',
-            fullResults: results,
+            //fullResults: results,
+            counts: counts,
             results: everything,
             limit: limit,
             streamed: {
