@@ -49,10 +49,13 @@ export async function load(req: any) {
     let postsPerPage = settings.uiState.postsPerPage || 50;
     
     // Use ceiling to ensure at least 1 post per community. If number ever 
+    /*
     let postsPerCommunity = Math.ceil(postsPerPage / communities.length)
     postsPerCommunity > 50
         ? postsPerCommunity=50
         : undefined
+    */
+   let postsPerCommunity = 50
 
     // Setup the arrays to run the tasks and hold the results
     let tasks:Array<Promise<any>> = []

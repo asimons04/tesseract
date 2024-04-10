@@ -19,10 +19,10 @@
 
     $: if (post?.post?.url) {
         // Parse URLs to pick out video IDs to create embed URLs
-        videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
+        videoID = new URL(post.post.url).searchParams.get('v');
         
         if (!videoID) {
-            videoID = new URL(post.post.url).searchParams.get('v');
+            videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
         }
         
         // Create the embed URL based on the user's preferred YouTube frontend

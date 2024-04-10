@@ -3,7 +3,7 @@ import type { CommunityView, ListingType } from 'lemmy-js-client'
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
-
+import { instance as homeInstance, LINKED_INSTANCE_URL } from '$lib/instance'
 
 interface CommunityList {
     communities: Array<CommunityView>
@@ -60,29 +60,31 @@ export async function load( req: any) {
     const page = Number(req.url.searchParams.get('page')) || 1
     const query = req.url.searchParams.get('q')
     const sort = req.url.searchParams.get('sort') || 'asc'
-    
+    const type = req.url.searchParams.get('type') || 'Local'
+    const instance = req.url.searchParams.get('instance') ?? req.params.instance ?? get(homeInstance) ?? LINKED_INSTANCE_URL
+
     let communities:CommunityList
-    let instance = req.params.instance
+    
 
     try { 
         // Pull in site info to load into sidebar
         let site = await getClient(instance, req.fetch).getSite({})
         if (query) { 
-            communities = await getClient(instance, fetch).search({
+            communities = await getClient(instance).search({
                 limit: 50,
                 page: page,
                 sort: 'TopAll',
                 type_: 'Communities',
-                listing_type: 'Local',
+                listing_type: type,
                 q: query,
             })
         }
         else { 
-            communities = await getClient(instance, fetch).listCommunities({
+            communities = await getClient(instance).listCommunities({
                 limit: 50,
                 page: page,
                 sort: 'TopAll',
-                type_: 'Local',
+                type_: type,
             })
         }
         
@@ -125,7 +127,12 @@ export async function load( req: any) {
         return {
             communities: communities.communities,
             site: site,
-            instance: instance
+            instance: instance,
+            page: page,
+            query: query ?? '',
+            sort: sort,
+            type: type
+
         }
     } 
     catch {

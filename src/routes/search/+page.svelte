@@ -16,6 +16,7 @@
         Person,
         PersonView,
         PostView,
+        SearchResponse,
     } from 'lemmy-js-client'
     
     import type { LoadEvent } from '@sveltejs/kit';
@@ -108,6 +109,9 @@
     
     async function search() {
         searching = true
+        data.results = []
+        data.fullResults = {} as SearchResponse
+
         const searchURL = new URL($page.url);
         if (filter.person)      searchURL.searchParams.set('person', filter.person.id.toString())
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
@@ -133,6 +137,7 @@
         filter.type = 'All'
         filter.query = ''
         data.results = []
+        data.fullResults = {} as SearchResponse
         pageState.scrollY = 0
         pageState.panel = 'All'
         goto('/search')
@@ -160,19 +165,15 @@
 <svelte:head>
     <title>Search</title>
 </svelte:head>
-<!---
-
-
---->
 
 <SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
     
     pageSelection={data?.results && data.results.length >= data.limit || data.page > 1}
-    bind:currentPage={data.page} pageSelectPreventDefault on:navPageSelect={(e) => {
+    bind:currentPage={data.page} pageSelectPreventDefault on:navPageSelect={async (e) => {
         if (e) {
             filter.page = e.detail
             window.scrollTo(0,0)
-            search()
+            await search()
         }
     }}
     
