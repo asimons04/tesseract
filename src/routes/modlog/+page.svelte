@@ -254,7 +254,7 @@
 
 
 <MainContentArea>
-    <div class="flex flex-row w-full flex-wrap justify-between">
+    <div class="flex flex-row w-full h-full flex-wrap justify-between">
   
     {#if data.modlog && data.modlog.length > 0}
         <div class="flex flex-col gap-2 divide-y w-full">
