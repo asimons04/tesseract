@@ -111,6 +111,7 @@
     {#if actions}
         <PostActions  bind:post bind:expandCompact bind:postContainer {displayType} bind:showCommentForm
             on:edit={(e) => {
+                post = post
                 toast({
                     title: 'Confirmation',
                     content: 'The post was edited successfully.',

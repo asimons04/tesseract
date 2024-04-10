@@ -35,23 +35,23 @@
     let showCommentForm:boolean = false;
     let postContainer: HTMLDivElement
     
-    $: post_view = data.post.post_view
-    $: community_view = data.post.community_view
-    $: moderators = data.post.moderators
+    //$: post_view = data.post.post_view
+    //$: community_view = data.post.community_view
+    //$: moderators = data.post.moderators
     
     //@ts-ignore (Add cross posts to post_view object for sanity)
-    $: post_view.cross_posts = data.post.cross_posts
+    $: data.post.post_view.cross_posts = data.post.cross_posts
 
     onMount(async () => {
-        setSessionStorage('lastSeenCommunity', { id: community_view.community.id, name: `${community_view.community.name}@${new URL(community_view.community.actor_id).hostname}` })
+        setSessionStorage('lastSeenCommunity', { id: data.post.community_view.community.id, name: `${data.post.community_view.community.name}@${new URL(data.post.community_view.community.actor_id).hostname}` })
         
         // Mark post as read when viewed
         try {
-            if (!post_view.read && $profile?.jwt) {
+            if (!data.post.post_view.read && $profile?.jwt) {
                 getClient().markPostAsRead({
                     auth: $profile.jwt,
                     read: true,
-                    post_id: post_view.post.id,
+                    post_id: data.post.post_view.post.id,
                 })
             }
         }
@@ -74,7 +74,7 @@
         try {
             const res = await getClient().resolveObject({
                 auth: $profile.jwt,
-                q: post_view.post.ap_id,
+                q: data.post.post_view.post.ap_id,
             })
 
             if (res.post) {
@@ -90,20 +90,20 @@
 </script>
 
 <svelte:head>
-    <title>{post_view.post.name}</title>
-    <meta property="og:title" content={post_view.post.name} />
+    <title>{data.post.post_view.post.name}</title>
+    <meta property="og:title" content={data.post.post_view.post.name} />
     <meta property="og:url" content={$page.url.toString()} />
     
-    {#if isImage(post_view.post.url)}
-        <meta property="og:image" content={post_view.post.url} />
+    {#if isImage(data.post.post_view.post.url)}
+        <meta property="og:image" content={data.post.post_view.post.url} />
     {/if}
 
-    {#if post_view.post.body}
-        <meta property="og:description" content={post_view.post.body} />
+    {#if data.post.post_view.post.body}
+        <meta property="og:description" content={data.post.post_view.post.body} />
     {/if}
 </svelte:head>
 
-<SubNavbar iconSize={28} back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={post_view} />
+<SubNavbar iconSize={28} back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={data.post.post_view} />
     
 
 
@@ -144,12 +144,12 @@
         <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]" bind:this={postContainer}>
             <!---Post--->
             <PostCardStyle 
-                bind:post={post_view} 
+                bind:post={data.post.post_view} 
                 bind:showCommentForm={showCommentForm}
                 bind:postContainer
                 displayType="post" 
                 actions={true} 
-                moderators={moderators} 
+                moderators={data.post.moderators} 
                 autoplay={$userSettings.embeddedMedia.autoplay}
                 loop={$userSettings.embeddedMedia.loop}
             
@@ -163,6 +163,6 @@
     
     <!--- Community Sidebar--->
     <div class="hidden xl:block w-auto">
-        <CommunityCard bind:community_view={data.post.community_view} moderators={moderators}/>
+        <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators}/>
     </div>
 </div>  

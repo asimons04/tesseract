@@ -18,10 +18,6 @@
     import PostActionsMenu      from './PostActions/PostActionsMenu.svelte'
     import PostReplyButton      from './PostActions/PostReplyButton.svelte'
     import PostVote             from './PostActions/PostVote.svelte'
-    
-    
-    
-    
 
     import {
         ArrowsPointingIn,
