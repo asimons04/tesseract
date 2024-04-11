@@ -4,7 +4,6 @@
     import type { Snapshot } from './$types';
     import { PageSnapshot } from '$lib/storage'
     
-
     import { beforeNavigate, goto } from '$app/navigation'
     import { 
         addMBFCResults, 
@@ -14,6 +13,7 @@
         scrollToLastSeenPost, 
         scrollTo,
         setLastSeenPost, 
+        sleep,
         sortPosts 
     } from '$lib/components/lemmy/post/helpers'
     
@@ -48,6 +48,8 @@
 
     $: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
     
+
+
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
     beforeNavigate(() => {
         infiniteScroll.exhausted = false
@@ -64,17 +66,22 @@
                 let snapshot = PageSnapshot.restore() 
                 if (snapshot.data)  data = snapshot.data
                 if (snapshot.state) pageState = snapshot.state
+                
+                await scrollToLastSeenPost()
+
+                // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms).  Call it twice for good measure (sigh)
+                /*
+                await sleep(400) 
+                if (pageState.scrollY) {
+                    await scrollTo(pageState.scrollY,0)
+                    //await scrollTo(pageState.scrollY, infiniteScroll.maxPosts + 400)
+                }
+                */
             }
             catch { 
                 PageSnapshot.clear() 
+                window.scrollTo(0,0)
             }
-            
-            // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms).  Call it twice for good measure (sigh)
-            if (pageState.scrollY) {
-                await scrollTo(pageState.scrollY, infiniteScroll.maxPosts + 400)
-                await scrollTo(pageState.scrollY, infiniteScroll.maxPosts)
-            }
-            else window.scrollTo(0,0)
         }
     }
     

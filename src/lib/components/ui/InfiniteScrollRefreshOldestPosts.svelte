@@ -12,7 +12,7 @@
     <Button color="tertiary-border" class="w-fit mx-auto" title="Load Older Posts" on:click>
         <div class="flex flex-row gap-2 items-center">
             <Icon src={ChevronDoubleUp} mini size="16" />
-            Refresh to See Oldest Posts 
+            Load Older Posts 
             <Icon src={ChevronDoubleUp} mini size="16" />
         </div>
     </Button>

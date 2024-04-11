@@ -55,6 +55,7 @@
     export let compactSwitch:boolean = false    // Switch between compact and card posts
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
     export let refreshButton:boolean = false    // Button to refresh the current page
+    export let refreshPreventDefault:boolean = false    // Prevent the default reload with invalidate 
     export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
 
     // Post Listing Type (Local, Subscribed, All)
@@ -240,8 +241,10 @@
             <Button title="Refresh" size="sm" color="tertiary"
                 on:click={async () => {
                     dispatcher('navRefresh')
-                    setSessionStorage('lastClickedPost', undefined)
-                    await goto(window.location.href, {invalidateAll: true});
+                    if (!refreshPreventDefault) {
+                        setSessionStorage('lastClickedPost', undefined)
+                        await goto(window.location.href, {invalidateAll: true});
+                    }
                 }}
                 >
                 <Icon src={ArrowPath} width={iconSize}/>
