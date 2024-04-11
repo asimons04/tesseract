@@ -5,6 +5,7 @@
     import { userSettings } from '$lib/settings.js'
 
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
@@ -37,7 +38,8 @@
     {#if data.items.length == 0}
         <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions that match this filter."/>
     {:else}
-        <div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">
+        <FeedContainer>    
+        <!---<div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">--->
             {#each data.items as item (item.counts.id)}
                 {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
                     <CommentItem comment={item} />
@@ -45,7 +47,8 @@
                     <Post post={item} />
                 {/if}
             {/each}
-        </div>
+        </FeedContainer>
+        <!---</div>--->
     {/if}
 
     <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
