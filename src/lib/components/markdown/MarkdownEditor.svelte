@@ -34,11 +34,13 @@
     export let previewing:boolean = false;
     export let id:string = '';
     export let resizeable:boolean = true;
+    
 
     /*
+    export let beforePreview: (input: string) => string = (input) => input
     export let previewContainerClass:string = '';
     export let previewContainerStyle:string = '';
-    export let beforePreview: (input: string) => string = (input) => input
+    
     */
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 

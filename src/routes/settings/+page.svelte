@@ -1149,14 +1149,6 @@
                                 bind:value={$userSettings.moderation.removalReasonPreset}
                                 images={false}
                                 previewButton
-                                beforePreview={(input) =>
-                                    removalTemplate(input, {
-                                        postTitle: '<Example post>',
-                                        communityLink: '[!community@example.com]()',
-                                        reason: '<Being a meanie>',
-                                        username: '@Bob',
-                                    })
-                                }
                             />
                         </div>
                     </div>

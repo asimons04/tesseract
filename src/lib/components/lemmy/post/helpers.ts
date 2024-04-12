@@ -569,7 +569,7 @@ export const crossPost = function(post:PostView):void {
 export const sortPosts = function(posts:PostView[], direction:SortType): PostView[] {
     const Page = get(page)
     const inCommunity = (Page?.url?.pathname && Page.url.pathname.startsWith('/c/')) ?? false
-    
+
     if (direction == 'New')          posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
     if (direction == 'Old')          posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
     if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
