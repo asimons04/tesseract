@@ -1,4 +1,4 @@
-import type { GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
+import type { GetPostsResponse, GetSiteResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
 import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, sortPosts } from '$lib/components/lemmy/post/helpers'
 import { getClient, site } from '$lib/lemmy.js'
@@ -9,12 +9,18 @@ import { userSettings } from '$lib/settings.js'
 
 interface LoadParams {
     url: any,
-    fetch?: any
+    fetch?: any,
+    passedSite?: GetSiteResponse    // Pass back the site info so we don't have to fetch it again (used for infinite scroll new batches)
 }
 
 
-export async function load({ url }: LoadParams) {
-    const page = Number(url.searchParams.get('page') || 1) || 1
+export async function load({ url, passedSite }: LoadParams) {
+    const page_cursor = url.searchParams.get('page_cursor')
+    
+    const page = page_cursor 
+        ? undefined
+        : Number(url.searchParams.get('page') || 1) || 1
+    
     const sort: SortType = (url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     const listingType: ListingType = (url.searchParams.get('type') as ListingType) || get(userSettings).defaultSort.feed
     
@@ -25,12 +31,15 @@ export async function load({ url }: LoadParams) {
                 limit: get(userSettings)?.uiState.postsPerPage || 10,
                 sort: sort,
                 type_: listingType,
+                page: page,
+                //@ts-ignore
+                page_cursor: page_cursor,
                 auth: get(profile)?.jwt,
             }),
-            getClient().getSite({})
+            passedSite ?? getClient().getSite({})
         ])
         
-        site.set(siteData)
+        if (!passedSite) site.set(siteData)
 
         // Fix posts that come in an hour ahead
         posts.posts = fixHourAheadPosts(posts.posts)
@@ -44,10 +53,8 @@ export async function load({ url }: LoadParams) {
         // Apply MBFC data object to post
         posts.posts = addMBFCResults(posts.posts);
         
-        posts.posts = sortPosts(posts.posts, sort)
-    
-
-        
+        // Only sort the first fetch. If a site object is passed, it can be used to indicate this is a re-fetch (which are sorted after being retrieved)
+        if (!passedSite) posts.posts = sortPosts(posts.posts, sort)
 
         // Return the data to the frontend
         return {
@@ -56,6 +63,7 @@ export async function load({ url }: LoadParams) {
             page: page,
             posts: posts,
             site: siteData,
+            type: listingType
         }
         
     } catch (err) {

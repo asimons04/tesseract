@@ -681,7 +681,7 @@
                         />
                     </div>
 
-                    <!---Posts Per Page--->
+                    <!---Infinite Scroll Size--->
                     <div class="flex flex-row w-full gap-2 py-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2">

@@ -295,11 +295,11 @@ export function getLastSeenPost() {
     return sessionStorage.getItem(key)
 }
 
-export async function scrollToLastSeenPost(pathname:string = '/') {
+export async function scrollToLastSeenPost(delay=200) {
     const lastSeenPost = getLastSeenPost()
     
     if (lastSeenPost) {
-        await sleep(200)
+        await sleep(delay)
         const element = document.getElementById(lastSeenPost)
         
         if (element) {
@@ -586,4 +586,20 @@ export const sortPosts = function(posts:PostView[], direction:SortType): PostVie
     
     
     return posts
+}
+
+// Used in infinite scroll load function to merge the new batch of posts into the existing while removing duplicates.
+export const mergeNewInfiniteScrollBatch = function (old: GetPostsResponse, next:GetPostsResponse):  GetPostsResponse {
+    // Merge the new results into the current set, deduplicate, and then sort.
+    for (let i:number=0; i < next.posts.length; i++) {
+        // Check if the current new post already exists in the existing array of posts
+        let exists = false
+        if (old.posts.some(p => p.post.id == next.posts[i].post.id)) exists = true
+        if (!exists) old.posts.push(next.posts[i])
+    }
+
+    //@ts-ignore since still using 0.18.x js client
+    if (next.next_page) old.next_page = next.next_page
+
+    return old
 }

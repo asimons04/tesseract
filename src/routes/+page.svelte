@@ -10,6 +10,7 @@
         findCrossposts, 
         filterKeywords, 
         fixHourAheadPosts, 
+        mergeNewInfiniteScrollBatch,
         scrollToLastSeenPost, 
         scrollTo,
         setLastSeenPost, 
@@ -18,6 +19,7 @@
     } from '$lib/components/lemmy/post/helpers'
     
     import { getClient, site } from '$lib/lemmy.js'
+    import { load } from './+page'
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings'
     
@@ -40,22 +42,25 @@
     let infiniteScroll = {
         loading: false,     // Used to toggle loading indicator
         exhausted: false,   // Sets to true if the API returns 0 posts
-        maxPosts: $userSettings.uiState.maxScrollPosts,      // Maximum number of posts to keep in the FIFO
+        // Maximum number of posts to keep in the FIFO
+        maxPosts: $userSettings.uiState.maxScrollPosts > 250 || $userSettings.uiState.maxScrollPosts < 50 || !$userSettings.uiState.maxScrollPosts
+            ? 100
+            : $userSettings.uiState.maxScrollPosts
+        ,      
         truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
         automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
     }
 
-    $: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
+    //$: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
     
-
-
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
     beforeNavigate(() => {
         infiniteScroll.exhausted = false
     })
 
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
+    // Also jumps to last seen post upon restore.
     export const snapshot: Snapshot<void> = {
         capture: () => {
             pageState.scrollY = window.scrollY
@@ -67,16 +72,7 @@
                 if (snapshot.data)  data = snapshot.data
                 if (snapshot.state) pageState = snapshot.state
                 
-                await scrollToLastSeenPost()
-
-                // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms).  Call it twice for good measure (sigh)
-                /*
-                await sleep(400) 
-                if (pageState.scrollY) {
-                    await scrollTo(pageState.scrollY,0)
-                    //await scrollTo(pageState.scrollY, infiniteScroll.maxPosts + 400)
-                }
-                */
+                await scrollToLastSeenPost(data.posts.posts.length + 200)
             }
             catch { 
                 PageSnapshot.clear() 
@@ -92,65 +88,30 @@
         window.scrollTo(0,0)
     }
 
-    async function loadPosts(params: GetPosts =  {
-                limit: $userSettings?.uiState.postsPerPage || 10,
-                page: undefined,
-                next_page: undefined,
-                sort: data.sort,
-                type_: data.listingType,
-                auth: $profile?.jwt,
-            } as GetPosts
-        ) {
-        
+    function loadPosts() {
+        const url = new URL(window.location.href)
+        url.searchParams.set('limit', $userSettings?.uiState.postsPerPage.toString() || '10')
+        url.searchParams.set('sort', data.sort)
+        url.searchParams.set('listingType', data.type)
+                
         //@ts-ignore
-        if (data.posts.next_page) params.page_cursor = data.posts.next_page;
-        else params.page = ++data.page
+        if (data.posts.next_page) url.searchParams.set('page_cursor', data.posts.next_page)
+        else if (data.page) url.searchParams.set('page', (++data.page).toString())
 
-        // Fetch posts
-        let posts = await getClient().getPosts(params);
+        load({url: url, passedSite: data.site}).then((nextBatch) => {
+            if (nextBatch.posts.posts.length < 1) infiniteScroll.exhausted = true
+            else infiniteScroll.exhausted = false
+           
+            data.posts = mergeNewInfiniteScrollBatch(data.posts, nextBatch.posts)
 
-        if (posts.posts.length < 1) infiniteScroll.exhausted = true
-        else infiniteScroll.exhausted = false
-
-        // Fix posts that come in an hour ahead
-        posts.posts = fixHourAheadPosts(posts.posts)
-
-        // Filter the posts for keywords
-        posts.posts = filterKeywords(posts.posts)
-
-        // Apply MBFC data object to post
-        posts.posts = addMBFCResults(posts.posts)
-        
-        // Roll up crossposts
-        posts.posts = findCrossposts(posts.posts)
-
-        // Sort the new result set based on the selected sort method
-        posts.posts = sortPosts(posts.posts, data.sort)
-        
-        
-        // Loop over the new posts
-        for (let i:number=0; i < posts.posts.length; i++) {
-            
-            // Check if the current new post already exists in the existing array of posts
-            let exists = false
-            for (let j:number=0; j < data.posts.posts.length; j++) {
-                if (posts.posts[i].post.id == data.posts.posts[j].post.id) exists = true
-            }
-
-            // Only add the new post if it doesn't already exist in the post array
-            if (!exists) data.posts.posts.push(posts.posts[i])
-            
             // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
-            if (data.posts.posts.length > infiniteScroll.maxPosts) {
-                data.posts.posts.shift()    
-                infiniteScroll.truncated = true
+            while (data.posts.posts.length > infiniteScroll.maxPosts) {
+                data.posts.posts.shift()
+                infiniteScroll.truncated = true  
             }
-        }
-
-        //@ts-ignore
-        if (posts.next_page) data.posts.next_page = posts.next_page
-        data = data
-        infiniteScroll.loading  = false
+            data = data
+            infiniteScroll.loading  = false
+        })
     }
 
 </script>
