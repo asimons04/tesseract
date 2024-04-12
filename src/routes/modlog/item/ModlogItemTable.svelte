@@ -102,7 +102,7 @@
     </div>
 
 
-    <!---Actions--->
+    <!---Details--->
     <div class="flex flex-col gap-1 text-xs w-full {$profile?.user ? 'lg:w-[40%]' : 'lg:w-[60%]'}">
         <ModlogAction action={item.actionName} expires={item.expires} />
 
@@ -131,9 +131,6 @@
                     {/if}
                 </li>
             {/if}
-
-            
-
         </ul>
 
     </div>

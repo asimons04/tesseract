@@ -4,6 +4,30 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.3.0
+### To Do
+- Add "action" column to modlog
+    - Ban/unban from community if action is community ban/unban
+    - Ban/unban from instance if action is ban
+    - Restore/remove comment/post if action is remove/restore
+
+- Finish community browser enhancements
+    - Add search bar to content area for mobile view
+    - Replace default /communities with the revamped version
+    - Use linked or current instance by default 
+    - Move target instance from route parameter to url parameter
+    - Update links to community browser in Explore menu to send the target instance as a URL parameter
+    - Add environment variable to allow admins to pre-populate a list of instances to browse
+
+- Create a /instances route 
+    - Use a tabbed/panel interface
+    - Allow filtering from a text input (similar to Federation block lists in admin panel)
+    - Add links for Fediseer, instance block (for 0.19.x), and community browser to instances
+
+- Add form to change user's password
+- Add MFA configuration support
+    - Look for a QR code library
+
+
 ### Media
 - Add support for detecting and rendering Peertube embeds
     - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
