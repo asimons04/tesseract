@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import { fade } from 'svelte/transition'
-    
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import { userSettings } from '$lib/settings.js'
@@ -19,11 +19,7 @@
             <Placeholder icon={ArchiveBox} title="No posts" description="There are no posts that match this filter." />
         </div>
     {:else}
-        <div data-sveltekit-preload-data="hover"
-            class="w-full {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[80%]' : ''}
-                ml-auto mr-auto flex flex-col gap-5
-            "
-        >
+        <FeedContainer>
         {#each posts as post, index (post.post.id)}
             {#if 
                     !(post.creator_blocked) && 
@@ -37,6 +33,6 @@
                 </div>
             {/if}
         {/each}
-        </div>
+        </FeedContainer>
     {/if}
 </section>
