@@ -39,7 +39,7 @@
     export let version: string
 </script>
 
-<StickyCard class="mb-3
+<StickyCard class="-mt-1
     {$userSettings.uiState.expandCommunitySidebar
         ? 'block'
         : 'hidden'
