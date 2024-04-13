@@ -69,7 +69,7 @@
         {#if item}
             <div class="flex flex-col gap-4 w-full">
                 <span class="text-sm">Reporting this submission to the moderators of {item.community?.name}@{new URL(item.community?.actor_id).host}</span>
-                <MarkdownEditor required rows={6} label="Reason" previewButton images={false} {reason} />
+                <MarkdownEditor required rows={6} label="Reason" previewButton images={false} bind:value={reason} />
                 
 
                 <Checkbox bind:checked={confirm} defaultvalue={false} class="px-2">

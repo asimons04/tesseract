@@ -27,10 +27,11 @@
     
 
     // Cut the preview length in half for compact posts
+    /*
     $: previewLength = ($userSettings.showCompactPosts && !expandCompact)
         ? Math.floor(previewLength/2)
         : previewLength
-    
+    */
 </script>
 
 {#if (post.post.body || post.post.embed_description)}
