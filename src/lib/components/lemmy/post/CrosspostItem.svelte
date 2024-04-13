@@ -19,6 +19,7 @@
     export let textSize:string = "text-xs"
     export let iconSize:number = 18
     
+    const getTextSize = () => `text-xs md:${textSize}`
 
 </script>
 
@@ -26,16 +27,14 @@
 <a class="
         hover:dark:bg-zinc-800 hover:bg-slate-200
         py-2.5 px-4 flex flex-row gap-4 items-center
+        {getTextSize()}
     " 
     id="{crosspost.post.id.toString()}"
-    href="/post/{getInstance()}/{crosspost.post.id}" title="{crosspost.post.name}">
-    <span class="{textSize} flex flex-col">
-        <CommunityLink
-            community={crosspost.community}
-            avatarSize={iconSize}
-            avatar={true}
-            href="/post/{getInstance()}/{crosspost.post.id}"
-        />
+    href="/post/{getInstance()}/{crosspost.post.id}" title="{crosspost.post.name}"
+>
+    
+    <span class="flex flex-col">
+        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} href="/post/{getInstance()}/{crosspost.post.id}"/>
     </span>
     
     <span class="ml-auto"/>
@@ -43,30 +42,21 @@
     <span class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
         <RelativeDate date={crosspost.post.published} />
         {#if crosspost.post.updated}
-            <span class="flex flex-row items-center gap-1 ml-1">•
+            <span class="hidden md:flex flex-row items-center gap-1 ml-1">•
                 <Icon src={Pencil} solid size="12" title="Edited" />
                 <RelativeDate date={crosspost.post.updated}/>
             </span>
         {/if}
     </span>
-    <span class="flex flex-row gap-2 font-normal {textSize} items-center">
-        <Icon
-            src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown}
-            mini
-            width={iconSize}
-            height={iconSize}
-        />
+
+    <span class="flex flex-row gap-2 font-normal items-center">
+        <Icon src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown} mini width={iconSize} height={iconSize}/>
         <FormattedNumber number={crosspost.counts.score} />
     </span>
 
     
-    <span class="flex flex-row gap-2 font-normal {textSize} items-center" >
-        <Icon
-            src={ChatBubbleOvalLeftEllipsis}
-            mini
-            width={iconSize}
-            height={iconSize}
-        />
+    <span class="flex flex-row gap-2 font-normal items-center" >
+        <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
         <FormattedNumber number={crosspost.counts.comments} />
     </span>
 </a>

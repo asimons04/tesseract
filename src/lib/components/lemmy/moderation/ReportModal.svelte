@@ -8,14 +8,15 @@
   import Button from '$lib/components/input/Button.svelte'
   import Checkbox from '$lib/components/input/Checkbox.svelte'
   import Comment from '$lib/components/lemmy/comment/Comment.svelte'
+  import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
   import Modal from '$lib/components/ui/modal/Modal.svelte'
   import Post from '$lib/components/lemmy/post/Post.svelte'
-  import TextArea from '$lib/components/input/TextArea.svelte'
-  
+    
   import {
     Icon,
     Flag
   } from 'svelte-hero-icons'
+    
 
   export let open: boolean
   export let item: PostView | CommentView | undefined = undefined
@@ -51,9 +52,10 @@
       toast({
         content: 'That submission has been reported.',
         type: 'success',
+        title: 'Success'
       })
     } catch (err) {
-      toast({ content: err as any, type: 'error' })
+      toast({ content: 'Unable to report post.', type: 'error', title:"Error" })
     }
 
     loading = false
@@ -67,12 +69,7 @@
         {#if item}
             <div class="flex flex-col gap-4 w-full">
                 <span class="text-sm">Reporting this submission to the moderators of {item.community?.name}@{new URL(item.community?.actor_id).host}</span>
-                <TextArea
-                    required
-                    rows={3}
-                    label="Reason"
-                    bind:value={reason}
-                />
+                <MarkdownEditor required rows={6} label="Reason" previewButton images={false} {reason} />
                 
 
                 <Checkbox bind:checked={confirm} defaultvalue={false} class="px-2">
