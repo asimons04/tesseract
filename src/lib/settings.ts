@@ -269,6 +269,7 @@ export const YTFrontends = {
         'invidious.asir.dev',
         'invidious.private.coffee',
         'iv.nboeck.de',
+        'yt.drgnz.club',
         'yt.oelrichsgarcia.de',
         'yt.artemislena.eu',
         'yt.whateveritworks.org',
