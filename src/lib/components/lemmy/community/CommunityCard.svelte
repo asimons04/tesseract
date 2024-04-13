@@ -384,7 +384,7 @@
         {/if}
     </div>
 
-    <div class="hidden xl:block w-full">
+    <div class="hidden xl:block w-full overflow-y-auto">
         {#if moderators.length > 0}
             <CollapseButton icon={HandRaised} title="Moderators">
                 {#each moderators as moderator}

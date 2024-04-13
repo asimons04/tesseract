@@ -121,7 +121,7 @@
     {/if}
 
     <!--- Collapsible buttons for admins and site info --->
-    <div class="hidden xl:block w-full">
+    <div class="hidden xl:block w-full overflow-y-auto">
         {#if admins.length > 0}
            <CollapseButton icon={ShieldCheck} title="Admins">
                 {#each admins as admin}

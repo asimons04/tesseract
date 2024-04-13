@@ -313,7 +313,7 @@
             </div>
         </Card>
 
-        <div class="hidden xl:block w-full">
+        <div class="hidden xl:block w-full overflow-y-auto">
         {#if moderates?.length > 0}
             <CollapseButton icon={ShieldCheck} title="Moderates">
                 {#each moderates as community}
