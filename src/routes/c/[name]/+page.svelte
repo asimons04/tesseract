@@ -16,11 +16,12 @@
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     
     import { load } from './+layout'
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    
 
     export let data
     
@@ -165,6 +166,7 @@
 
 {#if data?.posts && data?.community}
     <MainContentArea>
+        
         <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
         <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
             on:click={() => {
