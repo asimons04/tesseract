@@ -39,14 +39,7 @@
     export let version: string
 </script>
 
-<StickyCard class="
-    {$userSettings.uiState.expandCommunitySidebar
-        ? 'block'
-        : 'hidden'
-    }
-    {$$props.class}
-    "
->
+<StickyCard class="{$$props.class}">
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, 384, 'webp') : undefined}>
         <div class="flex flex-row gap-3 items-center p-3">
             {#if site.site.icon}

@@ -151,7 +151,7 @@
 
 
 
-    <StickyCard class="{$userSettings.uiState.expandCommunitySidebar ? 'block' : 'hidden'} {$$props.class}">
+    <StickyCard class="{$$props.class}">
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, 384, 'webp') : ''}>
             <div class="flex flex-row gap-3 items-start p-3">
                 <div class="flex-shrink-0">

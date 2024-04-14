@@ -167,7 +167,7 @@
 
 
 <!--- Hideable div to contain the main part of the community sidebar --->
-<StickyCard class="{(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
+<StickyCard class="{$$props.class}" >
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, 384, 'webp') : ''}>
         <div class="flex flex-col gap-2 h-full">
             <!--- Commuinity Avatar, display name, and federation name--->

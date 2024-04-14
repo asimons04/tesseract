@@ -20,6 +20,7 @@
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     
     import { load } from './+layout'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
 
     export let data
     
@@ -163,29 +164,26 @@
 />
 
 {#if data?.posts && data?.community}
-    <div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full h-full py-2">
-        <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-            <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
-            <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
-                on:click={() => {
-                    goto(window.location.href, {invalidateAll: true})
-                    refresh()
-                }}
-            />
-            <PostFeed posts={data.posts.posts}/>
-            
-            <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
-                on:loadMore={ () => {
-                    if (!infiniteScroll.exhausted) {
-                        infiniteScroll.loading = true
-                        loadPosts()
-                    }
-                }}
-            />
-        </div>
+    <MainContentArea>
+        <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
+        <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
+            on:click={() => {
+                goto(window.location.href, {invalidateAll: true})
+                refresh()
+            }}
+        />
+        <PostFeed posts={data.posts.posts}/>
+        
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
+            on:loadMore={ () => {
+                if (!infiniteScroll.exhausted) {
+                    infiniteScroll.loading = true
+                    loadPosts()
+                }
+            }}
+        />
 
-        <div class="mt-[8px]">
-            <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators}/>
-        </div>
-    </div>
+        
+            <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
+    </MainContentArea>
 {/if}
