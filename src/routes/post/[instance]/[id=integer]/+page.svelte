@@ -98,7 +98,7 @@
     {/if}
 </svelte:head>
 
-<SubNavbar iconSize={28} back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={data.post.post_view} />
+<SubNavbar back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={data.post.post_view} />
 
 <MainContentArea>                   
         
