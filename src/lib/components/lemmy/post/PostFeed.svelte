@@ -16,9 +16,7 @@
 
 <section class="flex flex-col gap-3 sm:gap-4 h-full">
     {#if posts.length == 0}
-        <div class="h-full grid place-items-center">
-            <Placeholder icon={ArchiveBox} title="No posts" description="There are no posts that match this filter." />
-        </div>
+        <Placeholder icon={ArchiveBox} title="No posts" description="There are no posts that match this filter." />
     {:else}
         <FeedContainer>
             {#each posts as post, index (post.post.id)}
