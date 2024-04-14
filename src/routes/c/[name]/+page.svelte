@@ -152,9 +152,7 @@
         content={data?.community?.community_view.community.title ?? "Community Not Found"}
     />
     {#if data?.community?.community_view.community.description}
-        <meta name="og:description"
-            content={data.community.community_view.community.description}
-        />
+        <meta name="og:description" content={data.community.community_view.community.description}/>
     {/if}
 </svelte:head>
 
@@ -184,8 +182,8 @@
                 }
             }}
         />
-
         
-            <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
+        <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
+        
     </MainContentArea>
 {/if}

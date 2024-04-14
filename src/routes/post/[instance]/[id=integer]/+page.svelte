@@ -16,19 +16,18 @@
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
-    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-
-    // Post Components
     import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
+    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     import {
         Icon, 
         ExclamationTriangle,
         Home
     } from 'svelte-hero-icons'
-
     
     export let data
    
@@ -100,65 +99,57 @@
 </svelte:head>
 
 <SubNavbar iconSize={28} back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={data.post.post_view} />
-    
 
-
-<div class="flex flex-col md:flex-row gap-4 w-full h-full">
-    <div class="flex flex-col gap-3 sm:gap-4 max-w-full w-full min-w-0">                    
+<MainContentArea>                   
         
-        <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
-        {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
-            
-            <div class="flex flex-col p-2 gap-4 bg-amber-500/30 text-zinc-950 dark:text-slate-100 rounded-md">
-                <span class="text-sm font-normal">
-                    <span class="flex flex-row gap-2 items-center">
-                        <Icon src={ExclamationTriangle} mini width={28}/>
-                        <p class="font-bold">You are viewing this post on a remote instance</p>
-                    </span>
-                    
-                    <span class="flex flex-row gap-1 pl-[2.3rem]">
-                        <p>
-                            You are viewing this post on a remote instance, and you will not be able to interact with it.  In order to reply or vote,
-                            you will need to fetch this post on your home instance.
-                        </p>
-                        
-                        <span class="ml-auto"/>
-                        
-                        <Button on:click={() => { fetchOnHome() }} color="warning" class="whitespace-nowrap">
-                            <span class="flex flex-col items-center">
-                                <Icon src={Home} mini size="18" title="Posts" />
-                                <span class="text-xs">Fetch on Home</span>
-                            </span>
-                        </Button>
-
-                    </span>
+    <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
+    {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
+        
+        <div class="flex flex-col p-2 gap-4 bg-amber-500/30 text-zinc-950 dark:text-slate-100 rounded-md">
+            <span class="text-sm font-normal">
+                <span class="flex flex-row gap-2 items-center">
+                    <Icon src={ExclamationTriangle} mini width={28}/>
+                    <p class="font-bold">You are viewing this post on a remote instance</p>
                 </span>
-            </div>
-        {/if}
-        
+                
+                <span class="flex flex-row gap-1 pl-[2.3rem]">
+                    <p>
+                        You are viewing this post on a remote instance, and you will not be able to interact with it.  In order to reply or vote,
+                        you will need to fetch this post on your home instance.
+                    </p>
+                    
+                    <span class="ml-auto"/>
+                    
+                    <Button on:click={() => { fetchOnHome() }} color="warning" class="whitespace-nowrap">
+                        <span class="flex flex-col items-center">
+                            <Icon src={Home} mini size="18" title="Posts" />
+                            <span class="text-xs">Fetch on Home</span>
+                        </span>
+                    </Button>
 
-        <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]" bind:this={postContainer}>
-            <!---Post--->
-            <PostCardStyle 
-                bind:post={data.post.post_view} 
-                bind:showCommentForm={showCommentForm}
-                bind:postContainer
-                displayType="post" 
-                actions={true} 
-                moderators={data.post.moderators} 
-                autoplay={$userSettings.embeddedMedia.autoplay}
-                loop={$userSettings.embeddedMedia.loop}
-            
-            />      
-
-            <!--- Comments --->
-            <CommentSection bind:data={data} bind:showCommentForm={showCommentForm}/>
+                </span>
+            </span>
         </div>
-
-    </div>
+    {/if}
     
-    <!--- Community Sidebar--->
-    <div class="hidden xl:block w-auto">
-        <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators}/>
+
+    <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]" bind:this={postContainer}>
+
+        <PostCardStyle 
+            bind:post={data.post.post_view} 
+            bind:showCommentForm={showCommentForm}
+            bind:postContainer
+            displayType="post" 
+            actions={true} 
+            moderators={data.post.moderators} 
+            autoplay={$userSettings.embeddedMedia.autoplay}
+            loop={$userSettings.embeddedMedia.loop}
+        
+        />      
+
+        <CommentSection bind:data={data} bind:showCommentForm={showCommentForm}/>
     </div>
-</div>  
+
+    <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel"/>
+
+</MainContentArea>
