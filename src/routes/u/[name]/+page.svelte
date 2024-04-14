@@ -39,7 +39,6 @@
         <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions that match this filter."/>
     {:else}
         <FeedContainer>    
-        <!---<div class="w-full flex flex-col gap-5 ml-auto mr-auto {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[75%]' : ''}">--->
             {#each data.items as item (item.counts.id)}
                 {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
                     <CommentItem comment={item} />
@@ -48,7 +47,6 @@
                 {/if}
             {/each}
         </FeedContainer>
-        <!---</div>--->
     {/if}
 
     <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
