@@ -120,7 +120,7 @@
                     
                     <span class="ml-auto"/>
                     
-                    <Button on:click={() => { fetchOnHome() }} color="warning" class="whitespace-nowrap">
+                    <Button on:click={() => { fetchOnHome() }} color="warning" class="h-16 whitespace-nowrap">
                         <span class="flex flex-col items-center">
                             <Icon src={Home} mini size="18" title="Posts" />
                             <span class="text-xs">Fetch on Home</span>
