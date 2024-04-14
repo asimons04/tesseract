@@ -27,12 +27,12 @@
     {#if avatar}
         <Avatar url={user.avatar} alt={user.name} width={avatarSize} />
     {/if}
-    <span
-        class="flex flex-row flex-wrap gap-0"
-        class:ml-0.5={avatar}
+    
+    <!---
         class:text-red-500={distinguishAdminsMods && user.admin}
         class:font-bold={distinguishAdminsMods && user.admin}
-    >
+    --->
+    <span class="flex flex-row flex-wrap gap-0" class:ml-0.5={avatar} >
         <span class="font-bold">
             {$userSettings.displayNames ? user.display_name || user.name : user.name}
         </span>
