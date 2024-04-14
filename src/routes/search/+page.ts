@@ -41,9 +41,16 @@ export async function load({ url }) {
             results.communities,
         ]
 
-        const everything = [...posts, ...comments, ...users, ...communities].sort(
-            (a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a))
-        )
+        const everything = sort == 'New'
+            ? [...posts, ...comments, ...users, ...communities].sort(
+                (a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a))
+            )
+            : [...posts, ...comments, ...users, ...communities].sort(
+                (a, b) => Date.parse(getItemPublished(b)) + Date.parse(getItemPublished(a))
+            )
+
+
+        
 
         const counts = {
             posts: results.posts.length,
