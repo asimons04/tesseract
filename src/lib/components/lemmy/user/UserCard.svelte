@@ -120,8 +120,10 @@
         loadingMessage = false
     }
 </script>
-{#if display}
 
+{#if display}
+    
+    <!---DM Compose Modal--->
     {#if $profile?.user}
         <Modal bind:open={messaging} title="Message">
             <form on:submit|preventDefault={sendMessage} class="flex flex-col gap-4">
@@ -149,7 +151,7 @@
 
 
 
-    <StickyCard class="-mt-1 {$userSettings.uiState.expandCommunitySidebar ? 'block' : 'hidden'} {$$props.class}">
+    <StickyCard class="{$userSettings.uiState.expandCommunitySidebar ? 'block' : 'hidden'} {$$props.class}">
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, 384, 'webp') : ''}>
             <div class="flex flex-row gap-3 items-start p-3">
                 <div class="flex-shrink-0">
@@ -313,7 +315,9 @@
             </div>
         </Card>
 
+        
         <div class="hidden xl:block w-full overflow-y-auto">
+        <!---List of Communities Moderated--->
         {#if moderates?.length > 0}
             <CollapseButton icon={ShieldCheck} title="Moderates">
                 {#each moderates as community}
@@ -344,6 +348,7 @@
             </CollapseButton>
         {/if}
         
+        <!---Person Bio--->
         {#if person?.person?.bio}
             <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
                 <Markdown source={person.person.bio} />
@@ -351,9 +356,7 @@
         {/if}
         </div>
         
-        <!-- Spacer block to give user action menu room to expand --->
-        <!--<div class="hidden xl:block h-[150px]" />-->
-
+        <!---Tesseract Logo and project links--->
         <SidebarFooter />
 
         

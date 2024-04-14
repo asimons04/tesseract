@@ -167,7 +167,7 @@
 
 
 <!--- Hideable div to contain the main part of the community sidebar --->
-<StickyCard class="-mt-1 {(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
+<StickyCard class="{(!$userSettings.uiState.expandCommunitySidebar && window.innerWidth > 640) ? 'hidden' : ''} " >
     <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, 384, 'webp') : ''}>
         <div class="flex flex-col gap-2 h-full">
             <!--- Commuinity Avatar, display name, and federation name--->
@@ -359,7 +359,8 @@
             <!---Create Post--->
             <Button href="/create/post" color="tertiary-border" class="w-full" size="lg"
                 hidden={
-                    (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || community_view.community.removed
+                    (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
+                    community_view.community.removed
                 }
             >
                 <Icon src={PencilSquare} mini size="16" slot="icon" />
