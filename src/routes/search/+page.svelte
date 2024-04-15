@@ -36,13 +36,14 @@
     import { goto } from '$app/navigation'
     import { load } from './+page'
     import { page } from '$app/stores'
-    import { scrollTo } from '$lib/components/lemmy/post/helpers'
+    import { filterKeywords, scrollTo } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
     import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
+    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte';
     import CommunityItem from '$lib/components/lemmy/community/CommunityItem.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
@@ -58,6 +59,7 @@
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
+    import UserCard from '$lib/components/lemmy/user/UserCard.svelte';
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { 
@@ -73,6 +75,8 @@
         Window,
         XCircle
     } from 'svelte-hero-icons'
+    
+    
 
     export let data
     
@@ -111,13 +115,12 @@
         searching = true
         data.results = []
         data.counts = {posts:0, comments:0, users:0,communities:0,total:0}
-        //data.fullResults = {} as SearchResponse
-        
 
         const searchURL = new URL($page.url);
         if (filter.person)      searchURL.searchParams.set('person', filter.person.id.toString())
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
         if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
+        
         if (filter.type) {
             searchURL.searchParams.set('type', filter.type)
             pageState.panel = filter.type
@@ -130,8 +133,6 @@
         }
         
         const results = await load({url: searchURL} as LoadEvent<RouteParams, null, {}, "/search">)
-        //data.results = undefined
-        //data.fullResults = undefined
         
         data = results
         searching = false
@@ -139,23 +140,25 @@
 
     function resetSearch() {
         filter = default_filter
-        filter.type = 'All'
-        filter.query = ''
         data.results = []
-        //data.fullResults = {} as SearchResponse
+        data.filters = {}
+        filter.community = undefined
+        filter.person = undefined
         pageState.scrollY = 0
         pageState.panel = 'All'
-        goto('/search')
         PageSnapshot.clear() 
-    }
 
-    
+        goto('/search', {invalidateAll: true})
+    }
+   
     
     let default_filter: SearchFilter = {
-        sort: data.sort,
-        type: data.type,
-        query: data.query,
-        page: data.page
+        sort: 'New',
+        type: 'All',
+        query: '',
+        page: 1,
+        community: undefined,
+        person: undefined
     }
 
     let pageState = {
@@ -165,21 +168,17 @@
 
     let filter = default_filter
     let searching = false
+    
+    // If the page data provides filters for community or person, set the local filter objects to those details
+    $: if (data.filters?.community?.community_view) filter.community = data.filters.community.community_view.community
+    $: if (data.filters?.person?.person_view) filter.person = data.filters.person.person_view.person
+
 </script>
 
 <svelte:head>
     <title>Search</title>
 </svelte:head>
-<!---
-    pageSelection={data?.results && data.results.length >= data.limit || data.page > 1}
-    bind:currentPage={data.page} pageSelectPreventDefault on:navPageSelect={async (e) => {
-        if (e) {
-            filter.page = e.detail
-            window.scrollTo(0,0)
-            await search()
-        }
-    }}
---->
+
 <SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
     sortMenu sortPreventDefault
     sortOptions={['New', 'Old']} 
@@ -231,7 +230,6 @@
                                 listing_type="All"
                                 on:select={(e) => {
                                     filter.community = e.detail
-                                    //searchParam($page.url, 'community', e.detail?.id.toString(), 'page')
                                 }}
                             />
                         </span>
@@ -269,11 +267,7 @@
             
             <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
             <!--- Reset Search Filters--->
-            <MenuButton class="!gap-4" on:click={() => {
-                filter = default_filter
-                filter.type = 'All'
-                data.results = []
-            }}
+            <MenuButton class="!gap-4" on:click={() => { resetSearch() }}
             >
                 <Icon src={ArrowPathRoundedSquare} class="h-8" mini width={iconSize-2}/>
                 Reset Search Filters
@@ -459,11 +453,24 @@
     {/if}
 
 
-    <!--- Site Sidebar--->
+    <!--- Site/Community/User Sidebar--->
     <div class="hidden xl:flex h-full" slot="right-panel">
-        {#if $site}
+        <!--- Display Site Sidebar by Default if community and user not selected-->
+        {#if $site && !data?.filters?.community?.community_view && !data?.filters?.person?.person_view}
             <SiteCard site={$site.site_view} taglines={$site.taglines} admins={$site.admins} version={$site.version} />
         {/if}
+
+        <!---Display community card if community is selected and user is not seelcted--->
+        {#if data?.filters?.community?.community_view && !data?.filters?.person?.person_view}
+            <CommunityCard community_view={data.filters.community.community_view} moderators={data.filters.community.moderators}/>
+        {/if}
+
+        <!---Display user card if a user is selected in the filter--->
+        {#if data?.filters?.person?.person_view}
+            <UserCard person={data.filters.person.person_view} moderates={data.filters.person.moderates} />
+        {/if}
+
+
     </div>
 </MainContentArea>
 

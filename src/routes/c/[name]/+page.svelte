@@ -18,7 +18,9 @@
     import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    
 
     export let data
     
@@ -35,7 +37,9 @@
             })
         }
     })
-
+    
+    let searchTerm:string
+    
     let pageState = {
         scrollY: 0,
     }
@@ -133,7 +137,9 @@
 <SubNavbar home back compactSwitch toggleMargins toggleCommunitySidebar scrollButtons
     sortMenu={true}         bind:selectedSortOption={data.sort}
     refreshButton           on:navRefresh={()=> refresh()}
-/>
+>
+    <SiteSearch placeholder="Search {data.community.community_view.community.name}" community_id={data.community.community_view.community.id} slot="center"/>
+</SubNavbar>
 
 {#if data?.posts && data?.community}
     <MainContentArea>

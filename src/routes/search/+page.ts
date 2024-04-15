@@ -2,17 +2,22 @@ import { profile } from '$lib/auth.js'
 import { getClient, getInstance } from '$lib/lemmy.js'
 import { getItemPublished } from '$lib/lemmy/item.js'
 import type {
-  CommentView,
-  CommunityView,
-  PersonView,
-  PostView,
-  SearchResponse,
+  GetCommunityResponse,
+  GetPersonDetailsResponse,
   SearchType,
   SortType,
 } from 'lemmy-js-client'
 import { get } from 'svelte/store'
+interface LoadParams {
+    url: URL
+}
 
-export async function load({ url }) {
+interface Filters {
+    community?: GetCommunityResponse,
+    person?: GetPersonDetailsResponse
+} 
+
+export async function load({ url }: LoadParams) {
     const query = url.searchParams.get('q')
     const page = Number(url.searchParams.get('page')) || 1
     const community = Number(url.searchParams.get('community_id'))
@@ -20,6 +25,11 @@ export async function load({ url }) {
     const type = url.searchParams.get('type') ?? 'All'
     const person = Number(url.searchParams.get('person'));
     const limit = Number(url.searchParams.get('limit')) || 50;
+
+    const filters: Filters = {
+        community: undefined,
+        person: undefined
+    }
 
     if (query) {
         const results = await getClient().search({
@@ -33,6 +43,18 @@ export async function load({ url }) {
             listing_type: 'All',
             type_: (type as SearchType) ?? 'All',
         })
+
+        if (community) {
+            filters.community = await getClient().getCommunity({
+                id: community
+            })
+        }
+
+        if (person) {
+            filters.person = await getClient().getPersonDetails({
+                person_id: person
+            })
+        }
 
         const [posts, comments, users, communities] = [
             results.posts,
@@ -67,8 +89,8 @@ export async function load({ url }) {
             community_id: community ?? undefined,
             person: person ?? undefined,
             query: query ?? ' ',
-            //fullResults: results,
             counts: counts,
+            filters: filters,
             results: everything,
             limit: limit,
             streamed: {

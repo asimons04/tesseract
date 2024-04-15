@@ -10,12 +10,14 @@
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
+    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
 
     import {
         PencilSquare,
     } from 'svelte-hero-icons'
+    
     
 
     export let data
@@ -31,7 +33,9 @@
     back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
     listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
-/>
+>
+    <SiteSearch placeholder="Search {data.person_view.person.name}" person_id={data.person_view.person.id} slot="center"/>
+</SubNavbar>
 {/if}
 
 <MainContentArea>

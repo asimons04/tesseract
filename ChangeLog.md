@@ -4,12 +4,12 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.3.0
-### To Do
+### Burndown List Before Release
 - [X] Fix search sorting (currently only sorts by new.)
 - [X] Update /c/[name] route to use the updated infinite scroll method implemented on the homepage
 - [X] Update snapshot to use individual storage keys for each path (instead of one big object) to work around per-key storage limitations (~5 MB)
-- Add search bar to /c/[name] page to search the community
-- Add search bar to /u/[name] page to search for content by that user
+- [X] Add search bar to /c/[name] page to search the community
+- [X] Add search bar to /u/[name] page to search for content by that user
 - Add panel to community settings (for mods/admins) to view community modlog
 - Add panel to communtiy settings (for mods/admins) to direct ban/unban user
 - [ ] Make relative time component reactive
@@ -164,7 +164,7 @@ All major/minor changes between releases will be documented here.
     - Posts in the feed, when browsing a community, now show the creator's avatar instead of the community's
     - Deprecated and removed "Theater Mode" button on videos.  Was somewhat ill-conceived when I created it, and maintaining it is annoying.
     - Compact posts are now slightly more compact
-    
+
 - Shamelessly stole the post body preview fade from Photon (ok, I reimplemented it but it does the exact same thing but with better contrast)
 
 - Reimplemented vote buttons
