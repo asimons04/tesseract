@@ -13,6 +13,8 @@
     export let placeholder:string|undefined = undefined
 
 </script>
+
+
 <div class="flex mx-auto">
     <form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
         on:submit={(e) => {
@@ -23,7 +25,7 @@
             url.searchParams.set('q', searchTerm);
             
             if (community_id > 0) url.searchParams.set('community_id', community_id.toString())
-            if (person_id > 0) url.searchParams.set('person', person_id.toString())
+            if (person_id > 0) url.searchParams.set('person_id', person_id.toString())
 
             goto(url, {
                 invalidateAll: true,
@@ -37,4 +39,25 @@
             <Icon src={MagnifyingGlass} mini width={24} />
         </Button>
     </form>
+    
+    <!---Below large breakpoint, just show a button that will take you to the search page, prepopulated with the community/user details--->
+    <span class="flex lg:hidden items-center gap-1 ml-auto">
+        <Button color="tertiary"
+            on:click={() => {
+                let url = new URL(window.location.href);
+                url.pathname = '/search';
+                url.searchParams.set('type', type)
+                
+                if (community_id > 0) url.searchParams.set('community_id', community_id.toString())
+                if (person_id > 0) url.searchParams.set('person_id', person_id.toString())
+
+                goto(url, {
+                    invalidateAll: true,
+                })
+            }}
+        >
+            <Icon src={MagnifyingGlass} mini width={24} />
+        </Button>
+    </span>
+    
 </div>

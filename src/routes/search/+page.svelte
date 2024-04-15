@@ -25,6 +25,8 @@
 
     import { expoInOut, expoOut } from 'svelte/easing'
     import { fly, slide } from 'svelte/transition'
+    import { onMount } from 'svelte';
+    
     import {
         isCommentView,
         isCommunityView,
@@ -36,7 +38,7 @@
     import { goto } from '$app/navigation'
     import { load } from './+page'
     import { page } from '$app/stores'
-    import { filterKeywords, scrollTo } from '$lib/components/lemmy/post/helpers'
+    import { scrollTo } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
     
@@ -75,6 +77,7 @@
         Window,
         XCircle
     } from 'svelte-hero-icons'
+    
     
     
 
@@ -117,7 +120,7 @@
         data.counts = {posts:0, comments:0, users:0,communities:0,total:0}
 
         const searchURL = new URL($page.url);
-        if (filter.person)      searchURL.searchParams.set('person', filter.person.id.toString())
+        if (filter.person)      searchURL.searchParams.set('person_id', filter.person.id.toString())
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
         if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
         
@@ -140,10 +143,13 @@
 
     function resetSearch() {
         filter = default_filter
-        data.results = []
-        data.filters = {}
         filter.community = undefined
         filter.person = undefined
+        filter.query = ''
+
+        data.results = []
+        data.filters = {}
+        
         pageState.scrollY = 0
         pageState.panel = 'All'
         PageSnapshot.clear() 
@@ -169,9 +175,13 @@
     let filter = default_filter
     let searching = false
     
-    // If the page data provides filters for community or person, set the local filter objects to those details
-    $: if (data.filters?.community?.community_view) filter.community = data.filters.community.community_view.community
-    $: if (data.filters?.person?.person_view) filter.person = data.filters.person.person_view.person
+    onMount(() => {
+        // If the page data provides filters for community or person, set the local filter objects to those details
+        if (data.filters?.community?.community_view) filter.community = data.filters.community.community_view.community
+        if (data.filters?.person?.person_view) filter.person = data.filters.person.person_view.person
+        if (data.query) filter.query = data.query
+    })
+
 
 </script>
 
@@ -309,7 +319,7 @@
                 search()
             }}
         >
-            <TextInput type="search" placeholder="Search" bind:value={filter.query}/>
+            <TextInput type="search" placeholder="Search {filter.community ? filter.community.name : ''} {filter.person ? `by ${filter.person.name}` : ''}" bind:value={filter.query}/>
             <Button submit color="tertiary">
                 <Icon src={MagnifyingGlass} mini width={24} />
             </Button>

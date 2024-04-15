@@ -122,6 +122,7 @@ All major/minor changes between releases will be documented here.
 
 
 ### Search Page
+Can use the filters to do things like see your (or anyone's) posts/comments to a specific community 
 - Added the context-sensitive navigation bar
 - Moved filtering options to the navigation ba r
 - Results are grouped by type, including "all", and can be toggled 
@@ -137,6 +138,7 @@ All major/minor changes between releases will be documented here.
 - Implemented infinite scrolling
 - Community name no longer appears in post headers in community feed
 - User avatars are shown in post headers now
+- Search bar now lets you search for content posted to that community.
 
 ## Profile Section
 - Replaced the ad-hoc context bar with the standardized one

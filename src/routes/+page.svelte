@@ -113,7 +113,7 @@
     refreshButton           on:navRefresh={()=> refresh()}
 >
     <!---Inline Search in Middle--->
-    <SiteSearch slot="center"/>
+    <SiteSearch placeholder="Search {data?.site?.site_view?.site?.name ?? "everything"}" slot="center"/>
 
 </SubNavbar>
 
