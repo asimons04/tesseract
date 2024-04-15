@@ -65,12 +65,13 @@ All major/minor changes between releases will be documented here.
 - Moved filter options to navigation bar
 - Made filter selections fancy
 - Reimplemented community and person autocomplete components
-- Person details in filter now fetch via API if not in the modlog data
+- Person details in filter now transparently fetch via API if not in the modlog data
 - Added quick action menu to modlog entries
     - Can be used to quicky undo a mod ation or take an additional related action
     - Can turn a temporary instnace ban into a permanent one without the intermediate step of unbanning first
 - Reversed reflow direction on mobile
 - Hide "moderator" column if not logged in since most instances hide that data for unauthenticated users
+
 
 ### Post Pages
 - Added post title to navigation bar (not shown in mobile).  
@@ -104,6 +105,14 @@ All major/minor changes between releases will be documented here.
 - Added Hot, Popular (Active), and Top Day buttons for quick switching to different feed sorts
 - Community list area is now larger
 - Moved collapse sidebar button out of teh sidebar and to the top navigation bar (to the left of the site name/logo)
+
+### Community Pages
+- Refactor to use standardized layout components
+- Implemented infinite scrolling
+- Community name no longer appears in post headers in community feed
+- User avatars are shown in post headers now
+
+
 
 
 ### UI
@@ -165,6 +174,10 @@ All major/minor changes between releases will be documented here.
 - Switched pagination to infinite scroll 
 - Removed feed setting for number of posts per page
   - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
+- Embed media objects are destroyed (or not rendered) when not within the viewport. 
+    - This should reduce memory consumption considerably as before, once an iframe was loaded after it was scrolled into the viewport, it remained in the DOM
+    - If you're done with a video, you can now just scroll past it without it continuing to play
+    
 
 
 

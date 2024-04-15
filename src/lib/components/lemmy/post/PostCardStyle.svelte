@@ -60,7 +60,7 @@
         
     <!--- Direct Video Post --->
     {#if postType == "video"}
-        <PostVideo bind:post {displayType} {autoplay} loop={loop}/>
+        <PostVideo bind:post bind:postContainer {displayType} {autoplay} loop={loop}/>
     {/if}
 
     <!--- Bandcamp Embed --->
