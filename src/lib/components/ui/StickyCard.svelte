@@ -1,5 +1,5 @@
 <aside
-    class="sticky top-[8rem] break-words flex flex-col gap-1 z-10 pr-2 -mt-1
+    class="sticky top-[8rem] break-words flex flex-col gap-1 z-10 xl:pr-2 -mt-1
     w-full h-full
     xl:w-[25rem] xl:overflow-auto
     max-h-[calc(100svh-9rem)]
