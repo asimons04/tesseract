@@ -14,12 +14,15 @@
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
     import { 
         ArrowPath,
+        ChatBubbleLeftRight,
         Icon 
     } from 'svelte-hero-icons'
+    
     
 
     export let data:any
@@ -113,7 +116,14 @@
                 <Spinner width={36} />
             </div>
             {:then comments}
-                <Comments post={post.post_view.post} moderators={post.moderators} nodes={comments} isParent={true} />
+                {#if comments.length > 0}
+                    <Comments post={post.post_view.post} moderators={post.moderators} nodes={comments} isParent={true} />
+                {:else}
+                    <!---Hide placeholder if you have the comment form open--->
+                    {#if !showCommentForm}
+                        <Placeholder icon={ChatBubbleLeftRight} class="mt-4" title="No Comments" description="No one has commented here yet" />
+                    {/if}
+                {/if}
         {/await}
         {:catch}
             <div class="bg-red-500/10 border border-red-500 rounded-md p-4">

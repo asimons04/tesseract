@@ -144,6 +144,6 @@
         <CommentSection bind:data={data} bind:showCommentForm={showCommentForm}/>
     </div>
 
-    <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel"/>
+    <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden xl:flex"/>
 
 </MainContentArea>

@@ -59,10 +59,57 @@ All major/minor changes between releases will be documented here.
 - Deprecated several old functions that were holdovers from the original Photon code
 
 
+### Modlog Enhancements
+- Added the context-sensitive navigation bar
+- Removed "Modlog" title since it's pretty obvious where you are
+- Moved filter options to navigation bar
+- Made filter selections fancy
+- Reimplemented community and person autocomplete components
+- Person details in filter now fetch via API if not in the modlog data
+- Added quick action menu to modlog entries
+    - Can be used to quicky undo a mod ation or take an additional related action
+    - Can turn a temporary instnace ban into a permanent one without the intermediate step of unbanning first
+- Reversed reflow direction on mobile
+- Hide "moderator" column if not logged in since most instances hide that data for unauthenticated users
+
+### Post Pages
+- Added post title to navigation bar (not shown in mobile).  
+    - Have you ever gotten deep into the comments, which have gone far off the rails, and completely forgotten what the post was about? This is why that was added.
+- Added a placeholder element if there are no comments
+- Removed action buttons (moderation, post, community) from navigation bar. Best I can tell they were rarely used and were problematic to implement.
+- Now uses standardized layout components.
+- Sidebar no longer jiggles
+- Removed comment count button from post card; redundant since those are displayed again below where it makes more sense
+
+
+### Search Page
+- Added the context-sensitive navigation bar
+- Moved filtering options to the navigation ba r
+- Results are grouped by type, including "all", and can be toggled 
+- Used standardized layout components
+- Added site sidebar 
+- Reimplemented search handling logic
+
+### Frontpage
+- Moved search out of main navigation bar and into the context-sensitive navigation bar below it (hidden on mobile; use top search button)
+- Added scroll to top / bottom buttons to navigation bar
+    - With infinite scrolling, this will basically take you to the next "page"
+- Implemented infinite scrolling
+    - A lot of effort was taken to ensure you get back to your same scroll position
+- Refreshing data is *mostly* manual now so that returning to the homepage will resume your former scroll position
+
+
+### Sidebar
+- Shrunk button text
+- Added Hot, Popular (Active), and Top Day buttons for quick switching to different feed sorts
+- Community list area is now larger
+- Moved collapse sidebar button out of teh sidebar and to the top navigation bar (to the left of the site name/logo)
+
+
 ### UI
 - Reimplemented account switching menu
 - Add "Copy Lemmyverse Link" to user profile menu.
-- Site, community, and user info are now collapsible
+- Site, community, and user info are now collapsible in the sidebars
 - Added transition effects in more places, removed from others
 
 - Various visual tweaks to posts, comments, and badges
