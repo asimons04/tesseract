@@ -20,6 +20,7 @@
     import { 
         ArrowPath,
         ChatBubbleLeftRight,
+        ExclamationTriangle,
         Icon 
     } from 'svelte-hero-icons'
     
@@ -121,13 +122,11 @@
                 {:else}
                     <!---Hide placeholder if you have the comment form open--->
                     {#if !showCommentForm}
-                        <Placeholder icon={ChatBubbleLeftRight} class="mt-4" title="No Comments" description="No one has commented here yet" />
+                        <Placeholder icon={ChatBubbleLeftRight} class="mt-4 mb-4" title="No Comments" description="No one has commented here yet" />
                     {/if}
                 {/if}
         {/await}
         {:catch}
-            <div class="bg-red-500/10 border border-red-500 rounded-md p-4">
-                Failed to load comments.
-            </div>
+            <Placeholder icon={ExclamationTriangle} class="mt-4 mb-4" title="An Error Has Occurred" description="Unable to fetch comments for this post." />
     {/await}
 </div>
