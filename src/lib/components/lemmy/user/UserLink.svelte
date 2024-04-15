@@ -1,8 +1,11 @@
 <script lang="ts">
-    import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import { userSettings } from '$lib/settings.js'
     import type { Person } from 'lemmy-js-client'
+    import { userSettings } from '$lib/settings.js'
+
+    import Avatar from '$lib/components/ui/Avatar.svelte'
+    import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
+    
+    
     import { Icon, NoSymbol, ShieldCheck, Trash } from 'svelte-hero-icons'
 
     export let user: Person
@@ -14,6 +17,7 @@
     export let mod:boolean = false
     export let href:string | undefined = undefined
     export let distinguishAdminsMods:boolean = true
+    
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
         return `/u/${user.name}@${domain}`
@@ -45,7 +49,7 @@
     </span>
   
     {#if badges && (user.admin || user.banned || user.bot_account || user.deleted || mod )}
-        <span class="flex flex-row gap-1">
+        <span class="flex flex-row flex-wrap gap-1">
             {#if distinguishAdminsMods && user.admin}
                 <div class="text-red-500" title="Admin">
                     <ShieldIcon width={12} filled />
@@ -73,7 +77,7 @@
                     <Icon src={Trash} mini size="12" />
                 </div>
                 
-                {/if}
+            {/if}
         </span>
     {/if}
 </a>

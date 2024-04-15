@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {Filters, ModLog} from '../+page.js'
-    import type { Post } from 'lemmy-js-client'
+    import type { Person, Post } from 'lemmy-js-client'
 
     import { amMod, amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy'
@@ -103,6 +103,15 @@
                 type: 'error',
             })
         }
+    }
+
+    function isNewAccount(user: Person):boolean {
+        return new Date().getTime()/1000/60 - (
+            user.published.endsWith('Z')
+                ? (Date.parse(user.published)/1000/60) 
+                : (Date.parse(user.published + 'Z')/1000/60) 
+            )
+            < 1440 * 5
     }
 
 </script>
@@ -222,6 +231,7 @@
                 <Icon src={filter.moderatee.set ? MinusCircle : PlusCircle} mini width={24} />
             </button>
 
+            
             <UserLink avatar={false} showInstance={true} user={item.moderatee} />
         </span>
         {/if}
