@@ -288,6 +288,20 @@
                                 {item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}
                             </MenuButton>
                         {/if}
+
+                        <!---Convert Temp Instance Ban to Permanent--->
+                        {#if item.moderatee && isAdmin($profile?.user) && item.moderatee.banned && item.expires}
+                            <MenuButton title="Ban Permanently From Instance" on:click={() => {
+                                if (item.moderatee) {
+                                    // Temporarily set to not banned so the modal will react properly
+                                    item.moderatee.banned = false
+                                    banningInstance = true
+                                }
+                            }}>
+                                <Icon mini width={14} src={ShieldExclamation} />
+                                Ban Permanently
+                            </MenuButton>
+                        {/if}
                     {/if}
 
                     <!---Actions Available for Post Remove/Restore Actions--->
