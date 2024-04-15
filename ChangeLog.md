@@ -59,6 +59,52 @@ All major/minor changes between releases will be documented here.
 - Deprecated several old functions that were holdovers from the original Photon code
 
 
+### Top Navigation Bar
+- All buttons are icons now
+- Created new notification widget
+    - Inbox notifications removed from profile button
+    - Shows a colored dot for each type of notification
+        - Red: Inbox notification
+        - Green: Unread Report
+        - Blue:  Unprocessed registration applications (admins only)
+    - Is now the way to get to the mod reports section (Notifications -> Reports)
+- Added Favorites menu to quick-access your favorited communities
+- Search removed from here and added to context navigation bar below)
+- Button to collapse the sidebar is now at the far left of the main nav bar instead of within the sidebar
+
+### Sidebar
+- Shrunk button text
+- Added Hot, Popular (Active), and Top Day buttons for quick switching to different feed sorts
+- Community list area is now larger
+- Moved collapse sidebar button out of teh sidebar and to the top navigation bar (to the left of the site name/logo)
+
+
+### Frontpage and Feeds
+- Moved search out of main navigation bar and into the context-sensitive navigation bar below it (hidden on mobile; use top search button)
+- Added scroll to top / bottom buttons to navigation bar
+    - With infinite scrolling, this will basically take you to the next "page"
+- Implemented infinite scrolling
+    - A lot of effort was taken to ensure you get back to your same scroll position
+- Refreshing data is *mostly* manual now so that returning to the homepage will resume your former scroll position
+- Embed media objects are destroyed (or not rendered) when not within the viewport. 
+    - This should reduce memory consumption considerably as before, once an iframe was loaded after it was scrolled into the viewport, it remained in the DOM
+    - If you're done with a video, you can now just scroll past it without it continuing to play
+- Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 
+  - Now will keep your place when changing post/compact view and changing margins
+  - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
+- Removed feed setting for number of posts per page
+  - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
+
+### Post Pages
+- Added post title to navigation bar (not shown in mobile).  
+    - Have you ever gotten deep into the comments, which have gone far off the rails, and completely forgotten what the post was about? This is why that was added.
+- Added a placeholder element if there are no comments
+- Removed action buttons (moderation, post, community) from navigation bar. Best I can tell they were rarely used and were problematic to implement.
+- Now uses standardized layout components.
+- Sidebar no longer jiggles
+- Removed comment count button from post card; redundant since those are displayed again below where it makes more sense
+
+
 ### Modlog Enhancements
 - Added the context-sensitive navigation bar
 - Removed "Modlog" title since it's pretty obvious where you are
@@ -73,14 +119,6 @@ All major/minor changes between releases will be documented here.
 - Hide "moderator" column if not logged in since most instances hide that data for unauthenticated users
 
 
-### Post Pages
-- Added post title to navigation bar (not shown in mobile).  
-    - Have you ever gotten deep into the comments, which have gone far off the rails, and completely forgotten what the post was about? This is why that was added.
-- Added a placeholder element if there are no comments
-- Removed action buttons (moderation, post, community) from navigation bar. Best I can tell they were rarely used and were problematic to implement.
-- Now uses standardized layout components.
-- Sidebar no longer jiggles
-- Removed comment count button from post card; redundant since those are displayed again below where it makes more sense
 
 
 ### Search Page
@@ -91,20 +129,8 @@ All major/minor changes between releases will be documented here.
 - Added site sidebar 
 - Reimplemented search handling logic
 
-### Frontpage
-- Moved search out of main navigation bar and into the context-sensitive navigation bar below it (hidden on mobile; use top search button)
-- Added scroll to top / bottom buttons to navigation bar
-    - With infinite scrolling, this will basically take you to the next "page"
-- Implemented infinite scrolling
-    - A lot of effort was taken to ensure you get back to your same scroll position
-- Refreshing data is *mostly* manual now so that returning to the homepage will resume your former scroll position
 
 
-### Sidebar
-- Shrunk button text
-- Added Hot, Popular (Active), and Top Day buttons for quick switching to different feed sorts
-- Community list area is now larger
-- Moved collapse sidebar button out of teh sidebar and to the top navigation bar (to the left of the site name/logo)
 
 ### Community Pages
 - Refactor to use standardized layout components
@@ -112,12 +138,21 @@ All major/minor changes between releases will be documented here.
 - Community name no longer appears in post headers in community feed
 - User avatars are shown in post headers now
 
+## Profile Section
+- Replaced the ad-hoc context bar with the standardized one
+- Moved profile section buttons below nav bar
+- Profile section buttons are now stickied to the top for easier navigation
+- Re-wrote the main layout and subpages to use the standardized layout components
+
+
+
+    
 
 
 
 ### UI
 - Reimplemented account switching menu
-- Add "Copy Lemmyverse Link" to user profile menu.
+- Add "Copy Lemmyverse Link" to user profile menu. Useful for sharing instance-agnostic links to users (mostly used by admins/mods to report spammers/trolls)
 - Site, community, and user info are now collapsible in the sidebars
 - Added transition effects in more places, removed from others
 
@@ -128,7 +163,8 @@ All major/minor changes between releases will be documented here.
     - Increase icon/avatar size -- rather than reflow to 3 rows from two + column (community, user, published), always display in a column
     - Posts in the feed, when browsing a community, now show the creator's avatar instead of the community's
     - Deprecated and removed "Theater Mode" button on videos.  Was somewhat ill-conceived when I created it, and maintaining it is annoying.
-
+    - Compact posts are now slightly more compact
+    
 - Shamelessly stole the post body preview fade from Photon (ok, I reimplemented it but it does the exact same thing but with better contrast)
 
 - Reimplemented vote buttons
@@ -167,17 +203,7 @@ All major/minor changes between releases will be documented here.
 - Revamped the search page
 - Revamped the modlog
 
-### Post Feeds    
-- Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 
-  - Now will keep your place when changing post/compact view and changing margins
-  - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
-- Switched pagination to infinite scroll 
-- Removed feed setting for number of posts per page
-  - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
-- Embed media objects are destroyed (or not rendered) when not within the viewport. 
-    - This should reduce memory consumption considerably as before, once an iframe was loaded after it was scrolled into the viewport, it remained in the DOM
-    - If you're done with a video, you can now just scroll past it without it continuing to play
-    
+
 
 
 

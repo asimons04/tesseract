@@ -15,10 +15,11 @@
     export let postContainer:HTMLDivElement
 
     let videoID:    string | null | undefined
-    let embedURL:   string = ""
     let extraParams:string = "autopause=0"
     let size: string = imageSize(displayType);
-
+    const embedURL = new URL('https://player.vimeo.com')
+    
+    
     // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
     // Should reduce memory consumption by a lot on video-heavy feeds.
     let inViewport = false
@@ -34,21 +35,31 @@
     $: if (postContainer) observer.observe(postContainer);
     
     $: if (post.post?.url) {
+        
+        
         // Parse URLs to pick out video IDs to create embed URLs
         videoID = new URL(post.post.url).pathname.replace('/','')
-        embedURL = "https://player.vimeo.com/video";
         
-        // Append the video ID to the embed URL
-        embedURL += `/${videoID}`
+        // Handle the /groups/123456/videos/{videoID} style links
+        if (videoID.startsWith('groups')) {
+            let re = new RegExp("/groups/[0-9]+/videos/", "i");
+            videoID = new URL(post.post.url).pathname.replace(re, '')
+        }
+
+        // Vimeo video IDs are numeric, so make sure we extracted a valid value (hopefully)
+        if (parseInt(videoID)) {
+            // Append the video ID to the embed URL
+            embedURL.pathname = `/video/${videoID}`
+        }
     }
 
-    $: if (embedURL) {
+    $: if (embedURL.pathname != '/') {
         if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
             extraParams += "&autoplay=1";
         }
     }
     
-    $: showAsEmbed = embedURL &&
+    $: showAsEmbed = embedURL.pathname != '/' &&
         (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 </script>
