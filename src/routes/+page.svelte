@@ -1,26 +1,14 @@
 <script lang="ts">
-    import type { SortType, GetPosts, GetPostsResponse, GetSiteResponse, ListingType } from 'lemmy-js-client'
-
     import type { Snapshot } from './$types';
     import { PageSnapshot } from '$lib/storage'
     
     import { beforeNavigate, goto } from '$app/navigation'
     import { 
-        addMBFCResults, 
-        findCrossposts, 
-        filterKeywords, 
-        fixHourAheadPosts, 
         mergeNewInfiniteScrollBatch,
         scrollToLastSeenPost, 
-        scrollTo,
-        setLastSeenPost, 
-        sleep,
-        sortPosts 
     } from '$lib/components/lemmy/post/helpers'
     
-    import { getClient, site } from '$lib/lemmy.js'
     import { load } from './+page'
-    import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings'
     
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
@@ -43,10 +31,7 @@
         loading: false,     // Used to toggle loading indicator
         exhausted: false,   // Sets to true if the API returns 0 posts
         // Maximum number of posts to keep in the FIFO
-        maxPosts: $userSettings.uiState.maxScrollPosts > 250 || $userSettings.uiState.maxScrollPosts < 50 || !$userSettings.uiState.maxScrollPosts
-            ? 100
-            : $userSettings.uiState.maxScrollPosts
-        ,      
+        maxPosts: $userSettings.uiState.maxScrollPosts,      
         truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
         automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
         enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)

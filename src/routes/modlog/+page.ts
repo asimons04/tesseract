@@ -5,6 +5,7 @@ import type {
     AdminPurgeCommunityView,
     AdminPurgePersonView,
     AdminPurgePostView,
+    Comment,
     Community,
     ModAddCommunityView,
     ModAddView,
@@ -19,6 +20,7 @@ import type {
     ModlogActionType,
     ModlogListParams,
     Person,
+    Post,
 } from 'lemmy-js-client'
 import { get } from 'svelte/store'
 
@@ -67,6 +69,8 @@ export interface ModLog {
     link?: string
     expires?:string
     when: string
+    post?: Post,
+    comment?: Comment
 }
 
 export interface Filters {
@@ -126,6 +130,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.moderator,
             reason: item.mod_remove_comment.reason,
             link: `/comment/${item.comment.id}`,
+            comment: item.comment
         }
     } else if ('mod_remove_post' in item) {
         return {
@@ -137,6 +142,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.moderator,
             reason: item.mod_remove_post.reason,
             link: `/post/${item.post.id}`,
+            post: item.post,
         }
     } else if ('mod_add_community' in item) {
         return {
@@ -158,6 +164,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             link: `/post/${item.post.id}`,
             moderator: item.moderator,
             content: item.post.name,
+            post: item.post
         }
     } else if ('mod_lock_post' in item) {
         return {
@@ -168,6 +175,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             link: `/post/${item.post.id}`,
             moderator: item.moderator,
             content: item.post.name,
+            post: item.post
         }
     } else if ('mod_transfer_community' in item) {
         return {

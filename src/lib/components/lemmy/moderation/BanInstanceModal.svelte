@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Person } from 'lemmy-js-client'
-
+    
+    import { createEventDispatcher } from 'svelte';
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -16,12 +17,15 @@
         Check,
         NoSymbol
     } from 'svelte-hero-icons'
+    
 
     
 
     export let open = false
     export let user: Person | undefined
     export let banned: boolean
+    
+    const dispatcher = createEventDispatcher<{ban:boolean}>()
 
     let reason = ''
     let deleteData = false
@@ -85,6 +89,7 @@
             })
         }
         loading = false
+        dispatcher('ban', banned)
     }
 </script>
 

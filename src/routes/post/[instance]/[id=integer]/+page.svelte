@@ -1,10 +1,5 @@
 <script lang="ts">
-    import type { PostType, PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
-    import type { CommunityModeratorView, GetPostResponse, PostView, CommunityView} from 'lemmy-js-client'
-
-    
-
-    import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
+    import { goto } from '$app/navigation'
     import { getClient } from '$lib/lemmy.js'
     import {  setSessionStorage } from '$lib/session.js'
     import { instance } from '$lib/instance.js'
@@ -18,7 +13,6 @@
     import Button from '$lib/components/input/Button.svelte'
     import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'

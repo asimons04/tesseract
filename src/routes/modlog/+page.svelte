@@ -78,6 +78,8 @@
 <svelte:head>
     <title>Modlog</title>
 </svelte:head>
+
+
 <SubNavbar home pageSelection bind:currentPage={data.page} refreshButton scrollButtons >
     
     <!---Custom Sub-Navbar Buttons for Modlog--->

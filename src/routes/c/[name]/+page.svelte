@@ -2,15 +2,15 @@
     import type { Snapshot } from './$types';
     import type { GetPosts } from 'lemmy-js-client'
     
-    import { addMBFCResults,  filterKeywords,  scrollTo, scrollToLastSeenPost, setLastSeenPost, sortPosts } from '$lib/components/lemmy/post/helpers'
-    import { fullCommunityName, searchParam } from '$lib/util.js'
-    import { getClient } from '$lib/lemmy.js'
+    
     import { beforeNavigate, goto } from '$app/navigation'
-    import { setSessionStorage } from '$lib/session.js'
+    import { fullCommunityName } from '$lib/util.js'
+    import { load } from './+layout'
+    import { mergeNewInfiniteScrollBatch, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { onMount } from 'svelte'
-    import { page } from '$app/stores'
     import { PageSnapshot } from '$lib/storage'
-    import { profile } from '$lib/auth.js'
+    import { setSessionStorage } from '$lib/session.js'
+
     import { userSettings } from '$lib/settings'
     
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
@@ -19,9 +19,6 @@
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    
-    import { load } from './+layout'
-    
 
     export let data
     
@@ -85,63 +82,39 @@
         window.scrollTo(0,0)
     }
 
-    async function loadPosts(params: GetPosts =  {
-            limit: $userSettings?.uiState.postsPerPage || 10,
-            community_name: $page.params.name,
-            page: undefined,
-            next_page: undefined,
-            sort: data.sort,
-            auth: $profile?.jwt,
-        } as GetPosts): Promise<void> {
-        
+    function loadPosts(): void {
         if (!data?.posts) return
-
-        //@ts-ignore
-        if (!data?.posts?.next_page && !data?.page) data.page = 1
-
-        //@ts-ignore
-        if (data.posts.next_page) params.page_cursor = data.posts.next_page;
-        else params.page = ++data.page!
-
-        // Fetch posts
-        let posts = await getClient().getPosts(params);
-
-        if (posts.posts.length < 1) infiniteScroll.exhausted = true
-        else infiniteScroll.exhausted = false
-
-        // Filter the posts for keywords
-        posts.posts = filterKeywords(posts.posts);
-
-        // Apply MBFC data object to post
-        posts.posts = addMBFCResults(posts.posts);
-
-        // Sort the new result set based on the selected sort method
-        posts.posts = sortPosts(posts.posts, data.sort)
         
-        // Loop over the new posts
-        for (let i:number=0; i < posts.posts.length; i++) {
-            
-            // Check if the current new post already exists in the existing array of posts
-            let exists = false
-            for (let j:number=0; j < data.posts.posts.length; j++) {
-                if (posts.posts[i].post.id == data.posts.posts[j].post.id) exists = true
-            }
+        const req = {
+            passedCommunity: data.community,
+            url: new URL(window.location.href)
+        }
 
-            // Only add the new post if it doesn't already exist in the post array
-            if (!exists) data.posts.posts.push(posts.posts[i])
+        req.url.searchParams.set('limit', $userSettings?.uiState.postsPerPage.toString() || '10')
+        req.url.searchParams.set('community_name', data.community_name)
+        req.url.searchParams.set('sort', data.sort ?? 'New')
+        
+        //@ts-ignore since using 0.18.x client wihout next_page in type def
+        if (data.posts.next_page) req.url.searchParams.set('page_cursor', data.posts.next_page)
+        else if (data.page) req.url.searchParams.set('page', (++data.page).toString())
+        
+        load(req).then((nextBatch) => {
+            if (!nextBatch || !data?.posts) return
             
+            if (nextBatch && nextBatch.posts.posts.length < 1) infiniteScroll.exhausted = true
+            else infiniteScroll.exhausted = false
+           
+            data.posts = mergeNewInfiniteScrollBatch(data.posts, nextBatch.posts)
+
             // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
-            if (data.posts.posts.length > infiniteScroll.maxPosts) {
+            while (data.posts.posts.length > infiniteScroll.maxPosts) {
                 data.posts.posts.shift()
                 infiniteScroll.truncated = true  
             }
-        }
-
-        //@ts-ignore
-        if (posts.next_page) data.posts.next_page = posts.next_page
+            data = data
+            infiniteScroll.loading  = false
+        })
         
-        data.posts.posts = data.posts.posts
-        infiniteScroll.loading  = false
     }
 </script>
 

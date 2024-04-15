@@ -5,18 +5,21 @@ All major/minor changes between releases will be documented here.
 
 ## 1.3.0
 ### To Do
-- Fix search sorting (currently only sorts by new.)
-- Update /c/[name] route to use the updated infinite scroll method implemented on the homepage
+- [X] Fix search sorting (currently only sorts by new.)
+- [X] Update /c/[name] route to use the updated infinite scroll method implemented on the homepage
+- [X] Update snapshot to use individual storage keys for each path (instead of one big object) to work around per-key storage limitations (~5 MB)
 - Add search bar to /c/[name] page to search the community
 - Add search bar to /u/[name] page to search for content by that user
 - Add panel to community settings (for mods/admins) to view community modlog
 - Add panel to communtiy settings (for mods/admins) to direct ban/unban user
-
+- [ ] Make relative time component reactive
 
 - Add "action" column to modlog
-    - Ban/unban from community if action is community ban/unban
-    - Ban/unban from instance if action is ban
-    - Restore/remove comment/post if action is remove/restore
+    - [X] Ban/unban from community if action is community ban/unban
+    - [X] Ban/unban from instance if action is ban
+    - [X] Restore/remove comment/post if action is remove/restore
+    - [X] Lock/unlock post
+    - [X] Unfeature post from community or local
 
 - Finish community browser enhancements
     - Add search bar to content area for mobile view

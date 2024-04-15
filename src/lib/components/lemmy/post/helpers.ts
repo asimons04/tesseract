@@ -6,6 +6,7 @@ export interface PostView extends LemmyPostView {
     cross_posts?: PostView[]
 }
 
+
 import { disableScrollHandling } from '$app/navigation'
 import { get } from 'svelte/store';
 import { getSessionStorage, setSessionStorage } from '$lib/session'
@@ -275,32 +276,39 @@ export const scrollToTop = function(element:HTMLElement|undefined|null, smooth:b
     catch {}
 }
 
+export const lastSeenPost = {
+    getKey: function() {
+        const Page = get(page)
+        const key = Page.url.pathname != "/" && Page.url.pathname.endsWith('/')
+            ? Page.url.pathname.substring(0, Page.url.pathname.length-1)
+            : Page.url.pathname
+        return key
+    },
 
+    set: function(postID: number) {
+        const key = this.getKey()
+        const lastSeenPosts = JSON.parse(sessionStorage.getItem('tesseract_last_seen_posts') ?? '{}')
+        if (postID > 0) lastSeenPosts[key] = postID.toString()
+        else delete lastSeenPosts[key]
 
-export function setLastSeenPost(postID: number) {
-    const Page = get(page)
-    const key = `lastSeenPost_${Page.url.pathname}`
+        sessionStorage.setItem('tesseract_last_seen_posts', JSON.stringify(lastSeenPosts))
+    },
 
-    if (postID > 0) {
-        sessionStorage.setItem(key, postID.toString())
-    }
-    else {
-        sessionStorage.removeItem(key)
+    get: function() {
+        const key = this.getKey()
+        const lastSeenPosts = JSON.parse(sessionStorage.getItem('tesseract_last_seen_posts') ?? '{}')
+        if (key in lastSeenPosts) return lastSeenPosts[key]
+        else return undefined
     }
 }
 
-export function getLastSeenPost() {
-    const Page = get(page)
-    const key = `lastSeenPost_${Page.url.pathname}`
-    return sessionStorage.getItem(key)
-}
 
 export async function scrollToLastSeenPost(delay=200) {
-    const lastSeenPost = getLastSeenPost()
+    const postID = lastSeenPost.get()
     
-    if (lastSeenPost) {
+    if (postID) {
         await sleep(delay)
-        const element = document.getElementById(lastSeenPost)
+        const element = document.getElementById(postID)
         
         if (element) {
             disableScrollHandling()

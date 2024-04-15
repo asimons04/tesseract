@@ -2,6 +2,7 @@
     import type { CommentView, PostView } from 'lemmy-js-client'
 
     import { amMod, isAdmin } from './moderation'
+    import { createEventDispatcher } from 'svelte'
     import { fullCommunityName } from '$lib/util.js'
     import { getClient } from '$lib/lemmy.js'
     import { isCommentView, isPostView } from '$lib/lemmy/item.js'
@@ -31,6 +32,8 @@
     export let purge: boolean = false
     export let reason:string 
     
+    const dispatcher = createEventDispatcher<{remove: { removed:boolean, purged:boolean}}>()
+
     let commentReason: boolean = false
     let privateMessage: boolean = false
     let loading = false
@@ -155,6 +158,9 @@
             })
         }
         loading = false
+
+        dispatcher('remove', {removed: item.post.removed, purged: purge})
+
     }
 
     const resetText = () => {

@@ -3,7 +3,7 @@
     import type { PostType, PostDisplayType } from './helpers.js'
     import { fade } from 'svelte/transition'
 
-    import { setLastSeenPost } from './helpers.js'
+    import { lastSeenPost } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
@@ -26,7 +26,7 @@
 {#if post?.post?.id}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-    <div id={post.post.id.toString()} on:mouseover={() => setLastSeenPost(post.post.id)} on:touchstart={() => setLastSeenPost(post.post.id)} bind:this={postContainer} transition:fade>
+    <div id={post.post.id.toString()} on:mouseover={() => lastSeenPost.set(post.post.id)} on:touchstart={() => lastSeenPost.set(post.post.id)} bind:this={postContainer} transition:fade>
         
         <!--- Compact Posts --->
         {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }

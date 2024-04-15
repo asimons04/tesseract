@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Community, Person } from 'lemmy-js-client'
 
+    import { createEventDispatcher } from 'svelte'
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -9,19 +10,24 @@
     import Button from '$lib/components/input/Button.svelte'
     import Checkbox from '$lib/components/input/Checkbox.svelte'
     import DateInput from '$lib/components/input/DateInput.svelte'
+    
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
+    
     
     import {
         Check,
         NoSymbol
     } from 'svelte-hero-icons'
+    import { create } from '@dicebear/initials';
 
 
     export let open = false
     export let user: Person
     export let community: Community | undefined = undefined
     export let banned: boolean
+
+    const dispatcher = createEventDispatcher<{banCommunity:boolean}>()
 
     let reason = ''
     let deleteData = false
@@ -89,6 +95,8 @@
             })
         }
         loading = false
+        dispatcher('banCommunity', banned)
+
     }
 </script>
 

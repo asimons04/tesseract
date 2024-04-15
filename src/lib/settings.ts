@@ -413,6 +413,12 @@ export function migrateSettings(old:any) {
         old.version = 0.5
     }
 
+    //0.5 -> 0.6
+    if (old.version == 0.5) {
+        if (old.uiState.maxScrollPosts > 150) old.uiState.maxScrollPosts = 150
+        old.version = 0.6
+    }
+
     return { ...defaultSettings, ...old }
 }
 

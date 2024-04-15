@@ -61,6 +61,7 @@
             toast({
                 content: `Successfully ${lock ? 'locked' : 'unlocked' } that post. You must refresh to see changes.`,
                 type: 'success',
+                title: "Success"
             })
         } catch (err) {
             toast({

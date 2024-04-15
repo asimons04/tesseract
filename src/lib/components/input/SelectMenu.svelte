@@ -15,7 +15,7 @@
 
     type T = $$Generic
 
-    export let options: T[]
+    export let options: T[] = []
     export let optionNames: string[] = []
     export let selected: T
     export let label: string | undefined = undefined
@@ -71,7 +71,7 @@
         </li>
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     {/if}
-
+    
     {#each options as option, index}
         <MenuButton
             on:click={() => {
@@ -92,4 +92,6 @@
             </span>
         </MenuButton>
     {/each}
+
+    <slot />
 </Menu>
