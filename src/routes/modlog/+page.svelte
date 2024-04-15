@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Filters} from './+page.js'
     
+    import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
@@ -52,21 +53,61 @@
         filter.moderator.set = new URLSearchParams(window.location.search).has('mod_id');
         
         // Community Filter
-        if (filter.community.set && data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
-             filter.community.community = data.modlog[0].community;
+        if (filter.community.set) {
+        
+            if (data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
+                filter.community.community = data.modlog[0].community
+            }
+            else {
+                getClient().getCommunity({
+                    id: Number($page.url.searchParams.get('community'))
+                })
+                .then((results) => {
+                    if (results?.community_view?.community)
+                    filter.community.community = results.community_view.community
+                })
+            }
         } else {
             delete filter.community.community
         }
         //Moderatee Filter
-        if (filter.moderatee.set && data.modlog && data.modlog.length > 0 && data.modlog[0].moderatee) {
-            filter.moderatee.person = data.modlog[0].moderatee;
+        if (filter.moderatee.set) {
+            if (data.modlog && data.modlog.length > 0 && data.modlog[0].moderatee) {
+                filter.moderatee.person = data.modlog[0].moderatee;
+            }
+            else {
+                getClient().getPersonDetails({
+                    person_id: Number($page.url.searchParams.get('other_person_id'))
+                })
+                .then((results) => {
+                    if (results?.person_view?.person) {
+                        filter.moderatee.person = results.person_view.person
+                    }
+
+                })
+
+            }
+            
         } else {
             delete filter.moderatee.person
         }
 
         //Moderator Filter
-        if (filter.moderator.set && data.modlog && data.modlog.length > 0 && data.modlog[0].moderator) {
-            filter.moderator.person = data.modlog[0].moderator;
+        if (filter.moderator.set) {
+            if (data.modlog && data.modlog.length > 0 && data.modlog[0].moderator) {
+                filter.moderator.person = data.modlog[0].moderator;
+            }
+            else {
+                getClient().getPersonDetails({
+                    person_id: Number($page.url.searchParams.get('mod_id'))
+                })
+                .then((results) => {
+                    if (results?.person_view?.person) {
+                        filter.moderator.person = results.person_view.person
+                    }
+
+                })
+            }
         }
         else {
             delete filter.moderator.person

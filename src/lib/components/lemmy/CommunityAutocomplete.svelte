@@ -13,7 +13,7 @@
 
     
     export let q: string = ''
-    export let listing_type: ListingType = 'Subscribed'
+    export let listing_type: ListingType = 'All'
     export let sort: SortType = 'New'
     export let items: Community[] = []
     export let label:string = ''
