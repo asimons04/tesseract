@@ -20,6 +20,7 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ModlogAction from '../ModlogAction.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import ModlogRemoveCommentModal from '../ModlogRemoveCommentModal.svelte';
     import ModlogRemovePostModal from '../ModlogRemovePostModal.svelte';
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     
@@ -35,11 +36,9 @@
         ShieldExclamation,
         Trash
     } from 'svelte-hero-icons'
-    import ModlogRemoveCommentModal from '../ModlogRemoveCommentModal.svelte';
     
     
     
-
     export let item: ModLog
     export let filter: Filters
 
@@ -103,15 +102,6 @@
                 type: 'error',
             })
         }
-    }
-
-    function isNewAccount(user: Person):boolean {
-        return new Date().getTime()/1000/60 - (
-            user.published.endsWith('Z')
-                ? (Date.parse(user.published)/1000/60) 
-                : (Date.parse(user.published + 'Z')/1000/60) 
-            )
-            < 1440 * 5
     }
 
 </script>

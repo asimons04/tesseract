@@ -313,7 +313,9 @@
             </div>
             
             {#each data.modlog as modlog}
-                <ModlogItemTable item={modlog} bind:filter />
+                {#if modlog.actionName != "Unknown"}  
+                    <ModlogItemTable item={modlog} bind:filter />
+                {/if}
             {/each}
         </div>
         
