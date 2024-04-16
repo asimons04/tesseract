@@ -21,6 +21,7 @@
     
 
     export let data
+    console.log(data)
 </script>
 
 <svelte:head>
@@ -39,18 +40,20 @@
 {/if}
 
 <MainContentArea>
-    {#if data.items.length == 0}
-        <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions that match this filter."/>
-    {:else}
+    {#if data.items && data.items.length > 0}
         <FeedContainer>    
-            {#each data.items as item (item.counts.id)}
-                {#if isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
-                    <CommentItem comment={item} />
-                {:else if !isCommentView(item) && (data.type == 'all' || data.type == 'posts')}
-                    <Post post={item} />
+            {#each data.items as item}
+                {#if item && isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
+                    <CommentItem bind:comment={item} />
+                
+                {:else if item && !isCommentView(item) && (data.type == 'all' || data.type == 'posts')}
+                    <Post bind:post={item} />
                 {/if}
             {/each}
         </FeedContainer>
+        
+    {:else}
+        <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions that match this filter."/>
     {/if}
 
     <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />

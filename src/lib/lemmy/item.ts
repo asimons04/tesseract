@@ -31,14 +31,22 @@ export function getItemPublished(item: Result) {
 
     // others
     if ('private_message' in item)        return item.private_message.published
-    if ('comment' in item)                return item.comment.published
-    else if ('post' in item)              return item.post.published
+    
+    if ('comment' in item)                return item.comment.published.endsWith('Z') ? item.comment.published : item.comment.published + 'Z'
+    else if ('post' in item)              return item.post.published.endsWith('Z') ? item.post.published : item.post.published + 'Z'
 
     if ('person' in item)                 return item.person.published
     if ('community' in item)              return item.community.published
 
     return ''
 }
+
+export function getPostOrCommentPublished(item:PostView|CommentView) {
+    if ('post' in item && 'comment' in item) return item.comment.published
+    if ('post' in item && !('comment' in item)) return item.post.published
+    return ''
+}
+
 
 export function isPostView(item: Result): item is PostView {
     return 'post' in item && !('comment' in item)
