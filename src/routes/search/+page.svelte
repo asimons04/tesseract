@@ -35,7 +35,7 @@
     } from '$lib/lemmy/item.js'
     
     
-    import { goto } from '$app/navigation'
+    import { beforeNavigate, goto } from '$app/navigation'
     import { load } from './+page'
     import { page } from '$app/stores'
     import { scrollTo } from '$lib/components/lemmy/post/helpers'
@@ -48,6 +48,7 @@
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte';
     import CommunityItem from '$lib/components/lemmy/community/CommunityItem.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
@@ -77,13 +78,17 @@
         Window,
         XCircle
     } from 'svelte-hero-icons'
+    import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte';
     
     
     
 
     export let data
     
-   
+    // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
+    beforeNavigate(() => {
+        infiniteScroll.exhausted = false
+    })
 
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {
@@ -114,10 +119,15 @@
         }
     }
     
-    async function search() {
+    async function search(clear=true) {
         searching = true
-        data.results = []
-        data.counts = {posts:0, comments:0, users:0,communities:0,total:0}
+        
+        // Whether to clear the results (default) or append to them for infinite scroll
+        if (clear) {
+            data.results = []
+            data.counts = {posts:0, comments:0, users:0,communities:0,total:0}
+            infiniteScroll.exhausted = false
+        }
 
         // Construct a new URL with just the origin/path to override any URL variables 
         const origin = new URL(window.location.href).origin
@@ -130,10 +140,8 @@
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
         if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
         
-        if (filter.type) {
-            searchURL.searchParams.set('type', filter.type)
-            pageState.panel = filter.type
-        }
+        if (filter.type) searchURL.searchParams.set('type', filter.type)
+
         if (filter.page)        searchURL.searchParams.set('page', filter.page.toString())
         if (filter.query)       searchURL.searchParams.set('q', filter.query)
         else {
@@ -141,10 +149,33 @@
             if (filter.person || filter.community) searchURL.searchParams.set('q', ' ')
         }
         
+        // Fetch the results from the page loader with our custom URL
         const results = await load({url: searchURL} as LoadEvent<RouteParams, null, {}, "/search">)
+        
+        // Set the pagedata to the new data from our call (if not infinite scrolling)
+        if ( clear ) data = results
+        
+        // Otherwise, append the results and update the counts
+        else {
+            results.results?.forEach((result) => {
+                data.results?.push(result)
+            })
+            if (results?.results && results.results.length < 1) infiniteScroll.exhausted = true
+            
+            if (data.counts && results.counts) {
+                data.counts.total += results.counts.total
+                data.counts.posts += results.counts.posts
+                data.counts.comments += results.counts.comments
+                data.counts.users += results.counts.users
+                data.counts.communities += results.counts.communities
+            }
 
-        data = results
+            data = data
+            infiniteScroll.loading = false
+        }
+
         searching = false
+        
     }
 
     function resetSearch() {
@@ -152,12 +183,13 @@
         filter.community = undefined
         filter.person = undefined
         filter.query = ''
+        filter.page = 1
+        filter.sort = 'New'
 
         data.results = []
         data.filters = {}
         
         pageState.scrollY = 0
-        pageState.panel = 'All'
         PageSnapshot.clear() 
 
         goto('/search', {invalidateAll: true})
@@ -175,8 +207,20 @@
 
     let pageState = {
         scrollY: 0,
-        panel: 'All'
     }
+    
+    // Infinite scroll object to hold config parms
+    let infiniteScroll = {
+        loading: false,     // Used to toggle loading indicator
+        exhausted: false,   // Sets to true if the API returns 0 posts
+        // Maximum number of posts to keep in the FIFO
+        maxPosts: $userSettings.uiState.maxScrollPosts,      
+        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
+        truncating: false,  // Whether a timeout is active waiting to truncate the overlow
+        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
+        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+    }
+
 
     let filter = default_filter
     let searching = false
@@ -217,7 +261,7 @@
             on:select={(e) => {
                 if (e.detail) {
                     filter.type = e.detail
-                    pageState.panel = e.detail
+                    //pageState.panel = e.detail
                 }
             }}
         />
@@ -297,6 +341,7 @@
         <form class="flex flex-row gap-0 items-center mx-auto"
             on:submit={(e) => {
                 e.preventDefault();
+                filter.page = 1
                 search()
             }}
         >
@@ -317,6 +362,7 @@
 </SubNavbar>
 
 <MainContentArea>
+    
     <!---Search Input Outside of Subnavbar for Views Smaller than XL--->
     <div class="flex xl:hidden w-full mx-auto">
         <form class="flex flex-row gap-1 items-center ml-auto mr-auto"
@@ -382,92 +428,89 @@
         {/await}
         
         <!--- Result Type Buttons--->
-        {#if filter.type == 'All'}
         <div class="sticky top-[6.8rem] xl:top-[7rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10" data-sveltekit-preload-data="false">
             <div class="flex flex-row gap-1 mx-auto">
                 
-                <Button color="tertiary" alignment="left" title="All" class="hover:bg-slate-200" on:click={() => pageState.panel='All'}>
-                    <span class="flex flex-col items-center {pageState.panel=="All" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                <Button color="tertiary" alignment="left" title="All" class="hover:bg-slate-200" on:click={() => filter.type='All'}>
+                    <span class="flex flex-col items-center {filter.type=="All" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={MagnifyingGlass} mini size="18" title="All" />
                         <span class="text-center text-xs">All ({data.counts.total})</span>
                     </span>            
                 </Button>
 
-                <Button color="tertiary" alignment="left" title="Posts" class="hover:bg-slate-200" on:click={() => pageState.panel='Posts'}>
-                    <span class="flex flex-col items-center {pageState.panel=="Posts" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                <Button color="tertiary" alignment="left" title="Posts" class="hover:bg-slate-200" on:click={() => filter.type='Posts'}>
+                    <span class="flex flex-col items-center {filter.type=="Posts" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={Window} mini size="18" title="Posts" />
                         <span class="text-center text-xs">Posts ({data.counts.posts})</span>
                     </span>            
                 </Button>
 
-                <Button color="tertiary" alignment="left" title="Comments" class="hover:bg-slate-200" on:click={() => pageState.panel='Comments'}>
-                    <span class="flex flex-col items-center {pageState.panel=="Comments" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                <Button color="tertiary" alignment="left" title="Comments" class="hover:bg-slate-200" on:click={() => filter.type='Comments'}>
+                    <span class="flex flex-col items-center {filter.type=="Comments" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={ChatBubbleOvalLeftEllipsis} mini size="18" title="Comments" />
                         <span class="text-center text-xs">Comments ({data.counts.comments})</span>
                     </span>            
                 </Button>
 
-                <Button color="tertiary" alignment="left" title="Communities" class="hover:bg-slate-200" on:click={() => pageState.panel='Communities'}>
-                    <span class="flex flex-col items-center {pageState.panel=="Communities" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                <Button color="tertiary" alignment="left" title="Communities" class="hover:bg-slate-200" on:click={() => filter.type='Communities'}>
+                    <span class="flex flex-col items-center {filter.type=="Communities" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={UserGroup} mini size="18" title="Communities" />
                         <span class="text-center text-xs">Communities ({data.counts.communities})</span>
                     </span>            
                 </Button>
 
-                <Button color="tertiary" alignment="left" title="Users" class="hover:bg-slate-200" on:click={() => pageState.panel='Users'}>
-                    <span class="flex flex-col items-center {pageState.panel=="Users" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                <Button color="tertiary" alignment="left" title="Users" class="hover:bg-slate-200" on:click={() => filter.type='Users'}>
+                    <span class="flex flex-col items-center {filter.type=="Users" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                         <Icon src={UserCircle} mini size="18" title="Users" />
                         <span class="text-center text-xs">Users ({data.counts.users})</span>
                     </span>            
                 </Button>
             </div>
         </div>
-        {/if}
         
-
-        <div data-sveltekit-preload-data="false" class="w-full 
-            {$userSettings.uiState.feedMargins ? 'sm:w-full md:w-[85%] lg:w-[90%] xl:w-[80%]' : ''}
-            ml-auto mr-auto flex flex-col gap-5"
-            
-        >
-            
-            <!---{#if filter.type == 'All'}--->
-                {#each data.results as result}
-                    {#if isPostView(result)}
-                        {#if (pageState.panel == 'Posts' || pageState.panel =='All' || filter.type == 'Posts')}
-                            <Post bind:post={result} displayType='feed' />
-                        {/if}
-                    
-                    {:else if isCommentView(result) }
-                        {#if (pageState.panel == 'Comments' || pageState.panel =='All' || filter.type == 'Comments')}    
-                            <CommentItem bind:comment={result} />
-                        {/if}
-                    
-                    {:else if isCommunityView(result) }
-                        {#if (pageState.panel == 'Communities' || pageState.panel =='All' || filter.type == 'Communities')}    
-                            <CommunityItem bind:community={result} />
-                        {/if}
-                    
-                    {:else if isUser(result) }
-                        {#if (pageState.panel == 'Users' || pageState.panel =='All' || filter.type == 'Users')}
-                            <UserItem bind:user={result} />
-                        {/if}
+        <FeedContainer>    
+            {#each data.results as result}
+                {#if isPostView(result)}
+                    {#if (filter.type == 'Posts' || filter.type=='All')}
+                        <Post bind:post={result} displayType='feed' />
                     {/if}
-                {/each}
-            <!---{/if}--->
-        </div>
+                
+                {:else if isCommentView(result) }
+                    {#if (filter.type == 'Comments' || filter.type=='All')}    
+                        <CommentItem bind:comment={result} />
+                    {/if}
+                
+                {:else if isCommunityView(result) }
+                    {#if (filter.type == 'Communities' || filter.type=='All')}    
+                        <CommunityItem bind:community={result} />
+                    {/if}
+                
+                {:else if isUser(result) }
+                    {#if (filter.type == 'Users' || filter.type=='All')}
+                        <UserItem bind:user={result} />
+                    {/if}
+                {/if}
+            {/each}
+        </FeedContainer>
     {/if}
 
-    <div class="mt-auto" />
-    {#if data?.results && data.results.length >= data.limit || data.page > 1}
-        <Pageination bind:page={data.page} on:change={(p) => {
-            filter.page = p.detail
-            window.scrollTo(0,0)
-            search()
-            //searchParam($page.url, 'page', p.detail.toString())
-        }}/>
+    {#if 
+        (filter.type == 'Posts' && data.counts && data.counts.posts > 1) ||
+        (filter.type == 'Comments' && data.counts && data.counts.comments > 1) ||
+        (filter.type == 'Communities' && data.counts && data.counts.communities > 1) ||
+        (filter.type == 'Users' && data.counts && data.counts.users > 1) ||
+        (filter.type == 'All' && data.counts && data.counts.total > 1)
+    }
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} automatic={infiniteScroll.automatic}
+            on:loadMore={ () => {
+                if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
+                    infiniteScroll.loading = true
+                    if (filter.page) filter.page = filter.page + 1
+                    search(false)
+                }
+            }}
+        />
     {/if}
-
 
     <!--- Site/Community/User Sidebar--->
     <div class="hidden xl:flex h-full" slot="right-panel">

@@ -58,7 +58,7 @@
                 <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
                 
                 <img
-                    src="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
+                    src="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 1024, 'webp')}"
                     class="ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)] z-20 opacity-0 transition-opacity duration-150"
                     class:opacity-100={loaded}
                     class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur)}

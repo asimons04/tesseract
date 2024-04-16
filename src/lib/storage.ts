@@ -84,6 +84,7 @@ export const storage = {
             }
             catch (err) {
                 console.error(err);
+                sessionStorage.removeItem(key)
                 return false
             }
         }

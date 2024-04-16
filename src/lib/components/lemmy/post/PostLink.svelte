@@ -37,7 +37,7 @@
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
                     <img
-                        src="{imageProxyURL(post.post?.thumbnail_url, (displayType=='feed' ? 768 : undefined), 'webp')}"
+                        src="{imageProxyURL(post.post?.thumbnail_url, (displayType=='feed' ? 1024 : undefined), 'webp')}"
                         class="max-w-full ml-auto mr-auto object-cover rounded-md opacity-0 transition-opacity duration-300"
                         class:opacity-100={loaded}
                         on:load={() => (loaded = true)}
