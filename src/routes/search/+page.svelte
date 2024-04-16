@@ -119,7 +119,13 @@
         data.results = []
         data.counts = {posts:0, comments:0, users:0,communities:0,total:0}
 
-        const searchURL = new URL($page.url);
+        // Construct a new URL with just the origin/path to override any URL variables 
+        const origin = new URL(window.location.href).origin
+        const path = new URL(window.location.href).pathname
+
+        const searchURL = new URL(origin)
+        searchURL.pathname = path
+
         if (filter.person)      searchURL.searchParams.set('person_id', filter.person.id.toString())
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
         if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
@@ -136,7 +142,7 @@
         }
         
         const results = await load({url: searchURL} as LoadEvent<RouteParams, null, {}, "/search">)
-        
+
         data = results
         searching = false
     }

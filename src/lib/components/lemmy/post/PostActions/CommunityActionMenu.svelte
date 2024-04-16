@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
-    import type { PostView } from 'lemmy-js-client'
+    import type { Person, PostView } from 'lemmy-js-client'
     
     import {addFavorite, isFavorite } from '$lib/favorites'
     import { blockCommunity, createPost, subscribe } from '$lib/components/lemmy/community/helpers'
@@ -22,6 +22,7 @@
         QueueList,
         Rss,
         Star,
+        User,
         UserGroup,
     } from 'svelte-hero-icons'
 
@@ -29,7 +30,6 @@
     export let post:PostView
     export let menuIconSize:number  = 16
     export let alignment:Alignment = 'top-right'
-
     export let suppressModal:boolean = false
 
     // Helpers for community groups
@@ -78,15 +78,22 @@
     </MenuButton>
     {/if}
 
+    <!---Browse Community--->
     <MenuButton on:click={() => goto(`/c/${post.community.name}@${new URL(post.community.actor_id).hostname}`)} title="Browse {post.community.title || post.community.name}">
         <Icon src={QueueList} width={16} mini />
         Browse Community
     </MenuButton>
 
+    <!---Posts In This Community by This Creator--->
+    <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" >
+        <Icon src={User} mini size="16" />
+        More from {post.creator.display_name ? post.creator.display_name : post.creator.name}@{new URL(post.creator.actor_id).hostname}
+    </MenuButton>
+
     <!---Modlog--->
     <MenuButton link href="/modlog?community={post.community.id}" title="Modlog for {post.community.title}" >
         <Icon src={Newspaper} mini size="16" />
-        Community Modlog
+        Modlog
     </MenuButton>
 
     {#if $profile?.user}
