@@ -13,13 +13,16 @@
     export let post:PostView
     export let displayType: PostDisplayType
 
-    let loaded                              = false;
-    let size: string                        = imageSize(displayType);
+    let loaded          = false;
+    let size: string    = imageSize(displayType);
  
 </script>
 
 {#if post.post?.url}
-    <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+    <span class="flex flex-row w-full gap-2 justify-between items-center">
+        <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+        <Link class="text-xs" href="https://archive.ph/{post.post.url}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
+    </span>
 {/if}
 
 
