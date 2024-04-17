@@ -80,20 +80,15 @@
 
 <li class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}">
     <details bind:open class="flex flex-col gap-1">
+        <!--flex-wrap-->
         <summary class="
             {node.comment_view.comment.distinguished ? distinguishedClassSummary : ''} 
             {node.comment_view.comment.distinguished && !open ? 'border-b': ''} 
-            flex flex-row cursor-pointer gap-2 items-center group text-xs flex-wrap
+            flex flex-row cursor-pointer gap-2 items-center group text-xs 
             hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 hover:rounded-lg
         ">
             <span class:font-bold={op} class="flex flex-row gap-1 items-center">
-                <UserLink
-                    avatarSize={20}
-                    avatar
-                    user={node.comment_view.creator}
-                    mod={mod}
-                />
-
+                <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={mod} />
                 {#if op}
                     <span class="text-sky-500">OP</span>
                 {/if}

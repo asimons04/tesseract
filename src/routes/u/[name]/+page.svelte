@@ -73,10 +73,7 @@
                 if (snapshot.data)              data = snapshot.data
                 if (snapshot.state)             pageState = snapshot.state
                 if (snapshot.infiniteScroll)    infiniteScroll = snapshot.infiniteScroll
-                
-                // Scroll to last position if all/comments and scroll to post element if viewing posts
-                //if (data.type == 'all' || data.type == 'comments') await scrollTo(pageState.scrollY, 300)
-                //else 
+
                 await scrollToLastSeenPost(data.items.length + 200)
             }
             catch { 
@@ -110,20 +107,26 @@
             if (nextBatch.items.length < 1) infiniteScroll.exhausted = true
             else infiniteScroll.exhausted = false
 
+            nextBatch.items.forEach((item) => {
+                data.items.push(item)
+            })
             
+            /*
             // Check if the current new item already exists in the existing array of items
             for (let i:number=0; i<nextBatch.items.length; i++) {
                 let nextItem = nextBatch.items[i]
                 let exists = false
 
+                
                 data.items.forEach((item) => {
                     if ('comment' in item && 'comment' in nextItem && item.comment.id == nextItem.comment.id) exists = true
-                    else if (item.post.id == nextItem.post.id) exists = true
+                    if (!('comment' in item) && !('comment' in nextItem) && item.post.id == nextItem.post.id) exists = true
                 })
                 
                 if (!exists) data.items.push(nextItem)
 
             }
+            */
 
             data = data
             infiniteScroll.loading  = false

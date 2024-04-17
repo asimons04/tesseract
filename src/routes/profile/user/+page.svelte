@@ -26,9 +26,12 @@
                 if (snapshot.data)  data = snapshot.data
                 if (snapshot.state) pageState = snapshot.state
                 
+                /*
                 if (data.type == 'all' || data.type == 'comments')
                     await scrollTo(pageState.scrollY, 300)
-                else  await scrollToLastSeenPost(data.user.submissions.length + 200)
+                else  
+                */
+                await scrollToLastSeenPost(data.user.submissions.length + 200)
             }
             catch { 
                 PageSnapshot.clear() 
