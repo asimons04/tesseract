@@ -25,7 +25,7 @@ export async function image_proxy(event:any) {
     // Build a URL to the requested image/video
     let imagePath = `${req.route}`
     let imageUrl = new URL(`https://${imagePath}?${req.params.toString()}`);
-
+    
     // Refuse proxy request if image url matches an entry in the blacklist
     if (MEDIA_PROXY_BLACKLIST.length > 0) {
         for (let i:number=0; i< MEDIA_PROXY_BLACKLIST.length; i++) {

@@ -611,3 +611,9 @@ export const mergeNewInfiniteScrollBatch = function (old: GetPostsResponse, next
 
     return old
 }
+
+export function removeURLParams(url:string):string {
+    let fullURL = new URL(url)
+    fullURL.search = ''
+    return fullURL.toString()
+}

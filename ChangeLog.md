@@ -38,18 +38,15 @@ All major/minor changes between releases will be documented here.
 - Add MFA configuration support
     - Look for a QR code library
 
-
-### Media
-- Add support for detecting and rendering Peertube embeds
-    - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
-    - Votes on Peertube videos will translate to thumbs-up on PT's end
-- Media embeds now only render when the post is actually in the viewport. 
-    - This should keep memory from ballooning in embed-heavy feeds. Before, all iframes were kept in the DOM
-    - Will show as thumbnail art until 10% of the post is in the viewport and then automatically switch to embed (if embeds enabled)
+### API Compatibility
+- 1.3.0 remains fully compatible with 0.18.x
+- Works and tested with 0.19.x but does not support any of the new features yet _except_ the cursor-based pagination. This has been implemented in a backwards-compatible way and will fall back to offset-based pagination for 0.18.x instances.
+- This will be the last version to support 0.18.x.  Once development of 1.4.0 begins, 0.18.x support will be dropped.
 
 
-### 0.19.x Features
-- Added support for both page number (offset based) and page_cursor (cursor based) pagination methods.  Will prefer cursor-based pagination if available and fall back to offset based if using < 0.19.0 instance (maintains backwards compatibility with 0.18.x)
+
+
+
 
 ### Bugfixes
 - General Typescript and a11y fixes (too numerous to list individually)
@@ -57,6 +54,8 @@ All major/minor changes between releases will be documented here.
 - Reimplemented vote functions for comments and posts.
 - Added more forwards/backwards-compatible date format checks (to work with both 0.18.x and 0.19.x)
 - Deprecated several old functions that were holdovers from the original Photon code
+- Fixed bug where refreshing a user profile would throw an unhandled JS error on 0.19.x (but strangly, the same flow worked on initial load). Was a bad index key for the Svelte `{#each}` loop.
+
 
 
 ### Top Navigation Bar
@@ -94,6 +93,19 @@ All major/minor changes between releases will be documented here.
   - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
 - Removed feed setting for number of posts per page
   - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
+
+### Media
+- Add support for detecting and rendering Peertube embeds
+    - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
+    - Votes on Peertube videos will translate to thumbs-up on PT's end
+- Media embeds now only render when the post is actually in the viewport. 
+    - This should keep memory from ballooning in embed-heavy feeds. Before, all iframes were kept in the DOM
+    - Will show as thumbnail art until 10% of the post is in the viewport and then automatically switch to embed (if embeds enabled)
+
+### Archive Links
+- Link posts now have an "[Archive Link]" button automatically applied to the right of the source URL.
+- Please, for the love of god, stop lazily commenting "PaYWalLed!".  Seriously. You're making your laziness everyone else's problem, and it's obnoxious.
+- Support for submitting archive links when creating posts will *not* be implemented. Among other things, that's one of the *worst* things Lemmy UI has done and allows absolute shit garbage "news" sources to masquerade as legitimate ones since the URL only shows the archive link and the real source is obfuscated. 
 
 ### Post Pages
 - Added post title to navigation bar (not shown in mobile).  

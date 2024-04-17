@@ -3,7 +3,7 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { getInstance } from '$lib/lemmy.js'
-    import { imageSize} from './helpers.js'
+    import { imageSize, removeURLParams } from './helpers.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
 
@@ -15,19 +15,21 @@
 
     let loaded          = false;
     let size: string    = imageSize(displayType);
+    
+
+    
  
 </script>
 
 {#if post.post?.url}
-    <span class="flex flex-row w-full gap-2 justify-between items-center">
+    <span class="flex flex-row w-full gap-4 items-center">
         <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-        <Link class="text-xs" href="https://archive.ph/{post.post.url}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
+        <Link class="text-xs" href="https://archive.ph/{removeURLParams(post.post.url)}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
     </span>
 {/if}
 
 
 {#if post.post?.thumbnail_url}
-    <!--href={post.post?.url || undefined}-->
     <a 
         href={displayType == 'feed' ? `/post/${getInstance()}/${post.post.id}` : `${post.post.url}`}
         target={

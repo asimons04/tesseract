@@ -5,7 +5,7 @@
     
     import { imageProxyURL } from '$lib/image-proxy'
     import {isImage, postType as identifyPostType} from './helpers.js'
-    import { scrollToTop } from './helpers.js'
+    import { removeURLParams, scrollToTop } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
@@ -27,6 +27,7 @@
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
 
+    $: postType = identifyPostType(post)
 </script>
 
 
@@ -56,7 +57,7 @@
                             class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
                         />
                     <!---Thumbnail for Image Post--->
-                    {:else}
+                    {:else if post.post.url}
                         <img
                             src="{imageProxyURL(post.post.url, 256, 'webp')}"
                             loading="lazy"
@@ -79,9 +80,14 @@
             <PostTitle bind:post />
 
             {#if post.post.url && !isImage(post.post.url)}
-                <Link highlight href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}>
-                    <span class="text-xs">{new URL(post.post.url).host}</span>
-                </Link>
+            <span class="flex flex-row w-full gap-4 items-center">
+                <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+            
+                <!---Show archive link if not a media post--->
+                {#if postType == "link" || postType == "thumbLink"}
+                    <Link class="text-xs" href="https://archive.ph/{removeURLParams(post.post.url)}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
+                {/if}
+            </span>
             {/if}
             
             <div class="mt-1"/>

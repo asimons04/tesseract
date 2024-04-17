@@ -9,9 +9,9 @@ import {
 } from '$lib/settings.js'
 
 // Accepts an image URL as input and determines whether to convert it into a proxied image URL or keep the original
-export function imageProxyURL(url:string|undefined, size:number|undefined = undefined, format:string|undefined = undefined): string|undefined {
+export function imageProxyURL(url:string, size?:number, format?:string): string|undefined {
     
-    if (!url) return undefined
+    if (!url) return
     
     // Return original URL if media proxying is globally disabled
     if (!ENABLE_MEDIA_PROXY) return url;                        
@@ -38,7 +38,7 @@ export function imageProxyURL(url:string|undefined, size:number|undefined = unde
     // Don't proxy inline data images
     if (url.startsWith('data:')) return url;
 
-    // Don't proxy images that are already going through the proxy
+    // Don't proxy images that are already going through the local proxy
     if (url.includes(`${new URL(window.location.href).origin}/image_proxy/`)) return url;
 
     // Build the image proxy URL to return
@@ -56,11 +56,11 @@ export function imageProxyURL(url:string|undefined, size:number|undefined = unde
         // Only add the thumbnail and format parameters to pictrs URLs (to avoid caching multiple version of a GIF from Giphy, etc where those aren't respected)
         if (url.includes('/pictrs/image')) {
             if (size) {
-                params.append('thumbnail', size.toString());
+                params.set('thumbnail', size.toString());
             }
 
             if (format) {
-                params.append('format', format)
+                params.set('format', format)
             }
         }
         
@@ -68,6 +68,8 @@ export function imageProxyURL(url:string|undefined, size:number|undefined = unde
         let imagePath = `${host}${path}`;
         
         return `${origin}/image_proxy/${imagePath}?${params}`
+
+        
     }
     
     // If building the URL fails, fallback to returning the original
