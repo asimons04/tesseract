@@ -120,7 +120,7 @@
     <span class="flex flex-row gap-1 md:gap-2 items-center text-sm text-center mx-auto md:mr-2">
         
         <!--Home Button-->
-        {#if home || history.length < 2}
+        {#if home }
             <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary">
                 <Icon src={Home} width={iconSize} />
             </Button>
