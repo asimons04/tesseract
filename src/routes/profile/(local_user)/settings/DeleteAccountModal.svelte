@@ -79,7 +79,8 @@
         
         <span class="font-normal text-base">
             <span class="font-bold">Warning</span>: Deleting your account is irreversible. If you are sure you want to do this, enter your
-            password below.  If you want to leave your content visible for posterity, leave the "delete content" checkbox empty.
+            password below. 
+            <!---If you want to leave your content visible for posterity, leave the "delete content" checkbox empty.--->
         </span>
         
         <!---<Checkbox bind:checked={deletion.delete_content}>Delete Content</Checkbox>--->

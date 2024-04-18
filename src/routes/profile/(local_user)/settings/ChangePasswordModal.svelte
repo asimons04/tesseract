@@ -85,6 +85,11 @@
 
 <Modal bind:open icon={Key} title="Change Password">
     <form class="flex flex-col gap-4" autocomplete="off">
+        
+        <span class="font-normal text-base">
+            Note that changing your password will log you out of any other active sessions. This session will be updated automatically, but 
+            you will need to remove and re-add the account on those devices to log back in.
+        </span>
 
         <TextInput label="Old Password" autocomplete="current-password" type="password" bind:value={oldPassword} />
         <TextInput label="New Password" autocomplete="new-password"type="password" bind:value={newPassword} />
