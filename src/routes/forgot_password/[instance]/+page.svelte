@@ -8,6 +8,10 @@
     import { getClient } from '$lib/lemmy.js'
     import type { GetCaptchaResponse } from 'lemmy-js-client'
     import { LINKED_INSTANCE_URL } from "$lib/instance.js";
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
 
     export let data
 
@@ -26,6 +30,8 @@
 
     async function submit() {
         submitting = true
+        if (!email) return
+        
         try {
             const res = await getClient(instance, fetch).passwordReset({
                 email: email,
@@ -34,13 +40,15 @@
             toast({
                 content: `A password reset email was sent to ${email}. Please check your inbox and follow the instructions.`,
                 type: 'success',
+                title: "Success"
             })
-            goto('/login');
+            goto(`/login/${instance}`);
             
         } catch (err) {
             toast({
                 content: err as any,
                 type: 'error',
+                title: 'Error'
             })
         }
         submitting = false
@@ -51,35 +59,32 @@
     <title>Forgot Password</title>
 </svelte:head>
 
-<form class="flex flex-col gap-4 max-w-2xl mx-auto" on:submit|preventDefault={submit}>
-    <span class="flex gap-4 items-center font-bold text-xl text-center mx-auto">
-        {#if data.site_view.site.icon}
-            <Avatar circle={false} width={48} url={data.site_view.site.icon} />
-        {/if}
-        {data.site_view.site.name}
-    </span>
-  
-    <h1 class="font-bold text-3xl">Recover Account Password</h1>
-    <p class="text-sm">
-        Enter your registerd email address to begin the password recovery process.  You will not be able to reset your 
-        password if you did not register an email when your account was created.
-    </p>
-    <TextInput
-        bind:value={email}
-        label="Email"
-        required={true}
-        type="email"
-        focus={true}
-    />
+<SubNavbar home back toggleMargins toggleCommunitySidebar/>
+
+<MainContentArea>
+    <FeedContainer>
+        
+        <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>
+            <h1 class="font-bold text-3xl">Recover Account Password</h1>
+            <p class="text-sm">
+                Enter your registerd email address to begin the password recovery process.  You will not be able to reset your 
+                password if you did not register an email when your account was created.
+            </p>
+            <TextInput bind:value={email} label="Email" required={true} type="email" autocomplete="email" focus={true} />
+            
+            <Button submit color="primary" size="lg" loading={submitting} disabled={submitting} class="mt-auto" >
+                Submit
+            </Button>
+        </form>
+        
+        
+    </FeedContainer>
     
-    <Button
-        submit
-        color="primary"
-        size="lg"
-        loading={submitting}
-        disabled={submitting}
-        class="mt-auto"
-    >
-        Submit
-    </Button>
-</form>
+    <SiteCard site={data.site_view} taglines={data.taglines} admins={data.admins} version={data.version} slot="right-panel"/>
+    
+</MainContentArea>
+
+
+
+
+

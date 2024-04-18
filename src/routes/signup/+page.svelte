@@ -1,6 +1,7 @@
 <script lang="ts">
     import Button from '$lib/components/input/Button.svelte'
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    import Link from '$lib/components/input/Link.svelte';
     import Logo from '$lib/components/ui/Logo.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
@@ -11,6 +12,7 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { DEFAULT_INSTANCE_URL } from '$lib/instance.js'
     import { validateInstance } from '$lib/lemmy.js'
+    
   
     let instance: string = ''
     let validating: boolean = false
@@ -61,6 +63,10 @@
                 Go
             </Button>
         </form>
+
+        <p class="text-sm">
+            Already have an account?  <Link highlight href="/login">Log in</Link>
+        </p>
     </FeedContainer>
 
     <SidebarFooter autohide={false} />
