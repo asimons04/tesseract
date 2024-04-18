@@ -29,22 +29,28 @@ All major/minor changes between releases will be documented here.
     - Update links to community browser in Explore menu to send the target instance as a URL parameter
     - Add environment variable to allow admins to pre-populate a list of instances to browse
 
+- Reimplement custom feeds
+    - Do a fetch of 50 posts per community in group (maximum allowed by API)
+    - Repeat 5 times (for a total of 250 per community)
+    - Store to localstorage `tesseract_custom_feed_{name}`
+    - Use localstorage to populate a custom `PostView[]` object which will feed the infinite scroll feed
+    - Profit???
+
+
 - Create a /instances route 
     - Use a tabbed/panel interface
     - Allow filtering from a text input (similar to Federation block lists in admin panel)
     - Add links for Fediseer, instance block (for 0.19.x), and community browser to instances
 
-- Add form to change user's password
-- Add MFA configuration support
+- [X] Add form to change user's password
+
+- Add MFA configuration support (on hold until 0.18.x support is dropped.)
     - Look for a QR code library
 
-### API Compatibility
-- 1.3.0 remains fully compatible with 0.18.x
-- Works and tested with 0.19.x but does not support any of the new features yet _except_ the cursor-based pagination. This has been implemented in a backwards-compatible way and will fall back to offset-based pagination for 0.18.x instances.
-- This will be the last version to support 0.18.x.  Once development of 1.4.0 begins, 0.18.x support will be dropped.
-
-
-
+### Important API Compatibility Notes
+**This will be the last version to support 0.18.x.  Once development of 1.4.0 begins, 0.18.x support will be dropped.**
+- 1.3.0 remains fully compatible with 0.18.x and 0.19.x
+- 0.19.x does not support any of the new features yet _except_ the cursor-based pagination. This has been implemented in a backwards-compatible way and will fall back to offset-based pagination for 0.18.x instances.  This was implemented for both since 0.19.x has deprecated offset-based pagination and was necessary for transition purposes past 0.19.x
 
 
 
@@ -68,7 +74,7 @@ All major/minor changes between releases will be documented here.
         - Blue:  Unprocessed registration applications (admins only)
     - Is now the way to get to the mod reports section (Notifications -> Reports)
 - Added Favorites menu to quick-access your favorited communities
-- Search removed from here and added to context navigation bar below)
+- Search removed from here and added to context navigation bar below
 - Button to collapse the sidebar is now at the far left of the main nav bar instead of within the sidebar
 
 ### Sidebar
@@ -150,18 +156,27 @@ Can use the filters to do things like see your (or anyone's) posts/comments to a
 - User avatars are shown in post headers now
 - Search bar now lets you search for content posted to that community.
 
+### Community Button on Posts
+- Added button called "More from {user@instance}" which will take you to a pre-populated search page showing only submission from that user in that community
+
+
 ## Profile Section
+- Now has infinite scroll for post/comment history
 - Replaced the ad-hoc context bar with the standardized one
 - Moved profile section buttons below nav bar
 - Profile section buttons are now stickied to the top for easier navigation
 - Re-wrote the main layout and subpages to use the standardized layout components
 - Can now set banner image
 - Updated layout of settings
-- Removed "show scores" option since it is not used by Tesseract
-    - Will likely move this to app settings
+- Removed "show scores" option since it is not used by Tesseract and doesn't change API behavior
+    - Will likely move this to app settings since it has to be implemented client-side
 - Can now change password (I _swear_ I thought I already implemented this ages ago)
-- TOTP settings will be added when 0.18.x support is dropped.  The 0.18.x implementation is bonkers, and I don't want to have to shim around that.
+- Note:  TOTP settings will be added when 0.18.x support is dropped.  The 0.18.x implementation is bonkers, and I don't want to have to shim around that.
 
+### Misc Pages
+- Reimplemented /legal page to use standardized layout
+- Reimplemented /signup, /signup/[instance], /login, and /login/[instance] to use new standardized layout.
+    - Added site card to the login and signup pages and removed old static site icon
 
     
 
