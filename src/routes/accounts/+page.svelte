@@ -78,7 +78,9 @@
             loading = false
             return
         }
-
+        
+        setUserID(-1)
+        
         $profileData.defaultInstance = newInstance
         if ($currentProfile && $currentProfile.id == -1) {
             $instance = newInstance
@@ -219,11 +221,8 @@
                     <div class="flex flex-row gap-4 items-center py-4">
 
                         <div class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined}>
-                            <TextInput placeholder="Instance URL" label="Guest instance"
-                                bind:value={newInstance} on:change={changeGuestInstance}
-                                disabled={LINKED_INSTANCE_URL != undefined}
-                            />
-                            <Button color="primary" {loading} disabled={loading || LINKED_INSTANCE_URL != undefined} class="h-8 self-end">
+                            <TextInput placeholder="Instance URL" label="Guest instance" bind:value={newInstance}  disabled={LINKED_INSTANCE_URL != undefined} />
+                            <Button color="primary" {loading} disabled={loading || LINKED_INSTANCE_URL != undefined} class="h-8 self-end" on:click={changeGuestInstance}>
                                 Change
                             </Button>
                         </div>
@@ -235,7 +234,7 @@
                                 await validateInstance($profileData.defaultInstance ?? DEFAULT_INSTANCE_URL, true)
                             }}
                         >
-                            {$currentProfile?.id == -1 ? 'Current' : 'Switch to'}
+                            {$currentProfile?.id == -1 ? 'Current' : 'Browse as Guest'}
                         </Button>
                     </div>
 
