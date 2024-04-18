@@ -46,13 +46,7 @@
                         </h1>
                         
                         
-                        <Button
-                            size="md"
-                            class="ml-auto"
-                            rounded="lg"
-                            color="tertiary"
-                            on:click={() => (open = false)}
-                        >
+                        <Button size="md" class="ml-auto" rounded="lg" color="tertiary" on:click={() => (open = false)}>
                             <Icon src={XMark} mini size="16" />
                         </Button>
                     </div>
@@ -66,11 +60,7 @@
                 {#if action}
                 <div class="border-x border-b bg-slate-100 dark:bg-zinc-950 dark:border-zinc-800 p-3 py-2 flex justify-end rounded-b-xl">
                     <slot name="action">
-                        <Button
-                            on:click={(e) => dispatcher('action', e)}
-                            color="primary"
-                            size="lg"
-                        >
+                        <Button on:click={(e) => dispatcher('action', e)} color="primary" size="lg">
                             {action}
                         </Button>
                     </slot>

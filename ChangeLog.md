@@ -131,8 +131,6 @@ All major/minor changes between releases will be documented here.
 - Hide "moderator" column if not logged in since most instances hide that data for unauthenticated users
 
 
-
-
 ### Search Page
 Can use the filters to do things like see your (or anyone's) posts/comments to a specific community 
 - Added the context-sensitive navigation bar
@@ -157,7 +155,12 @@ Can use the filters to do things like see your (or anyone's) posts/comments to a
 - Moved profile section buttons below nav bar
 - Profile section buttons are now stickied to the top for easier navigation
 - Re-wrote the main layout and subpages to use the standardized layout components
-
+- Can now set banner image
+- Updated layout of settings
+- Removed "show scores" option since it is not used by Tesseract
+    - Will likely move this to app settings
+- Can now change password (I _swear_ I thought I already implemented this ages ago)
+- TOTP settings will be added when 0.18.x support is dropped.  The 0.18.x implementation is bonkers, and I don't want to have to shim around that.
 
 
     

@@ -39,15 +39,14 @@
         }}
         on:dragleave|preventDefault={() => (dragover = false)}
     >
-        {#if image && files}
-        <!-- svelte-ignore a11y-missing-attribute -->
+        {#if (image && files) || preview && previewURL}
+
             {#if preview}
-                <img
-                    src={previewURL}
+                <img src={previewURL} class="w-full max-w-sm h-full rounded-lg" alt="Profile avatar"
                     on:load={() => {
                         if (previewURL) URL.revokeObjectURL(previewURL)
                     }}
-                    class="w-full max-w-sm h-full rounded-lg"
+                    
                 />
             {:else}
                 <Icon src={CheckCircle} class="opacity-50" size="36" />
