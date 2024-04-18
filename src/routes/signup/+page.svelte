@@ -45,7 +45,7 @@
             <Logo width={128} />
         </span>
 
-        <h1 class="font-bold text-2xl">Select An Instance</h1>
+        <h1 class="font-bold text-2xl">Sign Up: Select An Instance</h1>
         <p class="text-sm">
             This installation of Tesseract is configured to allow connections to any Lemmy instance.  Enter the domain of the
             instance you want to sign up with and then click "go".

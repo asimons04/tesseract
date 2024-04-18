@@ -197,6 +197,7 @@ async function userFromJwt(jwt: string, instance: string): Promise<{ user: Perso
             user: {
                 unreads: 0,
                 reports: 0,
+                registration_applications:0,
                 ...myUser,
             },
             site: site,

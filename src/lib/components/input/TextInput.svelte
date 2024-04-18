@@ -12,6 +12,7 @@
     export let min:number|undefined = undefined
     export let max:number|undefined = undefined
     export let readonly:boolean = false
+    export let autocomplete:string = 'off'
 
     function typeAction(node: Node) {
         // @ts-ignore
@@ -69,5 +70,6 @@
         {max}
         {readonly}
         disabled={readonly}
+        {autocomplete}
     />
 </label>

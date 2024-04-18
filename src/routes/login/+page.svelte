@@ -35,7 +35,7 @@
   </script>
   
 <svelte:head>
-<title>Login | Choose Instance</title>
+    <title>Login | Choose Instance</title>
 </svelte:head>
   
   
@@ -47,7 +47,7 @@
             <Logo width={128} />
         </span>
 
-        <h1 class="font-bold text-2xl">Select An Instance</h1>
+        <h1 class="font-bold text-2xl">Login: Select An Instance</h1>
         <p class="text-sm">
             This installation of Tesseract is configured to allow logging into any Lemmy instance.  Enter the domain of the
             instance you want to log into and then click "go".

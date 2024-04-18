@@ -48,7 +48,5 @@ export async function load({ params, url }: LoadParams) {
         person_view: user.person_view,
         moderates: user.moderates,
         items:items,
-        //posts: user.posts,
-        //comments: user.comments
     }
 }

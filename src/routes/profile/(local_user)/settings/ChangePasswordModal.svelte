@@ -85,16 +85,16 @@
 
 
 <Modal bind:open icon={Key} title="Change Password">
-    <div class="flex flex-col gap-4">
+    <form class="flex flex-col gap-4" autocomplete="off">
 
-        <TextInput label="Old Password" type="password" bind:value={oldPassword} />
-        <TextInput label="New Password" type="password" bind:value={newPassword} />
-        <TextInput label="Confirm New Password" type="password" bind:value={newPassword2} />
+        <TextInput label="Old Password" autocomplete="new-password" type="password" bind:value={oldPassword} />
+        <TextInput label="New Password" autocomplete="new-password"type="password" bind:value={newPassword} />
+        <TextInput label="Confirm New Password" autocomplete="new-password" type="password" bind:value={newPassword2} />
 
         <div class="flex flex-row justify-between mt-4">
             <Button color="primary" size="lg" on:click={() => open=false}>Cancel</Button>
             <Button color="primary" size="lg" loading={changingPassword} on:click={async () => await changePassword()}>Change Password</Button>
         </div>
-    </div>
+    </form>
 </Modal>
 

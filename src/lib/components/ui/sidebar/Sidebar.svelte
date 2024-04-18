@@ -157,10 +157,10 @@
 
         <!--- Search field to filter the subscribed communities--->
         {#if $userSettings.uiState.expandSidebar}
-            <div class="p-2 flex flex-row gap-1">
+            <form class="p-2 flex flex-row gap-1" on:submit|preventDefault>
                 <TextInput 
                     bind:value={communityFiltervalue}
-                    type="text"
+                    type="text" autocomplete="new-password"
                     placeholder="Jump to a Community"
                     on:keyup={(e) => { 
                         debounce(e.detail.srcElement.value);
@@ -175,7 +175,7 @@
                 >
                     <Icon src={XCircle} mini size="22"/>
                 </button>
-            </div>
+            </form>
         {/if}
         
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
