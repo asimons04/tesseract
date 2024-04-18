@@ -1,17 +1,16 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
-    import Button from '$lib/components/input/Button.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    import Avatar from '$lib/components/ui/Avatar.svelte'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { getClient } from '$lib/lemmy.js'
-    import type { GetCaptchaResponse } from 'lemmy-js-client'
     import { LINKED_INSTANCE_URL } from "$lib/instance.js";
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    
+    import Button from '$lib/components/input/Button.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import TextInput from '$lib/components/input/TextInput.svelte'
 
     export let data
 
