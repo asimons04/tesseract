@@ -2,13 +2,10 @@
     import Button from "$lib/components/input/Button.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte";
     import TextInput from "$lib/components/input/TextInput.svelte";
-    
-    
 
-    
+    import { get } from "svelte/store";
     import { getClient } from "$lib/lemmy";
-    import { instance } from "$lib/instance";
-    import { profile, setUser } from "$lib/auth";
+    import { profile, saveProfileToProfileData } from "$lib/auth";
     import { toast } from "$lib/components/ui/toasts/toasts";
 
     import { Key } from "svelte-hero-icons";    
@@ -60,7 +57,9 @@
 
             
             if (result?.jwt) {
-                setUser(result.jwt, $instance)
+                $profile.jwt = result.jwt
+                saveProfileToProfileData()
+
                 toast({
                     type: 'success',
                     title: 'Success',
@@ -87,7 +86,7 @@
 <Modal bind:open icon={Key} title="Change Password">
     <form class="flex flex-col gap-4" autocomplete="off">
 
-        <TextInput label="Old Password" autocomplete="new-password" type="password" bind:value={oldPassword} />
+        <TextInput label="Old Password" autocomplete="current-password" type="password" bind:value={oldPassword} />
         <TextInput label="New Password" autocomplete="new-password"type="password" bind:value={newPassword} />
         <TextInput label="Confirm New Password" autocomplete="new-password" type="password" bind:value={newPassword2} />
 

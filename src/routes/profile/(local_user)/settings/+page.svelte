@@ -119,7 +119,7 @@
         <div class="flex flex-col w-full lg:w-2/3 gap-4">
             <SettingToggleContainer>
                 <SettingToggle icon={ExclamationTriangle} title="Show NSFW Content" bind:value={formData.show_nsfw}
-                    description="Enable this option to see content flagged NSFW. Posts could be flagged NSFWfor any number of reasons (porn, spoiler, gore, violence, language, etc)."
+                    description="Enable this option to see content flagged NSFW. Posts could be flagged NSFW for any number of reasons (porn, spoiler, gore, violence, language, etc)."
                 />
                 
                 <SettingToggle icon={Sparkles} title="Bot Account" bind:value={formData.bot_account}
