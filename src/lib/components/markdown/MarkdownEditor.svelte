@@ -123,7 +123,7 @@
     </Modal>
 {/if}
 
-<div class="flex flex-col w-full h-full">
+<div class="flex flex-col w-full">
     {#if label}
         <div class="block my-1 font-bold text-sm">{label}</div>
     {/if}
