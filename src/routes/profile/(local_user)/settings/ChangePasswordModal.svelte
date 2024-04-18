@@ -3,12 +3,12 @@
     import Modal from "$lib/components/ui/modal/Modal.svelte";
     import TextInput from "$lib/components/input/TextInput.svelte";
 
-    import { get } from "svelte/store";
     import { getClient } from "$lib/lemmy";
     import { profile, saveProfileToProfileData } from "$lib/auth";
     import { toast } from "$lib/components/ui/toasts/toasts";
 
     import { Key } from "svelte-hero-icons";    
+    
     export let open:boolean = false
 
     let oldPassword: string
@@ -68,6 +68,9 @@
                 changingPassword = false
                 open = false
             }
+            else {
+                throw new Error('New JWT was not returned from API');
+            }
         }
         catch (err) {
             toast({
@@ -77,7 +80,6 @@
             })
             changingPassword = false
         }
-
 
     }
 </script>
