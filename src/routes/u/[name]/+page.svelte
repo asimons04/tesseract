@@ -70,7 +70,8 @@
 
                 await scrollToLastSeenPost(data.items.length + 200)
             }
-            catch { 
+            catch (err) { 
+                console.error("Error restoring snapshot: ", err)
                 PageSnapshot.clear() 
                 window.scrollTo(0,0)
             }
@@ -157,7 +158,7 @@
         />
 
         <FeedContainer>    
-            {#each data.items as item, idx}
+            {#each data.items as item}
                 {#if item && isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
                     <CommentItem bind:comment={item} />
                 
@@ -166,21 +167,20 @@
                 {/if}
             {/each}
         </FeedContainer>
+
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} automatic={infiniteScroll.automatic}
+            on:loadMore={ () => {
+                if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
+                    infiniteScroll.loading = true
+                    loadPosts()
+                }
+            }}
+        />
         
     {:else}
         <Placeholder icon={PencilSquare} title="No submissions" description="This user has no submissions that match this filter."/>
     {/if}
 
-    <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} automatic={infiniteScroll.automatic}
-        on:loadMore={ () => {
-            if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
-                infiniteScroll.loading = true
-                loadPosts()
-            }
-        }}
-    />
-
-    
     <!---User Info Panel: Only show on /u/ pages.  Profile (/profile/user) will use its own layout--->
     <UserCard person={data.person_view} moderates={data.moderates} display={$page.url.pathname.startsWith('/u/')} slot="right-panel"/>
 

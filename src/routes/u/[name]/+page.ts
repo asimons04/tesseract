@@ -1,8 +1,11 @@
+import type { SortType, GetPersonDetailsResponse } from 'lemmy-js-client'
+
+import { get } from 'svelte/store'
 import { profile } from '$lib/auth.js'
 import { getClient } from '$lib/lemmy.js'
 import { getItemPublished } from '$lib/lemmy/item.js'
-import type { SortType, GetPersonDetailsResponse } from 'lemmy-js-client'
-import { get } from 'svelte/store'
+import { userSettings } from '$lib/settings'
+
 
 interface LoadParams {
     params: any,
@@ -14,7 +17,7 @@ export async function load({ params, url }: LoadParams) {
     const page = Number(url.searchParams.get('page')) || 1
     const type: 'comments' | 'posts' | 'all' = (url.searchParams.get('type') as 'comments' | 'posts' | 'all') || 'all'
     const sort: SortType = (url.searchParams.get('sort') as SortType) || 'New'
-    const limit = Number(url.searchParams.get('limit')) || 20
+    const limit = Number(url.searchParams.get('limit')) || get(userSettings)?.uiState.postsPerPage || 20
 
     const user = await getClient().getPersonDetails({
         limit: limit,
@@ -39,7 +42,7 @@ export async function load({ params, url }: LoadParams) {
         items.sort( (a, b) => Date.parse(getItemPublished(a)) - Date.parse(getItemPublished(b)) )
     }
     
-    
+    console.log("/u/ loader running")
     return {
         limit: limit,
         type: type,
