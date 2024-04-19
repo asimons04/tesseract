@@ -1,4 +1,5 @@
 <script>
+    import { goto } from '$app/navigation';
     import { page } from '$app/stores'
     import { userSettings } from '$lib/settings'
 
@@ -10,11 +11,12 @@
     
     import {
         Icon,
+        Bookmark,
         Cog6Tooth,
-        UserCircle,
         Inbox,
+        MagnifyingGlass,
         NoSymbol,
-        Bookmark
+        UserCircle,
     } from 'svelte-hero-icons'
     
     
@@ -89,6 +91,13 @@
             <span class="flex flex-col items-center {$page.url.pathname.startsWith('/profile/saved') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                 <Icon src={Bookmark} mini size="18" title="Saved" />
                 <span class="text-xs">Saved</span>
+            </span>            
+        </Button>
+
+        <Button color="tertiary" alignment="left" title="Search My Profile" class="hover:bg-slate-200" on:click={() => goto(`/search?person_id=${data.person_view.person.id}`)}>
+            <span class="flex flex-col items-center">
+                <Icon src={MagnifyingGlass} mini size="18" title="Saved" />
+                <span class="text-xs">Search</span>
             </span>            
         </Button>
     </div>

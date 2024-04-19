@@ -256,11 +256,6 @@
 />
 
 <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full pb-6">
-    <slot name="formtitle">
-        <h1 class="font-bold text-xl">
-            {editingPost ? 'Edit' : 'Create'} Post
-        </h1>
-    </slot>
     
     <div class="flex flex-row justify-between">
         <!--- Edit / Preview Toggle --->

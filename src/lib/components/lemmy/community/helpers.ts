@@ -10,15 +10,17 @@ import { goto, invalidate } from '$app/navigation'
 import { profile } from '$lib/auth'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-
+/** Clears the last seen community from session storage */
 export function clearLastSeenCommunity() {
     sessionStorage.removeItem('lastSeenCommunity')
 }
 
+/** Stores the given community to the lastSeenCommunity session storage key */
 export function setLastSeenCommunity(community:Community) {
     sessionStorage.setItem('lastSeenCommunity', JSON.stringify(community))
 }
 
+/** Retrieves the community from the lastSeenCommunity session storage key (or undefined if not set)*/
 export function getLastSeenCommunity():Community | undefined {
     try {
         let community = sessionStorage.getItem('lastSeenCommunity')
@@ -29,7 +31,6 @@ export function getLastSeenCommunity():Community | undefined {
 }
 
 export const createPost = function (community:Community) {
-    setLastSeenCommunity(community)
     const route = `/c/${community.name}@${new URL(community.actor_id).hostname}/create_post`
     goto(route)
     
