@@ -27,10 +27,6 @@
         PencilSquare,
     } from 'svelte-hero-icons'
     
-    
-    
-    
-
     export let data
 
     // Page state that will persist in snapshots
@@ -40,14 +36,12 @@
     
     // Infinite scroll object to hold config parms
     let infiniteScroll = {
-        loading: false,     // Used to toggle loading indicator
-        exhausted: false,   // Sets to true if the API returns 0 posts
-        // Maximum number of posts to keep in the FIFO
-        maxPosts: $userSettings.uiState.maxScrollPosts,      
-        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
-        truncating: false,  // Whether a timeout is active waiting to truncate the overlow
-        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+        loading: false,
+        exhausted: false,
+        maxPosts: $userSettings.uiState.maxScrollPosts,
+        truncated: false,
+        automatic: true,
+        enabled: true,
     }
 
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)

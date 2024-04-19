@@ -100,10 +100,10 @@
                     {/if}
                 </span>
                 
-                <div class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
+                <div class="flex flex-row gap-4 items-center text-slate-600 dark:text-zinc-400">
                     <RelativeDate date={post.post.published} />
                     {#if post.post.updated}
-                        <span class="flex flex-row items-center gap-1 ml-1">•
+                        <span class="flex flex-row items-center gap-1 ml-1">
                             <Icon src={Pencil} solid size="12" title="Edited" />
                             <RelativeDate date={post.post.updated}/>
                         </span>
