@@ -101,15 +101,20 @@
                         {node.comment_view.counts.score}
                     </div>
                 {/if}
-
-                <RelativeDate date={node.comment_view.comment.published}/>
-
-                {#if node.comment_view.comment.updated}
-                    <span class="flex flex-row items-center gap-1 ml-1">•
-                        <Icon src={Pencil} solid size="12" title="Edited" />
-                        <RelativeDate date={node.comment_view.comment.updated}/>
+                
+                <div class="flex flex-row gap-4 items-center text-slate-600 dark:text-zinc-400">
+                    <!---If updated, only show edited time on mobile--->
+                    <span class="{node.comment_view.comment.updated ? 'hidden sm:flex' : 'flex'} flex-row">
+                        <RelativeDate date={node.comment_view.comment.published}/>
                     </span>
-                {/if}
+
+                    {#if node.comment_view.comment.updated}
+                        <span class="flex flex-row items-center gap-1 ml-1">
+                            <Icon src={Pencil} solid size="12" title="Edited" />
+                            <RelativeDate date={node.comment_view.comment.updated}/>
+                        </span>
+                    {/if}
+                </div>
                 
             </span>
 
