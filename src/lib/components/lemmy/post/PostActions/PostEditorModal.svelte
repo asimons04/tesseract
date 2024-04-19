@@ -17,16 +17,14 @@
 
 
 {#if open}
-    <Modal bind:open={open} fullHeight={false} icon={PencilSquare} title="Editing {post.post.name}">
+    <Modal bind:open={open} fullHeight={false} icon={PencilSquare} title="Editing Post">
         
         {#await import('$lib/components/lemmy/post/PostForm.svelte')}
             <div class="mx-auto flex justify-center items-center">
                 <Spinner width={32} />
             </div>
         {:then { default: PostForm }}
-            <PostForm
-                edit
-                editingPost={post}
+            <PostForm editingPost={post}
                 on:submit={(e) => {
                     open = false
                     post = e.detail

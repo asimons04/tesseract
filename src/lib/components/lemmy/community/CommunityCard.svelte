@@ -5,6 +5,7 @@
 
     import { addSubscription } from '$lib/lemmy/user.js'
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { createPost } from '$lib/components/lemmy/community/helpers';
     import { fullCommunityName } from '$lib/util.js'
     import { getClient, hideCommunity } from '$lib/lemmy.js'
     import { goto } from '$app/navigation';
@@ -20,11 +21,9 @@
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import Logo from '$lib/components/ui/Logo.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
@@ -55,6 +54,7 @@
         Star,
         UserGroup,
     } from 'svelte-hero-icons'
+    
     
     
 
@@ -181,12 +181,8 @@
 
                             <!---Community Action Menu --->
                             <div class="ml-auto">
-                                <!--- Community Info Modal--->                
-                                <Menu
-                                    alignment="bottom-right"
-                                    itemsClass="h-8 md:h-8"
-                                    containerClass="!max-h-[90vh]"
-                                >
+                                <Menu alignment="bottom-right" itemsClass="h-8 md:h-8" containerClass="!max-h-[90vh]">
+
                                     <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
                                         <Icon src={EllipsisVertical} mini size="16" slot="icon" />
                                     </Button>
@@ -196,17 +192,18 @@
                                     </span>
 
                                     {#if $profile?.jwt && $profile?.user}
-                                    <!---Create Post --->
-                                    <MenuButton link href="/create/post"
-                                        disabled={
-                                            (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
-                                            community_view.community.removed
-                                        }
-                                        title="Create post"
-                                    >
-                                        <Icon src={PencilSquare} mini size="16" />
-                                        Create Post
-                                    </MenuButton>
+                                    
+                                        <!---Create Post --->
+                                        <MenuButton on:click={() => createPost(community_view.community)}
+                                            disabled={
+                                                (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
+                                                community_view.community.removed
+                                            }
+                                            title="Create post"
+                                        >
+                                            <Icon src={PencilSquare} mini size="16" />
+                                            Create Post
+                                        </MenuButton>
                                     {/if}
 
                                     <!---Modlog--->
@@ -347,7 +344,8 @@
             {#if $profile?.jwt && $profile?.user}
                 
                 <!---Create Post--->
-                <Button href="/create/post" color="tertiary-border" class="w-full" size="lg"
+                <Button color="tertiary-border" class="w-full" size="lg"
+                    on:click={() => createPost(community_view.community)}
                     hidden={
                         (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
                         community_view.community.removed

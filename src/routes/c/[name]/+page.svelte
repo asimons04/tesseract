@@ -1,16 +1,12 @@
 <script lang="ts">
     import type { Snapshot } from './$types';
-    import type { GetPosts } from 'lemmy-js-client'
-    
     
     import { beforeNavigate, goto } from '$app/navigation'
-    import { fullCommunityName } from '$lib/util.js'
     import { load } from './+layout'
     import { mergeNewInfiniteScrollBatch, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { onMount } from 'svelte'
     import { PageSnapshot } from '$lib/storage'
-    import { setSessionStorage } from '$lib/session.js'
-
+    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers';
     import { userSettings } from '$lib/settings'
     
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
@@ -21,24 +17,14 @@
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     
+    
 
     export let data
     
-    onMount(() => {
-
-        if (data?.community) {
-            console.log("Setting last seen community")
-            setSessionStorage('lastSeenCommunity', {
-                id: data.community.community_view.community.id,
-                name: fullCommunityName(
-                    data.community.community_view.community.name,
-                    data.community.community_view.community.actor_id
-                ),
-            })
-        }
+    onMount(() => { 
+        if (data?.community) setLastSeenCommunity(data.community.community_view.community)
     })
     
-    let searchTerm:string
     
     let pageState = {
         scrollY: 0,

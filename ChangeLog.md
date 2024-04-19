@@ -113,6 +113,16 @@ All major/minor changes between releases will be documented here.
 - Please, for the love of god, stop lazily commenting "PaYWalLed!".  Seriously. You're making your laziness everyone else's problem, and it's obnoxious.
 - Support for submitting archive links when creating posts will *not* be implemented. Among other things, that's one of the *worst* things Lemmy UI has done and allows absolute shit garbage "news" sources to masquerade as legitimate ones since the URL only shows the archive link and the real source is obfuscated. 
 
+
+### Create Post Page/Form
+- Basically gutted the old logic and re-implemented it all.  Man that was a mess.
+- Created new route at /c/{name}/create_post for community-specific post creations
+- Added metadata fetch option to pre-set title, grab thumbnail URL for post preview, and append embed description to the post body.
+- Removed "Save/Load" draft functionality as it was rarely used and more trouble than it was worth.
+- Added "Undo/Reset" button to revert a post you're editing back to its initial state or to clear the post form if creating a new post
+    - If crossposting, will restore the current state to the original crosspost information
+    
+
 ### Post Pages
 - Added post title to navigation bar (not shown in mobile).  
     - Have you ever gotten deep into the comments, which have gone far off the rails, and completely forgotten what the post was about? This is why that was added.

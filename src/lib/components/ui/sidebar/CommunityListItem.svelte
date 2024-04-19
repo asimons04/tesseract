@@ -14,9 +14,8 @@
 
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fullCommunityName } from '$lib/util.js'
-    import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
-    import {  setSessionStorage } from '$lib/session.js'
+    import { createPost } from '$lib/components/lemmy/community/helpers'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
@@ -60,14 +59,6 @@
         removeCommunityFromGroup(community, group)
     }
 
-    function createPost() {
-        setSessionStorage('lastSeenCommunity', {
-            id: community.id,
-            name: fullCommunityName(community.name, community.actor_id),
-        });
-        // Hack to get the session storage to read on create post. "goto" wasn't picking up the change
-        window.location.pathname='/create/post';
-    }
 
     let unsubscribing:boolean = false;
     async function unsubscribe(confirm:boolean=false):Promise<void> {
@@ -116,13 +107,7 @@
         title="{community.title.replace('&amp;', '&')}@{new URL(community.actor_id).hostname}"
     >
         <div class="flex-none">
-            <Avatar
-                url={community.icon}
-                alt={community.name}
-                title={community.title}
-                width={20}
-                slot="icon"
-            />
+            <Avatar url={community.icon} alt={community.name} title={community.title} width={20} slot="icon" />
         </div>
         
         <span class="w-full break-words" class:hidden={!expanded}>
@@ -146,9 +131,9 @@
 
         <!---Create Post --->
         {#if $profile?.user}
-        <MenuButton link href="/create/post"
+        <MenuButton 
             disabled={(community.posting_restricted_to_mods && !amMod($profile.user, community)) || community.removed}
-            on:click={createPost}
+            on:click={() => createPost(community)}
             title="Create post"
         >
             <Icon src={PencilSquare} mini size="16" />

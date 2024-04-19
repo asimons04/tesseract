@@ -51,16 +51,7 @@
 
 <!---Community Actions Menu--->
 <Menu {alignment} containerClass="overflow-auto">
-    <Button
-        slot="button"
-        aria-label="Community Actions"
-        let:toggleOpen
-        on:click={toggleOpen}
-        
-        size="square-md"
-        title="Community Actions"
-        color="tertiary-border"
-    >
+    <Button slot="button" aria-label="Community Actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Community Actions" color="tertiary-border">
         <Icon slot="icon" src={UserGroup} width={menuIconSize} mini />
     </Button>
 
@@ -72,10 +63,10 @@
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
     {#if $profile?.user}
-    <MenuButton on:click={() => createPost(post.community)} title="Create Post">
-        <Icon src={PencilSquare} width={16} mini />
-        Create Post
-    </MenuButton>
+        <MenuButton on:click={() => createPost(post.community)} title="Create Post">
+            <Icon src={PencilSquare} width={16} mini />
+            Create Post
+        </MenuButton>
     {/if}
 
     <!---Browse Community--->

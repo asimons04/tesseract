@@ -6,18 +6,33 @@ import { addSubscription } from '$lib/lemmy/user.js'
 import { fullCommunityName } from '$lib/util.js'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy'
-import { goto } from '$app/navigation'
+import { goto, invalidate } from '$app/navigation'
 import { profile } from '$lib/auth'
-import { setSessionStorage } from '$lib/session'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 
+
+export function clearLastSeenCommunity() {
+    sessionStorage.removeItem('lastSeenCommunity')
+}
+
+export function setLastSeenCommunity(community:Community) {
+    sessionStorage.setItem('lastSeenCommunity', JSON.stringify(community))
+}
+
+export function getLastSeenCommunity():Community | undefined {
+    try {
+        let community = sessionStorage.getItem('lastSeenCommunity')
+        if (!community) return
+        return JSON.parse(community)
+    }
+    catch { return }
+}
+
 export const createPost = function (community:Community) {
-    setSessionStorage('lastSeenCommunity', {
-        id: community.id,
-        name: fullCommunityName(community.name, community.actor_id),
-    });
-    // Hack to get the session storage to read on create post. "goto" wasn't picking up the change
-    window.location.pathname='/create/post';
+    setLastSeenCommunity(community)
+    const route = `/c/${community.name}@${new URL(community.actor_id).hostname}/create_post`
+    goto(route)
+    
 }
 
 

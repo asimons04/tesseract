@@ -36,7 +36,6 @@
     
 
     export let post: PostView                 
-    //export let displayType: PostDisplayType     = 'feed';
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
     export let showFediseer:boolean             = true;
@@ -49,7 +48,7 @@
     let inProfile:boolean = false
     let userIsModerator:boolean =false 
 
-    $: inCommunity = ($page.url.pathname.startsWith("/c/"))
+    $: inCommunity = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: userIsModerator = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: post

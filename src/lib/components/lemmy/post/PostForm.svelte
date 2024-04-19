@@ -1,130 +1,82 @@
 <script lang="ts">
-    import { createEventDispatcher, onDestroy, onMount } from 'svelte'
+    interface PostData {
+        community?: Community
+        name: string
+        body?: string
+        image?: FileList
+        url?: string
+        nsfw: boolean
+        loading: boolean
+        thumbnail_url?: string
+    }
+
+    import type { Community, PostView } from 'lemmy-js-client'
+
+    import { createEventDispatcher } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { validateURL } from '$lib/blacklists'
 
-    import type { Community, CommunityView, GetCommunityResponse, Post, PostView } from 'lemmy-js-client'
-
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
-    import FileInput from '$lib/components/input/FileInput.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    
 
     import Button from '$lib/components/input/Button.svelte'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import SearchInput from '$lib/components/input/SearchInput.svelte'
+    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import CommunityAutocomplete from '../CommunityAutocomplete.svelte';
+    import CommunityLink from '../community/CommunityLink.svelte'
+    import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
+    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+    import PostPreview from './Post.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
+    
+    
+    
+    
     import { 
-        Check,
+        ArrowUturnDown,
         CheckCircle,
+        CloudArrowDown,
         Eye,
-        FolderOpen,
         Icon, 
         PencilSquare,
         Photo,
         XCircle
     } from 'svelte-hero-icons'
-    import { profile } from '$lib/auth.js'
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
-    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
-    import PostPreview from './Post.svelte'
     
-    export let edit = false
-
+    
     // The post to edit, as passed from the PostActions component
     export let editingPost: PostView | undefined = undefined
 
     // The community passed from sessionStorage via /create/post
-    export let passedCommunity:
-    |   {
-            id: number
-            name: string
-        }
-    | undefined = undefined
+    export let community: Community | undefined = undefined
+    export let crosspostData: PostData | undefined = undefined
+    export let hideCommunityInput = false
 
-
-
-    // Structure to hold the minimum Post fields needed to create a new post.
-    export let data: {
-        community: number | Community | null
-        name: string
-        body: string
-        image: FileList | null
-        url: string | undefined
-        nsfw: boolean
-        loading: boolean
-    } = {
-        community: null,
-        name: '',
-        body: '',
-        image: null,
-        url: undefined,
-        nsfw: false,
+    let default_data: PostData = crosspostData ?? {
+        community: editingPost?.community ?? community,
+        image: undefined,
+        name: editingPost?.post.name ?? '',
+        body: editingPost?.post.body,
+        url: editingPost?.post.url,
+        nsfw: editingPost?.post.nsfw ?? false,
         loading: false,
     }
 
-  let saveDraft = edit ? false : true
-  let communities: Community[] = []
-  
-  
-  let uploadingImage:boolean = false
-  let previewing:boolean = false
-  
-  // communitySearch is used to show the community name in the community selector
-  let communitySearch:string  = ''
-  
-  // communityDetails is used to hold the community details to pass to the post preview. The `data` struct used for creation only needs the post ID, so 
-  let communityDetails:Community
+    let data = {...default_data}
+    let uploadingImage   = false
+    let previewing       = false
+    let fetchingMetadata = false
 
-  const dispatcher = createEventDispatcher<{ submit: PostView }>()
+    const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
-    onMount(async () => {
-        if (editingPost) {
+    $: if (community) data.community = community
 
-            data.url = editingPost.post.url ?? ''
-            data.body = editingPost.post.body ?? ''
-            data.name = editingPost.post.name ?? ''
-            data.nsfw = editingPost.post.nsfw ?? false
-            data.community = editingPost.community ?? undefined
-        }
 
-        if (passedCommunity) {
-            data.community = passedCommunity.id
-            communitySearch = passedCommunity.name
-            communityDetails = await resolveCommunity(passedCommunity.id) as Community
-        } else {
-            const list = await getClient().listCommunities({
-                auth: $profile?.jwt,
-                type_: 'All',
-                sort: 'Active',
-                limit: 40,
-            })
-            communities = list.communities.map((c) => c.community)
-        }
-    })
-
-    onDestroy(() => {
-        // @ts-ignore
-        if (saveDraft) setSessionStorage('postDraft', data)
-    })
-
-    
     async function submit() {
-        if ((!data.community || communitySearch == '') && !edit) {
-            toast({
-                type: 'warning',
-                content: 'You need to set a community.',
-                title: "No Community Chosen"
-            })
-            return
-        }
-
         if (!data.name || !$profile?.jwt) return
         
         // Validate the post URL if supplied
-        if (data.url && data.url != '') {
+        if (data.url) {
             let { allowed, reason } = validateURL(data.url)
             
             if (!allowed) {
@@ -132,7 +84,7 @@
                     content: reason,
                     type: 'error',
                     title: 'Invalid URL',
-                    duration: 15000
+                    duration: 15 *1000
                 })
                 return
             }
@@ -141,11 +93,7 @@
         data.loading = true
 
         try {
-            if (edit) {
-                if (!editingPost) {
-                    throw new Error('Post is being edited but editingPost is null')
-                }
-
+            if (editingPost) {
                 const post = await getClient().editPost({
                     auth: $profile.jwt,
                     name: data.name,
@@ -158,39 +106,72 @@
                 if (!post) throw new Error('Failed to edit post')
                 dispatcher('submit', post.post_view)
                 
-            } else {
+            } 
+            else {
                 let image = data.image ? await uploadImage(data.image[0]) : undefined
                 data.url = image || data.url || undefined
                 const post = await getClient().createPost({
                     auth: $profile.jwt,
-                    community_id: data.community! as number,
+                    community_id: data.community!.id,
                     name: data.name,
                     body: data.body,
                     url: data.url,
                     nsfw: data.nsfw,
                 })
 
-                if (!post) throw new Error('Failed to upload post')
+                if (!post) throw new Error('Failed to create post')
 
-                saveDraft = false
                 dispatcher('submit', post.post_view)
             }
         } catch (err) {
-            toast({ content: err as any, type: 'error' })
+            toast({ title: 'Error', content: err as any, type: 'error' })
             data.loading = false
         }
     }
 
-    async function resolveCommunity(id:number) {
-        const result:GetCommunityResponse = await getClient().getCommunity({
-            auth: $profile?.jwt,
-            id: id
-        })
-        if (result && result.community_view) {
-            return result.community_view.community
-        }
-            
+    async function getWebsiteMetadata() {
+        if (!$profile?.jwt) return
+        if (!data.url) return
         
+        let { allowed, reason } = validateURL(data.url)
+            
+        if (!allowed) {
+            toast({
+                content: reason,
+                type: 'error',
+                title: 'Invalid URL',
+                duration: 15000
+            })
+            data.url = ''
+            fetchingMetadata = false
+            return
+        }
+
+        fetchingMetadata = true    
+        
+        try {        
+            const metadata = await getClient().getSiteMetadata({
+                url: data.url
+            })
+
+            if (metadata?.metadata) {
+                if (metadata.metadata.title) data.name = metadata.metadata.title
+                if (metadata.metadata.description) data.body = data.body 
+                    ? data.body += metadata.metadata.description
+                    : metadata.metadata.description
+                if (metadata.metadata.image) data.thumbnail_url = metadata.metadata.image
+            }
+        }
+        catch (err) {
+            toast({
+                type: 'error',
+                title: 'Error',
+                content: 'Unable to fetch metadata for the given URL'
+            })
+        }
+        finally {
+            fetchingMetadata = false
+        }
     }
 
     // Creates a second PostView object based on either the current form data or the post data passed from the edit event.  
@@ -199,7 +180,7 @@
         let post:PostView;
         
         // Validate URL
-        if (data.url && data.url != '') {
+        if (data.url) {
             let { allowed, reason } = validateURL(data.url)
             
             if (!allowed) {
@@ -212,29 +193,30 @@
                 data.url = ''
             }
         }
-
+        
         
         // If editing a post and the post details were passed, add them to the preview
         if (editingPost) {
-            post =  {
-                ...editingPost,
-            }
+            post =  { ...editingPost }
+            
             // Override the editable values with those from the form
             post.post.body = data.body;
             post.post.url = data.url;
             post.post.name = data.name;
             post.post.nsfw = data.nsfw;
-            
+            return post
         }
         
         // If creating a post, add some dummy values so the Post component can handle it for preview rending
-        if (!editingPost) {
+        else {
             post = {
                 post: { 
                     ...data,
                     id: -1,
-                    creator_id: -1,
-                    community_id: -1,
+                    creator_id: data.community!.id,
+                    community_id: data.community!.id,
+                    thumbnail_url: data.thumbnail_url,
+                    nsfw: data.nsfw,
                     removed: false,
                     locked: false,
                     deleted: false,
@@ -245,7 +227,7 @@
                     language_id: -1,
                     published: new Date().toISOString()
                 },
-                community:  communityDetails,
+                community:  data.community!,
                 // @ts-ignore
                 counts: {
                     upvotes: 1,
@@ -258,79 +240,53 @@
                 locked: false,
                 removed: false
             }
+            
+            return post
+            
         } 
-        // @ts-ignore
-        return post;
     }
+
 </script>
 
-{#if uploadingImage}
-    {#await import('$lib/components/lemmy/modal/ImageUploadModal.svelte') then { default: UploadModal }}
-        <UploadModal
-            bind:open={uploadingImage}
-            on:upload={(e) => {
-                if (e.detail) data.url = e.detail
-                uploadingImage = false
-            }}
-        />
-    {/await}
-{/if}
+
+<ImageUploadModal bind:open={uploadingImage} on:upload={(e) => {
+        if (e.detail) data.url = e.detail
+        uploadingImage = false
+    }}
+/>
 
 <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full pb-6">
     <slot name="formtitle">
         <h1 class="font-bold text-xl">
-            {edit ? 'Edit' : 'Create'} Post
+            {editingPost ? 'Edit' : 'Create'} Post
         </h1>
     </slot>
     
     <div class="flex flex-row justify-between">
         <!--- Edit / Preview Toggle --->
-        <Button 
-            disabled={(!data.name || !data.community)}
-            color="primary"
-            title="{previewing ? 'Edit' : 'Preview'}"
-            on:click={() => {
+        <Button  loading={fetchingMetadata} disabled={(!data || !data.name || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
+            on:click={ () => {
                 previewing = !previewing;
             }}
         >
             <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
             {previewing ? 'Edit' : 'Preview'}
         </Button>
-        
-        <!--- Restore from Draft--->
-        <Button
-            on:click={async () => {
-                const draft = getSessionStorage('postDraft')
-                if (draft && !edit) {
-                    // @ts-ignore
-                    draft.loading = false
-                    // @ts-ignore
-                    data = draft
-                    // @ts-ignore
-                    communityDetails = await resolveCommunity(draft.community)
-                    communitySearch = `${communityDetails.name}@${new URL(communityDetails.actor_id).hostname}`
-                }
+
+         <!--- Reset Form --->
+         <Button  loading={fetchingMetadata} disabled={previewing} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
+            on:click={ () => {
+                data = {...default_data}
+                data = data
             }}
-            size="sm"
-            color="primary"
-            disabled={!getSessionStorage('postDraft')}
-            hidden={edit}
-            title="Restore from draft"
         >
-            <Icon src={FolderOpen} mini size="16"/>                
+            <Icon src={ArrowUturnDown} mini size="16"/>                
         </Button>
         
         <!--- Submit/Save--->
-        <Button
-            submit
-            color="primary"
-            loading={data.loading}
-            size="lg"
-            title="{edit ? 'Save' : 'Create' }"
-            disabled={data.loading || !data.name || !data.community}
-        >
+        <Button submit color="tertiary-border" loading={data.loading} size="lg" title="{editingPost ? 'Save' : 'Create' }" disabled={!data || data.loading || !data.name || !data.community} >
             <Icon src={CheckCircle} mini size="16"/>
-            {edit ? 'Save' : 'Create' }
+            {editingPost ? 'Save' : 'Create' }
         </Button>
     </div>
 
@@ -340,55 +296,53 @@
     {#if !previewing}
         
         <!--- Hide Community Selection Field if Editing Existing Post--->
-        <div class:hidden={edit}>
-            <div class="flex flex-row">
+        <div class="flex flex-col gap-4" class:hidden={editingPost}>
+            
+            <!---If community is not set, display autocomplete input to select one--->
+            {#if !data.community}
                 <span class="block my-1 font-bold text-sm">
                     Community <span class="text-red-500">*</span>
                 </span>
-                {#if data.community}
-                    <Icon src={Check} mini size="20" class="text-green-400 ml-auto inline"/>
-                {/if}
-            </div>
 
-            <ObjectAutocomplete
-                bind:q={communitySearch}
-                bind:items={communities}
-                jwt={$profile?.jwt}
-                listing_type="All"
-                on:select={(e) => {
-                    const c = e.detail
-                    if (!c) {
-                        data.community = null
-                        return
-                    }
-                    data.community = c.id
-                    // @ts-ignore
-                    communityDetails = c
-                    communitySearch = `${c.name}@${new URL(c.actor_id).hostname}`
-                }}
-            />
+                <CommunityAutocomplete
+                    containerClass="!w-full"
+                    placeholder="Community"
+                    listing_type="All"
+                    on:select={(e) => {
+                        data.community = e.detail
+                    }}
+                />
+            
+            <!---If community is set, show a community link object and button to unselect it--->
+            {:else if !hideCommunityInput}
+                <div class="flex flex-row items-center justify-between">
+                    <CommunityLink avatar={true} community={data.community} />
+                    
+                    <Button size="md" color="tertiary" on:click={()=> data.community=undefined}>
+                        <Icon src={XCircle} mini size="20"/>
+                    </Button>
+                </div>
+            {/if}
         </div>
         
 
         <!--- Post Title--->
-        <TextInput
-            required
-            label="Title"
-            bind:value={data.name}
-            focus={true}
-        />
+        <TextInput required label="Title" bind:value={data.name} focus={true} />
         
         <!--- Post URL --->
         <div class="flex gap-2 w-full items-end">
-            <TextInput
-                label="URL"
-                bind:value={data.url}
-                class="w-full"
-            />
-            <Button
-                size="square-md"
+            <TextInput label="URL" bind:value={data.url} class="w-full" />
+            
+            <!---Fetch metadata from URL to populate title and append description to body--->
+            <Button size="square-md" style="width: 46px !important; height: 42px; padding: 0;" loading={fetchingMetadata} disabled={!data.url || fetchingMetadata} title="Fetch title and description"
+                on:click={() => (getWebsiteMetadata())}
+            >
+            <Icon src={CloudArrowDown} size="18" mini slot="icon" />
+            </Button>
+
+            <!---Upload an Image--->
+            <Button size="square-md" style="width: 46px !important; height: 42px; padding: 0;" loading={uploadingImage} disabled={uploadingImage} title="Upload an image"
                 on:click={() => (uploadingImage = !uploadingImage)}
-                style="width: 46px !important; height: 42px; padding: 0;"
             >
                 <Icon src={Photo} size="18" mini slot="icon" />
             </Button>
@@ -398,23 +352,12 @@
         <Checkbox bind:checked={data.nsfw}>NSFW</Checkbox>
 
         <!--- Post Body --->
-        <MarkdownEditor
-            rows={10}
-            label="Body"
-            resizeable={false}
-            bind:value={data.body}
-            bind:previewing={previewing}
-        />
+        <MarkdownEditor rows={10} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} />
 
     <!--- Previewing Post--->
     {:else}
         <div class="pb-3">
-            <PostPreview 
-                post={ generatePostPreview() } 
-                actions={false} 
-                displayType='post'
-                autoplay={false} 
-            />
+            <PostPreview  post={ generatePostPreview() }  actions={false}  displayType='feed' autoplay={false}  />
         </div>
     {/if}
 </form>

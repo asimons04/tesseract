@@ -22,6 +22,7 @@
         ExclamationTriangle,
         Home
     } from 'svelte-hero-icons'
+    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers.js';
     
     export let data
    
@@ -32,7 +33,7 @@
     $: data.post.post_view.cross_posts = data.post.cross_posts
 
     onMount(async () => {
-        setSessionStorage('lastSeenCommunity', { id: data.post.community_view.community.id, name: `${data.post.community_view.community.name}@${new URL(data.post.community_view.community.actor_id).hostname}` })
+        setLastSeenCommunity(data.post.community_view.community)
         
         // Mark post as read when viewed
         try {

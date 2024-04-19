@@ -1,10 +1,8 @@
+import type { Community } from 'lemmy-js-client'
+
 interface SessionStorage {
-    lastSeenCommunity?: {
-        id: number
-        name: string
-    }
     postDraft?:{
-        community: number | null
+        community?: Community
         name: string
         body: string
         image: FileList | null
