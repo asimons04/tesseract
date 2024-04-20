@@ -142,7 +142,8 @@
     sortMenu={true} sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
     listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
 >
-    <SiteSearch placeholder="Search {data.person_view.person.name}" person_id={data.person_view.person.id} slot="center"/>
+    <SiteSearch placeholder="Search {$userSettings.displayNames ? (data.person_view.person.display_name ?? data.person_view.person.name) : data.person_view.person.name }" 
+        person_id={data.person_view.person.id} slot="center"/>
 </SubNavbar>
 {/if}
 

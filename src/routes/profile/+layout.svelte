@@ -93,13 +93,6 @@
                 <span class="text-xs">Saved</span>
             </span>            
         </Button>
-
-        <Button color="tertiary" alignment="left" title="Search My Profile" class="hover:bg-slate-200" on:click={() => goto(`/search?person_id=${data.person_view.person.id}`)}>
-            <span class="flex flex-col items-center">
-                <Icon src={MagnifyingGlass} mini size="18" title="Saved" />
-                <span class="text-xs">Search</span>
-            </span>            
-        </Button>
     </div>
         
     <!---Content Area for Child Pages--->
