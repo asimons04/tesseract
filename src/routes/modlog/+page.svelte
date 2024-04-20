@@ -121,10 +121,10 @@
 </svelte:head>
 
 
-<SubNavbar home pageSelection bind:currentPage={data.page} refreshButton scrollButtons >
+<SubNavbar home refreshButton scrollButtons >
     
     <!---Custom Sub-Navbar Buttons for Modlog--->
-    <span class="flex flex-row gap-0 md:gap-1 items-center" slot="far-left" let:iconSize>
+    <span class="flex flex-row gap-1 md:gap-2 items-center" slot="far-left" let:iconSize>
         
         <!---Modlog Action Select Menu--->
         <SelectMenu
@@ -172,7 +172,7 @@
         />
 
         <!--- Modlog Filter Menu --->
-        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[170%] md:!-left-[50%]">
+        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[106%] md:!-left-[50%]">
             <!--- Lookup a Community to Filter--->
             <MenuButton>
                 <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
