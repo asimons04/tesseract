@@ -1,7 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { getClient } from '$lib/lemmy.js'
-    import {  setSessionStorage } from '$lib/session.js'
     import { instance } from '$lib/instance.js'
     import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
     import { onMount } from 'svelte'

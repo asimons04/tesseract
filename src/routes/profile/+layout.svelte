@@ -1,7 +1,5 @@
 <script>
-    import { goto } from '$app/navigation';
     import { page } from '$app/stores'
-    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
@@ -14,7 +12,6 @@
         Bookmark,
         Cog6Tooth,
         Inbox,
-        MagnifyingGlass,
         NoSymbol,
         UserCircle,
     } from 'svelte-hero-icons'
