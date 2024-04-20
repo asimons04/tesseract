@@ -305,7 +305,6 @@ export const lastSeenPost = {
 
 export async function scrollToLastSeenPost(delay=200) {
     const postID = lastSeenPost.get()
-    
     if (postID) {
         await sleep(delay)
         const element = document.getElementById(postID)

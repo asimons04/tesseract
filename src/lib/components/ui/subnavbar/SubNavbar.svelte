@@ -50,6 +50,7 @@
     // Which standard buttons to show
     export let home:boolean = false             // Return to home
     export let back:boolean = false             // Back (literally emulates browser back button)
+    export let backPreventDefault:boolean = false   // Prevent the default behavior for "back" button.
     export let scrollButtons:boolean = false    // Scroll to top/bottom buttons
     export let pageUpDownButtons:boolean = false // Page up/down
     export let compactSwitch:boolean = false    // Switch between compact and card posts
@@ -121,9 +122,11 @@
         
         <!--Home Button-->
         {#if home }
-            <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary">
-                <Icon src={Home} width={iconSize} />
-            </Button>
+            <span class="hidden md:flex">
+                <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary" >
+                    <Icon src={Home} width={iconSize} />
+                </Button>
+            </span>
         {/if}
 
         {#if back && history.length > 1}
@@ -134,7 +137,7 @@
                 hidden={history.length<2}
                 on:click={() => {
                     dispatcher('navBack')
-                    history.back();
+                    if (!backPreventDefault) history.back();
                 }}
             >
                 <Icon src={ArrowLeftCircle} width={iconSize} />

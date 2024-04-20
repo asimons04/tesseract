@@ -267,7 +267,7 @@
         />
 
         <!--- Search Filter Menu --->
-        <SubnavbarMenu alignment="bottom-center" title="Search Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[170%] md:!-left-[50%]">
+        <SubnavbarMenu alignment="bottom-center" title="Search Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[106%] md:!-left-[50%]">
             
             <!--- Lookup a Community to Filter--->
             <MenuButton>
