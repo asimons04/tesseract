@@ -99,6 +99,10 @@ All major/minor changes between releases will be documented here.
   - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
 - Removed feed setting for number of posts per page
   - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
+- Blocking a community/user will no longer refresh the page
+    - As a result, the blocked item will not leave the DOM unti you refresh since there is no API data to indicate a community is blocked
+    - Behavior change was needed to avoid having to recreate the post feed list with infinite scrolling
+
 
 ### Media
 - Add support for detecting and rendering Peertube embeds
@@ -121,7 +125,7 @@ All major/minor changes between releases will be documented here.
 - Removed "Save/Load" draft functionality as it was rarely used and more trouble than it was worth.
 - Added "Undo/Reset" button to revert a post you're editing back to its initial state or to clear the post form if creating a new post
     - If crossposting, will restore the current state to the original crosspost information
-    
+
 
 ### Post Pages
 - Added post title to navigation bar (not shown in mobile).  
