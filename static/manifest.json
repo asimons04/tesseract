@@ -1,24 +1,42 @@
 {
-  "short_name": "Tesseract",
-  "name": "Tesseract",
-  "start_url": "/",
-  "icons": [
+    "short_name": "Tesseract",
+    "name": "Tesseract",
+    "start_url": "/",
+    "icons": [
     {
-      "src": "logo_512.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "maskable"
+        "src": "logo_512.png",
+        "type": "image/png",
+        "sizes": "512x512",
+        "purpose": "maskable"
     },
     {
-      "src": "logo_512.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any"
+        "src": "logo_512.png",
+        "type": "image/png",
+        "sizes": "512x512",
+        "purpose": "any"
     }
-  ],
-  "background_color": "#000000",
-  "display": "standalone",
-  "scope": "/",
-  "theme_color": "#000000",
-  "description": "A Lemmy client designed with rich media in mind."
+    ],
+    "shortcuts" : [
+        {
+            "name": "Create Post",
+            "url": "/create/post",
+            "description": "Create a new post"
+        },
+        {
+            "name": "My Profile",
+            "url": "/profile/user",
+            "description": "Jump to your profile"
+        },
+        {
+            "name": "Settings",
+            "url": "/settings",
+            "description": "Tesseract Application Settings"
+        }
+    ],
+    "background_color": "#000000",
+    "orientation": "portrait",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#000000",
+    "description": "A Lemmy client designed with rich media in mind."
 }

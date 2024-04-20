@@ -11,7 +11,7 @@
         />
         <meta name="keywords" content="lemmy, client" />
         
-        <script type="" nonce="%sveltekit.nonce%">
+        <script nonce="%sveltekit.nonce%">
             const dark = () => localStorage.theme == 'dark' ||
                 ((!localStorage.theme || localStorage.theme == 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
@@ -26,17 +26,14 @@
         %sveltekit.head%
     </head>
 
-    <body data-sveltekit-preload-data="false">
-    
+    <body style="margin:0px !important;" data-sveltekit-preload-data="false">
         <div style="display: contents;">
-            
             <!---Loading Spinner--->
-            <div style="display:flex; height:96svh; width: 96%;">
+            <div style="background-color: black; display:flex; height:100svh; width: 100%;overflow:hidden">
                 <div style="margin-left: auto; margin-right: auto; margin-top: auto; margin-bottom: auto;">
                     <img src="/img/TesseractAnimation256.gif" alt="Loading indicator" height="128" width="128" />
                 </div>
             </div>
-
             %sveltekit.body%
         </div>
     </body>
