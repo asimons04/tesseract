@@ -302,7 +302,7 @@
     {#if data.modlog && data.modlog.length > 0}
         <div class="flex flex-col gap-2 divide-y w-full">
             
-            <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-28 text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-5">
+            <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-[6.8rem] text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-5">
                 <div class="w-[5%] flex justify-center">Time</div>
                 <div class="w-[15%] flex justify-center">Community</div>
                 {#if $profile?.user}
@@ -325,11 +325,7 @@
         {/if}
     {:else}
         <div class="mx-auto my-auto">
-            <Placeholder
-                title="No Results"    
-                description="There are no modlog results for the provided query."
-                icon={ExclamationTriangle}
-            />
+            <Placeholder title="No Results" description="There are no modlog results for the provided query." icon={ExclamationTriangle} />
         </div>
     
     {/if}
