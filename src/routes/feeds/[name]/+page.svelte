@@ -50,9 +50,9 @@
 >
     <!--Edit Group Button-->
     <Button title="Edit Group" color="tertiary" size="sm" let:iconSize slot="right" class="{!groupExists(data.feedName) ? 'hidden' : ''}"
-    on:click={() => {
-        editCommunityGroup = true;
-    }}
+        on:click={() => {
+            editCommunityGroup = true;
+        }}
     >
         <Icon src={PencilSquare} width={iconSize} />
     </Button>
