@@ -1,10 +1,13 @@
 <script lang="ts">
-    import { userSettings } from '$lib/settings.js'
-    import { getInstance } from '$lib/lemmy.js'
     import type {PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
+
+    import { buildYouTubeEmbedLink } from './helpers'
+    import { getInstance } from '$lib/lemmy.js'
+    import { userSettings } from '$lib/settings.js'
     
     import Link from '$lib/components/input/Link.svelte'
+    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
 
@@ -14,79 +17,13 @@
     export let autoplay:boolean|undefined = undefined;
     export let postContainer: HTMLDivElement
 
-    let videoID:    string | null | undefined
-    let embedURL:   URL = new URL('https://localhost') // Fake URL used to build with query params. Host will be changed to whatever YT frontend user specified.
     
-    
-    // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
-    // Should reduce memory consumption by a lot on video-heavy feeds.
+    let embedURL:   URL | null | undefined
     let inViewport = false
-    const observer = new window.IntersectionObserver( ([entry]) => {
-        if (entry.isIntersecting) {
-            inViewport = true
-            return
-        }
-        inViewport = false
-        }, 
-        { root: null, threshold: 0,}
-    )
-    $: if (postContainer) observer.observe(postContainer);
 
-   
+    $: if (post?.post?.url) embedURL = buildYouTubeEmbedLink(post.post.url, displayType, autoplay)
 
-    $: if (post?.post?.url) {
-        // Parse URLs to pick out video IDs to create embed URLs
-        videoID = new URL(post.post.url).searchParams.get('v');
-        
-        // If 'v' video ID param not found, check for older /watch/ABCDEFG format
-        if (!videoID) {
-            videoID = new URL(post.post.url).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
-        }
-        
-        // Create the embed URL based on the user's preferred YouTube frontend
-        if ($userSettings.embeddedMedia.YTFrontend == "YouTube") {
-            embedURL.host = 'www.youtube-nocookie.com';
-        }
-
-        if ($userSettings.embeddedMedia.YTFrontend == "Invidious" && $userSettings.embeddedMedia.customInvidious !='') {
-            embedURL.host = `${$userSettings.embeddedMedia.customInvidious}`;
-        }
-    
-        // Search for valid extra parameters
-        if (videoID) {
-
-            // Append the video ID to the embed URL
-            embedURL.pathname = `/embed/${videoID}`
-
-
-            // Enable autoplay videos in post if setting is enabled
-            
-            if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
-                embedURL.searchParams.set('autoplay', '1');
-            }
-            else {
-                embedURL.searchParams.set('autoplay', '0');
-            }
-
-            if ($userSettings.embeddedMedia.loop) {
-                embedURL.searchParams.set('loop', '1');
-            }
-
-            // Start time: Can be either t (legacy) or start
-            let startTime = new URL(post.post.url).searchParams.get('t') ?? new URL(post.post.url).searchParams.get('start');
-            if (startTime) {
-                embedURL.searchParams.set('start', startTime);
-            }
-
-            // End time: 
-            let endTime = new URL(post.post.url).searchParams.get('end');
-            if (endTime) {
-                embedURL.searchParams.set('end', endTime);
-            }
-        }
-    }
-
-    $: showAsEmbed = videoID &&
+    $: showAsEmbed = embedURL &&
         (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 </script>
@@ -108,9 +45,9 @@
     }
 </style>
 
+<PostIsInViewport bind:postContainer bind:inViewport />
 
-
-{#if showAsEmbed }
+{#if showAsEmbed && embedURL}
     <Link 
         href={
             embedURL

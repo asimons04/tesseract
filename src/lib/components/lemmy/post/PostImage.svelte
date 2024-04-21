@@ -11,14 +11,13 @@
     export let post:PostView 
     export let displayType: PostDisplayType
     
-    $: url = post.post.url as string
+    $: url           = post.post.url as string
     $: thumbnail_url = post.post.thumbnail_url as string ?? post.post.url as string
-
+    $: name          = post.post.name
     
-    let instance: string                    = getInstance()
-    let name:string                         = post.post.name
-    let id:number | undefined               = post.post.id ?? undefined
-    let loaded:boolean                      = false
+    let instance     = getInstance()
+    let id           = post.post.id ?? undefined
+    let loaded       = false
 
     // Hack to get Imgur gifs to render without having to click through to the site.
     $: if (!url?.endsWith('.gif') && post.post.embed_video_url && post.post.embed_video_url.endsWith('.gif')) {

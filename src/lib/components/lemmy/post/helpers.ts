@@ -165,6 +165,69 @@ export const isSongLink = (url:string):boolean => {
 }
 
 
+// Build a Youtube-like embed link from the post URL
+export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean=false): URL|undefined => {
+    if (!postURL) return
+    
+    let embedURL: URL
+    let videoID: string|null
+    
+    // Base the embed URL from the user's chosen YouTube frontend
+    if (userSettings.embeddedMedia.YTFrontend == "Invidious" && userSettings.embeddedMedia.customInvidious !='') {
+        embedURL = new URL('https://' + userSettings.embeddedMedia.customInvidious);
+    }
+    else {
+        embedURL = new URL('https://www.youtube-nocookie.com')
+    }
+
+
+    // Parse URLs to pick out video IDs to create embed URLs
+    videoID = new URL(postURL).searchParams.get('v');
+        
+    // If 'v' video ID param not found, check for older /watch/ABCDEFG format
+    if (!videoID) {
+        videoID = new URL(postURL).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
+    }
+        
+    // Return early if a video ID could not be found
+    if (!videoID) return
+
+    // Search for valid extra parameters
+
+    // Append the video ID to the embed URL
+    embedURL.pathname = `/embed/${videoID}`
+
+
+    // Enable autoplay videos in post if setting is enabled
+    
+    if (displayType ==  'post' && (autoplay ?? userSettings.embeddedMedia.autoplay)) {
+        embedURL.searchParams.set('autoplay', '1');
+    }
+    else {
+        embedURL.searchParams.set('autoplay', '0');
+    }
+
+    if (userSettings.embeddedMedia.loop) {
+        embedURL.searchParams.set('loop', '1');
+    }
+
+    // Start time: Can be either t (legacy) or start
+    let startTime = new URL(postURL).searchParams.get('t') ?? new URL(postURL).searchParams.get('start');
+    
+    if (startTime) {
+        embedURL.searchParams.set('start', startTime);
+    }
+
+    // End time: 
+    let endTime = new URL(postURL).searchParams.get('end');
+    
+    if (endTime) {
+        embedURL.searchParams.set('end', endTime);
+    }
+
+    return embedURL
+}
+    
 
 
 // Returns a string representing the detected post type
