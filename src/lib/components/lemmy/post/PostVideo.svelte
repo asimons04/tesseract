@@ -17,10 +17,10 @@
     export let postContainer: HTMLDivElement
 
     $: source = post.post.url && isVideo(post.post.url) 
-                    ? imageProxyURL(post.post.url)
-                    : post.post.embed_video_url && isVideo(post.post.embed_video_url)
-                        ? imageProxyURL(post.post.embed_video_url)
-                        : undefined
+                ? imageProxyURL(post.post.url)
+                : post.post.embed_video_url && isVideo(post.post.embed_video_url)
+                    ? imageProxyURL(post.post.embed_video_url)
+                    : undefined
     
     let muted = autoplay
     let inViewport = false
