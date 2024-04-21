@@ -15,7 +15,7 @@
 
     import type { Community, PostView } from 'lemmy-js-client'
 
-    import { createEventDispatcher, onMount } from 'svelte'
+    import { createEventDispatcher } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -29,7 +29,7 @@
     import CommunityLink from '../community/CommunityLink.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import PostPreview from './Post.svelte'
+    import PostPreview from './PostPreview.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     
@@ -45,7 +45,6 @@
         Photo,
         XCircle
     } from 'svelte-hero-icons'
-    
     
     // The post to edit, as passed from the PostActions component
     export let editingPost: PostView | undefined = undefined
@@ -68,7 +67,7 @@
         embed_title: editingPost?.post.embed_title
     }
 
-    let data = {...default_data}
+    let data = JSON.parse(JSON.stringify(default_data))
     let uploadingImage   = false
     let previewing       = false
     let fetchingMetadata = false
@@ -161,10 +160,10 @@
             })
 
             if (metadata?.metadata) {
-                if (metadata.metadata.title) data.name = metadata.metadata.title
+                if (metadata.metadata.title && data.name == '') data.name = metadata.metadata.title
                 
                 if (metadata.metadata.description) data.body = data.body 
-                    ? data.body += metadata.metadata.description
+                    ? data.body
                     : metadata.metadata.description
                 
                 if (metadata.metadata.image)            data.thumbnail_url = metadata.metadata.image
@@ -186,8 +185,7 @@
 
     // Creates a second PostView object based on either the current form data or the post data passed from the edit event.  
     // Used to generate a fully-stocked PostView object to pass to the Post component in order to get a fully-rendered preview.
-    function generatePostPreview() {
-        let post:PostView;
+    async function generatePostPreview() {
         
         // Validate URL
         if (data.url) {
@@ -204,23 +202,35 @@
             }
         }
         
-        
+        // Grab site metadata to use in the preview
+        if (!previewing) {
+            await getWebsiteMetadata()
+            if (!data.name) data.name = 'Untitled Post'  // In case the user didn't provide a title and the metadata fetch failed to return one
+        }
+            
         // If editing a post and the post details were passed, add them to the preview
         if (editingPost) {
-            post =  { ...editingPost }
             
+            let newPost: PostView = JSON.parse(JSON.stringify(editingPost))
+
             // Override the editable values with those from the form
-            post.post.id = -1
-            post.post.body = data.body;
-            post.post.url = data.url;
-            post.post.name = data.name;
-            post.post.nsfw = data.nsfw;
-            return post
+            newPost.post.body = data.body;
+            newPost.post.url = data.url;
+            newPost.post.name = data.name;
+            newPost.post.nsfw = data.nsfw;
+            
+            // Unset these for the prevew generation step (if present from the original post)
+            newPost.post.embed_description = undefined
+            newPost.post.embed_title = undefined
+            newPost.post.embed_video_url = data.embed_video_url ?? undefined
+            newPost.post.thumbnail_url = data.thumbnail_url ?? undefined
+
+            return newPost
         }
         
         // If creating a post, add some dummy values so the Post component can handle it for preview rending
         else {
-            post = {
+            let newPost:PostView = {
                 post: { 
                     ...data,
                     id: -1,
@@ -252,7 +262,7 @@
                 removed: false
             }
             
-            return post
+            return newPost
             
         } 
     }
@@ -270,11 +280,9 @@
     
     <div class="flex flex-row justify-between">
         <!--- Edit / Preview Toggle --->
-        <Button  loading={fetchingMetadata} disabled={(!data || !data.name || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
-            on:click={ () => {
-                previewPost = {...generatePostPreview()}
-                previewPost = previewPost
-                console.log(previewPost)
+        <Button  loading={fetchingMetadata} disabled={(!data || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
+            on:click={ async () => {
+                previewPost = await generatePostPreview()
                 previewing = !previewing;
             }}
         >
@@ -285,7 +293,7 @@
          <!--- Reset Form --->
          <Button  loading={fetchingMetadata} disabled={previewing} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
             on:click={ () => {
-                data = {...default_data}
+                data = JSON.parse(JSON.stringify(default_data))
                 data = data
             }}
         >
@@ -363,10 +371,11 @@
         <!--- Post Body --->
         <MarkdownEditor rows={10} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} />
 
-    <!--- Previewing Post--->
+    <!---Previewing Post--->
     {:else}
         <div class="pb-3">
-            <PostPreview  bind:post={previewPost}  actions={false}  displayType='post' autoplay={false}  />
+            <PostPreview  post={previewPost}  actions={false}  displayType='post' autoplay={false}  />
         </div>
     {/if}
+    
 </form>

@@ -260,6 +260,22 @@ export const buildVimeoEmbedLink = (postURL:string, displayType: 'post'|'feed' =
     
 }
 
+// Build a Songlink embed URL from the post URL
+export const buildSonglinkEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
+    let embedURL = new URL('https://odesli.co')
+    
+    // Parse URLs to pick out video IDs to create embed URLs
+    embedURL.pathname = '/embed/'
+    embedURL.searchParams.set('url', encodeURIComponent(postURL))
+    embedURL.searchParams.set('autopause', '0')
+
+    // @ts-ignore (This function is in index.html)
+    if ( dark() ) embedURL.searchParams.set('theme', 'dark')
+    if (displayType == 'post' && autoplay) embedURL.searchParams.set('autoplay', '1')
+
+    return embedURL
+}
+
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text

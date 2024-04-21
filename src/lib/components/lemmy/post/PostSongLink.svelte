@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { userSettings } from '$lib/settings.js'
-    
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
+
+    import { buildSonglinkEmbedLink, imageSize} from './helpers.js'
+    import { userSettings } from '$lib/settings.js'
     
     import IFrame from './utils/IFrame.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import { imageSize} from './helpers.js'
     
 
     export let post: PostView
@@ -17,29 +17,12 @@
     export let autoplay:boolean|undefined = undefined;
     export let postContainer: HTMLDivElement
     
-    
-    let embedURL:   URL
-    let extraParams:string = "autopause=0"
+    let embedURL:   URL | undefined
     let size: string = imageSize(displayType);
     let inViewport = false
 
 
-    $: if (post.post?.url) {
-        // Parse URLs to pick out video IDs to create embed URLs
-        let mediaID = encodeURIComponent(post.post.url);
-        embedURL = new URL('https://odesli.co')
-        embedURL.pathname = '/embed/'
-        embedURL.searchParams.set('url', mediaID)
-        
-        
-        // If UI theme is in dark mode, request dark mode embed.
-        // @ts-ignore (This function is in index.html)
-        if (dark()) {
-            embedURL.searchParams.set('theme', 'dark')
-        }
-
-        if (autoplay) embedURL.searchParams.set('autoplay', '1')
-    }
+    $: if (post.post?.url) embedURL = buildSonglinkEmbedLink(post.post.url, displayType, autoplay)
 
     $: showAsEmbed = embedURL &&
         (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
@@ -49,7 +32,7 @@
 
 <PostIsInViewport bind:postContainer bind:inViewport />
 
-{#if showAsEmbed}
+{#if showAsEmbed && embedURL}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
     <IFrame bind:embedURL bind:size bind:title={post.post.name} />
 

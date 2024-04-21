@@ -33,8 +33,7 @@
 
 {#if showAsEmbed && embedURL}
     <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
-        href={
-            embedURL
+        href={ embedURL
                 ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
                 : post.post.url
         }
