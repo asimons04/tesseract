@@ -66,11 +66,11 @@
     let uploadingImage   = false
     let previewing       = false
     let fetchingMetadata = false
+    let previewPost: PostView
 
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
     $: if (community) data.community = community
-
 
     async function submit() {
         if (!data.name || !$profile?.jwt) return
@@ -261,6 +261,7 @@
         <!--- Edit / Preview Toggle --->
         <Button  loading={fetchingMetadata} disabled={(!data || !data.name || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
             on:click={ () => {
+                previewPost = generatePostPreview();
                 previewing = !previewing;
             }}
         >
@@ -352,7 +353,7 @@
     <!--- Previewing Post--->
     {:else}
         <div class="pb-3">
-            <PostPreview  post={ generatePostPreview() }  actions={false}  displayType='feed' autoplay={false}  />
+            <PostPreview  bind:post={previewPost}  actions={false}  displayType='post' autoplay={false}  />
         </div>
     {/if}
 </form>
