@@ -17,6 +17,7 @@
 
     import { createEventDispatcher } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { isImage, isVideo } from './helpers'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { validateURL } from '$lib/blacklists'
@@ -162,10 +163,7 @@
             if (metadata?.metadata) {
                 if (metadata.metadata.title && data.name == '') data.name = metadata.metadata.title
                 
-                if (metadata.metadata.description) data.body = data.body 
-                    ? data.body
-                    : metadata.metadata.description
-                
+                if (metadata.metadata.description)      data.embed_description = metadata.metadata.description
                 if (metadata.metadata.image)            data.thumbnail_url = metadata.metadata.image
                 if (metadata.metadata.image)            data.thumbnail_url = metadata.metadata.image
                 if (metadata.metadata.embed_video_url)  data.embed_video_url = metadata.metadata.embed_video_url
@@ -173,8 +171,8 @@
         }
         catch (err) {
             toast({
-                type: 'error',
-                title: 'Error',
+                type: 'warning',
+                title: 'No Metadata',
                 content: 'Unable to fetch metadata for the given URL'
             })
         }
@@ -203,7 +201,7 @@
         }
         
         // Grab site metadata to use in the preview
-        if (!previewing) {
+        if (!previewing && data.url && !isImage(data.url) && !isVideo(data.url)) {
             await getWebsiteMetadata()
             if (!data.name) data.name = 'Untitled Post'  // In case the user didn't provide a title and the metadata fetch failed to return one
         }
@@ -248,7 +246,7 @@
                     language_id: -1,
                     published: new Date().toISOString()
                 },
-                community:  data.community!,
+                community:  {...data.community},
                 // @ts-ignore
                 counts: {
                     upvotes: 1,
