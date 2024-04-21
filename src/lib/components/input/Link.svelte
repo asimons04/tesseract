@@ -19,7 +19,7 @@
         ? '_blank'
         : '_self'
     }"
-    title = "{title}"
+    title = "{title ?? href}"
 >
     <slot name="icon" />
     <slot>

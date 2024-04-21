@@ -7,12 +7,15 @@
         url?: string
         nsfw: boolean
         loading: boolean
-        thumbnail_url?: string
+        thumbnail_url?: string,
+        embed_description?: string,
+        embed_video_url?: string,
+        embed_title?: string
     }
 
     import type { Community, PostView } from 'lemmy-js-client'
 
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, onMount } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -60,6 +63,9 @@
         url: editingPost?.post.url,
         nsfw: editingPost?.post.nsfw ?? false,
         loading: false,
+        embed_description: editingPost?.post.embed_description,
+        embed_video_url: editingPost?.post.embed_video_url,
+        embed_title: editingPost?.post.embed_title
     }
 
     let data = {...default_data}
@@ -156,10 +162,14 @@
 
             if (metadata?.metadata) {
                 if (metadata.metadata.title) data.name = metadata.metadata.title
+                
                 if (metadata.metadata.description) data.body = data.body 
                     ? data.body += metadata.metadata.description
                     : metadata.metadata.description
-                if (metadata.metadata.image) data.thumbnail_url = metadata.metadata.image
+                
+                if (metadata.metadata.image)            data.thumbnail_url = metadata.metadata.image
+                if (metadata.metadata.image)            data.thumbnail_url = metadata.metadata.image
+                if (metadata.metadata.embed_video_url)  data.embed_video_url = metadata.metadata.embed_video_url
             }
         }
         catch (err) {
@@ -200,6 +210,7 @@
             post =  { ...editingPost }
             
             // Override the editable values with those from the form
+            post.post.id = -1
             post.post.body = data.body;
             post.post.url = data.url;
             post.post.name = data.name;
@@ -261,7 +272,9 @@
         <!--- Edit / Preview Toggle --->
         <Button  loading={fetchingMetadata} disabled={(!data || !data.name || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
             on:click={ () => {
-                previewPost = generatePostPreview();
+                previewPost = {...generatePostPreview()}
+                previewPost = previewPost
+                console.log(previewPost)
                 previewing = !previewing;
             }}
         >

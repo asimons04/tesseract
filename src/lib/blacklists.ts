@@ -11,7 +11,6 @@ const FAKE_NEWS = [
     'infoterkiniviral.com',
     'kaggle.com',
     'news.cctv.com',
-    'news.gallup.com',
     'tass.com',
     'tbsnews.net',
     'www.infoterkiniviral.com',
@@ -44,6 +43,19 @@ const UDF_BLACKLIST = [] as string[]
 export function validateURL(testURL?:string): URLValidateResponse {
     if (!testURL) return { allowed: false, reason: 'No URL Supplied'}
     try {
+        new URL(testURL)
+        return { allowed: true, reason: 'Allowed' }
+    }
+    catch {
+        return { allowed: false, reason: 'Invalid or malformed URL' }
+    }
+
+    /*  
+        Commenting out for now as I forgot I left this in here.  This is incomplete and is meant to read config options from the admin
+        to set instance-specific blacklists and different block options.  As-is, it just applies the stock blacklists 100% of the time
+        which is not the intended behavior.
+
+    try {
         const url = new URL(testURL)
         if (URL_BLACKLIST.includes(url.hostname))   return {allowed: false, reason: 'URL is on the Tesseract blacklist'}
         if (UDF_BLACKLIST.includes(url.hostname))   return {allowed: false, reason: 'URL is blacklisted by the instance administrator.'}
@@ -64,4 +76,5 @@ export function validateURL(testURL?:string): URLValidateResponse {
     catch {
         return {allowed: false, reason: 'Invalid URL supplied'}
     }
+    */
 }

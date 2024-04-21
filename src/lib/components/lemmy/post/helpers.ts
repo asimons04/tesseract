@@ -166,7 +166,7 @@ export const isSongLink = (url:string):boolean => {
 
 
 // Build a Youtube-like embed link from the post URL
-export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean=false): URL|undefined => {
+export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
     if (!postURL) return
     
     let embedURL: URL
@@ -213,21 +213,52 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
 
     // Start time: Can be either t (legacy) or start
     let startTime = new URL(postURL).searchParams.get('t') ?? new URL(postURL).searchParams.get('start');
-    
     if (startTime) {
         embedURL.searchParams.set('start', startTime);
     }
 
     // End time: 
     let endTime = new URL(postURL).searchParams.get('end');
-    
     if (endTime) {
         embedURL.searchParams.set('end', endTime);
     }
 
     return embedURL
 }
+
+// Build a Vimeo embed link from the post URL
+export const buildVimeoEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
+    if(!postURL) return
     
+    let embedURL = new URL('https://player.vimeo.com')
+    embedURL.searchParams.set('autopause', '0')
+
+    // Parse URLs to pick out video IDs to create embed URLs
+    let videoID = new URL(postURL).pathname.replace('/','')
+        
+    // Handle the /groups/123456/videos/{videoID} style links
+    if (videoID.startsWith('groups')) {
+        let re = new RegExp("/groups/[0-9]+/videos/", "i");
+        videoID = new URL(postURL).pathname.replace(re, '')
+    }
+
+    // Vimeo video IDs are numeric, so make sure we extracted a valid value (hopefully)
+    if (parseInt(videoID)) {
+        // Append the video ID to the embed URL
+        embedURL.pathname = `/video/${videoID}`
+    }
+
+    if (embedURL.pathname != '/') {
+        if (displayType ==  'post' && (autoplay ?? userSettings.embeddedMedia.autoplay)) {
+            embedURL.searchParams.set('autoplay','1')
+        }
+
+        return embedURL
+    }
+    return
+
+    
+}
 
 
 // Returns a string representing the detected post type
