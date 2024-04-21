@@ -228,7 +228,7 @@
             
 
             <!--- User Report Post--->
-            {#if !post.post.removed && !post.post.deleted && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
+            {#if post?.creator?.id && !post.post.removed && !post.post.deleted && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
                 <hr class="mt-1"/>
                 <div class="flex flex-row items-center gap-2">
                     <div class="flex flex-col">

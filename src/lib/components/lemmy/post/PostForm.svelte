@@ -72,7 +72,7 @@
     let uploadingImage   = false
     let previewing       = false
     let fetchingMetadata = false
-    let previewPost: PostView
+    let previewPost: PostView | undefined
 
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
@@ -184,7 +184,8 @@
     // Creates a second PostView object based on either the current form data or the post data passed from the edit event.  
     // Used to generate a fully-stocked PostView object to pass to the Post component in order to get a fully-rendered preview.
     async function generatePostPreview() {
-        
+        if (!$profile?.user) return
+
         // Validate URL
         if (data.url) {
             let { allowed, reason } = validateURL(data.url)
@@ -197,14 +198,16 @@
                     duration: 15000
                 })
                 data.url = ''
+                return
             }
         }
         
         // Grab site metadata to use in the preview
         if (!previewing && data.url && !isImage(data.url) && !isVideo(data.url)) {
             await getWebsiteMetadata()
-            if (!data.name) data.name = 'Untitled Post'  // In case the user didn't provide a title and the metadata fetch failed to return one
         }
+        
+        if (!data.name) data.name = 'Untitled Post'  // In case the user didn't provide a title and the metadata fetch failed to return one
             
         // If editing a post and the post details were passed, add them to the preview
         if (editingPost) {
@@ -232,7 +235,7 @@
                 post: { 
                     ...data,
                     id: -1,
-                    creator_id: data.community!.id,
+                    creator_id: $profile.user?.local_user_view.person.id,
                     community_id: data.community!.id,
                     thumbnail_url: data.thumbnail_url,
                     nsfw: data.nsfw,
@@ -246,6 +249,8 @@
                     language_id: -1,
                     published: new Date().toISOString()
                 },
+                creator: {...$profile.user?.local_user_view.person},
+
                 community:  {...data.community},
                 // @ts-ignore
                 counts: {
@@ -281,7 +286,7 @@
         <Button  loading={fetchingMetadata} disabled={(!data || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
             on:click={ async () => {
                 previewPost = await generatePostPreview()
-                previewing = !previewing;
+                if (previewPost) previewing = !previewing;
             }}
         >
             <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
@@ -370,7 +375,7 @@
         <MarkdownEditor rows={10} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} />
 
     <!---Previewing Post--->
-    {:else}
+    {:else if previewPost}
         <div class="pb-3">
             <PostPreview  post={previewPost}  actions={false}  displayType='post' autoplay={false}  />
         </div>

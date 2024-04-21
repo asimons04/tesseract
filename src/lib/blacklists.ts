@@ -1,4 +1,6 @@
 import { lookup as MBFCLookup } from './MBFC/client'
+import { BLACKLIST_CONFIG } from '$lib/settings'
+
 
 export interface URLValidateResponse {
     allowed: boolean,
@@ -12,9 +14,9 @@ const FAKE_NEWS = [
     'kaggle.com',
     'news.cctv.com',
     'tass.com',
-    'tbsnews.net',
     'www.infoterkiniviral.com',
     'www.kaggle.com',
+    ...BLACKLIST_CONFIG.FAKE_NEWS_BLACKLIST
 ]
 
 // Disallow link shorteners
@@ -31,50 +33,42 @@ const LINK_SHORTENERS = [
     'short.cm',
     'tinyurl.com',
     'web.archive.org',
-    'zpr.io'
+    'zpr.io',
+    ...BLACKLIST_CONFIG.LINK_SHORTENER_BLACKLIST
 ]
 
-// Internal blacklist
-const URL_BLACKLIST = [] as string[]
-
-// To-do:  Read in list of domains from env var defined by admin
-const UDF_BLACKLIST = [] as string[]
 
 export function validateURL(testURL?:string): URLValidateResponse {
     if (!testURL) return { allowed: false, reason: 'No URL Supplied'}
-    try {
-        new URL(testURL)
-        return { allowed: true, reason: 'Allowed' }
-    }
-    catch {
-        return { allowed: false, reason: 'Invalid or malformed URL' }
-    }
-
-    /*  
-        Commenting out for now as I forgot I left this in here.  This is incomplete and is meant to read config options from the admin
-        to set instance-specific blacklists and different block options.  As-is, it just applies the stock blacklists 100% of the time
-        which is not the intended behavior.
 
     try {
         const url = new URL(testURL)
-        if (URL_BLACKLIST.includes(url.hostname))   return {allowed: false, reason: 'URL is on the Tesseract blacklist'}
-        if (UDF_BLACKLIST.includes(url.hostname))   return {allowed: false, reason: 'URL is blacklisted by the instance administrator.'}
-        if (LINK_SHORTENERS.includes(url.hostname)) return {allowed: false, reason: 'Link shorteners are not allowed and are stupid when people can click on the link. Use the actual link to the resource.'}
-        if (FAKE_NEWS.includes(url.hostname))       return {allowed: false, reason: 'You are attempting to link to a non-credible news source.'}
+               
+        if (BLACKLIST_CONFIG.DOMAIN_BLACKLIST.includes(url.hostname))   
+            return {allowed: false, reason: `${url.hostname} is blacklisted by the instance administrator.`}
+        
+        
+        if (BLACKLIST_CONFIG.REJECT_LINK_SHORTENERS && !(BLACKLIST_CONFIG.LINK_SHORTENER_ALLOWLIST.includes(url.hostname)) && LINK_SHORTENERS.includes(url.hostname) ) 
+            return {allowed: false, reason: 'Link shorteners are not allowed and are stupid when people can click on the link. Use the actual link to the resource.'}
+        
+        if (BLACKLIST_CONFIG.REJECT_FAKE_NEWS && FAKE_NEWS.includes(url.hostname)) 
+            return {allowed: false, reason: 'You are attempting to link to a non-credible news source.'}
         
         // Reject URLs if MBFC rates them as non-credible
-        const mbfc = MBFCLookup(testURL)
-        if (mbfc) {
-            if (mbfc.bias == 'fake-news' || mbfc.credibility == 'Low Credibility') 
+        if (BLACKLIST_CONFIG.REJECT_LOW_CRED_MBFC) {
+            const mbfc = MBFCLookup(testURL)
+            if (mbfc && (mbfc.bias == 'fake-news' || mbfc.credibility == 'Low Credibility')) {
                 return {
                     allowed: false, 
-                    reason: `You are attempting to link to a non-credible news source. See: ${mbfc.url}`
+                    reason: `Whoa there!  You are attempting to link to a known non-credible news source. Consider posting that story from somewhere with more credibility.  See: ${mbfc.url}`
                 }
+            }
         }
+        // If URL hasn't been denied yet, allow it to pass
         return { allowed: true, reason: 'Allowed' }
     }
     catch {
         return {allowed: false, reason: 'Invalid URL supplied'}
     }
-    */
+    
 }

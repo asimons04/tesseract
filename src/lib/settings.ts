@@ -2,7 +2,6 @@ import type { CommentSortType, CommunityView, SortType } from 'lemmy-js-client'
 import { type Writable, writable } from 'svelte/store'
 import { env } from '$env/dynamic/public'
 
-export const SSR_ENABLED = env.PUBLIC_SSR_ENABLED?.toLowerCase() == 'true'
 
 // Returns a proper boolean or null.  Used to set boolean values from env var strings while allowing nullish coalescing to set default values.
 const toBool = (str: string | undefined) => {
@@ -243,6 +242,18 @@ export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HO
 export const MEDIA_CACHE_HOUSEKEEP_STARTUP  = toBool(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP)          ?? true
 export const MEDIA_CACHE_KEEP_HOT_ITEMS     = toBool(env.PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS)             ?? true
 
+
+// URL Blacklist options
+export const BLACKLIST_CONFIG = {
+    DOMAIN_BLACKLIST:         strToArray(env.PUBLIC_DOMAIN_BLACKLIST),
+    FAKE_NEWS_BLACKLIST:      strToArray(env.PUBLIC_FAKE_NEWS_BLACKLIST),
+    LINK_SHORTENER_BLACKLIST: strToArray(env.PUBLIC_LINK_SHORTENER_BLACKLIST),
+    LINK_SHORTENER_ALLOWLIST: strToArray(env.PUBLIC_LINK_SHORTENER_ALLOWLIST),
+    
+    REJECT_LOW_CRED_MBFC:   toBool(env.PUBLIC_BLACKLIST_DENY_LOW_CRED_MBFC)     ?? false,
+    REJECT_LINK_SHORTENERS: toBool(env.PUBLIC_BLACKLIST_DENY_LINK_SHORTENERS)   ?? false,
+    REJECT_FAKE_NEWS:       toBool(env.PUBLIC_BLACKLIST_DENY_FAKE_NEWS)         ?? false,
+}
 
 // Define Invidious and Piped instances to determine if embedded media is a Youtube et al video.
 // Invidious Instance List:  https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest

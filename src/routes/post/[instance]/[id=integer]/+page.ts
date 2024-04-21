@@ -1,7 +1,6 @@
-import { env } from '$env/dynamic/public'
 import { profile } from '$lib/auth.js'
 import { getClient } from '$lib/lemmy.js'
-import { SSR_ENABLED, userSettings } from '$lib/settings.js'
+import { userSettings } from '$lib/settings.js'
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 
