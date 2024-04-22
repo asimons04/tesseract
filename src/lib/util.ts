@@ -56,10 +56,8 @@ export const removeItem = <T>(array: T[], predicate: (item: T) => boolean) => {
 }
 
 // Generates an array of numbers between start and stop.
-export const arrayRange = (start:number, stop:number, step:number=1) => Array.from(
-    { length: (stop - start) / step + 1 },
-    (value, index) => start + index * step
-);
+export const arrayRange = (start:number, stop:number, step:number=1) => 
+    Array.from( { length: (stop - start) / step + 1 }, (value, index) => start + index * step );
 
 // Deep copy an object or array
 export const objectCopy = function(input:any): any {

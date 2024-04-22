@@ -69,7 +69,7 @@
         embed_title: editingPost?.post.embed_title
     }
 
-    let data = JSON.parse(JSON.stringify(default_data))
+    let data             = objectCopy(default_data)
     let uploadingImage   = false
     let previewing       = false
     let fetchingMetadata = false
@@ -297,7 +297,7 @@
          <!--- Reset Form --->
          <Button  loading={fetchingMetadata} disabled={previewing} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
             on:click={ () => {
-                data = JSON.parse(JSON.stringify(default_data))
+                data = objectCopy(default_data)
                 data = data
             }}
         >
