@@ -13,6 +13,7 @@
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Setting from './Setting.svelte'
+    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import Sort from '$lib/components/lemmy/Sort.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -24,6 +25,7 @@
         ArrowPath,
         ArrowPathRoundedSquare,
         ArrowsPointingOut,
+        ArrowsRightLeft,
         ArrowUturnDown,
         Icon,
         Bars3,
@@ -547,18 +549,15 @@
                     </div>
                     {/if}
 
+                    <!---Reverse Action Bar Direction--->
+                    <SettingToggle icon={ArrowsRightLeft} title="Reverse Action Bar Direction"  bind:value={$userSettings.uiState.reverseActionBar}
+                        description="Reverse the direction of the action bars on posts/comments. e.g. The vote buttons will be on the right instead of the left."
+                    />
+
                     <!---Enable Debug Buttons--->
-                    <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
-                        <div class="flex flex-col">
-                            <p class="text-sm font-bold flex flex-row gap-2">
-                                <Icon src={BugAnt} mini width={16}/>
-                                Debug Buttons
-                            </p>
-                            <p class="text-xs font-normal">Show debug buttons in the UI</p>
-                        </div>
-                        <div class="mx-auto"/>
-                        <Switch bind:enabled={$userSettings.debugInfo} />
-                    </div>
+                    <SettingToggle icon={BugAnt} title="Debug Buttons" bind:value={$userSettings.debugInfo}
+                        description="Show debug buttons in the UI"
+                    />
 
                     <!---Enable Experimental Features--->
                     <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>

@@ -115,6 +115,8 @@ interface Settings {
         showBannersInCards: boolean
         stretchCardBanner: boolean
         modalOpen: boolean
+        reverseActionBar: boolean
+        showScores: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -166,6 +168,8 @@ export const defaultSettings: Settings = {
         showBannersInCards:                                             true,
         stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
         modalOpen:                                                      false,
+        reverseActionBar:                                               false,
+        showScores:                                                     true,
 
     },
 

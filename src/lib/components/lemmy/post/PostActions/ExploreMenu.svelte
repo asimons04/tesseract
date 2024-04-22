@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import { goto } from '$app/navigation'
+    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
@@ -33,7 +33,7 @@
 {/if}
 
 <!---Explore Menu--->
-<Menu alignment="top-right" containerClass="overflow-auto">
+<Menu alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}" containerClass="overflow-auto">
     <Button
         slot="button"
         aria-label="Explore"
@@ -67,14 +67,13 @@
 
     
     <MenuButton>
-        <span 
-            class="flex flex-row gap-2 items-center w-full text-sm"
+        <button  class="flex flex-row gap-2 items-center w-full text-sm"
             title="Get Fediseer info for  {new URL(post.community.actor_id).hostname}"
             on:click={async (e) => openFediseerModal(new URL(post.community.actor_id).hostname) }
         >
             <Icon src={Eye} width={16} mini />
             <span>Fediseer</span>
-        </span>
+    </button>
     </MenuButton>
 
     <!---Browse communities / fediseer of the post creator if different from community's home instance-->
@@ -92,14 +91,14 @@
         </MenuButton>
 
         <MenuButton>
-            <span 
+            <button 
                 class="flex flex-row gap-2 items-center w-full text-sm"
                 title="Get Fediseer info for  {new URL(post.creator.actor_id).hostname}"
                 on:click={async (e) => openFediseerModal(new URL(post.creator.actor_id).hostname)}
             >
                 <Icon src={Eye} width={16} mini />
                 <span>Fediseer</span>
-            </span>
+        </button>
         </MenuButton>
     {/if}
 

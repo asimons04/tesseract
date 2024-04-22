@@ -208,7 +208,15 @@
             await getWebsiteMetadata()
         }
         
-        if (!data.name) data.name = 'Untitled Post'  // In case the user didn't provide a title and the metadata fetch failed to return one
+        
+        if (!data.name) {
+            toast({
+                content: 'No post title was provided, and metadata fetch failed to populate it. Please provide a title for the post',
+                type: 'error',
+                title: 'No Title',
+            })
+            return
+        }
             
         // If editing a post and the post details were passed, add them to the preview
         if (editingPost) {

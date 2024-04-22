@@ -12,6 +12,7 @@
     import { isCommentView } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
 
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -56,7 +57,7 @@
     }
   </script>
 
-<Menu alignment="top-right" >
+<Menu alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}" >
     <Button
         on:click={toggleOpen}
         slot="button"

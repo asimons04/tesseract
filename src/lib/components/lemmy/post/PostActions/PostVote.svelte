@@ -9,6 +9,8 @@
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
+
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
 
@@ -55,7 +57,7 @@
 </script>
 
 
-<div class="flex items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-800 h-full duration-200">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-800 h-full duration-200">
     <Button
         disabled={!$profile?.user || !onHomeInstance}
         aria-label="Upvote"

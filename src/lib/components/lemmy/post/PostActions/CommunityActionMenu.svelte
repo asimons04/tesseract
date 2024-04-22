@@ -7,6 +7,7 @@
     import { createEventDispatcher } from 'svelte'
     import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
+    import { userSettings } from '$lib/settings'
     
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -29,7 +30,7 @@
 
     export let post:PostView
     export let menuIconSize:number  = 16
-    export let alignment:Alignment = 'top-right'
+    export let alignment:Alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
     export let suppressModal:boolean = false
 
     // Helpers for community groups

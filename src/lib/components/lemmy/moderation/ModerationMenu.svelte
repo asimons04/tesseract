@@ -9,7 +9,8 @@
     import { isPostView } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    import { userSettings } from '$lib/settings'
+    
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import BanCommunityModal from '$lib/components/lemmy/moderation/BanCommunityModal.svelte'
     import BanInstanceModal from '$lib/components/lemmy/moderation/BanInstanceModal.svelte'
@@ -33,7 +34,7 @@
 
     export let item: PostView | CommentView
     export let color:ButtonColor = "tertiary-border"
-    export let alignment:Alignment = 'side-left'
+    export let alignment:Alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
     export let menuIconSize:number = 16
 
     let locking = false

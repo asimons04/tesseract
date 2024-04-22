@@ -12,7 +12,7 @@
     import { profile } from '$lib/auth'
     import { setSessionStorage } from '$lib/session.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -43,7 +43,7 @@
     
     export let post:PostView
     export let menuIconSize:number  = 16
-    export let alignment:Alignment = 'top-right'
+    export let alignment:Alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
     export let icon:IconSource = EllipsisHorizontal;
     
     // Allow importing this component just for the edit post modal
@@ -57,16 +57,7 @@
 <PostEditorModal bind:open={editing} bind:post />
 
 <Menu {alignment} containerClass="overflow-auto">
-    <Button
-        slot="button"
-        aria-label="Post actions"
-        let:toggleOpen
-        on:click={toggleOpen}
-        
-        size="square-md"
-        title="Post actions"
-        color="tertiary-border"
-    >
+    <Button slot="button" aria-label="Post actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Post actions" color="tertiary-border" >
         <Icon slot="icon" src={icon} width={menuIconSize} mini />
     </Button>
 

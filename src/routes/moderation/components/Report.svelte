@@ -774,7 +774,7 @@
     <span class="flex flex-col lg:flex-row w-full gap-4">
         
         <!--- Report Title and Button Bar--->
-        <span class="flex flex-row gap-2 items-center" role="button" on:click={toggleOpenReport}>
+        <button class="flex flex-row gap-2 items-center" on:click={toggleOpenReport}>
             <Icon src={isCommentReport(item) ? ChatBubbleLeftEllipsis : Photo} mini width={20} />
             
             
@@ -790,7 +790,7 @@
                             : ''
                 }
             </span>
-        </span>
+        </button>
         
         <span class="ml-auto"/>
 
@@ -812,24 +812,6 @@
                     <Icon src={BugAnt} mini size="16" slot="icon" />
                 </Button>
             {/if}
-
-            <!---Quick Actions Menu
-            {#if !resolved && open}
-            <SelectMenu
-                alignment="bottom-right"
-                options={['manual', 'spam-ban', 'lock-remove-nonotify', 'lock-remove']}
-                optionNames={['Quick Actions', 'Spam, Ban, Thank You Man', 'Lock and Remove (No Notify)', 'Lock and Remove']}
-                selected={'manual'}
-                title="Quick Actions"
-                icon={Fire}
-                on:select={(e) => {
-                    // @ts-ignore
-                    applyActionPreset(e.detail)
-                }}
-            />
-            {/if}
-            --->
-
 
             <!--- Resolve Button--->
             <Button

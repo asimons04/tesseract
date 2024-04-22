@@ -5,11 +5,14 @@
         ArrowDown,
         Icon,
     } from 'svelte-hero-icons'
+    
+    
     import { getClient } from '$lib/lemmy'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
@@ -47,7 +50,7 @@
 
 </script>
 
-<div class="flex flex-row items-center rounded-md gap-0 transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800  border rounded-lg">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center rounded-md gap-0 transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800  border rounded-lg">
     <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
         class="{comment.my_vote == 1 ? voteColor() : ''} !gap-0.5"
         on:click={async () => {

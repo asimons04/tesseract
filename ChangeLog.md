@@ -36,6 +36,8 @@ All major/minor changes between releases will be documented here.
     - Use localstorage to populate a custom `PostView[]` object which will feed the infinite scroll feed
     - Profit???
 
+- [X] Reimplement PostForm component
+    - 
 
 - Create a /instances route 
     - Use a tabbed/panel interface
@@ -54,7 +56,7 @@ All major/minor changes between releases will be documented here.
 
 
 
-### Bugfixes
+### General Bugfixes
 - General Typescript and a11y fixes (too numerous to list individually)
 - Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote one one of the newly loaded ones.
 - Reimplemented vote functions for comments and posts.

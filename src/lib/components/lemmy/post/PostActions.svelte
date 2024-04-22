@@ -34,7 +34,7 @@
 
 </script>
 
-<div  class="flex flex-row gap-1 sm:gap-2 items-center h-8 
+<div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-1 sm:gap-2 items-center h-8 
     {displayType == 'post' ? 'mt-auto' : 'mt-2'} 
     {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'ml-[-0.5rem]'}
     {displayType == 'post' ? 'ml-[-0.5rem]' : ''}
@@ -76,7 +76,7 @@
 
     <!--- Moderation Menu--->
     {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <ModerationMenu bind:item={post} color="tertiary-border" alignment="top-right"/>
+        <ModerationMenu bind:item={post} />
     {/if}
 
     <!---Explore Menu--->

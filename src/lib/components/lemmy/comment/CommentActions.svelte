@@ -69,7 +69,7 @@
     <Fediseer bind:open={fediseer.modal} instance={fediseer.instance} />
 {/if}
       
-<div class="flex flex-row gap-2 items-center mt-1 h-8 w-full">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2 items-center mt-1 h-8 w-full">
     <!---Comment Vote Buttons--->
     <CommentVote bind:comment />
     
@@ -104,7 +104,7 @@
     {/if}
   
     <!---Comment Action Menu --->
-    <Menu  alignment="top-right">
+    <Menu  alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}">
         <Button
             slot="button"
             on:click={toggleOpen}
