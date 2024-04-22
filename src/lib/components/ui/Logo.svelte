@@ -5,4 +5,4 @@
   export let rounded:boolean = true
 </script>
 
-<img src="{url}" alt="{alt}" height="{width}" width="{width}" class="invert dark:invert-0 {rounded ? 'rounded-[999px]' : ''}" />
+<img src="{url}" alt="{alt}" height="{width}" width="{width}" class="invert dark:invert-0 {rounded ? 'rounded-[999px]' : ''} {$$props.class}" />
