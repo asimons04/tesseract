@@ -6,7 +6,9 @@ export default {
         fontFamily: {
             'sans': ['sans-serif'],
             'system': ['system-ui'], 
-            'serif': ['serif']
+            'serif': ['serif'],
+            'inter': ['Inter', 'sans-serif'],
+            'roboto': ['Roboto', 'sans-serif']
         },
         fontSize: {
             xs: '0.8rem',
