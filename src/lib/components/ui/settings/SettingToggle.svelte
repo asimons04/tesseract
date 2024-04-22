@@ -21,7 +21,8 @@ export let condition:boolean = true
             <p class="text-xs font-normal">
                 {description}
             </p>
-            {#if value}
+            
+            {#if $$slots.default && value}
                 <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4">
                     <slot />
                 </div>
