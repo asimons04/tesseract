@@ -60,7 +60,9 @@
         
     >
         <Icon src={ArrowUp} width={19} mini />
-        <FormattedNumber number={comment.counts.upvotes} />
+        {#if $userSettings.uiState.showScores}
+            <FormattedNumber number={comment.counts.upvotes} />
+        {/if}
     </Button>
     
     <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
@@ -74,7 +76,9 @@
         
     >
         <Icon src={ArrowDown} width={19} mini />
-        <FormattedNumber number={comment.counts.downvotes} />
+        {#if $userSettings.uiState.showScores}
+            <FormattedNumber number={comment.counts.downvotes} />
+        {/if}
     </Button>
 </div>
 

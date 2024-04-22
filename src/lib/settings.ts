@@ -433,6 +433,14 @@ export function migrateSettings(old:any) {
         if (old.uiState.maxScrollPosts > 150) old.uiState.maxScrollPosts = 150
         old.version = 0.6
     }
+    
+    // 0.6 -> 0.7
+    if (old.version == 0.6) {
+        if ( !('showScores' in old.uiState)) {
+            old.uiState.showScores = true;   
+        }
+        old.version = 0.7
+    }
 
     return { ...defaultSettings, ...old }
 }

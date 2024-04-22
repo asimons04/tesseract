@@ -208,7 +208,7 @@
             await getWebsiteMetadata()
         }
         
-        
+
         if (!data.name) {
             toast({
                 content: 'No post title was provided, and metadata fetch failed to populate it. Please provide a title for the post',
@@ -329,14 +329,8 @@
             
             <!---If community is not set, display autocomplete input to select one--->
             {#if !data.community}
-                <span class="block my-1 font-bold text-sm">
-                    Community <span class="text-red-500">*</span>
-                </span>
 
-                <CommunityAutocomplete
-                    containerClass="!w-full"
-                    placeholder="Community"
-                    listing_type="All"
+                <CommunityAutocomplete label="Community" containerClass="!w-full" placeholder="Community" listing_type="All"
                     on:select={(e) => {
                         data.community = e.detail
                     }}
@@ -356,7 +350,7 @@
         
 
         <!--- Post Title--->
-        <TextInput required label="Title" bind:value={data.name} focus={true} />
+        <TextInput required label="Title" bind:value={data.name} />
         
         <!--- Post URL --->
         <div class="flex gap-2 w-full items-end">

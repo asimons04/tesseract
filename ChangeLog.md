@@ -64,6 +64,11 @@ All major/minor changes between releases will be documented here.
 - Deprecated several old functions that were holdovers from the original Photon code
 - Fixed bug where refreshing a user profile would throw an unhandled JS error on 0.19.x (but strangly, the same flow worked on initial load). Was a bad index key for the Svelte `{#each}` loop.
 
+### New Features
+- Can swap the post / comment actions button direction
+    - Useful on mobile if you want to put the vote buttons on the right
+
+- Can now hide scores and show only your own upvote/downvote status
 
 
 ### Top Navigation Bar
@@ -104,6 +109,8 @@ All major/minor changes between releases will be documented here.
 - Blocking a community/user will no longer refresh the page
     - As a result, the blocked item will not leave the DOM unti you refresh since there is no API data to indicate a community is blocked
     - Behavior change was needed to avoid having to recreate the post feed list with infinite scrolling
+- Added user setting to reverse the action buttons in the post and comment action bar
+    - Will put the vote buttons on the right and the action menus on the left
 
 
 ### Media
@@ -194,7 +201,16 @@ Can use the filters to do things like see your (or anyone's) posts/comments to a
 - Reimplemented /signup, /signup/[instance], /login, and /login/[instance] to use new standardized layout.
     - Added site card to the login and signup pages and removed old static site icon
 
-    
+### Domain Blacklisting
+Tesseract can deny submissions (currently only in the post URL) to a set of admin-defined list of domains.  
+
+There are 3 independent blacklists which can be specified:
+
+- General
+- Link Shorteners
+- Fake news
+
+Please see the [Domain Blacklisting](docs/DomainBlacklisting.md) document for more details.
 
 
 
@@ -252,7 +268,7 @@ Can use the filters to do things like see your (or anyone's) posts/comments to a
 - Revamped the modlog
 
 
-
+---
 
 
 

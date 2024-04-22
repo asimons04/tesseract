@@ -554,6 +554,11 @@
                         description="Reverse the direction of the action bars on posts/comments. e.g. The vote buttons will be on the right instead of the left."
                     />
 
+                    <!---Show Scores--->
+                    <SettingToggle icon={ArrowsRightLeft} title="Show Scores"  bind:value={$userSettings.uiState.showScores}
+                        description="Disable this option if you do not want to see upvote/downvote counts on posts and comments."
+                    />
+
                     <!---Enable Debug Buttons--->
                     <SettingToggle icon={BugAnt} title="Debug Buttons" bind:value={$userSettings.debugInfo}
                         description="Show debug buttons in the UI"
