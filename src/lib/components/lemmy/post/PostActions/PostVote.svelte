@@ -8,6 +8,7 @@
     import { getClient } from '$lib/lemmy'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
+    import { site } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
 
@@ -79,22 +80,25 @@
     
     <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
    
-    <Button
-        disabled={!$profile?.user || !onHomeInstance}
-        aria-label="Downvote"
-        class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
-        size="sm"
-        color="tertiary"
-        on:click={async () => {
-            post.counts = await vote(post.my_vote == -1 ? 0 : -1)
-            post.my_vote = post.my_vote == -1 ? 0 : -1
-        }}
+    <!---Hide downvote buttons if site config has globally disabled downvotes--->
+    {#if $site?.site_view?.local_site?.enable_downvotes}
+        <Button
+            disabled={!$profile?.user || !onHomeInstance}
+            aria-label="Downvote"
+            class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
+            size="sm"
+            color="tertiary"
+            on:click={async () => {
+                post.counts = await vote(post.my_vote == -1 ? 0 : -1)
+                post.my_vote = post.my_vote == -1 ? 0 : -1
+            }}
 
-    >
-        <Icon src={ArrowDown} mini size="18" />
-        {#if $userSettings.uiState.showScores}
-            <FormattedNumber number={post.counts.downvotes} />
-        {/if}
-    </Button>
+        >
+            <Icon src={ArrowDown} mini size="18" />
+            {#if $userSettings.uiState.showScores}
+                <FormattedNumber number={post.counts.downvotes} />
+            {/if}
+        </Button>
+    {/if}
 </div>
 

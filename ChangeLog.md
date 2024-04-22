@@ -5,21 +5,10 @@ All major/minor changes between releases will be documented here.
 
 ## 1.3.0
 ### Burndown List Before Release
-- [X] Fix search sorting (currently only sorts by new.)
-- [X] Update /c/[name] route to use the updated infinite scroll method implemented on the homepage
-- [X] Update snapshot to use individual storage keys for each path (instead of one big object) to work around per-key storage limitations (~5 MB)
-- [X] Add search bar to /c/[name] page to search the community
-- [X] Add search bar to /u/[name] page to search for content by that user
 - Add panel to community settings (for mods/admins) to view community modlog
 - Add panel to communtiy settings (for mods/admins) to direct ban/unban user
 - [ ] Make relative time component reactive
 
-- Add "action" column to modlog
-    - [X] Ban/unban from community if action is community ban/unban
-    - [X] Ban/unban from instance if action is ban
-    - [X] Restore/remove comment/post if action is remove/restore
-    - [X] Lock/unlock post
-    - [X] Unfeature post from community or local
 
 - Finish community browser enhancements
     - Add search bar to content area for mobile view
@@ -36,24 +25,20 @@ All major/minor changes between releases will be documented here.
     - Use localstorage to populate a custom `PostView[]` object which will feed the infinite scroll feed
     - Profit???
 
-- [X] Reimplement PostForm component
-    - 
 
-- Create a /instances route 
+- Create a `/instances` route 
     - Use a tabbed/panel interface
     - Allow filtering from a text input (similar to Federation block lists in admin panel)
     - Add links for Fediseer, instance block (for 0.19.x), and community browser to instances
 
-- [X] Add form to change user's password
-
-- Add MFA configuration support (on hold until 0.18.x support is dropped.)
-    - Look for a QR code library
 
 ### Important API Compatibility Notes
 **This will be the last version to support 0.18.x.  Once development of 1.4.0 begins, 0.18.x support will be dropped.**
 - 1.3.0 remains fully compatible with 0.18.x and 0.19.x
 - 0.19.x does not support any of the new features yet _except_ the cursor-based pagination. This has been implemented in a backwards-compatible way and will fall back to offset-based pagination for 0.18.x instances.  This was implemented for both since 0.19.x has deprecated offset-based pagination and was necessary for transition purposes past 0.19.x
 
+### Overview
+Not really doing anything groundbreaking with this release.  There are a few new minor features, but almost all of the work has been refining the existing features and adding polish throughout.  
 
 
 ### General Bugfixes
@@ -61,14 +46,26 @@ All major/minor changes between releases will be documented here.
 - Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote one one of the newly loaded ones.
 - Reimplemented vote functions for comments and posts.
 - Added more forwards/backwards-compatible date format checks (to work with both 0.18.x and 0.19.x)
-- Deprecated several old functions that were holdovers from the original Photon code
+- Deprecated lots of old functions that were holdovers from the original Photon code
 - Fixed bug where refreshing a user profile would throw an unhandled JS error on 0.19.x (but strangly, the same flow worked on initial load). Was a bad index key for the Svelte `{#each}` loop.
 
-### New Features
-- Can swap the post / comment actions button direction
+### New Features (That Aren't Refinements to Existing Features)
+- Can swap the post / comment action bar button direction
     - Useful on mobile if you want to put the vote buttons on the right
 
 - Can now hide scores and show only your own upvote/downvote status
+    - This is in app settings rather than user settings. With Tesseract, the config options in "User Settings" are only settings that affect the behavior of the API.  Lemmy-UI keeps its frontend options there, but I don't want to have to fight those.
+
+- If the instance you're on has disabled downvotes, the downvote buttons on posts and comments will be hidden.
+
+- Can now fetch the metadata during post creation.
+    - Can fill in the title automatically as well as provide the thumbnail image for the post preview
+- Peertube video embeds are now supported
+
+- Can reset password now (thought this was already implemented, but that was just 'forgot password' process).
+
+- Infinite scroll has replaced the old pagination in all but the modlog (may add it there, just haven't bothered yet).
+
 
 
 ### Top Navigation Bar

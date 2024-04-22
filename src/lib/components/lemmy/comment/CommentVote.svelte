@@ -12,6 +12,7 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { site } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -66,19 +67,22 @@
     </Button>
     
     <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
-
-    <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
-        class="{comment.my_vote == -1 ? voteColor() : ''} !gap-0.5"
-        on:click={async () => {
-            comment.counts = await vote(comment.my_vote == -1 ? 0 : -1)
-            comment.my_vote = comment.my_vote == -1 ? 0 : -1
-        }}
-        
-    >
-        <Icon src={ArrowDown} width={19} mini />
-        {#if $userSettings.uiState.showScores}
-            <FormattedNumber number={comment.counts.downvotes} />
-        {/if}
-    </Button>
+    
+    <!---Hide downvote buttons if site config has globally disabled downvotes--->
+    {#if $site?.site_view?.local_site?.enable_downvotes}
+        <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
+            class="{comment.my_vote == -1 ? voteColor() : ''} !gap-0.5"
+            on:click={async () => {
+                comment.counts = await vote(comment.my_vote == -1 ? 0 : -1)
+                comment.my_vote = comment.my_vote == -1 ? 0 : -1
+            }}
+            
+        >
+            <Icon src={ArrowDown} width={19} mini />
+            {#if $userSettings.uiState.showScores}
+                <FormattedNumber number={comment.counts.downvotes} />
+            {/if}
+        </Button>
+    {/if}
 </div>
 
