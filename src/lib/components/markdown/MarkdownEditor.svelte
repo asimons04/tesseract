@@ -225,7 +225,7 @@
 
                     <Button
                         on:click={() =>
-                        wrapSelection('::: spoiler <spoiler title>\n', '\n:::')}
+                        wrapSelection('::: spoiler Spoiler Title\n', '\n:::')}
                         title="Spoiler"
                         size="square-md"
                     >

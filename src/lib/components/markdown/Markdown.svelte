@@ -8,7 +8,9 @@
     export let source: string = ''
     export let inline: boolean = false
     export let images:boolean = true;
-
+    
+    let div: HTMLDivElement
+    
     function replaceURLs(node: HTMLElement) {
         const links = node.querySelectorAll('a')
 
@@ -36,12 +38,7 @@
     if (!$userSettings.inlineImages) md.disable(['image'])
     if (!images) md.disable(['image'])
     
-
-    let div: HTMLElement
-
-    $: if (source && div) {
-        replaceURLs(div)
-    }
+    $: if (source && div) replaceURLs(div)
 
     // Render the markdown in a try/catch since sometimes it randomly fails. I think this is due to truncating it for the feed previews.
     let rendered:string
