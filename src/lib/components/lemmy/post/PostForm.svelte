@@ -18,6 +18,7 @@
     import { createEventDispatcher } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
     import { isImage, isVideo } from './helpers'
+    import { objectCopy } from '$lib/util'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { validateURL } from '$lib/blacklists'
@@ -212,7 +213,7 @@
         // If editing a post and the post details were passed, add them to the preview
         if (editingPost) {
             
-            let newPost: PostView = JSON.parse(JSON.stringify(editingPost))
+            let newPost: PostView = objectCopy(editingPost)
 
             // Override the editable values with those from the form
             newPost.post.body = data.body;
@@ -249,7 +250,7 @@
                     language_id: -1,
                     published: new Date().toISOString()
                 },
-                creator: {...$profile.user?.local_user_view.person},
+                creator: objectCopy($profile.user?.local_user_view.person),
 
                 community:  {...data.community},
                 // @ts-ignore

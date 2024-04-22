@@ -18,49 +18,41 @@ export const searchParam = (url: URL, key: string, value: string, ...deleteKeys:
     })
 }
 
-export const fullCommunityName = (name: string, actorId: string) =>
-  `${name}@${new URL(actorId).hostname}`
+export const fullCommunityName = (name: string, actorId: string) => `${name}@${new URL(actorId).hostname}`
 
 
-export function moveItem<T>(
-  array: T[],
-  currentIndex: number,
-  newIndex: number
-): T[] {
-  if (
-    currentIndex < 0 ||
-    currentIndex >= array.length ||
-    newIndex < 0 ||
-    newIndex >= array.length
-  ) {
-    throw new Error('Invalid index')
-  }
+export function moveItem<T>(array: T[], currentIndex: number, newIndex: number): T[] {
+    if ( currentIndex < 0 || currentIndex >= array.length || newIndex < 0 || newIndex >= array.length ) {
+        throw new Error('Invalid index')
+    }
 
-  const newArray = [...array]
+    const newArray = [...array]
 
-  // Remove the item from the current index
-  const [item] = newArray.splice(currentIndex, 1)
+    // Remove the item from the current index
+    const [item] = newArray.splice(currentIndex, 1)
 
-  // Insert the item at the new index
-  newArray.splice(newIndex, 0, item)
+    // Insert the item at the new index
+    newArray.splice(newIndex, 0, item)
 
-  return newArray
+    return newArray
 }
 
 type Maybe<T> = T | undefined | void | null
+
 export const trycatch = <T>(func: () => T): Maybe<T> => {
-  try {
-    return func()
-  } catch (err) {
-    toast({
-      content: err as any,
-      type: 'error',
-    })
-  }
+    try {
+        return func()
+    } 
+    catch (err) {
+        toast({
+            content: err as any,
+            type: 'error',
+        })
+    }
 }
 
 export const removeItem = <T>(array: T[], predicate: (item: T) => boolean) => {
-  array.splice(array.findIndex(predicate), 1)
+    array.splice(array.findIndex(predicate), 1)
 }
 
 // Generates an array of numbers between start and stop.
@@ -68,5 +60,16 @@ export const arrayRange = (start:number, stop:number, step:number=1) => Array.fr
     { length: (stop - start) / step + 1 },
     (value, index) => start + index * step
 );
+
+// Deep copy an object or array
+export const objectCopy = function(input:any): any {
+    try {
+        return JSON.parse(JSON.stringify(input))
+    }
+    catch (err) {
+        console.log(err);
+        return {}
+    }
+}
 
 
