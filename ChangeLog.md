@@ -66,6 +66,8 @@ Not really doing anything groundbreaking with this release.  There are a few new
 
 - Infinite scroll has replaced the old pagination in all but the modlog (may add it there, just haven't bothered yet).
 
+- Can now select one of multiple fonts for use in the UI.  Also has the benefit of looking more uniform between Firefox/Chromium as FF's default font looked less than ideal. 
+
 
 
 ### Top Navigation Bar

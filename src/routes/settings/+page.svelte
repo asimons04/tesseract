@@ -443,9 +443,10 @@
                     description="Enable experimental features. Note that these may be buggy."
                 />
 
-                <!---Use Browser Font Instead of Theme Font--->
-                <SettingToggle icon={Language} title="Use Browser Font" bind:value={$userSettings.systemUI}
-                    description="Use the system/browser's font instead of the theme font."
+                <SettingMultiSelect icon={Language} title="Application Font" description="Select your preferred font to use in Tesseract"
+                    options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+                    optionNames={['Sans', 'Serif', 'System', 'Inter', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+                    bind:selected={$userSettings.font}
                 />
 
                 <!---Reset to Default Settings--->

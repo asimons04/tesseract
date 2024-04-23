@@ -7,8 +7,11 @@ export default {
             'sans': ['sans-serif'],
             'system': ['system-ui'], 
             'serif': ['serif'],
-            'inter': ['Inter', 'sans-serif'],
-            'roboto': ['Roboto', 'sans-serif']
+            'inter': ['Inter', 'sans-serif', 'system-ui'],
+            'roboto': ['Roboto', 'sans-serif', 'system-ui'],
+            'reddit': ['RedditMono', 'sans-serif', 'system-ui'],
+            'ubuntu': ['Ubuntu', 'sans-serif', 'system-ui'],
+            'urbanist': ['Urbanist', 'sans-serif', 'system-ui']
         },
         fontSize: {
             xs: '0.8rem',

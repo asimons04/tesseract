@@ -48,12 +48,7 @@
     {@html webManifest}
 </svelte:head>
 
-<div class="flex flex-col min-h-screen 
-    {$userSettings.systemUI
-        ? 'font-system'
-        : 'font-sans'
-    }"
->
+<div class="flex flex-col min-h-screen {$userSettings.font}">
     <Navbar />
     <ToastContainer />
     <Moderation />

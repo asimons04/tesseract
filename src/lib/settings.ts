@@ -48,6 +48,7 @@ interface Settings {
     markReadPosts: boolean
     instance?: string
     showCompactPosts: boolean
+    font: 'font-system' | 'font-sans' | 'font-serif' | 'font-roboto' | 'font-inter' | 'font-reddit' | 'font-ubuntu' | 'font-urbanist'
     defaultSort: {
         sort: SortType
         feed: FeedType
@@ -77,7 +78,6 @@ interface Settings {
         posts: boolean,
     },
     debugInfo: boolean
-    systemUI: boolean
     embeddedMedia: {
         feed: boolean
         post: boolean
@@ -132,7 +132,7 @@ interface Settings {
 }
 
 export const defaultSettings: Settings = {
-    version: 0.5,
+    version: 0.8,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -143,9 +143,8 @@ export const defaultSettings: Settings = {
         removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
 
     },
-    
+    font: 'font-sans',
     debugInfo: false,
-    systemUI: false,
     imageSize: {
         feed: 'max-w-3xl',
         post: 'w-full'
@@ -442,6 +441,28 @@ export function migrateSettings(old:any) {
         old.version = 0.7
     }
 
-    return { ...defaultSettings, ...old }
+    // 0.7 -> 0.8
+    if (old.version == 0.7) {
+        delete old.systemUI
+        old.version = 0.8
+    }
+
+    return { 
+        ...defaultSettings, 
+        ...old, 
+        defaultSort:    {...defaultSettings.defaultSort, ...old.defaultSort },
+        hidePosts:      {...defaultSettings.hidePosts, ...old.hidePosts},
+        notifications:  {...defaultSettings.notifications, ...old.notifications},
+        moderation:     {...defaultSettings.moderation, ...old.moderation},
+        openInNewTab:   {...defaultSettings.openInNewTab, ...old.openInNewTab},
+        embeddedMedia:  {
+            ...defaultSettings.embeddedMedia,
+            ...old.embeddedMedia,
+            enabledSources: { ...defaultSettings.embeddedMedia.enabledSources, ...old.embeddedMedia.enabledSources }
+        },
+        imageSize:      {...defaultSettings.imageSize, ...old.imageSize},
+        uiState:        {...defaultSettings.uiState, ...old.uiState},
+        proxyMedia:     {...defaultSettings.proxyMedia, ...old.proxyMedia}
+    }
 }
 

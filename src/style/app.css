@@ -35,6 +35,30 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'RedditMono';
+    src: url("/fonts/RedditMono.ttf") format('ttf'),
+        url("/fonts/RedditMono.woff") format('woff'),
+        url("/fonts/RedditMono.woff2") format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Ubuntu';
+    src: url("/fonts/Ubuntu.ttf") format('ttf'),
+        url("/fonts/Ubuntu.woff") format('woff'),
+        url("/fonts/Ubuntu.woff2") format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Urbanist';
+    src: url("/fonts/Urbanist.ttf") format('ttf'),
+        url("/fonts/Urbanist.woff") format('woff'),
+        url("/fonts/Urbanist.woff2") format('woff2');
+    font-display: swap;
+}
+
 
 
 html {
