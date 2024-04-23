@@ -15,7 +15,7 @@
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fullCommunityName } from '$lib/util.js'
     import { profile } from '$lib/auth'
-    import { createPost } from '$lib/components/lemmy/community/helpers'
+    import { createPost, shortenCommunityName } from '$lib/components/lemmy/community/helpers'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
@@ -50,7 +50,7 @@
             toast({
                 type: "warning",
                 title: "Confirm Remove",
-                content: `Are you sure you want to remove ${community.title || community.name} from ${group}?`,
+                content: `Are you sure you want to remove ${shortenCommunityName(community.title) || community.name} from ${group}?`,
                 action: () => removeFromCurrentGroup(true),
             })
             return
@@ -111,7 +111,7 @@
         </div>
         
         <span class="w-full break-words" class:hidden={!expanded}>
-            {community.title.replace('&amp;', '&')}
+            {shortenCommunityName(community.title)}
         </span>
 
         <span class="ml-auto"/>
@@ -126,15 +126,14 @@
         
         <!---Community Name Header--->
         <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            {community.title ?? community.name}@{new URL(community.actor_id).host}
+            {shortenCommunityName(community.title) ?? community.name}@{new URL(community.actor_id).host}
         </span>
 
         <!---Create Post --->
         {#if $profile?.user}
-        <MenuButton 
+        <MenuButton title="Create post"
             disabled={(community.posting_restricted_to_mods && !amMod($profile.user, community)) || community.removed}
             on:click={() => createPost(community)}
-            title="Create post"
         >
             <Icon src={PencilSquare} mini size="16" />
             Create Post
@@ -163,8 +162,8 @@
 
         <!---Unsubscribe--->
         <MenuButton disabled={unsubscribing} loading={unsubscribing}>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="flex flex-row gap-2 w-full" role="button" tabindex="0" on:click={ (e) => {
+            
+            <button class="flex flex-row gap-2 w-full" tabindex="0" on:click={ (e) => {
                 e.stopPropagation();
                 unsubscribe();
             }}>
@@ -172,7 +171,7 @@
                     <Icon src={Minus} mini size="16" />
                 </span>
                 Unsubscribe
-            </span>
+            </button>
         </MenuButton>
 
         

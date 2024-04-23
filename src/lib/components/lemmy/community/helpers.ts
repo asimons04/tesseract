@@ -3,12 +3,14 @@ import type {
 } from 'lemmy-js-client'
 
 import { addSubscription } from '$lib/lemmy/user.js'
+import { fixLemmyEncodings } from '../post/helpers'
 import { fullCommunityName } from '$lib/util.js'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy'
 import { goto, invalidate } from '$app/navigation'
 import { profile } from '$lib/auth'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
+
 
 /** Clears the last seen community from session storage */
 export function clearLastSeenCommunity() {
@@ -96,4 +98,13 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
     } catch (error) {
         toast({ content: error as any, type: 'error' })
     }
+}
+
+/** If community title is > 40 characters, split it at the hyphen or colon and only return the text to the left of that */
+export function shortenCommunityName(name:string) {
+    if (!name) return
+    let shortened =  name.length > 40
+        ? fixLemmyEncodings(name).split(':')[0].split('-')[0].trim()
+        : fixLemmyEncodings(name)
+    return shortened.substring(0,40)
 }

@@ -2,6 +2,7 @@
     import type { Community } from 'lemmy-js-client'
     
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
+    import { shortenCommunityName } from '$lib/components/lemmy/community/helpers'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -36,9 +37,7 @@
         <span class="flex flex-wrap gap-0 {boldCommunityName ? 'font-bold' : 'font-normal'}">
             
             {$userSettings.displayNames 
-                ? fixLemmyEncodings(community.title).length > 40
-                    ? fixLemmyEncodings(community.title).split(':')[0].split('-')[0].trim()
-                    : fixLemmyEncodings(community.title)
+                ? shortenCommunityName(community.title)
                 : `/c/${community.name}`
             }
 
