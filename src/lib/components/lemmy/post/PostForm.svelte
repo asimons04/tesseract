@@ -21,6 +21,7 @@
     import { objectCopy } from '$lib/util'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
     import { validateURL } from '$lib/blacklists'
 
     
@@ -31,7 +32,8 @@
     import CommunityLink from '../community/CommunityLink.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import PostPreview from './PostPreview.svelte'
+    import PostPreview from './Post.svelte'
+    //import PostPreview from './PostPreview.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     
@@ -45,6 +47,8 @@
         Icon, 
         PencilSquare,
         Photo,
+        QueueList,
+        Window,
         XCircle
     } from 'svelte-hero-icons'
     
@@ -74,6 +78,10 @@
     let previewing       = false
     let fetchingMetadata = false
     let previewPost: PostView | undefined
+
+
+    let compactPosts = false
+    let displayType = 'post' as 'post' | 'feed'
 
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
@@ -302,6 +310,17 @@
             {previewing ? 'Edit' : 'Preview'}
         </Button>
 
+        <!---Card/Compact Switch--->
+        <Button title="Switch to {compactPosts ? 'card view' : 'compact view'}" disabled={!previewing} color="tertiary-border"
+            on:click={async () => {
+                compactPosts = !compactPosts
+                if (compactPosts) displayType='feed'
+                else displayType='post'
+            }}
+        >
+            <Icon src={compactPosts ? Window : QueueList} width={16} />
+        </Button>
+
          <!--- Reset Form --->
          <Button  loading={fetchingMetadata} disabled={previewing} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
             on:click={ () => {
@@ -380,7 +399,7 @@
     <!---Previewing Post--->
     {:else if previewPost}
         <div class="pb-3">
-            <PostPreview  post={previewPost}  actions={false}  displayType='post' autoplay={false}  />
+            <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
         </div>
     {/if}
     
