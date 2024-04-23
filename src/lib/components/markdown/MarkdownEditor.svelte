@@ -2,7 +2,7 @@
     import type { Community, Person } from 'lemmy-js-client'
 
     import { createEventDispatcher } from 'svelte'
-    
+    import { imageProxyURL } from '$lib/image-proxy';    
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { uploadImage } from '$lib/lemmy.js'
@@ -24,6 +24,7 @@
         ListBullet,
         Photo,
     } from 'svelte-hero-icons'
+    
 
     export let images: boolean = true
     export let value: string = ''
@@ -85,7 +86,8 @@
         try {
             const uploaded = await uploadImage(image[0])
             if (!uploaded) throw new Error('Image upload returned undefined')
-            wrapSelection(`![](${uploaded})`, '')
+            
+            wrapSelection(`![](${imageProxyURL(uploaded)})`, '')
             uploadingImage = false
         } catch (err) {
             toast({

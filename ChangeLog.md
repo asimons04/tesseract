@@ -151,6 +151,8 @@ ideal.   Current options are:
 - Added "Undo/Reset" button to revert a post you're editing back to its initial state or to clear the post form if creating a new post
     - If crossposting, will restore the current state to the original crosspost information
 
+- Image upload will now use the Tesseract image proxy, if configured and enabled.
+
 
 ### Post Pages
 - Added post title to navigation bar (not shown in mobile).  
