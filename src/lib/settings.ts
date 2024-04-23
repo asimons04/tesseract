@@ -131,6 +131,7 @@ interface Settings {
 
 }
 
+// Default settings
 export const defaultSettings: Settings = {
     version: 0.8,
     notifications: {

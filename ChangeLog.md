@@ -66,7 +66,23 @@ Not really doing anything groundbreaking with this release.  There are a few new
 
 - Infinite scroll has replaced the old pagination in all but the modlog (may add it there, just haven't bothered yet).
 
-- Can now select one of multiple fonts for use in the UI.  Also has the benefit of looking more uniform between Firefox/Chromium as FF's default font looked less than ideal. 
+- Can now select one of multiple fonts for use in the UI.  Also has the benefit of looking more uniform between Firefox/Chromium as FF's default font looked less than 
+ideal.   Current options are:
+    - Default sans
+    - Default serif
+    - Browser default
+    - Inter
+    - Roboto
+    - Reddit Mono
+    - Ubuntu
+    - Urbanist
+
+- Admins can define three different types of URL blacklists to disallow submitting posts to those domains.
+    - Can disable submissions that use a link shortener as the URL
+    - Can enable the option to deny submissions to domains MBFC has deemed low-credibility.
+    - All of these are disabled by default and must be explicitly enabled / configured by the admin
+    - Note: These are only effective when submitting through Tesseract UI, obviously. These will not prevent those from being submitted from another frontend or via API calls. 
+
 
 
 
@@ -116,6 +132,7 @@ Not really doing anything groundbreaking with this release.  There are a few new
 - Add support for detecting and rendering Peertube embeds
     - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
     - Votes on Peertube videos will translate to thumbs-up on PT's end
+
 - Media embeds now only render when the post is actually in the viewport. 
     - This should keep memory from ballooning in embed-heavy feeds. Before, all iframes were kept in the DOM
     - Will show as thumbnail art until 10% of the post is in the viewport and then automatically switch to embed (if embeds enabled)
