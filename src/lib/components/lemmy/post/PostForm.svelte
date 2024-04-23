@@ -17,6 +17,7 @@
 
     import { createEventDispatcher } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { imageProxyURL } from '$lib/image-proxy'
     import { isImage, isVideo } from './helpers'
     import { objectCopy } from '$lib/util'
     import { profile } from '$lib/auth.js'
@@ -291,7 +292,7 @@
 
 
 <ImageUploadModal bind:open={uploadingImage} on:upload={(e) => {
-        if (e.detail) data.url = e.detail
+        if (e.detail) data.url = imageProxyURL(e.detail)
         uploadingImage = false
     }}
 />

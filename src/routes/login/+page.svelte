@@ -34,6 +34,9 @@
             }
             validating = false
         }
+        else {
+            goto(`/login/${DEFAULT_INSTANCE_URL}`)
+        }
     }
   </script>
   
@@ -57,7 +60,7 @@
         </p>
 
         <form class="flex flex-col lg:flex-row gap-4 lg:items-end" on:submit|preventDefault={async () => { validate() }} >
-            <TextInput bind:value={instance} label="Instance URL" required placeholder={DEFAULT_INSTANCE_URL} focus={true}
+            <TextInput bind:value={instance} label="Instance URL" placeholder={DEFAULT_INSTANCE_URL}
                 on:input={() => {
                     instance = instance.toLowerCase().replaceAll(' ', '')
                 }}
