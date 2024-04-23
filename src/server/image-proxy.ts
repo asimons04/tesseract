@@ -113,7 +113,6 @@ export async function image_proxy(event:any) {
         // Not method GET and/or not an image/video requested 
         else {
             if (fallback) return res.redirect(imageUrl).send();
-            
             return res.error('Attempted to proxy invalid URL').send();
         }
     }
