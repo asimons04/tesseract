@@ -2,6 +2,7 @@
     import type { PostView } from 'lemmy-js-client';
 
     import { getInstance } from '$lib/lemmy.js'
+    import { userSettings } from '$lib/settings'
 
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
@@ -49,10 +50,12 @@
         {/if}
     </span>
 
+    {#if $userSettings.uiState.showScores}
     <span class="flex flex-row gap-2 font-normal items-center">
         <Icon src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown} mini width={iconSize} height={iconSize}/>
         <FormattedNumber number={crosspost.counts.score} />
     </span>
+    {/if}
 
     
     <span class="flex flex-row gap-2 font-normal items-center" >
