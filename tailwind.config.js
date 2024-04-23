@@ -14,7 +14,7 @@ export default {
             'urbanist': ['Urbanist', 'sans-serif', 'system-ui']
         },
         fontSize: {
-            xs: '0.8rem',
+            xs: '0.85rem',
             sm: '0.9rem',
             base: '1.0rem',
             lg: '1.125rem',

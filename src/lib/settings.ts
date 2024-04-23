@@ -144,7 +144,7 @@ export const defaultSettings: Settings = {
         removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
 
     },
-    font: 'font-sans',
+    font: 'font-roboto',
     debugInfo: false,
     imageSize: {
         feed: 'max-w-3xl',
