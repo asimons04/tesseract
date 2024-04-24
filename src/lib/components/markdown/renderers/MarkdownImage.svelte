@@ -33,7 +33,17 @@
         {:else if isVideo(token.href) && inViewport}
             <!-- svelte-ignore a11y-media-has-caption -->
             <video class="rounded-xl max-w-full max-h-[50vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
-                <source src="{imageProxyURL(token.href)}" type="video/mp4">
+                <source src="{imageProxyURL(token.href)}" 
+                    type="{
+                        new URL(token.href).pathname.endsWith('mp4') || new URL(token.href).pathname.endsWith('m4v')
+                            ? 'video/mp4' 
+                            : new URL(token.href).pathname.endsWith('webm') 
+                                ? "video/webm" 
+                                : new URL(token.href).pathname.endsWith('mov') 
+                                    ? "video/mp4"
+                                    : ''
+                    }"
+                />
             </video>    
         {/if}
     </div>

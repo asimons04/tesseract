@@ -14,7 +14,6 @@
     
     export let source: string = ''
     export let inline: boolean = false
-    //export let images:boolean = true;
 
     marked.use({
         extensions: [
@@ -26,7 +25,6 @@
                         title: params.options,
                         tokens: []
                     }
-
                 }
                 return null
             })
@@ -34,13 +32,11 @@
     })
    
 
-    $:  source 
-            ? source = fixLemmyEncodings(source).replaceAll("::: spoiler", ":::spoiler")
-            : source = ' ';
+    $:  source = fixLemmyEncodings(source).replaceAll("::: spoiler", ":::spoiler")
 
 </script>
 
-
+{#if source}
 <div class="markdown">
     {#if inline}
         {source}
@@ -57,7 +53,7 @@
         />
     {/if}
 </div>
-
+{/if}
 <style lang="postcss">
     .markdown :global(h1) {
         @apply text-3xl font-bold;
