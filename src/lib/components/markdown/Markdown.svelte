@@ -5,8 +5,10 @@
         type TokenExtractionParameters
          
     } from '@magidoc/plugin-svelte-marked'
+    
+    import {findUserCommunityLinks} from './markdown'
     import { marked } from 'marked';
-
+    
     import MarkdownCode from './renderers/MarkdownCode.svelte'
     import MarkdownImage from './renderers/MarkdownImage.svelte'
     import MarkdownLink from './renderers/MarkdownLink.svelte';
@@ -30,9 +32,15 @@
             })
         ]
     })
-   
+    
+    function preProcess(text:string) {
+        let temp = fixLemmyEncodings(text)
+        temp = findUserCommunityLinks(text)
+        temp = temp.replaceAll("::: spoiler", ":::spoiler")
+        return temp
+    }
 
-    $:  source = fixLemmyEncodings(source).replaceAll("::: spoiler", ":::spoiler")
+    $:  source = preProcess(source)
 
 </script>
 
