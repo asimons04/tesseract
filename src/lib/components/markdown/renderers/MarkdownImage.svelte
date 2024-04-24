@@ -24,15 +24,15 @@
 
 {#if $userSettings.inlineImages}
 
-<div bind:this={container} class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl w-fit p-1">
-    <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
+<div bind:this={container} class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl w-fit p-2">
+    <div class="ml-auto mr-auto max-w-full">
     
         {#if isImage(token.href)}
-            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} class="markdown-image" />
+            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} class="markdown-image rounded-xl" />
         
         {:else if isVideo(token.href) && inViewport}
             <!-- svelte-ignore a11y-media-has-caption -->
-            <video class="rounded-2xl max-w-full max-h-[50vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
+            <video class="rounded-xl max-w-full max-h-[50vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
                 <source src="{imageProxyURL(token.href)}" type="video/mp4">
             </video>    
         {/if}
