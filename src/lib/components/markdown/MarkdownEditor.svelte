@@ -234,6 +234,7 @@
                         <Icon src={ExclamationTriangle} mini size="16" />
                     </Button>
                 
+                    <!---
                     <Button
                         on:click={() => wrapSelection('~', '~')}
                         title="Subscript"
@@ -253,6 +254,7 @@
                             X<sup>1</sup>
                         </span>
                     </Button>
+                    --->
                 </div>
 
                 <!---Emoji Picker Panel--->

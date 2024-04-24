@@ -1,68 +1,3 @@
-import MarkdownIt from 'markdown-it'
-import markdown_it_container from 'markdown-it-container'
-// @ts-ignore
-import markdown_it_html5_embed from 'markdown-it-html5-embed' 
-// @ts-ignore
-import markdown_it_sub from 'markdown-it-sub'
-// @ts-ignore
-import markdown_it_sup from 'markdown-it-sup'
-
-export const md = new MarkdownIt({
-    html: false,
-    linkify: true,
-    })
-    .use(markdown_it_container, 'spoiler', {
-        validate: (params: string) => {
-            return params.trim().match(/^spoiler+(.*)/)
-        },
-        render: (tokens: any, idx: any) => {
-            var m = tokens[idx].info.trim().match(/^spoiler+(.*)/)
-
-            if (tokens[idx].nesting === 1) {
-                // opening tag
-                return `<details><summary> ${md.utils.escapeHtml(m[1])} </summary>\n`
-            } else {
-                // closing tag
-                return '</details>\n'
-            }
-        },
-    })
-    .use(markdown_it_html5_embed, {
-        html5embed: {
-            useImageSyntax: true, // Enables video/audio embed with ![]() syntax (default)
-            attributes: {
-                audio: 'controls preload="metadata"',
-                video: 'width="100%" max-height="100%" controls loop preload="metadata"',
-            },
-        }
-    })
-    .use(markdown_it_sub)
-    .use(markdown_it_sup)
-    
-
-
-
-export const mdInline: MarkdownIt = new MarkdownIt('zero')
-    //.enable(['emphasis', 'backticks', 'strikethrough', 'link'])
-    .use(markdown_it_container, 'spoiler', {
-        validate: (params: string) => {
-            return params.trim().match(/^spoiler+(.*)/)
-        },
-        render: (tokens: any, idx: any) => {
-            var m = tokens[idx].info.trim().match(/^spoiler+(.*)/)
-
-            if (tokens[idx].nesting === 1) {
-                // opening tag
-                return `<details><summary> ${md.utils.escapeHtml(m[1])} </summary>\n`
-            } else {
-                // closing tag
-                return '</details>\n'
-            }
-        },
-    })
-    .use(markdown_it_sub)
-    .use(markdown_it_sup)
-
 const communityLinks = {
     validate: function (text: any, pos: any, self: any) {
         var tail = text.slice(pos)
@@ -114,26 +49,6 @@ const userLinks = {
         match.url = `/u/${prefix}`
     },
 }
-
-md.linkify.add('!', {
-    validate: communityLinks.validate,
-    normalize: communityLinks.normalize,
-})
-
-md.linkify.add('c/', {
-    validate: communityLinks.validate,
-    normalize: communityLinks.normalize,
-})
-
-md.linkify.add('@', {
-    validate: userLinks.validate,
-    normalize: userLinks.normalize,
-})
-
-md.linkify.add('u/', {
-    validate: userLinks.validate,
-    normalize: userLinks.normalize,
-})
 
 const regexes = {
     post: /^https:\/\/([a-zA-Z0-9.-]+)\/post\/(\d+)$/,

@@ -1,65 +1,62 @@
 <script lang="ts">
-    import { md, mdInline, photonify } from '$lib/components/markdown/markdown'
-    import { userSettings } from '$lib/settings.js'
-    import { imageProxyURL } from '$lib/image-proxy'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
-    import markdown_it_highlightjs from 'markdown-it-highlightjs'
+    import Markdown, {
+        extensions,
+        type TokenExtractionParameters
+         
+    } from '@magidoc/plugin-svelte-marked'
+    import { marked } from 'marked';
 
+    import MarkdownCode from './renderers/MarkdownCode.svelte'
+    import MarkdownImage from './renderers/MarkdownImage.svelte'
+    import MarkdownLink from './renderers/MarkdownLink.svelte';
+    import MarkdownSpoiler from './renderers/MarkdownSpoiler.svelte';
+    
     export let source: string = ''
     export let inline: boolean = false
-    export let images:boolean = true;
-    
-    let div: HTMLDivElement
-    
-    function replaceURLs(node: HTMLElement) {
-        const links = node.querySelectorAll('a')
+    //export let images:boolean = true;
 
-        links.forEach((l) => {
-            const photonified = photonify(l.href)
-            if (photonified) l.href = photonified
-            if ($userSettings.openInNewTab.links) l.target = '_blank'
-        })
+    marked.use({
+        extensions: [
+            extensions.containerExtension((params: TokenExtractionParameters) => {
+                if (params.type === 'spoiler') {
+                    return {
+                        type: 'spoiler',
+                        raw: params.raw,
+                        title: params.options,
+                        tokens: []
+                    }
 
-        // If media proxying is enabled, rewrite image urls
-        const images = node.querySelectorAll('img');
-        images.forEach((i) => {
-            i.src = imageProxyURL(i.src)!;
-        })
-    }
+                }
+                return null
+            })
+        ]
+    })
+   
 
-    // Highlight code syntax if user option set
-    if ($userSettings.highlightCode) {
-        md.use(markdown_it_highlightjs, {
-            inline: $userSettings.highlightInlineCode ?? false
-        })
-    }
-
-    // Disable inline images if user option set
-    if (!$userSettings.inlineImages) md.disable(['image'])
-    if (!images) md.disable(['image'])
-    
-    $: if (source && div) replaceURLs(div)
-
-    // Render the markdown in a try/catch since sometimes it randomly fails. I think this is due to truncating it for the feed previews.
-    let rendered:string
-    
-    $: try {
-        source 
-            ? source = fixLemmyEncodings(source)
+    $:  source 
+            ? source = fixLemmyEncodings(source).replaceAll("::: spoiler", ":::spoiler")
             : source = ' ';
-        if (inline) { rendered = mdInline.render(source) }
-        else { rendered = md.render(source) }
-    }
-    catch {
-        try { rendered = mdInline.render(source) }
-        catch { rendered = "<p>Failed to render the markdown</p>"; }
-    }
+
 </script>
 
-<div bind:this={div} class="break-words flex flex-col markdown gap-2 leading-[1.5]  {$$props.class}">
-    {@html rendered}
-</div>
 
+<div class="markdown">
+    {#if inline}
+        {source}
+    {:else}
+        <Markdown bind:source={source} 
+            renderers={{
+                code: MarkdownCode,
+                image: MarkdownImage,
+                link: MarkdownLink,
+                spoiler: MarkdownSpoiler,
+              
+            }}
+
+        />
+    {/if}
+</div>
 
 <style lang="postcss">
     .markdown :global(h1) {
@@ -77,7 +74,7 @@
     }
 
     .markdown :global(details) {
-        @apply cursor-pointer;
+        @apply cursor-pointer my-4;
     }
 
     .markdown :global(hr) {
@@ -85,7 +82,7 @@
     }
 
     .markdown :global(img) {
-        @apply max-h-[40vh] border rounded-md border-slate-200 dark:border-zinc-800;
+        @apply max-h-[40vh];
     }
 
     .markdown :global(a) {
@@ -109,15 +106,25 @@
     }
 
     .markdown :global(li) {
-        @apply pt-[10px] m-0 leading-[1.5] !important ;
+        @apply pt-[5px] m-0 leading-[1.5] !important ;
     }
 
     .markdown :global(li > *) {
         @apply m-0 leading-[1.5] !important;
     }
 
+    .markdown :global(table) {
+        width:90%;
+        @apply my-4 mx-auto;
+    }
+
+    .markdown :global(td) {
+        width: 100%;
+    }
+
     .markdown :global(th) {
         text-align: left;
+        width: 100%;
     }
 
     .markdown :global(tr > th) {

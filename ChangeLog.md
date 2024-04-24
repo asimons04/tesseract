@@ -50,7 +50,13 @@ Not really doing anything groundbreaking with this release.  There are a few new
 - Fixed bug where refreshing a user profile would throw an unhandled JS error on 0.19.x (but strangly, the same flow worked on initial load). Was a bad index key for the Svelte `{#each}` loop.
 
 ### New Features (That Aren't Refinements to Existing Features)
-- Can swap the post / comment action bar button direction
+- Removed `markdown-it` and all of its plugins.
+    - Was too cumbersome to extend or do some things I wanted to do
+    - Replaced withed `svelte-plugin-marked` and wrote custom renderers for that to match the old behavior.
+    - **Note**:  Since `marked` uses Github-style markdown, subscript and superscript are not supported.  I really don't have the energy right now to look into custom-writing those (if it's even feasible without forking), so for now, support for sub/super-script has been removed.  Those seem to be rarely used, anyway, so I may be content living without them indefinitely.  The buttons in the editor toolbar for those have been removed.
+    - Now some new features I want to add are possible.  One of those is a link preview where you can click a link and preview the site in a modal.  Specifically, media like Youtube (et al) would play as an embed in the modal rather than taking you out of the app and into another tab or loading the YouTube app on mobile.
+
+- Can now swap the post / comment action bar button direction
     - Useful on mobile if you want to put the vote buttons on the right
 
 - Can now hide scores and show only your own upvote/downvote status

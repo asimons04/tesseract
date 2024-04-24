@@ -4,7 +4,7 @@
   export let highlight: boolean = false
   export let nowrap: boolean = false
   export let newtab: boolean = false
-  export let title: string = ""
+  export let title: string | undefined | null= undefined
   export let id: string = ""
   export let domainOnly:boolean = false;
   export let text:string | undefined = undefined
