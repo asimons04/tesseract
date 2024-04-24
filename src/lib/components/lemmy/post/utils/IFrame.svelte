@@ -1,7 +1,7 @@
 <script lang="ts">
     export let size: string = "max-w-3xl"
     export let embedURL:URL
-    export let title:string
+    export let title:string = ''
 </script>
 
 <style>

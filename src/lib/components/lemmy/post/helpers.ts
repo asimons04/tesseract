@@ -6,6 +6,15 @@ export interface PostView extends LemmyPostView {
     cross_posts?: PostView[]
 }
 
+export interface MediaEmbedItem {
+    embed_url?: string,
+    type?: PostType,
+    title?: string,
+    description?: string,
+    thumbnail_url?: string,
+    open?: boolean
+}
+
 
 import { disableScrollHandling } from '$app/navigation'
 import { get } from 'svelte/store';
@@ -63,7 +72,7 @@ export const isVideo = (inputUrl: string | undefined) => {
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
-export const isEmbeddableVideo = (url: string | undefined):boolean => {
+export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
     if (!url) return false
     return (
         isInvidious(url) ||
@@ -296,7 +305,7 @@ export const postType = (post: PostView | undefined ) => {
         return "video"
     }
 
-    if (post.post.url && isEmbeddableVideo(post.post.url)) {
+    if (post.post.url && isYoutubeLikeVideo(post.post.url)) {
         return "youtube"
     }
     

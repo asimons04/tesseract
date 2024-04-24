@@ -34,7 +34,7 @@ interface Hesitations extends FediseerResponse {
 }
 
 // What gets returned to the client on calls to /lookup
-interface FediseerInfo {
+export interface FediseerInfo {
     site?: GetSiteResponse | undefined
     censures?: Array<Censures>,
     endorsements?: Array<Endorsements>
