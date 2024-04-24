@@ -87,7 +87,6 @@ export function findUserCommunityLinks(source: string) {
     
     for (let community of communities2) {
         if (community.groups?.community && community.groups?.instance) {
-            console.log("found /c/ match", community[0])
             let replacementText = `[/c/${community.groups.community}@${community.groups.instance}](/c/${community.groups.community}@${community.groups.instance})`
             source = source.replace(communityRE2, replacementText)
         }
