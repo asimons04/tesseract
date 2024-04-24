@@ -28,7 +28,7 @@
     <div class="ml-auto mr-auto max-w-full">
     
         {#if isImage(token.href)}
-            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} class="markdown-image rounded-xl" />
+            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} class="rounded-xl" />
         
         {:else if isVideo(token.href) && inViewport}
             <!-- svelte-ignore a11y-media-has-caption -->
@@ -43,8 +43,3 @@
     <Link highlight href={token.href} title={token.title} text={token.text} newtab={$userSettings.openInNewTab.links}/>
 {/if}
   
-<style>
-    .markdown-image {
-          max-width: 100%;
-    }
-</style>
