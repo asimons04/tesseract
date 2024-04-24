@@ -61,6 +61,14 @@ export const isImage = (url: string | undefined) => {
     if (!url) return false
     return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(new URL(url).pathname)
 }
+
+// Check if the provided URL is an embeddable audio file
+export const isAudio = (url: string | undefined) => {
+    if (!url) return false
+    return /\.(mp3|oga|opus|aac)$/i.test(new URL(url).pathname)
+}
+
+
 // Check if provided URL is a video
 export const isVideo = (inputUrl: string | undefined) => {
   if (!inputUrl) return false
