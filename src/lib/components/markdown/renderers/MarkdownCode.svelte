@@ -12,7 +12,12 @@
         
     }
     catch (err){
-        rendered = hljs.highlight(token.text, {language:'plaintext'}).value
+        try {
+            rendered = hljs.highlight(token.text, {language:'plaintext'}).value
+        }
+        catch {
+            rendered = token.text
+        }
     }
 </script>
   
