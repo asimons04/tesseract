@@ -3,8 +3,17 @@
     
     import hljs from 'highlight.js'
     export let token: Tokens.Code
+    let rendered: string
 
-    $: rendered = hljs.highlight(token.text, {language: token.lang ?? 'plaintext'}).value
+    $: try {
+        rendered = token.lang
+            ? hljs.highlight(token.text, {language: token.lang}).value
+            : hljs.highlight(token.text, {language:'plaintext'}).value
+        
+    }
+    catch (err){
+        rendered = hljs.highlight(token.text, {language:'plaintext'}).value
+    }
 </script>
   
 <pre><code class="language-{token.lang}">{@html rendered}</code></pre>
