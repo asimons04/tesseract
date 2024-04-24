@@ -121,7 +121,7 @@
 </svelte:head>
 
 
-<SubNavbar home refreshButton scrollButtons >
+<SubNavbar home back refreshButton scrollButtons >
     
     <!---Custom Sub-Navbar Buttons for Modlog--->
     <span class="flex flex-row gap-1 md:gap-2 items-center" slot="far-left" let:iconSize>
