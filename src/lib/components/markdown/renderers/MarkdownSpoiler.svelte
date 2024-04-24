@@ -31,6 +31,6 @@
 </script>
   
 <details>
-    <summary>{title}</summary>
+    <summary><strong>{title}</strong></summary>
         <MarkdownTokens tokens={token.tokens} {renderers} {options} />
 </details>
