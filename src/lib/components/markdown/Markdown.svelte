@@ -35,21 +35,21 @@
     
     function preProcess(text:string) {
         let temp = fixLemmyEncodings(text)
-        temp = findUserCommunityLinks(text)
+        temp = findUserCommunityLinks(temp)
         temp = temp.replaceAll("::: spoiler", ":::spoiler")
         return temp
     }
 
-    $:  source = preProcess(source)
+    $:  mdText = preProcess(source)
 
 </script>
 
-{#if source}
+{#if mdText}
 <div class="markdown">
     {#if inline}
-        {source}
+        {mdText}
     {:else}
-        <Markdown bind:source={source} 
+        <Markdown bind:source={mdText} 
             renderers={{
                 code: MarkdownCode,
                 image: MarkdownImage,
