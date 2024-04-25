@@ -76,7 +76,7 @@
 
         <!---Show Alt Text as Descriptioin--->
         {#if token.text}
-            <p class="p-2 text-xs">{token.text}</p>
+            <p class="pt-2 text-xs">{token.text}</p>
         {/if}
     </div>
 </div>

@@ -1,19 +1,25 @@
-import { profile } from '$lib/auth.js'
-import { getClient } from '$lib/lemmy.js'
-import { userSettings } from '$lib/settings.js'
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
+import { getClient } from '$lib/lemmy.js'
+import { instance } from '$lib/instance'
+import { profile } from '$lib/auth.js'
+import { userSettings } from '$lib/settings.js'
+
 
 interface LoadParams {
     params: any,
     url: any,
-    fetch: any
+    fetch?: any
 }
 export async function load({ params, url }: LoadParams) {
+    const $instance = get(instance)
+
     try {
         const post = await getClient(params.instance.toLowerCase()).getPost({
             id: Number(params.id),
-            auth: get(profile)?.jwt,
+            auth: params.instance == $instance 
+                ? get(profile)?.jwt 
+                : undefined
         })
 
         const thread = url.searchParams.get('thread')
@@ -40,7 +46,10 @@ export async function load({ params, url }: LoadParams) {
             max_depth: max_depth,
             saved_only: false,
             sort: sort,
-            auth: get(profile)?.jwt,
+            auth: params.instance == $instance 
+                ? get(profile)?.jwt 
+                : undefined
+            ,
             parent_id: parentId,
         }
 
