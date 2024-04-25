@@ -118,6 +118,7 @@ interface Settings {
         reverseActionBar: boolean
         showScores: boolean
         showAltText:boolean
+        filterAnnoyingCCLicense: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -172,6 +173,7 @@ export const defaultSettings: Settings = {
         reverseActionBar:                                               false,
         showScores:                                                     true,
         showAltText:                                                    true,
+        filterAnnoyingCCLicense:                                        false,
 
     },
 

@@ -593,6 +593,13 @@
                     description="Show full URLs in posts. Disable to only show the domain of the link."
                 />
 
+                <!--Filter Annoying CC Licenses on Posts/Comments--->
+                <SettingToggle title="Filter CC Licenses" icon={Funnel} bind:value={$userSettings.uiState.filterAnnoyingCCLicense}
+                    description="Filter out those obnoxious 'CC BY-NC-SA 4.0' licenses on posts/comments that people somehow think will prevent LLMs from training on their submissions."
+                />
+
+               
+
                 <!---Fediseer Badges--->
                 <SettingToggle title="Fediseer Badges" icon={Eye} bind:value={$userSettings.uiState.fediseerBadges}
                     description="Show Fediseer badges on post cards"

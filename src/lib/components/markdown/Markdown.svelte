@@ -1,12 +1,17 @@
 <script lang="ts">
-    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
+    
+    
     import Markdown, {
         extensions,
         type TokenExtractionParameters
          
     } from '@magidoc/plugin-svelte-marked'
     
-    import {findUserCommunityLinks} from './markdown'
+    import {
+        filterAnnoyingCCLicenseOnComments,
+        findUserCommunityLinks
+    } from './markdown'
+    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { marked } from 'marked';
     
     import MarkdownCode from './renderers/MarkdownCode.svelte'
@@ -36,6 +41,7 @@
     function preProcess(text:string) {
         let temp = fixLemmyEncodings(text)
         temp = findUserCommunityLinks(temp)
+        temp = filterAnnoyingCCLicenseOnComments(temp)
         temp = temp.replaceAll("::: spoiler", ":::spoiler")
         return temp
     }

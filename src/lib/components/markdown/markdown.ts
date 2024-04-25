@@ -1,3 +1,8 @@
+import { get } from 'svelte/store'
+import { userSettings } from '$lib/settings'
+
+const $userSettings = get(userSettings)
+
 const communityLinks = {
     validate: function (text: any, pos: any, self: any) {
         var tail = text.slice(pos)
@@ -47,6 +52,14 @@ const userLinks = {
         match.url = `/u/${prefix}`
     },
 }
+
+
+export function filterAnnoyingCCLicenseOnComments(source:string) {
+    return $userSettings.uiState.filterAnnoyingCCLicense
+        ? source.replace('[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
+        : source
+}
+
 
 export function findUserCommunityLinks(source: string) {
 
