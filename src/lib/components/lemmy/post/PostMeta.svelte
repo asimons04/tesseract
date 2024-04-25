@@ -1,14 +1,10 @@
 <script lang="ts">
     import type { Community, CommunityModeratorView, Person, PostView } from 'lemmy-js-client'
-    import type { PostDisplayType } from './helpers.js'
-    
-    import { getInstance } from '$lib/lemmy.js'
-    import { fediseerLookup } from '$lib/fediseer/client.js'
-    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     
     import { imageProxyURL } from '$lib/image-proxy'
     import { page } from '$app/stores'
     import { postType } from './helpers'
+    import { profile } from '$lib/auth.js'
     import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings.js'
     
@@ -88,24 +84,26 @@
                 <span class="flex flex-col items-end gap-1">
                     <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
                     
-                    <!---Overlay small subscribe/unsubscribe button on avatar--->
-                    <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
-                        on:click={async () => {
-                            subscribing = true
-                            let result = await subscribe(post.community, subscribed)
-                            
-                            if (result) post.subscribed = 'Subscribed'
-                            else post.subscribed = 'NotSubscribed'
+                    {#if $profile?.user}
+                        <!---Overlay small subscribe/unsubscribe button on avatar--->
+                        <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
+                            on:click={async () => {
+                                subscribing = true
+                                let result = await subscribe(post.community, subscribed)
+                                
+                                if (result) post.subscribed = 'Subscribed'
+                                else post.subscribed = 'NotSubscribed'
 
-                            subscribing=false
-                    }}>
-                        
-                        {#if subscribing}
-                            <Spinner width={16} />
-                        {:else}
-                            <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
-                        {/if}
-                    </button>
+                                subscribing=false
+                        }}>
+                            
+                            {#if subscribing}
+                                <Spinner width={16} />
+                            {:else}
+                                <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
+                            {/if}
+                        </button>
+                    {/if}
                 </span>
             
             <!---Show user's avatar if viewing posts in a community--->

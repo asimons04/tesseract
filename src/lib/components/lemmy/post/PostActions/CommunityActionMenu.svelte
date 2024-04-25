@@ -42,7 +42,7 @@
 
     const dispatch = createEventDispatcher()
 
-    let subscribed:boolean = ['Subscribed', 'Pending'].includes(post.subscribed)
+    $: subscribed = ['Subscribed', 'Pending'].includes(post.subscribed)
 </script>
 
 <!---Community Group Modal--->
