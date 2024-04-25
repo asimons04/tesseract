@@ -3,6 +3,7 @@
     
     import { imageProxyURL } from '$lib/image-proxy';
     import {
+        fixLemmyEncodings,
         isAudio,
         isImage,
         isVideo
@@ -30,7 +31,7 @@
         
         <!---Show Text as a Title--->
         {#if token.title}
-            <p class="font-bold text-center text-sm">{token.title}</p>
+            <p class="font-bold text-center text-sm">{fixLemmyEncodings(token.title)}</p>
         {/if}
         
         <!---Image--->
@@ -76,7 +77,7 @@
 
         <!---Show Alt Text as Descriptioin--->
         {#if token.text}
-            <p class="pt-2 text-xs">{token.text}</p>
+            <p class="pt-2 text-xs">{fixLemmyEncodings(token.text)}</p>
         {/if}
     </div>
 </div>
