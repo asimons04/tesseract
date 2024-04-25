@@ -36,7 +36,7 @@
         
         <!---Image--->
         {#if isImage(token.href)}
-            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} class="rounded-xl" />
+            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} class="mx-auto rounded-xl" />
         
         <!--- Audio--->
         {:else if isAudio(token.href) && inViewport}
