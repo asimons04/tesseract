@@ -1,19 +1,24 @@
 <script lang="ts">
     import type { CommunityModeratorView, CommentView } from 'lemmy-js-client'
     import { page } from '$app/stores'
-    
+    import { profile } from '$lib/auth.js'
+    import { subscribe } from '../community/helpers.js'
+
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
         Icon,
         Bookmark,
         Cake,
+        MinusCircle,
         NoSymbol,
         Pencil,
+        PlusCircle,
         Trash
     } from 'svelte-hero-icons'
     
@@ -26,10 +31,12 @@
     let inCommunity:boolean = false
     let inProfile:boolean = false
     let userIsModerator:boolean = false
+    let subscribing:boolean = false
 
     $: inCommunity = ($page.url.pathname.startsWith("/c/"))
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: userIsModerator = (moderators.filter((index) => index.moderator.id == comment.creator.id).length > 0)
+    $: subscribed = comment.subscribed == 'Subscribed' || comment.subscribed == 'Pending'
 
     function isNewAccount():boolean {
         return new Date().getTime()/1000/60 - (
@@ -49,7 +56,30 @@
         <span class="flex flex-row gap-2 text-sm items-center">
             <!---Show user's avatar if viewing posts in a community--->
             {#if comment.community && !inCommunity}
-                <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} />
+                <span class="flex flex-col items-end gap-1">    
+                    <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} />
+                
+                    {#if $profile?.user}
+                        <!---Overlay small subscribe/unsubscribe button on avatar--->
+                        <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
+                            on:click={async () => {
+                                subscribing = true
+                                let result = await subscribe(comment.community, subscribed)
+                                
+                                if (result) comment.subscribed = 'Subscribed'
+                                else comment.subscribed = 'NotSubscribed'
+
+                                subscribing=false
+                        }}>
+                            
+                            {#if subscribing}
+                                <Spinner width={16} />
+                            {:else}
+                                <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
+                            {/if}
+                        </button>
+                    {/if}
+                </span>
             
             {:else if inCommunity && comment.creator}
                 <Avatar url={comment.creator.avatar} width={avatarSize} alt={comment.creator.name} />
