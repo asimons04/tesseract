@@ -38,7 +38,7 @@
             <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} class="rounded-xl" />
         
         <!--- Audio--->
-        {:else if isAudio(token.href)}
+        {:else if isAudio(token.href) && inViewport}
             <audio controls preload="auto">
                 <source src={imageProxyURL(token.href)} type="{
                     new URL(token.href).pathname.endsWith('mp3')

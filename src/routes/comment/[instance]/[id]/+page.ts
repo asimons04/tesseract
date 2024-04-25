@@ -5,17 +5,16 @@ import { get } from 'svelte/store'
 
 interface loadParams {
     params: any,
-    fetch: any
 }
 
-export async function load({ params, fetch }:loadParams) {
-  const comment = await getClient(undefined, fetch).getComment({
+export async function load({ params }:loadParams) {
+  const comment = await getClient(params.instance).getComment({
     id: Number(params.id),
     auth: get(profile)?.jwt,
   })
 
   throw redirect(
     300,
-    `/post/${comment.comment_view.post.id}?thread=${comment.comment_view.comment.path}#${comment.comment_view.comment.id}`
+    `/post/${params.instance}/${comment.comment_view.post.id}?thread=${comment.comment_view.comment.path}#${comment.comment_view.comment.id}`
   )
 }
