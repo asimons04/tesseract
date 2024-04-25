@@ -215,7 +215,7 @@
                         <p class="text-xs font-normal">Read the full report for {results.name} at Media Bias Fact Check.</p>
                         
                         <span class="mt-2 text-xs font-normal">
-                            <Link highlight href={results.url} newTab={true} title="Full MBFC report for {results.name}"/>
+                            <Link highlight href={results.url} newtab={true} title="Full MBFC report for {results.name}"/>
                         </span>
                     </div>
                     
