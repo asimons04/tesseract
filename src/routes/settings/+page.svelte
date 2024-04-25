@@ -40,6 +40,7 @@
         BugAnt,
         ArrowTopRightOnSquare,
         ChartBar,
+        ChatBubbleBottomCenterText,
         CheckBadge,
         ChevronUp,
         CloudArrowDown,
@@ -70,6 +71,7 @@
         Server,
         TableCells,
         Trash,
+        Trophy,
         Tv,
         Window,
         XCircle
@@ -429,7 +431,7 @@
                 />
 
                 <!---Show Scores--->
-                <SettingToggle icon={ArrowsRightLeft} title="Show Scores"  bind:value={$userSettings.uiState.showScores}
+                <SettingToggle icon={Trophy} title="Show Scores"  bind:value={$userSettings.uiState.showScores}
                     description="Disable this option if you do not want to see upvote/downvote counts on posts and comments."
                 />
 
@@ -580,9 +582,9 @@
                 />
                         
 
-                <!---Inline Code Syntax Highlighting--->
-                <SettingToggle title="Inline Code Highlighting" icon={CodeBracket} bind:value={$userSettings.highlightInlineCode}
-                    description="Enable syntax highlighting for inline code."
+                <!---Show Alt Text--->
+                <SettingToggle title="Show Alt Text" icon={ChatBubbleBottomCenterText} bind:value={$userSettings.uiState.showAltText}
+                    description="When available, show the provided alt text as a caption for images rendered in markdown."
                 />
                         
 

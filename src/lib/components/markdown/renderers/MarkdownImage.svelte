@@ -26,11 +26,11 @@
 
 {#if $userSettings.inlineImages}
 
-<div bind:this={container} class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl w-fit p-2">
+<div bind:this={container} class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl w-fit lg:max-w-[75%] p-2">
     <div class="ml-auto mr-auto max-w-full">
         
         <!---Show Text as a Title--->
-        {#if token.title}
+        {#if token.title && $userSettings.uiState.showAltText}
             <p class="font-bold text-center text-sm">{fixLemmyEncodings(token.title)}</p>
         {/if}
         
@@ -75,9 +75,10 @@
             </video>    
         {/if}
 
-        <!---Show Alt Text as Descriptioin--->
-        {#if token.text}
-            <p class="pt-2 text-xs">{fixLemmyEncodings(token.text)}</p>
+        <!---Show Alt Text as Caption--->
+        {#if token.text && $userSettings.uiState.showAltText}
+            <!---<p class="pt-2 text-xs">{fixLemmyEncodings(token.text)}</p>--->
+            <p class="background-blur-3xl bg-white/50 dark:bg-black/50 rounded-xl p-2 mt-2 text-xs text-center">{fixLemmyEncodings(token.text)}</p>
         {/if}
     </div>
 </div>

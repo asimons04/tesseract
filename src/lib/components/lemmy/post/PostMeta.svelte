@@ -5,9 +5,11 @@
     import { getInstance } from '$lib/lemmy.js'
     import { fediseerLookup } from '$lib/fediseer/client.js'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
+    
     import { imageProxyURL } from '$lib/image-proxy'
     import { page } from '$app/stores'
     import { postType } from './helpers'
+    import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -30,6 +32,7 @@
         MinusCircle,
         NoSymbol,
         Pencil,
+        PlusCircle,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -47,11 +50,13 @@
     let inCommunity:boolean = false
     let inProfile:boolean = false
     let userIsModerator:boolean =false 
+    let subscribing:boolean = false
 
     $: inCommunity = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: userIsModerator = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: post
+    $: subscribed = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
     
     let fediseerModal:boolean = false;
 
@@ -77,10 +82,33 @@
     <div class="flex flex-col gap-1">
 
         <span class="flex flex-row gap-2 text-sm items-center">
-            <!---Show user's avatar if viewing posts in a community--->
-            {#if post.community && !inCommunity}
-                <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
             
+            <!---Show Community Icon if Not in Community--->
+            {#if post.community && !inCommunity}
+                <span class="flex flex-col items-end gap-1">
+                    <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
+                    
+                    <!---Overlay small subscribe/unsubscribe button on avatar--->
+                    <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
+                        on:click={async () => {
+                            subscribing = true
+                            let result = await subscribe(post.community, subscribed)
+                            
+                            if (result) post.subscribed = 'Subscribed'
+                            else post.subscribed = 'NotSubscribed'
+
+                            subscribing=false
+                    }}>
+                        
+                        {#if subscribing}
+                            <Spinner width={16} />
+                        {:else}
+                            <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
+                        {/if}
+                    </button>
+                </span>
+            
+            <!---Show user's avatar if viewing posts in a community--->
             {:else if inCommunity && post.creator}
                 <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.name} />
             {/if}
@@ -118,6 +146,7 @@
                 {#if post && $userSettings.uiState.MBFCBadges && post.post.url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
+                
 
                 <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
                 {#if post?.creator?.published && isNewAccount() }
@@ -180,6 +209,8 @@
                         />
                     </button>
                 {/if}
+
+                
             </div>
             {/if}
             

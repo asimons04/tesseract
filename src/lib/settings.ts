@@ -117,6 +117,7 @@ interface Settings {
         modalOpen: boolean
         reverseActionBar: boolean
         showScores: boolean
+        showAltText:boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -170,6 +171,7 @@ export const defaultSettings: Settings = {
         modalOpen:                                                      false,
         reverseActionBar:                                               false,
         showScores:                                                     true,
+        showAltText:                                                    true,
 
     },
 
