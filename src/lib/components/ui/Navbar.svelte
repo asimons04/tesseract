@@ -48,6 +48,7 @@
         Newspaper,
         PencilSquare,
         Plus,
+        Server,
         Star,
         Sun,
         UserCircle,
@@ -302,26 +303,23 @@
         
         <!--- /admin Button --->
         {#if $profile?.user && isAdmin($profile.user)}
-            <MenuButton link href="/admin"
-                aria-label="Admin Panel"
-            >
+            <MenuButton link href="/admin" aria-label="Admin Panel" >
                 <Icon src={CommandLine} mini width={16} />
                 Admin Panel
             </MenuButton>
         {/if}
 
-        <!--- Optionally hide the modlog from non-moderators/non-admins. --->
-        {#if 
-            !DISABLE_MODLOG_USERS || 
-            ($profile?.user && isAdmin($profile.user)) || 
-            ($profile?.user && amModOfAny($profile?.user))  
-        }
-                <MenuButton link href="/modlog">
-                    <Icon src={Newspaper} mini width={16} />
-                    Modlog
-                </MenuButton>
-        {/if}
+
+        <MenuButton link href="/modlog">
+            <Icon src={Newspaper} mini width={16} />
+            Modlog
+        </MenuButton>
         
+        <MenuButton link href="/instances">
+            <Icon src={Server} mini width={16} />
+            Instances
+        </MenuButton>
+
         <MenuButton link href="/legal">
             <Icon src={BuildingOffice} mini width={16} />
             Legal
