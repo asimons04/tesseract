@@ -14,6 +14,7 @@
     
     import {
         Cog6Tooth,
+        HandRaised,
         Icon,
         UserGroup
     } from 'svelte-hero-icons'
@@ -45,6 +46,13 @@
             <span class="flex flex-col items-center {$page.url.pathname.endsWith('/settings/team') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                 <Icon src={UserGroup} mini size="18" title="Team" />
                 <span class="text-xs">Team</span>
+            </span>            
+        </Button>
+
+        <Button color="tertiary" alignment="left" title="Moderation" class="hover:bg-slate-200" href="{communityUrl}/settings/moderation">
+            <span class="flex flex-col items-center {$page.url.pathname.endsWith('/settings/moderation') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                <Icon src={HandRaised} mini size="18" title="Moderation" />
+                <span class="text-xs">Moderation</span>
             </span>            
         </Button>
 

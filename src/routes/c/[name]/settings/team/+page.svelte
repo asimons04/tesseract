@@ -142,7 +142,7 @@
         {/each}
 
         <div class="flex flex-row gap-2 pt-4 w-full">
-            <TextInput bind:value={formData.newModerator} class="w-full" placeholder="@user@example.com" />
+            <TextInput bind:value={formData.newModerator} class="w-full" placeholder="@user@example.com" label="Directly Ban or Unban a User"/>
             <Button loading={formData.addingModerator} disabled={formData.addingModerator} color="tertiary-border" size="lg" class="w-max flex-shrink-0" on:click={addModerator}>
                 <Icon slot="icon" src={Plus} mini size="16" />Add moderator
             </Button>

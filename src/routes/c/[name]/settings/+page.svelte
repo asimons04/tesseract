@@ -1,8 +1,7 @@
 <script lang="ts">
-  import CommunityForm from '$lib/components/lemmy/community/CommunityForm.svelte'
-  import CommunityTitle from '$lib/components/lemmy/community/CommunityTitle.svelte'
+    import CommunityForm from '$lib/components/lemmy/community/CommunityForm.svelte'
 
-  export let data
+    export let data
 </script>
 
 <div class="flex flex-col gap-4">

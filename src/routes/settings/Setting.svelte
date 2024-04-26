@@ -10,6 +10,6 @@
             <slot name="description" />
         </p>
     {/if}
-    <div class="mb-4"/>
+    
     <slot />
 </Card>
