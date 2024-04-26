@@ -56,6 +56,11 @@
             }
         }
         
+        // Convert a Lemmyverse link to something that can be resolved
+        if (formData.user.startsWith('https://lemmyverse.link')) {
+            formData.user = formData.user.replace('https://lemmyverse.link/u/', '@')
+        }
+
         formData.banning = true
 
         try {
@@ -111,6 +116,11 @@
     
     <Setting>
         <span slot="title">Ban/Unban a User</span>
+        <span slot="description">
+            Use this form to directly ban or unban a user. Direct bans can be useful if there is a known troll posting elsewhere
+            and you want to prevent them from hitting your community. You can also quickly unban a user without having to find them
+            in the modlog or locate a submission to find the relevant action button.
+        </span>
 
         <div class="flex flex-row gap-2 pt-4 w-full items-end">
             <TextInput bind:value={formData.user} class="w-full" label="User" required placeholder="@user@example.com or https://example.com/u/user" />

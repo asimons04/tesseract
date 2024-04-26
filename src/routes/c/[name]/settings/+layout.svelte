@@ -29,7 +29,7 @@
 </script>
 
 
-<SubNavbar home back toggleCommunitySidebar refreshButton toggleMargins/>
+<SubNavbar home back toggleCommunitySidebar refreshButton/>
 
 <MainContentArea>
         
