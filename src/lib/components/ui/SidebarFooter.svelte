@@ -10,7 +10,7 @@
         <Logo width={40} />
         <span class="flex flex-col gap-0">
             <span class="font-bold">Tesseract</span>
-            <span>v{__VERSION__}</span>
+            <span>v{__VERSION__} ({String(__CODENAME__)})</span>
         </span>
     </span>
 
