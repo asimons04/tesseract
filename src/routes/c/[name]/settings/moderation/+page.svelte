@@ -7,6 +7,7 @@
     import Checkbox from '$lib/components/input/Checkbox.svelte';
     import DateInput from '$lib/components/input/DateInput.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte';
     import Setting from '$routes/settings/Setting.svelte';
     import TextArea from '$lib/components/input/TextArea.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte';
@@ -114,6 +115,12 @@
     }
 
 </script>
+
+<svelte:head>
+    <title>Community Moderation</title>
+</svelte:head>
+
+
 <MainContentArea>
     <h1 class="font-bold text-2xl">Moderation</h1>
     
@@ -127,7 +134,7 @@
 
         <div class="flex flex-row gap-2 pt-4 w-full items-end">
             <TextInput bind:value={formData.user} class="w-full" label="User" required placeholder="@user@example.com or https://example.com/u/user" />
-            <Checkbox bind:checked={formData.ban}>Ban?</Checkbox>
+            <MultiSelect  options={[false, true]} optionNames={['Unban', 'Ban']} bind:selected={formData.ban} />
         </div>
 
         <div class="flex flex-col md:flex-row gap-2 w-full">
