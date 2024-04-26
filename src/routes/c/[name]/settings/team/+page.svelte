@@ -141,9 +141,9 @@
             </div>
         {/each}
 
-        <div class="flex flex-row gap-2 pt-4 w-full">
+        <div class="flex flex-row gap-2 pt-4 w-full items-end">
             <TextInput bind:value={formData.newModerator} class="w-full" placeholder="@user@example.com or https://example.com/u/user" label="Add a New Moderator to the Team"/>
-            <Button loading={formData.addingModerator} disabled={formData.addingModerator} color="tertiary-border" size="lg" class="w-max flex-shrink-0" on:click={addModerator}>
+            <Button loading={formData.addingModerator} disabled={formData.addingModerator} color="primary" size="md" class="w-max h-8 flex-shrink-0 h-" on:click={addModerator}>
                 <Icon slot="icon" src={Plus} mini size="16" />Add moderator
             </Button>
         </div>

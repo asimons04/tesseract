@@ -36,21 +36,21 @@
     <!---Profile Sub-Page Buttons--->
     <div class="sticky top-[6.9rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10">
         <Button color="tertiary" alignment="left" title="Settings" class="hover:bg-slate-200" href="{communityUrl}/settings">
-            <span class="flex flex-col items-center {$page.url.pathname.endsWith('/settings') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+            <span class="flex flex-col items-center {$page.url.pathname==`${communityUrl}/settings` || $page.url.pathname==`${communityUrl}/settings/` ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                 <Icon src={Cog6Tooth} mini size="18" title="Settings" />
                 <span class="text-xs">Settings</span>
             </span>            
         </Button>
         
         <Button color="tertiary" alignment="left" title="Team" class="hover:bg-slate-200" href="{communityUrl}/settings/team">
-            <span class="flex flex-col items-center {$page.url.pathname.endsWith('/settings/team') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+            <span class="flex flex-col items-center {$page.url.pathname.endsWith(`${communityUrl}/settings/team`) ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                 <Icon src={UserGroup} mini size="18" title="Team" />
                 <span class="text-xs">Team</span>
             </span>            
         </Button>
 
         <Button color="tertiary" alignment="left" title="Moderation" class="hover:bg-slate-200" href="{communityUrl}/settings/moderation">
-            <span class="flex flex-col items-center {$page.url.pathname.endsWith('/settings/moderation') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+            <span class="flex flex-col items-center {$page.url.pathname.endsWith(`${communityUrl}/settings/moderation`) ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                 <Icon src={HandRaised} mini size="18" title="Moderation" />
                 <span class="text-xs">Moderation</span>
             </span>            
