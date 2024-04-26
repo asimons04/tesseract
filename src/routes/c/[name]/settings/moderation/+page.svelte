@@ -25,6 +25,7 @@
         ban: false,
         expires: '',
         reason: '',
+        remove_data: false,
         banning: false
     }
 
@@ -76,7 +77,8 @@
                     expires: date ? Math.floor(date / 1000) : undefined,
                     person_id: res.person.person.id,
                     community_id: data.community.community_view.community.id,
-                    reason: formData.reason
+                    reason: formData.reason,
+                    remove_data: formData.remove_data
                 })
 
 
@@ -90,6 +92,7 @@
                 formData.reason = ''
                 formData.expires = ''
                 formData.ban = false
+                formData.remove_data = false
             } 
             else {
                 toast({
@@ -117,9 +120,9 @@
     <Setting>
         <span slot="title">Ban/Unban a User</span>
         <span slot="description">
-            Use this form to directly ban or unban a user. Direct bans can be useful if there is a known troll posting elsewhere
-            and you want to prevent them from hitting your community. You can also quickly unban a user without having to find them
-            in the modlog or locate a submission to find the relevant action button.
+            Use this form to directly ban or unban a user from this community. Direct bans can be useful if there is a known troll 
+            posting elsewhere and you want to prevent them from hitting your community. You can also quickly unban a user without having
+            to find them in the modlog or locate a submission to find the relevant action button.
         </span>
 
         <div class="flex flex-row gap-2 pt-4 w-full items-end">
@@ -127,14 +130,17 @@
             <Checkbox bind:checked={formData.ban}>Ban?</Checkbox>
         </div>
 
-        <div class="flex flex-row gap-2 w-full">
-            <div class="w-2/3">
+        <div class="flex flex-col md:flex-row gap-2 w-full">
+            <div class="w-full md:w-2/3">
                 <TextArea bind:value={formData.reason} rows={3} placeholder="Why are you {formData.ban ? 'banning' : 'unbanning'} this user?" class="w-full" label="Reason"/>
             </div>
 
-            <div class="w-1/3">
+            <div class="w-full md:w-1/3">
                 {#if formData.ban}
-                    <DateInput bind:value={formData.expires} label="Ban Expires?"/> 
+                    <div class="flex flex-col gap-2 w-full">    
+                        <DateInput bind:value={formData.expires} label="Ban Expires?"/> 
+                        <Checkbox bind:checked={formData.remove_data}>Remove Data?</Checkbox>
+                    </div>
                 {/if}
             </div>
         </div>

@@ -80,7 +80,9 @@
                 toast({
                     content: 'Successfully purged that submission.',
                     type: 'success',
+                    title: 'Success'
                 })
+                
 
                 loading = false
                 open = false
@@ -91,6 +93,8 @@
                 if (replyReason == '') {
                     toast({
                         content: 'Your reply cannot be empty if "Reply reason" is enabled.',
+                        type: 'warning',
+                        title: 'Reply Text is Required'
                     })
                     return
                 }
@@ -134,7 +138,8 @@
                     reason: reason || undefined,
                 })
                 item.comment.removed = !removed
-            } else if (isPostView(item)) {
+            } 
+            else if (isPostView(item)) {
                 await getClient().removePost({
                     auth: $profile.jwt,
                     post_id: item.post.id,
@@ -146,15 +151,15 @@
             open = false
 
             toast({
-                content: `Successfully ${
-                removed ? 'restored' : 'removed'
-                } that submission.`,
+                content: `Successfully ${removed ? 'restored' : 'removed'} that submission.`,
                 type: 'success',
+                title: 'Success'
             })
         } catch (err) {
             toast({
-                content: err as any,
+                content: (err as any) ?? 'The API returned an error when processing this request, but no details were provided.',
                 type: 'error',
+                title: 'Error'
             })
         }
         loading = false

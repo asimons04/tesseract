@@ -172,7 +172,7 @@
         />
 
         <!--- Modlog Filter Menu --->
-        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[106%] md:!-left-[50%]">
+        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[190%] md:!-left-[50%]">
             <!--- Lookup a Community to Filter--->
             <MenuButton>
                 <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
@@ -199,10 +199,7 @@
                     {:else}
                         <span class="flex flex-row gap-2 w-full">
                             
-                            <CommunityAutocomplete
-                                containerClass="!w-full"
-                                placeholder="Community"
-                                listing_type="All"
+                            <CommunityAutocomplete containerClass="!w-full" placeholder="Community" listing_type="All"
                                 on:select={(e) => {
                                     filter.community.community = e.detail
                                     searchParam($page.url, 'community', e.detail?.id.toString(), 'page')

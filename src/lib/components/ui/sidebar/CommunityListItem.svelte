@@ -28,11 +28,12 @@
     import {
         Icon,
         Bars3,
+        Cog6Tooth,
         Minus,
         PencilSquare,
         Star,
         Trash,
-        UserGroup
+        UserGroup,
     } from 'svelte-hero-icons'
 
     export let community:Community
@@ -173,6 +174,15 @@
                 Unsubscribe
             </button>
         </MenuButton>
+
+        <!---Community Settings--->
+        {#if amMod($profile?.user, community) || (community.local && isAdmin($profile?.user))}
+            <MenuButton title="Community Settings" link href="/c/{community.name}@{new URL(community.actor_id).hostname}/settings">
+                <Icon src={Cog6Tooth} mini size="16"/>
+                Community Settings
+            </MenuButton>
+
+        {/if}
 
         
     </Menu>

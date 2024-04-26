@@ -59,6 +59,9 @@ Not really doing anything groundbreaking with this release.  There are a few new
         - Load embeddable videos (Youtube-like, Vimeo, Peertube, etc) in a modal rather than leaving the app
         - Enlarge or otherwise add other features to images posted in markdown
 
+- New Community Moderation Panel
+    - In the community settings, mods can now direct ban/unban users
+
 - Added button to community avatars in the feed to quickly subscribe/unsubscribe to communities
     - Browsing all and see an interesting community?  Now you can quick-subscribe to it without having to click the community menu
 
