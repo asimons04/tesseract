@@ -140,8 +140,13 @@
     <TextInput required label="Display name" bind:value={formData.displayName} />
     
     <span class="flex flex-col lg:flex-row gap-4 items-start">
-        <FileInput label="Icon" bind:files={formData.icon} image preview previewURL={formData.currentIcon} class="w-full"/>
-        <FileInput label="Banner" bind:files={formData.banner} image preview previewURL={formData.currentBanner} class="w-full"/>
+        <div class="w-full lg:w-1/3">
+            <FileInput label="Icon" bind:files={formData.icon} image preview previewURL={formData.currentIcon} class="w-full"/>
+        </div>
+
+        <div class="w-full lg:w-2/3">
+            <FileInput label="Banner" bind:files={formData.banner} image preview previewURL={formData.currentBanner} class="w-full"/>
+        </div>
     </span>
 
     <MarkdownEditor previewButton label="Sidebar" bind:value={formData.sidebar} rows={10}/>
