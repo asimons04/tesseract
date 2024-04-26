@@ -6,7 +6,7 @@
   export let files: FileList | null | undefined = null
   export let image = false
   export let label: string | undefined = undefined
-  export let previewURL = ''
+  export let previewURL : string | undefined | null= ''
   export let preview:boolean = true;
 
   let dragover = false

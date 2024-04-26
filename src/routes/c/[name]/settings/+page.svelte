@@ -6,7 +6,6 @@
 </script>
 
 <div class="flex flex-col gap-4">
-    <CommunityTitle community={data.community.community_view.community} />
     <h1 class="font-bold text-2xl">Settings</h1>
   
     <CommunityForm
@@ -21,6 +20,8 @@
             icon: null,
             banner: null,
             submitting: false,
+            currentIcon: data.community.community_view.community.icon,
+            currentBanner: data.community.community_view.community.banner,
         }}
   >
     <svelte:fragment slot="formtitle">{''}</svelte:fragment>

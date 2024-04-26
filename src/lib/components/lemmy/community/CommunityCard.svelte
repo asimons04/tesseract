@@ -340,7 +340,7 @@
         </Card>
             
         <!--- Convenience button to create post --->
-        <div class="border-b border-slate-200 dark:border-zinc-800 w-full mt-2 pb-2 flex flex-row gap-2 hidden xl:flex">
+        <div class="w-full mt-2 flex flex-row gap-2 hidden xl:flex">
             {#if $profile?.jwt && $profile?.user}
                 
                 <!---Create Post--->
@@ -373,7 +373,19 @@
             {/if}
         </div>
 
-        <div class="hidden xl:block w-full overflow-y-auto">
+        <!---Settings buttons for Mod/Admin--->
+        {#if $profile?.user && amMod($profile.user, community_view.community) || (isAdmin($profile?.user) && community_view.community.local)}
+            <div class="w-full flex flex-row gap-2 hidden xl:flex">
+                <Button link title="Edit Community" class="w-full" size="lg" color="tertiary-border"
+                    href="/c/{fullCommunityName(community_view.community.name,community_view.community.actor_id)}/settings"
+                >
+                    <Icon src={Cog6Tooth} mini size="16" />
+                    Community Settings
+                </Button>
+            </div>
+        {/if}    
+        
+        <div class="hidden xl:block w-full mt-2 overflow-y-auto">
             {#if moderators.length > 0}
                 <CollapseButton icon={HandRaised} title="Moderators">
                     {#each moderators as moderator}
