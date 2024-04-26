@@ -206,7 +206,8 @@
             
             {#if data.modlog?.modlog?.length > 0}
                 {#each data.modlog.modlog as modlogItem}
-                    {#if [
+                    {#if 
+                        [
                             'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
                             'ban', 'unban' ,'banCommunity', 'unbanCommunity'
                         ].includes(modlogItem.actionName)
@@ -228,7 +229,7 @@
         </div>
         
             
-            <Pageination bind:page={data.modlog.page} scrollToTop={false} on:change={(e) => {
+            <Pageination bind:page={data.modlog.page} on:change={(e) => {
                 reloadModlog()
                 modlogDiv.scrollTo(0,0)
             }}/>
