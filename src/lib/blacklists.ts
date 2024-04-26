@@ -16,6 +16,8 @@ const FAKE_NEWS = [
     'tass.com',
     'www.infoterkiniviral.com',
     'www.kaggle.com',
+    'tiblur.com',
+    'www.tiblur.com',
     ...BLACKLIST_CONFIG.FAKE_NEWS_BLACKLIST
 ]
 
