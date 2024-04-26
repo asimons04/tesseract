@@ -10,7 +10,9 @@
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import ModlogItemList from '$routes/modlog/item/ModlogItemList.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte';
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import Setting from '$routes/settings/Setting.svelte';
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
     import TextArea from '$lib/components/input/TextArea.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte';
 
@@ -26,6 +28,7 @@
     export let data
     
     let modlogDiv:HTMLDivElement
+    let modlogLoading = false
 
     let formData = {
         user: '',
@@ -123,11 +126,13 @@
     }
 
     async function reloadModlog() {
+        modlogLoading = true
         const modlogSearchURL = new URL('https://localhost')
         modlogSearchURL.searchParams.set('community', data.community.community_view.community.id.toString())
         modlogSearchURL.searchParams.set('page', data.modlog.page.toString())
         
         data.modlog = await loadModlog({url: modlogSearchURL})
+        modlogLoading = false
     }
 </script>
 
@@ -181,7 +186,7 @@
         <span slot="title">
             <span class="flex flex-row w-full items-center justify-between">
                 <span>Community Modlog</span>
-                <Button href="/modlog?community=${data.community.community_view.community.id.toString()}" title="Full Community Modlog">
+                <Button href="/modlog?community={data.community.community_view.community.id.toString()}" title="Full Community Modlog">
                     <Icon src={Newspaper} mini width={18}/>
                 </Button>
             </span>
@@ -193,6 +198,12 @@
         
         
         <div bind:this={modlogDiv} class="flex flex-col gap-4 mt-2 max-h-[60vh] overflow-y-scroll p-2">
+            {#if modlogLoading}
+                <span class="mx-auto my-auto">    
+                    <Spinner width={64} />
+                </span>
+            {/if}
+            
             {#if data.modlog?.modlog?.length > 0}
                 {#each data.modlog.modlog as modlogItem}
                     {#if [
@@ -209,6 +220,10 @@
                 
                 <!---Spacer for bottommost action menu--->
                 <span class="mt-4" />
+            {:else}
+                <span class="mx-auto my-auto">
+                    <Placeholder icon={Newspaper} title="No Results" description="No modlog results returned" />
+                </span>
             {/if}
         </div>
         

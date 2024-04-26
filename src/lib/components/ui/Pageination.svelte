@@ -16,7 +16,7 @@
 
 <div class="flex flex-row w-full h-8 mt-auto gap-4">
     
-    <Button  class="flex-1 font-normal w-full" title="Previous Page"
+    <Button  class="flex-1 font-normal w-full" title="Previous Page" color="tertiary-border"
         on:click={() => {
             dispatcher('change', --page)
         }}
@@ -27,7 +27,7 @@
     </Button>
 
     {#if scrollToTop}
-        <Button class="flex-1 font-normal w-full" title="Scroll to Top"
+        <Button class="flex-1 font-normal w-full" title="Scroll to Top"  color="tertiary-border"
             on:click={() => {
                 window.scrollTo(0,0);
             }}
@@ -38,7 +38,7 @@
     {/if}
 
 
-    <Button  class="flex-1 font-normal w-full" title="Next Page"
+    <Button  class="flex-1 font-normal w-full" title="Next Page"  color="tertiary-border"
         on:click={() => {
             dispatcher('change', ++page)
         }}
