@@ -115,41 +115,39 @@
 </svelte:head>
 
 <MainContentArea>
-    <FeedContainer>
-        <h1 class="font-bold text-2xl">Moderator Team</h1>
-        <EditableList let:action
-            on:action={(e) => {
-                toast({
-                    content: `Are you sure you want to remove ${e.detail.name} as a moderator?`,
-                    action: () => removeMod(e.detail.id),
-                    title: 'Confirm'
-                })
-            }}
-        >
-            {#each data.community.moderators as moderator (moderator.moderator.id)}
-                <div class="py-4 flex items-center gap-2 justify-between" animate:flip={{ duration: 300 }} >
-                    <div class="flex gap-2 items-center">
-                        <Avatar width={28} url={moderator.moderator.avatar} alt={moderator.moderator.name} />
-                        <div class="flex flex-col gap-0">
-                            <UserLink user={moderator.moderator} showInstance={false} />
-                            <span class="text-xs text-slate-600 dark:text-zinc-400">
-                                {new URL(moderator.moderator.actor_id).hostname}
-                            </span>
-                        </div>
+    <h1 class="font-bold text-2xl">Moderator Team</h1>
+    <EditableList let:action
+        on:action={(e) => {
+            toast({
+                content: `Are you sure you want to remove ${e.detail.name} as a moderator?`,
+                action: () => removeMod(e.detail.id),
+                title: 'Confirm'
+            })
+        }}
+    >
+        {#each data.community.moderators as moderator (moderator.moderator.id)}
+            <div class="py-4 flex items-center gap-2 justify-between" animate:flip={{ duration: 300 }} >
+                <div class="flex gap-2 items-center">
+                    <Avatar width={28} url={moderator.moderator.avatar} alt={moderator.moderator.name} />
+                    <div class="flex flex-col gap-0">
+                        <UserLink user={moderator.moderator} showInstance={false} />
+                        <span class="text-xs text-slate-600 dark:text-zinc-400">
+                            {new URL(moderator.moderator.actor_id).hostname}
+                        </span>
                     </div>
-            
-                    <Button size="square-md" on:click={() => action(moderator.moderator)} icon={Trash} />
                 </div>
-            {/each}
-
-            <div class="flex flex-row gap-2 pt-4 w-full">
-                <TextInput bind:value={formData.newModerator} class="w-full" placeholder="@user@example.com" />
-                <Button loading={formData.addingModerator} disabled={formData.addingModerator} color="tertiary-border" size="lg" class="w-max flex-shrink-0" on:click={addModerator}>
-                    <Icon slot="icon" src={Plus} mini size="16" />Add moderator
-                </Button>
+        
+                <Button size="square-md" on:click={() => action(moderator.moderator)} icon={Trash} />
             </div>
-        </EditableList>
-    </FeedContainer>
+        {/each}
+
+        <div class="flex flex-row gap-2 pt-4 w-full">
+            <TextInput bind:value={formData.newModerator} class="w-full" placeholder="@user@example.com" />
+            <Button loading={formData.addingModerator} disabled={formData.addingModerator} color="tertiary-border" size="lg" class="w-max flex-shrink-0" on:click={addModerator}>
+                <Icon slot="icon" src={Plus} mini size="16" />Add moderator
+            </Button>
+        </div>
+    </EditableList>
 </MainContentArea>
 
 
