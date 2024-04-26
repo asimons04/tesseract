@@ -9,6 +9,9 @@ import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'
 
 export async function load(req: any) {
+    // Don't call this loader if accessing the settings panels beyond this path
+    if (req.url.pathname.includes('/settings')) return
+
     const page_cursor = req.url.searchParams.get('page_cursor')
     const page = page_cursor 
         ? undefined

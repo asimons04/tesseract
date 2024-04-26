@@ -1,5 +1,6 @@
 <script lang="ts">
     import { getClient } from '$lib/lemmy'
+    import { load as loadModlog } from '$routes/modlog/+page'
     import { profile } from '$lib/auth'
     import { toast } from '$lib/components/ui/toasts/toasts'
     
@@ -7,6 +8,7 @@
     import Checkbox from '$lib/components/input/Checkbox.svelte';
     import DateInput from '$lib/components/input/DateInput.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import ModlogItemList from '$routes/modlog/item/ModlogItemList.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte';
     import Setting from '$routes/settings/Setting.svelte';
     import TextArea from '$lib/components/input/TextArea.svelte';
@@ -14,13 +16,17 @@
 
     import { 
         Icon,
+        Newspaper,
         Trash
     } from 'svelte-hero-icons'
+    import Pageination from '$lib/components/ui/Pageination.svelte';
     
     
 
     export let data
     
+    let modlogDiv:HTMLDivElement
+
     let formData = {
         user: '',
         ban: false,
@@ -43,8 +49,8 @@
             return
         }
 
+        // Validate date and format into the expected format for Lemmy's API
         let date: undefined | number = undefined
-        
         if (formData.expires != '') {
             date = Date.parse(formData.expires)
             if (Number.isNaN(date) || date < Date.now()) {
@@ -56,6 +62,7 @@
                 
                 return
             }
+            date = Math.floor(date / 1000)
         }
         
         // Convert a Lemmyverse link to something that can be resolved
@@ -75,7 +82,7 @@
                 const banUserRes = await getClient().banFromCommunity({
                     auth: $profile.jwt,
                     ban: formData.ban,
-                    expires: date ? Math.floor(date / 1000) : undefined,
+                    expires: date || undefined,
                     person_id: res.person.person.id,
                     community_id: data.community.community_view.community.id,
                     reason: formData.reason,
@@ -112,8 +119,16 @@
         }
 
         formData.banning = false
+        reloadModlog()
     }
 
+    async function reloadModlog() {
+        const modlogSearchURL = new URL('https://localhost')
+        modlogSearchURL.searchParams.set('community', data.community.community_view.community.id.toString())
+        modlogSearchURL.searchParams.set('page', data.modlog.page.toString())
+        
+        data.modlog = await loadModlog({url: modlogSearchURL})
+    }
 </script>
 
 <svelte:head>
@@ -133,7 +148,7 @@
         </span>
 
         <div class="flex flex-row gap-2 pt-4 w-full items-end">
-            <TextInput bind:value={formData.user} class="w-full" label="User" required placeholder="@user@example.com or https://example.com/u/user" />
+            <TextInput bind:value={formData.user} class="w-full" label="User" required placeholder="@user@example.com, https://example.com/u/user, or https://lemmyverse.link/u/user@example.com" />
             <MultiSelect  options={[false, true]} optionNames={['Unban', 'Ban']} bind:selected={formData.ban} />
         </div>
 
@@ -146,7 +161,7 @@
                 {#if formData.ban}
                     <div class="flex flex-col gap-2 w-full">    
                         <DateInput bind:value={formData.expires} label="Ban Expires?"/> 
-                        <Checkbox bind:checked={formData.remove_data}>Remove Data?</Checkbox>
+                        <Checkbox bind:checked={formData.remove_data}>Remove Submissions?</Checkbox>
                     </div>
                 {/if}
             </div>
@@ -158,5 +173,50 @@
                 {formData.ban ? 'Ban' : 'Unban'} User
             </Button>
         </div>
+    </Setting>
+
+    
+    <!---Community Modlog--->
+    <Setting>
+        <span slot="title">
+            <span class="flex flex-row w-full items-center justify-between">
+                <span>Community Modlog</span>
+                <Button href="/modlog?community=${data.community.community_view.community.id.toString()}" title="Full Community Modlog">
+                    <Icon src={Newspaper} mini width={18}/>
+                </Button>
+            </span>
+        </span>
+
+        <span slot="description">
+            Mini modlog for this community. Use the button to the top right of this panel to access the full-featured modlog.
+        </span>
+        
+        
+        <div bind:this={modlogDiv} class="flex flex-col gap-4 mt-2 max-h-[60vh] overflow-y-scroll p-2">
+            {#if data.modlog?.modlog?.length > 0}
+                {#each data.modlog.modlog as modlogItem}
+                    {#if [
+                            'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
+                            'ban', 'unban' ,'banCommunity', 'unbanCommunity'
+                        ].includes(modlogItem.actionName)
+                    }
+                        <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
+                            <ModlogItemList item={modlogItem} hideCommunity={true} />
+                        </div>
+                    {/if}
+
+                {/each}
+                
+                <!---Spacer for bottommost action menu--->
+                <span class="mt-4" />
+            {/if}
+        </div>
+        
+            
+            <Pageination bind:page={data.modlog.page} scrollToTop={false} on:change={(e) => {
+                reloadModlog()
+                modlogDiv.scrollTo(0,0)
+            }}/>
+        
     </Setting>
 </MainContentArea>

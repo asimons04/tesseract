@@ -9,6 +9,7 @@
     } from 'svelte-hero-icons'
 
     export let page: number
+    export let scrollToTop:boolean = true
 
     const dispatcher = createEventDispatcher<{ change: number }>()
 </script>
@@ -25,14 +26,16 @@
         Back
     </Button>
 
-    <Button class="flex-1 font-normal w-full" title="Scroll to Top"
-        on:click={() => {
-            window.scrollTo(0,0);
-        }}
-    >
-        <Icon src={ChevronDoubleUp} mini size="16" slot="icon" />
-        <span class="hidden md:inline">Scroll to Top</span>
-    </Button>
+    {#if scrollToTop}
+        <Button class="flex-1 font-normal w-full" title="Scroll to Top"
+            on:click={() => {
+                window.scrollTo(0,0);
+            }}
+        >
+            <Icon src={ChevronDoubleUp} mini size="16" slot="icon" />
+            <span class="hidden md:inline">Scroll to Top</span>
+        </Button>
+    {/if}
 
 
     <Button  class="flex-1 font-normal w-full" title="Next Page"
