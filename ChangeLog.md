@@ -61,6 +61,7 @@ Not really doing anything groundbreaking with this release.  There are a few new
 
 - New Community Moderation Panel
     - In the community settings, mods can now direct ban/unban users
+    - There's now a mini-modlog available in the moderation section. Can perform quick actions, see recent (or all) history, and link to the main modlog pre-filtered for that community.
 
 - Added button to community avatars in the feed to quickly subscribe/unsubscribe to communities
     - Browsing all and see an interesting community?  Now you can quick-subscribe to it without having to click the community menu
