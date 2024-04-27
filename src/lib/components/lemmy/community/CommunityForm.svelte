@@ -122,9 +122,7 @@
     }
 </script>
 
-<svelte:head>
-    <title>Create Community</title>
-</svelte:head>
+
 
 <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full">
     <slot name="formtitle">

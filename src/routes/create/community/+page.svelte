@@ -8,6 +8,10 @@
 
 </script>
 
+<svelte:head>
+    <title>Create Community</title>
+</svelte:head>
+
 <SubNavbar home back toggleCommunitySidebar />
 
 <MainContentArea>
