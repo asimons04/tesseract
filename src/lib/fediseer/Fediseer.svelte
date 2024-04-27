@@ -221,7 +221,7 @@
                                         {censure.domain}
                                         
                                         {#if censure?.censure_evidence && censure.censure_evidence.length > 0}
-                                            <p class="text-xs font-bold">Hesitation Evidence:</p>
+                                            <p class="text-xs font-bold">Censure Evidence:</p>
                                             {#each censure.censure_evidence as evidence}
                                             <p class="font-normal text-xs">
                                                 {evidence}
