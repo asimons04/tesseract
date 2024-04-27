@@ -11,7 +11,7 @@ interface loadParams {
 export async function load({ params }:loadParams) {
     const $instance = get(instance)
     
-    const comment = await getClient(params.instance).getComment({
+    const comment = await getClient($instance).getComment({
         id: Number(params.id),
         auth: params.instance == $instance 
             ? get(profile)?.jwt 
