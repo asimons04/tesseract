@@ -34,12 +34,9 @@
             <p class="font-bold text-center text-sm">{fixLemmyEncodings(token.title)}</p>
         {/if}
         
-        <!---Image--->
-        {#if isImage(token.href)}
-            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} loading="lazy" class="mx-auto rounded-xl" />
-        
+               
         <!--- Audio--->
-        {:else if isAudio(token.href) && inViewport}
+        {#if isAudio(token.href) && inViewport}
             <audio controls preload="auto">
                 <source src={imageProxyURL(token.href)} type="{
                     new URL(token.href).pathname.endsWith('mp3')
@@ -73,6 +70,10 @@
                     }"
                 />
             </video>    
+        
+        <!---Image--->
+        {:else}
+            <img src={imageProxyURL(token.href)} title={token.title} alt={token.text} loading="lazy" class="mx-auto rounded-xl" />
         {/if}
 
         <!---Show Alt Text as Caption--->
