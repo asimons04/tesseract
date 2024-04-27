@@ -2,9 +2,11 @@
     import { site } from '$lib/lemmy'
 
     import CommunityForm from '$lib/components/lemmy/community/CommunityForm.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    
 
 </script>
 
@@ -12,10 +14,12 @@
     <title>Create Community</title>
 </svelte:head>
 
-<SubNavbar home back toggleCommunitySidebar />
+<SubNavbar home back toggleMargins toggleCommunitySidebar />
 
 <MainContentArea>
-    <CommunityForm />
+    <FeedContainer>
+        <CommunityForm />
+    </FeedContainer>
 
     
     <div class="h-full" slot="right-panel">

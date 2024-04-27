@@ -34,13 +34,10 @@
 
 <MainContentArea>
     <FeedContainer>
-        
+            <h1 class="text-2xl font-bold">Create Post</h1>
             <PostForm crosspostData={data.crosspost ? draft : undefined}
                 on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
-            >
-            <h1 class="text-2xl font-bold" slot="formtitle">Create Post</h1>
-            </PostForm>
-        
+            />
     </FeedContainer>
 
     <div class="h-full" slot="right-panel">
