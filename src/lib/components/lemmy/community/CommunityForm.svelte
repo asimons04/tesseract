@@ -122,6 +122,10 @@
     }
 </script>
 
+<svelte:head>
+    <title>Create Community</title>
+</svelte:head>
+
 <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full">
     <slot name="formtitle">
         <h1 class="text-2xl font-bold">Create Community</h1>
@@ -129,7 +133,7 @@
     
     <!---Name is not mutable after creation--->
     {#if !edit}
-    <TextInput required label="Name" bind:value={formData.name} disabled={edit}
+    <TextInput required label="Name" bind:value={formData.name} disabled={edit} maxlength={20}
         on:input={() => {
             formData.name = formData.name.toLowerCase().replaceAll(' ', '_')
         }}
