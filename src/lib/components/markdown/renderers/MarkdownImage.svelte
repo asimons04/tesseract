@@ -17,9 +17,7 @@
 
     let inViewport = false
     let container:HTMLDivElement
-
-    //$: src = imageProxyURL(token.href)
-    $: loop = $userSettings.embeddedMedia.loop
+    let loop = $userSettings.embeddedMedia.loop
 </script>
 
 <PostIsInViewport bind:postContainer={container} bind:inViewport />

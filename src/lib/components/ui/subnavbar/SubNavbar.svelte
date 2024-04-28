@@ -8,6 +8,7 @@
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
+    import { site } from '$lib/lemmy'
     import { fixLemmyEncodings, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { 
         sortOptions as defaultSortOptions, 
@@ -90,14 +91,22 @@
     let editPostModal:boolean                   = false
 
     //const dispatcher = createEventDispatcher();
-    const dispatcher = createEventDispatcher< 
-        { 
+    const dispatcher = createEventDispatcher
+        <{ 
             navChangeSort?: string,
             navBack?: null,
             navRefresh?: null,
             navPageSelect?: number
+        }>()
+
+    $:  if ($site && $site.version?.startsWith('0.19')) {
+            if (!sortOptions.includes('Scaled')) sortOptions.unshift('Scaled')
+            if (!sortOptionNames.includes('Scaled')) sortOptionNames.unshift('Scaled')
         }
-    >()
+        else {
+            if (sortOptions.indexOf('Scaled') > -1) sortOptions.splice(sortOptions.indexOf('Scaled'), 1)
+            if (sortOptionNames.indexOf('Scaled') > -1) sortOptionNames.splice(sortOptionNames.indexOf('Scaled'), 1)
+        }
     
     
    

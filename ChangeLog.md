@@ -48,6 +48,12 @@ Not really doing anything groundbreaking with this release.  There are a few new
 - Added more forwards/backwards-compatible date format checks (to work with both 0.18.x and 0.19.x)
 - Deprecated lots of old functions that were holdovers from the original Photon code
 - Fixed bug where refreshing a user profile would throw an unhandled JS error on 0.19.x (but strangly, the same flow worked on initial load). Was a bad index key for the Svelte `{#each}` loop.
+- Fixed a bug where direct linking to a post (/post/123456) would sometimes return the wrong post or fail to load the post
+    - The circumstances required to hit this bug were pretty rare, but it was a bug.  Basically, if you have Tesseract in place as your instance's default UI, _and_ it's unlocked to allow logging into other instances, _and_ the current or guest session was _not_ the home instance, then if you tried to load the canonical AP link to a local post (https://dubvee.org/post/12345), it would try to redirect you to the current guest/foreign instance's post 12345.  
+- Direct linking to comments (/comment/12345) now works properly (similar to above bug for posts)
+- Linking to a comment in a theread now properly scrolls the actual linked post to the top
+    - The linked comment is now highlighted for easier reference.  e.g. Someome replies "See https://example.com/comment/12345", and it will now take you to that comment( as it always has) as well as properly scroll that comment to the top and give it a highlighted background and border.
+    
 
 ### New Features (That Aren't Refinements to Existing Features)
 - New markdown renderer
