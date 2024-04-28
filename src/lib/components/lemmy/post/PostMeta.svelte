@@ -3,7 +3,7 @@
     
     import { imageProxyURL } from '$lib/image-proxy'
     import { page } from '$app/stores'
-    import { postType } from './helpers'
+    import { isNewAccount, postType } from './helpers'
     import { profile } from '$lib/auth.js'
     import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings.js'
@@ -55,15 +55,6 @@
     $: subscribed = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
     
     let fediseerModal:boolean = false;
-
-    function isNewAccount():boolean {
-        return new Date().getTime()/1000/60 - (
-        post.creator.published.endsWith('Z')
-            ? (Date.parse(post.creator.published)/1000/60) 
-            : (Date.parse(post.creator.published + 'Z')/1000/60) 
-        )
-        < 1440 * 5
-    }
 </script>
 
 {#if fediseerModal}
@@ -145,15 +136,6 @@
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
                 
-
-                <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
-                {#if post?.creator?.published && isNewAccount() }
-                    <Badge label="New Account" color="gray">
-                        <Icon src={Cake} mini size="16"/>
-                        <RelativeDate date={post.creator.published} />
-                    </Badge>
-                {/if}
-
                 {#if post.post.nsfw}
                     <Badge label="NSFW" color="red">
                         <Icon src={ExclamationCircle} mini size="16"/>

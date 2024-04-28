@@ -381,10 +381,10 @@ export const fixLemmyEncodings = function (content:string|undefined):string {
 }
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export const scrollToTop = function(element:HTMLElement|undefined|null, smooth:boolean=true):void {
+export const scrollToTop = async function(element:HTMLElement|undefined|null, smooth:boolean=true):Promise<void> {
     if (!element) return;
+    await sleep(150)
     try {
-            
         // Offset = navbar height (-64) - sticky menu height (52) + 3 pixel gap
         let offset = 64 + 64 + 3;
 
@@ -745,4 +745,28 @@ export function removeURLParams(url:string):string {
     let fullURL = new URL(url)
     fullURL.search = ''
     return fullURL.toString()
+}
+
+export function isThreadComment(commentID:number):boolean {
+    const $page = get(page)
+    if ($page.url.searchParams.get('thread')) {
+        let thread = $page.url.searchParams.get('thread')
+        let path = thread?.split('.')
+        
+        if  (path && path.length>0) {
+            const threadCommentID = Number(path[path.length-1])
+            if (threadCommentID && threadCommentID == commentID) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
+export function isNewAccount(date:string):boolean {
+    return new Date().getTime()/1000/60 - (
+        date.endsWith('Z')
+            ? (Date.parse(date)/1000/60) 
+            : (Date.parse(date + 'Z')/1000/60) 
+    ) < 1440 * 5
 }

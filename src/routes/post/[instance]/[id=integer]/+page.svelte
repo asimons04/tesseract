@@ -2,7 +2,7 @@
     import { goto } from '$app/navigation'
     import { getClient } from '$lib/lemmy.js'
     import { instance } from '$lib/instance.js'
-    import { isImage, postType } from '$lib/components/lemmy/post/helpers.js'
+    import { isImage, removeURLParams } from '$lib/components/lemmy/post/helpers.js'
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
@@ -10,6 +10,7 @@
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte';
     import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
@@ -23,6 +24,7 @@
     } from 'svelte-hero-icons'
     import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers.js';
     
+    
     export let data
    
     let showCommentForm:boolean = false;
@@ -34,9 +36,9 @@
     onMount(async () => {
         setLastSeenCommunity(data.post.community_view.community)
         
-        // Mark post as read when viewed
+        // Mark post as read when viewed on home instance
         try {
-            if (!data.post.post_view.read && $profile?.jwt) {
+            if (!data.post.post_view.read && $profile?.jwt && $page.params.instance == $profile?.instance) {
                 getClient().markPostAsRead({
                     auth: $profile.jwt,
                     read: true,
@@ -50,6 +52,7 @@
         // Scroll to top unless jumping to a comment
         if (!$page.url.searchParams.get('thread')) window.scrollTo(0,0);
     })
+    
 
     
     const fetchOnHome = async () => {
@@ -92,38 +95,34 @@
     {/if}
 </svelte:head>
 
-<SubNavbar back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={data.post.post_view} />
+<SubNavbar back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={data.post.post_view} 
+    refreshPreventDefault on:navRefresh={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }
+/>
 
 <MainContentArea>                   
         
     <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
     {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
         
-        <div class="flex flex-col p-2 gap-4 bg-amber-500/30 text-zinc-950 dark:text-slate-100 rounded-md">
-            <span class="text-sm font-normal">
-                <span class="flex flex-row gap-2 items-center">
-                    <Icon src={ExclamationTriangle} mini width={28}/>
-                    <p class="font-bold">You are viewing this post on a remote instance</p>
-                </span>
-                
-                <span class="flex flex-row gap-1 pl-[2.3rem]">
-                    <p>
-                        You are viewing this post on a remote instance, and you will not be able to interact with it.  In order to reply or vote,
-                        you will need to fetch this post on your home instance.
-                    </p>
-                    
-                    <span class="ml-auto"/>
-                    
-                    <Button on:click={() => { fetchOnHome() }} color="warning" class="h-16 whitespace-nowrap">
-                        <span class="flex flex-col items-center">
-                            <Icon src={Home} mini size="18" title="Posts" />
-                            <span class="text-xs">Fetch on Home</span>
-                        </span>
-                    </Button>
 
+        <Card  class="py-2 px-4 text-sm flex flex-row items-center flex-wrap gap-4">
+            <div class="flex flex-row gap-2 items-center">
+                <span class="items-center">
+                    <Icon src={ExclamationTriangle} mini width={28}/>
                 </span>
-            </span>
-        </div>
+                <p>
+                    You are viewing this post on a remote instance, and you will not be able to interact with it.  In order to reply or vote,
+                    you will need to fetch this post on your home instance.
+                </p>
+                
+                <Button on:click={() => { fetchOnHome() }} color="tertiary-border" class="ml-auto h-16 whitespace-nowrap">
+                    <span class="flex flex-col items-center">
+                        <Icon src={Home} mini size="18" title="Posts" />
+                        <span class="text-xs">Fetch on Home</span>
+                    </span>
+                </Button>
+            </div>
+        </Card>
     {/if}
     
 
@@ -141,7 +140,7 @@
         
         />      
 
-        <CommentSection bind:data={data} bind:showCommentForm={showCommentForm}/>
+        <CommentSection data={data} bind:showCommentForm={showCommentForm}/>
     </div>
 
     <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden xl:flex"/>

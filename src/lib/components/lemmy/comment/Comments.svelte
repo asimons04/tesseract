@@ -21,23 +21,13 @@
     export let nodes: CommentNodeI[]
     export let isParent: boolean
     export let post: Post
-    //export let community: CommunityView
     export let moderators: Array<CommunityModeratorView>
 
 
     if (isParent) {
         setContext('comments:tree', nodes)
     }
-
-    onMount(() => {
-        if (isParent && $page.url.hash) {
-            document.getElementById($page.url.hash)?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-            })
-        }
-    })
-
+    
     let loadingChildren = false
 
     async function fetchChildren(parent: CommentNodeI) {
@@ -46,7 +36,9 @@
         try {
             parent.loading = true
             const newComments = await getClient($page.params.instance).getComments({
-                auth: $profile?.jwt,
+                auth: $page.params.instance == $profile?.instance
+                    ? $profile?.jwt
+                    : undefined,
                 max_depth: 5,
                 parent_id: parent.comment_view.comment.id,
                 type_: 'All',
