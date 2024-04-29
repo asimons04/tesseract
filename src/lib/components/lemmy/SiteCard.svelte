@@ -106,8 +106,10 @@
     <div class="mt-2"/>
     
     {#if taglines && taglines.length > 0}
-        <Markdown source={taglines[Math.floor(Math.random() * taglines.length)].content} />
-        <hr class="border-slate-300 dark:border-zinc-700" />
+        <div class="flex flex-col gap-1">    
+            <Markdown source={taglines[Math.floor(Math.random() * taglines.length)].content} />
+            <hr class="border-slate-300 dark:border-zinc-700" />
+        </div>
     {/if}
 
     <!--- Collapsible buttons for admins and site info --->

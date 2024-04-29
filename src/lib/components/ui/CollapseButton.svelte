@@ -14,9 +14,7 @@
 </script>
 
 <div class="flex flex-col gap-1 my-2 border-b border-slate-200 dark:border-zinc-800 ">
-    <Button color="tertiary" alignment="left" rounded='none'
-        on:click={ ()=> { expanded = !expanded}}
-    >
+    <Button color="tertiary" alignment="left" rounded='none' on:click={ ()=> { expanded = !expanded}}>
         <span class="mr-[0.5rem]">
             <slot name="icon" />
             

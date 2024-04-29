@@ -13,7 +13,7 @@ export function filterAnnoyingCCLicenseOnComments(source:string) {
 
 
 export function hashtagsToMDLinks(source:string) {
-    const hashtagRE = /#\w+/gi
+    const hashtagRE = /#[A-Z]\w+/gi
     let hashtags = source.matchAll(hashtagRE)
     for (let tag of hashtags) {
         let replacementText = `[${tag[0]}](/search?q=${encodeURIComponent(tag[0])})`

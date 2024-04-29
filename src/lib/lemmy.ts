@@ -8,6 +8,10 @@ interface CustomFetchFunction {
     ( input: RequestInfo | URL, init?: RequestInit | undefined):  Promise<Response>
 }
 
+export interface BlockInstanceResponse {
+    blocked: boolean
+}
+
 
 async function customFetch(func: CustomFetchFunction, input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
     const res = await func(input, init)
@@ -49,6 +53,35 @@ export async function validateInstance(instance: string, setSite:boolean=false):
         return true
     } catch (err) {
         return false
+    }
+}
+
+
+export async function blockInstance(instance_id: number, block:boolean = false): Promise<BlockInstanceResponse> {
+    if (!instance_id || !get(profile)?.jwt) return { blocked: !block }
+
+    try {
+        const body = {
+            instance_id: instance_id,
+            block: block
+        }
+        const response = await fetch(`https://${get(instance)}/api/v3/site/block`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${get(profile)?.jwt}`,
+                },
+                body: JSON.stringify(body)
+            }
+        )
+
+        if (response.ok)    return { blocked: block }
+        else                return { blocked: !block }
+    }
+    catch (err) {
+        console.log(err)
+        return { blocked: !block }
     }
 }
 

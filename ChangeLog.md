@@ -34,7 +34,14 @@ All major/minor changes between releases will be documented here.
 ### Important API Compatibility Notes
 **This will be the last version to support 0.18.x.  Once development of 1.4.0 begins, 0.18.x support will be dropped.**
 - 1.3.0 remains fully compatible with 0.18.x and 0.19.x
-- 0.19.x does not support any of the new features yet _except_ the cursor-based pagination. This has been implemented in a backwards-compatible way and will fall back to offset-based pagination for 0.18.x instances.  This was implemented for both since 0.19.x has deprecated offset-based pagination and was necessary for transition purposes past 0.19.x
+
+### 0.19.x Features Currently Supported
+- Cursor-based pagination (will fallback to offset-based pagination for 0.18.x)
+- Instance blocking
+    - Note:  Intentionall will not allow you to block your home instance
+- Scaled sort (dynamically added/removed from sort options if switching between an 0.18.x instance and 0.19.x instance)
+
+
 
 ### Overview
 Not really doing anything groundbreaking with this release.  There are a few new minor features, but almost all of the work has been refining the existing features and adding polish throughout.  

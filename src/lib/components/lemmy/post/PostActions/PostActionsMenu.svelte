@@ -4,14 +4,12 @@
     
     import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { blockUser, isBlocked } from '$lib/lemmy/user'
-
+    import { blockInstance, site } from '$lib/lemmy'
     import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
-    import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
-    import { setSessionStorage } from '$lib/session.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -39,6 +37,7 @@
         Window
 
     } from 'svelte-hero-icons'
+    import { remove } from 'nprogress';
     
     
     export let post:PostView
@@ -50,9 +49,29 @@
     export let suppressModal:boolean = false;
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
-    let editing:boolean = false;
+    let editing = false;
+    let blockingInstance = false;
     
-    
+    async function doBlockInstance(instance_id:number, hostname:string):Promise<void> {
+        blockingInstance = true
+        let pleaseWaitToast = toast({
+            type: 'warning',
+            title: 'Please wait...',
+            content: `Please wait while ${hostname} is added to your blocklist.`
+        })
+        await blockInstance(instance_id, true)
+        blockingInstance = false
+        
+        // Hack to remove the post from the DOM since there's no instance block / hide option available
+        post.creator_blocked = true
+
+        removeToast(pleaseWaitToast)
+        toast({
+            type: 'success',
+            title: "Success",
+            content: `Successfully blocked ${hostname}`
+        })
+    }
 </script>
 <PostEditorModal bind:open={editing} bind:post />
 
@@ -165,6 +184,31 @@
                     : `Block ${post.creator.display_name || post.creator.name}@${new URL(post.creator.actor_id).hostname}`}
             </MenuButton>
         {/if}
+
+        <!---Block Instance (for 0.19+ and if not home instance)--->
+        {#if $site?.version.startsWith('0.19') }
+            
+            <!--- Block Instance of Post's Community--->
+            {#if new URL(post.community.actor_id).hostname != $profile?.instance}
+                <MenuButton loading={blockingInstance} disabled={blockingInstance}
+                    on:click={async () => {doBlockInstance(post.community.instance_id, new URL(post.community.actor_id).hostname) }}
+                >
+                    <Icon src={NoSymbol} width={16} mini />
+                    Block Instance ({new URL(post.community.actor_id).hostname})
+                </MenuButton>
+            {/if}
+
+            <!--- Block Instance of Post's Creator--->
+            {#if new URL(post.creator.actor_id).hostname != $profile?.instance && post.community.instance_id != post.creator.instance_id}
+                <MenuButton loading={blockingInstance} disabled={blockingInstance}
+                    on:click={async () => { doBlockInstance(post.creator.instance_id, new URL(post.creator.actor_id).hostname) }}
+                >
+                    <Icon src={NoSymbol} width={16} mini />
+                    Block Instance ({new URL(post.creator.actor_id).hostname})
+                </MenuButton>
+            {/if}
+        {/if}
+
 
         <!---Delete Post--->
         {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
