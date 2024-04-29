@@ -37,6 +37,16 @@
     export let taglines: Tagline[] | undefined = undefined
     export let admins: PersonView[] = []
     export let version: string
+
+    // Update the tagline every 20 seconds
+    let tagline:string = ' '
+    
+    if (taglines && taglines.length > 0) {
+        tagline = taglines[Math.floor(Math.random() * taglines.length)].content
+        setInterval(() => {
+            if (taglines && taglines.length > 0) tagline = taglines[Math.floor(Math.random() * taglines.length)].content
+        }, 30*1000)
+    }
 </script>
 
 <StickyCard class="{$$props.class}">
@@ -107,7 +117,7 @@
     
     {#if taglines && taglines.length > 0}
         <div class="flex flex-col gap-1">    
-            <Markdown source={taglines[Math.floor(Math.random() * taglines.length)].content} />
+            <Markdown source={tagline} />
             <hr class="border-slate-300 dark:border-zinc-700" />
         </div>
     {/if}

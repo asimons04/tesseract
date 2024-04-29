@@ -111,7 +111,9 @@ ideal.   Current options are:
     - All of these are disabled by default and must be explicitly enabled / configured by the admin
     - Note: These are only effective when submitting through Tesseract UI, obviously. These will not prevent those from being submitted from another frontend or via API calls. 
 
-
+- Added some 0.19 features (disabled on 0.18 instances)
+    - Scaled sort 
+    - Instance blocking
 
 
 ### Top Navigation Bar
@@ -132,7 +134,7 @@ ideal.   Current options are:
 - Added Hot, Popular (Active), and Top Day buttons for quick switching to different feed sorts
 - Community list area is now larger
 - Moved collapse sidebar button out of teh sidebar and to the top navigation bar (to the left of the site name/logo)
-
+- Site taglines now automatically rotate every 30 seconds in the site sidebar (if taglines are set by admin)
 
 ### Frontpage and Feeds
 - Moved search out of main navigation bar and into the context-sensitive navigation bar below it (hidden on mobile; use top search button)
@@ -262,6 +264,8 @@ Please see the [Domain Blacklisting](docs/DomainBlacklisting.md) document for mo
 
 ### UI
 - Reimplemented account switching menu
+- "Explore" menu is now "Instances" menu
+    - Contains same items plus the optiosn to block the instance of the post creator or the community the post belongs to
 - Add "Copy Lemmyverse Link" to user profile menu. Useful for sharing instance-agnostic links to users (mostly used by admins/mods to report spammers/trolls)
 - Site, community, and user info are now collapsible in the sidebars
 - Added transition effects in more places, removed from others

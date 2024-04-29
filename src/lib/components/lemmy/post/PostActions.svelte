@@ -14,7 +14,7 @@
     import CommentCountButton   from './PostActions/CommentCountButton.svelte'
     import CommunityActionMenu  from './PostActions/CommunityActionMenu.svelte'
     import DebugButton          from './PostActions/DebugButton.svelte'
-    import ExploreMenu          from './PostActions/ExploreMenu.svelte'
+    import InstanceMenu          from './PostActions/InstanceMenu.svelte'
     import PostActionsMenu      from './PostActions/PostActionsMenu.svelte'
     import PostReplyButton      from './PostActions/PostReplyButton.svelte'
     import PostVote             from './PostActions/PostVote.svelte'
@@ -65,8 +65,6 @@
         <Button  color="tertiary-border" title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
                 expandCompact = !expandCompact; 
-                //const element = document.getElementById(post.post.id.toString());
-                //if (element) scrollToTop(element);
                 scrollToTop(postContainer)
             }}
         >
@@ -80,7 +78,7 @@
     {/if}
 
     <!---Explore Menu--->
-    <ExploreMenu bind:post />
+    <InstanceMenu bind:post />
 
     <!---Community Action Menu--->
     <CommunityActionMenu bind:post />

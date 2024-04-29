@@ -50,28 +50,7 @@
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
     let editing = false;
-    let blockingInstance = false;
-    
-    async function doBlockInstance(instance_id:number, hostname:string):Promise<void> {
-        blockingInstance = true
-        let pleaseWaitToast = toast({
-            type: 'warning',
-            title: 'Please wait...',
-            content: `Please wait while ${hostname} is added to your blocklist.`
-        })
-        await blockInstance(instance_id, true)
-        blockingInstance = false
-        
-        // Hack to remove the post from the DOM since there's no instance block / hide option available
-        post.creator_blocked = true
 
-        removeToast(pleaseWaitToast)
-        toast({
-            type: 'success',
-            title: "Success",
-            content: `Successfully blocked ${hostname}`
-        })
-    }
 </script>
 <PostEditorModal bind:open={editing} bind:post />
 
@@ -185,34 +164,12 @@
             </MenuButton>
         {/if}
 
-        <!---Block Instance (for 0.19+ and if not home instance)--->
-        {#if $site?.version.startsWith('0.19') }
-            
-            <!--- Block Instance of Post's Community--->
-            {#if new URL(post.community.actor_id).hostname != $profile?.instance}
-                <MenuButton loading={blockingInstance} disabled={blockingInstance}
-                    on:click={async () => {doBlockInstance(post.community.instance_id, new URL(post.community.actor_id).hostname) }}
-                >
-                    <Icon src={NoSymbol} width={16} mini />
-                    Block Instance ({new URL(post.community.actor_id).hostname})
-                </MenuButton>
-            {/if}
-
-            <!--- Block Instance of Post's Creator--->
-            {#if new URL(post.creator.actor_id).hostname != $profile?.instance && post.community.instance_id != post.creator.instance_id}
-                <MenuButton loading={blockingInstance} disabled={blockingInstance}
-                    on:click={async () => { doBlockInstance(post.creator.instance_id, new URL(post.creator.actor_id).hostname) }}
-                >
-                    <Icon src={NoSymbol} width={16} mini />
-                    Block Instance ({new URL(post.creator.actor_id).hostname})
-                </MenuButton>
-            {/if}
-        {/if}
+        
 
 
         <!---Delete Post--->
         {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
-            <MenuButton
+            <MenuButton title="{post.post.deleted ? 'Restore' : 'Delete'} Post"
                 on:click={async () => {
                     if ($profile?.jwt) {
                         post.post.deleted = await deleteItem(
@@ -223,7 +180,6 @@
                         post=post
                     }
                 }}
-                title="{post.post.deleted ? 'Restore' : 'Delete'} Post"
             >
                 <Icon src={Trash} width={16} mini />
                 {post.post.deleted ? 'Restore' : 'Delete'}

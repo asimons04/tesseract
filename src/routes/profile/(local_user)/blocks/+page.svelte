@@ -61,8 +61,6 @@
     }
     
     async function unblockInstance(item: InstanceBlockView) {
-        console.log("Calling ublock instance", item)
-        
         const blocked = await blockInstance(item.instance.id, false)
         
         if (!blocked.blocked) {
@@ -129,11 +127,7 @@
         {#if data.community_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
                 {#each data.community_blocks as block (block.community.id)}
-                    <div
-                        class="flex flex-row gap-4 items-center py-4 justify-between"
-                        animate:flip={{ duration: 250 }}
-                        out:slide|local={{ axis: 'y' }}
-                    >
+                    <div class="flex flex-row gap-4 items-center py-4 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         <CommunityLink community={block.community} avatar />
                         <Button size="square-md" on:click={() => action(block)}>
                             <Icon src={Trash} mini size="16" slot="icon" />
