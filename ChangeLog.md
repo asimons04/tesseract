@@ -5,10 +5,8 @@ All major/minor changes between releases will be documented here.
 
 ## 1.3.0
 ### Burndown List Before Release
-- Add panel to community settings (for mods/admins) to view community modlog
-- Add panel to communtiy settings (for mods/admins) to direct ban/unban user
-- [ ] Make relative time component reactive
-
+- [X] Add panel to community settings (for mods/admins) to view community modlog
+- [X] Add panel to communtiy settings (for mods/admins) to direct ban/unban user
 
 - Finish community browser enhancements
     - Add search bar to content area for mobile view
@@ -26,10 +24,11 @@ All major/minor changes between releases will be documented here.
     - Profit???
 
 
-- Create a `/instances` route 
-    - Use a tabbed/panel interface
-    - Allow filtering from a text input (similar to Federation block lists in admin panel)
-    - Add links for Fediseer, instance block (for 0.19.x), and community browser to instances
+- [X] Create a `/instances` route 
+    - [X] Use a tabbed/panel interface
+    - [X] Allow filtering from a text input (similar to Federation block lists in admin panel)
+    - [X] Add links for Fediseer, instance block (for 0.19.x), and community browser to instances
+        - Instance block not yet added
 
 
 ### Important API Compatibility Notes
@@ -53,7 +52,7 @@ Not really doing anything groundbreaking with this release.  There are a few new
 - Direct linking to comments (/comment/12345) now works properly (similar to above bug for posts)
 - Linking to a comment in a theread now properly scrolls the actual linked post to the top
     - The linked comment is now highlighted for easier reference.  e.g. Someome replies "See https://example.com/comment/12345", and it will now take you to that comment( as it always has) as well as properly scroll that comment to the top and give it a highlighted background and border.
-    
+
 
 ### New Features (That Aren't Refinements to Existing Features)
 - New markdown renderer

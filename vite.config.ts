@@ -34,6 +34,6 @@ export default defineConfig({
 
   define: {
     __VERSION__: JSON.stringify(process.env.npm_package_version),
-    __CODENAME__: JSON.stringify("Enterprise")
+    __CODENAME__: JSON.stringify("Intrepid")
   },
 })
