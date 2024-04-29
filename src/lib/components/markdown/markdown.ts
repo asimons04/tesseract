@@ -12,6 +12,16 @@ export function filterAnnoyingCCLicenseOnComments(source:string) {
 }
 
 
+export function hashtagsToMDLinks(source:string) {
+    const hashtagRE = /#\w+/gi
+    let hashtags = source.matchAll(hashtagRE)
+    for (let tag of hashtags) {
+        let replacementText = `[${tag[0]}](/search?q=${encodeURIComponent(tag[0])})`
+        source = source.replace(tag[0], replacementText)
+    }
+    return source
+}
+
 export function findUserCommunityLinks(source: string) {
 
     // Find @user@instance.xyz and turn into localized links

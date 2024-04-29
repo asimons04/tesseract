@@ -9,7 +9,8 @@
     
     import {
         filterAnnoyingCCLicenseOnComments,
-        findUserCommunityLinks
+        findUserCommunityLinks,
+        hashtagsToMDLinks
     } from './markdown'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { marked } from 'marked';
@@ -42,6 +43,7 @@
         let temp = fixLemmyEncodings(text)
         temp = findUserCommunityLinks(temp)
         temp = filterAnnoyingCCLicenseOnComments(temp)
+        temp = hashtagsToMDLinks(temp)
         temp = temp.replaceAll("::: spoiler", ":::spoiler")
         return temp
     }
