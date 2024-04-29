@@ -39,7 +39,7 @@
             
             <Button
                 color="secondary"
-                href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}#{comment.comment.id}"
+                href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}"
                 size="sm"
                 class="self-start"
                 title="Jump to Comment"
