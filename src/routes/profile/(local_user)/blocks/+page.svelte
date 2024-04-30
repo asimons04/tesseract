@@ -150,7 +150,11 @@
                 {#each data.instance_blocks as block (block.instance.id)}
                     
                     <div class="flex flex-row gap-4 items-center py-4 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
-                        <SiteLink site={block.site} avatar={true} />
+                        {#if block.site}
+                            <SiteLink site={block.site} avatar={true} />
+                        {:else}
+                            {block.instance.domain}
+                        {/if}
                         <Button size="square-md" on:click={() => action(block)}>
                             <Icon src={Trash} mini size="16" slot="icon" />
                         </Button>
