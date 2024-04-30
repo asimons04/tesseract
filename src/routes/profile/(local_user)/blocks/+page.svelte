@@ -34,8 +34,8 @@
             updated: string,
             version: string
         }
-        person: Person,
-        site: Site
+        person?: Person,
+        site?: Site
     }
   
     export let data: PageData & {
@@ -72,6 +72,7 @@
             data.instance_blocks = data.instance_blocks
         }
     }
+
     async function unblockCommunity(item: CommunityBlockView) {
         if (!$profile?.jwt) return
 
@@ -89,24 +90,24 @@
         })
     }
 </script>
-<!--
+
+<svelte:head>
+    <title>Profile | Blocks</title>
+</svelte:head>
+
 <h1 class="flex flex-row justify-between">
     <span class="font-bold text-2xl">Blocks</span>
 </h1>
--->
+
 
 <MainContentArea>
 
     <!---User Blocks--->
-    <CollapseButton title="Users" icon={User}>
+    <CollapseButton title="Users" icon={User} heading={true} innerClass="max-h-[50vh] overflow-y-auto">
         {#if data.person_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockUser(i.detail)}>
                 {#each data.person_blocks as block (block.target.id)}
-                    <div
-                        class="flex flex-row gap-4 items-center py-4 justify-between"
-                        animate:flip={{ duration: 250 }}
-                        out:slide|local={{ axis: 'y' }}
-                    >
+                    <div class="flex flex-row gap-4 items-center py-4 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         <UserLink user={block.target} avatar badges />
                         <Button size="square-md" on:click={() => action(block)}>
                             <Icon src={Trash} mini size="16" slot="icon" />
@@ -123,7 +124,7 @@
 
     <!---Community Blocks--->
     
-    <CollapseButton title="Communities" icon={UserGroup}>
+    <CollapseButton title="Communities" icon={UserGroup}  heading={true} innerClass="max-h-[50vh] overflow-y-auto">
         {#if data.community_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
                 {#each data.community_blocks as block (block.community.id)}
@@ -143,8 +144,9 @@
 
 
 
-    <!---Instance Blocks--->
-    <CollapseButton title="Instances" icon={Server}>
+    <!---Instance Blocks (Only show for 0.19+ instances)--->
+    {#if $site?.version.startsWith('0.19')}
+    <CollapseButton title="Instances" icon={Server}  heading={true} innerClass="max-h-[50vh] overflow-y-auto">
         {#if data.instance_blocks && data.instance_blocks?.length > 0}
             <EditableList let:action on:action={(i) => unblockInstance(i.detail)}>
                 {#each data.instance_blocks as block (block.instance.id)}
@@ -166,6 +168,7 @@
             <Placeholder description="You have not blocked any instances yet." title="No instance blocks" icon={Check} />
         {/if}
     </CollapseButton>
+    {/if}
 </MainContentArea>
 
 

@@ -90,17 +90,12 @@
 
     {#if $profile?.user}
         <!---Add/Remove to Favorites--->
-        <MenuButton>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span class="flex flex-row gap-2 w-full" on:click={ (e) => {
-                //e.stopPropagation();
-                groups.favorite = !groups.favorite
-                addFavorite(post.community, groups.favorite)
-            }}>
+        <MenuButton on:click={ (e) => {
+            groups.favorite = !groups.favorite
+            addFavorite(post.community, groups.favorite)
+        }}>
                 <Icon src={Star} mini size="16" />
                 {groups.favorite ? 'Un-Favorite Community' : 'Favorite Community'}
-            </span>
         </MenuButton>
 
         <!---Add to Group--->

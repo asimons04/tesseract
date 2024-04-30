@@ -24,6 +24,10 @@
     <title>Saved</title>
 </svelte:head>
 
+<h1 class="flex flex-row justify-between">
+    <span class="font-bold text-2xl">Saved</span>
+</h1>
+
 <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full h-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         

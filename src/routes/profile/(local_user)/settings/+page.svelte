@@ -10,6 +10,7 @@
     import ChangePasswordModal from './ChangePasswordModal.svelte'
     import DeleteAccountModal from './DeleteAccountModal.svelte';
     import FileInput from '$lib/components/input/FileInput.svelte'
+    import Link from '$lib/components/input/Link.svelte';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
@@ -27,6 +28,7 @@
         Trash
 
     } from 'svelte-hero-icons'
+    
 
     export let data
 
@@ -92,7 +94,11 @@
     <h1 class="flex flex-row justify-between">
         <span class="font-bold text-2xl">Profile Settings</span>
     </h1>
-    
+    <p class="text-sm">
+        The settings here are only ones that affect the behavior of the API. Please see
+        <Link href="/settings" highlight>app settings</Link> for additional options.
+    </p>
+
     {#if data.local_user_view?.local_user && formData}
     <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
         

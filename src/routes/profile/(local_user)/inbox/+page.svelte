@@ -52,8 +52,12 @@
 </script>
 
 <svelte:head>
-    <title>Inbox</title>
+    <title>Profile | Inbox</title>
 </svelte:head>
+
+<h1 class="flex flex-row justify-between">
+    <span class="font-bold text-2xl">Inbox</span>
+</h1>
 
 <div class="flex flex-row gap-4 w-full">
     <MultiSelect

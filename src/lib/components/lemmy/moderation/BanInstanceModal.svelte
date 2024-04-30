@@ -110,8 +110,8 @@
             >
                 <div class="flex flex-row flex-wrap w-full items-center justify-between" slot="actions">
                     {#if !banned}
-                        <Checkbox bind:checked={deleteData} class="mx-auto">Remove Content</Checkbox>
-                        <DateInput bind:value={expires} label="Ban Expires" />
+                        <Checkbox bind:checked={deleteData} class="ml-auto mr-4 md:mr-0 md:mx-auto">Remove Content</Checkbox>
+                        <DateInput bind:value={expires} class="ml-auto" label="Ban Expires" />
                     {/if}
                 </div>
 
