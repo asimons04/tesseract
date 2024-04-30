@@ -91,12 +91,7 @@
 
     <div class="ml-auto"/>
 
-    <Button
-        on:click={markAllAsRead}
-        loading={markingAsRead}
-        disabled={markingAsRead}
-        size="md"
-    >
+    <Button on:click={markAllAsRead} loading={markingAsRead} disabled={markingAsRead} size="md" >
         <Icon src={Check} width={16} mini slot="icon" />
             Mark all as read
     </Button>
@@ -105,11 +100,7 @@
 <div class="flex flex-col gap-4 list-none my-4 w-full h-full flex-1">
     {#if !data.data || (data.data?.length ?? 0) == 0}
         <div class="my-auto">
-            <Placeholder
-                icon={Inbox}
-                title="No new notifications"
-                description="Messages, replies, and mentions will appear here."
-            />
+            <Placeholder icon={Inbox} title="No new notifications" description="Messages, replies, and mentions will appear here." />
         </div>
     {:else}
         {#each data.data as item}
@@ -118,9 +109,6 @@
             </div>
         {/each}
 
-        <Pageination
-            page={data.page}
-            on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-        />
+        <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
     {/if}
 </div>  
