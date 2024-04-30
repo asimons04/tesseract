@@ -36,9 +36,9 @@
             </span>
         {/if}
 
-        <span class="flex flex-row gap-0" class:ml-0.5={avatar} >
+        <span class="flex flex-row flex-wrap gap-0" class:ml-0.5={avatar} >
             <span class="font-bold whitespace-nowrap">
-                {$userSettings.displayNames ? user.display_name || user.name : user.name}
+                {$userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             
             {#if $userSettings.uiState.showInstances && showInstance}
