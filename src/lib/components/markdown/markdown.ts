@@ -8,6 +8,7 @@ export function filterAnnoyingCCLicenseOnComments(source:string) {
     return $userSettings.uiState.filterAnnoyingCCLicense
         ? source.replace('[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
             .replace('[~CC~ ~BY-NC-SA~ ~4.0~](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
+            .replace('[~Anti~ ~Commercial-AI~ ~license~](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
         : source
 }
 
