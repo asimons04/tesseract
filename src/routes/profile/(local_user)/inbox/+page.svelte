@@ -105,7 +105,7 @@
     {:else}
         {#each data.data as item}
             <div in:fly={{ duration: 500, y: -6, opacity: 0 }}>
-                <InboxItem {item} read={isRead(item)} />
+                <InboxItem bind:item  />
             </div>
         {/each}
 

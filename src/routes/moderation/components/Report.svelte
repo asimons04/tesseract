@@ -1,6 +1,9 @@
 <script lang="ts">
     import type {
+        CommentReport,
         CommentReportView,
+        Person,
+        Community,
         PostReportView,
         PrivateMessageReportView,
     } from 'lemmy-js-client'
@@ -113,7 +116,12 @@
             ? item.post_report.resolved
             : false
 
-    $: reporteeID = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id;
+    $: reporteeID = isCommentReport(item) 
+        ? item.comment.creator_id 
+        : isPostReport(item)
+            ? item.post.creator_id
+            : item.private_message_creator.id
+
    
     let resolving:boolean = false
     let open:boolean = false;
@@ -182,7 +190,8 @@
 
     // A copy of the actions object used to reset it after submission
     let actionsDefault = {...actions};
-
+    
+    /*
     // Live-update the reply to the reporter based on the selected moderation options.
     $: {
         actions.replyReporterBody = `**Re: Report for ${isCommentReport(item) ? 'comment' : 'post'} in ${item.community.title ?? item.community.name}**\n\n`
@@ -215,7 +224,9 @@
         if (actions.replyReporterText != '') actions.replyReporterBody += '**Moderator Comments**: ' + actions.replyReporterText + '\n\n';
         actions.replyReporterBody += 'Your report has been resolved.';
     }
-
+    */
+    
+    
     // Validates a date string to ensure it converts to a proper date in the future.
     function validateExpiryDate(dateStr:string):boolean {
         let date:number = Date.parse(dateStr);
@@ -243,6 +254,7 @@
         return true;
     }
 
+    /*
     // Expands a report item, hides the rest. Send `false` as argument to close and un-hide.
     function toggleOpenReport():void {
         let element = document.getElementById(isCommentReport(item) ? item.comment_report.id : item.post_report.id);
@@ -728,9 +740,9 @@
         // If un-resolving the report, keep it open
         if (resolved) toggleOpenReport();
     }
+    */
 
-
-    
+    /*
     function applyActionPreset(preset:string) {
         if (!preset) return
         
@@ -758,7 +770,7 @@
         }
 
     }
-    
+    */
 </script>
 
 
@@ -766,7 +778,15 @@
 
 <Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-2'}" 
     name="ModeratorReport" 
-    id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}"
+    id="{
+        isCommentReport(item) 
+            ? item.comment_report.id 
+            : isPostReport(item)
+                ? item.post_report.id
+                : isPrivateMessageReport(item)
+                    ? item.private_message_report.id
+                    : 1
+        }"
 >
     
     
@@ -787,7 +807,9 @@
                         ? `"${item.comment.content.length > 120 ? item.comment.content.slice(0,120) + '...' : item.comment.content}"` 
                         : isPostReport(item) 
                             ? `"${item.post.name.length > 120 ? item.post.name.slice(0,120) + '...' : item.post.name}"` 
-                            : ''
+                            : isPrivateMessageReport(item)
+                                ? 'Private Message Report'
+                                : ''
                 }
             </span>
         </button>
@@ -795,9 +817,29 @@
         <span class="ml-auto"/>
 
         <span class="flex flex-row gap-4 items-center">
-            <Badge color="{item.comment_report?.resolved || item.post_report?.resolved ? 'green' : 'yellow'}">
-                <Icon src={item.comment_report?.resolved || item.post_report?.resolved ? Check : ExclamationTriangle} mini size="14" />
-                <span class="hidden md:block">{item.comment_report?.resolved || item.post_report?.resolved ? 'Resolved' : 'Needs Action'}</span>
+            <Badge color="{
+                (isCommentReport(item) && item.comment_report.resolved) || 
+                (isPostReport(item) && item.post_report.resolved) || 
+                (isPrivateMessageReport(item) && item.private_message_report.resolved)
+                    ? 'green' 
+                    : 'yellow'
+            }">
+                <Icon mini size="14"  src={
+                    (isCommentReport(item) && item.comment_report.resolved) || 
+                    (isPostReport(item) && item.post_report.resolved) || 
+                    (isPrivateMessageReport(item) && item.private_message_report.resolved)
+                        ? Check 
+                        : ExclamationTriangle
+            }/>
+                <span class="hidden md:block">
+                    {
+                        (isCommentReport(item) && item.comment_report.resolved) || 
+                        (isPostReport(item) && item.post_report.resolved) || 
+                        (isPrivateMessageReport(item) && item.private_message_report.resolved)
+                            ? 'Resolved' 
+                            : 'Needs Action'
+                    }
+                </span>
             </Badge>
 
             <!---Debug Button--->

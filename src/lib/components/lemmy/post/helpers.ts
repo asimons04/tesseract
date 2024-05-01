@@ -1,4 +1,4 @@
-import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType } from 'lemmy-js-client'
+import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType, CommentReplyView, PersonMentionView } from 'lemmy-js-client'
 import type { MBFCReport } from '$lib/MBFC/types'
 
 export interface PostView extends LemmyPostView {
@@ -45,6 +45,9 @@ export const isMutable = (post: PostView, me: PersonView) =>
 export const isCommentMutable = (comment: CommentView, me: PersonView) =>
     me.person.id == comment.creator.id
 
+export function isPostView(item: PostView | CommentReplyView | PersonMentionView): item is PostView {
+    return !('comment' in item)
+}
 
 // Return the image size based on the display type (feed/post) and the user's preference
 export const imageSize = (displayType:PostDisplayType, ) => {

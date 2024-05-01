@@ -1,9 +1,14 @@
 <script lang="ts">
-    import type { Community, CommunityModeratorView, Person, PostView } from 'lemmy-js-client'
+    import type { 
+        CommentReplyView, 
+        CommunityModeratorView, 
+        PersonMentionView, 
+        PostView 
+    } from 'lemmy-js-client'
     
     import { imageProxyURL } from '$lib/image-proxy'
+    import { isPostView, postType } from './helpers'
     import { page } from '$app/stores'
-    import { isNewAccount, postType } from './helpers'
     import { profile } from '$lib/auth.js'
     import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings.js'
@@ -20,7 +25,6 @@
 
     import {
         Bookmark,
-        Cake,
         ExclamationCircle,
         Icon,
         LockClosed,
@@ -34,7 +38,7 @@
     
     
 
-    export let post: PostView                 
+    export let post: PostView | CommentReplyView | PersonMentionView             
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
     export let showFediseer:boolean             = true;
@@ -43,18 +47,17 @@
     export let avatarSize:number                = 48;
     
     
-    let inCommunity:boolean = false
-    let inProfile:boolean = false
-    let userIsModerator:boolean =false 
-    let subscribing:boolean = false
-
-    $: inCommunity = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
-    $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
-    $: userIsModerator = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
-    $: post
-    $: subscribed = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
+    let inCommunity:boolean     = false
+    let inProfile:boolean       = false
+    let userIsModerator:boolean = false 
+    let subscribing:boolean     = false
+    let fediseerModal:boolean   = false;
     
-    let fediseerModal:boolean = false;
+    $: post
+    $: inCommunity      = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
+    $: inProfile        = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
+    $: userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
+    $: subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
 </script>
 
 {#if fediseerModal}
@@ -132,7 +135,7 @@
             {#if !hideBadges}
             <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
                 <!--- Media Bias Fact Check--->
-                {#if post && $userSettings.uiState.MBFCBadges && post.post.url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
+                {#if isPostView(post) && post && $userSettings.uiState.MBFCBadges && post.post.url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
                 

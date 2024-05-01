@@ -1,18 +1,9 @@
 <script lang="ts">
-    import type {
-        PersonProfile,
-    } from '../lib/types'
-    
-    import type {
-        CommentReportView,
-        PostReportView,
-        PrivateMessageReportView,
-    } from 'lemmy-js-client'
+    import type { PersonProfile } from '../lib/types'
+    import type { StandardReport } from './helpers';
 
     import { fade } from 'svelte/transition'
-    import { isCommentReport } from '$lib/lemmy/item.js'
-
-    import { Icon, PencilSquare } from 'svelte-hero-icons'
+    import { PencilSquare } from 'svelte-hero-icons'
     
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
@@ -21,7 +12,7 @@
 
     export let creatorProfile:PersonProfile 
     export let display:boolean = true
-    export let item:PostReportView | CommentReportView | PrivateMessageReportView
+    export let item: StandardReport
 </script>
 
 
@@ -36,7 +27,7 @@
         {:else}
             <h1 class="text-lg font-bold">Posts</h1>
             <p class="text-sm font-normal whitespace-normal">
-                Latest 50 posts made by <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                Latest 50 posts made by <UserLink user={item.reportee} />.
             </p>
 
             {#if creatorProfile?.posts && creatorProfile?.posts?.length > 0 }

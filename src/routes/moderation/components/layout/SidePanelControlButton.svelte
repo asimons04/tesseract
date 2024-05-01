@@ -1,13 +1,12 @@
 <script lang="ts">
-    import { SidePanelTypes } from '../../lib/types'
+    import type { SidePanelTypes } from '../../lib/types'
     import Button from '$lib/components/input/Button.svelte'
-    import { Icon, IconSrc, Bars4 } from 'svelte-hero-icons'
+    import { Icon, IconSource, Bars4 } from 'svelte-hero-icons'
 
     export let sidePanel:SidePanelTypes
     export let value:SidePanelTypes
-    export let icon:IconSrc = Bars4
+    export let icon:IconSource = Bars4
     export let name:string = ''
-    export let selected:boolean = false
     export let action:Function = () => { return }
 </script>
 

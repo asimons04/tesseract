@@ -1,11 +1,14 @@
 import type {
     CommentView,
     CommunityView,
-    Modlog,
+    ModlogActionType,
     PersonView,
     PostView,
-
 } from 'lemmy-js-client'
+
+import type {
+    ModLog
+} from '$routes/modlog/+page.js'
 
 export type SidePanelTypes = 'posts' | 'comments' | 'profile' | 'community' | 'modlog' | 'closed'
 export type PanelWidths = 'w-full' | 'w-1/5' | 'w-1/4' | 'w-1/3' | 'w-1/2'
@@ -26,7 +29,11 @@ export interface ContentRemovalTemplateReturn {
 export interface ModlogContainer {
     url: URL,
     loading:boolean,
-    data?:Modlog,
+    data?: {
+        page: number;
+        type: ModlogActionType;
+        modlog: ModLog[];   
+    },
 }
 
 

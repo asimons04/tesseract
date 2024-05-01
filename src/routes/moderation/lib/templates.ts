@@ -10,6 +10,8 @@ import type {
     ContentRemovalTemplateReturn
 } from './types'
 
+import type { StandardReport } from '../components/helpers'
+
 import { isCommentReport, isPostReport } from '$lib/lemmy/item.js'
 import {
     lookup as MBFCLookup, generateModerationPreset as MBFCModerationPreset
@@ -21,7 +23,7 @@ let communityBanPresets:ContentRemovalTemplate[] = [];
 let instanceBanPresets:ContentRemovalTemplate[] = [];
 
 
-export const getRemovalTemplates = function (item:PostReportView | CommentReportView | PrivateMessageReportView):ContentRemovalTemplateReturn {
+export const getRemovalTemplates = function (item:StandardReport):ContentRemovalTemplateReturn {
     removalPresets = [];
     
     addStandardReasons();
@@ -45,9 +47,9 @@ export const getRemovalTemplates = function (item:PostReportView | CommentReport
 }
 
 // Adds the MBFC report as a removal option (if found)
-function addMBFCPreset(item:PostReportView | CommentReportView | PrivateMessageReportView) {
-    let results = (isPostReport(item) && item?.post?.url) ? MBFCLookup(item.post.url) : undefined
-    let template = results ? MBFCModerationPreset(item, results)?.replaceAll('\n', ' -- ') : undefined
+function addMBFCPreset(item:StandardReport) {
+    let results = (item.type=='post' && item.post_view!.post.url) ? MBFCLookup(item.post_view!.post.url) : undefined
+    let template = results ? MBFCModerationPreset(item.post_view!, results)?.replaceAll('\n', ' -- ') : undefined
     
     if (template) {
         let preset:ContentRemovalTemplate = {
