@@ -1,31 +1,23 @@
 <script lang="ts">
-    import type { StandardReport } from './components/helpers'
-    import { createStandardReport } from './components/helpers'
-
     import { fly } from 'svelte/transition'
-    import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { searchParam } from '$lib/util.js'
-    import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import Report from './components/Report2.svelte'
+    import Report from './components/Report.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte';
 
     import { 
-    Envelope,
+        Envelope,
         EnvelopeOpen,
         Icon,
         Inbox, 
         Newspaper 
     } from 'svelte-hero-icons'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
-    
 
     export let data
 

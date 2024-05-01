@@ -102,7 +102,7 @@ export function createStandardReport(item: PostReportView | CommentReportView | 
         
         community: isCommentReport(item) || isPostReport(item) ? item.community : undefined,
         reason: isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : item.private_message_report.reason,
-        title: isCommentReport(item) ? item.comment.content : isPostReport(item) ? item.post.name : 'Private Message',
+        title: isCommentReport(item) ? item.comment.content : isPostReport(item) ? item.post.name : '',
        
         post_view: isPostReport(item) ? createPostView(item) : undefined,
         comment_view: isCommentReport(item) ? createCommentView(item) : undefined,
