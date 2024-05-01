@@ -622,7 +622,7 @@
         toast({
             content: `${report.resolved ? 'Resolved' : 'Unresolved'} that report.`,
             type: 'success',
-            title: 'Resolved'
+            title: `${report.resolved ? 'Resolved' : 'Unresolved'}`
         })
 
 
