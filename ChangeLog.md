@@ -230,8 +230,14 @@ Can use the filters to do things like see your (or anyone's) posts/comments to a
 ### Community Button on Posts
 - Added button called "More from {user@instance}" which will take you to a pre-populated search page showing only submission from that user in that community
 
+### Moderation Section
+- Re-wrote pretty much all of it
+- Comment, Post, and Private Message reports are now pre-processed into a common/standard report format; makes working with the reports _much_ easier now.
+- Can now resolve private message reports
 
-## Profile Section
+
+
+### Profile Section
 - Now has infinite scroll for post/comment history
 - Replaced the ad-hoc context bar with the standardized one
 - Moved profile section buttons below nav bar
@@ -243,6 +249,9 @@ Can use the filters to do things like see your (or anyone's) posts/comments to a
     - Will likely move this to app settings since it has to be implemented client-side
 - Can now change password (I _swear_ I thought I already implemented this ages ago)
 - Note:  TOTP settings will be added when 0.18.x support is dropped.  The 0.18.x implementation is bonkers, and I don't want to have to shim around that.
+- Inbox has been re-written
+    - Can now report private messages
+    - Private messages can be marked as read individually
 
 ### Misc Pages
 - Reimplemented /legal page to use standardized layout

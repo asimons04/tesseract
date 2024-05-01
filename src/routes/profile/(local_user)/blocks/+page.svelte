@@ -107,7 +107,7 @@
         {#if data.person_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockUser(i.detail)}>
                 {#each data.person_blocks as block (block.target.id)}
-                    <div class="flex flex-row gap-4 items-center py-4 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
+                    <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         <UserLink user={block.target} avatar badges />
                         <Button size="square-md" on:click={() => action(block)}>
                             <Icon src={Trash} mini size="16" slot="icon" />
@@ -128,7 +128,7 @@
         {#if data.community_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
                 {#each data.community_blocks as block (block.community.id)}
-                    <div class="flex flex-row gap-4 items-center py-4 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
+                    <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         <CommunityLink community={block.community} avatar />
                         <Button size="square-md" on:click={() => action(block)}>
                             <Icon src={Trash} mini size="16" slot="icon" />
@@ -151,7 +151,7 @@
             <EditableList let:action on:action={(i) => unblockInstance(i.detail)}>
                 {#each data.instance_blocks as block (block.instance.id)}
                     
-                    <div class="flex flex-row gap-4 items-center py-4 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
+                    <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         {#if block.site}
                             <SiteLink site={block.site} avatar={true} />
                         {:else}
