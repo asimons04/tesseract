@@ -102,11 +102,11 @@
     }
 
     .markdown :global(ul) {
-        @apply list-disc pl-4 leading-3 whitespace-normal;
+        @apply list-disc pl-4 leading-3 whitespace-normal pb-2;
     }
 
     .markdown :global(ol) {
-        @apply list-decimal pl-4 leading-3 whitespace-normal;
+        @apply list-decimal pl-4 leading-3 whitespace-normal pb-2;
     }
 
     .markdown :global(ul > *) {

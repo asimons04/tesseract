@@ -9,6 +9,7 @@ export function filterAnnoyingCCLicenseOnComments(source:string) {
         ? source.replace('[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
             .replace('[~CC~ ~BY-NC-SA~ ~4.0~](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
             .replace('[~Anti~ ~Commercial-AI~ ~license~](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
+            .replaceAll(/\[.*]\(https\:\/\/creativecommons.org\/licenses\/by-nc-sa\/4\.0\/\)/gi, '')
         : source
 }
 
