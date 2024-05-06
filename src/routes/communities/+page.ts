@@ -57,19 +57,20 @@ function dedupe(arr:Array<CommunityView>) {
 
 
 export async function load( req: any) {
-    
+    const instance = req.url.searchParams.get('instance') ?? get(homeInstance) ?? LINKED_INSTANCE_URL
     const page = Number(req.url.searchParams.get('page')) || 1
     const query = req.url.searchParams.get('q')
     const sort = req.url.searchParams.get('sort') || 'asc'
-    const type = req.url.searchParams.get('type') || 'All'
-    const instance = req.url.searchParams.get('instance') ?? req.params.instance ?? get(homeInstance) ?? LINKED_INSTANCE_URL
+    const type = req.url.searchParams.get('type') || instance == get(homeInstance) ?'All' : 'Local'
+    
+    const passedSite = req.passedSite
 
     let communities:CommunityList
     
 
     try { 
         // Pull in site info to load into sidebar
-        let site = await getClient(instance).getSite({})
+        let site = passedSite ? passedSite : await getClient(instance).getSite({})
         
         if (query) { 
             communities = await getClient(instance).search({

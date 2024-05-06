@@ -70,6 +70,7 @@
         // Construct the expected request object for the page's load function
         const req = {
             url: searchURL,
+            passedSite: searchParams.instance == new URL(data.site.site_view.site.actor_id).hostname ? data.site : undefined
         }
 
         const results = await load(req)
