@@ -26,9 +26,10 @@
         </span>
 
         <span class="w-full flex flex-row justify-between {heading ? 'text-xl' : 'text-xs'} font-bold">
+            <slot name="title" />
             {title}
             
-            <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
+            <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 my-auto">
                 <Icon src={ChevronUp} mini height={18} width={18} class="transition-transform {expanded ? '' : 'rotate-180'}"/>
             </span>
         </span>

@@ -263,6 +263,10 @@ export const BLACKLIST_CONFIG = {
     REJECT_FAKE_NEWS:       toBool(env.PUBLIC_BLACKLIST_DENY_FAKE_NEWS)         ?? false,
 }
 
+
+// Instances you want to feature for login (if not locked to instance), signup, and community browsing
+export const FEATURED_INSTANCES = strToArray(env.PUBLIC_FEATURED_INSTANCES)
+
 // Define Invidious and Piped instances to determine if embedded media is a Youtube et al video.
 // Invidious Instance List:  https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest
 // Piped Instance List: https://github.com/TeamPiped/Piped/wiki/Instances

@@ -53,7 +53,7 @@
 </script>
 
 {#if mdText}
-<div class="markdown">
+<div class="markdown {$$props.class}">
     {#if inline}
         {mdText}
     {:else}

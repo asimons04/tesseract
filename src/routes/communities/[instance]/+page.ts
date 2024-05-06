@@ -4,6 +4,7 @@ import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { instance as homeInstance, LINKED_INSTANCE_URL } from '$lib/instance'
+import { profile } from '$lib/auth'
 
 interface CommunityList {
     communities: Array<CommunityView>
@@ -68,7 +69,8 @@ export async function load( req: any) {
 
     try { 
         // Pull in site info to load into sidebar
-        let site = await getClient(instance, req.fetch).getSite({})
+        let site = await getClient(instance).getSite({})
+        
         if (query) { 
             communities = await getClient(instance).search({
                 limit: 50,
@@ -77,6 +79,9 @@ export async function load( req: any) {
                 type_: 'Communities',
                 listing_type: type,
                 q: query,
+                auth: instance == get(homeInstance)
+                    ? get(profile)?.jwt
+                    : undefined
             })
         }
         else { 
@@ -85,6 +90,9 @@ export async function load( req: any) {
                 page: page,
                 sort: 'TopAll',
                 type_: type,
+                auth: instance == get(homeInstance)
+                    ? get(profile)?.jwt
+                    : undefined
             })
         }
         
