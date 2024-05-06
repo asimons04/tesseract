@@ -81,7 +81,7 @@
             <span>Fediseer</span>
     </MenuButton>
 
-    <MenuButton link href="/communities/{new URL(post.community.actor_id).hostname}" title="Browse communities at {new URL(post.community.actor_id).hostname}" >
+    <MenuButton link href="/communities?instance={new URL(post.community.actor_id).hostname}" title="Browse communities at {new URL(post.community.actor_id).hostname}" >
         <Icon src={GlobeAlt} width={16} mini />
         <span>Communities @ {new URL(post.community.actor_id).hostname}</span>
     </MenuButton>
@@ -107,7 +107,7 @@
                 <span>Fediseer</span>
         </MenuButton>
 
-        <MenuButton link href="/communities/{new URL(post.creator.actor_id).hostname}" title="Browse communities at {new URL(post.creator.actor_id).hostname}">
+        <MenuButton link href="/communities?instance={new URL(post.creator.actor_id).hostname}" title="Browse communities at {new URL(post.creator.actor_id).hostname}">
             <Icon src={GlobeAlt} width={16} mini />
             <span>Communities @ {new URL(post.creator.actor_id).hostname}</span>
         </MenuButton>

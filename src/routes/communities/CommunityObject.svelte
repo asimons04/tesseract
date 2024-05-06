@@ -20,7 +20,7 @@
         UserGroup,
     } from 'svelte-hero-icons'
     import Avatar from "$lib/components/ui/Avatar.svelte";
-    import Subscribe from "../Subscribe.svelte";
+    import Subscribe from "./Subscribe.svelte";
     
     
     
