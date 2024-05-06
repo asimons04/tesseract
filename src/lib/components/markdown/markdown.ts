@@ -6,10 +6,7 @@ const $userSettings = get(userSettings)
 
 export function filterAnnoyingCCLicenseOnComments(source:string) {
     return $userSettings.uiState.filterAnnoyingCCLicense
-        ? source.replace('[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
-            .replace('[~CC~ ~BY-NC-SA~ ~4.0~](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
-            .replace('[~Anti~ ~Commercial-AI~ ~license~](https://creativecommons.org/licenses/by-nc-sa/4.0/)', '')
-            .replaceAll(/\[.*]\(https\:\/\/creativecommons.org\/licenses\/by-nc-sa\/4\.0\/\)/gi, '')
+        ? source.replaceAll(/\[.*]\(https:\/\/creativecommons.org\/licenses\/by-nc-sa\/.*\)/gi, '')
         : source
 }
 
@@ -18,7 +15,7 @@ export function hashtagsToMDLinks(source:string) {
     const hashtagRE = /#[A-Z]\w+/gi
     let hashtags = source.matchAll(hashtagRE)
     for (let tag of hashtags) {
-        let replacementText = `[${tag[0]}](/search?q=${encodeURIComponent(tag[0])})`
+        let replacementText = `[${tag[0].trim()}](/search?q=${encodeURIComponent(tag[0].trim())})`
         source = source.replace(tag[0], replacementText)
     }
     return source
