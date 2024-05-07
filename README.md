@@ -7,28 +7,15 @@ In addition to the user experience, care has also been taken to enhance the defa
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
 ## 0.18.x Support
-Lemmy API version 0.18.x is still fully supported.  No date has been set yet for sunsetting that support.
+Lemmy API version 0.18.x is still fully supported.  Tesseract 1.3.x will be the last version to support the 0.18.x API.  Starting with 1.4.0, the 0.19.3 API will be the minimum supported version.
 
 ## 0.19.x Support
-Tesseract has supported 0.19.x since version 1.2 point something.  
+Tesseract has supported 0.19.x since version 1.2 point something.  As of 1.3.0, the following 0.19.x specific features are supported:
+- Scaled sort
+- Instance blocking
+- Cursor-based pagination
 
-None of the 0.19 features (such as instance block) are plumbed in yet.  As of the latest release, 1.2.9.31, the only 0.19 support is with the auth module.  There are things I'd like to do with those features, but of freaking course, the Lemmy API leaves me hanging by not providing the needed data without making another API call to get the needed data. That's all to say those features are in the works, but I'm not going to release anything until I can make them behave like I want them.
-
-Version 1.3.0, currently in development, is adding full support for cursor-based pagination since the old offset-based method is deprecated.  As a side-effect, I've switched to infinite scroll as the pagination method.
-
-- The cursor pagination in 0.19 only gives you the next page's cursor
-- I didn't want to track cursors in the pagination component
-- People were asking for infinite scroll anyway
-- I'm implementing a setting to infinite scroll or load next posts manually
-- I hated the idea of infinite scroll at first, but after driving my dev branch with it for a  few weeks, it's starting to grow on me.
-
-No release date has been set yet, but the 1.3.0 branch is relatively stable since I use the dev branch as my daily driver for Lemmy usage.
-
-## Guiding Principles
-- As much media should be embeddable in the app as possible/practical. 
-- Apps should be responsive and work well on desktop/mobile without requiring separate interfaces
-- The UI should be flexible and configurable
-- 
+When connected to an 0.18.x instance, the scaled sort and instance blocking are disabled and pagination falls back to offset-based.
 
 
 
@@ -45,10 +32,12 @@ The following features are unique to Tesseract:
   - [Song Link](https://odesli.co/)
   - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
   - Peertube Embeds (new as of 1.3.0).  PT support is kind of cool because you can already follow PeerTube channels in Lemmy. With the addition of support for their embeds, this makes following your favorite creator even easier. Upvotes/downvotes to a Peertube post will federate out to thumbs-up/thumbs-down on PT's side.
+  - Any embeddable content that provides a video link in the `embed_video` metadata.
 
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
   - Post and comment menus let you browse the communities of the originating instance
+  - Subscribe to communities on remote instances with one click.  As of 1.3.0, your subscribed state will be reflected when browing remote instances.
   - Note:  This only works for Lemmy instances. Kbin, Mastadon, etc are not currently supported for remote community browsing.  
 
 
@@ -118,7 +107,7 @@ Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with 
 - Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI
 - Local instance admins have full moderation control of the instance as with Lemmy-UI
 - Modlog support on both desktop and mobile.
-- Supercharged modlog with enhanced filtering
+- Supercharged modlog with enhanced filtering and quick actions.
 - Communities and users have "moglog" links in their action menus.  Those will take you to a pre-filtered modlog for just actions related to them.
 - Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
 
@@ -163,12 +152,7 @@ I created a public Matrix support space you can join.  General discussion, flesh
 There is also a Lemmy community where you can get the latest announcements and post questions related to Tesseract.  Find us at https://dubvee.org/c/tesseract
 
 
-## Roadmap
-The "to do" and roadmap has been moved to [a dedicated file](/Roadmap.md).
 
-Completed "to do"s have been moved to the [change log](./ChangeLog.md).
-
-The changelog also contains an informal list of items I _hope_ to add to the next few upcoming releases.
 
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.  
@@ -220,6 +204,14 @@ server {
 
 
   location / {
+    proxy_set_header  Host                  $host;
+    proxy_set_header  X-Forwarded-Host      $host;
+    proxy_set_header  X-Forwarded-For       $remote_addr;
+    proxy_set_header  X-Forwarded-Proto     $scheme;
+    proxy_set_header  X-Forwarded-Uri       $request_uri;
+    proxy_set_header  X-Forwarded-Ssl       on;
+
+    # Update this to match the IP/port you are mapping from Docker.
     proxy_pass http://127.0.0.1:8080;
   }
 
@@ -239,11 +231,7 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_INSTANCE_URL             | URL                 | `lemmy.world`                          |
 | PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
 | PUBLIC_THEME                    | system\|dark\|light | system                                 |
-| PUBLIC_DISABLE_MODLOG_USERS     | `bool`              | false                                  |
 | PUBLIC_MARK_READ_POSTS          | `bool`              | true                                   |
-| PUBLIC_SHOW_INSTANCES_USER      | `bool`              | false                                  |
-| PUBLIC_SHOW_INSTANCES_COMMUNITY | `bool`              | true                                   |
-| PUBLIC_SHOW_INSTANCES_COMMENTS  | `bool`              | false                                  |
 | PUBLIC_SHOW_COMPACT_POSTS       | `bool`              | false                                  |
 | PUBLIC_DEFAULT_FEED_SORT        | `SortType`          | Active                                 |
 | PUBLIC_DEFAULT_FEED             | `ListingType`       | Local                                  |
@@ -251,10 +239,9 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_HIDE_DELETED             | `bool`              | true                                   |
 | PUBLIC_HIDE_REMOVED             | `bool`              | false                                  |
 | PUBLIC_DISPLAY_NAMES            | `bool`              | true                                   |
-| PUBLIC_TAG_NSFW_COMMUNITIES     | `bool`              | true                                   |
 | PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
 | PUBLIC_OPEN_LINKS_NEW_TAB       | `bool`              | false                                  |
-| PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | false                                  |
+| PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | true                                   |
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |
 | PUBLIC_YOUTUBE_FRONTEND         | `YouTube`\|`Invidious` | YouTube                             |
 | PUBLIC_CUSTOM_INVIDIOUS         | Comma-separated string | ''                                  |
@@ -264,6 +251,9 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_ENABLE_MBFC_BADGES       | `bool`              | true                                   |
 | PUBLIC_STRETCH_CARD_BANNERS     | `bool`              | false                                  |
 | PUBLIC_MATCH_XPOST_TITLE        | `bool`              | true                                   |
+| PUBLIC_FEATURED_INSTANCES       | Comma-separated string | ''                                  |
+
+See [environment options](docs/EnvironmentOptions.md) for descripions of each.
 
 ### Configuration Options for Media Proxying and Caching
 Descriptions of the config options and what they do are covered in the [Media Proxy Cache](docs/MediaProxy.md) module documentation.
@@ -322,13 +312,7 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/CommentSortType.
 - Old (not implemented in Tesseract)
 - Controversial (not implemented in Tesseract)
 
-## Screenshots
-These screenshots are quite out of date, but they'll give you an idea (haven't had time to replace them yet).  You can also see it live at https://tesseract.dubvee.org.
-_ | _ 
----|---
-![YouTube videos playing inline](./screenshots/Tesseract-Screenshot-1.png) YouTube videos playing inline | ![Beehaw c/Music as it was meant to be](./screenshots/Tesseract-Screenshot-3.png) Beehaw c/Music as it was meant to be
-![Post view with comments and sidebars](./screenshots/Tesseract-Screenshot-4.png) Community sidebar added to post view.| ![Feed view with cards](./screenshots/Tesseract-Screenshot-5.png) Post cards are much more Reddit-like
-![Spotify Playlist Embed](./screenshots/Tesseract-Screenshot-2.png) Spotify playlist embedded| ![Desktop PWA](./screenshots/Tesseract-Screenshot-6.png) Running as a desktop PWA
+
 
 ## Donate
 I'm not accepting donations at this time.  
