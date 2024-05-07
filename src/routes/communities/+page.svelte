@@ -52,6 +52,8 @@
 
     $: if (data.instance) searchParams.instance = data.instance
 
+    console.log($profile?.user?.follows)
+
     async function search(refresh:boolean=false) {
         data.communities = []
         searching = true
@@ -64,6 +66,7 @@
         else if (searchParams.page)  searchURL.searchParams.set('page', searchParams.page.toString())
 
         if (searchParams.type)  searchURL.searchParams.set('type', searchParams.type)
+        
         if (searchParams.instance)  searchURL.searchParams.set('instance', searchParams.instance)
         else searchURL.searchParams.set('instance', $homeInstance)
         
@@ -232,7 +235,7 @@
             {#if data.site.site_view.site.icon}
                 <Avatar circle={false} width={48} url={data.site.site_view.site.icon} />
             {/if}
-            <h1 class="text-2xl font-bold">Communities {searchParams.type == 'All' ? 'Known to' : 'At'} {data.site.site_view.site.name}</h1>
+            <h1 class="text-lg lg:text-xl xl:text-2xl font-bold">Communities {searchParams.type == 'All' ? 'Known to' : 'At'} {data.site.site_view.site.name}</h1>
         </span>
 
         
@@ -278,9 +281,10 @@
             {/if}
 
             {#each data.communities as community}
-                <CommunityObject bind:community onHome={$profile?.instance == data.instance}/>
+                <CommunityObject bind:community />
             {/each}
         </div>
+        
         {#if data.communities.length > 0 || parseInt($page.url.searchParams.get('page') ?? '1') > 1}
             <div class="mt-2 w-full">
                 <Pageination page={data.page} on:change={(p) => {

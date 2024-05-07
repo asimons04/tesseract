@@ -61,7 +61,7 @@ export async function load( req: any) {
     const page = Number(req.url.searchParams.get('page')) || 1
     const query = req.url.searchParams.get('q')
     const sort = req.url.searchParams.get('sort') || 'asc'
-    const type = req.url.searchParams.get('type') || instance == get(homeInstance) ?'All' : 'Local'
+    const type = req.url.searchParams.get('type') ?? 'All' 
     
     const passedSite = req.passedSite
 

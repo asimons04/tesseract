@@ -4,29 +4,39 @@
     import { addSubscription } from '$lib/lemmy/user.js'
     import { profile } from '$lib/auth'
     
+    import Avatar from "$lib/components/ui/Avatar.svelte";
     import Badge from "$lib/components/ui/Badge.svelte";
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
     import CommunityLink from "$lib/components/lemmy/community/CommunityLink.svelte";
     import Button from "$lib/components/input/Button.svelte";
     import Markdown from "$lib/components/markdown/Markdown.svelte";
     import RelativeDate from "$lib/components/util/RelativeDate.svelte";
+    import Subscribe from "./Subscribe.svelte";
 
     import {
         Icon,
         CalendarDays,
         ChatBubbleOvalLeftEllipsis,
+        Check,
         LockClosed,
         PencilSquare,
         UserGroup,
     } from 'svelte-hero-icons'
-    import Avatar from "$lib/components/ui/Avatar.svelte";
-    import Subscribe from "./Subscribe.svelte";
-    
     
     
     export let community: CommunityView
-    export let onHome: boolean = false
 
+    function isSubscribed(community_view:CommunityView): boolean {
+        if (!$profile?.user?.follows) return false
+        
+        for (let i:number=0; i<$profile.user.follows.length; i++) {
+            if ($profile.user.follows[i].community.actor_id == community_view.community.actor_id) return true
+        }
+        return false
+    }
+
+    community.subscribed = isSubscribed(community) ? 'Subscribed' : 'NotSubscribed'
+    
 </script>
 
 
@@ -99,37 +109,37 @@
             </div>
         </div>
         
-        {#if onHome}
-            
-            <Subscribe {community} let:subscribe let:subscribing>
-                <Button
-                    disabled={subscribing || !$profile?.jwt}
-                    loading={subscribing}
-                    color="tertiary-border"
-                    on:click ={async (e) => {
-                        e.stopPropagation()
-                        const res = await subscribe()
+           
+        <Subscribe {community} let:subscribe let:subscribing>
+            <Button
+                disabled={subscribing || !$profile?.jwt}
+                loading={subscribing}
+                color="tertiary-border"
+                size="square-sm"
+                title={['Subscribed', 'Pending'].includes(community.subscribed) ? 'Unsubscribe' : 'Subscribe'}
+                on:click ={async (e) => {
+                    e.stopPropagation()
+                    const res = await subscribe()
 
-                        if (res) {
-                            community.subscribed = res.community_view.subscribed != 'NotSubscribed'
-                                ? 'Subscribed'
-                                : 'NotSubscribed'
+                    if (res) {
+                        community.subscribed = res.community_view.subscribed != 'NotSubscribed'
+                            ? 'Subscribed'
+                            : 'NotSubscribed'
 
-                            addSubscription(
-                                community.community, ['Subscribed', 'Pending'].includes(res.community_view.subscribed)
-                            )
-                        }
-                    }}
-                    
-                >
-                    {
-                        ['Subscribed', 'Pending'].includes(community.subscribed)
-                            ? 'Unsubscribe' 
-                            : 'Subscribe'
-                        }
-                </Button>
-            </Subscribe>
-        {/if}
+                        addSubscription(
+                            community.community, ['Subscribed', 'Pending'].includes(res.community_view.subscribed)
+                        )
+                    }
+                }}
+                
+            >
+                {#if !subscribing}
+                <span class:text-green-500 = {['Subscribed', 'Pending'].includes(community.subscribed)}>
+                    <Icon mini src={Check} width={18}/>
+                </span>
+                {/if}
+            </Button>
+        </Subscribe>
     </div>
     
     <!---Collapsed Area--->    
