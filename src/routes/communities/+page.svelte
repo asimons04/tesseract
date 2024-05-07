@@ -283,15 +283,15 @@
             {/each}
         </div>
         
-        {#if data.communities.length > 0 || parseInt($page.url.searchParams.get('page') ?? '1') > 1}
-            <div class="mt-2 w-full">
-                <Pageination page={data.page} on:change={(p) => {
-                    searchParams.page = p.detail
-                    search()
-                    window.scrollTo(0,0)
-                }}/>
-            </div>
-        {/if}
+        
+        <div class="mt-2 w-full">
+            <Pageination page={data.page} on:change={(p) => {
+                searchParams.page = p.detail
+                search()
+                window.scrollTo(0,0)
+            }}/>
+        </div>
+        
     </FeedContainer>
     
 
