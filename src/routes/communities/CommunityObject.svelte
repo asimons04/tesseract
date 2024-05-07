@@ -36,7 +36,7 @@
     }
 
     community.subscribed = isSubscribed(community) ? 'Subscribed' : 'NotSubscribed'
-    
+
 </script>
 
 
@@ -110,7 +110,7 @@
         </div>
         
            
-        <Subscribe {community} let:subscribe let:subscribing>
+        <Subscribe {community} let:subscribe let:subscribing class="mr-4">
             <Button
                 disabled={subscribing || !$profile?.jwt}
                 loading={subscribing}
@@ -134,9 +134,9 @@
                 
             >
                 {#if !subscribing}
-                <span class:text-green-500 = {['Subscribed', 'Pending'].includes(community.subscribed)}>
-                    <Icon mini src={Check} width={18}/>
-                </span>
+                    <span class="{['Subscribed', 'Pending'].includes(community.subscribed) ? 'text-green-500 font-bold' : ''}">
+                        <Icon mini src={Check} width={18}/>
+                    </span>
                 {/if}
             </Button>
         </Subscribe>

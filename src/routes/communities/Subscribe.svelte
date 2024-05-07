@@ -55,4 +55,6 @@
   }
 </script>
 
-<slot {subscribe} {subscribing} />
+<div class="{$$props.class}">
+    <slot {subscribe} {subscribing} />
+</div>

@@ -52,8 +52,6 @@
 
     $: if (data.instance) searchParams.instance = data.instance
 
-    console.log($profile?.user?.follows)
-
     async function search(refresh:boolean=false) {
         data.communities = []
         searching = true
