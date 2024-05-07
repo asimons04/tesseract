@@ -235,14 +235,14 @@ Like `PUBLIC_INSTANCE_URL`, only the base domain of the instances should be prov
 
 ```
 # Single Line Format
-PUBLIC_FEATURED_INSTANCES=lemmy.world, beehaw.org, mander.xyx, lemmy.ca, programming.dev
+PUBLIC_FEATURED_INSTANCES=lemmy.world, beehaw.org, mander.xyz, lemmy.ca, programming.dev
 
 # Multi-line format
 - |-
   PUBLIC_FEATURED_INSTANCES=
     lemmy.world, 
     beehaw.org, 
-    mander.xyx, 
+    mander.xyz, 
     lemmy.ca, 
     programming.dev
 
