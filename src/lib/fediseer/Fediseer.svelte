@@ -37,6 +37,7 @@
         HandRaised,
         ShieldCheck
     } from 'svelte-hero-icons'
+    import Markdown from '$lib/components/markdown/Markdown.svelte';
     
     
     let fediseer:FediseerModal = {
@@ -183,7 +184,6 @@
                                         {endorsement.domain}
 
                                         {#if endorsement?.endorsement_reasons && endorsement.endorsement_reasons.length > 0}
-                                            <p class="text-xs font-bold">Endorsement Reasons:</p>
                                             <ul class="pl-6 text-xs list-disc">
                                                 {#each endorsement.endorsement_reasons as reason}
                                                     <li>{reason}</li>
@@ -223,9 +223,7 @@
                                         {#if censure?.censure_evidence && censure.censure_evidence.length > 0}
                                             <p class="text-xs font-bold">Censure Evidence:</p>
                                             {#each censure.censure_evidence as evidence}
-                                            <p class="font-normal text-xs">
-                                                {evidence}
-                                            </p>
+                                                <Markdown source={evidence} />
                                             {/each}
                                         {/if}
 
@@ -270,9 +268,7 @@
                                         {#if hesitation.hesitation_evidence && hesitation.hesitation_evidence?.length > 0}
                                             <p class="text-xs font-bold">Hesitation Evidence:</p>
                                             {#each hesitation.hesitation_evidence as evidence}
-                                            <p class="font-normal text-xs">
-                                                {evidence}
-                                            </p>
+                                                <Markdown source={evidence} />
                                             {/each}
                                         {/if}
                                         

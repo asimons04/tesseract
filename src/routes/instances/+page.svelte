@@ -1,24 +1,27 @@
 <script lang="ts">
     import type { Instance } from 'lemmy-js-client'
 
+    import { page } from '$app/stores';
     import { site } from '$lib/lemmy'
 
-    import Button from '$lib/components/input/Button.svelte';
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import InstanceListItem from './InstanceListItem.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import Switch from '$lib/components/input/Switch.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte';
 
     import {
-        HandThumbUp,
         Icon,
-        NoSymbol,
         Link,
-        XCircle
-
+        XCircle,
+        Bars3
     } from 'svelte-hero-icons'
+
+    
+    
     
     export let data;
 
@@ -31,14 +34,17 @@
     data.instances.allowed.sort(sortInstances)
 
 
-    let tab: 'allowed' | 'blocked' | 'linked' = 'linked'
-    
+      
     
     let filterTerm:string = ''
     let filterTermInput:string = ''
+    let hideDeadInstances = $page.url.searchParams.get('hideDead')?.toLowerCase() == 'true' ?? false
+    let selectedSoftwareType = $page.url.searchParams.get('software') ?? 'All'
+    let selectedFederationState = $page.url.searchParams.get('state') ?? 'Linked'
+    
     let debounceTimer: ReturnType<typeof setTimeout>;
     
-        function debounce(value:string,  timeout=300) {
+    function debounce(value:string,  timeout=300) {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(
             () => {
@@ -47,89 +53,133 @@
             }, timeout
         )
     }
+
+    // Get a list of the software types to filter by
+
+    let softwareTypes = ['All'] as string[]
+    data.instances.blocked.forEach((instance:Instance) => {
+        if (instance.software && !softwareTypes.includes(instance.software)) softwareTypes.push(instance.software)
+    })
+
+    data.instances.linked.forEach((instance:Instance) => {
+        if (instance.software && !softwareTypes.includes(instance.software)) softwareTypes.push(instance.software)
+    })
+
+    data.instances.allowed.forEach((instance:Instance) => {
+        if (instance.software && !softwareTypes.includes(instance.software)) softwareTypes.push(instance.software)
+    })
+
+    softwareTypes.sort()
+
+    // Populate arrays for federation state dropdown
+    let federationStates = ['Linked'] 
+    
+
+    if (data.instances.allowed.length > 0) federationStates.push('Allowed')
+    else federationStates.push('Blocked')
+
 </script>
 
 <svelte:head>
     <title>Federated Instances</title>
 </svelte:head>
 
-<SubNavbar home back toggleMargins refreshButton toggleCommunitySidebar />
+<SubNavbar home back toggleMargins refreshButton toggleCommunitySidebar scrollButtons >
+    <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="left">
+        <!---Local/Subscribed/All Switcher--->
+        <SelectMenu
+            options={softwareTypes}
+            selected={selectedSoftwareType}
+            on:select={(e) => { 
+                selectedSoftwareType = e.detail
+            }}
+            title="Software Type"
+            icon={Bars3}
+        />
+
+        <SelectMenu
+            options={federationStates}
+            selected={selectedFederationState}
+            on:select={(e) => { 
+                selectedFederationState = e.detail
+            }}
+            title="Federation State"
+            icon={Link}
+
+        />
+    </div>
+
+    <!---Filters--->
+    <div class="hidden xl:flex flex-row gap-2 items-center" slot="center">
+  
+        <TextInput type="text" placeholder="Filter Instances" class="h-8"
+            bind:value={filterTermInput}
+            on:keyup={(e) => { 
+                debounce(e.detail.srcElement.value);
+            }}
+        />
+        <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
+                debounce('');
+                filterTermInput = ''
+            }}
+        >
+            <Icon src={XCircle} mini size="22"/>
+        </button>
+
+        <span class="font-bold text-xs whitespace-nowrap ml-4">Hide dead</span>
+        <Switch bind:enabled={hideDeadInstances}/>
+
+    </div>
+
+</SubNavbar>
 
 
 
 
 
 <MainContentArea>
-    <div class="sticky top-[6.8rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10">
-        <div class="flex flex-row gap-1 mx-auto">
-            <Button color="tertiary" alignment="left" title="Linked" class="hover:bg-slate-200" on:click={() => tab='linked' }>
-                <span class="flex flex-col items-center {tab == 'linked' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                    <Icon src={Link} mini size="18" title="Linked" />
-                    <span class="text-xs text-center">Linked ({data.instances.linked.length})</span>
-                </span>            
-            </Button>
     
-            {#if data.instances.allowed.length > 0}
-                <Button color="tertiary" alignment="left" title="Allowed" class="hover:bg-slate-200" on:click={() => tab='allowed' }>
-                    <span class="flex flex-col items-center {tab == 'allowed' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                        <Icon src={HandThumbUp} mini size="18" title="Allowed" />
-                        <span class="text-xs text-center">Allowed ({data.instances.allowed.length})</span>
-                    </span>            
-                </Button>
-            {:else}
-                <Button color="tertiary" alignment="left" title="Blocked" class="hover:bg-slate-200" on:click={() => tab='blocked' }>
-                    <span class="flex flex-col items-center {tab == 'blocked' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                        <Icon src={NoSymbol} mini size="18" title="Blocked" />
-                        <span class="text-xs text-center">Blocked ({data.instances.blocked.length})</span>
-                    </span>            
-                </Button>
-            {/if}
-    
-            <span class="flex flex-row gap-1 mx-auto items-center">
-                <TextInput type="text" placeholder="Filter Instances" class="h-8 w-full"
-                    bind:value={filterTermInput}
-                    on:keyup={(e) => { 
-                        debounce(e.detail.srcElement.value);
-                    }}
-                />
-                <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
-                        debounce('');
-                        filterTermInput = ''
-                    }}
-                >
-                    <Icon src={XCircle} mini size="22"/>
-                </button>
-            </span>
-        </div>
-    </div>
+    <!---Filter for mobile view--->
+    <span class="flex xl:hidden flex-row gap-1 mx-auto items-center">
+        <TextInput type="text" placeholder="Filter Instances" class="h-8 w-full"
+            bind:value={filterTermInput}
+            on:keyup={(e) => { 
+                debounce(e.detail.srcElement.value);
+            }}
+        />
+        <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
+                debounce('');
+                filterTermInput = ''
+            }}
+        >
+            <Icon src={XCircle} mini size="22"/>
+        </button>
+
+        <span class="font-bold text-xs whitespace-nowrap">Hide dead instances</span>
+        <Switch bind:enabled={hideDeadInstances}/>
+    </span>
+
     
     <FeedContainer>
         <div class="flex flex-col gap-4 w-full">
-            {#if tab == 'linked'}
+            {#if selectedFederationState == 'Linked'}
                 {#each data.instances.linked as instance}
-                    {#if filterTerm == '' || instance.domain.includes(filterTerm)}  
-                        <InstanceListItem instance={instance} />
-                    {/if}
+                    <InstanceListItem instance={instance} bind:filterTerm bind:hideDead={hideDeadInstances} bind:softwareType={selectedSoftwareType}/>
                 {/each}
 
             {/if}
 
-            {#if tab == 'blocked'}
+            {#if selectedFederationState == 'Blocked'}
                 {#each data.instances.blocked as instance}
-                    {#if filterTerm == '' || instance.domain.includes(filterTerm)}  
-                        <InstanceListItem instance={instance} />
-                    {/if}
+                    <InstanceListItem instance={instance} bind:filterTerm bind:hideDead={hideDeadInstances} bind:softwareType={selectedSoftwareType}/>
                 {/each}
 
             {/if}
 
-            {#if tab == 'allowed'}
+            {#if selectedFederationState == 'Allowed'}
                 {#each data.instances.allowed as instance}
-                    {#if filterTerm == '' || instance.domain.includes(filterTerm)}  
-                        <InstanceListItem instance={instance} />
-                    {/if}
+                    <InstanceListItem instance={instance} bind:filterTerm bind:hideDead={hideDeadInstances} bind:softwareType={selectedSoftwareType}/>
                 {/each}
-
             {/if}
         </div>
     </FeedContainer>

@@ -65,6 +65,6 @@
     }
 </script>
   
-<time datetime={dateTime} title={dateTime}>
+<time class="whitespace-nowrap" datetime={dateTime} title={dateTime}>
     {formatRelativeDate(stringToDate(date))}
 </time>
