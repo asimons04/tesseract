@@ -16,32 +16,26 @@
     import TextInput from '$lib/components/input/TextInput.svelte'
 
     import {
-        AdjustmentsHorizontal,
         ArchiveBox,
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
-        Bars3,
+        Bolt,
         BuildingOffice,
+        CalendarDays,
         ChevronDoubleLeft,
-        ChevronDoubleDown,
-        Cog6Tooth,
+        Fire,
         GlobeAlt,
-        HandRaised,
         Home,
         Icon,
         InboxArrowDown,
-        InformationCircle,
         Identification,
-        MagnifyingGlass,
-        Minus,
-        Plus,
-        QueueList,
         Star,
         UserGroup,
-        XCircle
+        XCircle,
     } from 'svelte-hero-icons'
 
     import CommunityGroup from "./CommunityGroup.svelte";
+    import { goto } from "$app/navigation";
     
     let panel: 'groups' | 'subscribed' | 'favorites' = 'subscribed';
     
@@ -67,56 +61,62 @@
 </script>
 
 <nav
-    class="hidden sm:flex flex-col pl-4 pr-4 pt-[1.2rem] overflow-auto sticky top-16 bottom-0
+    class="hidden sm:flex flex-col pl-4 pr-4 overflow-auto sticky top-16 bottom-0
         gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black z-50
         {$userSettings.uiState.expandSidebar
             ? `max-w-[25%] lg:max-w-[20%] xl:max-w-[18%] min-w-[20rem]`
             : "w-max max-w-max min-w-max"
         }
+        -mb-4
     "
 >
+    <!--- Feed Sort Convenience Buttons--->
+    <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
+        
+        <!---Popular --->
+        <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="off">
+            <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
+        </SidebarButton>
 
-    <Button
-        alignment="left"
-        on:click={() =>
-            ($userSettings.uiState.expandSidebar = !$userSettings.uiState.expandSidebar)
-        }
-        class="w-max !p-2 hover:bg-slate-200"
-        aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-        title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
-    >
-        <Icon
-            src={ChevronDoubleLeft}
-            mini
-            size="16"
-            class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"
-        />
-    </Button>
-    
+        <!---Hot --->
+        <SidebarButton href="/?sort=Hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="off">
+            <Icon src={Fire} mini size="18" title="Hot" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Hot</span>
+        </SidebarButton>
+
+        <!---Top Day --->
+        <SidebarButton href="/?sort=TopDay" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="off">
+            <Icon src={CalendarDays} mini size="18" title="Top Day" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Top Day</span>
+        </SidebarButton>
+    </span>
+
+    <hr class="border-slate-300 dark:border-zinc-800 mt-2"/>
 
     <!---Frontpage--->
-    <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+    <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Home" on:click={() => { goto('/', {invalidateAll: true}) }} data-sveltekit-preload-data="off">
         <Icon src={Home} mini size="18" title="Home" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
 
-    <!---Popular --->
-    <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="hover">
-        <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
-    </SidebarButton>
+    <!--- Explore Communities / Favorites --->
     
     <!---Communities--->
     <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Communities</span>
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>Browse Communities</span>
     </SidebarButton>
 
-    <!---Feed Groups--->
-    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="hover">
+    <!---Favorites Feed--->
+    {#if $profile?.user}
+    <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="off">
         <Icon src={Star} mini size="18" title="Feeds" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
     </SidebarButton>
+    {/if}
+
+    
 
 
     {#if $profile?.user}
@@ -145,9 +145,9 @@
             {/if}
 
             
-            <SidebarButton title="Moderating" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='favorites'}>
+            <SidebarButton title="Favorites" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='favorites'}>
                 <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                    <Icon src={Star} mini size="18" title="Moderating" />
+                    <Icon src={Star} mini size="18" title="Favorites" />
                     <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">Favorites</span>
                 </span>
             </SidebarButton>
@@ -157,10 +157,10 @@
 
         <!--- Search field to filter the subscribed communities--->
         {#if $userSettings.uiState.expandSidebar}
-            <div class="p-2 flex flex-row gap-1">
+            <form class="p-2 flex flex-row gap-1" on:submit|preventDefault>
                 <TextInput 
                     bind:value={communityFiltervalue}
-                    type="text"
+                    type="text" autocomplete="new-password"
                     placeholder="Jump to a Community"
                     on:keyup={(e) => { 
                         debounce(e.detail.srcElement.value);
@@ -168,14 +168,14 @@
                     }}
                     class="h-8 w-full"
                 />
-                <span class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
+                <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
                         debounce('');
                         communityFiltervalue = '';
                     }}
                 >
                     <Icon src={XCircle} mini size="22"/>
-                </span>
-            </div>
+                </button>
+            </form>
         {/if}
         
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
@@ -226,7 +226,7 @@
             {#if panel=='groups' && $userSettings.uiState.expandSidebar}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
                     
-                    {#if $profile?.groups?.length > 1}
+                    {#if $profile?.groups && $profile?.groups?.length > 1}
                         {#each $profile.groups.sort(sortGroups) as group}
                             <CommunityGroup group={group} bind:showEmptyGroups/>
                         {/each}
@@ -255,7 +255,7 @@
             <!---Favorites--->
             {#if panel == 'favorites'}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
-                    {#if $profile?.groups[getGroupIndex('Favorites')]?.communities?.length > 0}
+                    {#if $profile?.groups && $profile?.groups[getGroupIndex('Favorites')]?.communities?.length > 0}
                         <CommunityList 
                             expanded={$userSettings.uiState.expandSidebar} 
                             items={$profile?.groups[getGroupIndex('Favorites')]?.communities}
@@ -270,36 +270,22 @@
 
     <!--- Sidebar options for non-authenticated users--->
     {:else}
-        <Button
-            class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
-            href="/login"
-            color="tertiary"
-            alignment="left"
-        >
-            <Icon mini src={ArrowLeftOnRectangle} size="18" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Log in</span>
-        </Button>
+        <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+        <SidebarButton href="/login" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+            <Icon src={ArrowLeftOnRectangle} mini size="18" title="Login" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Login</span>
+        </SidebarButton>
 
-        <Button
-            class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
-            href="/signup"
-            color="tertiary"
-            alignment="left"
-        >
-            <Icon mini src={Identification} size="18" title="Sign Up"/>
+        <SidebarButton href="/signup" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+            <Icon src={Identification} mini size="18" title="Sign Up" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Sign Up</span>
-        </Button>
+        </SidebarButton>
         
         {#if !LINKED_INSTANCE_URL}
-            <Button
-                class="hover:bg-slate-200 {$userSettings.uiState.expandSidebar ? '' : '!p-1.5'}"
-                href="/accounts"
-                color="tertiary"
-                alignment="left"
-            >
-                <Icon mini src={BuildingOffice} size="18" />
+            <SidebarButton href="/accounts" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="hover">
+                <Icon src={BuildingOffice} mini size="18" title="Change Guest Instance" />
                 <span class:hidden={!$userSettings.uiState.expandSidebar}>Change Guest Instance</span>
-            </Button>
+            </SidebarButton>
         {/if}
     {/if}
     

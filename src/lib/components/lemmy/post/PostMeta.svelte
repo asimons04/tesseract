@@ -1,12 +1,16 @@
 <script lang="ts">
-    import type { Community, CommunityModeratorView, Person, PostView } from 'lemmy-js-client'
-    import type { PostDisplayType } from './helpers.js'
+    import type { 
+        CommentReplyView, 
+        CommunityModeratorView, 
+        PersonMentionView, 
+        PostView 
+    } from 'lemmy-js-client'
     
-    import { getInstance } from '$lib/lemmy.js'
-    import { fediseerLookup } from '$lib/fediseer/client.js'
-    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { imageProxyURL } from '$lib/image-proxy'
-    import { postType } from './helpers'
+    import { isPostView, postType } from './helpers'
+    import { page } from '$app/stores'
+    import { profile } from '$lib/auth.js'
+    import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -14,6 +18,7 @@
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import MBFC from '$lib/MBFC/MBFC.svelte'
+    import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -26,64 +31,33 @@
         Megaphone,
         MinusCircle,
         NoSymbol,
+        Pencil,
+        PlusCircle,
         Trash,
-        UserPlus
     } from 'svelte-hero-icons'
     
     
 
-    export let post: PostView                   
-    export let displayType: PostDisplayType     = 'feed';
+    export let post: PostView | CommentReplyView | PersonMentionView             
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
     export let showFediseer:boolean             = true;
     export let collapseBadges:boolean           = false;
-    //export let hideBadges:boolean               = false;
-
-
-    // Extract data from post object for easier reference
-    // These values are mutable so define them and bind them reactively
-    let id: number |undefined
-    let community: Community | undefined
-    let user: Person | undefined
-    let published:string
-    let title: string | undefined
-    let upvotes: number | undefined
-    let downvotes: number | undefined
-    let nsfw: boolean
-    let saved: boolean
-    let featured: boolean
-    let deleted: boolean
-    let removed: boolean
-    let locked: boolean
-    let read: boolean
-    let userIsModerator:boolean
-    let url: string | undefined
+    export let hideBadges:boolean               = false;
+    export let avatarSize:number                = 48;
     
-    // Make these variables reactive
-    $: {
-        community                           = post.community ?? undefined
-        user                                = post.creator ?? undefined
-        id                                  = post.post.id ?? undefined
-        published                           = post.post.published
-        title                               = fixLemmyEncodings(post.post.name) ?? undefined
-        upvotes                             = post.counts.upvotes ?? undefined
-        downvotes                           = post.counts.downvotes ?? undefined
-        nsfw                                = post.post.nsfw ?? false
-        saved                               = post.saved ?? false
-        featured                            = (post.post.featured_local || post.post.featured_community) ?? false
-        deleted                             = post.post.deleted ?? false
-        removed                             = post.post.removed ?? false
-        locked                              = post.post.locked ?? false
-        read                                = post.read ?? false
-        userIsModerator                     = (moderators.filter((index) => index.moderator.id == user?.id).length > 0)
-        url                                 = post.post.url ?? undefined
-    }
     
-     
+    let inCommunity:boolean     = false
+    let inProfile:boolean       = false
+    let userIsModerator:boolean = false 
+    let subscribing:boolean     = false
+    let fediseerModal:boolean   = false;
     
-    let fediseerModal:boolean = false;
-
+    $: post
+    $: inCommunity      = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
+    $: inProfile        = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
+    $: userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
+    $: subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
 </script>
 
 {#if fediseerModal}
@@ -98,142 +72,137 @@
     <div class="flex flex-col gap-1">
 
         <span class="flex flex-row gap-2 text-sm items-center">
-            {#if community}
-                <Avatar url={community.icon} width={32} alt={community.name} />
+            
+            <!---Show Community Icon if Not in Community--->
+            {#if post.community && !inCommunity}
+                <span class="flex flex-col items-end gap-1">
+                    <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
+                    
+                    {#if $profile?.user}
+                        <!---Overlay small subscribe/unsubscribe button on avatar--->
+                        <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
+                            on:click={async () => {
+                                subscribing = true
+                                let result = await subscribe(post.community, subscribed)
+                                
+                                if (result) post.subscribed = 'Subscribed'
+                                else post.subscribed = 'NotSubscribed'
+
+                                subscribing=false
+                        }}>
+                            
+                            {#if subscribing}
+                                <Spinner width={16} />
+                            {:else}
+                                <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
+                            {/if}
+                        </button>
+                    {/if}
+                </span>
+            
+            <!---Show user's avatar if viewing posts in a community--->
+            {:else if inCommunity && post.creator}
+                <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.name} />
             {/if}
 
             <div class="flex flex-col text-xs">
-                {#if community}
-                    <CommunityLink {community} />
+                {#if !inCommunity && post.community}
+                    <CommunityLink bind:community={post.community} {avatarSize} />
                 {/if}
                 
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
-                    {#if user}
-                        <div class="flex items-center" class:text-slate-900={!community} class:dark:text-zinc-100={!community}>
+                    {#if !inProfile && post.creator}
+                        <div class="flex flex-wrap items-center" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'}">Posted by&nbsp;</span>
-                            <UserLink avatarSize={20} {user} mod={userIsModerator} avatar={!community} />
+                            <UserLink avatarSize={20} bind:user={post.creator} mod={userIsModerator} avatar={!post.community} />
                         </div>
                     {/if}
-
-                    <span class="flex flex-row gap-1">
-                        <span class="pl-1 hidden sm:block">•</span>
-                        <RelativeDate date={published} />
-                        
-                        {#if upvotes != undefined && downvotes != undefined}
-                            <span>•</span>
-                            <span title="{upvotes.toString()} Upvotes / {downvotes.toString()} Downvotes">
-                                {Math.floor((upvotes / (upvotes + downvotes || 1)) * 100)}%
-                            </span>
-                        {/if}
-                    </span>
                 </span>
+                
+                <div class="flex flex-row gap-4 items-center text-slate-600 dark:text-zinc-400">
+                    <RelativeDate date={post.post.published} />
+                    {#if post.post.updated}
+                        <span class="flex flex-row items-center gap-1 ml-1">
+                            <Icon src={Pencil} solid size="12" title="Edited" />
+                            <RelativeDate date={post.post.updated}/>
+                        </span>
+                    {/if}
+                </div>
+
             </div>
 
             <!--- Post Badges --->
+            {#if !hideBadges}
             <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
                 <!--- Media Bias Fact Check--->
-                {#if post && $userSettings.uiState.MBFCBadges && url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
+                {#if isPostView(post) && post && $userSettings.uiState.MBFCBadges && post.post.url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
-
-                <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
-                {#if post?.creator?.published && 
-                    (
-                        new Date().getTime()/1000/60 - (
-                            post.creator.published.endsWith('Z')
-                                ? (Date.parse(post.creator.published)/1000/60) 
-                                : (Date.parse(post.creator.published + 'Z')/1000/60) 
-                            )
-                            < 1440 * 5
-                    )
-                }
-                    <Badge label="New Account: {
-                        post.creator.published.endsWith('Z')
-                            ? new Date(post.creator.published).toString()
-                            : new Date(post.creator.published + 'Z').toString()
-                        }" 
-                        color="gray"
-                    >
-                        <Icon src={UserPlus} mini size="16"/>New
-                        <span class="hidden {collapseBadges ? 'hidden' : 'md:block'}"> Account</span>
-                    </Badge>
-                {/if}
-
-                {#if nsfw}
+                
+                {#if post.post.nsfw}
                     <Badge label="NSFW" color="red">
                         <Icon src={ExclamationCircle} mini size="16"/>
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
                     </Badge>
                 {/if}
 
-                {#if saved}
+                {#if post.saved}
                     <Badge label="Saved" color="yellow">
                         <Icon src={Bookmark} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>
                     </Badge>
                 {/if}
                 
-                {#if locked}
+                {#if post.post.locked}
                     <Badge label="Locked" color="yellow">
                         <Icon src={LockClosed} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>
                     </Badge>
                 {/if}
                 
-                {#if removed}
+                {#if post.post.removed}
                     <Badge label="Removed" color="red">
                         <Icon src={NoSymbol} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>
                     </Badge>
                 {/if}
                 
-                {#if deleted}
+                {#if post.post.deleted}
                     <Badge label="Deleted" color="red">
                         <Icon src={Trash} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>
                     </Badge>
                 {/if}
                 
-                {#if featured}
+                {#if (post.post.featured_local || post.post.featured_community)}
                     <Badge label="Featured" color="green">
                         <Icon src={Megaphone} mini size="16" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>-->
+                        <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
                     </Badge>
                 {/if}
 
                 <!--- Fediseer Endorsement Badge--->
-                {#if community && showFediseer && $userSettings.uiState.fediseerBadges}
-                    <span class="flex flex-row gap-2 items-center mr-2">
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(community.actor_id).hostname}.svg?style=ICON`)} 
+                {#if post.community && showFediseer && $userSettings.uiState.fediseerBadges}
+                    <button class="flex flex-row gap-2 items-center mr-2" on:click={(e) => fediseerModal = true}>
+                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(post.community.actor_id).hostname}.svg?style=ICON`)} 
                             class="cursor-pointer"
                             loading="lazy"
-                            alt="{`Fediseer endorsement badge for ${new URL(community.actor_id).hostname}`}"
-                            title="{`Fediseer endorsements for ${new URL(community.actor_id).hostname}`}"
-                            on:click={(e) => fediseerModal = true}
+                            alt="{`Fediseer endorsement badge for ${new URL(post.community.actor_id).hostname}`}"
+                            title="{`Fediseer endorsements for ${new URL(post.community.actor_id).hostname}`}"
                         />
-                    </span>
+                    </button>
                 {/if}
+
+                
             </div>
+            {/if}
             
             
         </span>
     </div>
 
     {#if showTitle}
-    <a
-        href="/post/{getInstance()}/{id}"
-        target="{$userSettings.openInNewTab.posts ? '_blank' : undefined}"
-        class="font-medium max-w-full w-full break-words"
-        style="word-break: break-word;"
-        class:text-slate-500={read && $userSettings.markReadPosts}
-        class:dark:text-zinc-400={read && $userSettings.markReadPosts}
-        title="{title}"
-    >
-        <h1 class="text-base md:text-lg" class:font-bold={displayType==='post'}>{title}</h1>    
-    
-    </a>
+        <PostTitle bind:post />
     {/if}
 
 

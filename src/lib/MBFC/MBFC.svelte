@@ -213,22 +213,18 @@
                             Full Results
                         </p>
                         <p class="text-xs font-normal">Read the full report for {results.name} at Media Bias Fact Check.</p>
+                        
+                        <span class="mt-2 text-xs font-normal">
+                            <Link highlight href={results.url} newtab={true} title="Full MBFC report for {results.name}"/>
+                        </span>
                     </div>
-                    
-                    <div class="mx-auto"/>
-                    
-                    
-                    <Button color="primary" size="md" href={results.url} newtab={true} title="Full MBFC report for {results.name}">
-                        <Icon src={ClipboardDocumentCheck} mini size="16"/>
-                        <span class="hidden md:block">Full Results</span>
-                    </Button>
                     
                 </div>
             {/if}
             
 
             <!--- User Report Post--->
-            {#if !post.post.removed && !post.post.deleted && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
+            {#if post?.creator?.id && !post.post.removed && !post.post.deleted && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
                 <hr class="mt-1"/>
                 <div class="flex flex-row items-center gap-2">
                     <div class="flex flex-col">

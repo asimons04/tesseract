@@ -1,20 +1,25 @@
 <script lang="ts">
     import type { Community } from 'lemmy-js-client'
-    import {  type CommunityGroup, profile } from '$lib/auth'
+    import type{ CommunityGroup } from '$lib/auth'
+
     import { onMount } from 'svelte'
-    
+    import { profile } from '$lib/auth'
+    import { toast } from '$lib/components/ui/toasts/toasts';
+
+
     import {
+        getGroupIndex,
         removeGroup,
         sortCommunities,
         updateGroup
     } from '$lib/favorites'
     
-    import { toast } from '$lib/components/ui/toasts/toasts';
+    
 
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
+    import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
 
@@ -29,11 +34,10 @@
     
 
     export let open:boolean = false;
-    export let group:CommunityGroup | undefined = undefined
-
+    export let group:CommunityGroup = {} as CommunityGroup
     
 
-    let formData:CommunityGroup|undefined = {
+    let formData:CommunityGroup = {
         ...group,
         communities: [...group.communities.sort(sortCommunities)]
     }
@@ -41,9 +45,10 @@
     // Reset the formdata value to the current group
     onMount(() => reset() );
 
-    let communitySearchInput:string = ''
+    let communitySearchInput:string
     
-    let modified = !(JSON.stringify(formData) == JSON.stringify(group))
+    let modified:boolean
+    // = !(JSON.stringify(formData) == JSON.stringify(group))
     $: modified = !(JSON.stringify(formData) == JSON.stringify(group))
 
     function reset():void {
@@ -57,7 +62,9 @@
         if (formData.name == '') {
             toast({
                 content: `Group name cannot be blank.`,
-                type: "warning"
+                type: "warning",
+                title: "Warning"
+
             })
             return
         }
@@ -65,17 +72,20 @@
         if (updateGroup(group, formData)) {
             open = false;
             toast({
-                content: `Updated group.`,
-                type: "success"
+                title: `Updated Group.`,
+                type: "success",
+                content: `Successfully updated ${formData.name}`
             })
         }
         else {
             toast({
                 content: `Failed to update group.`,
-                type: "error"
+                type: "error",
+                title: "Error"
             })
             return
         }
+    
     }
 
     function removeMember(community:Community):void {
@@ -110,7 +120,7 @@
             return
         }
         removeGroup(group.name)
-        formData = undefined;
+        formData = {} as CommunityGroup;
         open = false;
     }
     
@@ -118,17 +128,16 @@
 
 </script>
 
-{#if formData}
+{#if formData && open}
     <Modal bind:open={open} icon={UserGroup} fullHeight title="Edit Group: {group.name}">
         <div class="flex flex-col h-full gap-2 pr-2">
             
-            <TextInput bind:value={formData.name} label="Group Name"/>
+            <TextInput bind:value={formData.name} readonly={group.name == 'Favorites'} label="Group Name" class="{group.name == 'Favorites' ? 'hidden' : ''}"/>
             
-            <ObjectAutocomplete
+            <CommunityAutocomplete
                 label="Add Member"
                 placeholder="Add a community to '{formData.name}'"
                 listing_type="All"
-                showWhenEmpty={false}
                 containerClass="!max-h-[50vh]"
                 bind:q={communitySearchInput}
                 on:select={(e) => {

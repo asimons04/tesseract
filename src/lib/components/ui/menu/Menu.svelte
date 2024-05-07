@@ -30,7 +30,7 @@
                 return 'bottom-[100%] -left-[50%] origin-bottom'
 
             case 'bottom-center':
-                return 'top-[100%] -left-[50%] origin-top'
+                return 'top-[100%] -left-[200%] origin-top'
 
             case 'side-left':
                 return 'bottom-[-500%] right-[120%]'
@@ -77,7 +77,7 @@
                 {getOriginClass(alignment)}
                 rounded-lg py-1 w-max my-2 flex flex-col 
                 shadow-md  border
-                bg-white/90  border-slate-200 
+                bg-white/95  border-slate-200 
                 dark:bg-zinc-950/95 dark:border-zinc-800
                 backdrop-blur-3xl
                 {$$props.containerClass}
@@ -85,7 +85,7 @@
         >
 
             {#if open}
-                <div on:click={toggleOpen} class="flex flex-col gap-0" role="button" tabindex=0>
+                <div on:click={toggleOpen} class="flex flex-col gap-0 min-w-[155px] max-w-[90vw]" role="button" tabindex=0>
                     <slot {toggleOpen} />
                 </div>
             {/if}

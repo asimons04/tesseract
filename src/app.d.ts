@@ -10,10 +10,9 @@ declare global {
     // interface Platform {}
   }
   declare const __VERSION__: string
+  declare const __CODENAME__: string
 }
 
 export {}
 declare const __VERSION__: string
-
-declare module 'markdown-it-sub'
-declare module 'markdown-it-sup'
+declare const __CODENAME__: string

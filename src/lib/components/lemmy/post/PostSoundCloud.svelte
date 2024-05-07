@@ -7,94 +7,54 @@
     import { imageSize} from './helpers.js'
 
     import Link from '$lib/components/input/Link.svelte'
+    import IFrame from './utils/IFrame.svelte'
+    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     
 
     export let post: PostView
     export let displayType: PostDisplayType
+    export let postContainer: HTMLDivElement
 
-    let embedURL:   string = ""
+    let inViewport = false
+    let embedURL:   URL
     
     let size: string = imageSize(displayType);
-
+    
     // Check for a defined embed URL and use that if available
-    if (post.post && post.post.embed_video_url) {
-        embedURL = post.post.embed_video_url;
+    $: if (post.post && post.post.embed_video_url) {
+        embedURL = new URL(post.post.embed_video_url);
     }
     // If embed URL isn't provided, make our own!
     else if (post.post && post.post.url && !post.post.url.includes("/discover/")) {
-        embedURL = `https://w.soundcloud.com/player/?visual=true&url=${post.post.url.replace('m.soundcloud.com', 'soundcloud.com')}`
+        embedURL = new URL(`https://w.soundcloud.com/player/?visual=true&url=${post.post.url.replace('m.soundcloud.com', 'soundcloud.com')}`)
     }
 
    $: showAsEmbed = embedURL &&
-        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 
 </script>
 
-<style>
-    .flexiframe-container {
-        position: relative;
-        overflow: hidden;
-        padding-top: 56.25%;
-    }
 
-    .flexiframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        border:0;
-    }
-</style>
+<PostIsInViewport bind:postContainer bind:inViewport />
 
-
-
-<!--{#if showAsEmbed()}-->
 {#if showAsEmbed}
-    
-
-<Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-<div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
-        
-    <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
-        <div class="flexiframe-container rounded-md max-w-screen max-h-[480px] mx-auto">
-            <iframe 
-                class="flexiframe"
-                src="{embedURL}" 
-                allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
-                loading="lazy"
-                allowfullscreen 
-                title="Sound Cloud: {post.post.name}"
-            >
-            </iframe>
-        </div>
-    </div>
-        
-</div>
+    <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+    <IFrame bind:embedURL bind:size bind:title={post.post.name} />
 
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
     {#if $userSettings.embeddedMedia.post}
-    <Link
-        href={post.post.url}
-        title={post.post.name}
-        newtab={$userSettings.openInNewTab.links}
-        highlight nowrap
-    />
-    <PostImage bind:post={post} displayType={displayType}/>
-    
-    <!---Create PostLink to external link if user does not have embeds enaled for posts--->
+        <Link href={post.post.url} title={post.post.name} newtab={$userSettings.openInNewTab.links} highlight nowrap />
+        <PostImage bind:post={post} displayType={displayType}/>
     {:else}
+        <!---Create PostLink to external link if user does not have embeds enaled for posts--->
         <PostLink post={post} displayType={displayType}/>
+
     {/if}
 
 {:else if !post.post.thumbnail_url}
-<Link
-    href={post.post.url}
-    title={post.post.name}
-    highlight nowrap
-/>
+    <Link href={post.post.url} title={post.post.name} highlight nowrap />
 {/if}

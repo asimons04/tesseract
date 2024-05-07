@@ -1,92 +1,88 @@
 <script lang="ts">
+    import type { CommentAggregates, CommentView } from 'lemmy-js-client'
     import {
         ArrowUp,
         ArrowDown,
         Icon,
     } from 'svelte-hero-icons'
+    
+    
     import { getClient } from '$lib/lemmy'
+    import { instance } from '$lib/instance'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { site } from '$lib/lemmy'
+    import { userSettings } from '$lib/settings'
+
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
 
-    export let vote: number = 0
-    export let score: number
-    export let commentId: number
+    export let comment: CommentView
 
-    async function upvote() {
-        if (!$profile?.jwt) return
-        const upvoted = vote == 1
+    let onHomeInstance: boolean = true
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
-        if (vote == -1) {
-            score += 2
-        } else if (vote == 1) {
-            score -= 1
-        } else if (vote == 0) {
-            score += 1
-        }
-
-        vote = Number(!upvoted)
-
-        await getClient().likeComment({
-            score: upvoted ? 0 : 1,
-            auth: $profile.jwt,
-            comment_id: commentId,
-        })
-        .catch((_) => undefined)
-    }
-
-    async function downvote() {
-        if (!$profile?.jwt) return
-        const upvoted = vote == -1
-
-        if (vote == -1) {
-            score += 1
-        } else if (vote == 1) {
-            score -= 2
-        } else if (vote == 0) {
-            score -= 1
-        }
-
-        vote = -Number(!upvoted)
-
-        await getClient().likeComment({
-            score: upvoted ? 0 : -1,
-            auth: $profile.jwt,
-            comment_id: commentId,
-        })
-        .catch((_) => undefined)
-    }
-
-    const voteColor = (vote: number) => {
-        if (vote == 1) return '!text-blue-500 dark:!text-blue-400'
-        if (vote == -1) return '!text-red-500'
+    const voteColor = () => {
+        if (comment.my_vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'
+        if (comment.my_vote == -1) return '!text-red-500 font-bold'
         return ''
+    }
+
+    async function vote(vote:number): Promise<CommentAggregates> {
+        if (!$profile?.jwt) return comment.counts
+        try {
+            return (await getClient().likeComment({
+                    auth: $profile.jwt,
+                    comment_id: comment.comment.id,
+                    score: vote,
+                })
+                ).comment_view.counts
+        }
+        catch (err) {
+            toast({
+                type: 'error',
+                title: "Error",
+                content: `Unable to process your vote.`,
+            })
+            return comment.counts
+        }
     }
 
 </script>
 
-<div class="flex flex-row items-center rounded-md transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800 border-none">
-    <button
-        disabled={!$profile?.user}
-        on:click={upvote}
-        class="px-1.5 {vote == 1 ? voteColor(vote) : ''}"
-        aria-label="Upvote"
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center rounded-md gap-0 transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800  border rounded-lg">
+    <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
+        class="{comment.my_vote == 1 ? voteColor() : ''} !gap-0.5"
+        on:click={async () => {
+            comment.counts = await vote(comment.my_vote == 1 ? 0 : 1)
+            comment.my_vote = comment.my_vote == 1 ? 0 : 1
+        }}
+        
     >
         <Icon src={ArrowUp} width={19} mini />
-    </button>
+        {#if $userSettings.uiState.showScores}
+            <FormattedNumber number={comment.counts.upvotes} />
+        {/if}
+    </Button>
     
-    <span class="text-sm font-medium {voteColor(vote)}">
-        <FormattedNumber number={score} />
-    </span>
-
-    <button
-        disabled={!$profile?.user}
-        class:hidden={!$profile?.user}
-        on:click={downvote}
-        class="px-1.5 {vote == -1 ? voteColor(vote) : ''}"
-        aria-label="Downvote"
-    >
-        <Icon src={ArrowDown} width={19} mini />
-    </button>
+    <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
+    
+    <!---Hide downvote buttons if site config has globally disabled downvotes--->
+    {#if $site?.site_view?.local_site?.enable_downvotes}
+        <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
+            class="{comment.my_vote == -1 ? voteColor() : ''} !gap-0.5"
+            on:click={async () => {
+                comment.counts = await vote(comment.my_vote == -1 ? 0 : -1)
+                comment.my_vote = comment.my_vote == -1 ? 0 : -1
+            }}
+            
+        >
+            <Icon src={ArrowDown} width={19} mini />
+            {#if $userSettings.uiState.showScores}
+                <FormattedNumber number={comment.counts.downvotes} />
+            {/if}
+        </Button>
+    {/if}
 </div>
 

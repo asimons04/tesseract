@@ -1,6 +1,7 @@
 <script lang="ts">
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+
     import { createEventDispatcher } from 'svelte'
     import { Icon, XMark } from 'svelte-hero-icons'
     import { expoOut } from 'svelte/easing'
@@ -12,32 +13,27 @@
     export let icon:any = undefined;
 
     export let fullHeight:boolean = false
-    export let height:string = ''
-
+    export let height:string = 'h-auto'
+    
     const dispatcher = createEventDispatcher()
 </script>
 
 {#if open}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!---Div to blur background. Diabled click event that closes modal --->
-    <div
-        class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal"
+    <div class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] 
+        flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal"
         transition:fade={{ duration: 200 }}
     >
   
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div transition:scale={{ start: 0.9, easing: expoOut }}
-            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-full' : height} {$$props.class}"
+            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[95svh]' : height} {$$props.class}"
         >
-            <div
-                class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : height}"
-                on:click={() => {}}
-            >
+            <div class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : height}">
                 <div
-                    on:click|stopPropagation={() => {}}
                     class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
                     dark:bg-zinc-950 dark:border-zinc-800
-                    bg-white border border-slate-200  {fullHeight ? 'h-full' : ''}"
+                    bg-white border border-slate-200  {fullHeight ? 'h-full' : 'h-auto'}"
                     class:rounded-b-none={action}
                     class:border-b-0={action}
                 >
@@ -50,13 +46,7 @@
                         </h1>
                         
                         
-                        <Button
-                            size="md"
-                            class="ml-auto"
-                            rounded="lg"
-                            color="tertiary"
-                            on:click={() => (open = false)}
-                        >
+                        <Button size="md" class="ml-auto" rounded="lg" color="tertiary" on:click={() => (open = false)}>
                             <Icon src={XMark} mini size="16" />
                         </Button>
                     </div>
@@ -66,14 +56,11 @@
                     </div>
 
                 </div>
+                
                 {#if action}
                 <div class="border-x border-b bg-slate-100 dark:bg-zinc-950 dark:border-zinc-800 p-3 py-2 flex justify-end rounded-b-xl">
                     <slot name="action">
-                        <Button
-                            on:click={(e) => dispatcher('action', e)}
-                            color="primary"
-                            size="lg"
-                        >
+                        <Button on:click={(e) => dispatcher('action', e)} color="primary" size="lg">
                             {action}
                         </Button>
                     </slot>

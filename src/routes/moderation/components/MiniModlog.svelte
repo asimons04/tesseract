@@ -1,13 +1,7 @@
 <script lang="ts">
-    import type {
-        ModlogContainer,
-    } from '../lib/types'
+    import type { ModlogContainer} from '../lib/types'
+    import type { StandardReport } from './helpers'
     
-    import type {
-        CommentReportView,
-        PostReportView,
-        PrivateMessageReportView,
-    } from 'lemmy-js-client'
 
     import { fade } from 'svelte/transition'
     import { isCommentReport } from '$lib/lemmy/item.js'
@@ -18,7 +12,7 @@
 
     export let modlog:ModlogContainer 
     export let display:boolean = true
-    export let item:PostReportView | CommentReportView | PrivateMessageReportView
+    export let item: StandardReport
 </script>
 
 
@@ -33,7 +27,7 @@
         {:else}
             <h1 class="text-lg font-bold">Modlog History</h1>
             <p class="text-sm font-normal">
-                Abridged modlog filtered for <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />.
+                Abridged modlog filtered for <UserLink user={item.reportee} />.
             </p>
 
             {#if modlog.data?.modlog?.length > 0}

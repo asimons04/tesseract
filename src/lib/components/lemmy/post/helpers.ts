@@ -1,11 +1,31 @@
-import type { CommentView, GetPostsResponse, PersonView, PostView } from 'lemmy-js-client'
+import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType, CommentReplyView, PersonMentionView } from 'lemmy-js-client'
+import type { MBFCReport } from '$lib/MBFC/types'
 
+export interface PostView extends LemmyPostView {
+    mbfc?: MBFCReport,
+    cross_posts?: PostView[]
+}
+
+export interface MediaEmbedItem {
+    embed_url?: string,
+    type?: PostType,
+    title?: string,
+    description?: string,
+    thumbnail_url?: string,
+    open?: boolean
+}
+
+
+import { disableScrollHandling } from '$app/navigation'
 import { get } from 'svelte/store';
+import { getSessionStorage, setSessionStorage } from '$lib/session'
 import { goto } from '$app/navigation'
 import { lookup as MBFCLookup } from '$lib/MBFC/client'
-import { setSessionStorage } from '$lib/session.js'
+import { page } from '$app/stores'
 import { userSettings as UserSettings} from '$lib/settings.js'
 import { YTFrontends } from '$lib/settings.js'
+
+
 
 // Import user settings
 let userSettings: any = get(UserSettings);
@@ -14,7 +34,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' |
+    'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' | 'peertube' |
     'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -25,6 +45,9 @@ export const isMutable = (post: PostView, me: PersonView) =>
 export const isCommentMutable = (comment: CommentView, me: PersonView) =>
     me.person.id == comment.creator.id
 
+export function isPostView(item: PostView | CommentReplyView | PersonMentionView): item is PostView {
+    return !('comment' in item)
+}
 
 // Return the image size based on the display type (feed/post) and the user's preference
 export const imageSize = (displayType:PostDisplayType, ) => {
@@ -41,23 +64,40 @@ export const isImage = (url: string | undefined) => {
     if (!url) return false
     return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(new URL(url).pathname)
 }
+
+// Check if the provided URL is an embeddable audio file
+export const isAudio = (url: string | undefined) => {
+    if (!url) return false
+    return /\.(mp3|oga|opus|aac)$/i.test(new URL(url).pathname)
+}
+
+
 // Check if provided URL is a video
 export const isVideo = (inputUrl: string | undefined) => {
   if (!inputUrl) return false
 
   const url = new URL(inputUrl).pathname.toLowerCase()
 
+  // (/videos/embed) is for Peertube embed video detection
   return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
-export const isEmbeddableVideo = (url: string | undefined):boolean => {
+export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
     if (!url) return false
     return (
         isInvidious(url) ||
         isYouTube(url) ||
         isPiped(url)
     )
+}
+
+// Check if URL is a peerTube embed
+export const isPeertube = (embed_video_url:string): boolean => {
+    const regex = `\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
+    const found = embed_video_url.match(regex)
+    if (found) return true
+    return false
 }
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
@@ -78,10 +118,17 @@ export const isYouTube = (url:string):boolean => {
         url.startsWith('http://youtu.be') || 
         url.startsWith('https://m.youtube.com') || 
         url.startsWith('http://m.youtube.com') || 
+        url.startsWith('http://music.youtube.com') ||
+        url.startsWith('https://music.youtube.com') ||
         url.startsWith('https://www.youtube.com') || 
         url.startsWith('http://www.youtube.com') || 
         url.startsWith('https://youtube.com') || 
-        url.startsWith('http://youtube.com')
+        url.startsWith('http://youtube.com') ||
+        url.startsWith('https://youtube.de') ||
+        url.startsWith('https://www.youtube.de') ||
+        url.startsWith('http://youtube.de') ||
+        url.startsWith('http://www.youtube.de') ||
+        url.startsWith('https://y2u.be/')
     )
 }
 
@@ -142,13 +189,123 @@ export const isSongLink = (url:string):boolean => {
 }
 
 
+// Build a Youtube-like embed link from the post URL
+export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
+    if (!postURL) return
+    
+    let embedURL: URL
+    let videoID: string|null
+    
+    // Base the embed URL from the user's chosen YouTube frontend
+    if (userSettings.embeddedMedia.YTFrontend == "Invidious" && userSettings.embeddedMedia.customInvidious !='') {
+        embedURL = new URL('https://' + userSettings.embeddedMedia.customInvidious);
+    }
+    else {
+        embedURL = new URL('https://www.youtube-nocookie.com')
+    }
+
+
+    // Parse URLs to pick out video IDs to create embed URLs
+    videoID = new URL(postURL).searchParams.get('v');
+        
+    // If 'v' video ID param not found, check for older /watch/ABCDEFG format
+    if (!videoID) {
+        videoID = new URL(postURL).pathname.replace('/watch','').replace('/shorts/','').replace('/','');
+    }
+        
+    // Return early if a video ID could not be found
+    if (!videoID) return
+
+    // Search for valid extra parameters
+
+    // Append the video ID to the embed URL
+    embedURL.pathname = `/embed/${videoID}`
+
+
+    // Enable autoplay videos in post if setting is enabled
+    
+    if (displayType ==  'post' && (autoplay ?? userSettings.embeddedMedia.autoplay)) {
+        embedURL.searchParams.set('autoplay', '1');
+    }
+    else {
+        embedURL.searchParams.set('autoplay', '0');
+    }
+
+    if (userSettings.embeddedMedia.loop) {
+        embedURL.searchParams.set('loop', '1');
+    }
+
+    // Start time: Can be either t (legacy) or start
+    let startTime = new URL(postURL).searchParams.get('t') ?? new URL(postURL).searchParams.get('start');
+    if (startTime) {
+        embedURL.searchParams.set('start', startTime);
+    }
+
+    // End time: 
+    let endTime = new URL(postURL).searchParams.get('end');
+    if (endTime) {
+        embedURL.searchParams.set('end', endTime);
+    }
+
+    return embedURL
+}
+
+// Build a Vimeo embed link from the post URL
+export const buildVimeoEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
+    if(!postURL) return
+    
+    let embedURL = new URL('https://player.vimeo.com')
+    embedURL.searchParams.set('autopause', '0')
+
+    // Parse URLs to pick out video IDs to create embed URLs
+    let videoID = new URL(postURL).pathname.replace('/','')
+        
+    // Handle the /groups/123456/videos/{videoID} style links
+    if (videoID.startsWith('groups')) {
+        let re = new RegExp("/groups/[0-9]+/videos/", "i");
+        videoID = new URL(postURL).pathname.replace(re, '')
+    }
+
+    // Vimeo video IDs are numeric, so make sure we extracted a valid value (hopefully)
+    if (parseInt(videoID)) {
+        // Append the video ID to the embed URL
+        embedURL.pathname = `/video/${videoID}`
+    }
+
+    if (embedURL.pathname != '/') {
+        if (displayType ==  'post' && (autoplay ?? userSettings.embeddedMedia.autoplay)) {
+            embedURL.searchParams.set('autoplay','1')
+        }
+
+        return embedURL
+    }
+    return
+
+    
+}
+
+// Build a Songlink embed URL from the post URL
+export const buildSonglinkEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
+    let embedURL = new URL('https://odesli.co')
+    
+    // Parse URLs to pick out video IDs to create embed URLs
+    embedURL.pathname = '/embed/'
+    embedURL.searchParams.set('url', encodeURIComponent(postURL))
+    embedURL.searchParams.set('autopause', '0')
+
+    // @ts-ignore (This function is in index.html)
+    if ( dark() ) embedURL.searchParams.set('theme', 'dark')
+    if (displayType == 'post' && autoplay) embedURL.searchParams.set('autoplay', '1')
+
+    return embedURL
+}
 
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
 export const postType = (post: PostView | undefined ) => {
     
-    if (!post) return
+    if (!post) return 'text'
     
     if ( 
         (post.post.url && isImage(post.post.url) ) ||
@@ -163,7 +320,7 @@ export const postType = (post: PostView | undefined ) => {
         return "video"
     }
 
-    if (post.post.url && isEmbeddableVideo(post.post.url)) {
+    if (post.post.url && isYoutubeLikeVideo(post.post.url)) {
         return "youtube"
     }
     
@@ -191,6 +348,9 @@ export const postType = (post: PostView | undefined ) => {
         return "songlink"
     }
 
+    if (post.post.embed_video_url && isPeertube(post.post.embed_video_url)) {
+        return "peertube"
+    }
 
 
     // These need to be last
@@ -209,7 +369,7 @@ export const postType = (post: PostView | undefined ) => {
 }
 
 
-export const fixLemmyEncodings = function (content:string|undefined):string|undefined {
+export const fixLemmyEncodings = function (content:string|undefined):string {
     if (!content) return ' '
     
     try {
@@ -222,13 +382,20 @@ export const fixLemmyEncodings = function (content:string|undefined):string|unde
         return content;
     }
 }
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolean=true):void {
+export const scrollToTop = async function(element:HTMLElement|undefined|null, smooth:boolean=true):Promise<void> {
     if (!element) return;
+    await sleep(150)
     try {
-            
         // Offset = navbar height (-64) - sticky menu height (52) + 3 pixel gap
-        let offset = 64 + 55;
+        let offset = 64 + 64 + 3;
+
+        // Account for the profile button bar (height=58px) in the offset calculation
+        if (get(page) && get(page).url.pathname.startsWith('/profile/')) {
+            offset = offset + 58;
+        } 
+        
 
         let y = element.getBoundingClientRect().top + window.pageYOffset - offset;
 
@@ -243,15 +410,66 @@ export const scrollToTop = function(element:HTMLElement|undefined, smooth:boolea
     catch {}
 }
 
+export const lastSeenPost = {
+    getKey: function() {
+        const Page = get(page)
+        const key = Page.url.pathname != "/" && Page.url.pathname.endsWith('/')
+            ? Page.url.pathname.substring(0, Page.url.pathname.length-1)
+            : Page.url.pathname
+        return key
+    },
+
+    set: function(postID: number) {
+        const key = this.getKey()
+        const lastSeenPosts = JSON.parse(sessionStorage.getItem('tesseract_last_seen_posts') ?? '{}')
+        if (postID > 0) lastSeenPosts[key] = postID.toString()
+        else delete lastSeenPosts[key]
+
+        sessionStorage.setItem('tesseract_last_seen_posts', JSON.stringify(lastSeenPosts))
+    },
+
+    get: function() {
+        const key = this.getKey()
+        const lastSeenPosts = JSON.parse(sessionStorage.getItem('tesseract_last_seen_posts') ?? '{}')
+        if (key in lastSeenPosts) return lastSeenPosts[key]
+        else return undefined
+    }
+}
+
+
+export async function scrollToLastSeenPost(delay=200) {
+    const postID = lastSeenPost.get()
+    if (postID) {
+        await sleep(delay)
+        const element = document.getElementById(postID)
+        
+        if (element) {
+            disableScrollHandling()
+            scrollToTop(element, false)
+        }
+        else {
+            window.scrollTo(0,0)
+        }
+    }
+}
+
+export async function scrollTo(pos:number, delay=100) {
+    if (!pos) return
+    await sleep(delay)
+    disableScrollHandling()
+    window.scrollTo(0, pos)
+}
+
+
 
 // Used in post fetch loader to filter posts by keywords
-export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
+export const filterKeywords = function (posts:PostView[]):PostView[] {
     try {
-        let filteredPosts: PostView[] = [];
+        let filteredPosts = [] as PostView[];
         let filterWords = get(UserSettings)?.hidePosts?.keywordList ?? [] as string[];
 
         // Bypass filtering if keyword filtering is disabled by user
-        if (!get(UserSettings)?.hidePosts?.keywords) return {posts: posts};
+        if (!get(UserSettings)?.hidePosts?.keywords) return posts;
 
         // Loop over posts and check for any keywords that should be filtered out
         for(let i:number=0; i<posts.length; i++) {
@@ -269,7 +487,8 @@ export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
                         post?.post?.embed_description?.toLowerCase().startsWith(word.toLowerCase())
                     ) {
                         
-                        filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
+                        //posts.splice(i, 1)
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it starts with the keyword '${word}'`);
                         break;
@@ -284,7 +503,8 @@ export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
                         post?.post?.body?.includes(word) || 
                         post?.post?.embed_description?.includes(word)
                     ) {
-                        filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
+                        //posts.splice(i, 1)
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -301,7 +521,8 @@ export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
                         post?.post?.body?.includes(word) || 
                         post?.post?.embed_description?.includes(word)
                     ) {
-                        filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
+                        //posts.splice(i, 1)
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -318,7 +539,7 @@ export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
                         post?.post?.body?.toLowerCase().includes(word.toLowerCase()) || 
                         post?.post?.embed_description?.toLowerCase().includes(word.toLowerCase())
                     ) {
-                        filteredPosts.push(posts.splice(i, 1));
+                        filteredPosts.push(...posts.splice(i, 1));
                         i--;
                         console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
                         break;
@@ -329,18 +550,18 @@ export const filterKeywords = function (posts:PostView[]):GetPostsResponse {
         }
         console.log(filteredPosts);
         
-        return { posts: posts };
+        return posts
     }
     catch (err) {
         console.log("filterKeywords():  An error has occurred. Returning unfiltered posts list");
         console.log(err);
-        return { posts: posts}
+        return posts
     }
 
 }
 
 // Used in post fetch loader to detect and "roll up" crossposts
-export const findCrossposts = function (posts:PostView[]):GetPostsResponse {
+export const findCrossposts = function (posts:PostView[]):PostView[] {
     try {
         let uniquePosts: PostView[] = [];
 
@@ -351,7 +572,7 @@ export const findCrossposts = function (posts:PostView[]):GetPostsResponse {
                     !post.post.removed && !otherPost.post.removed &&
                     ( 
                         (post.post.url && otherPost.post.url && post.post.url == otherPost.post.url) || 
-                        post.post.name.toLowerCase().trim() == otherPost.post.name.toLowerCase().trim()
+                        (userSettings?.uiState?.matchCrossPostOnTitle && post.post.name.toLowerCase().trim() == otherPost.post.name.toLowerCase().trim())
                     ) 
             ){
                 return true;
@@ -409,17 +630,17 @@ export const findCrossposts = function (posts:PostView[]):GetPostsResponse {
             }
         }
 
-        return { posts: uniquePosts };
+        return uniquePosts
     }
     catch (err) {
         console.log("findCrossposts():  An error has occurred. Returning unfiltered posts list");
         console.log(err);
-        return { posts: posts }
+        return posts
     }
 }
 
 //Used in post fetch loader to add MBFC report info to post objects (if found)
-export const addMBFCResults = function (posts:PostView[]):GetPostsResponse {
+export const addMBFCResults = function (posts:PostView[]):PostView[] {
     try {
         for (let i:number=0; i<posts.length; i++) {
             let post = posts[i];
@@ -435,23 +656,120 @@ export const addMBFCResults = function (posts:PostView[]):GetPostsResponse {
         console.log(err);
     }
 
-    return {posts: posts};
+    return posts
+    //return {posts: posts};
 
 }
 
+// Fix one hour ahead posts
+export const fixHourAheadPosts = function(posts:PostView[]): PostView[] {
+    try {
+        for (let i:number=0; i<posts.length; i++) {
+            let published = posts[i].post.published.endsWith('Z')
+                ? new Date(posts[i].post.published)
+                : new Date(posts[i].post.published + 'Z')
+            
+            let now = new Date()
+
+            if (published > now) {
+                console.log("Fixing post pub time")
+                console.log(`Old: ${posts[i].post.published}`)
+                posts[i].post.published = new Date(published.setHours(published.getHours() - 1)).toISOString()
+                console.log(`New: ${posts[i].post.published}`)
+
+            }
+        }
+        return posts
+    }
+    catch (err) {
+        console.log('fixHourAheadPosts(): An error has occurred. Returning original posts list');
+        console.log(err)
+        return posts
+    }
+
+
+    
+
+}
 
 // Crosspost a post
 export const crossPost = function(post:PostView):void {
     setSessionStorage('postDraft', {
-        body: `cross-posted from: ${post.post.ap_id}\n\n${
-            post.post.body || ''
-        }`,
+        body: `cross-posted from: ${post.post.ap_id}\n\n${post.post.body || ''}`,
         url: post.post.url || '',
         name: post.post.name,
         loading: false,
         nsfw: post.post.nsfw,
-        community: null,
         image: null,
     })
     goto('/create/post?crosspost=true')
+}
+
+// Sort an array of posts
+export const sortPosts = function(posts:PostView[], direction:SortType): PostView[] {
+    const Page = get(page)
+    const inCommunity = (Page?.url?.pathname && Page.url.pathname.startsWith('/c/')) ?? false
+
+    if (direction == 'New')          posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
+    if (direction == 'Old')          posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
+    if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+    if (direction == 'Active')       posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+    if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+    if (direction == 'MostComments') posts.sort((a, b) => b.counts.comments - a.counts.comments)
+    if (direction.startsWith('Top')) posts.sort((a, b) => b.counts.score - a.counts.score)
+    
+    // Move featured posts to the beginning of the arrray
+    posts.sort((a,b) => Number(b.post.featured_local) - Number(a.post.featured_local))
+
+    // Move community featured posts to beginning if browsing community page
+    if (inCommunity) posts.sort((a,b) => Number(b.post.featured_community) - Number(a.post.featured_community))
+    
+    
+    return posts
+}
+
+// Used in infinite scroll load function to merge the new batch of posts into the existing while removing duplicates.
+export const mergeNewInfiniteScrollBatch = function (old: GetPostsResponse, next:GetPostsResponse):  GetPostsResponse {
+    // Merge the new results into the current set, deduplicate, and then sort.
+    for (let i:number=0; i < next.posts.length; i++) {
+        // Check if the current new post already exists in the existing array of posts
+        let exists = false
+        if (old.posts.some(p => p.post.id == next.posts[i].post.id)) exists = true
+        if (!exists) old.posts.push(next.posts[i])
+    }
+
+    //@ts-ignore since still using 0.18.x js client
+    if (next.next_page) old.next_page = next.next_page
+
+    return old
+}
+
+export function removeURLParams(url:string):string {
+    let fullURL = new URL(url)
+    fullURL.search = ''
+    return fullURL.toString()
+}
+
+export function isThreadComment(commentID:number):boolean {
+    const $page = get(page)
+    if ($page.url.searchParams.get('thread')) {
+        let thread = $page.url.searchParams.get('thread')
+        let path = thread?.split('.')
+        
+        if  (path && path.length>0) {
+            const threadCommentID = Number(path[path.length-1])
+            if (threadCommentID && threadCommentID == commentID) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
+export function isNewAccount(date:string):boolean {
+    return new Date().getTime()/1000/60 - (
+        date.endsWith('Z')
+            ? (Date.parse(date)/1000/60) 
+            : (Date.parse(date + 'Z')/1000/60) 
+    ) < 1440 * 5
 }

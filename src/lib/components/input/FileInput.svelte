@@ -6,7 +6,7 @@
   export let files: FileList | null | undefined = null
   export let image = false
   export let label: string | undefined = undefined
-  export let previewURL = ''
+  export let previewURL : string | undefined | null= ''
   export let preview:boolean = true;
 
   let dragover = false
@@ -21,7 +21,7 @@
         <span class="block my-1 text-sm font-bold">{label}</span>
     {/if}
     <label
-        class="flex flex-col items-center px-8 py-4 mx-auto w-full rounded-lg
+        class="flex flex-col items-center px-8 py-8 mx-auto w-full rounded-lg
             border border-slate-300 dark:border-zinc-700 bg-white dark:bg-black
             cursor-pointer min-h-36 transition-colors 
             {
@@ -39,15 +39,14 @@
         }}
         on:dragleave|preventDefault={() => (dragover = false)}
     >
-        {#if image && files}
-        <!-- svelte-ignore a11y-missing-attribute -->
+        {#if (image && files) || preview && previewURL}
+
             {#if preview}
-                <img
-                    src={previewURL}
+                <img src={previewURL} class="w-full max-w-sm h-full rounded-lg" alt="Profile avatar"
                     on:load={() => {
                         if (previewURL) URL.revokeObjectURL(previewURL)
                     }}
-                    class="w-full max-w-sm h-full rounded-lg"
+                    
                 />
             {:else}
                 <Icon src={CheckCircle} class="opacity-50" size="36" />

@@ -13,9 +13,9 @@
     const dispatcher = createEventDispatcher<{ change: number }>()
 </script>
 
-<div class="flex flex-row w-full gap-4">
+<div class="flex flex-row w-full h-8 mt-auto gap-4">
     
-    <Button  class="flex-1 font-normal w-full" title="Previous Page"
+    <Button  class="flex-1 font-normal w-full" title="Previous Page" color="tertiary-border"
         on:click={() => {
             dispatcher('change', --page)
         }}
@@ -25,17 +25,13 @@
         Back
     </Button>
 
-    <Button class="flex-1 font-normal w-full" title="Scroll to Top"
-        on:click={() => {
-            window.scrollTo(0,0);
-        }}
-    >
-        <Icon src={ChevronDoubleUp} mini size="16" slot="icon" />
-        <span class="hidden md:inline">Scroll to Top</span>
-    </Button>
-
-
-    <Button  class="flex-1 font-normal w-full" title="Next Page"
+    <div class="flex w-1/3 items-center">
+        <span class="mx-auto font-bold text-xl text-center">
+            {page}
+        </span>
+    </div>
+    
+    <Button  class="flex-1 font-normal w-full" title="Next Page"  color="tertiary-border"
         on:click={() => {
             dispatcher('change', ++page)
         }}

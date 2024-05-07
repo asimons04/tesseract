@@ -1,145 +1,78 @@
-import MarkdownIt from 'markdown-it'
-import markdown_it_container from 'markdown-it-container'
-// @ts-ignore
-import markdown_it_html5_embed from 'markdown-it-html5-embed' 
-// @ts-ignore
-import markdown_it_sub from 'markdown-it-sub'
-// @ts-ignore
-import markdown_it_sup from 'markdown-it-sup'
+import { get } from 'svelte/store'
+import { userSettings } from '$lib/settings'
 
-export const md = new MarkdownIt({
-    html: false,
-    linkify: true,
-    })
-    .use(markdown_it_container, 'spoiler', {
-        validate: (params: string) => {
-            return params.trim().match(/^spoiler+(.*)/)
-        },
-        render: (tokens: any, idx: any) => {
-            var m = tokens[idx].info.trim().match(/^spoiler+(.*)/)
+const $userSettings = get(userSettings)
 
-            if (tokens[idx].nesting === 1) {
-                // opening tag
-                return `<details><summary> ${md.utils.escapeHtml(m[1])} </summary>\n`
-            } else {
-                // closing tag
-                return '</details>\n'
-            }
-        },
-    })
-    .use(markdown_it_html5_embed, {
-        html5embed: {
-            useImageSyntax: true, // Enables video/audio embed with ![]() syntax (default)
-            attributes: {
-                audio: 'controls preload="metadata"',
-                video: 'width="100%" max-height="100%" controls loop preload="metadata"',
-            },
+
+export function filterAnnoyingCCLicenseOnComments(source:string) {
+    return $userSettings.uiState.filterAnnoyingCCLicense
+        ? source.replaceAll(/\[.*]\(https:\/\/creativecommons.org\/licenses\/by-nc-sa\/.*\)/gi, '')
+        : source
+}
+
+
+export function hashtagsToMDLinks(source:string) {
+    const hashtagRE = /#[A-Z]\w+/gi
+    let hashtags = source.matchAll(hashtagRE)
+    for (let tag of hashtags) {
+        let replacementText = `[${tag[0].trim()}](/search?q=${encodeURIComponent(tag[0].trim())})`
+        source = source.replace(tag[0], replacementText)
+    }
+    return source
+}
+
+export function findUserCommunityLinks(source: string) {
+
+    // Find @user@instance.xyz and turn into localized links
+    const userRE = /@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
+    let users = source.matchAll(userRE)
+    for (let user of users) {
+        if (user.groups?.username && user.groups?.instance) {
+            let replacementText = `[@${user.groups.username}@${user.groups.instance}](/u/${user.groups.username}@${user.groups.instance})`
+            source = source.replace(user[0], replacementText)
         }
-    })
-    .use(markdown_it_sub)
-    .use(markdown_it_sup)
+    }
+
+    // Find /u/user@instance.xyz and turn into localized links
+    // find /c/community@instance.xyz and turn into localized links
+    const userRE2 = /(?<!https:\/\/([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?<!\()(?<!\[)\/u\/((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
+    let users2 = source.matchAll(userRE2)
+    for (let user of users2) {
+        if (user.groups?.username && user.groups?.instance) {
+            let replacementText = `[/u/${user.groups.username}@${user.groups.instance}](/u/${user.groups.username}@${user.groups.instance})`
+            source = source.replace(userRE2, replacementText)
+        }
+    }
+
+    // Find !community@instance.xyz and turn into localized links
+    const communityRE = /!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
+    let communities = source.matchAll(communityRE)
+    for (let community of communities) {
+        if (community.groups?.community && community.groups?.instance) {
+            let replacementText = `[!${community.groups.community}@${community.groups.instance}](/c/${community.groups.community}@${community.groups.instance})`
+            source = source.replace(community[0], replacementText)
+        }
+    }
     
-
-
-
-export const mdInline: MarkdownIt = new MarkdownIt('zero')
-    .enable(['emphasis', 'backticks', 'strikethrough', 'link'])
-    .use(markdown_it_container, 'spoiler', {
-        validate: (params: string) => {
-            return params.trim().match(/^spoiler+(.*)/)
-        },
-        render: (tokens: any, idx: any) => {
-            var m = tokens[idx].info.trim().match(/^spoiler+(.*)/)
-
-            if (tokens[idx].nesting === 1) {
-                // opening tag
-                return `<details><summary> ${md.utils.escapeHtml(m[1])} </summary>\n`
-            } else {
-                // closing tag
-                return '</details>\n'
-            }
-        },
-    })
-    .use(markdown_it_sub)
-    .use(markdown_it_sup)
-
-const communityLinks = {
-    validate: function (text: any, pos: any, self: any) {
-        var tail = text.slice(pos)
-
-        if (!self.re.community) {
-            self.re.community = new RegExp(
-                /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z]{2,6})/
-            )
+    // find /c/community@instance.xyz and turn into localized links
+    const communityRE2 = /(?<!https:\/\/([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?<!\()(?<!\[)\/c\/((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
+    let communities2 = source.matchAll(communityRE2)
+    
+    for (let community of communities2) {
+        if (community.groups?.community && community.groups?.instance) {
+            let replacementText = `[/c/${community.groups.community}@${community.groups.instance}](/c/${community.groups.community}@${community.groups.instance})`
+            source = source.replace(communityRE2, replacementText)
         }
+    }
 
-        if (self.re.community.test(tail)) {
-            // Linkifier allows punctuation chars before prefix,
-            // but we additionally disable `@` ("@@mention" is invalid)
-            if (pos >= 2 && tail[pos - 2] === '!') {
-                return false
-            }
-            return tail.match(self.re.community)![0].length
-        }
-        return 0
-    },
-  
-    normalize: function (match: any) {
-        let prefix = match.url
-        prefix = prefix.startsWith('c/') ? prefix.slice(2) : prefix.slice(1)
-        match.url = `/c/${prefix}`
-    },
+    return source
 }
-
-const userLinks = {
-    validate: function (text: any, pos: any, self: any) {
-        var tail = text.slice(pos)
-
-        if (!self.re.user) {
-            self.re.user = new RegExp(/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z]{2,6})/)
-        }
-        if (self.re.user.test(tail)) {
-            // Linkifier allows punctuation chars before prefix,
-            // but we additionally disable `@` ("@@mention" is invalid)
-        if (pos >= 2 && tail[pos - 2] === '!') {
-            return false
-        }
-        return tail.match(self.re.user)![0].length
-        }
-        return 0
-    },
-    normalize: function (match: any) {
-        let prefix = match.url
-        prefix = prefix.startsWith('u/') ? prefix.slice(2) : prefix.slice(1)
-        match.url = `/u/${prefix}`
-    },
-}
-
-md.linkify.add('!', {
-    validate: communityLinks.validate,
-    normalize: communityLinks.normalize,
-})
-
-md.linkify.add('c/', {
-    validate: communityLinks.validate,
-    normalize: communityLinks.normalize,
-})
-
-md.linkify.add('@', {
-    validate: userLinks.validate,
-    normalize: userLinks.normalize,
-})
-
-md.linkify.add('u/', {
-    validate: userLinks.validate,
-    normalize: userLinks.normalize,
-})
 
 const regexes = {
     post: /^https:\/\/([a-zA-Z0-9.-]+)\/post\/(\d+)$/,
     comment: /^https:\/\/([a-zA-Z0-9.-]+)\/comment\/(\d+)$/,
     user: /^https:\/\/([a-zA-Z0-9.-]+)\/user\/(\w+)$/,
-    community: /^https:\/\/([a-zA-Z0-9.-]+)\/c\/(\w+)$/,
+    community: /^https:\/\/([a-zA-Z0-9.-]+)\/c\/(\w+)$/
 }
 
 /**
@@ -169,4 +102,5 @@ export const photonify = (link: string) => {
         if (!match) return
         return `/c/${match?.[2]}@${match?.[1]}`
     }
+
 }

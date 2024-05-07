@@ -1,6 +1,6 @@
-import type { GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
+import type { GetPostsResponse, GetSiteResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
-import { addMBFCResults, findCrossposts, filterKeywords } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, sortPosts } from '$lib/components/lemmy/post/helpers'
 import { getClient, site } from '$lib/lemmy.js'
 import { get } from 'svelte/store'
 import { error } from '@sveltejs/kit'
@@ -9,39 +9,53 @@ import { userSettings } from '$lib/settings.js'
 
 interface LoadParams {
     url: any,
-    fetch: any
+    fetch?: any,
+    passedSite?: GetSiteResponse    // Pass back the site info so we don't have to fetch it again (used for infinite scroll new batches)
 }
 
-export async function load({ url, fetch }: LoadParams) {
-    const page = Number(url.searchParams.get('page') || 1) || 1
+
+export async function load({ url, passedSite }: LoadParams) {
+    const page_cursor = url.searchParams.get('page_cursor')
+    
+    const page = page_cursor 
+        ? undefined
+        : Number(url.searchParams.get('page') || 1) || 1
+    
     const sort: SortType = (url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     const listingType: ListingType = (url.searchParams.get('type') as ListingType) || get(userSettings).defaultSort.feed
-   
+    
     try {
         // Fetch posts
-        let posts = await getClient(undefined, fetch).getPosts({
-            limit: get(userSettings)?.uiState.postsPerPage || 20,
-            page: page,
-            sort: sort,
-            type_: listingType,
-            auth: get(profile)?.jwt,
-        });
-
-        // Fetch site data
-        let siteData = await getClient(undefined, fetch).getSite({});
-        site.set(siteData)
+        let [ posts, siteData ] = await Promise.all([
+            getClient().getPosts({
+                limit: get(userSettings)?.uiState.postsPerPage || 10,
+                sort: sort,
+                type_: listingType,
+                page: page,
+                //@ts-ignore
+                page_cursor: page_cursor,
+                auth: get(profile)?.jwt,
+            }),
+            passedSite ?? getClient().getSite({})
+        ])
         
-        // Apply MBFC data object to post
-        posts = addMBFCResults(posts.posts);
+        if (!passedSite) site.set(siteData)
+
+        // Fix posts that come in an hour ahead
+        posts.posts = fixHourAheadPosts(posts.posts)
 
         // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
+        posts.posts = filterKeywords(posts.posts);
 
         // Roll up any duplicate posts/crossposts
-        posts = findCrossposts(posts.posts);
+        posts.posts = findCrossposts(posts.posts);
 
+        // Apply MBFC data object to post
+        posts.posts = addMBFCResults(posts.posts);
         
-        
+        // Only sort the first fetch. If a site object is passed, it can be used to indicate this is a re-fetch (which are sorted after being retrieved)
+        if (!passedSite) posts.posts = sortPosts(posts.posts, sort)
+
         // Return the data to the frontend
         return {
             sort: sort,
@@ -49,7 +63,9 @@ export async function load({ url, fetch }: LoadParams) {
             page: page,
             posts: posts,
             site: siteData,
+            type: listingType
         }
+        
     } catch (err) {
         console.log(err)
         throw error(500, {

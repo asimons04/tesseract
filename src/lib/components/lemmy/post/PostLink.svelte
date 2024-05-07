@@ -3,7 +3,7 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { getInstance } from '$lib/lemmy.js'
-    import { imageSize} from './helpers.js'
+    import { imageSize, removeURLParams } from './helpers.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
 
@@ -13,18 +13,23 @@
     export let post:PostView
     export let displayType: PostDisplayType
 
-    let loaded                              = false;
-    let size: string                        = imageSize(displayType);
+    let loaded          = false;
+    let size: string    = imageSize(displayType);
+    
+
+    
  
 </script>
 
 {#if post.post?.url}
-    <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+    <span class="flex flex-row w-full gap-4 items-center">
+        <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+        <Link class="text-xs" href="https://archive.ph/{removeURLParams(post.post.url)}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
+    </span>
 {/if}
 
 
 {#if post.post?.thumbnail_url}
-    <!--href={post.post?.url || undefined}-->
     <a 
         href={displayType == 'feed' ? `/post/${getInstance()}/${post.post.id}` : `${post.post.url}`}
         target={
@@ -33,11 +38,11 @@
                 : undefined
         }
     >
-        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+        <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
                     <img
-                        src="{imageProxyURL(post.post?.thumbnail_url, (displayType=='feed' ? 768 : undefined), 'webp')}"
+                        src="{imageProxyURL(post.post?.thumbnail_url, (displayType=='feed' ? 1024 : undefined), 'webp')}"
                         class="max-w-full ml-auto mr-auto object-cover rounded-md opacity-0 transition-opacity duration-300"
                         class:opacity-100={loaded}
                         on:load={() => (loaded = true)}

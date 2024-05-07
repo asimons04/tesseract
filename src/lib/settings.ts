@@ -2,7 +2,6 @@ import type { CommentSortType, CommunityView, SortType } from 'lemmy-js-client'
 import { type Writable, writable } from 'svelte/store'
 import { env } from '$env/dynamic/public'
 
-export const SSR_ENABLED = env.PUBLIC_SSR_ENABLED?.toLowerCase() == 'true'
 
 // Returns a proper boolean or null.  Used to set boolean values from env var strings while allowing nullish coalescing to set default values.
 const toBool = (str: string | undefined) => {
@@ -12,28 +11,28 @@ const toBool = (str: string | undefined) => {
   return str.toLowerCase() === 'true'
 }
 
-const strToArray = (str:string | undefined) => {
+const strToArray = (str:string | undefined): string[] => {
     if (!str) { return [] }
 
     // Reject empty strings
     if (str.trim() == "") { return [] }
     
     // Convert non-empty string into array, convert newlines into commas, remove scheme and slashes
-    let arr:Array<String> =  str.split(',');
+    let arr:Array<string> =  str.split(',');
     
     // Deduplicate and sort the array of instances
-    let uniqArr:Array<String> = [...new Set(arr)].sort();
+    let uniqArr:Array<string> = [...new Set(arr)].sort();
     
     // Remove empty string elements and trim whitespace from each domain entry
-    let trimmedArr:Array<String> = [];
+    let trimmedArr:Array<string> = [];
     
     for (let i=0; i< uniqArr.length; i++) {
-        let item:String = uniqArr[i].trim();
+        let item:string = uniqArr[i].trim();
         if (item.length > 0) {
             trimmedArr.push(item);
         }
     }
-    trimmedArr.sort();
+    trimmedArr.sort()
     return trimmedArr;
 }
 
@@ -49,6 +48,7 @@ interface Settings {
     markReadPosts: boolean
     instance?: string
     showCompactPosts: boolean
+    font: 'font-system' | 'font-sans' | 'font-serif' | 'font-roboto' | 'font-inter' | 'font-reddit' | 'font-ubuntu' | 'font-urbanist'
     defaultSort: {
         sort: SortType
         feed: FeedType
@@ -78,7 +78,6 @@ interface Settings {
         posts: boolean,
     },
     debugInfo: boolean
-    systemUI: boolean
     embeddedMedia: {
         feed: boolean
         post: boolean
@@ -106,12 +105,20 @@ interface Settings {
         expandCommunitySidebar: boolean
         feedMargins:boolean
         postsPerPage: number
+        maxScrollPosts: number
         fediseerBadges: boolean
         MBFCBadges: boolean
         showInstances: boolean
         showFullURL: boolean
         expandCrossPosts: boolean
+        matchCrossPostOnTitle: boolean
         showBannersInCards: boolean
+        stretchCardBanner: boolean
+        modalOpen: boolean
+        reverseActionBar: boolean
+        showScores: boolean
+        showAltText:boolean
+        filterAnnoyingCCLicense: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -126,8 +133,9 @@ interface Settings {
 
 }
 
+// Default settings
 export const defaultSettings: Settings = {
-    version: 0.4,
+    version: 0.8,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -138,9 +146,8 @@ export const defaultSettings: Settings = {
         removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
 
     },
-    
+    font: 'font-roboto',
     debugInfo: false,
-    systemUI: false,
     imageSize: {
         feed: 'max-w-3xl',
         post: 'w-full'
@@ -153,12 +160,20 @@ export const defaultSettings: Settings = {
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,
         postsPerPage:                                                   20,
+        maxScrollPosts:                                                 100,
         fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,
         showInstances:                                                  true,
         showFullURL:                                                    false,
         expandCrossPosts:                                               true,
+        matchCrossPostOnTitle: toBool(env.PUBLIC_MATCH_XPOST_TITLE)     ?? true,
         showBannersInCards:                                             true,
+        stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
+        modalOpen:                                                      false,
+        reverseActionBar:                                               false,
+        showScores:                                                     true,
+        showAltText:                                                    true,
+        filterAnnoyingCCLicense:                                        false,
 
     },
 
@@ -217,13 +232,17 @@ export const defaultSettings: Settings = {
 }
 
 
-
 // Global option environment flags
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                     ?? false
 export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)                 ?? false
-export const MEDIA_PROXY_BLACKLIST          = strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
+export const MEDIA_PROXY_BLACKLIST          = [
+    'burgit.moe',
+    'iili.io',
+    'img.shields.io',
+    'mintboard.org',
+    ...strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
+]
 export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)               ?? true
-
 export const ENABLE_MEDIA_CACHE             = toBool(env.PUBLIC_ENABLE_MEDIA_CACHE)                     ?? ENABLE_MEDIA_PROXY ? true : false;
 export const MEDIA_CACHE_DURATION           = parseInt(env.PUBLIC_MEDIA_CACHE_DURATION ?? '')           || 12*60    // Base unit: Minutes
 export const MEDIA_CACHE_MAX_SIZE           = parseInt(env.PUBLIC_MEDIA_CACHE_MAX_SIZE ?? '')           || 1000     // Base unit: MB (Minimum 100 MB will be used if lower than that)
@@ -231,12 +250,22 @@ export const MEDIA_CACHE_HOUSEKEEP_INTERVAL = parseInt(env.PUBLIC_MEDIA_CACHE_HO
 export const MEDIA_CACHE_HOUSEKEEP_STARTUP  = toBool(env.PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP)          ?? true
 export const MEDIA_CACHE_KEEP_HOT_ITEMS     = toBool(env.PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS)             ?? true
 
-// Import custom Invidious/Piped instances
-let custom_invidious_instances = strToArray(env.PUBLIC_CUSTOM_INVIDIOUS) as Array<string>
-let custom_piped_instances = strToArray(env.PUBLIC_CUSTOM_PIPED) as Array<string>
+
+// URL Blacklist options
+export const BLACKLIST_CONFIG = {
+    DOMAIN_BLACKLIST:         strToArray(env.PUBLIC_DOMAIN_BLACKLIST),
+    FAKE_NEWS_BLACKLIST:      strToArray(env.PUBLIC_FAKE_NEWS_BLACKLIST),
+    LINK_SHORTENER_BLACKLIST: strToArray(env.PUBLIC_LINK_SHORTENER_BLACKLIST),
+    LINK_SHORTENER_ALLOWLIST: strToArray(env.PUBLIC_LINK_SHORTENER_ALLOWLIST),
+    
+    REJECT_LOW_CRED_MBFC:   toBool(env.PUBLIC_BLACKLIST_DENY_LOW_CRED_MBFC)     ?? false,
+    REJECT_LINK_SHORTENERS: toBool(env.PUBLIC_BLACKLIST_DENY_LINK_SHORTENERS)   ?? false,
+    REJECT_FAKE_NEWS:       toBool(env.PUBLIC_BLACKLIST_DENY_FAKE_NEWS)         ?? false,
+}
 
 
-
+// Instances you want to feature for login (if not locked to instance), signup, and community browsing
+export const FEATURED_INSTANCES = strToArray(env.PUBLIC_FEATURED_INSTANCES)
 
 // Define Invidious and Piped instances to determine if embedded media is a Youtube et al video.
 // Invidious Instance List:  https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest
@@ -248,6 +277,7 @@ export const YTFrontends = {
     invidious: [
         'yewtu.be',
         'vid.puffyan.us',
+        'i.devol.it',
         'invidious.lunar.icu',
         'invidious.privacydev.net',
         'invidious.slipfox.xyz',
@@ -262,13 +292,17 @@ export const YTFrontends = {
         'invidious.asir.dev',
         'invidious.private.coffee',
         'iv.nboeck.de',
+        'yt.drgnz.club',
         'yt.oelrichsgarcia.de',
         'yt.artemislena.eu',
-        'yt.whateveritworks.org'
+        'yt.whateveritworks.org',
+        ...strToArray(env.PUBLIC_CUSTOM_INVIDIOUS)
     ],
 
     piped: [
+        'cf.piped.video',
         'piped.video',
+        'piped.adminforge.de',
         'pipedapi.tokhmi.xyz',
         'pipedapi.moomoo.me',
         'pipedapi.syncpundit.io',
@@ -303,21 +337,10 @@ export const YTFrontends = {
         'piapi.ggtyler.dev',
         'watchapi.pluto.lat',
         'piped.syncpundit.io',
-        'piped.yt'
-
+        'piped.yt',
+        ...strToArray(env.PUBLIC_CUSTOM_PIPED)
     ]
 }
-
-// Import custom Invidious/Piped instances
-if (custom_invidious_instances.length > 0) {
-    YTFrontends.invidious.push(...custom_invidious_instances);
-}
-
-// Add user-defined Piped instances
-if (custom_piped_instances.length > 0) {
-    YTFrontends.piped.push(...custom_piped_instances);
-}
-
 
 // Create a writable store for the user settings
 export const userSettings = writable(defaultSettings)
@@ -403,6 +426,52 @@ export function migrateSettings(old:any) {
         old.version = 0.4
     }
 
-    return { ...defaultSettings, ...old }
+    // 0.4 - 0.5
+    if (old.version == 0.4) {
+        // Match new posts per fetch setting to new range of 10, 20, or 30
+        if (old.uiState.postsPerPage >=30) old.uiState.postsPerPage = 30
+        else if (old.uiState.postsPerPage == 20) old.uiState.postsPerPage = 30
+        else old.uiState.postsPerPage = 10
+
+        old.version = 0.5
+    }
+
+    //0.5 -> 0.6
+    if (old.version == 0.5) {
+        if (old.uiState.maxScrollPosts > 150) old.uiState.maxScrollPosts = 150
+        old.version = 0.6
+    }
+    
+    // 0.6 -> 0.7
+    if (old.version == 0.6) {
+        if ( !('showScores' in old.uiState)) {
+            old.uiState.showScores = true;   
+        }
+        old.version = 0.7
+    }
+
+    // 0.7 -> 0.8
+    if (old.version == 0.7) {
+        delete old.systemUI
+        old.version = 0.8
+    }
+
+    return { 
+        ...defaultSettings, 
+        ...old, 
+        defaultSort:    {...defaultSettings.defaultSort, ...old.defaultSort },
+        hidePosts:      {...defaultSettings.hidePosts, ...old.hidePosts},
+        notifications:  {...defaultSettings.notifications, ...old.notifications},
+        moderation:     {...defaultSettings.moderation, ...old.moderation},
+        openInNewTab:   {...defaultSettings.openInNewTab, ...old.openInNewTab},
+        embeddedMedia:  {
+            ...defaultSettings.embeddedMedia,
+            ...old.embeddedMedia,
+            enabledSources: { ...defaultSettings.embeddedMedia.enabledSources, ...old.embeddedMedia.enabledSources }
+        },
+        imageSize:      {...defaultSettings.imageSize, ...old.imageSize},
+        uiState:        {...defaultSettings.uiState, ...old.uiState},
+        proxyMedia:     {...defaultSettings.proxyMedia, ...old.proxyMedia}
+    }
 }
 

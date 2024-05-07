@@ -1,6 +1,6 @@
 import type { Community, GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
-import { addMBFCResults, filterKeywords, findCrossposts } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, filterKeywords, findCrossposts, sortPosts } from '$lib/components/lemmy/post/helpers'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 
@@ -49,10 +49,13 @@ export async function load(req: any) {
     let postsPerPage = settings.uiState.postsPerPage || 50;
     
     // Use ceiling to ensure at least 1 post per community. If number ever 
+    /*
     let postsPerCommunity = Math.ceil(postsPerPage / communities.length)
     postsPerCommunity > 50
         ? postsPerCommunity=50
         : undefined
+    */
+   let postsPerCommunity = 50
 
     // Setup the arrays to run the tasks and hold the results
     let tasks:Array<Promise<any>> = []
@@ -89,30 +92,20 @@ export async function load(req: any) {
         combinedPosts = [...combinedPosts, ...posts.posts]
     }
 
-    // Sort the posts however
-    if (sort == 'New')          combinedPosts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
-    if (sort == 'Old')          combinedPosts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-    if (sort == 'NewComments')  combinedPosts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
-    if (sort == 'Active')       combinedPosts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
-    if (sort == 'Hot')          combinedPosts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
-    if (sort == 'MostComments') combinedPosts.sort((a, b) => b.counts.comments - a.counts.comments)
-    if (sort.startsWith('Top')) combinedPosts.sort((a, b) => b.counts.score - a.counts.score)
-    
-
-
-    
-    
     // Load the posts into a posts object
     let posts = { posts: [...combinedPosts] }
     
+    // Sort the posts however
+    posts.posts = sortPosts(posts.posts, sort)
+
     // Filter the posts for keywords
-    posts = filterKeywords(posts.posts);
+    posts.posts = filterKeywords(posts.posts);
     
     // Roll up crossposts
-    posts = findCrossposts(posts.posts);
+    posts.posts = findCrossposts(posts.posts);
 
     // Apply MBFC data object to post
-    posts = addMBFCResults(posts.posts);
+    posts.posts = addMBFCResults(posts.posts);
         
     //console.log(tasks)
     //console.log(tasksResult);

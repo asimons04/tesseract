@@ -56,9 +56,10 @@ export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
 export const blockUser = async function (personID: number, confirm:boolean=false):Promise<void> {
     if (!confirm) {
         toast({
+            title: "Confirmation",
             content: "Are you sure you want to block this user?",
             type: "warning",
-            action: () => blockUser(personID, true)
+            action: async () => await blockUser(personID, true)
         })
         return
     }
@@ -83,20 +84,24 @@ export const blockUser = async function (personID: number, confirm:boolean=false
             }
             
             toast({
+                title: "Succcess",
                 content: `Successfully ${blocked ? 'unblocked' : 'blocked'} that user.`,
                 type: 'success',
             })
 
+            return
+
             // Refresh the page to effect the change in block status
-            goto(window.location.href, {
-                invalidateAll: true,
-            })
+            //goto(window.location.href, {
+            //    invalidateAll: true,
+            //})
 
         } catch (err) {
             toast({
                 content: err as any,
                 type: 'error',
             })
+            return
         }
     }
 }

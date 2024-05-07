@@ -1,10 +1,6 @@
 <script lang="ts">
     import type { PersonProfile } from '../lib/types'
-    import type {
-        CommentReportView,
-        PostReportView,
-        PrivateMessageReportView,
-    } from 'lemmy-js-client'
+    import type { StandardReport } from './helpers'
 
     import { fade } from 'svelte/transition'
 
@@ -13,7 +9,6 @@
 
     export let creatorProfile:PersonProfile 
     export let display:boolean = true
-    export let item:PostReportView | CommentReportView | PrivateMessageReportView
 </script>
 
 
@@ -28,7 +23,7 @@
         </span>
     {:else}
         {#if creatorProfile?.person_view }
-            <UserCardBasic person={creatorProfile.person_view} community={item.community} bind:banned={item.creator_banned_from_community} />
+            <UserCardBasic person={creatorProfile.person_view} />
         {/if}
     {/if}
 </div>

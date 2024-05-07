@@ -25,7 +25,7 @@ export async function image_proxy(event:any) {
     // Build a URL to the requested image/video
     let imagePath = `${req.route}`
     let imageUrl = new URL(`https://${imagePath}?${req.params.toString()}`);
-
+    
     // Refuse proxy request if image url matches an entry in the blacklist
     if (MEDIA_PROXY_BLACKLIST.length > 0) {
         for (let i:number=0; i< MEDIA_PROXY_BLACKLIST.length; i++) {
@@ -52,6 +52,7 @@ export async function image_proxy(event:any) {
                         return res
                             .setHeader('X-Tesseract-Image-Cache', 'hit')
                             .setHeader('X-Tesseract-Image-Cache-Key', cacheKey)
+                            .setHeader('Cache-Control', 'max-age=604800')
                             .length(image.size)
                             .type(image.type)
                             .send(await image.arrayBuffer());
@@ -111,6 +112,7 @@ export async function image_proxy(event:any) {
         
         // Not method GET and/or not an image/video requested 
         else {
+            if (fallback) return res.redirect(imageUrl).send();
             return res.error('Attempted to proxy invalid URL').send();
         }
     }

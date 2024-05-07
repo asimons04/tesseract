@@ -9,31 +9,40 @@ import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { userSettings } from '$lib/settings.js'
 
 export async function load(req: any) {
-    const page = Number(req.url.searchParams.get('page') || 1) || 1
+    // Don't call this loader if accessing the settings panels beyond this path
+    if (req.url.pathname.includes('/settings')) return
 
-    const sort: SortType = (req.url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
-    
+    const page_cursor = req.url.searchParams.get('page_cursor')
+    const page = page_cursor 
+        ? undefined
+        : Number(req.url.searchParams.get('page') || 1) || 1
+
+    const sort: SortType = (req.url.searchParams.get('sort') as SortType) ?? get(userSettings).defaultSort.sort ?? 'New'
+    const community_name = req.url.searchParams.get('community_name') ?? req.params.name
     
     try {
-        let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: get(userSettings)?.uiState.postsPerPage || 40,
-            community_name: req.params.name,
+        let posts = await getClient().getPosts({
+            limit: get(userSettings)?.uiState.postsPerPage || 10,
+            community_name: community_name,
             page: page,
+            //@ts-ignore
+            page_cursor: page_cursor,
             sort: sort,
             auth: get(profile)?.jwt,
         });
         
         // Apply MBFC data object to post
-        posts = addMBFCResults(posts.posts);
+        posts.posts = addMBFCResults(posts.posts);
         
         // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
+        posts.posts = filterKeywords(posts.posts);
 
         return {
             sort: sort,
             page: page,
             posts: posts,
-            community: await getClient(undefined, req.fetch).getCommunity({
+            community_name: community_name,
+            community: req.passedCommunity ?? await getClient().getCommunity({
                 name: req.params.name,
                 auth: get(profile)?.jwt,
             }),
@@ -44,6 +53,7 @@ export async function load(req: any) {
     catch {
         if (!get(profile)?.jwt) {
             toast({
+                title: "Notice",
                 content: `You must be logged in to resolve communities not currently known to this instance.`,
                 type: 'warning',
             })
@@ -54,17 +64,18 @@ export async function load(req: any) {
         toast({
             content: `This community is not known to your instance. Fetching community from its home instance. This may take a moment...`,
             type: 'success',
+            title: "Please Wait",
             loading: true,
             duration: 15000
         })
 
-        await getClient(undefined, fetch).resolveObject({
+        await getClient().resolveObject({
             auth: get(profile)!.jwt!,
             q: '!' + req.params.name,
         })
         
-        let posts = await getClient(undefined, req.fetch).getPosts({
-            limit: get(userSettings)?.uiState.postsPerPage || 40,
+        let posts = await getClient().getPosts({
+            limit: get(userSettings)?.uiState.postsPerPage || 10,
             community_name: req.params.name,
             page: page,
             sort: sort,
@@ -72,14 +83,18 @@ export async function load(req: any) {
         })
         
         // Filter the posts for keywords
-        posts = filterKeywords(posts.posts);
+        posts.posts = filterKeywords(posts.posts);
+
+        // Apply MBFC data object to post
+        posts.posts = addMBFCResults(posts.posts);
 
 
         return {
             sort: sort,
             page: page,
             posts: posts,
-            community: await getClient(undefined, req.fetch).getCommunity({
+            community_name: community_name,
+            community: await getClient().getCommunity({
                 name: req.params.name,
                 auth: get(profile)?.jwt,
             }),

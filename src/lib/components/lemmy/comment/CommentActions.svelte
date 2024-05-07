@@ -11,7 +11,9 @@
     import { createEventDispatcher } from 'svelte'
     import { getFediseerInfo } from '$lib/fediseer/client.js'
     import { deleteItem, save } from '$lib/lemmy/contentview.js'
+    import { instance } from '$lib/instance'
     import { isCommentMutable } from '$lib/components/lemmy/post/helpers.js'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
@@ -47,6 +49,9 @@
     export let replying: boolean = false
     export let debug: boolean = false
 
+    let onHomeInstance: boolean = true
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
+
     const dispatcher = createEventDispatcher<{ edit: CommentView }>()
 
     let fediseer = {
@@ -64,21 +69,14 @@
     <Fediseer bind:open={fediseer.modal} instance={fediseer.instance} />
 {/if}
       
-<div class="flex flex-row gap-2 items-center mt-1 h-7 w-full">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2 items-center mt-1 h-8 w-full">
     <!---Comment Vote Buttons--->
-    <CommentVote
-        bind:score={comment.counts.score}
-        bind:vote={comment.my_vote}
-        commentId={comment.comment.id}
-    />
+    <CommentVote bind:comment />
     
     <!---Comment Reply Button--->
-    <Button
-        size="sm"
-        color="tertiary"
+    <Button size="sm" color="tertiary-border"
+        disabled={comment.post.locked || !$profile?.user || !onHomeInstance} hidden={comment.post.locked || !$profile?.user}
         on:click={() => (replying = !replying)}
-        disabled={comment.post.locked || !$profile.user}
-        hidden={comment.post.locked || !$profile.user}
     >
         <Icon src={ArrowUturnLeft} width={14} height={14} mini />
         <span class="text-xs">Reply</span>
@@ -95,7 +93,7 @@
             {/await}
         {/if}
 
-        <Button on:click={() => (debug = true)} size="sm" color="tertiary" title="Debug Info">
+        <Button on:click={() => (debug = true)} size="square-sm" color="tertiary-border" title="Debug Info">
             <Icon src={BugAnt} mini  width={14} height={14} slot="icon" />
         </Button>
     {/if}
@@ -106,19 +104,26 @@
     {/if}
   
     <!---Comment Action Menu --->
-    <Menu class="top-0 leading-3" alignment="top-right">
+    <Menu  alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}">
         <Button
             slot="button"
             on:click={toggleOpen}
-            class="!p-1"
             aria-label="Comment actions"
-            color="tertiary"
+            color="tertiary-border"
+            size="square-sm"
             let:toggleOpen
         >
             <Icon src={EllipsisHorizontal} width={16} height={16} mini slot="icon" />
         </Button>
         
-        <span class="text-xs opacity-80 py-1 my-1 px-4">Comment actions</span>
+        <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
+            Comment Actions
+            <span class="ml-auto" />
+            <Icon src={ChatBubbleOvalLeft} width={16} mini />
+        </li>
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+        
+        
         <!--- Share Comment / Copy URL to Clipboard--->
         <MenuButton
             on:click={() => {
@@ -127,6 +132,7 @@
                 }) ?? navigator.clipboard.writeText(comment.comment.ap_id)
                 toast({
                     type: 'success',
+                    title: "Success",
                     content: `Copied comment URL to clipboard!`,
                 })
             }}
@@ -180,7 +186,7 @@
             </MenuButton>
             {/if}
         
-            {#if $profile.jwt && $profile.user?.local_user_view.person.id != comment.creator.id}
+            {#if $profile.jwt && $profile?.user && $profile.user?.local_user_view.person.id != comment.creator.id}
             <MenuButton on:click={() => report(comment)} color="dangerSecondary">
                 <Icon src={Flag} mini size="16" />
                 <span>Report</span>
@@ -209,14 +215,14 @@
 
 
         <MenuButton>
-            <span 
+            <button 
                 class="flex flex-row gap-2 items-center w-full text-sm"
                 title="Get Fediseer info for {new URL(comment.creator.actor_id).hostname}"
                 on:click={async (e) => {openFediseerModal(new URL(comment.creator.actor_id).hostname)}}
             >
                 <Icon src={Eye} width={16} mini />
                 <span>Fediseer</span>
-            </span>
+        </button>
         </MenuButton>
     </Menu>
 </div>

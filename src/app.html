@@ -1,34 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%sveltekit.assets%/img/favicon.png" />
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Tesseract: An alternative Lemmy client with a focus on rich media."
-    />
-    <meta name="keywords" content="lemmy, client" />
-    <script defer type="" nonce="%sveltekit.nonce%">
-      const dark = () =>
-        localStorage.theme == 'dark' ||
-        ((!localStorage.theme || localStorage.theme == 'system') &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches)
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="%sveltekit.assets%/img/favicon.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+            name="description"
+            content="Tesseract: An alternative Lemmy client with a focus on rich media."
+        />
+        <meta name="keywords" content="lemmy, client" />
+        
+        <script nonce="%sveltekit.nonce%">
+            const dark = () => localStorage.theme == 'dark' ||
+                ((!localStorage.theme || localStorage.theme == 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
-      if (dark()) document.documentElement.classList.add('dark')
-      else document.documentElement.classList.remove('dark')
+            if (dark()) document.documentElement.classList.add('dark')
+            else document.documentElement.classList.remove('dark')
 
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', (event) => {
-          if (dark()) document.documentElement.classList.add('dark')
-          else document.documentElement.classList.remove('dark')
-        })
-    </script>
-    %sveltekit.head%
-  </head>
-  <body data-sveltekit-preload-data="false">
-    <div style="display: contents">%sveltekit.body%</div>
-  </body>
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+                    if (dark()) document.documentElement.classList.add('dark')
+                    else document.documentElement.classList.remove('dark')
+            })
+        </script>
+        %sveltekit.head%
+    </head>
+
+    <body style="margin:0px !important;" data-sveltekit-preload-data="false">
+        <div style="display: contents;">
+            <!---Loading Spinner--->
+            <div style="background-color: black; display:flex; height:100svh; width: 100%;overflow:hidden">
+                <div style="margin-left: auto; margin-right: auto; margin-top: auto; margin-bottom: auto;">
+                    <img src="/img/TesseractAnimation256.gif" alt="Loading indicator" height="128" width="128" />
+                </div>
+            </div>
+            %sveltekit.body%
+        </div>
+    </body>
 </html>

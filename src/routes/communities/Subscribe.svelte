@@ -1,33 +1,60 @@
 <script lang="ts">
-  import { getClient } from '$lib/lemmy.js'
-  import type { CommunityView } from 'lemmy-js-client'
-  import { profile } from '$lib/auth.js'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import type { CommunityView } from 'lemmy-js-client'
+    
+    import { getClient } from '$lib/lemmy.js'
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-  export let community: CommunityView
 
-  let subscribing = false
+    export let community: CommunityView
 
-  async function subscribe() {
-    if (!$profile?.jwt) return
+    let subscribing = false
 
-    subscribing = true
+    async function subscribe() {
+        if (!$profile?.jwt) return
 
-    try {
-      const res = await getClient().followCommunity({
-        auth: $profile.jwt,
-        community_id: community.community.id,
-        follow: community.subscribed == 'NotSubscribed',
-      })
+        subscribing = true
 
-      subscribing = false
-      return res
-    } catch (error) {
-      toast({ content: 'Failed to subscribe to community', type: 'error' })
-    }
+        try {
+            const resolve = await getClient().resolveObject({
+                auth: $profile.jwt,
+                q: community.community.actor_id
+            })
 
-    subscribing = false
+            if (!resolve.community) {
+                toast({
+                    title: 'Error',
+                    type: 'error',
+                    content: 'Unable to resolve community'
+                })
+                return
+            }
+
+            const resolvedCommunity = resolve.community
+
+      
+            const res = await getClient().followCommunity({
+                auth: $profile.jwt,
+                community_id: resolvedCommunity.community.id,
+                follow: community.subscribed == 'NotSubscribed',
+            })
+
+            subscribing = false
+            return res
+
+        } 
+        catch (error) {
+            toast({ 
+                content: 'Failed to subscribe to community', 
+                type: 'error',
+                title: 'Error'
+            })
+        }
+
+        subscribing = false
   }
 </script>
 
-<slot {subscribe} {subscribing} />
+<div class="{$$props.class}">
+    <slot {subscribe} {subscribing} />
+</div>

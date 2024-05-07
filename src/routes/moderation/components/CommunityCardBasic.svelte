@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
+    import type { Community } from 'lemmy-js-client'
     
     import {imageProxyURL} from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
@@ -7,26 +7,18 @@
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Card from '$lib/components/ui/Card.svelte'
-    
-    
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     
     import {
         Calendar,
-        ChatBubbleOvalLeftEllipsis,
         Icon,
-        PencilSquare,
-        UserGroup,
     } from 'svelte-hero-icons'
-    
-    
 
-    export let community: CommunityView
+    export let community: Community
 </script>
 
 
-<Card backgroundImage={($userSettings.uiState.showBannersInCards && community?.banner) ? imageProxyURL(community.banner, '384', 'webp') : ''} class="min-h-[130px]">
+<Card backgroundImage={($userSettings.uiState.showBannersInCards && community?.banner) ? imageProxyURL(community.banner, 384, 'webp') : ''} class="min-h-[130px]">
     <div class="flex flex-col gap-2 h-full">
         
         <!--- Commuinity Avatar, display name, and federation name--->

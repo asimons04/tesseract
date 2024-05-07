@@ -1,23 +1,26 @@
-import { env } from '$env/dynamic/public'
-import { profile } from '$lib/auth.js'
-import { getClient } from '$lib/lemmy.js'
-import { SSR_ENABLED, userSettings } from '$lib/settings.js'
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
+import { getClient } from '$lib/lemmy.js'
+import { instance } from '$lib/instance'
+import { profile } from '$lib/auth.js'
+import { userSettings } from '$lib/settings.js'
+
 
 interface LoadParams {
     params: any,
     url: any,
-    fetch: any
+    fetch?: any
 }
-export async function load({ params, url, fetch }: LoadParams) {
-    try {
-        const post = await getClient(params.instance.toLowerCase(), fetch).getPost({
-            id: Number(params.id),
-            auth: get(profile)?.jwt,
-        })
+export async function load({ params, url }: LoadParams) {
+    const $instance = get(instance)
 
-        let max_depth = post.post_view.counts.comments > 100 ? 2 : 5
+    try {
+        const post = await getClient(params.instance.toLowerCase()).getPost({
+            id: Number(params.id),
+            auth: params.instance == $instance 
+                ? get(profile)?.jwt 
+                : undefined
+        })
 
         const thread = url.searchParams.get('thread')
         let parentId: number | undefined
@@ -29,22 +32,24 @@ export async function load({ params, url, fetch }: LoadParams) {
                 parentId = undefined
             }
         }
-
-        if (parentId) {
-            max_depth = 10
-        }
+        
+        // Set the max-depth of comments to fetch. Fetch more layers if loading a particular thread, otherwise base it on the total number of comments.
+        const max_depth = parentId
+            ? 15
+            : post.post_view.counts.comments > 50 ? 2 : 3
 
         const sort = get(userSettings)?.defaultSort?.comments ?? 'Hot'
 
         const commentParams: any = {
             post_id: Number(params.id),
             type_: 'All',
-            limit: 50,
-            page: 1,
             max_depth: max_depth,
             saved_only: false,
             sort: sort,
-            auth: get(profile)?.jwt,
+            auth: params.instance == $instance 
+                ? get(profile)?.jwt 
+                : undefined
+            ,
             parent_id: parentId,
         }
 
@@ -53,9 +58,7 @@ export async function load({ params, url, fetch }: LoadParams) {
             post: post,
             commentSort: sort,
             streamed: {
-                comments: SSR_ENABLED
-                    ? await getClient(params.instance, fetch).getComments(commentParams)
-                    : getClient(params.instance, fetch).getComments(commentParams),
+                comments: getClient(params.instance, fetch).getComments(commentParams),
             },
         }
     }

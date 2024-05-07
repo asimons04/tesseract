@@ -4,9 +4,10 @@
   export let highlight: boolean = false
   export let nowrap: boolean = false
   export let newtab: boolean = false
-  export let title: string = ""
+  export let title: string | undefined | null= undefined
   export let id: string = ""
   export let domainOnly:boolean = false;
+  export let text:string | undefined = undefined
 
 
 </script>
@@ -18,19 +19,12 @@
         ? '_blank'
         : '_self'
     }"
-    title = "{title}"
+    title = "{title ?? href}"
 >
     <slot name="icon" />
     <slot>
-        <span class="flex gap-0 
-                {nowrap
-                    ? 'w-full whitespace-nowrap overflow-hidden text-ellipsis text-xs'
-                    : ''
-                } 
-                {$$props.class}
-            "
-        >
-            {domainOnly ? new URL(href).hostname : href}
+        <span class="flex gap-0  {nowrap ? 'w-full whitespace-nowrap overflow-hidden text-ellipsis text-xs' : ''}  {$$props.class}" >
+            {text ?? (domainOnly ? new URL(href).hostname : href)}
         </span>
     </slot>
   

@@ -17,6 +17,7 @@
         ArchiveBox,
         PencilSquare,
     } from 'svelte-hero-icons'
+    import Button from '$lib/components/input/Button.svelte';
 
 
     export let data
@@ -35,8 +36,8 @@
 {/if}
 
 <SubNavbar 
-    home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
-    listingType={true} 
+    home compactSwitch toggleMargins refreshButton toggleCommunitySidebar
+    listingType={true} listingTypeTitle="Custom Feed"
     listingTypeOptions = {[...$profile?.groups?.map((cg) => cg.name.toLowerCase())?.sort(sortGroups) ?? [] ]} 
     listingTypeOptionNames = {[...$profile?.groups?.map((cg) => cg.name)?.sort(sortGroups) ?? [] ]} 
     listingTypeOnSelect={(e) => {
@@ -48,17 +49,16 @@
     pageSelection={true} bind:currentPage={data.page}
 >
     <!--Edit Group Button-->
-    <button let:iconSize slot="right" class="flex flex-row gap-1 mr-2 cursor-pointer text-sm font-bold {!groupExists(data.feedName) ? 'hidden' : ''}" 
-        title="Edit Group"
+    <Button title="Edit Group" color="tertiary" size="sm" let:iconSize slot="right" class="{!groupExists(data.feedName) ? 'hidden' : ''}"
         on:click={() => {
             editCommunityGroup = true;
         }}
     >
         <Icon src={PencilSquare} width={iconSize} />
-    </button>
+    </Button>
 </SubNavbar>
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
+<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full h-full py-2">
     <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
         {#if data}
             {#if data.posts.length > 0}

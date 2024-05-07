@@ -1,8 +1,10 @@
 <script lang="ts">
-  import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-  import { Icon, type IconSource } from 'svelte-hero-icons'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    import { Icon, type IconSource } from 'svelte-hero-icons'
+    
+    import { buttonColor, type ButtonColor } from '$lib/ui/colors'
 
-  type ButtonColor = keyof typeof buttonColor
+  
   type ButtonSize = keyof typeof buttonSize
   type ButtonRoundness = keyof typeof buttonRoundness
   type ButtonAlignment = keyof typeof buttonAlignment
@@ -13,39 +15,7 @@
     right: 'justify-end text-right',
   }
 
-  const buttonColor = {
-    primary: `border border-slate-900 bg-slate-900 dark:bg-zinc-100
-        dark:border-zinc-100 dark:text-black hover:text-inherit hover:dark:text-inherit text-slate-100
-        hover:bg-transparent hover:dark:bg-transparent
-        active:bg-black/10 active:dark:bg-white/10`,
 
-    secondary: `border border-slate-200 dark:border-zinc-700 dark:bg-zinc-900
-        hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 dark:text-zinc-400 hover:text-inherit
-        hover:dark:text-inherit border-none`,
-
-    tertiary:
-      'border border-transparent bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none',
-
-    danger:
-      'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',
-
-    warning:
-      'border border-amber-500 bg-amber-500 hover:text-amber-500 hover:bg-transparent text-black',
-
-    ghost: `border border-slate-200 dark:border-zinc-800 bg-transparent
-        hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 dark:text-zinc-400 hover:text-inherit
-        hover:dark:text-inherit`,
-
-    elevated: `bg-slate-100 dark:bg-zinc-800 border border-slate-200
-        dark:border-zinc-700 hover:bg-slate-200 hover:dark:bg-zinc-700 hover:border-slate-300
-        hover:dark:border-zinc-600`,
-
-    elevatedLow: `bg-slate-100 dark:bg-zinc-900 border border-slate-200
-        dark:border-zinc-800 hover:bg-slate-200 hover:dark:bg-zinc-800 hover:border-slate-300
-        hover:dark:border-zinc-700`,
-
-    none: '',
-  }
 
   const buttonSize = {
     sm: 'px-2 py-1',
@@ -146,7 +116,7 @@
             title={title}
             class:hidden={hidden}
     >
-        <div class="flex flex-row items-center gap-1.5 {buttonAlignment[alignment]}">
+        <div class="flex flex-row items-center gap-1.5 relative {buttonAlignment[alignment]}">
             {#if loading}
                 <Spinner
                     width={loaderWidth

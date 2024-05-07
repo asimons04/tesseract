@@ -1,6 +1,6 @@
 import type { Community, GetSiteResponse, MyUserInfo, SortType } from 'lemmy-js-client'
 
-import { amModOfAny } from '$lib/components/lemmy/moderation/moderation.js'
+import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
 import { DEFAULT_INSTANCE_URL, instance } from '$lib/instance.js'
 import { get, writable } from 'svelte/store'
 import { getClient, site } from '$lib/lemmy.js'
@@ -27,6 +27,7 @@ export interface ProfileData {
 export interface PersonData extends MyUserInfo {
     unreads: number
     reports: number
+    registration_applications: number
 }
 
 export interface Profile {
@@ -118,7 +119,7 @@ profile.subscribe(async (p:Profile|undefined) => {
 
 
 // Used at login to store a new user profile
-export async function setUser(jwt: string, inst: string, username: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined>  {
+export async function setUser(jwt: string, inst: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined>  {
     let user:{ user: PersonData; site: GetSiteResponse } | undefined = undefined
     
     // Test that the instance parameter can be a valid URL
@@ -196,6 +197,7 @@ async function userFromJwt(jwt: string, instance: string): Promise<{ user: Perso
             user: {
                 unreads: 0,
                 reports: 0,
+                registration_applications:0,
                 ...myUser,
             },
             site: site,
@@ -303,7 +305,7 @@ export function moveProfile(id: number, up: boolean) {
     }
 }
 
-const getNotificationCount = async (jwt: string, mod: boolean) => {
+const getNotificationCount = async (jwt: string, mod: boolean, admin:boolean=false) => {
     const unreads = await getClient().getUnreadCount({
         auth: jwt,
     })
@@ -321,9 +323,19 @@ const getNotificationCount = async (jwt: string, mod: boolean) => {
         (reportRes.private_message_reports ?? 0)
     }
 
+    const applications = admin
+        ? (await getClient().listRegistrationApplications(
+            {
+                unread_only: true,
+                auth: jwt
+            }
+        ))?.registration_applications?.length ?? 0
+        : 0
+
     return {
         unreads: unreads.mentions + unreads.private_messages + unreads.replies,
         reports: reports,
+        registration_applications: applications
     }
 }
 
@@ -334,10 +346,11 @@ setInterval(async () => {
     const { user, jwt } = get(profile)!
     if (!jwt || !user) return
 
-    const notifs = await getNotificationCount(jwt, amModOfAny(user) ?? false)
+    const notifs = await getNotificationCount(jwt, amModOfAny(user) ?? false, isAdmin(user) ?? false)
 
     user.unreads = notifs.unreads
     user.reports = notifs.reports
+    user.registration_applications = notifs.registration_applications
 
     profile.update((p) => ({
         ...p!,

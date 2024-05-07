@@ -25,9 +25,7 @@ export function getInboxItemPublished(item: InboxItemView): string {
   return item.person_mention.published
 }
 
-export function isRead(
-  item: PersonMentionView | CommentReplyView | PrivateMessageView
-) {
+export function isRead(item: PersonMentionView | CommentReplyView | PrivateMessageView) {
   if ('person_mention' in item) {
     return (item as PersonMentionView).person_mention.read
   }

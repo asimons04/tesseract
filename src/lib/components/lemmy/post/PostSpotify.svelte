@@ -10,13 +10,29 @@
 
     export let post: PostView
     export let displayType: PostDisplayType
+    export let postContainer: HTMLDivElement
     
     let trackID:    string = ""
     let embedURL:   string = ""
     let extraParams:string = ""
 
+    // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
+    // Should reduce memory consumption by a lot on video-heavy feeds.
+    let inViewport = false
+    const observer = new window.IntersectionObserver( ([entry]) => {
+        if (entry.isIntersecting) {
+            inViewport = true
+            return
+        }
+        inViewport = false
+        }, 
+        { root: null, threshold: 0,}
+    )
+    $: if (postContainer) observer.observe(postContainer);
+
+
     // Generate the embed URL for the given post URL
-    if (post.post && post.post.url) {
+    $: if (post.post && post.post.url) {
         // e.g. https://open.spotify.com/embed/track/2RUs0cO0KpvuZJ0J4hqFFC
         if (post.post.url.startsWith('https://open.spotify.com/embed')) {
             embedURL = post.post.url;
@@ -39,7 +55,7 @@
     }
 
     $: showAsEmbed = embedURL &&
-        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 </script>
 
@@ -64,10 +80,10 @@
 
 {#if showAsEmbed}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'}">
-        <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 p-1 rounded-md max-w-full">
+    <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'}">
+        <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 p-1 rounded-2xl max-w-full">
             <div class="ml-auto mr-auto w-full">
-                <div class="flexiframe-container rounded-md max-w-screen {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'} mx-auto">
+                <div class="flexiframe-container rounded-2xl max-w-screen {embedURL.includes('/track/') ? 'h-[352px]' : 'h-[500px]'} mx-auto">
                     <iframe 
                         class="flexiframe"
                         src="{embedURL}?{extraParams}" 

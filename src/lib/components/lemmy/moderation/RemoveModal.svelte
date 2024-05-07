@@ -2,6 +2,7 @@
     import type { CommentView, PostView } from 'lemmy-js-client'
 
     import { amMod, isAdmin } from './moderation'
+    import { createEventDispatcher } from 'svelte'
     import { fullCommunityName } from '$lib/util.js'
     import { getClient } from '$lib/lemmy.js'
     import { isCommentView, isPostView } from '$lib/lemmy/item.js'
@@ -31,6 +32,8 @@
     export let purge: boolean = false
     export let reason:string 
     
+    const dispatcher = createEventDispatcher<{remove: { removed:boolean, purged:boolean}}>()
+
     let commentReason: boolean = false
     let privateMessage: boolean = false
     let loading = false
@@ -77,7 +80,9 @@
                 toast({
                     content: 'Successfully purged that submission.',
                     type: 'success',
+                    title: 'Success'
                 })
+                
 
                 loading = false
                 open = false
@@ -88,6 +93,8 @@
                 if (replyReason == '') {
                     toast({
                         content: 'Your reply cannot be empty if "Reply reason" is enabled.',
+                        type: 'warning',
+                        title: 'Reply Text is Required'
                     })
                     return
                 }
@@ -131,7 +138,8 @@
                     reason: reason || undefined,
                 })
                 item.comment.removed = !removed
-            } else if (isPostView(item)) {
+            } 
+            else if (isPostView(item)) {
                 await getClient().removePost({
                     auth: $profile.jwt,
                     post_id: item.post.id,
@@ -143,18 +151,21 @@
             open = false
 
             toast({
-                content: `Successfully ${
-                removed ? 'restored' : 'removed'
-                } that submission.`,
+                content: `Successfully ${removed ? 'restored' : 'removed'} that submission.`,
                 type: 'success',
+                title: 'Success'
             })
         } catch (err) {
             toast({
-                content: err as any,
+                content: (err as any) ?? 'The API returned an error when processing this request, but no details were provided.',
                 type: 'error',
+                title: 'Error'
             })
         }
         loading = false
+
+        dispatcher('remove', {removed: item.post.removed, purged: purge})
+
     }
 
     const resetText = () => {
@@ -175,32 +186,19 @@
         <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
             
 
-            <TextArea
-                rows={5}
-                label="Reason"
-                placeholder="Optional"
-                bind:value={reason}
-            />
+            <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={reason} />
             
             <!--- Only show "Reply with reason" if you're a mod of the community or an admin and the content is local--->
-            {#if !removed && ( amMod($profile.user, item.community) || (isAdmin($profile.user) && item.community.local))}
+            {#if !removed && ( amMod($profile?.user, item.community) || (isAdmin($profile?.user) && item.community.local))}
                 <div class="flex flex-row gap-2 items-center justify-between">
                     <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>
                     {#if commentReason}
-                        <MultiSelect
-                            options={[false, true]}
-                            optionNames={['Comment', 'Message']}
-                            bind:selected={privateMessage}
-                        />
+                        <MultiSelect options={[false, true]} optionNames={['Comment', 'Message']} bind:selected={privateMessage} />
                     {/if}
                 </div>
+                
                 {#if commentReason}
-                    <MarkdownEditor
-                        bind:value={replyReason}
-                        placeholder={replyReason}
-                        rows={3}
-                        label="Reply"
-                    />
+                    <MarkdownEditor previewButton images={false} bind:value={replyReason} placeholder={replyReason} rows={6} label="Reply"/>
                 {/if}
             {/if}
 
@@ -219,7 +217,8 @@
                 {/if}
             </Button>
             
-            <div class="pointer-events-none list-none">
+            <!---
+            <div class="pointer-events-none list-none overflow-x-hidden">
                 {#if isCommentView(item)}
                     <Comment
                         node={{
@@ -234,7 +233,7 @@
                     <Post actions={false} post={item} forceCompact={true}/>
                 {/if}
             </div>
-
+            --->
         </form>
     {/if}
 </Modal>

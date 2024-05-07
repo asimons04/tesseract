@@ -6,10 +6,15 @@ export default {
         fontFamily: {
             'sans': ['sans-serif'],
             'system': ['system-ui'], 
-            'serif': ['serif']
+            'serif': ['serif'],
+            'inter': ['Inter', 'sans-serif', 'system-ui'],
+            'roboto': ['Roboto', 'sans-serif', 'system-ui'],
+            'reddit': ['RedditMono', 'sans-serif', 'system-ui'],
+            'ubuntu': ['Ubuntu', 'sans-serif', 'system-ui'],
+            'urbanist': ['Urbanist', 'sans-serif', 'system-ui']
         },
         fontSize: {
-            xs: '0.8rem',
+            xs: '0.85rem',
             sm: '0.9rem',
             base: '1.0rem',
             lg: '1.125rem',

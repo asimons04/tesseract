@@ -19,36 +19,80 @@
 }
 
 
+@font-face {
+    font-family: 'Roboto';
+    src: url("/fonts/Roboto-Regular.ttf") format('ttf'),
+        url("/fonts/Roboto-Regular.woff") format('woff'),
+        url("/fonts/Roboto-Regular.woff2") format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url("/fonts/Inter-Regular.ttf") format('ttf'),
+        url("/fonts/Inter-Regular.woff") format('woff'),
+        url("/fonts/Inter-Regular.woff2") format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'RedditMono';
+    src: url("/fonts/RedditMono.ttf") format('ttf'),
+        url("/fonts/RedditMono.woff") format('woff'),
+        url("/fonts/RedditMono.woff2") format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Ubuntu';
+    src: url("/fonts/Ubuntu.ttf") format('ttf'),
+        url("/fonts/Ubuntu.woff") format('woff'),
+        url("/fonts/Ubuntu.woff2") format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Urbanist';
+    src: url("/fonts/Urbanist.ttf") format('ttf'),
+        url("/fonts/Urbanist.woff") format('woff'),
+        url("/fonts/Urbanist.woff2") format('woff2');
+    font-display: swap;
+}
+
+
+
 html {
     zoom: 100%;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-zinc-100 accent-slate-950 dark:accent-zinc-50;
+    @apply bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-zinc-100 accent-slate-950 dark:accent-zinc-50;
 }
 
 .dark {
-  color-scheme: dark;
+    color-scheme: dark;
 }
 
 html,
 body {
-  text-rendering: optimizeLegibility;
-  font-family: system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+    font-family: system-ui, sans-serif;
 }
 
 .wait * {
-  cursor: wait !important;
+    cursor: wait !important;
 }
 
 #nprogress {
-  z-index: 999 !important;
-  position: fixed !important;
+    z-index: 999 !important;
+    position: fixed !important;
 }
 
 #nprogress .bar {
-  @apply bg-black dark:bg-white !important;
+  /*@apply bg-black dark:bg-white !important;*/
+  @apply bg-sky-700 !important;
   z-index: 999 !important;
+  height: 4px !important;
 }
 
 #nprogress .peg {
@@ -63,8 +107,7 @@ pre {
 
 
 :not(pre) > code {
-  @apply bg-slate-100 border border-slate-300 dark:bg-zinc-800
-  dark:border-zinc-700;
+  @apply bg-slate-100 border border-slate-300 dark:bg-zinc-800 dark:border-zinc-700;
   padding-left: 0.25rem;
   padding-right: 0.25rem;
   padding-top: 0.125rem;
@@ -88,12 +131,17 @@ pre {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 9999px;
-  @apply bg-slate-200;
+  @apply bg-zinc-800;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-800;
+  @apply bg-slate-200
 }
+
+
+
+
+
 
 
 .flexrow {

@@ -17,11 +17,11 @@
   import type { ActionName } from './+page.js'
 
   export let action: ActionName
-  export let expires: number|undefined = undefined
+  export let expires: string|undefined = undefined
 
   $: actionData = getAction(action, expires)
 
-    const getAction = ( action: ActionName, expires:number|undefined=undefined): { icon: IconSource; text: string; class: string } => {
+    const getAction = ( action: ActionName, expires:string|undefined=undefined): { icon: IconSource; text: string; class: string } => {
         let qualifier = "Permanent ";
         switch (action) {
             case 'ban': {

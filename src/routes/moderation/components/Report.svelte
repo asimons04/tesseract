@@ -1,28 +1,17 @@
 <script lang="ts">
-    import type {
-        CommentReportView,
-        PostReportView,
-        PrivateMessageReportView,
-    } from 'lemmy-js-client'
     
     import type {
         ModlogContainer,
         PersonProfile,
-        ModActionList,
     } from '../lib/types'
 
+    import type { StandardReport } from './helpers'
 
-    import { afterNavigate, beforeNavigate } from '$app/navigation'
+    import { beforeNavigate } from '$app/navigation'
     import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
-    import { fade, fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
     import { getRemovalTemplates } from '../lib/templates'
-    import { 
-        getItemPublished, 
-        isCommentReport, 
-        isPrivateMessageReport,
-        isPostReport, 
-    } from '$lib/lemmy/item.js'
+    import { getItemPublished } from '$lib/lemmy/item.js'
     
     import { profile } from '$lib/auth.js'
     import { scrollToTop } from '$lib/components/lemmy/post/helpers'
@@ -31,17 +20,15 @@
     
     // Modlog Loader
     import {
-        type Modlog,
+        type ModLog,
         load as loadModlog
-    
     } from '$routes/modlog/+page'
-    import ModlogItemList from '$routes/modlog/item/ModlogItemList.svelte'
 
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
-    import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
-    import CommunityCardBasic from './CommunityCardBasic.svelte'
+    
+    
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     
     import ConfigContainer from './ConfigContainer.svelte'
@@ -62,10 +49,7 @@
     import SidePanelControlButton from './layout/SidePanelControlButton.svelte'
 
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import Post from '$lib/components/lemmy/post/Post.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     import UserReportDetails from './UserReportDetails.svelte'
@@ -99,7 +83,8 @@
     } from 'svelte-hero-icons'
     
 
-    export let item: PostReportView | CommentReportView | PrivateMessageReportView
+    //export let item: PostReportView | CommentReportView | PrivateMessageReportView
+    export let report: StandardReport
 
     // Closes the current report before leaving the page.  Needed to be able to switch between "all" and "unread"
     beforeNavigate(() => {
@@ -107,13 +92,6 @@
 
     });
 
-    $: resolved = isCommentReport(item)
-        ? item.comment_report.resolved
-        : isPostReport(item)
-            ? item.post_report.resolved
-            : false
-
-    $: reporteeID = isCommentReport(item) ? item.comment.creator_id : item.post.creator_id;
    
     let resolving:boolean = false
     let open:boolean = false;
@@ -121,25 +99,18 @@
     let sidePanel: 'posts' | 'comments' | 'profile' | 'community' | 'modlog' | 'closed' = 'profile'
     let lookupThisCommunityOnly:boolean = false;
 
-    
-
-    let modlog:ModlogContainer = {
+    let modlog = {
         url: new URL(window.location.href),
         loading: false,
         data: undefined,
-    }
+    } as ModlogContainer
 
-    
-
-    let creatorProfile:PersonProfile = {
+    let creatorProfile = {
         loading: false,
-    };
+    } as PersonProfile
 
     // Load Moderation presets from the template module
-    let removalPresets = getRemovalTemplates(item);
-
-
-
+    let removalPresets = getRemovalTemplates(report);
 
     // Object containing the actions to perform
     let actions = {
@@ -174,29 +145,35 @@
         banInstanceDeleteData: false,
         banInstanceExpires: '',
 
+        deletePM: false,
+        restorePM: false,
+
         replyReporter: false,
         replyReporterText: '',
         replyReporterBody: '',
         replyReporterIncludeActions: true,
+
+
     }
 
     // A copy of the actions object used to reset it after submission
     let actionsDefault = {...actions};
-
+    
+    
     // Live-update the reply to the reporter based on the selected moderation options.
     $: {
-        actions.replyReporterBody = `**Re: Report for ${isCommentReport(item) ? 'comment' : 'post'} in ${item.community.title ?? item.community.name}**\n\n`
+        actions.replyReporterBody = `**Re: Report for ${report.type_friendly}${['post', 'comment'].includes(report.type) ? ' in ' + report.community?.title ?? report.community?.name : ''}**\n\n`
         actions.replyReporterBody += "Thank you for your submission.\n\n";
         
         if (actions.replyReporterIncludeActions) {
-            if (actions.lock || actions.remove || actions.banCommunity || actions.banInstance || actions.unlock || actions.restore || actions.unbanCommunity || actions.unbanInstance) {
+            if (actions.lock || actions.remove || actions.banCommunity || actions.banInstance || actions.unlock || actions.restore || actions.unbanCommunity || actions.unbanInstance || actions.deletePM) {
                 actions.replyReporterBody += "Actions taken in response to this report:\n";
 
                 if (actions.lock)           actions.replyReporterBody += "- Reported post has been locked\n";
                 if (actions.unlock)         actions.replyReporterBody += "- Reported post has been unlocked\n";
 
-                if (actions.remove)         actions.replyReporterBody += `- Reported ${isCommentReport(item) ? 'comment' : 'post'} has been removed\n`;
-                if (actions.restore)         actions.replyReporterBody += `- Reported ${isCommentReport(item) ? 'comment' : 'post'} has been restored\n`;
+                if (actions.remove)         actions.replyReporterBody += `- Reported ${report.type} has been removed\n`;
+                if (actions.restore)         actions.replyReporterBody += `- Reported ${report.type} has been restored\n`;
                 
                 if (actions.banCommunity)   actions.replyReporterBody += `- User was ${actions.banCommunityExpires ? 'temporarily' : 'permanently'} banned from this community\n`
                 if (actions.unbanCommunity)   actions.replyReporterBody += `- The ${actions.banCommunityExpires ? 'temporary' : 'permanent'} community ban was lifted\n`
@@ -204,66 +181,63 @@
                 if (actions.banInstance)    actions.replyReporterBody += `- User was ${actions.banInstanceExpires ? 'temporarily' : 'permanently'} banned from this instance\n`
                 if (actions.unbanInstance)    actions.replyReporterBody += `- The ${actions.banInstanceExpires ? 'temporary' : 'permanent'} instance ban was lifted\n`
 
+                if (actions.deletePM)       actions.replyReporterBody += `- The reported private message was removed\n`
+                if (actions.restorePM)       actions.replyReporterBody += `- The reported private message was restored\n`
+
                 // Add an additional newline to finish list
                 actions.replyReporterBody += '\n'
             }
             else {
-                actions.replyReporterBody += `The reported ${isCommentReport(item) ? 'comment' : 'post'} was reviewed by our moderation team and does not violate any community or server rules.\n\n`
+                actions.replyReporterBody += `The reported ${report.type_friendly} was reviewed by our moderation team and does not violate any community or server rules.\n\n`
             }
         }
 
         if (actions.replyReporterText != '') actions.replyReporterBody += '**Moderator Comments**: ' + actions.replyReporterText + '\n\n';
         actions.replyReporterBody += 'Your report has been resolved.';
     }
-
-    // Validates a date string to ensure it converts to a proper date in the future.
-    function validateExpiryDate(dateStr:string):boolean {
-        let date:number = Date.parse(dateStr);
-        
-        if (Number.isNaN(date)) {
+    
+    
+    
+    // Validates a date string to ensure it converts to a proper date.
+    function validateExpiryDate(dateStr:string): boolean{
+        if (dateStr && Number.isNaN(Date.parse(dateStr))) {
             toast({
                 content: 'Invalid date. It must be an absolute date.',
                 type: 'error',
+                title: 'Invalid Ban Expiry'
             });
-            return false;
+            console.log("date failed")
+            return false
         }
-        
-        // Removing past date check since I took out the timezone shims for 0.19 and this breaks for short duration bans. Will re-enable when released for 0.19 with proper date strings.
-        // For what it's worth, the API doesn't care if the date is in the past.  It just won't be effective.
-        /*
-        if (date < Date.now()) {
-            toast({
-                content: 'Invalid date. It is before the current time.',
-                type: 'error',
-            });
-            return false;
-        }
-        */
-
-        return true;
+        return true
     }
 
+    function parseExpiryDate(dateStr:string): number | undefined {
+        return Math.floor(Date.parse(dateStr)/1000) || undefined
+    }
+
+    
     // Expands a report item, hides the rest. Send `false` as argument to close and un-hide.
     function toggleOpenReport():void {
-        let element = document.getElementById(isCommentReport(item) ? item.comment_report.id : item.post_report.id);
+        let element = document.getElementById(report.id.toString());
         let reports = document.getElementsByName('ModeratorReport'); 
         
         open=!open;
 
         if (open) {
             // Don't await
-            getUserPostsComments(reporteeID);
+            getUserPostsComments(report.reportee.id);
             
             // Hide all closed reports if one is open.
-            reports.forEach((report) => {
-                if (report != element) {
-                    report.style.display='none';
+            reports.forEach((reportItem) => {
+                if (reportItem != element) {
+                    reportItem.style.display='none';
                 }
             })
 
             creatorProfile.loading = true;
             
-            if (resolved) {
+            if (report.resolved) {
                 getModlog();
                 sidePanel= 'modlog';
             }
@@ -273,8 +247,8 @@
         }
         else {
             // Show all reports
-            reports.forEach((report) => {
-                report.style.display='flex';
+            reports.forEach((reportItem) => {
+                reportItem.style.display='flex';
             })
 
             // Hide the modlog and profile sidebar
@@ -302,7 +276,7 @@
         }
 
         
-        modlog.url.searchParams.set('other_person_id', isCommentReport(item) ? item.comment.creator_id.toString() : item.post.creator_id.toString() )
+        modlog.url.searchParams.set('other_person_id', report.reportee.id.toString() )
         modlog.url.searchParams.set('type', 'All');
 
         modlog.loading = true;
@@ -318,7 +292,7 @@
         try {
             creatorProfile.loading = true;
 
-            const user = await getClient(undefined, fetch).getPersonDetails({
+            const user = await getClient().getPersonDetails({
                 limit: 50,
                 page: 1,
                 person_id: personID,
@@ -337,7 +311,6 @@
             creatorProfile.person_view = user.person_view;
             
             creatorProfile.loading = false;
-            creatorProfile.show = true;
         }
         catch (err){
             console.log(err);
@@ -346,416 +319,312 @@
     }
 
     async function resolve() {
-        if (!$profile?.jwt || !$profile.user ||!item ) return
+        console.log("Resolving...")
+        if (!$profile?.jwt || !$profile.user ||!report ) return
         
         // Validate the ban expiry dates and pop up a toast warning before returning early.
-        if (actions.banCommunityExpires != '' && !validateExpiryDate(actions.banCommunityExpires)) return;
-        if (actions.banInstanceExpires  != '' && !validateExpiryDate(actions.banInstanceExpires)) return;
+        if (actions.banCommunityExpires && !validateExpiryDate(actions.banCommunityExpires) ) return;
+        if (actions.banInstanceExpires  && !validateExpiryDate(actions.banInstanceExpires) ) return;
 
         resolving = true
 
-        try {
-            if (!resolved) {
-                // Lock post if "lock" option selected.
-                if ( actions.lock && isPostReport(item)) {
-                    try {
-                        await getClient().lockPost({
-                            auth: $profile.jwt,
-                            locked: true,
-                            post_id: item.post.id,
-                        })
-
-                        item.post.locked = true
-
-                    } catch (err) {
-                        console.log(err)
-                        toast({
-                            content: "Failed to lock post",
-                            type: 'error',
-                        })
-                    }
-                }
-
-                // Unlock post if "unlock" option selected.
-                if ( actions.unlock && isPostReport(item)) {
-                    try {
-                        await getClient().lockPost({
-                            auth: $profile.jwt,
-                            locked: false,
-                            post_id: item.post.id,
-                        })
-
-                        item.post.locked = false
-
-                    } catch (err) {
-                        console.log(err)
-                        toast({
-                            content: "Failed to unlock post",
-                            type: 'error',
-                        })
-                    }
-                }
-
-                // Remove post if "remove" option selected
-                if (actions.remove && isPostReport(item)) {
-                    try {
-                        await getClient().removePost({
-                            auth: $profile.jwt,
-                            post_id: item.post.id,
-                            removed: true,
-                            reason: actions.removeReason || undefined,
-                        })
-
-                        item.post.removed = true
-                    }
-                    catch (err) {
-                        console.log(err)
-                        toast({
-                            content: "Failed to remove post.",
-                            type: 'error',
-                        })
-                    }
-
-                }
-
-                // Restore post if "restore" option selected
-                if (actions.restore && isPostReport(item)) {
-                    try {
-                        await getClient().removePost({
-                            auth: $profile.jwt,
-                            post_id: item.post.id,
-                            removed: false,
-                            reason: actions.restoreReason || undefined,
-                        })
-
-                        item.post.removed = false
-                    }
-                    catch (err) {
-                        console.log(err)
-                        toast({
-                            content: "Failed to restore post.",
-                            type: 'error',
-                        })
-                    }
-
-                }
-
-
-                // Remove comment if "remove" option selected
-                if (actions.remove && isCommentReport(item)) {
-                    try {
-                        await getClient().removeComment({
-                            auth: $profile.jwt,
-                            comment_id: item.comment.id,
-                            removed: true,
-                            reason: actions.removeReason || undefined,
-                        })
-                        item.comment.removed = true
-                    }
-                    catch (err) {
-                        console.log(err)
-                        toast({
-                            content: "Failed to remove comment.",
-                            type: 'error',
-                        })
-                    }
-
-                }
-
-                // Restore comment if "restore" option selected
-                if (actions.restore && isCommentReport(item)) {
-                    try {
-                        await getClient().removeComment({
-                            auth: $profile.jwt,
-                            comment_id: item.comment.id,
-                            removed: false,
-                            reason: actions.restoreReason || undefined,
-                        })
-                        item.comment.removed = false
-                    }
-                    catch (err) {
-                        console.log(err)
-                        toast({
-                            content: "Failed to restore comment.",
-                            type: 'error',
-                        })
-                    }
-
-                }
-
-
-            
-                // Ban user from community if that is selected
-                if (actions.banCommunity) {
-                    try {
-                        let date:number = Date.parse(actions.banCommunityExpires)
-
-                        await getClient().banFromCommunity({
-                            auth: $profile.jwt,
-                            ban: true,
-                            community_id: item.post.community_id,
-                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                            reason: actions.banCommunityReason || undefined,
-                            remove_data: actions.banCommunityDeleteData,
-                            expires: date ? Math.floor(date / 1000) : undefined,
-                        })
-                        item.creator_banned_from_community = true;
-                    }
-                    catch (err) {
-                        console.log(err)
-                    }
-
-                }
-
-                // Unban user from community if that is selected
-                if (actions.unbanCommunity) {
-                    try {
-
-                        await getClient().banFromCommunity({
-                            auth: $profile.jwt,
-                            ban: false,
-                            reason: actions.unbanCommunityReason || undefined,
-                            community_id: item.post.community_id,
-                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                        })
-
-                        item.creator_banned_from_community = false;
-                    }
-                    catch (err) {
-                        console.log(err)
-                    }
-
-                }
-
-                // Ban user from instance if selected
-                if (actions.banInstance) {
-                    try {
-                        let date:number = Date.parse(actions.banInstanceExpires)
-                        await getClient().banPerson({
-                            auth: $profile.jwt,
-                            ban: true,
-                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                            reason: actions.banInstanceReason || undefined,
-                            remove_data: actions.banInstanceDeleteData,
-                            expires: date ? Math.floor(date / 1000) : undefined,
-                        })
-
-                        isCommentReport(item)
-                            ? item.comment_creator.banned = true
-                            : item.post_creator.banned = true
-                    }
-                    catch (err) {
-                        console.log(err)
-                    }
-                }
-
-                // Unban user from instance if selected
-                if (actions.unbanInstance) {
-                    try {
-                        await getClient().banPerson({
-                            auth: $profile.jwt,
-                            ban: false,
-                            person_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                            reason: actions.unbanInstanceReason || undefined,
-                        })
-                        
-                        isCommentReport(item)
-                            ? item.comment_creator.banned = false
-                            : item.post_creator.banned = false
-                    }
-                    catch (err) {
-                        console.log(err)
-                    }
-                }
-
-
-                //// Follow-Up Messages:  If selected, sends follow-up DMs to the post/comment author and/or reporter
-                
-                // Community Ban/Unban Notify to author
-                if ( (actions.banCommunity && actions.banCommunityNotify) || (actions.unbanCommunity && actions.unbanCommunityNotify) ) {
-                    let template:string = '';
-                    let duration:string = '';
-
-                    if (actions.banCommunity) {
-                        actions.banCommunityExpires
-                            ? duration = `until ${actions.banCommunityExpires}`
-                            : duration = 'permanently'
-
-                        template += `You have been banned from ${item.community.name}@${new URL(item.community.actor_id).host} ${duration}.\n\n`
-                        template += `**Reason**: ${actions.banCommunityReason || '{None provided}'}\n`
-                    }
-
-                    if (actions.unbanCommunity) {
-                        template = `Your ban from  ${item.community.name}@${new URL(item.community.actor_id).host} has been lifted.`
-                    }
-
-                    try {
-                        await getClient().createPrivateMessage({
-                            auth: $profile.jwt,
-                            content: template,
-                            recipient_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                        })
-                    }
-                    catch (err) {
-                        console.log(err);
-                        toast({
-                            content: 'Failed to message post/comment author.',
-                            type: 'warning',
-                        })
-                    }
-                }
-
-
-
-                // Post/Comment Removal DM to Author
-                if ( (actions.remove && actions.removeReplyToAuthor) || (actions.restore && actions.restoreReplyToAuthor) ) {
-                    
-                    let template:string = '';
-                    let reason:string = '';
-
-                    if (actions.remove)     reason = actions.removeReason;
-                    if (actions.restore)    reason = actions.restoreReason;
-
-                    
-                    template = `Your ${isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} in 
-                        !${item.community.name}@${new URL(item.community.actor_id).host} has been ${actions.restore ? 'restored' : 'removed'}:\n\n`
-                    
-                    
-                    template += `- **Post**: [${item.post.name}](${item.post.ap_id})\n`
-                    
-                    if (isCommentReport(item)) {
-                        template += `- **Comment**: [${item.comment.content}](${item.comment.ap_id})\n`    
-                    }
-                    if (reason != '') {
-                        template += `- **Reason**: ${reason}\n`
-                    }
-
-                    template += '\n';
-
-                    try {
-                        await getClient().createPrivateMessage({
-                            auth: $profile.jwt,
-                            content: template,
-                            recipient_id: isCommentReport(item) ? item.comment.creator_id : isPostReport(item) ? item.post.creator_id : undefined,
-                        })
-                    }
-                    catch (err) {
-                        console.log(err);
-                        toast({
-                            content: 'Failed to message post/comment author.',
-                            type: 'warning',
-                        })
-                    }
-
-                }
-
-                // Send DM to reporter if selected
-                if (actions.replyReporter) {
-                    try {
-                        await getClient().createPrivateMessage({
-                            auth: $profile.jwt,
-                            content: actions.replyReporterBody,
-                            recipient_id: item.creator.id
-                        })
-                    }
-                    catch (err) {
-                        console.log(err);
-                        toast({
-                            content: 'Failed to message user.',
-                            type: 'warning',
-                        })
-                    }
-                }
-            }
-
-            
-            // Resolve Comment Report
-            if (isCommentReport(item)) {
-                await getClient().resolveCommentReport({
-                    auth: $profile.jwt,
-                    report_id: item.comment_report.id,
-                    resolved: !resolved,
-                })
-
-                resolved = !resolved
-                item.comment_report.resolved = resolved
-                
-                toast({
-                    content: `${resolved ? 'Resolved' : 'Unresolved'} that report.`,
-                    type: 'success',
-                })
-            } 
-            
-            // Resolve Post Report
-            if (isPostReport(item)) {
-                await getClient().resolvePostReport({
-                    auth: $profile.jwt,
-                    report_id: item.post_report.id,
-                    resolved: !resolved,
-                })
-
-                resolved = !resolved
-                item.post_report.resolved = resolved;
-
-                toast({
-                    content: `${resolved ? 'Resolved' : 'Unresolved'} that report.`,
-                    type: 'success',
-                })
-            }
-
-            
-
-            // Update reports object store
-            const reports = await getClient().getReportCount({
-                auth: $profile?.jwt,
-            })
-
-            $profile.user.reports =
-                reports.comment_reports +
-                reports.post_reports +
-                (reports.private_message_reports ?? 0)
+        const client = getClient()
         
-            } catch (err) {
-            toast({
-                content: err as any,
-                type: 'error',
+        // Resolve an unresolved report
+        if (!report.resolved) {
+            
+            // Private Message Actions
+            if (report.type == 'private_message') {
+                
+                // Delete Private Message
+                if (actions.deletePM) {
+                    await client.deletePrivateMessage({
+                        auth: $profile.jwt,
+                        deleted: true,
+                        private_message_id: report.private_message_view!.private_message.id
+                    })
+                    report.private_message_view!.private_message.deleted = true
+                }
+                // Restore Private Message
+                if (actions.restorePM) {
+                    await client.deletePrivateMessage({
+                        auth: $profile.jwt,
+                        deleted: false,
+                        private_message_id: report.private_message_view!.private_message.id
+                    })
+                    report.private_message_view!.private_message.deleted = false
+                }
+            }
+
+            // Post Actions
+            if (report.type == 'post') {
+                
+                // Lock post
+                if (actions.lock) {
+                    await client.lockPost({
+                        auth: $profile.jwt,
+                        locked: true,
+                        post_id: report.post_view!.post.id,
+                    })
+                    report.post_view!.post.locked = true
+                }
+                
+                // Unlock post
+                if (actions.unlock) {
+                    await client.lockPost({
+                        auth: $profile.jwt,
+                        locked: false,
+                        post_id: report.post_view!.post.id,
+                    })
+                    report.post_view!.post.locked = false
+                }
+
+                // Remove Post
+                if (actions.remove) {
+                    await client.removePost({
+                        auth: $profile.jwt,
+                        post_id: report.post_view!.post.id,
+                        removed: true,
+                        reason: actions.removeReason || undefined,
+                    })
+                    report.post_view!.post.removed = true
+                }
+
+                // Restore Post
+                if (actions.restore) {
+                    await client.removePost({
+                        auth: $profile.jwt,
+                        post_id: report.post_view!.post.id,
+                        removed: false,
+                        reason: actions.removeReason || undefined,
+                    })
+                    report.post_view!.post.removed = false
+                }
+
+
+            }
+
+            // Comment Actions
+            if (report.type == 'comment') {
+                
+                // Remove Comment
+                if (actions.remove) {
+                    await client.removeComment({
+                        auth: $profile.jwt,
+                        comment_id: report.comment_view!.comment.id,
+                        removed: true,
+                        reason: actions.removeReason || undefined,
+                    })
+                    report.comment_view!.comment.removed = true
+                }
+
+                // Restore Comment
+                if (actions.remove) {
+                    await client.removeComment({
+                        auth: $profile.jwt,
+                        comment_id: report.comment_view!.comment.id,
+                        removed: false,
+                        reason: actions.removeReason || undefined,
+                    })
+                    report.comment_view!.comment.removed = false
+                }
+            }
+
+            // Actions for either a post or comment report
+            if (['comment', 'post'].includes(report.type) && report.community) {
+                
+                // Ban from community
+                if (actions.banCommunity) {
+                    
+                    await client.banFromCommunity({
+                        auth: $profile.jwt,
+                        ban: true,
+                        community_id: report.community.id,
+                        person_id: report.reportee.id,
+                        reason: actions.banCommunityReason || undefined,
+                        remove_data: actions.banCommunityDeleteData,
+                        expires: parseExpiryDate(actions.banCommunityExpires),
+                    })
+                    report.creator_banned_from_community = true;
+                }
+
+                // Unban from community
+                if (actions.unbanCommunity) {
+                    
+                    await client.banFromCommunity({
+                        auth: $profile.jwt,
+                        ban: false,
+                        community_id: report.community.id,
+                        person_id: report.reportee.id,
+                        reason: actions.banCommunityReason || undefined,
+                    })
+                    report.creator_banned_from_community = false;
+                }
+            }
+
+            // Ban Instance
+            if (actions.banInstance) {
+                await client.banPerson({
+                    auth: $profile.jwt,
+                    ban: true,
+                    person_id: report.reportee.id,
+                    reason: actions.banInstanceReason || undefined,
+                    remove_data: actions.banInstanceDeleteData,
+                    expires: parseExpiryDate(actions.banInstanceExpires)
+                })
+                report.reportee.banned = true
+            }
+
+            // Unban Instance
+            if (actions.unbanInstance) {
+                await client.banPerson({
+                    auth: $profile.jwt,
+                    ban: false,
+                    person_id: report.reportee.id,
+                    reason: actions.banInstanceReason || undefined,
+                })
+                report.reportee.banned = false
+            }
+
+            //// Follow-Up Messages:  If selected, sends follow-up DMs to the post/comment author and/or reporter
+                
+            // Community Ban/Unban Notify to author
+            if ( report.community && ( (actions.banCommunity && actions.banCommunityNotify) || (actions.unbanCommunity && actions.unbanCommunityNotify)) ) {
+                let template:string = '';
+                let duration:string = '';
+
+                if (actions.banCommunity) {
+                    actions.banCommunityExpires
+                        ? duration = `until ${actions.banCommunityExpires}`
+                        : duration = 'permanently'
+
+                    template += `You have been banned from ${report.community.name}@${new URL(report.community.actor_id).host} until ${duration}.\n\n`
+                    template += `**Reason**: ${actions.banCommunityReason || '{None provided}'}\n`
+                }
+
+                if (actions.unbanCommunity) {
+                    template = `Your ban from  ${report.community.name}@${new URL(report.community.actor_id).host} has been lifted.`
+                }
+
+                await client.createPrivateMessage({
+                    auth: $profile.jwt,
+                    content: template,
+                    recipient_id: report.reportee.id,
+                })
+            }
+
+            // Post Removal DM to Author
+            if (report.type == 'post' && ( (actions.remove && actions.removeReplyToAuthor) || (actions.restore && actions.restoreReplyToAuthor))) {
+                let template:string = '';
+                let reason:string = '';
+
+                if (actions.remove)     reason = actions.removeReason;
+                if (actions.restore)    reason = actions.restoreReason;
+
+                
+                template = `Your post in 
+                    !${report.community!.name}@${new URL(report.community!.actor_id).host} has been ${actions.restore ? 'restored' : 'removed'}:\n\n`
+                
+                template += `- **Post**: [${report.post_view!.post.name}](${report.post_view!.post.ap_id})\n\n`
+                template += reason 
+                    ? `- **Reason**: ${reason}\n\n`
+                    : '\n\n'
+
+                await client.createPrivateMessage({
+                    auth: $profile.jwt,
+                    content: template,
+                    recipient_id: report.reportee.id,
+                })
+            }
+
+            // Comment Removal DM to Author
+            if (report.type == 'comment' && ( (actions.remove && actions.removeReplyToAuthor) || (actions.restore && actions.restoreReplyToAuthor))) {
+                let template:string = '';
+                let reason:string = '';
+
+                if (actions.remove)     reason = actions.removeReason;
+                if (actions.restore)    reason = actions.restoreReason;
+
+                
+                template = `Your comment in 
+                    !${report.community!.name}@${new URL(report.community!.actor_id).host} has been ${actions.restore ? 'restored' : 'removed'}:\n\n`
+                
+                template += `- **Comment**: [${report.comment_view!.comment.content}](${report.comment_view!.comment.ap_id})\n\n`
+                template += reason 
+                    ? `- **Reason**: ${reason}\n\n`
+                    : '\n\n'
+
+                await client.createPrivateMessage({
+                    auth: $profile.jwt,
+                    content: template,
+                    recipient_id: report.reportee.id,
+                })
+            }
+
+            // Send follow-up DM to reporter if selected
+            if (actions.replyReporter) {
+                await client.createPrivateMessage({
+                    auth: $profile.jwt,
+                    content: actions.replyReporterBody,
+                    recipient_id: report.reporter.id
+                })
+            }
+        }
+
+        //// Resolve or unresolve a report based on the report.resolved key
+        
+        // Resolve a Post Report
+        if (report.type == 'post') {
+            await client.resolvePostReport({
+                auth: $profile.jwt,
+                report_id: report.id,
+                resolved: !report.resolved,
             })
         }
-        
+
+            
+        // Resolve a Comment Report
+        if (report.type == 'comment') {
+            await client.resolveCommentReport({
+                auth: $profile.jwt,
+                report_id: report.id,
+                resolved: !report.resolved,
+            })
+        }
+
+        // Resolve a private message report
+        if (report.type == 'private_message') {
+            await client.resolvePrivateMessageReport({
+                auth: $profile.jwt,
+                report_id: report.id,
+                resolved: !report.resolved,
+            })
+        }
+            
+            
+        // Update reports object store
+        const reports = await getClient().getReportCount({
+            auth: $profile?.jwt,
+        })
+        $profile.user.reports = reports.comment_reports + reports.post_reports + (reports.private_message_reports ?? 0)
+
+        // Stop the spinner and reset the actions
         resolving = false;
         actions = {...actionsDefault};
         
+        // Mark the report object as resolved
+        report.resolved = !report.resolved
+
         // If un-resolving the report, keep it open
-        if (resolved) toggleOpenReport();
-    }
+        if (open && report.resolved) toggleOpenReport();
 
+        // Toast the user
+        toast({
+            content: `${report.resolved ? 'Resolved' : 'Unresolved'} that report.`,
+            type: 'success',
+            title: `${report.resolved ? 'Resolved' : 'Unresolved'}`
+        })
 
-    
-    function applyActionPreset(preset:string) {
-        if (!preset) return
-        
-        if (preset == 'spam-ban') {
-            actions.remove = true;
-            actions.removeReason = "Spam";
-            actions.banCommunity = true;
-            actions.banCommunityDeleteData = true;
-            actions.banCommunityReason = 'Spam';
-
-            if (isAdmin($profile.user)) {
-                actions.banInstance = true;
-                actions.banInstanceReason = 'Spam';
-            }
-            if (isPostReport(item)) actions.lock = true;
-        }
-
-        // Locks an item (if post) and removes it with a generic notification
-        if (preset == 'lock-remove') {
-            if (isPostReport(item)) actions.lock = true;
-            actions.remove = true;
-            actions.removeReason = 'Your submission has been removed because it violates the community or server rules.';
-            actions.removeReplyToAuthor = true;
-
-        }
 
     }
     
@@ -764,47 +633,40 @@
 
 
 
-<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-2'}" 
-    name="ModeratorReport" 
-    id="{isCommentReport(item) ? item.comment_report.id : item.post_report.id}"
->
+<Card class="p-4 flex flex-col gap-1.5 w-full !bg-slate-100 dark:!bg-black lg:max-h-[87vh] {open ? '' : 'mt-2'}"  name="ModeratorReport"  id="{report.id}" >
     
     
     <!---Report Title, Badge and Open/Close Button Row--->
     <span class="flex flex-col lg:flex-row w-full gap-4">
         
         <!--- Report Title and Button Bar--->
-        <span class="flex flex-row gap-2 items-center" role="button" on:click={toggleOpenReport}>
-            <Icon src={isCommentReport(item) ? ChatBubbleLeftEllipsis : Photo} mini width={20} />
+        <button class="flex flex-row gap-2 items-center" on:click={toggleOpenReport}>
+            <Icon src={report.icon} mini width={20} />
             
             
             <span class="text-sm font-normal whitespace-nowrap overflow-hidden text-ellipsis hover:underline">
                 <span class="text-base font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-                    {isCommentReport(item) ? "Comment Report: " : "Post Report: "}
+                    {report.type_friendly} Report
                 </span>
-                {
-                    isCommentReport(item) 
-                        ? `"${item.comment.content.length > 120 ? item.comment.content.slice(0,120) + '...' : item.comment.content}"` 
-                        : isPostReport(item) 
-                            ? `"${item.post.name.length > 120 ? item.post.name.slice(0,120) + '...' : item.post.name}"` 
-                            : ''
-                }
+                {report.title.length > 120 ? report.title.slice(0,120) + '...' : report.title}
             </span>
-        </span>
+        </button>
         
         <span class="ml-auto"/>
 
         <span class="flex flex-row gap-4 items-center">
-            <Badge color="{item.comment_report?.resolved || item.post_report?.resolved ? 'green' : 'yellow'}">
-                <Icon src={item.comment_report?.resolved || item.post_report?.resolved ? Check : ExclamationTriangle} mini size="14" />
-                <span class="hidden md:block">{item.comment_report?.resolved || item.post_report?.resolved ? 'Resolved' : 'Needs Action'}</span>
+            <Badge color="{report.resolved ? 'green' : 'yellow'}">
+                <Icon mini size="14"  src={report.resolved ? Check : ExclamationTriangle}/>
+                <span class="hidden md:block">
+                    {report.resolved ? 'Resolved' : 'Needs Action'}
+                </span>
             </Badge>
 
             <!---Debug Button--->
             {#if $userSettings.debugInfo}
                 {#if debug}
                     {#await import('$lib/components/util/debug/DebugObject.svelte') then { default: DebugObject }}
-                        <DebugObject object={item} bind:open={debug} />
+                        <DebugObject object={report} bind:open={debug} />
                     {/await}
                 {/if}
 
@@ -813,45 +675,10 @@
                 </Button>
             {/if}
 
-            <!---Quick Actions Menu
-            {#if !resolved && open}
-            <SelectMenu
-                alignment="bottom-right"
-                options={['manual', 'spam-ban', 'lock-remove-nonotify', 'lock-remove']}
-                optionNames={['Quick Actions', 'Spam, Ban, Thank You Man', 'Lock and Remove (No Notify)', 'Lock and Remove']}
-                selected={'manual'}
-                title="Quick Actions"
-                icon={Fire}
-                on:select={(e) => {
-                    // @ts-ignore
-                    applyActionPreset(e.detail)
-                }}
-            />
-            {/if}
-            --->
-
-
             <!--- Resolve Button--->
-            <Button
-                on:click={resolve}
-                color="primary"
-                class="h-8"
-                size="md"
-                aria-label="{resolved ? "Unresolve" : "Resolve"}"
-                title="{resolved ? "Unresolve" : "Resolve"}"
-                loading={resolving}
-                disabled={resolving || !open}
-                hidden={!open}
-            >
-                <Icon src={resolved ? ArrowUturnLeft : Check} mini size="16" slot="icon" />
-                {resolved ? "Unresolve" : "Resolve"}
-            </Button>
-
-            <!--- Open Close Button (also populates sidebar) --->
-            <Button color="primary" size="sm" class="!w-[75px] h-8" icon={open ? Folder : FolderOpen}
-                on:click={toggleOpenReport} 
-            >
-                <span class="hidden lg:block">{open ? 'Close' : 'Open'}</span>
+            <Button on:click={resolve} color="primary" class="h-8" size="md" title="{report.resolved ? "Unresolve" : "Resolve"}" loading={resolving} disabled={resolving} >
+                <Icon src={report.resolved ? ArrowUturnLeft : Check} mini size="16" slot="icon" />
+                {report.resolved ? "Unresolve" : "Resolve"}
             </Button>
         </span>
 
@@ -865,32 +692,33 @@
             <span class="font-bold dark:text-zinc-400 text-slate-600">
                 Report from 
             </span>
-            <UserLink user={item.creator} />
+            <UserLink user={report.reporter} />
         </span>
 
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             <span class="font-bold dark:text-zinc-400 text-slate-600">
                 Report to
             </span>
-            <CommunityLink community={item.community} />
+            {#if report.community}
+                <CommunityLink community={report.community} />
+            {:else}
+                ---
+            {/if}
         </span>
 
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
             <span class="font-bold dark:text-zinc-400 text-slate-600">
                 Report against 
             </span>
-            <UserLink user={isCommentReport(item) ? item.comment_creator : item.post_creator} />
+            <UserLink user={report.reportee} />
         </span>
 
         <span class="flex flex-col gap-1 text-xs w-full lg:w-1/5">
                 <span class="font-bold dark:text-zinc-400 text-slate-600">
                     Resolved by
                 </span>
-                {#if 
-                    ( (isCommentReport(item) && item.comment_report.resolved) || (isPostReport(item) && item.post_report.resolved) ) 
-                    && item.resolver
-                }        
-                    <UserLink user={item.resolver} />
+                {#if report.resolver}
+                    <UserLink user={report.resolver} />
                 {:else}
                     ---
                 {/if}
@@ -900,7 +728,7 @@
             <span class="font-bold dark:text-zinc-400 text-slate-600">
                 Sent
             </span>
-            <RelativeDate date={isCommentReport(item) ? item.comment_report.published : item.post_report.published} />
+            <RelativeDate date={report.published} />
         </span>
         
     </span>
@@ -916,20 +744,22 @@
             action={() => {
                 if (!creatorProfile.person_view) {
                     creatorProfile.loading = true;
-                    getUserPostsComments(reporteeID);
+                    getUserPostsComments(report.reportee.id);
                 }
             }}
         />
 
         <!---Community--->
-        <SidePanelControlButton bind:sidePanel={sidePanel} icon={UserGroup} name="Community" value='community'/>
+        {#if report.community}
+            <SidePanelControlButton bind:sidePanel={sidePanel} icon={UserGroup} name="Community" value='community'/>
+        {/if}
 
         <!---Posts--->
         <SidePanelControlButton bind:sidePanel={sidePanel} icon={Window} name="Posts" value='posts'
             action={() => {
                 if (!creatorProfile.posts) {
                     creatorProfile.loading = true;
-                    getUserPostsComments(reporteeID);
+                    getUserPostsComments(report.reportee.id);
                 }
             }}
         />
@@ -939,41 +769,43 @@
             action={() => {
                 if (!creatorProfile.comments) {
                     creatorProfile.loading = true; 
-                    getUserPostsComments(reporteeID);
+                    getUserPostsComments(report.reportee.id);
                 }
             }}
         />
         <!---Modlog History--->
         <SidePanelControlButton bind:sidePanel={sidePanel} icon={Newspaper} name="Modlog History" value='modlog'
             action={() => {
-                if (lookupThisCommunityOnly) getModlog(item.community.id)
+                if (lookupThisCommunityOnly && report.community) getModlog(report.community.id)
                 else getModlog()   
             }}
         />
        
 
         <!--- Toggle filter posts/comments/modlog for the reported community only--->
-        <span class="flex flex-row gap-4 ml-auto pr-4 items-center">
-            <span class="text-xs font-bold flex flex-row gap-2 items-center">
-                <Icon src={Funnel} mini width={16}/>
-                This Community Only
-            </span>
+        {#if report.community}
+            <span class="flex flex-row gap-4 ml-auto pr-4 items-center">
+                <span class="text-xs font-bold flex flex-row gap-2 items-center">
+                    <Icon src={Funnel} mini width={16}/>
+                    This Community Only
+                </span>
 
-            <Switch bind:enabled={lookupThisCommunityOnly} 
-                on:change={()=> {
-                    lookupThisCommunityOnly = !lookupThisCommunityOnly
-                    
-                    if (lookupThisCommunityOnly) {
-                        getUserPostsComments(reporteeID, item.community.id)
-                        getModlog(item.community.id)
-                    }
-                    else {
-                        getUserPostsComments(reporteeID)
-                        getModlog()
-                    }
-                }}
-            />
-        </span>
+                <Switch bind:enabled={lookupThisCommunityOnly} 
+                    on:change={()=> {
+                        lookupThisCommunityOnly = !lookupThisCommunityOnly
+                        
+                        if (lookupThisCommunityOnly && report.community) {
+                            getUserPostsComments(report.reportee.id, report.community.id)
+                            getModlog(report.community.id)
+                        }
+                        else {
+                            getUserPostsComments(report.reportee.id)
+                            getModlog()
+                        }
+                    }}
+                />
+            </span>
+        {/if}
 
     </SidePanelControlBar>
 
@@ -981,31 +813,33 @@
     <ContentPanel bind:sidePanel={sidePanel} bind:display={open}>
 
         <!---User Report Details and Preview of Post/Comment Being Reported--->
-        <UserReportDetails bind:item={item}/>
+        <UserReportDetails bind:item={report}/>
 
         <!--- Moderation Actions Form--->
-        <ConfigContainer title="Available Actions" display={ !resolved && $profile?.user && (amModOfAny($profile.user))}>
+        <ConfigContainer title="Available Actions" display={ !report.resolved && $profile?.user && (amModOfAny($profile.user))}>
 
             <!--- Lock Posts--->
-            <ConfigSwitch bind:enabled={actions.lock} icon={LockClosed} 
-                name="Lock Post" 
-                description="Lock the post to prevent any further comments or votes."
-                display={isPostReport(item) && !item.post.locked}
-            />
+            {#if report.type == 'post' && report.post_view}
+                <ConfigSwitch bind:enabled={actions.lock} icon={LockClosed} 
+                    name="Lock Post" 
+                    description="Lock the post to prevent any further comments or votes."
+                    display={!report.post_view.post.locked}
+                />
 
-            <!--- Unlock Post--->
-            <ConfigSwitch bind:enabled={actions.unlock} icon={LockOpen} 
-                name="Unlock Post" 
-                description="Unlock a post so that it may receive votes and comments."
-                display={isPostReport(item) && item.post.locked}
-            />
+                <!--- Unlock Post--->
+                <ConfigSwitch bind:enabled={actions.unlock} icon={LockOpen} 
+                    name="Unlock Post" 
+                    description="Unlock a post so that it may receive votes and comments."
+                    display={report.post_view.post.locked}
+                />
+            {/if}
 
 
             <!---Remove Comment/Post--->
             <ConfigSwitch bind:enabled={actions.remove} icon={Trash}
-                name="Remove {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
-                description="Removes the offending {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'}"
-                display={(isCommentReport(item) && !item.comment.removed) || (isPostReport(item) && !item.post.removed)}
+                name="Remove {report.type_friendly}"
+                description="Removes the offending {report.type_friendly}"
+                display={(report.type == 'post' && !report.post_view?.post.removed) || (report.type=='comment' && !report.comment_view?.comment.removed)}
             >
 
                 <!---Remove Comment/Post Reason with Preset Selector--->
@@ -1024,7 +858,7 @@
                         on:select={(e) => {
                             switch (e.detail) {
                                 case "REPORTTEXT":
-                                    actions.removeReason = (isCommentReport(item) ? item.comment_report.reason : isPostReport(item) ? item.post_report.reason : 'No reason provided')
+                                    actions.removeReason = (report.reason ?? 'No reason provided')
                                     break;
                                 default:
                                     actions.removeReason = e.detail
@@ -1039,7 +873,7 @@
                 <!--- Remove Post: Reply to Author --->
                 <ConfigSwitch bind:enabled={actions.removeReplyToAuthor} icon={ChatBubbleLeftEllipsis}
                     name="Reply to Author"
-                    description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been removed. The reason given above will be included in that message."
+                    description="Send the {report.type_friendly} author a DM informing them that their content has been removed. The reason given above will be included in that message."
                     display={actions.remove}
                     nested={true}
                 />
@@ -1049,9 +883,9 @@
                 
             <!---Restore Post/Comment--->
             <ConfigSwitch bind:enabled={actions.restore} icon={Trash}
-                name="Restore  {isCommentReport(item) ? 'Comment' : isPostReport(item) ? 'Post' : 'Content'}"
-                description="Restores the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} to the community."
-                display={(isCommentReport(item) && item.comment.removed) || (isPostReport(item) && item.post.removed)}
+                name="Restore  {report.type_friendly}"
+                description="Restores the {report.type_friendly} to the community."
+                display={(report.type=='post' && report.post_view?.post.removed) || (report.type=='comment' && report.comment_view?.comment.removed)}
             >
                 <ConfigTextArea bind:value={actions.restoreReason} icon={Clipboard}
                     name="Restore Reason"
@@ -1064,84 +898,97 @@
 
                 <ConfigSwitch bind:enabled={actions.restoreReplyToAuthor} icon={ChatBubbleLeftEllipsis}
                     name="Reply to Author"
-                    description="Send the {isCommentReport(item) ? 'comment' : isPostReport(item) ? 'post' : 'content'} author a DM informing them that their content has been restored. The reason given above will be included in that message."
+                    description="Send the {report.type_friendly} author a DM informing them that their content has been restored. The reason given above will be included in that message."
                     display={actions.restore}
                     nested={true}
                 />
             </ConfigSwitch>
 
+            <!---Delete Private Message:  Disabled - doesn't work in 0.18.5.  Need to test against 0.19
+            <ConfigSwitch bind:enabled={actions.deletePM} icon={Trash} name="Delete {report.type_friendly}" description="Delete the reported private message."
+                display={report.type=='private_message' && !report.private_message_view?.private_message.deleted}
+            />
+            --->
+
+            <!---Restore Private Message: Disabled - doesn't work in 0.18.5.  Need to test against 0.19
+            <ConfigSwitch bind:enabled={actions.restorePM} icon={Trash} name="Restore {report.type_friendly}" description="Restore the reported private message."
+                display={report.type=='private_message' && report.private_message_view?.private_message.deleted}
+            />
+            --->
+
+
 
 
             <!---Community Ban--->
-            <ConfigSwitch bind:enabled={actions.banCommunity} icon={UserGroup}
-                name="Ban From Community"
-                description="Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
-                display={!item.creator_banned_from_community}
-            >
-                <ConfigSwitch bind:enabled={actions.banCommunityDeleteData} icon={Trash}
-                    name="Remove Posts/Comments"
-                    description="Remove all post and comments in this community made by this user."
-                    display={actions.banCommunity}
-                    nested={true}
-                />
+            {#if ['post', 'comment'].includes(report.type)}
+                <ConfigSwitch bind:enabled={actions.banCommunity} icon={UserGroup}
+                    name="Ban From Community"
+                    description="Ban the author of the reported content from the community. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
+                    display={!report.creator_banned_from_community}
+                >
+                    <ConfigSwitch bind:enabled={actions.banCommunityDeleteData} icon={Trash}
+                        name="Remove Posts/Comments"
+                        description="Remove all post and comments in this community made by this user."
+                        display={actions.banCommunity}
+                        nested={true}
+                    />
 
-                <ConfigTextArea bind:value={actions.banCommunityReason} icon={Clipboard}
-                    name="Reason for Community Ban"
-                    description="The given reason meriting the ban from this community. This will appear in the modlog."
-                    display={actions.banCommunity}
-                    nested={true}
-                    rows={3}
-                    placeholder="Ban reason"
-                />
+                    <ConfigTextArea bind:value={actions.banCommunityReason} icon={Clipboard}
+                        name="Reason for Community Ban"
+                        description="The given reason meriting the ban from this community. This will appear in the modlog."
+                        display={actions.banCommunity}
+                        nested={true}
+                        rows={3}
+                        placeholder="Ban reason"
+                    />
 
-                <ConfigSwitch bind:enabled={actions.banCommunityNotify} icon={Megaphone}
-                    name="Send Ban Notification"
-                    description="Send a message to the user letting them know they have been banned, why, and for how long. The ban reason will be included in that message."
-                    display={actions.banCommunity}
-                    nested={true}
-                />
+                    <ConfigSwitch bind:enabled={actions.banCommunityNotify} icon={Megaphone}
+                        name="Send Ban Notification"
+                        description="Send a message to the user letting them know they have been banned, why, and for how long. The ban reason will be included in that message."
+                        display={actions.banCommunity}
+                        nested={true}
+                    />
 
-                <ConfigDateInput bind:value={actions.banCommunityExpires} icon={Clock}
-                    name="Community Ban Duration"
-                    description="The expiration date of the ban. Leave blank to effect a permanent community ban."
-                    display={actions.banCommunity}
-                    nested={true}
-                />
+                    <ConfigDateInput bind:value={actions.banCommunityExpires} icon={Clock}
+                        name="Community Ban Duration"
+                        description="The expiration date of the ban. Leave blank to effect a permanent community ban."
+                        display={actions.banCommunity}
+                        nested={true}
+                    />
 
-            </ConfigSwitch>
+                </ConfigSwitch>
+            
 
-            <!---Community Unban--->
-            <ConfigSwitch bind:enabled={actions.unbanCommunity} icon={UserGroup}
-                name="Unban From Community"
-                description="Lift the community ban applied to the author of the reported content."
-                display={item.creator_banned_from_community}
-            >
-                <ConfigTextArea bind:value={actions.unbanCommunityReason} icon={Clipboard}
-                    name="Reason for Community Unban"
-                    description="The given reason meriting the lifting of the community ban."
-                    nested={true}
-                    rows={3}
-                    placeholder="Unban reason"
-                    display={actions.unbanCommunity}
-                />
+                <!---Community Unban--->
+                <ConfigSwitch bind:enabled={actions.unbanCommunity} icon={UserGroup}
+                    name="Unban From Community"
+                    description="Lift the community ban applied to the author of the reported content."
+                    display={report.creator_banned_from_community}
+                >
+                    <ConfigTextArea bind:value={actions.unbanCommunityReason} icon={Clipboard}
+                        name="Reason for Community Unban"
+                        description="The given reason meriting the lifting of the community ban."
+                        nested={true}
+                        rows={3}
+                        placeholder="Unban reason"
+                        display={actions.unbanCommunity}
+                    />
 
-                <ConfigSwitch bind:enabled={actions.unbanCommunityNotify} icon={Megaphone}
-                    name="Send Unban Notification"
-                    description="Send a message to the user letting them know their ban has been lifted. The ban reason will be included in that message."
-                    nested={true}
-                    display={actions.unbanCommunity}
-                />
-            </ConfigSwitch>
+                    <ConfigSwitch bind:enabled={actions.unbanCommunityNotify} icon={Megaphone}
+                        name="Send Unban Notification"
+                        description="Send a message to the user letting them know their ban has been lifted. The ban reason will be included in that message."
+                        nested={true}
+                        display={actions.unbanCommunity}
+                    />
+                </ConfigSwitch>
+            {/if}
 
 
             <!--- Instance Ban (Admin Only) --->
             <ConfigSwitch bind:enabled={actions.banInstance} icon={NoSymbol}
                 name="Ban From Instance"
                 description="Ban the author of the reported content from this instance. Enter an expiration date for the ban or leave it empty to effect a permanent ban."
-                display={
-                    ( $profile?.user && isAdmin($profile.user) ) &&
-                    ( (isPostReport(item) && !item.post_creator.banned) || (isCommentReport(item) && !item.comment_creator.banned) )
-                }
+                display={ $profile?.user && isAdmin($profile.user)  && !report.reportee.banned }
             >
                 <ConfigSwitch bind:enabled={actions.banInstanceDeleteData} icon={Trash}
                     name="Remove Posts/Comments"
@@ -1172,10 +1019,7 @@
             <ConfigSwitch bind:enabled={actions.unbanInstance} icon={Check}
                 name="Unban From Instance"
                 description="Lift the instance ban for the author of the reported content."
-                display={
-                    ( $profile?.user && isAdmin($profile.user) ) &&
-                    ( (isPostReport(item) && item.post_creator.banned) || (isCommentReport(item) && item.comment_creator.banned) )
-                }
+                display={ $profile?.user && isAdmin($profile.user)  && report.reportee.banned }
             >
                 <ConfigTextArea bind:value={actions.unbanInstanceReason} icon={Clipboard}
                     name="Reason for Instance Unban"
@@ -1223,19 +1067,19 @@
         <!--- Right 1/3 Width Side Panel--->
         <SidePanel slot="sidePanel" width="w-1/3" display={sidePanel != 'closed'}>
             <!--- Right pane / Modlog --->
-            <MiniModlog bind:item={item} bind:modlog={modlog} display={sidePanel=='modlog'} />
+            <MiniModlog bind:item={report} bind:modlog={modlog} display={sidePanel=='modlog'} />
 
             <!---Right Pane / User Posts --->
-            <MiniPostFeed bind:item={item} bind:creatorProfile={creatorProfile} display={sidePanel=='posts'}/>
+            <MiniPostFeed bind:item={report} bind:creatorProfile={creatorProfile} display={sidePanel=='posts'}/>
 
             <!--- Right Pane / User Comments --->
-            <MiniCommentFeed bind:item={item} bind:creatorProfile={creatorProfile} display={sidePanel=='comments'}/>
+            <MiniCommentFeed bind:item={report} bind:creatorProfile={creatorProfile} display={sidePanel=='comments'}/>
 
             <!--- Right Pane / User Profile View--->
-            <MiniProfileView bind:item={item} bind:creatorProfile={creatorProfile} display={sidePanel=='profile'}/>
+            <MiniProfileView bind:creatorProfile={creatorProfile} display={sidePanel=='profile'}/>
 
             <!--- Right Pane / Community Profile --->
-            <MiniCommunityProfile bind:item={item} display={sidePanel=='community'} />
+            <MiniCommunityProfile bind:item={report} display={sidePanel=='community'} />
         </SidePanel>
     </ContentPanel>
         

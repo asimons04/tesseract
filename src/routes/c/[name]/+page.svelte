@@ -1,78 +1,154 @@
 <script lang="ts">
+    import type { Snapshot } from './$types';
     
-    import { afterNavigate, disableScrollHandling, goto } from '$app/navigation';
-    import { arrayRange, fullCommunityName, searchParam } from '$lib/util.js'
-    import { getSessionStorage, setSessionStorage } from '$lib/session.js'
-    import { onDestroy, onMount } from 'svelte'
-    import { page } from '$app/stores'
-    import { scrollToTop } from '$lib/components/lemmy/post/helpers'
-    import { sortOptions, sortOptionNames } from '$lib/lemmy'
-    import { userSettings } from '$lib/settings.js'
-    
+    import { beforeNavigate, goto } from '$app/navigation'
+    import { load } from './+layout'
+    import { mergeNewInfiniteScrollBatch, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { onMount } from 'svelte'
+    import { PageSnapshot } from '$lib/storage'
+    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers';
+    import { userSettings } from '$lib/settings'
     
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import Pageination from '$lib/components/ui/Pageination.svelte'
+    import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
+    import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
+    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
-    import Sort from '$lib/components/lemmy/Sort.svelte'
-
-    import {
-        ArrowSmallRight,
-        Bars3,
-        ChartBar,
-        DocumentDuplicate,
-        Home,
-        Icon,
-        QueueList,
-        UserGroup,
-        Window
-    } from 'svelte-hero-icons'
+    
+    
 
     export let data
     
-    
-    onMount(() => {
-        setSessionStorage('lastSeenCommunity', {
-            id: data.community.community_view.community.id,
-            name: fullCommunityName(
-                data.community.community_view.community.name,
-                data.community.community_view.community.actor_id
-            ),
-        })
+    onMount(() => { 
+        if (data?.community) setLastSeenCommunity(data.community.community_view.community)
     })
+    
+    
+    let pageState = {
+        scrollY: 0,
+    }
+
+    let infiniteScroll = {
+        loading: false,     // Used to toggle loading indicator
+        exhausted: false,   // Sets to true if the API returns 0 posts
+        maxPosts: $userSettings.uiState.maxScrollPosts,      // Maximum number of posts to keep in the FIFO
+        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
+        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
+        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+    }
+    $: infiniteScroll.truncated = (data?.posts?.posts && data.posts.posts.length > infiniteScroll.maxPosts-2) ?? false
+    
+    beforeNavigate(() => {
+        infiniteScroll.exhausted = false
+    })
+
+    // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
+    export const snapshot: Snapshot<void> = {
+        capture: () => {
+            pageState.scrollY = window.scrollY
+            PageSnapshot.capture({data: data, state: pageState})
+        },
+        restore: async () => {
+            try { 
+                let snapshot = PageSnapshot.restore() 
+                if (snapshot.data)  data = snapshot.data
+                if (snapshot.state) pageState = snapshot.state
+
+                await scrollToLastSeenPost()
+            }
+            catch { 
+                PageSnapshot.clear() 
+                window.scrollTo(0,0)
+            }
+        }
+    }
+
+    async function refresh() {
+        PageSnapshot.clear()
+        infiniteScroll.exhausted = false
+        infiniteScroll.truncated = false
+        window.scrollTo(0,0)
+    }
+
+    function loadPosts(): void {
+        if (!data?.posts) return
+        
+        const req = {
+            passedCommunity: data.community,
+            url: new URL(window.location.href)
+        }
+
+        req.url.searchParams.set('limit', $userSettings?.uiState.postsPerPage.toString() || '10')
+        req.url.searchParams.set('community_name', data.community_name)
+        req.url.searchParams.set('sort', data.sort ?? 'New')
+        
+        //@ts-ignore since using 0.18.x client wihout next_page in type def
+        if (data.posts.next_page) req.url.searchParams.set('page_cursor', data.posts.next_page)
+        else if (data.page) req.url.searchParams.set('page', (++data.page).toString())
+        
+        load(req).then((nextBatch) => {
+            if (!nextBatch || !data?.posts) return
+            
+            if (nextBatch && nextBatch.posts.posts.length < 1) infiniteScroll.exhausted = true
+            else infiniteScroll.exhausted = false
+           
+            data.posts = mergeNewInfiniteScrollBatch(data.posts, nextBatch.posts)
+
+            // To reduce memory consumption, remove posts from the beginning after the max number have been rendered
+            while (data.posts.posts.length > infiniteScroll.maxPosts) {
+                data.posts.posts.shift()
+                infiniteScroll.truncated = true  
+            }
+            data = data
+            infiniteScroll.loading  = false
+        })
+        
+    }
 </script>
 
 <svelte:head>
-    <title>{data.community.community_view.community.title}</title>
+    <title>{data?.community?.community_view.community.title ?? "Community Not Found"}</title>
 
-    <meta
-        name="og:title"
-        content={data.community.community_view.community.title}
+    <meta name="og:title"
+        content={data?.community?.community_view.community.title ?? "Community Not Found"}
     />
-    {#if data.community.community_view.community.description}
-        <meta
-            name="og:description"
-            content={data.community.community_view.community.description}
-        />
+    {#if data?.community?.community_view.community.description}
+        <meta name="og:description" content={data.community.community_view.community.description}/>
     {/if}
 </svelte:head>
 
-<SubNavbar home back compactSwitch toggleMargins refreshButton toggleCommunitySidebar
-    sortMenu={true} bind:selectedSortOption={data.sort}
-    pageSelection={true} bind:currentPage={data.page}
-/>
+<!--pageSelection={true}    bind:currentPage={data.page}-->
+<SubNavbar home back compactSwitch toggleMargins toggleCommunitySidebar scrollButtons
+    sortMenu={true}         bind:selectedSortOption={data.sort}
+    refreshButton           on:navRefresh={()=> refresh()}
+>
+    <SiteSearch placeholder="Search {data.community.community_view.community.name}" community_id={data.community.community_view.community.id} slot="center"/>
+</SubNavbar>
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full py-2">
-    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
+{#if data?.posts && data?.community}
+    <MainContentArea>
         
+        <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
+        <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
+            on:click={() => {
+                goto(window.location.href, {invalidateAll: true})
+                refresh()
+            }}
+        />
         <PostFeed posts={data.posts.posts}/>
         
-        <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
-    </div>
-
-    <div class="mt-[8px]">
-        <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators}/>
-    </div>
-</div>
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
+            on:loadMore={ () => {
+                if (!infiniteScroll.exhausted) {
+                    infiniteScroll.loading = true
+                    loadPosts()
+                }
+            }}
+        />
+        
+        <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
+        
+    </MainContentArea>
+{/if}

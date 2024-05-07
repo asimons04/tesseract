@@ -1,13 +1,21 @@
 # Tesseract
 # About
-Tesseract was Lemmy client designed for media-rich feeds and content.  It was probably the best Lemmy client no one was using :-P
+Tesseract is a Sublinks/Lemmy client designed for media-rich feeds and content.  
 
-It started out as my personal, custom build of Photon, but it got exhausting porting over my bells and whistles each release. To that end, I finally decided to make it an official fork.
-
-You can't really call this a Photon fork anymore.  Deep down, yeah, there's still some Photon left, but much of it has been re-implemented as I've added new features and rewritten various components.
+In addition to the user experience, care has also been taken to enhance the default experience for moderators and instance admins. 
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
+## 0.18.x Support
+Lemmy API version 0.18.x is still fully supported.  Tesseract 1.3.x will be the last version to support the 0.18.x API.  Starting with 1.4.0, the 0.19.3 API will be the minimum supported version.
+
+## 0.19.x Support
+Tesseract has supported 0.19.x since version 1.2 point something.  As of 1.3.0, the following 0.19.x specific features are supported:
+- Scaled sort
+- Instance blocking
+- Cursor-based pagination
+
+When connected to an 0.18.x instance, the scaled sort and instance blocking are disabled and pagination falls back to offset-based.
 
 
 
@@ -23,10 +31,14 @@ The following features are unique to Tesseract:
   - Odysee
   - [Song Link](https://odesli.co/)
   - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
+  - Peertube Embeds (new as of 1.3.0).  PT support is kind of cool because you can already follow PeerTube channels in Lemmy. With the addition of support for their embeds, this makes following your favorite creator even easier. Upvotes/downvotes to a Peertube post will federate out to thumbs-up/thumbs-down on PT's side.
+  - Any embeddable content that provides a video link in the `embed_video` metadata.
 
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
   - Post and comment menus let you browse the communities of the originating instance
+  - Subscribe to communities on remote instances with one click.  As of 1.3.0, your subscribed state will be reflected when browing remote instances.
+  - Note:  This only works for Lemmy instances. Kbin, Mastadon, etc are not currently supported for remote community browsing.  
 
 
 ### Image/Media Proxying and Caching
@@ -40,7 +52,9 @@ Privacy conscious users have long requested media be proxied through Lemmy.  Whi
 Read more: [Media Proxy/Cache Docs](docs/MediaProxy.md)
 
 ### Media Bias Fact Check (MBFC) Integration
-Posts with URLs can have a MBFC badge in the corner which will lookup the publisher in the MBFC database and return their bias and credibility information.  The MBFC results are also integrated into the reporting and moderation tools.
+Misinformation is rampant on the internet, and the Fediverse is, perhaps, more susceptible to it due to its open and distributed nature.  To help combat this, Media Bias Fact Check has been integrated into the UI.
+
+Posts with URLs are checked against the MBFC dataset.  If a record is found, an MBFC badge will be added in the corner. Clicking the badge brings up an abridged report for the publisher containing their credibility, factual reporting history, and bias information; a link to the full report is also provided.  The MBFC results are also integrated into the reporting and moderation tools.
 
 **For Users**:
 - Easily see where the news stories in your feed are coming from and what their sources' credibility ratings are.  
@@ -55,27 +69,14 @@ Posts with URLs can have a MBFC badge in the corner which will lookup the publis
 
 
 ### Fediseer Integration
-- See any endorsements, hesitations, and censures given to instances you're interacting with.
-- Code syntax highlighting in code and inline code blocks.
+See any endorsements, hesitations, and censures given to instances you're interacting with.
+
+### Syntax Highlighting
+Code syntax highlighting in code and inline code blocks.
 
 ### Distinguished and Sticky Comments
-Mods/Admins can distinguish and sticky comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.
+Mods/Admins can distinguish and sticky their own comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.  
 
-The handling of the `distinguished` flag is different in Tesseract than in Lemmy-UI:
-
-**Tesseract**
-- Distinguished comments will be given a green background and border
-- Distinguished comments are pinned at the top of the comments list.
-- Any comment can be distinguished by a mod/admin.
-
-**Lemmy-UI**
-- Distinguished comments just have an "admin" badge next to them.   
-- Only admin/mod comments can be distinguished with the "Speak as moderator" option. (which is redundant because mod accounts already have moderator badges).  
-
-Note that the way distinguished comments are handled only applies to Tesseract.  The comments will be marked as distinguished at the API level, but it's up to individual clients/UIs to handle how to render comments with the `distinguished` flag set.
-
-
-## Additional Features
 ### Keyword Filtering
 Sick of hearing about a particular topic?  Add keyword filters to keep posts containg those terms from appearing in your feed.  By default, keywords are compared case-insensitively, checked as whole-words, and only checked for presence within the post title, body, or embed description.  
 
@@ -85,9 +86,6 @@ You can add modifiers to fine tune this somewhat:
 - `*term`: An asterisk disabled whole word checking will filter a post if the keyword is contained within other words.
 
 At this time, modifiers cannot be combined. Perhaps that is something that will be implemented later.
-
-
-
 
 ### Designed for desktop and mobile.
 Install as a PWA on either or just use it through the web.
@@ -109,13 +107,12 @@ Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with 
 - Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI
 - Local instance admins have full moderation control of the instance as with Lemmy-UI
 - Modlog support on both desktop and mobile.
-- Supercharged modlog with enhanced filtering
+- Supercharged modlog with enhanced filtering and quick actions.
 - Communities and users have "moglog" links in their action menus.  Those will take you to a pre-filtered modlog for just actions related to them.
 - Can simply click "reply with reason" when taking moderation actions to send the user a message with the removal details. Template is user-configurable.
 
-### Committed Developer
-Tesseract is maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  
-
+### Multi-Role Developer
+Tesseract is maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  Each of those roles requires different considerations, and Tesseract is being built to accommodate them all.
 
 
 
@@ -138,30 +135,25 @@ links are detected as "Youtube-like" embeddable videos.  These will embed using 
 - Spotify tracks, albums, and playlists will embed a player right in the feed or post.
   - (Optional) To enable full track playback rather than previews, you will need to either allow 3rd party cookies for the Tesseract domain or whitelist cookies for `open.spotify.com`. This is to allow the Spotify iframe to detect your login.
     - On mobile browsers, Spotify will only allow track previews regardless of login state so don't bother allowing 3rd party cookies.
+    - With the push to end 3rd party cookies (which is ultimately a good thing since advertisers can't be trusted), playing full tracks may no longer be possible due to not being able to associate the iframe player with your logged-in account.
 
 
 
 - Bandcamp tracks and albums.  
 
+- Peertube embeds
 
-- TikTok is not currently supported. I don't have TikTok, and no one has asked for it, so I'm content not supporting that unless there's demand and someone is able to provide me some sample links (TT does have an embed API, so at least limited support possible).
-
-
-## Support
-I created a public Matrix support space you can join.  General discussion, flesh out ideas, or ask for support.  [Tesseract Support](https://matrix.to/#/#tesseract-support:ptznetwork.org)
-
-There is also a Lemmy community where you can get the latest announcements and post questions related to Tesseract.  Find us at https://dubvee.org/c/tesseract
+- TikTok is not currently supported. I don't have TikTok, and no one has asked for it, so I'm content not supporting that unless there's demand and someone is able to provide me some sample links (I think TT does have an embed API, so at least limited support possible).
 
 
-## Roadmap
-The "to do" and roadmap has been moved to [a dedicated file](/Roadmap.md).
 
-Completed "to do"s have been moved to the [change log](./ChangeLog.md).
 
-The changelog also contains an informal list of items I _hope_ to add to the next few upcoming releases.
+
 
 ## Public Hosted Demo Instance
-An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.
+An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.  
+
+Ideally, you would either host it yourself and point it to your home Lemmy instance or ask your instance admins to offer it as an alternative frontend. The VPS I have the demo running on is potato-class and unable to handle a massive number of users.
 
 
 ## Self-Hosting
@@ -169,7 +161,7 @@ Tesseract is designed to be self hosted.  You can even run it from localhost if 
 
 
 ### Deploying the Image
-Replace `example.com` in the line below with the base URL of your instance.  
+Replace `example.com` in the line below with the base URL of your instance.  This example exposes the container's port on `8080` but you can/should change that to whatever port you need or have free on your host.  
 
 Additional environment variables for configuring Tesseract can be found further down in the README.
 
@@ -208,15 +200,6 @@ server {
 
 
   location / {
-    # Adjust as needed, but these are what I have in my dev server
-    proxy_http_version              1.1;
-    send_timeout                    5m;
-    proxy_read_timeout              360;
-    proxy_send_timeout              360;
-    proxy_connect_timeout           360;
-    proxy_max_temp_file_size        0;
-
-    # Set headers to send to backend server
     proxy_set_header  Host                  $host;
     proxy_set_header  X-Forwarded-Host      $host;
     proxy_set_header  X-Forwarded-For       $remote_addr;
@@ -225,18 +208,17 @@ server {
     proxy_set_header  X-Forwarded-Ssl       on;
 
     # Update this to match the IP/port you are mapping from Docker.
-    proxy_pass http://127.0.0.1:3000;
+    proxy_pass http://127.0.0.1:8080;
   }
 
 }
 ```
 **Running Tesseract In Place Of Lemmy-UI**
 
-If you want to run Tesseract in place of Lemmy-UI, just replace the proxy pass that goes to your current Lemmy-UI with the IP/port of Tesseract.
+If you want to run Tesseract in place of Lemmy-UI, just replace the proxy pass that goes to your current Lemmy-UI with the IP/port of Tesseract.  Be sure to keep the conditionals that separate the ActivityPub ld+json out to the API's container.
 
 
-
-### Configuring default settings
+## Configuring
 The following environment variables can be set to override the default settings.  Note that all environment variables must be prefixed with `PUBLIC_` to be picked up by SvelteKit.
 
 
@@ -244,13 +226,8 @@ The following environment variables can be set to override the default settings.
 | ------------------------------- | ------------------- | -------------------------------------- |
 | PUBLIC_INSTANCE_URL             | URL                 | `lemmy.world`                          |
 | PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
-| PUBLIC_SSR_ENABLED              | `bool`              | `false`                                |
 | PUBLIC_THEME                    | system\|dark\|light | system                                 |
-| PUBLIC_DISABLE_MODLOG_USERS     | `bool`              | false                                  |
 | PUBLIC_MARK_READ_POSTS          | `bool`              | true                                   |
-| PUBLIC_SHOW_INSTANCES_USER      | `bool`              | false                                  |
-| PUBLIC_SHOW_INSTANCES_COMMUNITY | `bool`              | true                                   |
-| PUBLIC_SHOW_INSTANCES_COMMENTS  | `bool`              | false                                  |
 | PUBLIC_SHOW_COMPACT_POSTS       | `bool`              | false                                  |
 | PUBLIC_DEFAULT_FEED_SORT        | `SortType`          | Active                                 |
 | PUBLIC_DEFAULT_FEED             | `ListingType`       | Local                                  |
@@ -258,10 +235,9 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_HIDE_DELETED             | `bool`              | true                                   |
 | PUBLIC_HIDE_REMOVED             | `bool`              | false                                  |
 | PUBLIC_DISPLAY_NAMES            | `bool`              | true                                   |
-| PUBLIC_TAG_NSFW_COMMUNITIES     | `bool`              | true                                   |
 | PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
 | PUBLIC_OPEN_LINKS_NEW_TAB       | `bool`              | false                                  |
-| PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | false                                  |
+| PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | true                                   |
 | PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |
 | PUBLIC_YOUTUBE_FRONTEND         | `YouTube`\|`Invidious` | YouTube                             |
 | PUBLIC_CUSTOM_INVIDIOUS         | Comma-separated string | ''                                  |
@@ -269,6 +245,11 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_ENABLE_USER_MEDIA_PROXY  | `bool`              | false                                  |
 | PUBLIC_ENABLE_FEDISEER_BADGES   | `bool`              | false                                  |
 | PUBLIC_ENABLE_MBFC_BADGES       | `bool`              | true                                   |
+| PUBLIC_STRETCH_CARD_BANNERS     | `bool`              | false                                  |
+| PUBLIC_MATCH_XPOST_TITLE        | `bool`              | true                                   |
+| PUBLIC_FEATURED_INSTANCES       | Comma-separated string | ''                                  |
+
+See [environment options](docs/EnvironmentOptions.md) for descripions of each.
 
 ### Configuration Options for Media Proxying and Caching
 Descriptions of the config options and what they do are covered in the [Media Proxy Cache](docs/MediaProxy.md) module documentation.
@@ -327,15 +308,12 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/CommentSortType.
 - Old (not implemented in Tesseract)
 - Controversial (not implemented in Tesseract)
 
-## Screenshots
-These screenshots are quite out of date, but they'll give you an idea (haven't had time to replace them yet).  You can also see it live at https://tesseract.dubvee.org.
-_ | _ 
----|---
-![YouTube videos playing inline](./screenshots/Tesseract-Screenshot-1.png) YouTube videos playing inline | ![Beehaw c/Music as it was meant to be](./screenshots/Tesseract-Screenshot-3.png) Beehaw c/Music as it was meant to be
-![Post view with comments and sidebars](./screenshots/Tesseract-Screenshot-4.png) Community sidebar added to post view.| ![Feed view with cards](./screenshots/Tesseract-Screenshot-5.png) Post cards are much more Reddit-like
-![Spotify Playlist Embed](./screenshots/Tesseract-Screenshot-2.png) Spotify playlist embedded| ![Desktop PWA](./screenshots/Tesseract-Screenshot-6.png) Running as a desktop PWA
+
+## Support
+I created a public Matrix support space you can join.  General discussion, flesh out ideas, or ask for support.  [Tesseract Support](https://matrix.to/#/#tesseract:ptznetwork.org)
+
+There is also a Lemmy community where you can get the latest announcements and post questions related to Tesseract.  Find us at https://dubvee.org/c/tesseract
+
 
 ## Donate
-Donate to Xylight, not me.  It's their baby, and I'm just building on top of it. You can donate at [Buy me a Coffee](https://buymeacoffee.com/xylight)
-
-<a href="https://www.buymeacoffee.com/xylight"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=xylight&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" /></a>
+I'm not accepting donations at this time.  

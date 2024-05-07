@@ -2,7 +2,7 @@
     import type { Community, Person } from 'lemmy-js-client'
 
     import { createEventDispatcher } from 'svelte'
-    
+    import { imageProxyURL } from '$lib/image-proxy';    
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { uploadImage } from '$lib/lemmy.js'
@@ -24,6 +24,7 @@
         ListBullet,
         Photo,
     } from 'svelte-hero-icons'
+    
 
     export let images: boolean = true
     export let value: string = ''
@@ -34,12 +35,14 @@
     export let previewing:boolean = false;
     export let id:string = '';
     export let resizeable:boolean = true;
+    
 
+    /*
+    export let beforePreview: (input: string) => string = (input) => input
     export let previewContainerClass:string = '';
     export let previewContainerStyle:string = '';
-  
-    export let beforePreview: (input: string) => string = (input) => input
-
+    
+    */
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
     let textArea: HTMLTextAreaElement
@@ -83,7 +86,8 @@
         try {
             const uploaded = await uploadImage(image[0])
             if (!uploaded) throw new Error('Image upload returned undefined')
-            wrapSelection(`![](${uploaded})`, '')
+            
+            wrapSelection(`![](${imageProxyURL(uploaded)})`, '')
             uploadingImage = false
         } catch (err) {
             toast({
@@ -110,8 +114,8 @@
 </script>
 
 {#if uploadingImage && images}
-    <Modal bind:open={uploadingImage}>
-        <span slot="title">Upload image</span>
+    <Modal bind:open={uploadingImage} title="Upload Image" icon={Photo}>
+        
         <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
             <FileInput image bind:files={image} />
             <Button {loading} disabled={loading} submit color="primary" size="lg">
@@ -121,7 +125,7 @@
     </Modal>
 {/if}
 
-<div class="flex flex-col w-full h-full">
+<div class="flex flex-col w-full">
     {#if label}
         <div class="block my-1 font-bold text-sm">{label}</div>
     {/if}
@@ -223,13 +227,14 @@
 
                     <Button
                         on:click={() =>
-                        wrapSelection('::: spoiler <spoiler title>\n', '\n:::')}
+                        wrapSelection('::: spoiler Spoiler Title\n', '\n:::')}
                         title="Spoiler"
                         size="square-md"
                     >
                         <Icon src={ExclamationTriangle} mini size="16" />
                     </Button>
                 
+                    <!---
                     <Button
                         on:click={() => wrapSelection('~', '~')}
                         title="Subscript"
@@ -249,6 +254,7 @@
                             X<sup>1</sup>
                         </span>
                     </Button>
+                    --->
                 </div>
 
                 <!---Emoji Picker Panel--->
@@ -279,7 +285,7 @@
         
         {#if $$slots.actions || previewButton}
             <!---Bottom Toolbar (edit/preview button, submit button--->
-            <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center
+            <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center justify-between
                 {$$props.disabled
                     ? 'opacity-60 pointer-events-none'
                     : ''

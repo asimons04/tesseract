@@ -3,21 +3,39 @@ import type {
 } from 'lemmy-js-client'
 
 import { addSubscription } from '$lib/lemmy/user.js'
+import { fixLemmyEncodings } from '../post/helpers'
 import { fullCommunityName } from '$lib/util.js'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy'
-import { goto } from '$app/navigation'
+import { goto, invalidate } from '$app/navigation'
 import { profile } from '$lib/auth'
-import { setSessionStorage } from '$lib/session'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 
+
+/** Clears the last seen community from session storage */
+export function clearLastSeenCommunity() {
+    sessionStorage.removeItem('lastSeenCommunity')
+}
+
+/** Stores the given community to the lastSeenCommunity session storage key */
+export function setLastSeenCommunity(community:Community) {
+    sessionStorage.setItem('lastSeenCommunity', JSON.stringify(community))
+}
+
+/** Retrieves the community from the lastSeenCommunity session storage key (or undefined if not set)*/
+export function getLastSeenCommunity():Community | undefined {
+    try {
+        let community = sessionStorage.getItem('lastSeenCommunity')
+        if (!community) return
+        return JSON.parse(community)
+    }
+    catch { return }
+}
+
 export const createPost = function (community:Community) {
-    setSessionStorage('lastSeenCommunity', {
-        id: community.id,
-        name: fullCommunityName(community.name, community.actor_id),
-    });
-    // Hack to get the session storage to read on create post. "goto" wasn't picking up the change
-    window.location.pathname='/create/post';
+    const route = `/c/${community.name}@${new URL(community.actor_id).hostname}/create_post`
+    goto(route)
+    
 }
 
 
@@ -27,12 +45,19 @@ export const subscribe = async function(community:Community, subscribed:boolean)
     if (!userProfile?.jwt) return subscribed
    
     try {
-        await getClient().followCommunity({
+        const followResponse = await getClient().followCommunity({
             auth: userProfile.jwt,
             community_id: community.id,
             follow: !subscribed,
         })
         subscribed = !subscribed
+        
+        toast({
+            title: "Success",
+            content: `Successfully ${subscribed ? 'subscribed to' : 'unsubscribed from'} ${followResponse.community_view.community.title ?? followResponse.community_view.community.name}`,
+            type: "success",
+        })
+
     } catch (error) {
         toast({ content: error as any, type: 'error' })
     }
@@ -58,17 +83,28 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
     }
     
     try {
-        await getClient().blockCommunity({
+        const blockedCommunity = await getClient().blockCommunity({
             auth: userProfile.jwt,
             community_id: communityID,
             block: true,
         })
+        
+
+        toast({
+            title: "Success",
+            content: `Successfully blocked ${blockedCommunity.community_view.community.title ?? blockedCommunity.community_view.community.name}`,
+            type: "success",
+        })
     } catch (error) {
         toast({ content: error as any, type: 'error' })
     }
+}
 
-    // Refresh the page to effect the block
-    goto(window.location.href, {
-        invalidateAll: true,
-    })
+/** If community title is > 40 characters, split it at the hyphen or colon and only return the text to the left of that */
+export function shortenCommunityName(name:string) {
+    if (!name) return
+    let shortened =  name.length > 40
+        ? fixLemmyEncodings(name).split(':')[0].split('-')[0].trim()
+        : fixLemmyEncodings(name)
+    return shortened.substring(0,40)
 }

@@ -1,63 +1,73 @@
 <script lang="ts">
-  import type { CommentView, PostView } from 'lemmy-js-client'
+    import type { CommentView, PostView, PrivateMessageView } from 'lemmy-js-client'
 
-  import { getClient } from '$lib/lemmy.js'
-  import { profile } from '$lib/auth.js'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { getClient } from '$lib/lemmy.js'
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-  import Button from '$lib/components/input/Button.svelte'
-  import Checkbox from '$lib/components/input/Checkbox.svelte'
-  import Comment from '$lib/components/lemmy/comment/Comment.svelte'
-  import Modal from '$lib/components/ui/modal/Modal.svelte'
-  import Post from '$lib/components/lemmy/post/Post.svelte'
-  import TextArea from '$lib/components/input/TextArea.svelte'
+    import Button from '$lib/components/input/Button.svelte'
+    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
+    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
+    import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import Post from '$lib/components/lemmy/post/Post.svelte'
+
+    import {
+        Flag
+    } from 'svelte-hero-icons'
+
+
+    export let open: boolean
+    export let item: PostView | CommentView | PrivateMessageView | undefined = undefined
+    export let reason = ''
+
+    const isComment = (item: PostView | CommentView | PrivateMessageView): item is CommentView => 'comment' in item
+    const isPost = (item: PostView | CommentView | PrivateMessageView) : item is PostView => ('post' in item && !('comment' in item))
+    const isPrivateMessage = (item: PostView | CommentView | PrivateMessageView) : item is PrivateMessageView => 'private_message' in item
+
+    let loading = false
+    let confirm = false
   
-  import {
-    Icon,
-    Flag
-  } from 'svelte-hero-icons'
 
-  export let open: boolean
-  export let item: PostView | CommentView | undefined = undefined
-  export let reason = ''
+    async function report() {
+        if (!item || !$profile?.jwt || reason == '') return
+        loading = true
 
-  const isComment = (item: PostView | CommentView): item is CommentView => 'comment' in item
-
-  const isPost = (item: PostView | CommentView): item is PostView => !isComment(item)
-
-  let loading = false
-  let confirm = false
-  
-
-  async function report() {
-    if (!item || !$profile?.jwt || reason == '') return
-    loading = true
-
-    try {
-      if (isComment(item)) {
-        await getClient().createCommentReport({
-          auth: $profile.jwt,
-          comment_id: item.comment.id,
-          reason: reason,
-        })
-      } else if (isPost(item)) {
-        await getClient().createPostReport({
-          auth: $profile.jwt,
-          post_id: item.post.id,
-          reason: reason,
-        })
-      }
-      open = false
-      toast({
-        content: 'That submission has been reported.',
-        type: 'success',
-      })
-    } catch (err) {
-      toast({ content: err as any, type: 'error' })
+        try {
+            if (isPrivateMessage(item)) {
+                await getClient().createPrivateMessageReport({
+                    auth: $profile.jwt,
+                    private_message_id: item.private_message.id,
+                    reason: reason,
+                })  
+            }
+            else if (isComment(item)) {
+                await getClient().createCommentReport({
+                    auth: $profile.jwt,
+                    comment_id: item.comment.id,
+                    reason: reason,
+                })
+            } 
+            else if (isPost(item)) {
+                await getClient().createPostReport({
+                    auth: $profile.jwt,
+                    post_id: item.post.id,
+                    reason: reason,
+                })
+            }
+            
+            open = false
+            toast({
+                content: 'That submission has been reported.',
+                type: 'success',
+                title: 'Success'
+            })
+        } 
+        catch (err) {
+            toast({ content: 'Unable to report submission.', type: 'error', title:"Error" })
+        }
+        loading = false
     }
-
-    loading = false
-  }
 
 </script>
 
@@ -66,13 +76,11 @@
     <form class="flex flex-col gap-4" on:submit|preventDefault={report}>
         {#if item}
             <div class="flex flex-col gap-4 w-full">
-                <span class="text-sm">Reporting this submission to the moderators of {item.community?.name}@{new URL(item.community?.actor_id).host}</span>
-                <TextArea
-                    required
-                    rows={3}
-                    label="Reason"
-                    bind:value={reason}
-                />
+                <span class="text-sm">Reporting this submission 
+                    {isComment(item) || isPost(item) ? `to the moderators of ${item.community?.name}@${new URL(item.community?.actor_id).host}` : ''}
+                    {isPrivateMessage(item) ? `to the admins of ${new URL(item.creator.actor_id).hostname}` : ''}
+                </span>
+                <MarkdownEditor required rows={6} label="Reason" previewButton images={false} bind:value={reason} />
                 
 
                 <Checkbox bind:checked={confirm} defaultvalue={false} class="px-2">
@@ -85,10 +93,9 @@
                 </Button>
             </div>
 
-            <div class="pointer-events-none list-none overflow-x-none">
+            <div class="flex flex-col pointer-events-none list-none">
                 {#if isComment(item)}
-                    <Comment
-                        actions={false}
+                    <Comment actions={false}
                         node={{
                             children: [],
                             comment_view: item,

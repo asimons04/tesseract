@@ -23,13 +23,12 @@
 
     export let open = false
     export { item as user }
-    export let community: Community | undefined
+    export let community: Community | undefined = undefined
     export let banned: boolean
 
     let reason = ''
     let deleteData = false
     let expires = ''
-
     let loading = false
 
     // hack due to svelte's reactive declarations
@@ -38,8 +37,15 @@
         deleteData = false
         expires = ''
     }
-
     $: if (item) resetReason()
+
+    function invalidDateErrorToast() {
+        toast({
+            content: 'Invalid date. It must be an absolute date greater than the current date.',
+            type: 'error',
+            title: 'Invaild Date'
+        })
+    }
 
     async function submit() {
         if (!item || !$profile?.user || !$profile?.jwt) return
@@ -48,24 +54,11 @@
 
         try {
             let date: number | undefined
+            // Validate ban expiry date
             if (expires != '') {
                 date = Date.parse(expires)
-                if (Number.isNaN(date)) {
-                    
-                    toast({
-                        content: 'Invalid date. It must be an absolute date.',
-                        type: 'error',
-                    })
-                    
-                    loading = false
-                    return
-                }
-
-                if (date < Date.now()) {
-                    toast({
-                        content: 'Invalid date. It is before the current time.',
-                        type: 'error',
-                    })
+                if (Number.isNaN(date) || date < Date.now()) {
+                    invalidDateErrorToast()
                     loading = false
                     return
                 }
@@ -98,8 +91,10 @@
                     that user. You may need to refresh to see changes.
                 `,
                 type: 'success',
+                title: 'Success'
             })
-            item.banned = !banned
+            //item.banned = !banned
+            banned = !banned
         } catch (err) {
             toast({
                 content: err as any,
@@ -123,10 +118,7 @@
                 <span class="font-bold">{community ? community.name : 'site'}</span>
             </p>
 
-            <TextArea
-                required
-                bind:value={reason}
-                label="Reason"
+            <TextArea required bind:value={reason} label="Reason"
                 placeholder="Why are you {banned
                     ? 'unbanning'
                     : 'banning'} {item.name}?"

@@ -1,11 +1,9 @@
+import type { Community } from 'lemmy-js-client'
+
 interface SessionStorage {
-    lastSeenCommunity?: {
-        id: number
-        name: string
-    }
     postDraft?:{
-        community: number | null
-        title: string
+        community?: Community
+        name: string
         body: string
         image: FileList | null
         url: string | undefined
@@ -25,6 +23,6 @@ export const setSessionStorage = (key: keyof SessionStorage, value: SessionStora
     }
 }
 
-export const getSessionStorage = (key: keyof SessionStorage): SessionStorage[typeof key] => {
+export const getSessionStorage = (key: keyof SessionStorage): SessionStorage => {
     return JSON.parse(sessionStorage.getItem(key)!)
 }

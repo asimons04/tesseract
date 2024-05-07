@@ -1,14 +1,32 @@
 <script lang="ts">
+    interface SearchFilter {
+        person?: Person,
+        community?: Community
+        sort?: string
+        type?: string    
+        query?: string
+        page?: number
+    }
+    type Result = PostView | CommentView | PersonView | CommunityView
+
     import type {
         CommentView,
+        Community,
         CommunityView,
+        Person,
         PersonView,
         PostView,
+        SearchResponse,
     } from 'lemmy-js-client'
     
-    import { arrayRange } from '$lib/util.js'
+    import type { LoadEvent } from '@sveltejs/kit';
+    import type { RouteParams, Snapshot } from './$types';
+    import { PageSnapshot } from '$lib/storage'
+
     import { expoInOut, expoOut } from 'svelte/easing'
     import { fly, slide } from 'svelte/transition'
+    import { onMount } from 'svelte';
+    
     import {
         isCommentView,
         isCommunityView,
@@ -17,267 +35,372 @@
     } from '$lib/lemmy/item.js'
     
     
-    import { goto } from '$app/navigation'
+    import { beforeNavigate, goto } from '$app/navigation'
+    import { load } from './+page'
     import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
-    import { sortOptions, sortOptionNames } from '$lib/lemmy'
+    import { scrollTo } from '$lib/components/lemmy/post/helpers'
+    import { site } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
     
-    
-    
     import Button from '$lib/components/input/Button.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
+    import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
+    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte';
     import CommunityItem from '$lib/components/lemmy/community/CommunityItem.svelte'
-    import ObjectAutocomplete from '$lib/components/lemmy/ObjectAutocomplete.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import UserItem from '$lib/components/lemmy/user/UserItem.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    
-    import { searchParam } from '$lib/util.js'
-    
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
+    import UserCard from '$lib/components/lemmy/user/UserCard.svelte';
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+
     import { 
         Icon, 
-        ArrowSmallRight,
+        ArrowPathRoundedSquare,
         Bars3,
-        ChartBar,
-        Cog,
-        DocumentDuplicate,
+        ChatBubbleOvalLeftEllipsis,
+        Funnel,
         MagnifyingGlass,
-        QueueList,
-        Window
+        User,
+        UserCircle,
+        UserGroup,
+        Window,
+        XCircle
     } from 'svelte-hero-icons'
+    import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte';
     
     
-
-    type Result = PostView | CommentView | PersonView | CommunityView
+    
 
     export let data
+    
+    // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
+    beforeNavigate(() => {
+        infiniteScroll.exhausted = false
+    })
 
-    let pageNum = data.page
-    let searchParams = {
+    // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
+    export const snapshot: Snapshot<void> = {
+        capture: () => {
+            pageState.scrollY = window.scrollY
+            PageSnapshot.capture(
+                {
+                    data: data, 
+                    state: pageState,
+                    filter: filter
+                }
+            )
+        },
+        restore: async () => {
+            try { 
+                let snapshot = PageSnapshot.restore() 
+                if (snapshot.data)  data = snapshot.data
+                if (snapshot.state) pageState = snapshot.state
+                if (snapshot.filter) filter = snapshot.filter
+            }
+            catch { 
+                PageSnapshot.clear() 
+            }
+            
+            // Scroll to last stored position if found in snapshot data (delay by number of posts + 100 ms)
+            if (pageState.scrollY) await scrollTo(pageState.scrollY, 300)
+            else window.scrollTo(0,0)
+        }
+    }
+    
+    async function search(clear=true) {
+        searching = true
+        
+        // Whether to clear the results (default) or append to them for infinite scroll
+        if (clear) {
+            data.results = []
+            data.counts = {posts:0, comments:0, users:0,communities:0,total:0}
+            infiniteScroll.exhausted = false
+        }
+
+        // Construct a new URL with just the origin/path to override any URL variables 
+        const origin = new URL(window.location.href).origin
+        const path = new URL(window.location.href).pathname
+
+        const searchURL = new URL(origin)
+        searchURL.pathname = path
+
+        if (filter.person)      searchURL.searchParams.set('person_id', filter.person.id.toString())
+        if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
+        if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
+        
+        if (filter.type) searchURL.searchParams.set('type', filter.type)
+
+        if (filter.page)        searchURL.searchParams.set('page', filter.page.toString())
+        if (filter.query)       searchURL.searchParams.set('q', filter.query)
+        else {
+            // Search for anything if person or community is selected but no term is given
+            if (filter.person || filter.community) searchURL.searchParams.set('q', ' ')
+        }
+        
+        // Fetch the results from the page loader with our custom URL
+        const results = await load({url: searchURL} as LoadEvent<RouteParams, null, {}, "/search">)
+        
+        // Set the pagedata to the new data from our call (if not infinite scrolling)
+        if ( clear ) data = results
+        
+        // Otherwise, append the results and update the counts
+        else {
+            results.results?.forEach((result) => {
+                data.results?.push(result)
+            })
+            if (results?.results && results.results.length < 1) infiniteScroll.exhausted = true
+            
+            if (data.counts && results.counts) {
+                data.counts.total += results.counts.total
+                data.counts.posts += results.counts.posts
+                data.counts.comments += results.counts.comments
+                data.counts.users += results.counts.users
+                data.counts.communities += results.counts.communities
+            }
+
+            data = data
+            infiniteScroll.loading = false
+        }
+
+        searching = false
+        
+    }
+
+    function resetSearch() {
+        filter = default_filter
+        filter.community = undefined
+        filter.person = undefined
+        filter.query = ''
+        filter.page = 1
+        filter.sort = 'New'
+
+        data.results = []
+        data.filters = {}
+        
+        pageState.scrollY = 0
+        PageSnapshot.clear() 
+
+        goto('/search', {invalidateAll: true})
+    }
+   
+    
+    let default_filter: SearchFilter = {
+        sort: 'New',
+        type: 'All',
         query: '',
-        community_name: data.community_name ?? '',
-        sort: data.sort ?? 'New',
-        type: data.type ?? 'All',
-        person: undefined,
-        limit: 40
-
+        page: 1,
+        community: undefined,
+        person: undefined
     }
-    let advancedSearch:boolean = false;
 
-    let searchURL = new URL($page.url);
-
-    function search() {
-        searchParams.community_name
-            ? searchURL.searchParams.set('community_name', searchParams.community_name)
-            : searchURL.searchParams.delete('community_name')
-        
-        searchParams.query
-            ? searchURL.searchParams.set('q', searchParams.query)
-            : searchURL.searchParams.delete('q')
-        
-        searchParams.sort
-            ? searchURL.searchParams.set('sort', searchParams.sort)
-            : searchURL.searchParams.delete('sort')
-        
-        searchParams.type
-            ? searchURL.searchParams.set('type', searchParams.type)
-            : searchURL.searchParams.delete('type');
-
-        searchParams.person
-            ? searchURL.searchParams.set('person', searchParams.person)
-            : searchURL.searchParams.delete('person')
-
-        searchParams.limit
-            ? searchURL.searchParams.set('limit', searchParams.limit.toString())
-            : searchURL.searchParams.delete('limit')
-        
-        goto(searchURL, {
-            invalidateAll: true,
-        })
+    let pageState = {
+        scrollY: 0,
     }
     
+    // Infinite scroll object to hold config parms
+    let infiniteScroll = {
+        loading: false,     // Used to toggle loading indicator
+        exhausted: false,   // Sets to true if the API returns 0 posts
+        // Maximum number of posts to keep in the FIFO
+        maxPosts: $userSettings.uiState.maxScrollPosts,      
+        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
+        truncating: false,  // Whether a timeout is active waiting to truncate the overlow
+        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
+        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+    }
+
+
+    let filter = default_filter
+    let searching = false
     
+    onMount(() => {
+        // If the page data provides filters for community or person, set the local filter objects to those details
+        if (data.filters?.community?.community_view) filter.community = data.filters.community.community_view.community
+        if (data.filters?.person?.person_view) filter.person = data.filters.person.person_view.person
+        if (data.query) filter.query = data.query
+    })
+
+
 </script>
 
 <svelte:head>
     <title>Search</title>
 </svelte:head>
 
-<header class="sticky top-16 w-full flex flex-col gap-4 backdrop-blur-3xl z-20 mt-[-0.5rem] px-2">
-    <span class="flex flex-row gap-4 items-center font-bold text-sm text-center my-2">
-        <!--Home Button-->
-        <span class="mt-[-6px] mr-2 cursor-pointer" title="Reset Search"
-            on:click={() => {
-                searchParams = {
-                    query: '',
-                    community_name: '',
-                    sort: data.sort ?? 'New',
-                    type: data.type ?? 'All',
-                    person: undefined,
-                    limit: 40
+<SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
+    sortMenu sortPreventDefault
+    sortOptions={['New', 'Old']} 
+    sortOptionNames={['New', 'Old']} 
+    bind:selectedSortOption={filter.sort} 
+    on:navChangeSort={(e) => {
+        if (e && e.detail) {
+            filter.sort = e.detail
+        }
+    }}
+>
 
-                }
-                goto(window.location.pathname);
-            }}
-        >
-            <Icon src={MagnifyingGlass} width={24} />
-        </span>
-        
+    <!---Custom Sub-Navbar Buttons for Search--->
+    <span class="flex flex-row gap-1 md:gap-2 items-center" slot="far-left" let:iconSize>
         <SelectMenu
-            alignment="bottom-left"
             options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
-            selected={searchParams.type}
-            items={0}
+            selected={filter.type}
             icon={Bars3}
-            headless={true}
-            class="pb-2"
+            title="Search Type"
             on:select={(e) => {
-                searchParams.type = e.detail;
-            }}
-        />
-        
-        <Icon src={ArrowSmallRight} mini width={24} />
-        
-        <!---Sort Menu--->
-        <SelectMenu
-            alignment="bottom-left"
-            options={sortOptions}
-            optionNames={sortOptionNames}
-            selected={searchParams.sort}
-            title="Sorting"
-            icon={ChartBar}
-            on:select={(e) => {
-                // @ts-ignore
-                searchParams.sort = e.detail;
+                if (e.detail) {
+                    filter.type = e.detail
+                    //pageState.panel = e.detail
+                }
             }}
         />
 
-        <span class="hidden lg:flex lg:flex-row gap-2 items-center">
-            <Icon src={ArrowSmallRight} mini width={24} />
+        <!--- Search Filter Menu --->
+        <SubnavbarMenu alignment="bottom-center" title="Search Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[106%] md:!-left-[50%]">
+            
+            <!--- Lookup a Community to Filter--->
+            <MenuButton>
+                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
+                    <Icon mini src={UserGroup} width={iconSize-2} />
+                    
+                    {#if filter.community?.id}
+                        <div class="flex flex-row w-full justify-between">
+                            <CommunityLink avatar={true} avatarSize={iconSize} community={filter.community} />
+                            
+                            <button class="cursor-pointer" on:click={() => filter.community = undefined }>
+                                <Icon src={XCircle} mini width={iconSize-2}/>
+                            </button>
+                        </div>
+                    {:else}
+                        <span class="flex flex-row gap-2 w-full">
+                            <CommunityAutocomplete
+                                containerClass="!w-full"
+                                placeholder="Community"
+                                listing_type="All"
+                                on:select={(e) => {
+                                    filter.community = e.detail
+                                }}
+                            />
+                        </span>
+                    {/if}
+                </button>
+            </MenuButton>
+            
+
+            <!---Filter for a Person--->
+            <MenuButton>
+                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
+                    <Icon mini src={User} width={iconSize-2} />
+
+                    {#if filter.person}
+                        <div class="flex flex-row w-full justify-between">
+                            <UserLink avatar={true} avatarSize={iconSize} user={filter.person} />
                         
-            <!---Page Selection--->
-            <SelectMenu
-                alignment="bottom-left"
-                options={arrayRange(1, data.page +1)}
-                selected={data.page}
-                title="Page"
-                icon={DocumentDuplicate}
-                on:select={(e) => {
-                    // @ts-ignore
-                    searchParam($page.url, 'page', e.detail.toString())
-                }}
-            />
-            </span>
-        
+                            <button class="cursor-pointer" on:click={() => filter.person = undefined}>
+                                <Icon src={XCircle} mini width={iconSize-2}/>
+                            </button>
+                        </div>
+                    {:else}
+                        <span class="flex flex-row gap-2 w-full">
+                            <PersonAutocomplete
+                                containerClass="!w-full"
+                                placeholder="Creator"
+                                on:select={(e) => {
+                                    filter.person = e.detail
+                                }}
+                            />
+                        </span>
+                    {/if}
+                </button>
+            </MenuButton>
+            
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+            <!--- Reset Search Filters--->
+            <MenuButton class="!gap-4" on:click={() => { resetSearch() }}
+            >
+                <Icon src={ArrowPathRoundedSquare} class="h-8" mini width={iconSize-2}/>
+                Reset Search Filters
+            </MenuButton>
+        </SubnavbarMenu>
 
-        <div class="ml-auto"/>
-
-        <!---Simple/Advanced Search Switcher--->
-        <SelectMenu
-            alignment="bottom-right"
-            title="Toggle simple/advanced ssearch"
-            icon={Cog}
-            options={['Advanced Search', 'Simple Search']}
-            selected={advancedSearch
-                ? 'Advanced'
-                : 'Simple'
-            }
-            on:select={(e) => {
-                e.detail == 'Advanced Search'
-                    ? advancedSearch = true
-                    : advancedSearch = false
-            }}
-        />
-        
-        <!---Card/Compact Selection--->
-        <span class="mr-2 cursor-pointer" title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
-            on:click={() => {
-                $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+    </span>
+    
+    <!---Search Input in Subnavbar-->
+    <span class="hidden xl:flex flex-row gap-0" let:iconSize slot="center">
+        <form class="flex flex-row gap-0 items-center mx-auto"
+            on:submit={(e) => {
+                e.preventDefault();
+                filter.page = 1
+                search()
             }}
         >
-            <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={24} />
-        </span>
-    </span>
+            <TextInput type="search" placeholder="Search" bind:value={filter.query}/>
 
-    <span class="flex flex-col md:flex-row gap-2 items-center text-sm text-center mx-auto mb-2">
-        <!---Filter by User--->
-        
-        <div class="flex flex-row gap-2 items-center text-sm text-center" class:hidden={!advancedSearch}>
-            <ObjectAutocomplete
-                placeholder="User"
-                type="person"
-                jwt={$profile?.jwt}
-                listing_type="All"
-                showWhenEmpty={false}
-                bind:q={searchParams.person}
-
-                on:select={ (e) => {
-                    searchParams.person = e.detail.id;
-                }}
-            />
-
-            <!---Filter by Community--->
-            <ObjectAutocomplete
-                placeholder="Community"
-                jwt={$profile?.jwt}
-                listing_type="All"
-                showWhenEmpty={false}
-                bind:q={searchParams.community_name}
-                
-                on:select={ (e) => {
-                    let communityURL = `${e.detail?.name}@${new URL(e.detail?.actor_id).host}`
-                    searchParams.community_name = communityURL;
-                }}
-            />
-        </div>
-
-
-        <div class="mx-auto" />
-        
-        <div class="flex flex-row gap-2 items-center">
-            <TextInput
-                bind:value={searchParams.query}
-                placeholder="Search Term(s)"
-                type="search"
-            />
-
-            <Button
-                on:click={() => {
-                    search();
-                }}
-                size="lg"
-                class="h-full"
-                icon={MagnifyingGlass} 
-            >
-                Search
+            <Button submit color="tertiary">
+                <Icon src={MagnifyingGlass} mini width={iconSize} />
             </Button>
-        </div>
+
+            <!---Reset Search Button--->
+            <Button color="tertiary" size="sm" title="Clear Search" on:click={() => resetSearch() } >
+                <Icon src={XCircle} mini width={iconSize-2}/>
+            </Button>
+        </form>
+
+        
     </span>
-</header>
+</SubNavbar>
 
-<div class="p-2 mt-4">
-    <h1 class="font-bold text-2xl">Search</h1>
-
-
-    {#if !data.results}
-        <Placeholder
-            icon={MagnifyingGlass}
-            title="No results"
-            description="Search across the fediverse"
-        />
+<MainContentArea>
+    
+    <!---Search Input Outside of Subnavbar for Views Smaller than XL--->
+    <div class="flex xl:hidden w-full mx-auto">
+        <form class="flex flex-row gap-1 items-center ml-auto mr-auto"
+            on:submit={(e) => {
+                e.preventDefault();
+                search()
+            }}
+        >
+            <TextInput type="search" placeholder="Search {filter.community ? filter.community.name : ''} {filter.person ? `by ${filter.person.name}` : ''}" bind:value={filter.query}/>
+            <Button submit color="tertiary">
+                <Icon src={MagnifyingGlass} mini width={24} />
+            </Button>
+            
+            <!---Reset Search Button--->
+            <Button color="tertiary" size="sm" title="Clear Search" on:click={() => resetSearch() }>
+                <Icon src={XCircle} mini width={24}/>
+            </Button>
+        </form>
+    </div>
+    
+    <!--- Display Results or No Results or Searching Spinner--->
+    {#if !data.results || (data?.results && data.results.length < 1)}
+        {#if searching}
+            <div class="flex gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
+                <Spinner width={48} />
+                <span>Searching...</span>
+            </div>
+        {:else}
+            <div class="flex h-full w-full">
+                <div class="mx-auto my-auto">
+                    <Placeholder icon={MagnifyingGlass} title="No results" />
+                </div>
+            </div>
+        {/if}
+        
     {:else}
         {#await data.streamed.object}
-            <div
-                class="flex gap-2 items-center mt-4"
-                out:slide={{ axis: 'y', easing: expoOut }}
-            >
+            <div class="flex flex-col gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
                 <Spinner width={24} />
                 <span>Federating...</span>
             </div>
@@ -303,26 +426,113 @@
                 </div>
             {/if}
         {/await}
+        
+        <!--- Result Type Buttons--->
+        <div class="sticky top-[6.8rem] xl:top-[7rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10" data-sveltekit-preload-data="false">
+            <div class="flex flex-row gap-1 mx-auto">
+                
+                <Button color="tertiary" alignment="left" title="All" class="hover:bg-slate-200" on:click={() => filter.type='All'}>
+                    <span class="flex flex-col items-center {filter.type=="All" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={MagnifyingGlass} mini size="18" title="All" />
+                        <span class="text-center text-xs">All ({data.counts.total})</span>
+                    </span>            
+                </Button>
 
-        <div class="flex flex-col gap-4 mt-4 sm:max-w-full md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mx-auto">
+                <Button color="tertiary" alignment="left" title="Posts" class="hover:bg-slate-200" on:click={() => filter.type='Posts'}>
+                    <span class="flex flex-col items-center {filter.type=="Posts" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={Window} mini size="18" title="Posts" />
+                        <span class="text-center text-xs">Posts ({data.counts.posts})</span>
+                    </span>            
+                </Button>
+
+                <Button color="tertiary" alignment="left" title="Comments" class="hover:bg-slate-200" on:click={() => filter.type='Comments'}>
+                    <span class="flex flex-col items-center {filter.type=="Comments" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={ChatBubbleOvalLeftEllipsis} mini size="18" title="Comments" />
+                        <span class="text-center text-xs">Comments ({data.counts.comments})</span>
+                    </span>            
+                </Button>
+
+                <Button color="tertiary" alignment="left" title="Communities" class="hover:bg-slate-200" on:click={() => filter.type='Communities'}>
+                    <span class="flex flex-col items-center {filter.type=="Communities" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={UserGroup} mini size="18" title="Communities" />
+                        <span class="text-center text-xs">Communities ({data.counts.communities})</span>
+                    </span>            
+                </Button>
+
+                <Button color="tertiary" alignment="left" title="Users" class="hover:bg-slate-200" on:click={() => filter.type='Users'}>
+                    <span class="flex flex-col items-center {filter.type=="Users" ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
+                        <Icon src={UserCircle} mini size="18" title="Users" />
+                        <span class="text-center text-xs">Users ({data.counts.users})</span>
+                    </span>            
+                </Button>
+            </div>
+        </div>
+        
+        <FeedContainer>    
             {#each data.results as result}
                 {#if isPostView(result)}
-                    <Post post={result} />
-                {:else if isCommentView(result)}
-                    <CommentItem comment={result} />
-                {:else if isCommunityView(result)}
-                    <CommunityItem community={result} />
-                {:else if isUser(result)}
-                    <UserItem user={result} />
+                    {#if (filter.type == 'Posts' || filter.type=='All')}
+                        <Post bind:post={result} displayType='feed' />
+                    {/if}
+                
+                {:else if isCommentView(result) }
+                    {#if (filter.type == 'Comments' || filter.type=='All')}    
+                        <CommentItem bind:comment={result} />
+                    {/if}
+                
+                {:else if isCommunityView(result) }
+                    {#if (filter.type == 'Communities' || filter.type=='All')}    
+                        <CommunityItem bind:community={result} />
+                    {/if}
+                
+                {:else if isUser(result) }
+                    {#if (filter.type == 'Users' || filter.type=='All')}
+                        <UserItem bind:user={result} />
+                    {/if}
                 {/if}
             {/each}
-        </div>
-        <div class="mt-4" />
-        {#if data.results.length > 0}
-            <Pageination
-                bind:page={pageNum}
-                on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-            />
-        {/if}
+        </FeedContainer>
     {/if}
-</div>
+
+    {#if 
+        (filter.type == 'Posts' && data.counts && data.counts.posts > 1) ||
+        (filter.type == 'Comments' && data.counts && data.counts.comments > 1) ||
+        (filter.type == 'Communities' && data.counts && data.counts.communities > 1) ||
+        (filter.type == 'Users' && data.counts && data.counts.users > 1) ||
+        (filter.type == 'All' && data.counts && data.counts.total > 1)
+    }
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} automatic={infiniteScroll.automatic}
+            on:loadMore={ () => {
+                if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
+                    infiniteScroll.loading = true
+                    if (filter.page) filter.page = filter.page + 1
+                    search(false)
+                }
+            }}
+        />
+    {/if}
+
+    <!--- Site/Community/User Sidebar--->
+    <div class="hidden xl:flex h-full" slot="right-panel">
+        <!--- Display Site Sidebar by Default if community and user not selected-->
+        {#if $site && !data?.filters?.community?.community_view && !data?.filters?.person?.person_view}
+            <SiteCard site={$site.site_view} taglines={$site.taglines} admins={$site.admins} version={$site.version} />
+        {/if}
+
+        <!---Display community card if community is selected and user is not seelcted--->
+        {#if data?.filters?.community?.community_view && !data?.filters?.person?.person_view}
+            <CommunityCard community_view={data.filters.community.community_view} moderators={data.filters.community.moderators}/>
+        {/if}
+
+        <!---Display user card if a user is selected in the filter--->
+        {#if data?.filters?.person?.person_view}
+            <UserCard person={data.filters.person.person_view} moderates={data.filters.person.moderates} />
+        {/if}
+
+
+    </div>
+</MainContentArea>
+
+
+
+

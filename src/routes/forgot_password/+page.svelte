@@ -1,60 +1,73 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
-  import Button from '$lib/components/input/Button.svelte'
-  import TextInput from '$lib/components/input/TextInput.svelte'
-  import { toast } from '$lib/components/ui/toasts/toasts.js'
-  import { DEFAULT_INSTANCE_URL } from '$lib/instance.js'
-  import { validateInstance } from '$lib/lemmy.js'
+  
+    import Button from '$lib/components/input/Button.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    import Logo from '$lib/components/ui/Logo.svelte';
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import TextInput from '$lib/components/input/TextInput.svelte'
 
-  let instance: string = ''
-  let validating: boolean = false
+
+    import { DEFAULT_INSTANCE_URL } from '$lib/instance.js'
+    import { goto } from '$app/navigation'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { validateInstance } from '$lib/lemmy.js'
+    
+
+    let instance: string = ''
+    let validating: boolean = false
+
+    async function validate() {
+        if (instance != '') {
+            validating = true
+            
+            if (await validateInstance(instance.trim())) {
+                goto(`/forgot_password/${instance}`)
+            } else {
+                toast({
+                    content: 'Could not contact that instance URL',
+                    type: 'error',
+                })
+            }
+            validating = false
+        }
+        else {
+            goto(`/forgot_password/${DEFAULT_INSTANCE_URL}`)
+        }
+    }
+
 </script>
 
 <svelte:head>
   <title>Forgot Password | Choose Instance</title>
 </svelte:head>
 
-<div class="mx-auto max-w-xl flex flex-col gap-4">
-    <h1 class="font-bold text-2xl">Forgot Password</h1>
-    <h2 class="font-bold text-xl">Choose an instance</h2>
-    <p class="text-sm">
-        Enter your instance domain to begin the password recovery process.
-    </p>
-    <form
-        class="flex flex-col gap-4"
-        on:submit|preventDefault={async () => {
-            if (instance != '') {
-                validating = true
-                if (await validateInstance(instance.trim())) {
-                    goto(`/forgot_password/${instance}`)
-                } else {
-                    toast({
-                        content: 'Could not contact that instance URL',
-                        type: 'error',
-                    })
-                }
-                validating = false
-            }
-        }}
-    >
-        <TextInput
-            bind:value={instance}
-            label="Instance URL"
-            required
-            placeholder={DEFAULT_INSTANCE_URL}
-            on:input={() => {
-                instance = instance.toLowerCase().replaceAll(' ', '')
-            }}
-            focus={true}
-        />
-            <Button
-                submit
-                color="primary"
-                size="lg"
-                loading={validating}
-                disabled={validating}
-            >
+<SubNavbar home back/>
+
+<MainContentArea>
+    <FeedContainer>
+        <span class="mx-auto">
+            <Logo width={128} />
+        </span>
+
+        <h1 class="font-bold text-2xl">Forgot Password: Select An Instance</h1>
+        <p class="text-sm">
+            This installation of Tesseract is configured to allow logging into any Lemmy instance.  Enter the domain of the
+            home instance for the account you wish to recover.
+        </p>
+
+        <form class="flex flex-col lg:flex-row gap-4 lg:items-end" on:submit|preventDefault={async () => { validate() }} >
+            <TextInput bind:value={instance} label="Instance URL" placeholder={DEFAULT_INSTANCE_URL}
+                on:input={() => {
+                    instance = instance.toLowerCase().replaceAll(' ', '')
+                }}
+            />
+            <Button submit color="primary" size="lg" class="h-10" loading={validating} disabled={validating} >
                 Go
             </Button>
-    </form>
-</div>
+        </form>
+    </FeedContainer>
+
+    <SidebarFooter autohide={false} />
+</MainContentArea>

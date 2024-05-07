@@ -121,7 +121,7 @@
 
     // Federation mode helper variable
     let federation_mode:string = 'block';
-    if (data?.site?.federated_instances?.allowed?.length > 0) {
+    if (data?.site?.federated_instances?.allowed && data?.site?.federated_instances?.allowed?.length > 0) {
         federation_mode = 'allow';
     }
 
@@ -158,6 +158,7 @@
         let keys = Object.keys(formData);
         for (let key of keys) {
             if (key.startsWith('rate_limit_')) {
+                //@ts-ignore
                 formData[key] = parseInt(formData[key]);
             }
         }
@@ -192,7 +193,7 @@
                 }
 
                 // If there are no domains in the allowed list, set federation mode to 'block' mode.
-                if (formData.allowed_instances.length < 1) {
+                if (formData?.allowed_instances && formData.allowed_instances.length < 1) {
                     federation_mode = 'block';
                 }
 
@@ -207,6 +208,7 @@
             toast({
                 content: 'Updated your site.',
                 type: 'success',
+                title: "Site Settings Saved"
             })
             
             // Reset the icon and banner helper variables
@@ -243,13 +245,14 @@
     //Add domain to block list
     const addBlockedDomain = function(input:string):void {
         if (input.trim() == '') return;
-        if (!formData) return;
+        if (!formData?.blocked_instances) return;
 
         let domains = input.split(',');
         let ignored:boolean = false;
 
         domains.forEach((item) => {
             let domain = item.trim();
+            if (!formData?.blocked_instances) return;
             
             if (formData.blocked_instances.includes(domain)) {
                 ignored = true;
@@ -273,7 +276,8 @@
         else {
             toast( {
                 content: "Domain(s) successfully added to the block list.",
-                type: "success"
+                type: "success",
+                title: "Domain added"
 
             })
         }
@@ -281,7 +285,7 @@
 
     // Remove domain from block list
     const delBlockedDomain = function(input:string):void {
-        if (!formData) return;
+        if (!formData?.blocked_instances) return;
 
         if (formData.blocked_instances.includes(input)) {
             let index = formData.blocked_instances.indexOf(input);
@@ -294,14 +298,15 @@
     //Add domain to allow list
     const addAllowedDomain = function(input:string):void {
         if (input.trim() == '') return;
-        if (!formData) return;
+        if (!formData?.allowed_instances) return;
 
         let domains = input.split(',');
         let ignored:boolean = false;
 
         domains.forEach((item) => {
             let domain = item.trim();
-            
+            if (!formData?.allowed_instances) return;
+
             if (formData.allowed_instances.includes(domain)) {
                 ignored = true;
             }
@@ -317,21 +322,23 @@
         if (ignored) {
             toast( {
                 content: "One or more domains were ignored because they are already in the list.",
-                type: "warning"
+                type: "warning",
+                title: "Duplicate"
 
             })
         }
         else {
             toast( {
                 content: "Domain(s) successfully added to the allow list.",
-                type: "success"
+                type: "success",
+                title: "Domain Added"
 
             })
         }
     }
     // Remove domain from allow list
     const delAllowedDomain = function(input:string):void {
-        if (!formData) return;
+        if (!formData?.allowed_instances) return;
 
         if (formData.allowed_instances.includes(input)) {
             let index = formData.allowed_instances.indexOf(input);

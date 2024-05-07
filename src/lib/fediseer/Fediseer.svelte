@@ -12,7 +12,7 @@
         }
     }
 
-    import type { PersonView, PostView, SiteView } from 'lemmy-js-client'
+    import type { PersonView, PostView, Site, SiteView } from 'lemmy-js-client'
     import { onMount } from 'svelte'
 
     import { 
@@ -37,6 +37,7 @@
         HandRaised,
         ShieldCheck
     } from 'svelte-hero-icons'
+    import Markdown from '$lib/components/markdown/Markdown.svelte';
     
     
     let fediseer:FediseerModal = {
@@ -55,7 +56,7 @@
     export let instance:string
 
     //new URL(post.community.actor_id).hostname);
-    let site:SiteView
+    let site:Site
     let admins:PersonView[] = []
 
     onMount(async ()=> {
@@ -64,7 +65,7 @@
             fediseer.data = await fediseerLookup(instance) 
             fediseer.loading = false;
 
-            if (fediseer.data.success) {
+            if (fediseer?.data?.success) {
                 if (fediseer.data?.site?.site_view?.site) {
                     site = fediseer.data.site.site_view.site
                     admins = fediseer.data.site.admins
@@ -176,14 +177,13 @@
                     </Button>
                     
                     <div class="flex flex-col gap-2 pl-8 max-h-[45vh] overflow-y-scroll" class:hidden={!fediseer.expanded.endorsements}>
-                        {#if fediseer.data.endorsements?.length > 0}
+                        {#if fediseer?.data?.endorsements && fediseer.data.endorsements.length > 0}
                             <ol class="font-bold text-sm list-decimal">
                                 {#each fediseer.data.endorsements as endorsement}
                                     <li>
                                         {endorsement.domain}
 
-                                        {#if endorsement.endorsement_reasons?.length > 0}
-                                            <p class="text-xs font-bold">Endorsement Reasons:</p>
+                                        {#if endorsement?.endorsement_reasons && endorsement.endorsement_reasons.length > 0}
                                             <ul class="pl-6 text-xs list-disc">
                                                 {#each endorsement.endorsement_reasons as reason}
                                                     <li>{reason}</li>
@@ -214,22 +214,20 @@
                     </Button>
                     
                     <div class="flex flex-col gap-2 pl-8 max-h-[45vh] overflow-y-scroll" class:hidden={!fediseer.expanded.censures}>
-                        {#if fediseer.data.censures?.length > 0}
+                        {#if fediseer?.data?.censures && fediseer.data.censures.length > 0}
                             <ol class="font-bold text-sm list-decimal">
                                 {#each fediseer.data.censures as censure}
                                     <li>
                                         {censure.domain}
                                         
-                                        {#if censure.censure_evidence?.length > 0}
-                                            <p class="text-xs font-bold">Hesitation Evidence:</p>
+                                        {#if censure?.censure_evidence && censure.censure_evidence.length > 0}
+                                            <p class="text-xs font-bold">Censure Evidence:</p>
                                             {#each censure.censure_evidence as evidence}
-                                            <p class="font-normal text-xs">
-                                                {evidence}
-                                            </p>
+                                                <Markdown source={evidence} />
                                             {/each}
                                         {/if}
 
-                                        {#if censure.censure_reasons?.length > 0}
+                                        {#if censure.censure_reasons && censure.censure_reasons?.length > 0}
                                             <p class="text-xs font-bold">Censure Reasons:</p>
                                             <ul class="pl-6 text-xs list-disc">
                                                 {#each censure.censure_reasons as reason}
@@ -261,22 +259,20 @@
                     </Button>
                     
                     <div class="flex flex-col gap-2 pl-8 max-h-[45vh] overflow-y-scroll" class:hidden={!fediseer.expanded.hesitations}>
-                        {#if fediseer.data.hesitations?.length > 0}
+                        {#if fediseer.data.hesitations && fediseer.data.hesitations?.length > 0}
                             <ol class="font-bold text-sm list-decimal">
                                 {#each fediseer.data.hesitations as hesitation}
                                     <li>
                                         {hesitation.domain}
                                         
-                                        {#if hesitation.hesitation_evidence?.length > 0}
+                                        {#if hesitation.hesitation_evidence && hesitation.hesitation_evidence?.length > 0}
                                             <p class="text-xs font-bold">Hesitation Evidence:</p>
                                             {#each hesitation.hesitation_evidence as evidence}
-                                            <p class="font-normal text-xs">
-                                                {evidence}
-                                            </p>
+                                                <Markdown source={evidence} />
                                             {/each}
                                         {/if}
                                         
-                                        {#if hesitation.hesitation_reasons?.length > 0}
+                                        {#if hesitation.hesitation_reasons && hesitation.hesitation_reasons?.length > 0}
                                             <p class="text-xs font-bold">Hesitation Reasons:</p>
                                             <ul class="pl-6 font-normal text-xs list-disc">
                                                 {#each hesitation.hesitation_reasons as reason}

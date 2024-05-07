@@ -3,50 +3,57 @@
     import type { SiteView, PersonView, Tagline } from 'lemmy-js-client'
     import { getClient } from '$lib/lemmy.js'
     import {imageProxyURL} from '$lib/image-proxy'
+    import { slide } from 'svelte/transition'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    import CollapseButton from '../ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
+        BuildingOffice,
         Calendar,
         ChatBubbleOvalLeftEllipsis,
         ChevronDoubleRight,
         ChevronUp,
         ChevronDown,
         Icon,
+        InformationCircle,
         Newspaper,
         PencilSquare,
         Server,
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
+    
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
     export let admins: PersonView[] = []
     export let version: string
 
-    let expandAdmins:boolean = false
-
+    // Update the tagline every 20 seconds
+    let tagline:string = ' '
+    
+    if (taglines && taglines.length > 0) {
+        tagline = taglines[Math.floor(Math.random() * taglines.length)].content
+        setInterval(() => {
+            if (taglines && taglines.length > 0) tagline = taglines[Math.floor(Math.random() * taglines.length)].content
+        }, 30*1000)
+    }
 </script>
 
-<StickyCard class="mb-3
-    {$userSettings.uiState.expandCommunitySidebar
-        ? 'block'
-        : 'hidden'}
-    "
->
-    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, 384, 'webp') : ''}>
+<StickyCard class="{$$props.class}">
+    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, 384, 'webp') : undefined}>
         <div class="flex flex-row gap-3 items-center p-3">
             {#if site.site.icon}
-                <Avatar width={42} url={site.site.icon} alt={site.site.name} circle={false} />
+                <Avatar width={64} url={site.site.icon} alt={site.site.name} circle={false} />
             {/if}
             
             
@@ -58,6 +65,7 @@
                             {new URL(site.site.actor_id).hostname}
                         </span>
                     </span>
+
                     <div class="ml-auto flex flex-col">
                         <span class="flex flex-row items-center gap-2 text-sm" title="Created">
                             <Icon src={Calendar} width={16} height={16} mini />
@@ -69,12 +77,8 @@
                             {version}
                         </span>
                     </div>
+
                 </div>
-                <!---
-                <span class="text-sm opacity-60">
-                    {new URL(site.site.actor_id).hostname}
-                </span>
-                --->
             </div>
 
                 
@@ -112,37 +116,35 @@
     <div class="mt-2"/>
     
     {#if taglines && taglines.length > 0}
-        <Markdown source={taglines[Math.floor(Math.random() * taglines.length)].content} />
-        <hr class="border-slate-300 dark:border-zinc-700" />
+        <div class="flex flex-col gap-1">    
+            <Markdown source={tagline} />
+            <hr class="border-slate-300 dark:border-zinc-700" />
+        </div>
     {/if}
 
-    <div class="hidden xl:block">
+    <!--- Collapsible buttons for admins and site info --->
+    <div class="hidden xl:block w-full overflow-y-auto">
         {#if admins.length > 0}
-            <div class="flex flex-col gap-1 mt-2 mb-4">
-                <Button
-                    color="tertiary"
-                    alignment="left"
-                    on:click={ ()=> { expandAdmins = !expandAdmins}}
-                >
-                    
-                    <Icon src={ShieldCheck} mini size="18" />
-
-                    <span class="w-full flex flex-row justify-between">
-                        Admins
-                        <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5">
-                            <Icon src={expandAdmins ? ChevronUp : ChevronDown} mini height={18} width={18} />
-                        </span>
-                    </span>
-                </Button>
-                
-                <div class="flex flex-col gap-2 pl-4" class:hidden={!expandAdmins}>
-                    {#each admins as admin}
-                        <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
-                    {/each}
-                </div>
-            </div>
+           <CollapseButton icon={ShieldCheck} title="Admins">
+                {#each admins as admin}
+                    <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
+                {/each}
+           </CollapseButton>
         {/if}
         
-        <Markdown source={site.site.sidebar} />
+        {#if site?.site?.sidebar}
+            <CollapseButton icon={InformationCircle} title="Site Info" expanded={false}>
+                <Markdown source={site.site.sidebar} />
+            </CollapseButton>
+        {/if}
+
+        {#if site?.local_site?.legal_information}
+            <CollapseButton icon={BuildingOffice} title="Legal" expanded={false}>
+                <Markdown source={site.local_site.legal_information} />
+            </CollapseButton>
+        {/if}
     </div>
+
+    <SidebarFooter />
+
 </StickyCard>

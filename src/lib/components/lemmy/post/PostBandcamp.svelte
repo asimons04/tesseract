@@ -11,12 +11,26 @@
 
     export let post: PostView
     export let displayType: PostDisplayType
-    
-    let trackID:    string = ""
+    export let postContainer: HTMLDivElement
+
     let embedURL:   string = ""
 
+    // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
+    // Should reduce memory consumption by a lot on video-heavy feeds.
+    let inViewport = false
+    const observer = new window.IntersectionObserver( ([entry]) => {
+        if (entry.isIntersecting) {
+            inViewport = true
+            return
+        }
+        inViewport = false
+        }, 
+        { root: null, threshold: 0,}
+    )
+    $: if (postContainer) observer.observe(postContainer)
+
     // Generate the embed URL for the given post URL
-    if (post.post && post.post.embed_video_url) {
+    $: if (post.post && post.post.embed_video_url) {
         embedURL = post.post.embed_video_url
 
         let opts = "/bgcol=1F1F24/";
@@ -26,7 +40,7 @@
     }
 
     $: showAsEmbed = embedURL &&
-        (displayType == 'feed' && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
         (displayType == 'post' && $userSettings.embeddedMedia.post)
 
 </script>
@@ -54,7 +68,7 @@
 {#if showAsEmbed}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
 
-    <div class="overflow-hidden z-10 relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+    <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
         
         <!--- Album Art from Thumbnail --->
         {#if post.post.thumbnail_url}
@@ -75,7 +89,7 @@
         <!--- End Album Art from Thumbnail--->
         
         <!---Iframe with player--->
-        <div class="overflow-hidden z-10 relative mt-[-120px]  max-w-full max-h-[128px]">
+        <div class="overflow-hidden  relative mt-[-120px]  max-w-full max-h-[128px]">
             <div class="ml-auto mr-auto w-full}">
                 <div class="flexiframe-container  max-w-screen max-h-[128px] mx-auto">
                     <iframe 

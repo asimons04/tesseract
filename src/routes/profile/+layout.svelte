@@ -2,18 +2,22 @@
     import { page } from '$app/stores'
 
     import Button from '$lib/components/input/Button.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
     
     import {
         Icon,
+        Bookmark,
         Cog6Tooth,
-        UserCircle,
         Inbox,
         NoSymbol,
-        Bookmark
+        UserCircle,
     } from 'svelte-hero-icons'
-
-
+    
+    
+    
     export let data;
 </script>
 
@@ -21,9 +25,37 @@
     <title>Profile</title>
 </svelte:head>
 
-<div class="flex flex-col gap-4 h-full">
-   
-    <div class="flex flex-row gap-1 p-2">
+<!---Use Different navigation bars depending on which profile page is active--->
+
+<!--- /profile/user--->
+{#if $page.url.pathname.startsWith('/profile/user') || $page.url.pathname.startsWith('/u/')}
+<SubNavbar 
+    compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+    listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
+    sortMenu sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
+>
+    <SiteSearch placeholder="Search {data.person_view.person.name}" person_id={data.person_view.person.id} slot="center"/>
+</SubNavbar>
+{/if}
+
+<!---Inbox, Settings, Blocks --->
+{#if $page.url.pathname.startsWith('/profile/inbox') || $page.url.pathname.startsWith('/profile/settings') || $page.url.pathname.startsWith('/profile/blocks')}
+<SubNavbar back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons />
+{/if}
+
+<!---Saved--->
+{#if $page.url.pathname.startsWith('/profile/saved')}
+<SubNavbar 
+    compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+    listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Saved Posts', 'Saved Comments']} bind:selectedListingType={data.type}
+    sortMenu sortOptions={['New', 'Old']} sortOptionNames={['New', 'Old']} bind:selectedSortOption={data.sort}
+/>
+{/if}
+
+<MainContentArea>
+        
+    <!---Profile Sub-Page Buttons--->
+    <div class="sticky top-[6.9rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10">
         <Button color="tertiary" alignment="left" title="Profile" class="hover:bg-slate-200" href="/profile/user">
             <span class="flex flex-col items-center {$page.url.pathname.startsWith('/profile/user') ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
                 <Icon src={UserCircle} mini size="18" title="Profile" />
@@ -59,20 +91,12 @@
             </span>            
         </Button>
     </div>
-    
+        
+    <!---Content Area for Child Pages--->
     <slot />
-    <!--
-    <div class="flex flex-col-reverse xl:flex-row gap-4 max-w-full w-full">
-        <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-            <slot />
-        </div>
+        
 
-    
-        <div>
-            <UserCard person={data.user.person_view} />
-        </div>
-    </div>
-    -->
+    <!---User Sidebar--->
+    <UserCard person={data.person_view} moderates={data.moderates} slot="right-panel"/>
 
-    
-</div>
+</MainContentArea>

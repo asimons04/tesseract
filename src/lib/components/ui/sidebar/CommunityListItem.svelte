@@ -14,9 +14,8 @@
 
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { fullCommunityName } from '$lib/util.js'
-    import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
-    import {  setSessionStorage } from '$lib/session.js'
+    import { createPost, shortenCommunityName } from '$lib/components/lemmy/community/helpers'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
@@ -29,17 +28,19 @@
     import {
         Icon,
         Bars3,
+        Cog6Tooth,
         Minus,
         PencilSquare,
         Star,
         Trash,
-        UserGroup
+        UserGroup,
     } from 'svelte-hero-icons'
 
     export let community:Community
     export let hidden:boolean = false
     export let expanded:boolean = true;
     export let group:string = ''
+    export let menu:boolean = false
     
     let isGroupMember:boolean = false;
     $: favorite = isFavorite(community)
@@ -50,7 +51,7 @@
             toast({
                 type: "warning",
                 title: "Confirm Remove",
-                content: `Are you sure you want to remove ${community.title || community.name} from ${group}?`,
+                content: `Are you sure you want to remove ${shortenCommunityName(community.title) || community.name} from ${group}?`,
                 action: () => removeFromCurrentGroup(true),
             })
             return
@@ -59,14 +60,6 @@
         removeCommunityFromGroup(community, group)
     }
 
-    function createPost() {
-        setSessionStorage('lastSeenCommunity', {
-            id: community.id,
-            name: fullCommunityName(community.name, community.actor_id),
-        });
-        // Hack to get the session storage to read on create post. "goto" wasn't picking up the change
-        window.location.pathname='/create/post';
-    }
 
     let unsubscribing:boolean = false;
     async function unsubscribe(confirm:boolean=false):Promise<void> {
@@ -100,53 +93,48 @@
     let groupAddModal:boolean = false;
 </script>
 
+{#if menu}
 <div class="z-20">
     <AddCommunityGroup bind:open={groupAddModal} community={community} />
 </div>
+{/if}
 
 <div class="inline-flex w-full" class:hidden={hidden}>
     <Button
-        class="hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
+        class="!text-xs hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
         color="tertiary"
         alignment="left"
         href="/c/{community.name}@{new URL(community.actor_id).hostname}"
         title="{community.title.replace('&amp;', '&')}@{new URL(community.actor_id).hostname}"
     >
         <div class="flex-none">
-            <Avatar
-                url={community.icon}
-                alt={community.name}
-                title={community.title}
-                width={20}
-                slot="icon"
-            />
+            <Avatar url={community.icon} alt={community.name} title={community.title} width={20} slot="icon" />
         </div>
         
         <span class="w-full break-words" class:hidden={!expanded}>
-            {community.title.replace('&amp;', '&')}
+            {shortenCommunityName(community.title)}
         </span>
 
         <span class="ml-auto"/>
 
     </Button>
     
-    {#if expanded}
+    {#if expanded && menu}
     <Menu alignment="bottom-right" itemsClass="h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[19rem]">
-        <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Community Options">
+        <Button color="tertiary" slot="button" let:toggleOpen on:click={(e) => { e.stopPropagation(); toggleOpen() }} title="Community Options">
             <Icon src={Bars3} mini size="16" slot="icon" />
         </Button>
         
         <!---Community Name Header--->
         <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            {community.title ?? community.name}@{new URL(community.actor_id).host}
+            {shortenCommunityName(community.title) ?? community.name}@{new URL(community.actor_id).host}
         </span>
 
         <!---Create Post --->
         {#if $profile?.user}
-        <MenuButton link href="/create/post"
+        <MenuButton title="Create post"
             disabled={(community.posting_restricted_to_mods && !amMod($profile.user, community)) || community.removed}
-            on:click={createPost}
-            title="Create post"
+            on:click={() => createPost(community)}
         >
             <Icon src={PencilSquare} mini size="16" />
             Create Post
@@ -175,8 +163,8 @@
 
         <!---Unsubscribe--->
         <MenuButton disabled={unsubscribing} loading={unsubscribing}>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="flex flex-row gap-2 w-full" role="button" tabindex="0" on:click={ (e) => {
+            
+            <button class="flex flex-row gap-2 w-full" tabindex="0" on:click={ (e) => {
                 e.stopPropagation();
                 unsubscribe();
             }}>
@@ -184,8 +172,17 @@
                     <Icon src={Minus} mini size="16" />
                 </span>
                 Unsubscribe
-            </span>
+            </button>
         </MenuButton>
+
+        <!---Community Settings--->
+        {#if amMod($profile?.user, community) || (community.local && isAdmin($profile?.user))}
+            <MenuButton title="Community Settings" link href="/c/{community.name}@{new URL(community.actor_id).hostname}/settings">
+                <Icon src={Cog6Tooth} mini size="16"/>
+                Community Settings
+            </MenuButton>
+
+        {/if}
 
         
     </Menu>

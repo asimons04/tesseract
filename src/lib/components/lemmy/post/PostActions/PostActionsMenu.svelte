@@ -4,15 +4,13 @@
     
     import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { blockUser, isBlocked } from '$lib/lemmy/user'
-
+    import { blockInstance, site } from '$lib/lemmy'
     import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
-    import { goto } from '$app/navigation'
     import { profile } from '$lib/auth'
-    import { setSessionStorage } from '$lib/session.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -39,42 +37,35 @@
         Window
 
     } from 'svelte-hero-icons'
+    import { remove } from 'nprogress';
     
     
     export let post:PostView
     export let menuIconSize:number  = 16
-    export let alignment:Alignment = 'top-right'
+    export let alignment:Alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
     export let icon:IconSource = EllipsisHorizontal;
     
     // Allow importing this component just for the edit post modal
     export let suppressModal:boolean = false;
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
-    let editing:boolean = false;
-    
-    
+    let editing = false;
+
 </script>
 <PostEditorModal bind:open={editing} bind:post />
 
 <Menu {alignment} containerClass="overflow-auto">
-    <Button
-        slot="button"
-        aria-label="Post actions"
-        let:toggleOpen
-        on:click={toggleOpen}
-        class="hover:text-inherit !border-none"
-        size="square-md"
-        title="Post actions"
-        color="ghost"
-    >
+    <Button slot="button" aria-label="Post actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Post actions" color="tertiary-border" >
         <Icon slot="icon" src={icon} width={menuIconSize} mini />
     </Button>
 
     <!---Post Actions --->
-    <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
-        <Icon slot="icon" src={Window} width={16} mini />
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
         Post
+        <span class="ml-auto"/>
+        <Icon slot="icon" src={Window} width={16} mini />
     </li>
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
 
     <!---Edit if owned by self--->
@@ -160,7 +151,12 @@
             </MenuButton>
 
             <!---Block User--->
-            <MenuButton on:click={() => blockUser(post.creator.id)}  title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}">
+            <MenuButton on:click={async () => {
+                    blockUser(post.creator.id, true)
+                    post.creator_blocked = !post.creator_blocked
+                }}
+                title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}"
+            >
                 <Icon src={NoSymbol} width={16} mini />
                 {isBlocked($profile?.user, post.creator.id) 
                     ? `Unblock ${post.creator.display_name || post.creator.name}@${new URL(post.creator.actor_id).hostname}`
@@ -168,9 +164,12 @@
             </MenuButton>
         {/if}
 
+        
+
+
         <!---Delete Post--->
         {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
-            <MenuButton
+            <MenuButton title="{post.post.deleted ? 'Restore' : 'Delete'} Post"
                 on:click={async () => {
                     if ($profile?.jwt) {
                         post.post.deleted = await deleteItem(
@@ -181,7 +180,6 @@
                         post=post
                     }
                 }}
-                title="{post.post.deleted ? 'Restore' : 'Delete'} Post"
             >
                 <Icon src={Trash} width={16} mini />
                 {post.post.deleted ? 'Restore' : 'Delete'}

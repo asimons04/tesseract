@@ -1,10 +1,23 @@
 <script lang="ts">
+    
+    import type { Alignment } from '$lib/components/ui/menu/menu.js'
+    import type { CommentView, PostView } from 'lemmy-js-client'
+    
+    import { amMod, isAdmin, remove } from './moderation'
+    import type { ButtonColor } from '$lib/ui/colors.js'
     import { getClient } from '$lib/lemmy'
-    import type { CommentView, Community, PostView } from 'lemmy-js-client'
-    import { amMod, ban, isAdmin, remove } from './moderation'
+    import { isPostView } from '$lib/lemmy/item.js'
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
+    
     import Menu from '$lib/components/ui/menu/Menu.svelte'
+    import BanCommunityModal from '$lib/components/lemmy/moderation/BanCommunityModal.svelte'
+    import BanInstanceModal from '$lib/components/lemmy/moderation/BanInstanceModal.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import RemoveModal from '$lib/components/lemmy/moderation/RemoveModal.svelte'
+
     import {
         Fire,
         Icon,
@@ -16,21 +29,22 @@
         ShieldExclamation,
         Trash,
     } from 'svelte-hero-icons'
-    import { Color } from '$lib/ui/colors.js'
-    import { isCommentView, isPostView } from '$lib/lemmy/item.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { profile } from '$lib/auth.js'
+    
+    
 
     export let item: PostView | CommentView
-    export let color:string = "tertiary"
-    export let alignment:string = 'side-left'
-    export let presetReason:string = ''
+    export let color:ButtonColor = "tertiary-border"
+    export let alignment:Alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
     export let menuIconSize:number = 16
 
     let locking = false
     let pinning = false
+    let removing = false
+    let purging = false
+    let banningInstance = false
+    let banningCommunity = false
 
-    $: acting = locking || pinning
+    $: acting = locking || pinning || removing || purging || banningInstance || banningCommunity
 
     async function lock(lock: boolean) {
         if (!$profile?.jwt || !isPostView(item)) return
@@ -48,6 +62,7 @@
             toast({
                 content: `Successfully ${lock ? 'locked' : 'unlocked' } that post. You must refresh to see changes.`,
                 type: 'success',
+                title: "Success"
             })
         } catch (err) {
             toast({
@@ -86,10 +101,15 @@
     }
 </script>
 
+<RemoveModal bind:open={removing} bind:item bind:purge={purging} reason='' />
+
+<BanInstanceModal bind:open={banningInstance} bind:banned={item.creator.banned} bind:user={item.creator} />
+
+<BanCommunityModal bind:open={banningCommunity} bind:banned={item.creator_banned_from_community} bind:user={item.creator} bind:community={item.community}/>
+
 <Menu alignment={alignment}>
     <Button
         on:click={toggleOpen}
-        class="hover:text-inherit !border-none"
         slot="button"
         title="Moderation Menu"
         size="square-md"
@@ -117,10 +137,12 @@
 
     {#if ($profile?.user && amMod($profile.user, item.community)) || ($profile?.user && isAdmin($profile.user))}
         
-        <li class="flex flex-row gap-1 items-center ml-2 text-xs opacity-80 text-left font-bold my-1 py-1">
-            <Icon slot="icon" src={ShieldExclamation} width={16} mini />
+        <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
             Moderation
+            <span class="ml-auto" />
+            <Icon slot="icon" src={ShieldExclamation} width={16} mini />
         </li>
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!--- Modlog filtered for this user--->
         <MenuButton link
@@ -163,37 +185,20 @@
         {/if}
 
         <!--- Lock Post--->
-        <MenuButton
-            on:click={() => lock(!item.post.locked)}
-            loading={locking}
-            disabled={locking}
-            >
-            <Icon
-                src={item.post.locked ? LockOpen : LockClosed}
-                size="16"
-                mini
-                slot="icon"
-            />
+        <MenuButton on:click={() => lock(!item.post.locked)} loading={locking} disabled={locking} >
+            <Icon mini size="16" slot="icon" src={item.post.locked ? LockOpen : LockClosed} />
             {item.post.locked ? 'Unlock Post' : 'Lock Post'}
         </MenuButton>
 
         <!--- Mod/Admin Restore/Remove Post --->
-        <MenuButton on:click={() => remove(item, false, presetReason)}>
+        <MenuButton on:click={() => { removing = true }}>
             <Icon src={Trash} size="16" mini />
-            {#if isCommentView(item)}
-                {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}
-            {:else}
-                {item.post.removed ? 'Restore Post' : 'Remove Post'}
-            {/if}
+            {item.post.removed ? 'Restore Post' : 'Remove Post'}
         </MenuButton>
     
-        <!---Hide ban option for own posts--->
+        <!---Hide ban from community option for own posts--->
         {#if $profile?.user && $profile.user.local_user_view.person.id != item.creator.id}
-            <MenuButton
-                on:click={() =>
-                    ban(item.creator_banned_from_community, item.creator, item.community)
-                }
-            >
+            <MenuButton on:click={() => banningCommunity = true} >
                 <Icon src={ShieldExclamation} size="16" mini />
                 {
                     item.creator_banned_from_community
@@ -212,11 +217,7 @@
 
             <!--Hide ban button if viewing own profile--->
             {#if item.creator.id != $profile.user.local_user_view.person.id}
-                <MenuButton
-                    on:click={() =>
-                        ban(item.creator.banned, item.creator)
-                    }
-                >
+                <MenuButton on:click={() => banningInstance = true } >
                     <Icon slot="icon" mini size="16" src={ShieldExclamation} />
                     {item.creator.banned ? 'Unban from Instance' : 'Ban from Instance'}
                 </MenuButton>

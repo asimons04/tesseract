@@ -1,13 +1,14 @@
 <script lang="ts">
-    import type {PageData} from '$types'
-    import type { PostView, CommentSortType } from 'lemmy-js-client'
+    import type { GetPostResponse, CommentSortType } from 'lemmy-js-client'
 
 
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import { getClient } from '$lib/lemmy.js'
+    import { goto } from '$app/navigation';
     import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { removeURLParams} from '$lib/components/lemmy/post/helpers'
 
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
@@ -15,38 +16,30 @@
     import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
     import { 
         ArrowPath,
+        ChatBubbleLeftRight,
+        ExclamationTriangle,
         Icon 
     } from 'svelte-hero-icons'
     
 
-    export let data:PageData
+    export let data:any
     export let showCommentForm:boolean = true;
 
-
-    let post:PostView
     let commentSort: CommentSortType = data.commentSort;
-    let commentsPage:number
-    
-
-    $: {
-        post = data.post;
-        commentsPage = commentsPage || 1
-    }
 
     async function reloadComments() {
         data.singleThread = false
-        commentsPage = 1
-
         data.streamed.comments = getClient().getComments({
-            auth: $profile?.jwt,
-            page: 1,
-            limit: 25,
+            auth: $page.params.instance == $instance
+                ? $profile?.jwt
+                : undefined,
             type_: 'All',
-            post_id: post.post_view.post.id,
+            post_id: data.post.post_view.post.id,
             sort: commentSort,
             max_depth: 3,
         })
@@ -61,31 +54,26 @@
         <div class="font-bold text-lg">
             Comments 
             <span class="text-sm font-normal ml-2 opacity-80">
-                <FormattedNumber number={post.post_view.counts.comments} />
+                <FormattedNumber number={data.post.post_view.counts.comments} />
             </span>
         </div>
 
-        <MultiSelect
-            options={['Hot', 'Top', 'New']}
-            bind:selected={commentSort}
-            on:select={reloadComments}
-            headless={true}
-        />
+        <MultiSelect options={['Hot', 'Top', 'New']} bind:selected={commentSort} on:select={reloadComments} headless={true} />
 
-        <Button class="font-normal" title="Reload comments"
+        <Button class="font-normal" title="{$page.url.searchParams.get('thread') ? 'Reload comment thread' : 'Reload comments'}" color="tertiary-border"
             on:click={() => {
                 reloadComments();
             }}
         >
             <Icon src={ArrowPath} mini size="16" slot="icon" />
-            <span class="hidden md:inline">Reload Comments</span>
+            <span class="hidden md:inline">{$page.url.searchParams.get('thread') ? 'Reload comment thread' : 'Reload comments'}</span>
         </Button>
     </div>
 
     {#if data.singleThread}
-        <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap gap-4">
+        <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap justify-between">
             <p>You're viewing a single thread.</p>
-            <Button on:click={reloadComments}>View full thread</Button>
+            <Button on:click={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }>View full thread</Button>
         </Card>
     {/if}
 
@@ -96,16 +84,14 @@
         {:then comments}
         
         {#if $profile?.user && showCommentForm}
-            <CommentForm
-                postId={post.post_view.post.id}
+            <CommentForm postId={data.post.post_view.post.id}
+                locked={data.post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
                 on:comment={ (comment) =>
                     {
                         comments.comments = [comment.detail.comment_view, ...comments.comments,];
                         showCommentForm = !showCommentForm;
                     }
-
                 }
-                locked={post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
             />
         {/if}
     
@@ -114,11 +100,17 @@
                 <Spinner width={36} />
             </div>
             {:then comments}
-                <Comments post={post.post_view.post} moderators={post.moderators} nodes={comments} isParent={true} />
+                {#if comments.length > 0}
+                    <Comments post={data.post.post_view.post} moderators={data.post.moderators} nodes={comments} isParent={true} />
+                {:else}
+                    <!---Hide placeholder if you have the comment form open--->
+                    {#if !showCommentForm}
+                        <Placeholder icon={ChatBubbleLeftRight} class="mt-4 mb-4" title="No Comments" description="No one has commented here yet" />
+                    {/if}
+                {/if}
         {/await}
+
         {:catch}
-            <div class="bg-red-500/10 border border-red-500 rounded-md p-4">
-                Failed to load comments.
-            </div>
+            <Placeholder icon={ExclamationTriangle} class="mt-4 mb-4" title="An Error Has Occurred" description="Unable to fetch comments for this post." />
     {/await}
 </div>

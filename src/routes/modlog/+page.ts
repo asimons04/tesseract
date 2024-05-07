@@ -5,6 +5,7 @@ import type {
     AdminPurgeCommunityView,
     AdminPurgePersonView,
     AdminPurgePostView,
+    Comment,
     Community,
     ModAddCommunityView,
     ModAddView,
@@ -19,6 +20,7 @@ import type {
     ModlogActionType,
     ModlogListParams,
     Person,
+    Post,
 } from 'lemmy-js-client'
 import { get } from 'svelte/store'
 
@@ -66,25 +68,28 @@ export interface ModLog {
     timestamp: number
     link?: string
     expires?:string
+    when: string
+    post?: Post,
+    comment?: Comment
 }
 
 export interface Filters {
     title?: string,
     moderator: {
         set: boolean,
-        person?: Person | undefined
+        person?: Person 
     },
     moderatee: {
         set: boolean,
-        person?: Person | undefined
+        person?: Person 
     },
     community: {
         set: boolean,
-        community?: Community | undefined
+        community?: Community
     },
     action: {
         set: boolean,
-        action?: ModlogActionType | undefined
+        action?: ModlogActionType 
     }
 }
 
@@ -109,6 +114,7 @@ export const _toModLog = (item: ModAction): ModLog => {
                 : 'unbanCommunity',
             reason: item.mod_ban_from_community.reason,
             timestamp: timestamp(item.mod_ban_from_community.when_),
+            when: item.mod_ban_from_community.when_,
             expires: item.mod_ban_from_community.expires,
         }
     } else if ('mod_remove_comment' in item) {
@@ -119,10 +125,12 @@ export const _toModLog = (item: ModAction): ModLog => {
             community: item.community,
             content: item.comment.content,
             timestamp: timestamp(item.mod_remove_comment.when_),
+            when: item.mod_remove_comment.when_,
             moderatee: item.commenter,
             moderator: item.moderator,
             reason: item.mod_remove_comment.reason,
             link: `/comment/${item.comment.id}`,
+            comment: item.comment
         }
     } else if ('mod_remove_post' in item) {
         return {
@@ -130,15 +138,18 @@ export const _toModLog = (item: ModAction): ModLog => {
             community: item.community,
             content: item.post.name,
             timestamp: timestamp(item.mod_remove_post.when_),
+            when: item.mod_remove_post.when_,
             moderator: item.moderator,
             reason: item.mod_remove_post.reason,
             link: `/post/${item.post.id}`,
+            post: item.post,
         }
     } else if ('mod_add_community' in item) {
         return {
             actionName: item.mod_add_community.removed ? 'modRemove' : 'modAdd',
             community: item.community,
             timestamp: timestamp(item.mod_add_community.when_),
+            when: item.mod_add_community.when_,
             moderator: item.moderator,
             moderatee: item.modded_person,
         }
@@ -148,24 +159,29 @@ export const _toModLog = (item: ModAction): ModLog => {
                 ? 'postFeature'
                 : 'postUnfeature',
             timestamp: timestamp(item.mod_feature_post.when_),
+            when: item.mod_feature_post.when_,
             community: item.community,
             link: `/post/${item.post.id}`,
             moderator: item.moderator,
             content: item.post.name,
+            post: item.post
         }
     } else if ('mod_lock_post' in item) {
         return {
             actionName: item.mod_lock_post.locked ? 'postLock' : 'postUnlock',
             timestamp: timestamp(item.mod_lock_post.when_),
+            when: item.mod_lock_post.when_,
             community: item.community,
             link: `/post/${item.post.id}`,
             moderator: item.moderator,
             content: item.post.name,
+            post: item.post
         }
     } else if ('mod_transfer_community' in item) {
         return {
             actionName: 'Unknown',
             timestamp: timestamp(item.mod_transfer_community.when_),
+            when: item.mod_transfer_community.when_,
             moderator: item.moderator,
             moderatee: item.modded_person,
             community: item.community,
@@ -174,6 +190,7 @@ export const _toModLog = (item: ModAction): ModLog => {
         return {
             actionName: 'purge',
             timestamp: timestamp(item.admin_purge_post.when_),
+            when: item.admin_purge_post.when_,
             moderator: item.admin,
             community: item.community,
             content: 'Purged a post',
@@ -183,6 +200,7 @@ export const _toModLog = (item: ModAction): ModLog => {
         return {
             actionName: 'purge',
             timestamp: timestamp(item.admin_purge_comment.when_),
+            when: item.admin_purge_comment.when_,
             moderator: item.admin,
             content: 'Purged a comment',
             reason: item.admin_purge_comment.reason,
@@ -191,6 +209,7 @@ export const _toModLog = (item: ModAction): ModLog => {
         return {
             actionName: 'purge',
             timestamp: timestamp(item.admin_purge_community.when_),
+            when: item.admin_purge_community.when_,
             moderator: item.admin,
             content: 'Purged a community',
             reason: item.admin_purge_community.reason,
@@ -199,6 +218,7 @@ export const _toModLog = (item: ModAction): ModLog => {
         return {
             actionName: 'purge',
             timestamp: timestamp(item.admin_purge_person.when_),
+            when: item.admin_purge_person.when_,
             moderator: item.admin,
             content: 'Purged a user',
             reason: item.admin_purge_person.reason,
@@ -207,6 +227,7 @@ export const _toModLog = (item: ModAction): ModLog => {
         return {
             actionName: item.mod_ban.banned ? 'ban' : 'unban',
             timestamp: timestamp(item.mod_ban.when_),
+            when: item.mod_ban.when_,
             moderator: item.moderator,
             moderatee: item.banned_person,
             reason: item.mod_ban.reason,
@@ -217,6 +238,7 @@ export const _toModLog = (item: ModAction): ModLog => {
         return {
             actionName: item.mod_add.removed ? 'modRemove' : 'modAdd',
             timestamp: timestamp(item.mod_add.when_),
+            when: item.mod_add.when_,
             moderator: item.moderator,
             moderatee: item.modded_person,
         }
@@ -225,6 +247,7 @@ export const _toModLog = (item: ModAction): ModLog => {
     return {
         actionName: 'Unknown',
         timestamp: 0,
+        when: new Date().toISOString()
     }
 }
 
@@ -244,7 +267,7 @@ export async function load({ url }: LoadParams) {
     const results = await getClient().getModlog({
         auth: get(profile)?.jwt,
         community_id: community,
-        limit: 50,
+        limit: 20,
         type_: type,
         page: page,
         mod_person_id: modId,
