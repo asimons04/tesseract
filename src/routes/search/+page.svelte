@@ -384,10 +384,12 @@
     </div>
     
     <!---Show federated resolve if any--->
+    
     {#if data?.streamed?.object}
+    <FeedContainer>
         {#await data.streamed.object}
             <div class="flex flex-col gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
-                <Spinner width={24} />
+                <Spinner width={48} />
                 <span>Federating...</span>
             </div>
         {:then object}
@@ -411,7 +413,9 @@
                 </div>
             {/if}
         {/await}
+    </FeedContainer>
     {/if}
+    
 
 
     <!--- Display Results or No Results or Searching Spinner--->
