@@ -27,10 +27,10 @@
         {:else}
             <h1 class="text-lg font-bold">Modlog History</h1>
             <p class="text-sm font-normal">
-                Abridged modlog filtered for <UserLink user={item.reportee} />.
+                Abridged modlog filtered for <UserLink user={item.reportee} />
             </p>
 
-            {#if modlog.data?.modlog?.length > 0}
+            {#if modlog?.data?.modlog && modlog.data.modlog?.length > 0}
                 <div class="flex flex-col gap-4 mt-2">
                     {#each modlog.data.modlog as modlogItem}
                         {#if [
