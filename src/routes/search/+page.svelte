@@ -383,29 +383,14 @@
         </form>
     </div>
     
-    <!--- Display Results or No Results or Searching Spinner--->
-    {#if !data.results || (data?.results && data.results.length < 1)}
-        {#if searching}
-            <div class="flex gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
-                <Spinner width={48} />
-                <span>Searching...</span>
-            </div>
-        {:else}
-            <div class="flex h-full w-full">
-                <div class="mx-auto my-auto">
-                    <Placeholder icon={MagnifyingGlass} title="No results" />
-                </div>
-            </div>
-        {/if}
-        
-    {:else}
+    <!---Show federated resolve if any--->
+    {#if data?.streamed?.object}
         {#await data.streamed.object}
             <div class="flex flex-col gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
                 <Spinner width={24} />
                 <span>Federating...</span>
             </div>
         {:then object}
-
             {#if object}
                 <div transition:slide={{ axis: 'y', easing: expoOut }}>
                     {#if object.community}
@@ -426,7 +411,26 @@
                 </div>
             {/if}
         {/await}
+    {/if}
+
+
+    <!--- Display Results or No Results or Searching Spinner--->
+    {#if !data.results || (data?.results && data.results.length < 1)}
+        {#if searching}
+            <div class="flex gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
+                <Spinner width={48} />
+                <span>Searching...</span>
+            </div>
+        {:else}
+            <div class="flex h-full w-full">
+                <div class="mx-auto my-auto">
+                    <Placeholder icon={MagnifyingGlass} title="No results" />
+                </div>
+            </div>
+        {/if}
         
+    {:else}
+       
         <!--- Result Type Buttons--->
         <div class="sticky top-[6.8rem] xl:top-[7rem] flex flex-row gap-1 -ml-2 px-2 py-1 w-[calc(100%+1rem)] bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-10" data-sveltekit-preload-data="false">
             <div class="flex flex-row gap-1 mx-auto">
