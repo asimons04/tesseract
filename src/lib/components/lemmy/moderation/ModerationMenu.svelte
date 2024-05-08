@@ -145,7 +145,7 @@
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!--- Modlog filtered for this user--->
-        <MenuButton link
+        <MenuButton link color="info"
             href="/modlog?other_person_id={item.creator.id}"
             title="Modlog for {item.creator.display_name ?? item.creator.name}"
         >
@@ -155,7 +155,7 @@
 
 
         <!--- Mod Feature Post Community--->
-        <MenuButton
+        <MenuButton color="success"
             on:click={() =>
                 pin(isPostView(item) ? !item.post.featured_community : false)
             }
@@ -171,7 +171,7 @@
         
         <!--- Admin Feature Post on Instance--->
         {#if isAdmin($profile.user)}
-            <MenuButton
+            <MenuButton color="success"
                 on:click={() =>
                     pin(isPostView(item) ? !item.post.featured_local : false, true)
                 }
@@ -185,20 +185,20 @@
         {/if}
 
         <!--- Lock Post--->
-        <MenuButton on:click={() => lock(!item.post.locked)} loading={locking} disabled={locking} >
+        <MenuButton color="warning" on:click={() => lock(!item.post.locked)} loading={locking} disabled={locking} >
             <Icon mini size="16" slot="icon" src={item.post.locked ? LockOpen : LockClosed} />
             {item.post.locked ? 'Unlock Post' : 'Lock Post'}
         </MenuButton>
 
         <!--- Mod/Admin Restore/Remove Post --->
-        <MenuButton on:click={() => { removing = true }}>
+        <MenuButton color="dangerSecondary" on:click={() => { removing = true }}>
             <Icon src={Trash} size="16" mini />
             {item.post.removed ? 'Restore Post' : 'Remove Post'}
         </MenuButton>
     
         <!---Hide ban from community option for own posts--->
         {#if $profile?.user && $profile.user.local_user_view.person.id != item.creator.id}
-            <MenuButton on:click={() => banningCommunity = true} >
+            <MenuButton color="{item.creator_banned_from_community ? 'success' : 'dangerSecondary'}" on:click={() => banningCommunity = true} >
                 <Icon src={ShieldExclamation} size="16" mini />
                 {
                     item.creator_banned_from_community
@@ -210,14 +210,14 @@
 
         <!--- Admin Only Options--->
         {#if isAdmin($profile.user)}
-            <MenuButton on:click={() => remove(item, true)}>
+            <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
                 <Icon src={Fire} size="16" mini />
                 Purge Post
             </MenuButton>
 
             <!--Hide ban button if viewing own profile--->
             {#if item.creator.id != $profile.user.local_user_view.person.id}
-                <MenuButton on:click={() => banningInstance = true } >
+                <MenuButton color="{item.creator_banned_from_community ? 'success' : 'dangerSecondary'}" on:click={() => banningInstance = true } >
                     <Icon slot="icon" mini size="16" src={ShieldExclamation} />
                     {item.creator.banned ? 'Unban from Instance' : 'Ban from Instance'}
                 </MenuButton>

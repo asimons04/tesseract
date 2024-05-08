@@ -78,7 +78,7 @@
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!--- Distinguish Comment --->
-        <MenuButton  on:click={async () => distinguish(item)}>
+        <MenuButton  color="success" on:click={async () => distinguish(item)}>
             <Icon src={Sparkles} size="16" mini />
             {#if isCommentView(item)}
                 {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
@@ -86,7 +86,7 @@
         </MenuButton>
 
         <!--- User Modlog--->
-        <MenuButton link
+        <MenuButton link color="info"
             href="/modlog?other_person_id={item.creator.id}"
             title="Modlog for {item.creator.display_name ?? item.creator.name}@{new URL(item.creator.actor_id).hostname}"
         >

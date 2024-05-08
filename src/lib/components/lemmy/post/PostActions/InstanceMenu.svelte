@@ -76,19 +76,21 @@
     <!---Actions for the instance the post was submitted to--->
     <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>
     
-    <MenuButton title="Fediseer Info" on:click={async (e) => openFediseerModal(new URL(post.community.actor_id).hostname)} >
+    <MenuButton title="Fediseer Info" color="info" on:click={async (e) => openFediseerModal(new URL(post.community.actor_id).hostname)} >
             <Icon src={Eye} width={16} mini />
             <span>Fediseer</span>
     </MenuButton>
 
-    <MenuButton link href="/communities?instance={new URL(post.community.actor_id).hostname}&type=Local" title="Browse communities at {new URL(post.community.actor_id).hostname}" >
+    <MenuButton link href="/communities?instance={new URL(post.community.actor_id).hostname}&type=Local" 
+        title="Browse communities at {new URL(post.community.actor_id).hostname}" color="success"
+    >
         <Icon src={GlobeAlt} width={16} mini />
         <span>Communities @ {new URL(post.community.actor_id).hostname}</span>
     </MenuButton>
 
     <!--- Block Instance of Post's Community (0.19+)--->
     {#if $profile?.jwt && $site?.version.startsWith('0.19') && new URL(post.community.actor_id).hostname != $profile?.instance}
-        <MenuButton loading={blockingInstance} disabled={blockingInstance}
+        <MenuButton color="dangerSecondary"loading={blockingInstance} disabled={blockingInstance}
             on:click={async () => {doBlockInstance(post.community.instance_id, new URL(post.community.actor_id).hostname) }}
         >
             <Icon src={NoSymbol} width={16} mini />
@@ -102,12 +104,16 @@
         <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
         <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{(new URL(post.creator.actor_id).hostname)}</li>    
         
-        <MenuButton title="Fediseer Info" on:click={async (e) => openFediseerModal(new URL(post.creator.actor_id).hostname)}>
+        <MenuButton title="Fediseer Info" color="info"
+            on:click={async (e) => openFediseerModal(new URL(post.creator.actor_id).hostname)}
+        >
                 <Icon src={Eye} width={16} mini />
                 <span>Fediseer</span>
         </MenuButton>
 
-        <MenuButton link href="/communities?instance={new URL(post.creator.actor_id).hostname}&type=Local" title="Browse communities at {new URL(post.creator.actor_id).hostname}">
+        <MenuButton link href="/communities?instance={new URL(post.creator.actor_id).hostname}&type=Local" 
+            title="Browse communities at {new URL(post.creator.actor_id).hostname}" color="success"
+        >
             <Icon src={GlobeAlt} width={16} mini />
             <span>Communities @ {new URL(post.creator.actor_id).hostname}</span>
         </MenuButton>
@@ -115,7 +121,7 @@
 
     <!--- Block Instance of Post's Creator (0.19+ only)--->
     {#if $profile?.jwt && $site?.version.startsWith('0.19') && new URL(post.creator.actor_id).hostname != $profile?.instance && post.community.instance_id != post.creator.instance_id}
-        <MenuButton loading={blockingInstance} disabled={blockingInstance}
+        <MenuButton color="dangerSecondary" loading={blockingInstance} disabled={blockingInstance}
             on:click={async () => { doBlockInstance(post.creator.instance_id, new URL(post.creator.actor_id).hostname) }}
         >
             <Icon src={NoSymbol} width={16} mini />

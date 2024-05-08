@@ -15,7 +15,10 @@
             'hover:bg-green-600 text-green-600 dark:text-green-500 hover:text-white hover:dark:text-white',
 
         warning:
-            'hover:bg-yellow-500 dark:text-yellow-300 text-yellow-600 hover:dark:text-black hover:text-black',
+            'hover:bg-yellow-500 dark:text-yellow-300 text-yellow-700 hover:dark:text-black hover:text-black',
+
+        info:
+            'hover:bg-sky-500 dark:text-sky-500 text-sky-700 hover:dark:text-white hover:text-white',
     }
 
     export let color: ButtonColor = 'secondary'

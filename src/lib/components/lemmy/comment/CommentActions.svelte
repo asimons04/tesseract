@@ -125,7 +125,7 @@
         
         
         <!--- Share Comment / Copy URL to Clipboard--->
-        <MenuButton
+        <MenuButton color="success"
             on:click={() => {
                 navigator.share?.({
                     url: comment.comment.ap_id,
@@ -144,14 +144,14 @@
         {#if $profile?.jwt}
             {#if comment.creator.id == $profile.user?.local_user_view.person.id}
             <!--- Edit Comment--->
-            <MenuButton on:click={() => dispatcher('edit', comment)}>
+            <MenuButton color="info" on:click={() => dispatcher('edit', comment)}>
                 <Icon src={PencilSquare} mini size="16" />
                 <span>Edit</span>
             </MenuButton>
             {/if}
         
             <!--- Save Comment--->
-            <MenuButton
+            <MenuButton color="warning"
                 on:click={async () => {
                     if ($profile?.jwt) {
                         comment.saved = await save(comment, !comment.saved, $profile.jwt)
@@ -170,8 +170,7 @@
 
             {#if $profile?.user && $profile.jwt && isCommentMutable(comment, $profile.user.local_user_view)}
             <!---Delete Comment--->
-            <MenuButton
-                color="dangerSecondary"
+            <MenuButton color="dangerSecondary"
                 on:click={async () => {
                     if ($profile?.jwt)
                     comment.comment.deleted = await deleteItem(
@@ -205,8 +204,8 @@
         <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
         <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(comment.creator.actor_id).hostname}</li>
         <MenuButton
-            link
-            href="/communities/{new URL(comment.creator.actor_id).hostname}"
+            link color="success"
+            href="/communities?instance={new URL(comment.creator.actor_id).hostname}&type=Local"
             title="Browse communities at {new URL(comment.creator.actor_id).hostname}"
         >
             <Icon src={GlobeAlt} width={16} mini />
@@ -214,15 +213,11 @@
         </MenuButton>
 
 
-        <MenuButton>
-            <button 
-                class="flex flex-row gap-2 items-center w-full text-sm"
-                title="Get Fediseer info for {new URL(comment.creator.actor_id).hostname}"
-                on:click={async (e) => {openFediseerModal(new URL(comment.creator.actor_id).hostname)}}
-            >
-                <Icon src={Eye} width={16} mini />
-                <span>Fediseer</span>
-        </button>
+        <MenuButton color="info" title="Get Fediseer info for {new URL(comment.creator.actor_id).hostname}"
+            on:click={async (e) => {openFediseerModal(new URL(comment.creator.actor_id).hostname)}}
+        >
+            <Icon src={Eye} width={16} mini />
+            <span>Fediseer</span>
         </MenuButton>
     </Menu>
 </div>

@@ -70,7 +70,7 @@
 
     <!---Edit if owned by self--->
     {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}
-        <MenuButton  title="Edit Post"
+        <MenuButton  title="Edit Post" color="info"
             on:click={() => {
                 if (!suppressModal) editing = true
                 else {
@@ -83,26 +83,8 @@
         </MenuButton>
     {/if}
 
-    <!--- Mark as Read/Unread --->
-    {#if $profile?.jwt}
-        <MenuButton title="Mark as {post.read ? 'Unread' : 'Read'}"
-            on:click={async () => {
-                if ($profile?.jwt)
-                post.read = await markAsRead(post.post, !post.read, $profile.jwt)
-                toast({
-                    type: 'success',
-                    content: `Post marked as ${post.read ? 'read' : 'unread'}`,
-                })
-            }}
-        >
-            <Icon src={post.read ? EyeSlash : Eye} width={16} mini />
-            Mark as {post.read ? 'Unread' : 'Read'}
-        </MenuButton>
-    {/if}
-
     <!--- Share/Copy Post Link to Clipboard --->
-    <MenuButton
-        title="Share"
+    <MenuButton title="Share" color="success"
         on:click={() => {
             navigator.share?.({
                 url: post.post.ap_id,
@@ -115,15 +97,33 @@
         }}
     >
         <Icon src={Share} width={16} mini />
-        Share
+            Share
     </MenuButton>
 
-
-
+    <!--- Mark as Read/Unread --->
     {#if $profile?.jwt}
+        <MenuButton title="Mark as {post.read ? 'Unread' : 'Read'}" color="info"
+            on:click={async () => {
+                if ($profile?.jwt)
+                post.read = await markAsRead(post.post, !post.read, $profile.jwt)
+                toast({
+                    type: 'success',
+                    content: `Post marked as ${post.read ? 'read' : 'unread'}`,
+                })
+            }}
+        >
+            <Icon src={post.read ? EyeSlash : Eye} width={16} mini />
+            Mark as {post.read ? 'Unread' : 'Read'}
+        </MenuButton>
+    
+        <!---Crosspost--->
+        <MenuButton title="Crosspost" color="info" on:click={() => crossPost(post)} >
+            <Icon src={ArrowTopRightOnSquare} width={16} mini />
+            Crosspost
+        </MenuButton>    
+
         <!--- Save/Unsave Post --->
-        <MenuButton
-            title="{post.saved ? 'Unsave' : 'Save'} Post"
+        <MenuButton title="{post.saved ? 'Unsave' : 'Save'} Post" color="warning"
             on:click={async () => {
                 if ($profile?.jwt) post.saved = await save(post, !post.saved, $profile.jwt)
             }}
@@ -132,11 +132,7 @@
             {post.saved ? 'Unsave' : 'Save'}
         </MenuButton>
 
-        <!---Crosspost--->
-        <MenuButton title="Crosspost" on:click={() => crossPost(post)} >
-            <Icon src={ArrowTopRightOnSquare} width={16} mini />
-            Crosspost
-        </MenuButton>
+        
 
         
 
@@ -145,17 +141,19 @@
         {#if $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
             
             <!---Report Post--->
-            <MenuButton on:click={() => report(post)}  title="Report Post">
+            <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary">
                 <Icon src={Flag} width={16} mini />
                 Report Post
             </MenuButton>
 
             <!---Block User--->
-            <MenuButton on:click={async () => {
+            <MenuButton title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}" 
+                color="{isBlocked($profile?.user, post.creator.id) ? 'success' : 'dangerSecondary'}"
+                on:click={async () => {
                     blockUser(post.creator.id, true)
                     post.creator_blocked = !post.creator_blocked
                 }}
-                title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}"
+                
             >
                 <Icon src={NoSymbol} width={16} mini />
                 {isBlocked($profile?.user, post.creator.id) 
@@ -169,7 +167,7 @@
 
         <!---Delete Post--->
         {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
-            <MenuButton title="{post.post.deleted ? 'Restore' : 'Delete'} Post"
+            <MenuButton title="{post.post.deleted ? 'Restore' : 'Delete'} Post" color="{post.post.deleted ? 'success' : 'dangerSecondary'}"
                 on:click={async () => {
                     if ($profile?.jwt) {
                         post.post.deleted = await deleteItem(

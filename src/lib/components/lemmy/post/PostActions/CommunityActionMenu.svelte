@@ -64,33 +64,33 @@
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
     {#if $profile?.user}
-        <MenuButton on:click={() => createPost(post.community)} title="Create Post">
+        <MenuButton on:click={() => createPost(post.community)} title="Create Post" color="info">
             <Icon src={PencilSquare} width={16} mini />
             Create Post
         </MenuButton>
     {/if}
 
     <!---Browse Community--->
-    <MenuButton on:click={() => goto(`/c/${post.community.name}@${new URL(post.community.actor_id).hostname}`)} title="Browse {post.community.title || post.community.name}">
+    <MenuButton on:click={() => goto(`/c/${post.community.name}@${new URL(post.community.actor_id).hostname}`)} title="Browse {post.community.title || post.community.name}" color="info">
         <Icon src={QueueList} width={16} mini />
         Browse Community
     </MenuButton>
 
     <!---Posts In This Community by This Creator--->
-    <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" >
+    <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" color="info">
         <Icon src={User} mini size="16" />
         More from {post.creator.display_name ? post.creator.display_name : post.creator.name}@{new URL(post.creator.actor_id).hostname}
     </MenuButton>
 
     <!---Modlog--->
-    <MenuButton link href="/modlog?community={post.community.id}" title="Modlog for {post.community.title}" >
+    <MenuButton link href="/modlog?community={post.community.id}" title="Modlog for {post.community.title}" color="info" >
         <Icon src={Newspaper} mini size="16" />
         Modlog
     </MenuButton>
 
     {#if $profile?.user}
         <!---Add/Remove to Favorites--->
-        <MenuButton on:click={ (e) => {
+        <MenuButton color="warning" on:click={ (e) => {
             groups.favorite = !groups.favorite
             addFavorite(post.community, groups.favorite)
         }}>
@@ -99,7 +99,7 @@
         </MenuButton>
 
         <!---Add to Group--->
-        <MenuButton title="Add/Remove to Group" on:click={(e) => {
+        <MenuButton color="warning" title="Add/Remove to Group" on:click={(e) => {
                 if (!suppressModal) {
                     groups.showModal=!groups.showModal
                 } else {
@@ -111,7 +111,7 @@
             Add/Remove to Group(s)
         </MenuButton>
 
-        <MenuButton title="{subscribed ? 'Unsubscribe' : 'Subscribe'}" 
+        <MenuButton color="{subscribed ? 'dangerSecondary' : 'success'}" title="{subscribed ? 'Unsubscribe' : 'Subscribe'}" 
             on:click={async () => {
                 subscribed = await subscribe(post.community, subscribed)
                 subscribed = subscribed
@@ -125,7 +125,7 @@
         </MenuButton>
 
         <!---Block Community--->
-        <MenuButton title="Block Community" on:click={(e) =>  blockCommunity(post.community.id) } >
+        <MenuButton color="dangerSecondary" title="Block Community" on:click={(e) =>  blockCommunity(post.community.id) } >
             <Icon src={NoSymbol} mini size="16" />
             Block {post.community.name}@{new URL(post.community.actor_id).hostname}
         </MenuButton>
