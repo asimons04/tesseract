@@ -17,6 +17,7 @@ function normalizeDomain(domain:string):string {
         .replace('mronline.org', 'monthlyreview.org')
         .replace('presstv.co.uk', 'presstv.ir') 
         .replace('reutersagency.com', 'reuters.com')
+        .replace('tcrn.ch', 'techcrunch.com')
         .replace('tvpworld.com', 'tvp.info')
         .replace('wapo.st', 'washingtonpost.com')
         .replace('yahoo.com', 'news.yahoo.com')
