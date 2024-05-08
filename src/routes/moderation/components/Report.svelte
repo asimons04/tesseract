@@ -419,7 +419,7 @@
                 }
 
                 // Restore Comment
-                if (actions.remove) {
+                if (actions.restore) {
                     await client.removeComment({
                         auth: $profile.jwt,
                         comment_id: report.comment_view!.comment.id,
