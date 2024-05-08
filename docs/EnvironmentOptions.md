@@ -243,6 +243,7 @@ PUBLIC_FEATURED_INSTANCES=lemmy.world, beehaw.org, mander.xyz, lemmy.ca, program
     lemmy.world, 
     beehaw.org, 
     mander.xyz, 
+    startrek.website,
     lemmy.ca, 
     programming.dev
 
