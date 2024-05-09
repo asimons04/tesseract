@@ -305,7 +305,7 @@
 
                     {#if filter.person}
                         <div class="flex flex-row w-full justify-between">
-                            <UserLink avatar={true} avatarSize={iconSize} user={filter.person} />
+                            <UserLink avatar={true} avatarSize={iconSize} user={filter.person} badges={false}/>
                         
                             <button class="cursor-pointer" on:click={() => filter.person = undefined}>
                                 <Icon src={XCircle} mini width={iconSize-2}/>

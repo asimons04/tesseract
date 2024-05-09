@@ -255,7 +255,7 @@
                     {#if filter.moderatee.set}
                         <div class="flex flex-row w-full justify-between">
                             {#if filter.moderatee.person}
-                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} />
+                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} badges={false}/>
                             {:else}
                                 <span>
                                     { new URLSearchParams(window.location.search).get('other_person_id') }
