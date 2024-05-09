@@ -94,7 +94,7 @@
 </script>
 
 <!--- Zero-height container to make the overlap work--->
-<div class="w-full z-20 h-0">
+<div class="w-full z-10 h-0">
     <!--- Emoji Picker Container--->
     <div bind:this={pickerContainer} class="overflow-hidden w-full" class:hidden={!open} style="height: {(rows+5)*24}px"/>
 </div>
