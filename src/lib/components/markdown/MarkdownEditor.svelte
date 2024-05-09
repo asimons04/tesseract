@@ -34,15 +34,7 @@
     export let rows: number = 4
     export let previewing:boolean = false;
     export let id:string = '';
-    export let resizeable:boolean = true;
-    
 
-    /*
-    export let beforePreview: (input: string) => string = (input) => input
-    export let previewContainerClass:string = '';
-    export let previewContainerStyle:string = '';
-    
-    */
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
     let textArea: HTMLTextAreaElement
@@ -50,6 +42,9 @@
     let loading = false
     let image: FileList | null = null
     let emojiPickerOpen:boolean = false
+
+    let minRows = rows
+
 
     function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
         return str.substring(0, startIndex) + replacement + str.substring(endIndex)
@@ -132,107 +127,115 @@
 
     <div class="flex flex-col border border-slate-300 dark:border-zinc-800 rounded-md overflow-hidden focus-within:border-black focus-within:dark:border-white transition-colors w-full h-full">
         {#if previewing}
-            <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm {resizeable ? 'resize-y' : 'resize-none'}" style="height: {(rows+3)*24}px">
+            <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm resize-none" style="height: {(rows+3)*24}px">
                 <Markdown source={value} />
             </div>
 
         {:else}
             <div class="flex flex-col px-1">
                 <!--Toolbar-->
-                <div class="[&>*]:flex-shrink-0 flex flex-row overflow-x-scroll overflow-y-hidden h-fit p-1.5 gap-1.5 mb-2 {$$props.disabled ? 'opacity-60 pointer-events-none' : ''}">
-                    <!--Emoji Picker Button-->
-                    <Button
-                        on:click={() => emojiPickerOpen = !emojiPickerOpen}
-                        title="Emojis"
-                        size="square-md"
-                    >
-                        <span class="font-bold">
-                            <Icon src={FaceSmile} mini size="16"/>
-                        </span>
-                    </Button>
-
-                    {#if images}
+                <div class="[&>*]:flex-shrink-0 flex flex-col lg:flex-row h-fit p-1.5 gap-4 mb-2 {$$props.disabled ? 'opacity-60 pointer-events-none' : ''}">
+                    <!---Formatting Buttons--->
+                    <span class="flex flex-row gap-1.5 items-center overflow-x-scroll  ">
+                        <!--Emoji Picker Button-->
                         <Button
-                            on:click={() => (uploadingImage = !uploadingImage)}
-                            title="Image"
+                            on:click={() => emojiPickerOpen = !emojiPickerOpen}
+                            title="Emojis"
                             size="square-md"
                         >
-                            <Icon src={Photo} size="16" mini />
+                            <span class="font-bold">
+                                <Icon src={FaceSmile} mini size="16"/>
+                            </span>
                         </Button>
-                    {/if}
-                
-                    <Button
-                        on:click={() => wrapSelection('**', '**')}
-                        title="Bold"
-                        size="square-md"
-                    >
-                        <span class="font-bold">B</span>
-                    </Button>
 
-                    <Button
-                        on:click={() => wrapSelection('*', '*')}
-                        title="Italic"
-                        size="square-md"
-                    >
-                        <span class="italic font-bold">I</span>
-                    </Button>
-                
-                    <Button
-                        on:click={() => wrapSelection('[label](url)', '')}
-                        title="Link"
-                        size="square-md"
-                    >
-                        <Icon src={Link} mini size="16" />
-                    </Button>
-                
-                    <Button
-                        on:click={() => wrapSelection('\n# ', '')}
-                        title="Header"
-                        size="square-md"
-                    >
-                        <span class="italic font-bold font-serif">H</span>
-                    </Button>
+                        {#if images}
+                            <Button
+                                on:click={() => (uploadingImage = !uploadingImage)}
+                                title="Image"
+                                size="square-md"
+                            >
+                                <Icon src={Photo} size="16" mini />
+                            </Button>
+                        {/if}
+                    
+                        <Button
+                            on:click={() => wrapSelection('**', '**')}
+                            title="Bold"
+                            size="square-md"
+                        >
+                            <span class="font-bold">B</span>
+                        </Button>
 
-                    <Button
-                        on:click={() => wrapSelection('~~', '~~')}
-                        title="Strikethrough"
-                        size="square-md"
-                    >
-                        <span class="line-through font-bold">S</span>
-                    </Button>
+                        <Button
+                            on:click={() => wrapSelection('*', '*')}
+                            title="Italic"
+                            size="square-md"
+                        >
+                            <span class="italic font-bold">I</span>
+                        </Button>
+                    
+                        <Button
+                            on:click={() => wrapSelection('[label](url)', '')}
+                            title="Link"
+                            size="square-md"
+                        >
+                            <Icon src={Link} mini size="16" />
+                        </Button>
+                    
+                        <Button
+                            on:click={() => wrapSelection('\n# ', '')}
+                            title="Header"
+                            size="square-md"
+                        >
+                            <span class="italic font-bold font-serif">H</span>
+                        </Button>
 
-                    <Button
-                        on:click={() => wrapSelection('\n> ', '')}
-                        title="Quote"
-                        size="square-md"
-                    >
-                        <span class="font-bold font-serif">"</span>
-                    </Button>
+                        <Button
+                            on:click={() => wrapSelection('~~', '~~')}
+                            title="Strikethrough"
+                            size="square-md"
+                        >
+                            <span class="line-through font-bold">S</span>
+                        </Button>
 
-                    <Button
-                        on:click={() => wrapSelection('\n- ', '')}
-                        title="List"
-                        size="square-md"
-                    >
-                        <Icon src={ListBullet} mini size="16" />
-                    </Button>
+                        <Button
+                            on:click={() => wrapSelection('\n> ', '')}
+                            title="Quote"
+                            size="square-md"
+                        >
+                            <span class="font-bold font-serif">"</span>
+                        </Button>
 
-                    <Button
-                        on:click={() => wrapSelection('`', '`')}
-                        title="Code"
-                        size="square-md"
-                    >
-                        <Icon src={CodeBracket} mini size="16" />
-                    </Button>
+                        <Button
+                            on:click={() => wrapSelection('\n- ', '')}
+                            title="List"
+                            size="square-md"
+                        >
+                            <Icon src={ListBullet} mini size="16" />
+                        </Button>
 
-                    <Button
-                        on:click={() =>
-                        wrapSelection('::: spoiler Spoiler Title\n', '\n:::')}
-                        title="Spoiler"
-                        size="square-md"
-                    >
-                        <Icon src={ExclamationTriangle} mini size="16" />
-                    </Button>
+                        <Button
+                            on:click={() => wrapSelection('`', '`')}
+                            title="Code"
+                            size="square-md"
+                        >
+                            <Icon src={CodeBracket} mini size="16" />
+                        </Button>
+
+                        <Button
+                            on:click={() =>
+                            wrapSelection('::: spoiler Spoiler Title\n', '\n:::')}
+                            title="Spoiler"
+                            size="square-md"
+                        >
+                            <Icon src={ExclamationTriangle} mini size="16" />
+                        </Button>
+                    </span>
+
+                    <!---Markdown editor resize slider--->
+                    <span class="flex flex-row gap-1 w-full lg:w-fit lg:ml-auto items-center">
+                        <input type="range" bind:value={rows} min={minRows} max={minRows*4} class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                    </span>
                 
                     <!---
                     <Button
@@ -262,7 +265,7 @@
 
                 <!--Actual text area-->
                 <TextArea
-                    class="border-0 rounded-none h-full focus-within:border-none {resizeable ? 'resize-y' : 'resize-none'}"
+                    class="border-0 rounded-none h-full focus-within:border-none resize-none"
                     bind:value
                     bind:item={textArea}
                     on:keydown={(e) => {
@@ -286,10 +289,7 @@
         {#if $$slots.actions || previewButton}
             <!---Bottom Toolbar (edit/preview button, submit button--->
             <div class="flex-shrink-0 flex flex-row overflow-auto overflow-y-hidden p-1.5 gap-1.5 items-center justify-between
-                {$$props.disabled
-                    ? 'opacity-60 pointer-events-none'
-                    : ''
-                }
+                {$$props.disabled ? 'opacity-60 pointer-events-none' : '' }
             "
             >
                 {#if previewButton}
