@@ -55,7 +55,7 @@
     const getPicker = function () { 
         return new EmojiPicker({
             data: EmojiMartData,
-            onEmojiSelect: (s) => {
+            onEmojiSelect: (s:any) => {
                 // Use native emoji value or the src value for custom emojis
                 let emojiValue:string = ''
                 s.native
@@ -81,14 +81,17 @@
     
     // Recreate the picker when its container gets removed/recreated in the DOM when switching between edit/preview
     afterUpdate(() => {
+        //@ts-ignore
         if (pickerContainer && !pickerContainer.contains(picker)) {
             picker = getPicker()
+            //@ts-ignore
             pickerContainer.appendChild(picker)
         }
     })
     
     // Initialize the emoji picker
     onMount(() => {
+        //@ts-ignore
         pickerContainer.appendChild(picker);
     })
 </script>
