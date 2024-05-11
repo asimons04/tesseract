@@ -83,7 +83,7 @@
                 src="{imageProxyURL(url, undefined, 'webp')}"
                 alt="{name}"
                 loading="lazy"
-                class="ml-auto mr-auto object-cover rounded-md h-auto z-30 opacity-0 transition-opacity duration-150"
+                class="ml-auto mr-auto object-contain rounded-md h-auto xl:min-h-[500px] z-30 opacity-0 transition-opacity duration-150"
                 class:opacity-100={loaded}
                 on:load={() => (loaded = true)}
                 
