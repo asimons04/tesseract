@@ -89,7 +89,8 @@ export function amModOfAny (me?: MyUserInfo):boolean {
 
 export function isAdmin (me?: MyUserInfo):boolean {
     if (!me) return false
-    return me.local_user_view?.person?.admin
+    //@ts-ignore  (0.18.x looks at local_user_view->person while 0.19+ looks at local_user
+    return me.local_user_view.local_user.admin ?? me.local_user_view?.person?.admin
 }
 
 export const removalTemplate = (
