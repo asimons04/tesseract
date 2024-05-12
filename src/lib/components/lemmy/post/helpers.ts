@@ -193,6 +193,9 @@ export const isSongLink = (url:string):boolean => {
 export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
     if (!postURL) return
     
+    try { new URL(postURL) }
+    catch { return }
+
     let embedURL: URL
     let videoID: string|null
     
@@ -238,7 +241,7 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
     // Start time: Can be either t (legacy) or start
     let startTime = new URL(postURL).searchParams.get('t') ?? new URL(postURL).searchParams.get('start');
     if (startTime) {
-        embedURL.searchParams.set('start', startTime);
+        embedURL.searchParams.set('t', startTime);
     }
 
     // End time: 
@@ -252,7 +255,10 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
 
 // Build a Vimeo embed link from the post URL
 export const buildVimeoEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
-    if(!postURL) return
+    if (!postURL) return
+
+    try { new URL(postURL) }
+    catch { return }
     
     let embedURL = new URL('https://player.vimeo.com')
     embedURL.searchParams.set('autopause', '0')

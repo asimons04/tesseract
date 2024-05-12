@@ -131,12 +131,12 @@
     }
 
     .markdown :global(td) {
-        width: 100%;
+        /*width: 100%;*/
     }
 
     .markdown :global(th) {
         text-align: left;
-        width: 100%;
+        /*width: 100%;*/
     }
 
     .markdown :global(tr > th) {

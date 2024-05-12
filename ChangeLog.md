@@ -2,6 +2,24 @@
 All major/minor changes between releases will be documented here.  
 
 
+## 1.3.1
+
+### To Do
+- Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
+- Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
+- Add  purge user button for admins.
+    - Acknowledge checkbox/dialog
+    - Ban user permanently with content removal
+    - Delay ~3-5 seconds for the federation activities to be created and queued
+    - Call purge user
+    - Redirect to homepage or somewhere appropriate
+- Link preview option.  If enabled:
+    - Ignore Tesseract links (links to posts, comments, communities, users, etc)
+    - Instead of taking you to the link directly, open a modal and call getSiteMetadata() for that URL to generate a preview
+    - If the link is to some kind of media supported in Tesseract, render it in a modal
+    - Provide option to create a post based on the link
+    - Provide button to take you to the link (honoring "open in new tab" setting)
+
 
 ## 1.3.0
 
