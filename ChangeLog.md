@@ -1,11 +1,34 @@
-# Changelog
+# Changelog for 1.3.x Series
 All major/minor changes between releases will be documented here.  
 
 
 ## 1.3.1
 
-### To Do Ideas 
-- Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
+### Goals 
+
+#### Drop Support for 0.18.x
+- [ ] Remove all `auth` fields from API call POST bodies
+- [ ] Remove all the date checks that look for and append 'Z'
+- [ ] Remove score from user pages (currently conditional upon presence of value)
+- [ ] Update `lemmy-js-client` 
+
+
+#### Markdown Renderer
+- [X] Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
+
+#### Admin Panel
+- [ ] Add ability to define and edit custom emojis
+
+#### Instances List
+- [ ] Add `federation_state` data to instance list objects in `/instances`
+- [ ] Add button to fetch and display federation state for the current instance from the selected instance
+
+#### User Settings
+- [ ] Add TOTP setup
+
+
+#### Feeds
+- [ ] Add "Moderator View" listing type option
 
 - Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 
