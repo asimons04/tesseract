@@ -1,16 +1,15 @@
 <script lang="ts">
     import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
 
     import { createEventDispatcher } from 'svelte'
-    import { Icon, XMark } from 'svelte-hero-icons'
+    import { type IconSource, Icon, XMark } from 'svelte-hero-icons'
     import { expoOut } from 'svelte/easing'
     import { fade, scale } from 'svelte/transition'
 
     export let action: string | undefined = undefined
     export let open = false
     export let title:string = '';
-    export let icon:any = undefined;
+    export let icon:IconSource = undefined;
 
     export let fullHeight:boolean = false
     export let height:string = 'h-auto'
@@ -19,14 +18,13 @@
 </script>
 
 {#if open}
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <!---Div to blur background. Diabled click event that closes modal --->
+    <!---Div to blur background. Diabled click event that closes modal --->  
     <div class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] 
         flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal"
         transition:fade={{ duration: 200 }}
     >
   
-        <div transition:scale={{ start: 0.9, easing: expoOut }}
+        <div transition:scale={{ start: 0.5, easing: expoOut }}
             class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[95svh]' : height} {$$props.class}"
         >
             <div class="w-full dark:!bg-zinc-950 rounded-xl max-w-4xl box-border mx-auto {fullHeight ? 'h-full' : height}">

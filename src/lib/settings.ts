@@ -286,6 +286,7 @@ export const YTFrontends = {
         'invidious.io.lol',
         'inv.makerlab.tech',
         'inv.zzls.xyz',
+        'invidious.perennialte.ch',
         'anontube.lvkaszus.pl',
         'invidious.fdn.fr',
         'iv.datura.network',

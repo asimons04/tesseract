@@ -4,15 +4,18 @@ All major/minor changes between releases will be documented here.
 
 ## 1.3.1
 
-### To Do
+### To Do Ideas 
 - Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
+
 - Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
+
 - Add  purge user button for admins.
     - Acknowledge checkbox/dialog
     - Ban user permanently with content removal
     - Delay ~3-5 seconds for the federation activities to be created and queued
     - Call purge user
     - Redirect to homepage or somewhere appropriate
+
 - Link preview option.  If enabled:
     - Ignore Tesseract links (links to posts, comments, communities, users, etc)
     - Instead of taking you to the link directly, open a modal and call getSiteMetadata() for that URL to generate a preview
@@ -20,6 +23,19 @@ All major/minor changes between releases will be documented here.
     - Provide option to create a post based on the link
     - Provide button to take you to the link (honoring "open in new tab" setting)
 
+- On UserLink component, instead of taking you directly to user page, open a modal with user-specific actions
+    - Use component export variable to determine if should be a link to the user or open the modal (where modal would be inappropriate or less useful)
+    - View Profile
+    - Block (or unblock)
+    - Send Message in Lemmy and/or Matrix
+    - Ban from community (mods only)
+    - Ban from instance (admins only)
+    - Make avatars clickable to enlarge to full size
+
+- Make back button close modals
+    - If this is added to the modal component, should apply it automatically to all modal types
+
+- If profile is active but no MyLocalUser info returned from getSite, prompt for login
 
 ## 1.3.0
 
