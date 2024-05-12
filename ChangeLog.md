@@ -11,6 +11,14 @@ All major/minor changes between releases will be documented here.
 - [ ] Remove all the date checks that look for and append 'Z'
 - [ ] Remove score from user pages (currently conditional upon presence of value)
 - [ ] Update `lemmy-js-client` 
+- [ ] Remove admin flag check from `local_user_view.person` in moderation.ts
+- [ ] 
+- [ ] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
+- [ ] Remove custom functions for `blockInstance` and `hideCommunity` and use the client-native ones
+- [ ] Remove custom shim to conditionally add/remove `Scaled` sort option
+- [ ] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
+- [ ] Add `ModeratorView` to listing types if `modOfAny()`
+
 
 
 #### Markdown Renderer
@@ -22,13 +30,25 @@ All major/minor changes between releases will be documented here.
 #### Instances List
 - [ ] Add `federation_state` data to instance list objects in `/instances`
 - [ ] Add button to fetch and display federation state for the current instance from the selected instance
+- [ ] For admins, add ability to add/remove an instance from the instance block list
 
 #### User Settings
 - [ ] Add TOTP setup
 
+#### Fediseer
+- [ ] Create custom components for Endorsements, Censures, Hesitations. Clean up presentation.
+- [ ] Make each instance that endorses/censures/hesitates clickable to view their Fediseer records
+
+
 
 #### Feeds
 - [ ] Add "Moderator View" listing type option
+- [ ] Add `user_is_moderator` flag to post meta header in feed
+
+### Posts / Comments
+- [ ] Add `listPostLikes` and `listCommentLikes` options to post and comment action menus for admins
+- [ ] Do not show (or disable) subscribe/unsubscribe button in Post Meta on post preview
+
 
 - Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 
@@ -59,6 +79,8 @@ All major/minor changes between releases will be documented here.
     - If this is added to the modal component, should apply it automatically to all modal types
 
 - If profile is active but no MyLocalUser info returned from getSite, prompt for login
+
+
 
 ## 1.3.0
 
