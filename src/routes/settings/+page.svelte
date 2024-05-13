@@ -234,7 +234,7 @@
             let oldSettings = {}
 
             // Fetch the current value of the settings object (theme for now) from the API
-            const myProfile = await getClient().getSite({auth: $profile?.jwt})
+            const myProfile = await getClient().getSite()
             
 
             // In case old settings are still the default 'theme' values.
@@ -257,7 +257,6 @@
 
             // Save the updated settings object back to the 'theme' field. (for some reason, the local user 'person' object is required)
             const res = await getClient().saveUserSettings({
-                auth: $profile.jwt ?? ' ',
                 ...$profile.user?.local_user_view.person,
                 theme: JSON.stringify(settings)
             })
@@ -285,7 +284,7 @@
         if (!$profile) return
         
         try {
-            const res = await getClient().getSite({auth: $profile?.jwt})
+            const res = await getClient().getSite()
             let mySettings
             if (res?.my_user?.local_user_view?.local_user?.theme) mySettings = JSON.parse(res.my_user.local_user_view.local_user.theme)
 
@@ -340,7 +339,6 @@
 
         try {
             const res = await getClient().saveUserSettings({
-                auth: $profile?.jwt ?? ' ',
                 ...$profile?.user?.local_user_view?.person,
                 theme: 'browser'
             })

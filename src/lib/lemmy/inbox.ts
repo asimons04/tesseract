@@ -49,7 +49,6 @@ export const getInbox = async (
 
   const params = {
     limit: 50,
-    auth: jwt,
     unread_only: true,
   }
 

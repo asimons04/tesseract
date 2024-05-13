@@ -46,7 +46,6 @@ export const subscribe = async function(community:Community, subscribed:boolean)
    
     try {
         const followResponse = await getClient().followCommunity({
-            auth: userProfile.jwt,
             community_id: community.id,
             follow: !subscribed,
         })
@@ -84,7 +83,6 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
     
     try {
         const blockedCommunity = await getClient().blockCommunity({
-            auth: userProfile.jwt,
             community_id: communityID,
             block: true,
         })

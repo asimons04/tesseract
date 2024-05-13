@@ -43,7 +43,6 @@
         if (purge) {
             try {
                 await getClient().purgePost({
-                    auth: $profile.jwt,
                     post_id: post.id,
                     reason: reason || undefined,
                 })
@@ -71,7 +70,6 @@
         else {
             try {
             await getClient().removePost({
-                auth: $profile.jwt,
                 post_id: post.id,
                 removed: !removed,
                 reason: reason || undefined,

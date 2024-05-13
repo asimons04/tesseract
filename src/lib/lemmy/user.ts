@@ -39,14 +39,12 @@ export const addSubscription = (community: Community, subscribe: boolean = true)
 export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
     trycatch(async () => {
             const user = await getClient().resolveObject({
-            auth: jwt,
             q: handle,
         })
 
         if (!user.person) throw new Error('No user found')
 
         return await getClient().addAdmin({
-            auth: jwt,
             added: true,
             person_id: user.person.person.id,
         })
@@ -71,7 +69,6 @@ export const blockUser = async function (personID: number, confirm:boolean=false
             const blocked = isBlocked(userProfile.user, personID)
 
             await getClient().blockPerson({
-                auth: userProfile.jwt,
                 block: !blocked,
                 person_id: personID,
             })

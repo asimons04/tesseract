@@ -78,7 +78,6 @@
         unsubscribing = true
         try {
             await getClient().followCommunity({
-                auth: $profile.jwt,
                 community_id: community.id,
                 follow: false,
             })

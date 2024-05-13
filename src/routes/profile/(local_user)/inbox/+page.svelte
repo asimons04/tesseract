@@ -35,9 +35,7 @@
 
         markingAsRead = true
 
-        const response = await getClient().markAllAsRead({
-            auth: $profile.jwt!,
-        })
+        const response = await getClient().markAllAsRead()
 
         $profile.user.unreads = 0
 

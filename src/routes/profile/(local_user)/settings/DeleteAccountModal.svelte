@@ -2,6 +2,7 @@
     
 
     import Button from "$lib/components/input/Button.svelte"
+    import Checkbox from "$lib/components/input/Checkbox.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import TextInput from "$lib/components/input/TextInput.svelte"
 
@@ -10,10 +11,12 @@
     import { profile, profileData, setUserID } from "$lib/auth"
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { Trash } from "svelte-hero-icons"
+    
 
     export let open:boolean = false
 
     let password = ''
+    let delete_content = false
 
     async function deleteAccount() {
         if (!$profile?.jwt) return
@@ -39,11 +42,11 @@
             const { jwt } = $profile
 
             await getClient().deleteAccount({
-                auth: jwt,
                 password: password,
-                //delete_content: deletion.delete_content,
+                delete_content: delete_content,
             })
 
+            // Remove Profile
             profileData.update((pd) => {
                 pd.profiles.splice(
                     pd.profiles.findIndex((p) => pd.profile == p.id),1
@@ -51,7 +54,6 @@
 
                 return pd
             })
-
             setUserID(-1)
             
             toast({
@@ -83,7 +85,7 @@
             <!---If you want to leave your content visible for posterity, leave the "delete content" checkbox empty.--->
         </span>
         
-        <!---<Checkbox bind:checked={deletion.delete_content}>Delete Content</Checkbox>--->
+        <Checkbox bind:checked={delete_content}>Delete Content</Checkbox>
         <TextInput label="Password" type="password" bind:value={password} />
 
         <div class="flex flex-row justify-between mt-4">

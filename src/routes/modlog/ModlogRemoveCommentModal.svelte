@@ -43,7 +43,6 @@
         if (purge) {
             try {
                 await getClient().purgeComment({
-                    auth: $profile.jwt,
                     comment_id: comment.id,
                     reason: reason || undefined,
                 })
@@ -71,7 +70,6 @@
         else {
             try {
             await getClient().removeComment({
-                auth: $profile.jwt,
                 comment_id: comment.id,
                 removed: !removed,
                 reason: reason || undefined,

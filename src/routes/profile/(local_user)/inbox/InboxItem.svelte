@@ -46,7 +46,6 @@
 
         try {
             await getClient().createPrivateMessage({
-                auth: $profile.jwt,
                 content: reply,
                 recipient_id: message.creator.id,
             })
@@ -80,21 +79,18 @@
 
         if ('person_mention' in item) {
             await getClient().markPersonMentionAsRead({
-                auth: $profile?.jwt,
                 person_mention_id: item.person_mention.id,
                 read: isRead,
             })
         } 
         else if ('comment_reply' in item) {
             await getClient().markCommentReplyAsRead({
-                auth: $profile?.jwt,
                 comment_reply_id: item.comment_reply.id,
                 read: isRead,
             })
         }
         else if ('private_message' in item) {
             await getClient().markPrivateMessageAsRead({
-                auth: $profile?.jwt,
                 private_message_id: item.private_message.id,
                 read: isRead
             })

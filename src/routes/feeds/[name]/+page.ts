@@ -63,12 +63,11 @@ export async function load(req: any) {
     let combinedPosts:PostView[] = [] as PostView[]
 
     // Instantiate a Lemmy client and parameters to use for each community fetch.
-    const client = getClient(undefined, fetch)
+    const client = getClient()
     const params = {
         page: page,
         sort: sort,
         limit: postsPerCommunity,
-        auth: get(profile)?.jwt
     }
 
     // Grab the site info to populate the sidebar

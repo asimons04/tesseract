@@ -39,7 +39,6 @@
 
             const results = await getClient().search({
                 q: q || ' ',
-                auth: $profile?.jwt || undefined,
                 type_: 'Users',
                 limit: 50,
             })

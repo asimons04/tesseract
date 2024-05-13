@@ -40,7 +40,6 @@
         try {
             if (!data.post.post_view.read && $profile?.jwt && $page.params.instance == $profile?.instance) {
                 getClient().markPostAsRead({
-                    auth: $profile.jwt,
                     read: true,
                     post_id: data.post.post_view.post.id,
                 })
@@ -65,7 +64,6 @@
 
         try {
             const res = await getClient().resolveObject({
-                auth: $profile.jwt,
                 q: data.post.post_view.post.ap_id,
             })
 

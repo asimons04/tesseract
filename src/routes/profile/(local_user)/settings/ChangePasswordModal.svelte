@@ -52,7 +52,6 @@
                 old_password: oldPassword,
                 new_password: newPassword,
                 new_password_verify: newPassword2,
-                auth: $profile.jwt
             })
 
             

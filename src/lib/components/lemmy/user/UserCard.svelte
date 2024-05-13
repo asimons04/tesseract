@@ -63,7 +63,6 @@
             const blocked = isBlocked($profile.user, block)
 
             await getClient().blockPerson({
-                auth: $profile.jwt,
                 block: !blocked,
                 person_id: block,
             })
@@ -99,7 +98,6 @@
 
         try {
             await getClient().createPrivateMessage({
-                auth: $profile.jwt,
                 content: message,
                 recipient_id: person.person.id,
             })
@@ -304,12 +302,14 @@
                         <FormattedNumber number={person.counts.comment_count} />
                     </span>
                     
+                    <!---
                     {#if person.counts.post_score && person.counts.comment_score}
                     <span class="flex flex-row items-center gap-2" title="Content Score">
                         <Icon src={Trophy} width={16} height={16} mini />
                         <FormattedNumber number={(person.counts.post_score + person.counts.comment_score)} />
                     </span>
                     {/if}
+                    --->
                     
                 </div>
             </div>

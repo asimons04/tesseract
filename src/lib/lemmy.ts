@@ -95,7 +95,6 @@ export async function hideCommunity(communityID:number, hidden:boolean, reason:s
     try {
         const body = {
             community_id: communityID,
-            auth: get(profile)?.jwt,
             hidden: hidden,
             reason: reason
         }

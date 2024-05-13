@@ -37,7 +37,6 @@
         on:search={async () => {
             const results = await getClient().search({
                 q: q || ' ',
-                auth: $profile?.jwt || undefined,
                 type_: 'Communities',
                 limit: 50,
                 listing_type: listing_type,

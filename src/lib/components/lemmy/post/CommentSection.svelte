@@ -35,9 +35,6 @@
     async function reloadComments() {
         data.singleThread = false
         data.streamed.comments = getClient().getComments({
-            auth: $page.params.instance == $instance
-                ? $profile?.jwt
-                : undefined,
             type_: 'All',
             post_id: data.post.post_view.post.id,
             sort: commentSort,
