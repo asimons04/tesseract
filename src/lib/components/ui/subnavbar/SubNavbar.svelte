@@ -98,18 +98,6 @@
             navRefresh?: null,
             navPageSelect?: number
         }>()
-
-    $:  if ($site && $site.version?.startsWith('0.19')) {
-            if (!sortOptions.includes('Scaled')) sortOptions.unshift('Scaled')
-            if (!sortOptionNames.includes('Scaled')) sortOptionNames.unshift('Scaled')
-        }
-        else {
-            if (sortOptions.indexOf('Scaled') > -1) sortOptions.splice(sortOptions.indexOf('Scaled'), 1)
-            if (sortOptionNames.indexOf('Scaled') > -1) sortOptionNames.splice(sortOptionNames.indexOf('Scaled'), 1)
-        }
-    
-    
-   
 </script>
 
 <!---Hacks to launch the editor modals and keep them over the outer layout since they're inside a fixed element--->

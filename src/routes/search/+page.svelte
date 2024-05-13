@@ -49,6 +49,7 @@
     import CommunityItem from '$lib/components/lemmy/community/CommunityItem.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
+    import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
@@ -78,7 +79,7 @@
         Window,
         XCircle
     } from 'svelte-hero-icons'
-    import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte';
+    
     
     
     
@@ -179,12 +180,12 @@
     }
 
     function resetSearch() {
-        filter = default_filter
         filter.community = undefined
         filter.person = undefined
         filter.query = ''
         filter.page = 1
         filter.sort = 'New'
+        filter.type = 'All'
 
         data.results = []
         data.filters = {}
@@ -222,7 +223,17 @@
     }
 
 
-    let filter = default_filter
+    let filter = 
+    { 
+        ...default_filter,
+        query: data.query,
+        community: data.filters.community?.community_view.community,
+        person: data.filters.person?.person_view.person,
+        sort: data.sort,
+        page: data.page,
+        type: data.type
+    }
+
     let searching = false
     
     onMount(() => {

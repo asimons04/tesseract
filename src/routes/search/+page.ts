@@ -18,13 +18,13 @@ interface Filters {
 } 
 
 export async function load({ url }: LoadParams) {
-    const query     = url.searchParams.get('q')
     const page      = Number(url.searchParams.get('page')) || 1
     const community = Number(url.searchParams.get('community_id'))
     const sort      = url.searchParams.get('sort') ?? 'New'
     const type      = url.searchParams.get('type') ?? 'All'
     const person    = Number(url.searchParams.get('person_id'));
     const limit     = Number(url.searchParams.get('limit')) || 50;
+    const query     = url.searchParams.get('q') ?? (community || person) ? ' ' : undefined
 
     const filters: Filters = {
         community: undefined,
