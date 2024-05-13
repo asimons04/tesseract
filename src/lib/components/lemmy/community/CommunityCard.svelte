@@ -77,7 +77,6 @@
         const subscribed = community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
         try {
             await getClient().followCommunity({
-                auth: $profile.jwt,
                 community_id: community_view.community.id,
                 follow: !subscribed,
             })
@@ -99,7 +98,6 @@
 
         try {
             await getClient().removeCommunity({
-                auth: $profile.jwt,
                 community_id: community_view.community.id,
                 removed: !removed,
             })
@@ -117,7 +115,6 @@
 
         try {
             await getClient().blockCommunity({
-                auth: $profile.jwt,
                 community_id: community_view.community.id,
                 block: !blocked,
             })
@@ -222,7 +219,7 @@
                                                 e.stopPropagation();
                                                 subscribe();
                                             }}>
-                                                <Icon src={community_view.subscribed == 'Subscribed' ? Minus : Rss} mini size="16" />
+                                                <Icon src={community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending' ? Minus : Rss} mini size="16" />
                                                 {
                                                     community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
                                                     ? 'Unsubscribe'
