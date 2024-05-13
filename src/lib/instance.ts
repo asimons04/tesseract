@@ -1,5 +1,3 @@
-// maybe fix circular dependency, hopefully.
-
 import { env } from '$env/dynamic/public'
 import { writable } from 'svelte/store'
 

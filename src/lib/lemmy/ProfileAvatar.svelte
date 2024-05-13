@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Profile } from '$lib/auth.js'
-  import { Icon, UserCircle } from 'svelte-hero-icons'
+  import { Icon, PaintBrush, UserCircle } from 'svelte-hero-icons'
 
   export let profile: Profile | undefined = undefined
   export let selected: boolean = false
@@ -9,14 +9,24 @@
 </script>
 
 {#if profile}
-  <Icon
-    src={UserCircle}
-    mini={selected}
-    size={`${size}`}
-    title={profile.username}
-    class="text-blue-500 flex-shrink-0"
-    style={profile.color
-      ? `color: ${profile.color}`
-      : `filter: hue-rotate(${index * 50}deg)`}
-  />
+<div class="relative group flex-col items-center">  
+    <Icon
+        src={UserCircle}
+        mini={selected}
+        size={`${size}`}
+        title={profile.username}
+        class="text-blue-500 flex-shrink-0"
+        style={profile.color
+        ? `color: ${profile.color}`
+        : `filter: hue-rotate(${index * 50}deg)`}
+    />
+
+    <div class="absolute top-0 left-0 w-full h-full opacity-0 grid group-hover:opacity-100 z-20 place-items-center
+        bg-slate-200 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-full transition-all"
+    >
+        <Icon src={PaintBrush} mini size="14" />
+    </div>
+
+    <input type="color" class="opacity-0 absolute top-0 left-0 h-full w-full rounded-full cursor-pointer z-30" bind:value={profile.color}/>
+</div>
 {/if}

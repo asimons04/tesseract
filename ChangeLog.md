@@ -10,13 +10,13 @@ All major/minor changes between releases will be documented here.
 - [ ] Remove all `auth` fields from API call POST bodies
 - [ ] Remove all the date checks that look for and append 'Z'
 - [ ] Remove score from user pages (currently conditional upon presence of value)
-- [ ] Update `lemmy-js-client` 
+- [X] Update `lemmy-js-client` 
 - [ ] Remove admin flag check from `local_user_view.person` in moderation.ts
 - [ ] 
 - [ ] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
 - [ ] Remove custom functions for `blockInstance` and `hideCommunity` and use the client-native ones
 - [ ] Remove custom shim to conditionally add/remove `Scaled` sort option
-- [ ] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
+- [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
 - [ ] Add `ModeratorView` to listing types if `modOfAny()`
 
 

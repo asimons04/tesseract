@@ -50,6 +50,7 @@
         Plus,
         Trash,
     } from 'svelte-hero-icons'
+    import Avatar from '$lib/components/ui/Avatar.svelte';
     
     
     
@@ -127,18 +128,13 @@
                 {#each $profileData.profiles as profile, index (profile.id)}
                     <div class="flex flex-row gap-2 items-center py-4" animate:flip={{ duration: 250, easing: expoOut }} >
                         <div class="flex items-center gap-2">
-                            <div class="relative group flex-col items-center">
-                                <ProfileAvatar {profile} {index} selected={$currentProfile?.id == profile.id} size={24} />
-
-                                <div
-                                    class="absolute top-0 left-0 w-full h-full opacity-0 grid group-hover:opacity-100 z-20 place-items-center
-                                    bg-slate-200 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-full transition-all"
-                                >
-                                    <Icon src={PaintBrush} mini size="14" />
-                                </div>
-                                
-                                <input type="color" class="opacity-0 absolute top-0 left-0 h-full w-full rounded-full cursor-pointer z-30" bind:value={profile.color}/>
-                            </div>
+                            
+                            {#if profile.avatar}
+                                <Avatar url={profile.avatar} ring={$currentProfile?.id == profile.id} width={36} />
+                            {:else}
+                                <ProfileAvatar bind:profile {index} selected={$currentProfile?.id == profile.id} size={36} />
+                            {/if}
+                            
 
                             <div class="flex flex-col">
                                 <span class="font-bold">{profile.username}</span>

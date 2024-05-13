@@ -8,47 +8,52 @@ export interface BlockInstanceResponse {
     blocked: boolean
 }
 
-// Override Lemmy's stupid cache on the goddamned only endpoint that will return the user profile
-async function customFetch(input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
-    if (init) init.cache = 'no-store'
-    else init = { cache: 'no-store'}
-    
-    const res = await fetch(input, init)
-    if (!res.ok) throw error(res.status, await res.text())
-    return res
-}
-
-
+/** Returns a LemmyHttp API client
+ * @param instanceURL is the instance domain it should work against (default is current instance)
+ * @param jwt is the auth token to be used (defaults to profile, but need to supply it in some cases to bootstrap profile
+*/
 export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
+    // Use current instance is not otherwise defiend
     if (!instanceURL)   instanceURL = get(instance)
-    
-    try { if (!jwt && instanceURL == get(instance)) jwt = get(profile)?.jwt }
-    catch { jwt = '' }
 
-    const headers = {
-        Authorization: jwt ? `Bearer ${jwt}` : ''
+    // Add the authorization header if JWT is supplied or if present in profile
+    jwt = jwt ?? get(profile)?.jwt
+    const headers = {} as { [key: string]: string; }
+    if (jwt) headers['Authorization'] = `Bearer ${jwt}`
+
+    // Override Lemmy's stupid server-side cache on the only fscking endpoint that will return the local_user profile
+    const cachelessFetch = async function (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
+        if (init) init.cache = 'no-store'
+        else init = { cache: 'no-store'}
+        
+        const res = await fetch(input, init)
+        if (!res.ok) throw error(res.status, await res.text())
+        return res
     }
 
     return new LemmyHttp(`https://${instanceURL}`, 
         {
-            fetchFunction: (input: RequestInfo | URL, init: RequestInit | undefined) => customFetch(input, init),
+            fetchFunction: cachelessFetch,
             headers: headers
         }
     )
 }
 
+/** Returns the current instance */
 export const getInstance = () => get(instance)
+
 
 export const site = writable<GetSiteResponse | undefined>(undefined)
 
+/** Validates an instance by calling getSite() and optionallly sets the current site store to its GetSiteResponse
+ * @param instance The instance domain to check
+ * @param setSite Default false to discard the results and true to set the current site store details to the results of that
+*/
 export async function validateInstance(instance: string, setSite:boolean=false): Promise<boolean> {
-    if (instance == '') return false
+    if (!instance) return false
     try {
         let siteData = await getClient(instance).getSite()
-        // Optionally 
-        if (setSite) {
-            site.set(siteData);
-        }
+        if (setSite) site.set(siteData);
         return true
     } catch (err) {
         return false
@@ -201,13 +206,3 @@ export let sortOptionNames:string[] = [
     'Most Comments',
     'New Comments',
 ];
-
-// Set the current site
-/*
-getClient(LINKED_INSTANCE_URL ? LINKED_INSTANCE_URL : getInstance())
-    .getSite()
-    .then((s) => {
-            site.set(s)
-        }
-    )
-*/

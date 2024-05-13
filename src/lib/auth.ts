@@ -35,6 +35,7 @@ export interface Profile {
     instance: string
     jwt?: string
     user?: PersonData
+    avatar?: string
     username?: string
     favorites?: Community[]
     groups?: CommunityGroup[]
@@ -95,7 +96,6 @@ profile.subscribe(async (p:Profile|undefined) => {
         return
     }
     // If user details (MyUserInfo from API) are already stored, don't proceed to fetch it.
-    
     if (p.user) return    
 
     // Set the current instance to the instance defined in the profile.
@@ -163,6 +163,7 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
             instance: inst,
             jwt: jwt,
             username: user!.user.local_user_view.person.name,
+            avatar: user!.user.local_user_view.person.avatar,
             favorites: [],
             groups: []
 
