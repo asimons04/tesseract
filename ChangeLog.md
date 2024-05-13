@@ -7,7 +7,7 @@ All major/minor changes between releases will be documented here.
 ### Goals 
 
 #### Drop Support for 0.18.x
-- [ ] Remove all `auth` fields from API call POST bodies
+- [X] Remove all `auth` fields from API call POST bodies
 - [ ] Remove all the date checks that look for and append 'Z'
 - [ ] Remove score from user pages (currently conditional upon presence of value)
 - [X] Update `lemmy-js-client` 
@@ -17,7 +17,7 @@ All major/minor changes between releases will be documented here.
 - [ ] Remove custom functions for `blockInstance` and `hideCommunity` and use the client-native ones
 - [ ] Remove custom shim to conditionally add/remove `Scaled` sort option
 - [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
-- [ ] Add `ModeratorView` to listing types if `modOfAny()`
+- [X] Add `ModeratorView` to listing types if `modOfAny()`
 
 
 
@@ -45,13 +45,17 @@ All major/minor changes between releases will be documented here.
 
 
 #### Feeds
-- [ ] Add "Moderator View" listing type option
+- [X] Add "Moderator View" listing type option
 - [ ] Add `user_is_moderator` flag to post meta header in feed
 
 ### Posts / Comments
 - [ ] Add `listPostLikes` and `listCommentLikes` options to post and comment action menus for admins
 - [ ] Do not show (or disable) subscribe/unsubscribe button in Post Meta on post preview
 
+
+### Search
+- [X] Add permalink share button to search with currently-selected query and params
+i don'
 
 - Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 

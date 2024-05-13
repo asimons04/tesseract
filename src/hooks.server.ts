@@ -32,7 +32,7 @@ const routes = [
 ]
 
 // Svelte Handler
-export async function handle({event, resolve }) {
+export async function handle({event, resolve }: {event:any, resolve:any}) {
     
     // Send the defined server-side routes to their handlers 
     const routed =  await router(event, resolve, routes)

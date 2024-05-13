@@ -1,5 +1,5 @@
 // annoying hack to fix lemmy's CORS
-export async function proxy_pictrs_upload(event) {
+export async function proxy_pictrs_upload(event:any) {
     const req = event.req;
     const res = event.res;
     const url = buildUrl(req.url)

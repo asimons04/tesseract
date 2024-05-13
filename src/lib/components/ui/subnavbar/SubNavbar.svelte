@@ -1,19 +1,21 @@
 <script lang="ts">
     import type { PostView, SortType } from 'lemmy-js-client'
 
-    import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
+    import { amMod, amModOfAny, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
     import { arrayRange, searchParam } from '$lib/util.js'
     import { createEventDispatcher } from 'svelte'
-    import { getSessionStorage, setSessionStorage } from '$lib/session'
+    import { setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
-    import { site } from '$lib/lemmy'
+    
     import { fixLemmyEncodings, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    
     import { 
         sortOptions as defaultSortOptions, 
         sortOptionNames as defaultSortOptionNames
     } from '$lib/lemmy'
+    
     import { userSettings } from '$lib/settings'
     
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
@@ -63,7 +65,8 @@
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
     export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All']
-    export let listingTypeOptionNames:string[]  = listingTypeOptions
+    export let listingTypeOptionNames:string[]  = [...listingTypeOptions]
+
     export let listingTypeOnSelect              = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
     export let selectedListingType:string       = ''
     export let listingTypeTitle:string          = 'Listing Type'
@@ -89,6 +92,16 @@
 
     let addCommunityGroup:boolean               = false
     let editPostModal:boolean                   = false
+
+    // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
+    $:  if ($profile?.user && amModOfAny($profile.user)) {
+            if (!listingTypeOptions.includes('ModeratorView')) listingTypeOptions.push('ModeratorView')
+            if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Moderator View")
+        }
+        else {
+            if (listingTypeOptions.includes('ModeratorView')) listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
+            if (listingTypeOptionNames.includes('ModeratorView')) listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Moderator View'), 1)
+        }
 
     //const dispatcher = createEventDispatcher();
     const dispatcher = createEventDispatcher

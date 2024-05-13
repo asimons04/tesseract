@@ -1,13 +1,16 @@
-import { profile } from '$lib/auth.js'
+import type {
+    GetCommunityResponse,
+    GetPersonDetailsResponse,
+    SearchType,
+    SortType,
+} from 'lemmy-js-client'
+  
+import { get } from 'svelte/store'
 import { getClient, getInstance } from '$lib/lemmy.js'
 import { getItemPublished } from '$lib/lemmy/item.js'
-import type {
-  GetCommunityResponse,
-  GetPersonDetailsResponse,
-  SearchType,
-  SortType,
-} from 'lemmy-js-client'
-import { get } from 'svelte/store'
+import { profile } from '$lib/auth.js'
+
+
 interface LoadParams {
     url: URL
 }
@@ -24,7 +27,7 @@ export async function load({ url }: LoadParams) {
     const type      = url.searchParams.get('type') ?? 'All'
     const person    = Number(url.searchParams.get('person_id'));
     const limit     = Number(url.searchParams.get('limit')) || 50;
-    const query     = url.searchParams.get('q') || (community || person) ? ' ' : undefined
+    const query     = url.searchParams.get('q') ?? ((community || person) ? ' ' : undefined)
 
     const filters: Filters = {
         community: undefined,
