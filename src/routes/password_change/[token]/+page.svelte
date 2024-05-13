@@ -38,7 +38,7 @@
         }
         
         try {
-            const res = await getClient(instance, fetch).passwordChangeAfterReset({
+            const res = await getClient(instance).passwordChangeAfterReset({
                 ...formData
             })
            

@@ -13,10 +13,6 @@ export async function load(req: any) {
     if (req.url.pathname.includes('/settings')) return
 
     const page_cursor = req.url.searchParams.get('page_cursor')
-    const page = page_cursor 
-        ? undefined
-        : Number(req.url.searchParams.get('page') || 1) || 1
-
     const sort: SortType = (req.url.searchParams.get('sort') as SortType) ?? get(userSettings).defaultSort.sort ?? 'New'
     const community_name = req.url.searchParams.get('community_name') ?? req.params.name
     
@@ -24,11 +20,8 @@ export async function load(req: any) {
         let posts = await getClient().getPosts({
             limit: get(userSettings)?.uiState.postsPerPage || 10,
             community_name: community_name,
-            page: page,
-            //@ts-ignore
             page_cursor: page_cursor,
             sort: sort,
-            auth: get(profile)?.jwt,
         });
         
         // Apply MBFC data object to post
@@ -39,12 +32,10 @@ export async function load(req: any) {
 
         return {
             sort: sort,
-            page: page,
             posts: posts,
             community_name: community_name,
             community: req.passedCommunity ?? await getClient().getCommunity({
                 name: req.params.name,
-                auth: get(profile)?.jwt,
             }),
         }
     }
@@ -70,16 +61,13 @@ export async function load(req: any) {
         })
 
         await getClient().resolveObject({
-            auth: get(profile)!.jwt!,
             q: '!' + req.params.name,
         })
         
         let posts = await getClient().getPosts({
             limit: get(userSettings)?.uiState.postsPerPage || 10,
             community_name: req.params.name,
-            page: page,
             sort: sort,
-            auth: get(profile)?.jwt,
         })
         
         // Filter the posts for keywords
@@ -91,12 +79,10 @@ export async function load(req: any) {
 
         return {
             sort: sort,
-            page: page,
             posts: posts,
             community_name: community_name,
             community: await getClient().getCommunity({
                 name: req.params.name,
-                auth: get(profile)?.jwt,
             }),
         }
     }

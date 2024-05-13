@@ -48,7 +48,6 @@ export async function load({ url }: LoadParams) {
     if (query) {
         const results = await getClient().search({
             q: query ?? ' ',
-            auth: get(profile)?.jwt,
             community_id: community ?? undefined,
             creator_id: person ?? undefined,
             limit: limit,
@@ -100,7 +99,6 @@ export async function load({ url }: LoadParams) {
             streamed: {
                 object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@') || query.startsWith('https://') ))
                 ? getClient().resolveObject({
-                    auth: get(profile)!.jwt!,
                     q: query,
                 })
                 : undefined,

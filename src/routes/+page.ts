@@ -16,11 +16,6 @@ interface LoadParams {
 
 export async function load({ url, passedSite }: LoadParams) {
     const page_cursor = url.searchParams.get('page_cursor')
-    
-    const page = page_cursor 
-        ? undefined
-        : Number(url.searchParams.get('page') || 1) || 1
-    
     const sort: SortType = (url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     const listingType: ListingType = (url.searchParams.get('type') as ListingType) || get(userSettings).defaultSort.feed
     
@@ -31,12 +26,9 @@ export async function load({ url, passedSite }: LoadParams) {
                 limit: get(userSettings)?.uiState.postsPerPage || 10,
                 sort: sort,
                 type_: listingType,
-                page: page,
-                //@ts-ignore
                 page_cursor: page_cursor,
-                auth: get(profile)?.jwt,
             }),
-            passedSite ?? getClient().getSite({})
+            passedSite ?? getClient().getSite()
         ])
         
         if (!passedSite) site.set(siteData)
@@ -60,7 +52,6 @@ export async function load({ url, passedSite }: LoadParams) {
         return {
             sort: sort,
             listingType: listingType,
-            page: page,
             posts: posts,
             site: siteData,
             type: listingType

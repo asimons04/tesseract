@@ -111,7 +111,6 @@
         try {
             if (editingPost) {
                 const post = await getClient().editPost({
-                    auth: $profile.jwt,
                     name: data.name,
                     body: data.body,
                     url: data.url || undefined,
@@ -127,7 +126,6 @@
                 let image = data.image ? await uploadImage(data.image[0]) : undefined
                 data.url = image || data.url || undefined
                 const post = await getClient().createPost({
-                    auth: $profile.jwt,
                     community_id: data.community!.id,
                     name: data.name,
                     body: data.body,

@@ -5,7 +5,7 @@ import { LINKED_INSTANCE_URL } from "$lib/instance.js";
 export async function load(req: any) {
     try {
         return {
-            site: await getClient(LINKED_INSTANCE_URL ?? req.params.instance, req.fetch).getSite({}),
+            site: await getClient(LINKED_INSTANCE_URL ?? req.params.instance).getSite(),
         }
     } catch (err) {
         throw error(500, {

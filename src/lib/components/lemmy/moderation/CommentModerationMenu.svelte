@@ -39,8 +39,7 @@
         if (!$profile?.jwt) return
 
         try {
-            await getClient(undefined, fetch).distinguishComment({
-                auth: $profile?.jwt,
+            await getClient(undefined).distinguishComment({
                 comment_id: comment.comment.id,
                 distinguished: !distinguished
             });

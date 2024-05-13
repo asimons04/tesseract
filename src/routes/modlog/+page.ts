@@ -265,7 +265,6 @@ export async function load({ url }: LoadParams) {
     let type: ModlogActionType = (url.searchParams.get('type') as ModlogActionType) || 'All'
 
     const results = await getClient().getModlog({
-        auth: get(profile)?.jwt,
         community_id: community,
         limit: 20,
         type_: type,

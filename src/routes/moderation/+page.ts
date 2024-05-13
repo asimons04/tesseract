@@ -24,7 +24,6 @@ export async function load({ url, fetch }) {
     const client = getClient()
 
     const params = {
-        auth: jwt,
         limit: 20,
         page: page,
         unresolved_only: type == 'unread',
@@ -58,12 +57,3 @@ export async function load({ url, fetch }) {
         reports: reports,
     }
 }
-
-// Removing PM report checks.  Don't feel like detecting admin state on this release. Especially when the PM reporting feature hasn't been plugged in yet.
-/*
-client.listPrivateMessageReports({
-    ...params,
-}),
-
-, ...private_messages.private_message_reports
-*/

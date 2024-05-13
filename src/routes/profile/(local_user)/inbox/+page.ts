@@ -22,7 +22,6 @@ export async function load({ url }:LoadParams) {
     const params = {
         limit: 50,
         page: page,
-        auth: auth.jwt,
         unread_only: unreadOnly,
     }
 

@@ -27,6 +27,9 @@ All major/minor changes between releases will be documented here.
 #### Admin Panel
 - [ ] Add ability to define and edit custom emojis
 
+#### Community Settings Panel
+- [ ] Add report panel for reports in that community
+
 #### Instances List
 - [ ] Add `federation_state` data to instance list objects in `/instances`
 - [ ] Add button to fetch and display federation state for the current instance from the selected instance

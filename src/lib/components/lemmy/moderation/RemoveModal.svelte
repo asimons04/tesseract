@@ -65,14 +65,12 @@
         try {
             if (purge) {
                 if (isCommentView(item)) {
-                    await getClient(undefined, fetch).purgeComment({
-                        auth: $profile.jwt,
+                    await getClient(undefined).purgeComment({
                         comment_id: item.comment.id,
                         reason: reason,
                     })
                 } else {
-                    await getClient(undefined, fetch).purgePost({
-                        auth: $profile.jwt,
+                    await getClient(undefined).purgePost({
                         post_id: item.post.id,
                         reason: reason,
                     })
@@ -102,7 +100,6 @@
                 if (privateMessage) {
                     await getClient()
                         .createPrivateMessage({
-                            auth: $profile.jwt,
                             content: replyReason,
                             recipient_id: isCommentView(item)
                             ? item.comment.creator_id
@@ -116,7 +113,6 @@
                         })
                 } else {
                     await getClient().createComment({
-                        auth: $profile.jwt,
                         content: replyReason,
                         post_id: item.post.id,
                         parent_id: isCommentView(item) ? item.comment.id : undefined,
@@ -132,7 +128,6 @@
 
             if (isCommentView(item)) {
                 await getClient().removeComment({
-                    auth: $profile.jwt,
                     comment_id: item.comment.id,
                     removed: !removed,
                     reason: reason || undefined,
@@ -141,7 +136,6 @@
             } 
             else if (isPostView(item)) {
                 await getClient().removePost({
-                    auth: $profile.jwt,
                     post_id: item.post.id,
                     removed: !removed,
                     reason: reason || undefined,

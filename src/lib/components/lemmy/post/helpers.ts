@@ -1,4 +1,4 @@
-import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType, CommentReplyView, PersonMentionView } from 'lemmy-js-client'
+import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType, CommentReplyView, PersonMentionView, LocalUserView } from 'lemmy-js-client'
 import type { MBFCReport } from '$lib/MBFC/types'
 
 export interface PostView extends LemmyPostView {
@@ -40,9 +40,9 @@ export type PostType =
 // Check whether current user can make changes to posts/comments
 // Note:  These appear to be no longer referenced anywhere.  Marking as deprecated.
 export const isMutable = (post: PostView, me: PersonView) =>
-    (me.person.admin && post.post.local) || me.person.id == post.creator.id
+    (me.is_admin && post.post.local) || me.person.id == post.creator.id
 
-export const isCommentMutable = (comment: CommentView, me: PersonView) =>
+export const isCommentMutable = (comment: CommentView, me: PersonView|LocalUserView) =>
     me.person.id == comment.creator.id
 
 export function isPostView(item: PostView | CommentReplyView | PersonMentionView): item is PostView {
@@ -718,9 +718,9 @@ export const sortPosts = function(posts:PostView[], direction:SortType): PostVie
 
     if (direction == 'New')          posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
     if (direction == 'Old')          posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-    if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
-    if (direction == 'Active')       posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
-    if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+    //if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+    //if (direction == 'Active')       posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+    //if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
     if (direction == 'MostComments') posts.sort((a, b) => b.counts.comments - a.counts.comments)
     if (direction.startsWith('Top')) posts.sort((a, b) => b.counts.score - a.counts.score)
     

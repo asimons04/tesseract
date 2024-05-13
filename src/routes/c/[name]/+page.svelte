@@ -85,8 +85,7 @@
         req.url.searchParams.set('sort', data.sort ?? 'New')
         
         //@ts-ignore since using 0.18.x client wihout next_page in type def
-        if (data.posts.next_page) req.url.searchParams.set('page_cursor', data.posts.next_page)
-        else if (data.page) req.url.searchParams.set('page', (++data.page).toString())
+        req.url.searchParams.set('page_cursor', data.posts.next_page)
         
         load(req).then((nextBatch) => {
             if (!nextBatch || !data?.posts) return

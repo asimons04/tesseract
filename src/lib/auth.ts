@@ -188,9 +188,9 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
 
 async function userFromJwt(jwt: string, instance: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
     try {
-        const site = await getClient(instance, undefined, jwt).getSite({ auth: jwt })
-        const myUser = site.my_user
-    
+        const getSite = await getClient(instance, jwt).getSite()
+        const myUser = getSite.my_user
+        
         if (!myUser) return undefined
     
         return {
@@ -200,7 +200,7 @@ async function userFromJwt(jwt: string, instance: string): Promise<{ user: Perso
                 registration_applications:0,
                 ...myUser,
             },
-            site: site,
+            site: getSite,
         }
     } 
     catch (err) {
@@ -305,17 +305,13 @@ export function moveProfile(id: number, up: boolean) {
     }
 }
 
-const getNotificationCount = async (jwt: string, mod: boolean, admin:boolean=false) => {
-    const unreads = await getClient().getUnreadCount({
-        auth: jwt,
-    })
+const getNotificationCount = async (mod: boolean, admin:boolean=false) => {
+    const unreads = await getClient().getUnreadCount()
 
     let reports: number = 0
 
     if (mod) {
-        const reportRes = await getClient().getReportCount({
-            auth: jwt,
-    })
+        const reportRes = await getClient().getReportCount({})
 
     reports =
         reportRes.comment_reports +
@@ -323,14 +319,12 @@ const getNotificationCount = async (jwt: string, mod: boolean, admin:boolean=fal
         (reportRes.private_message_reports ?? 0)
     }
 
-    const applications = admin
-        ? (await getClient().listRegistrationApplications(
-            {
-                unread_only: true,
-                auth: jwt
-            }
+    let applications = 0
+    if (admin) {
+        applications = (await getClient().listRegistrationApplications(
+            { unread_only: true }
         ))?.registration_applications?.length ?? 0
-        : 0
+    }
 
     return {
         unreads: unreads.mentions + unreads.private_messages + unreads.replies,
@@ -346,7 +340,7 @@ setInterval(async () => {
     const { user, jwt } = get(profile)!
     if (!jwt || !user) return
 
-    const notifs = await getNotificationCount(jwt, amModOfAny(user) ?? false, isAdmin(user) ?? false)
+    const notifs = await getNotificationCount(amModOfAny(user) ?? false, isAdmin(user) ?? false)
 
     user.unreads = notifs.unreads
     user.reports = notifs.reports

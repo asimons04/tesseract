@@ -52,7 +52,6 @@
 
         try {
             await getClient().lockPost({
-                auth: $profile.jwt,
                 locked: lock,
                 post_id: item.post.id,
             })
@@ -81,7 +80,6 @@
         try {
             await getClient().featurePost({
                 feature_type: toInstance ? 'Local' : 'Community',
-                auth: $profile.jwt,
                 featured: pinned,
                 post_id: item.post.id,
             })

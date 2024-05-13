@@ -9,7 +9,7 @@ export async function load(req: any) {
     let instance = LINKED_INSTANCE_URL ?? get(Instance);
 
     try {
-        const site = await getClient(instance, req.fetch).getSite({});
+        const site = await getClient(instance).getSite();
         return site;
 
     } catch (err) {

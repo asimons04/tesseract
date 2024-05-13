@@ -24,7 +24,6 @@ export async function load({ params, url }: LoadParams) {
         page: page,
         username: params.name ?? get(profile)?.username,
         sort: sort,
-        auth: get(profile)?.jwt,
     })
 
     

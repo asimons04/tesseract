@@ -1,8 +1,6 @@
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
-import { instance } from '$lib/instance'
-import { profile } from '$lib/auth.js'
 import { userSettings } from '$lib/settings.js'
 
 
@@ -12,14 +10,9 @@ interface LoadParams {
     fetch?: any
 }
 export async function load({ params, url }: LoadParams) {
-    const $instance = get(instance)
-
     try {
         const post = await getClient(params.instance.toLowerCase()).getPost({
             id: Number(params.id),
-            auth: params.instance == $instance 
-                ? get(profile)?.jwt 
-                : undefined
         })
 
         const thread = url.searchParams.get('thread')
@@ -46,10 +39,6 @@ export async function load({ params, url }: LoadParams) {
             max_depth: max_depth,
             saved_only: false,
             sort: sort,
-            auth: params.instance == $instance 
-                ? get(profile)?.jwt 
-                : undefined
-            ,
             parent_id: parentId,
         }
 
@@ -58,7 +47,7 @@ export async function load({ params, url }: LoadParams) {
             post: post,
             commentSort: sort,
             streamed: {
-                comments: getClient(params.instance, fetch).getComments(commentParams),
+                comments: getClient(params.instance).getComments(commentParams),
             },
         }
     }

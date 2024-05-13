@@ -297,7 +297,6 @@
                 page: 1,
                 person_id: personID,
                 sort: 'New',
-                auth: $profile?.jwt,
                 community_id: communityID
             })
             const posts = [...user.posts]
@@ -339,7 +338,6 @@
                 // Delete Private Message
                 if (actions.deletePM) {
                     await client.deletePrivateMessage({
-                        auth: $profile.jwt,
                         deleted: true,
                         private_message_id: report.private_message_view!.private_message.id
                     })
@@ -348,7 +346,6 @@
                 // Restore Private Message
                 if (actions.restorePM) {
                     await client.deletePrivateMessage({
-                        auth: $profile.jwt,
                         deleted: false,
                         private_message_id: report.private_message_view!.private_message.id
                     })
@@ -362,7 +359,6 @@
                 // Lock post
                 if (actions.lock) {
                     await client.lockPost({
-                        auth: $profile.jwt,
                         locked: true,
                         post_id: report.post_view!.post.id,
                     })
@@ -372,7 +368,6 @@
                 // Unlock post
                 if (actions.unlock) {
                     await client.lockPost({
-                        auth: $profile.jwt,
                         locked: false,
                         post_id: report.post_view!.post.id,
                     })
@@ -382,7 +377,6 @@
                 // Remove Post
                 if (actions.remove) {
                     await client.removePost({
-                        auth: $profile.jwt,
                         post_id: report.post_view!.post.id,
                         removed: true,
                         reason: actions.removeReason || undefined,
@@ -393,7 +387,6 @@
                 // Restore Post
                 if (actions.restore) {
                     await client.removePost({
-                        auth: $profile.jwt,
                         post_id: report.post_view!.post.id,
                         removed: false,
                         reason: actions.removeReason || undefined,
@@ -410,7 +403,6 @@
                 // Remove Comment
                 if (actions.remove) {
                     await client.removeComment({
-                        auth: $profile.jwt,
                         comment_id: report.comment_view!.comment.id,
                         removed: true,
                         reason: actions.removeReason || undefined,
@@ -421,7 +413,6 @@
                 // Restore Comment
                 if (actions.restore) {
                     await client.removeComment({
-                        auth: $profile.jwt,
                         comment_id: report.comment_view!.comment.id,
                         removed: false,
                         reason: actions.removeReason || undefined,
@@ -437,7 +428,6 @@
                 if (actions.banCommunity) {
                     
                     await client.banFromCommunity({
-                        auth: $profile.jwt,
                         ban: true,
                         community_id: report.community.id,
                         person_id: report.reportee.id,
@@ -452,7 +442,6 @@
                 if (actions.unbanCommunity) {
                     
                     await client.banFromCommunity({
-                        auth: $profile.jwt,
                         ban: false,
                         community_id: report.community.id,
                         person_id: report.reportee.id,
@@ -465,7 +454,6 @@
             // Ban Instance
             if (actions.banInstance) {
                 await client.banPerson({
-                    auth: $profile.jwt,
                     ban: true,
                     person_id: report.reportee.id,
                     reason: actions.banInstanceReason || undefined,
@@ -478,7 +466,6 @@
             // Unban Instance
             if (actions.unbanInstance) {
                 await client.banPerson({
-                    auth: $profile.jwt,
                     ban: false,
                     person_id: report.reportee.id,
                     reason: actions.banInstanceReason || undefined,
@@ -507,7 +494,6 @@
                 }
 
                 await client.createPrivateMessage({
-                    auth: $profile.jwt,
                     content: template,
                     recipient_id: report.reportee.id,
                 })
@@ -531,7 +517,6 @@
                     : '\n\n'
 
                 await client.createPrivateMessage({
-                    auth: $profile.jwt,
                     content: template,
                     recipient_id: report.reportee.id,
                 })
@@ -555,7 +540,6 @@
                     : '\n\n'
 
                 await client.createPrivateMessage({
-                    auth: $profile.jwt,
                     content: template,
                     recipient_id: report.reportee.id,
                 })
@@ -564,7 +548,6 @@
             // Send follow-up DM to reporter if selected
             if (actions.replyReporter) {
                 await client.createPrivateMessage({
-                    auth: $profile.jwt,
                     content: actions.replyReporterBody,
                     recipient_id: report.reporter.id
                 })
@@ -576,7 +559,6 @@
         // Resolve a Post Report
         if (report.type == 'post') {
             await client.resolvePostReport({
-                auth: $profile.jwt,
                 report_id: report.id,
                 resolved: !report.resolved,
             })
@@ -586,7 +568,6 @@
         // Resolve a Comment Report
         if (report.type == 'comment') {
             await client.resolveCommentReport({
-                auth: $profile.jwt,
                 report_id: report.id,
                 resolved: !report.resolved,
             })
@@ -595,7 +576,6 @@
         // Resolve a private message report
         if (report.type == 'private_message') {
             await client.resolvePrivateMessageReport({
-                auth: $profile.jwt,
                 report_id: report.id,
                 resolved: !report.resolved,
             })
@@ -603,9 +583,7 @@
             
             
         // Update reports object store
-        const reports = await getClient().getReportCount({
-            auth: $profile?.jwt,
-        })
+        const reports = await getClient().getReportCount({})
         $profile.user.reports = reports.comment_reports + reports.post_reports + (reports.private_message_reports ?? 0)
 
         // Stop the spinner and reset the actions

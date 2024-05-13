@@ -16,13 +16,16 @@ import { getClient } from '$lib/lemmy.js'
 import { profile } from '$lib/auth.js'
 import { userSettings } from '$lib/settings'
 
+interface LoadParams {
+    url: URL
+}
 
 function getSavedItemPublished(item: PostView | CommentView) {
     if ('comment' in item) return item.comment.published
     else return item.post.published
 }
 
-export async function load({ url, fetch }) {
+export async function load({ url }: LoadParams) {
     if (!get(profile)) return { posts: [] }
 
     const page = Number(url.searchParams.get('page')) || 1
@@ -32,7 +35,6 @@ export async function load({ url, fetch }) {
     const client = getClient()
 
     const params = {
-        auth: get(profile)!.jwt!,
         saved_only: true,
         limit: get(userSettings)?.uiState.postsPerPage || 20,
         page: page,

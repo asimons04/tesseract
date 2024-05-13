@@ -4,7 +4,7 @@
 
     export let label: string | number | undefined = ''
     export let type: 'text' | 'password' | 'email' | 'number' | 'search' | null | undefined = 'text'
-    export let value: string = ''
+    export let value: string | number = ''
     export let required = false
     export let placeholder:string = ''
     export let focus:boolean = false;
@@ -25,7 +25,7 @@
     const dispatcher = createEventDispatcher()
 
     let className =`
-        ${value.length != 0 ? 'invalid:border-red-400' : ''}
+        ${!value ? 'invalid:border-red-400' : ''}
         form-text text-sm rounded-md shadow-sm px-3 h-8 w-full
         bg-slate-200 text-zinc-900
         dark:bg-zinc-800 dark:text-slate-200

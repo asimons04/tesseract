@@ -78,10 +78,7 @@
         url.searchParams.set('limit', $userSettings?.uiState.postsPerPage.toString() || '10')
         url.searchParams.set('sort', data.sort)
         url.searchParams.set('listingType', data.type)
-                
-        //@ts-ignore
         if (data.posts.next_page) url.searchParams.set('page_cursor', data.posts.next_page)
-        else if (data.page) url.searchParams.set('page', (++data.page).toString())
 
         load({url: url, passedSite: data.site}).then((nextBatch) => {
             if (nextBatch.posts.posts.length < 1) infiniteScroll.exhausted = true

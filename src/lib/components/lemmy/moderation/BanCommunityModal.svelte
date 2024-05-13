@@ -69,7 +69,6 @@
 
             
             await getClient().banFromCommunity({
-                auth: $profile.jwt,
                 ban: !banned,
                 community_id: community.id,
                 person_id: user.id,

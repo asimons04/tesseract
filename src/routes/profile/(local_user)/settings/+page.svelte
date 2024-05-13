@@ -28,7 +28,6 @@
         Trash
 
     } from 'svelte-hero-icons'
-    
 
     export let data
 
@@ -50,25 +49,22 @@
             let banner = bannerImage ? await uploadImage(bannerImage[0]) : undefined
 
             const res = await getClient().saveUserSettings({
-                auth: $profile.jwt,
                 ...formData,
                 avatar: pfp,
                 banner: banner
             })
-
-            toast({
-                content: 'Saved your user settings.',
-                type: 'success',
-                title: "Success"
-            })
-    
-            if (res.verify_email_sent) {
+            
+            if (res.success) {
                 toast({
-                    content: 'A verification email was sent.',
-                    type: 'info',
-                    title: "Notice"
+                    content: 'Saved your user settings.',
+                    type: 'success',
+                    title: "Success"
                 })
+            }   
+            else {
+                throw new Error('Failed to save user settings')
             }
+    
         } catch (err) {
             toast({
                 content: err as any,

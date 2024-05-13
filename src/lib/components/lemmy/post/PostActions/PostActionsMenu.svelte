@@ -125,7 +125,7 @@
         <!--- Save/Unsave Post --->
         <MenuButton title="{post.saved ? 'Unsave' : 'Save'} Post" color="warning"
             on:click={async () => {
-                if ($profile?.jwt) post.saved = await save(post, !post.saved, $profile.jwt)
+                if ($profile?.jwt) post.saved = await save(post, !post.saved)
             }}
         >
             <Icon src={post.saved ? BookmarkSlash : Bookmark} width={16} mini />
@@ -173,7 +173,6 @@
                         post.post.deleted = await deleteItem(
                             post,
                             !post.post.deleted,
-                            $profile.jwt
                         )
                         post=post
                     }

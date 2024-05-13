@@ -36,21 +36,18 @@
         try {
             if (isPrivateMessage(item)) {
                 await getClient().createPrivateMessageReport({
-                    auth: $profile.jwt,
                     private_message_id: item.private_message.id,
                     reason: reason,
                 })  
             }
             else if (isComment(item)) {
                 await getClient().createCommentReport({
-                    auth: $profile.jwt,
                     comment_id: item.comment.id,
                     reason: reason,
                 })
             } 
             else if (isPost(item)) {
                 await getClient().createPostReport({
-                    auth: $profile.jwt,
                     post_id: item.post.id,
                     reason: reason,
                 })

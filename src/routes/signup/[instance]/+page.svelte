@@ -61,7 +61,7 @@
     submitting: boolean = false,
     honeypot: string | undefined = undefined
 
-    const getCaptcha = async () => (captcha = await getClient(instance, fetch).getCaptcha())
+    const getCaptcha = async () => (captcha = await getClient(instance).getCaptcha())
 
     $: captchaAudio = captcha?.ok?.wav
         ? `data:audio/wav;base64,${captcha.ok.wav}`
@@ -71,7 +71,7 @@
         submitting = true
 
         try {
-            const res = await getClient(instance, fetch).register({
+            const res = await getClient(instance).register({
                 username: username,
                 email: email,
                 password: password,

@@ -66,7 +66,6 @@
 
             if (community) {
                 await getClient().banFromCommunity({
-                    auth: $profile.jwt,
                     ban: !banned,
                     community_id: community.id,
                     person_id: item.id,
@@ -76,7 +75,6 @@
                 })
             } else {
                 await getClient().banPerson({
-                    auth: $profile.jwt,
                     ban: !banned,
                     person_id: item.id,
                     reason: reason || undefined,

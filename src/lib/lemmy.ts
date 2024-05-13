@@ -4,36 +4,35 @@ import { profile, profileData } from '$lib/auth.js'
 import { error } from '@sveltejs/kit'
 import { LINKED_INSTANCE_URL, instance } from '$lib/instance.js'
 
-interface CustomFetchFunction {
-    ( input: RequestInfo | URL, init?: RequestInit | undefined):  Promise<Response>
-}
-
 export interface BlockInstanceResponse {
     blocked: boolean
 }
 
-
-async function customFetch(func: CustomFetchFunction, input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
-    const res = await func(input, init)
+// Override Lemmy's stupid cache on the goddamned only endpoint that will return the user profile
+async function customFetch(input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
+    if (init) init.cache = 'no-store'
+    else init = { cache: 'no-store'}
+    
+    const res = await fetch(input, init)
     if (!res.ok) throw error(res.status, await res.text())
     return res
 }
 
-export function getClient(instanceURL?: string, func?: CustomFetchFunction ,jwt?:string): LemmyHttp {
+
+export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
     if (!instanceURL)   instanceURL = get(instance)
     
-    try {
-        if (!jwt) jwt = get(profile)?.jwt 
-    } catch {
-        jwt = ''
+    try { if (!jwt && instanceURL == get(instance)) jwt = get(profile)?.jwt }
+    catch { jwt = '' }
+
+    const headers = {
+        Authorization: jwt ? `Bearer ${jwt}` : ''
     }
 
     return new LemmyHttp(`https://${instanceURL}`, 
         {
-            fetchFunction: func
-                ? (input: RequestInfo | URL, init: RequestInit | undefined) => customFetch(func, input, init)
-                : undefined,
-            headers: jwt ? { 'Authorization': `Bearer ${jwt}`} : undefined
+            fetchFunction: (input: RequestInfo | URL, init: RequestInit | undefined) => customFetch(input, init),
+            headers: headers
         }
     )
 }
@@ -45,7 +44,7 @@ export const site = writable<GetSiteResponse | undefined>(undefined)
 export async function validateInstance(instance: string, setSite:boolean=false): Promise<boolean> {
     if (instance == '') return false
     try {
-        let siteData = await getClient(instance).getSite({})
+        let siteData = await getClient(instance).getSite()
         // Optionally 
         if (setSite) {
             site.set(siteData);
@@ -165,6 +164,7 @@ export async function uploadImage(image: File | null | undefined): Promise<strin
 
 export let sortOptions:string[] = [
     'Active',
+    'Scaled',
     'Hot',
     'New',
     'Old',
@@ -184,6 +184,7 @@ export let sortOptions:string[] = [
 
 export let sortOptionNames:string[] = [
     'Active',
+    'Scaled',
     'Hot',
     'New',
     'Old',
@@ -202,9 +203,11 @@ export let sortOptionNames:string[] = [
 ];
 
 // Set the current site
+/*
 getClient(LINKED_INSTANCE_URL ? LINKED_INSTANCE_URL : getInstance())
-    .getSite({})
+    .getSite()
     .then((s) => {
             site.set(s)
         }
     )
+*/

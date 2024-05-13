@@ -9,7 +9,7 @@
     export let options: T[]
     export let disabled: boolean[] = []
     export let optionNames: string[] = []
-    export let selected: T
+    export let selected: T 
     export let headless: boolean = false
     export let items: number = 4
     export let fullWidth: boolean = false 

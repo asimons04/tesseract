@@ -40,7 +40,6 @@
         
         try {
             return (await getClient().likePost({
-                    auth: $profile.jwt,
                     post_id: post.post.id,
                     score: vote,
                 })

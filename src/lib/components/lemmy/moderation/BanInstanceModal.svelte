@@ -66,7 +66,6 @@
             }
 
             await getClient().banPerson({
-                auth: $profile.jwt,
                 ban: !banned,
                 person_id: user.id,
                 reason: reason || undefined,
