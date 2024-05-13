@@ -6,6 +6,7 @@
     import ProfileAvatar from '$lib/lemmy/ProfileAvatar.svelte'
     import {Icon, Trash} from 'svelte-hero-icons'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import Avatar from '../Avatar.svelte';
 
     export let prof: Profile
     export let index: number
@@ -41,8 +42,13 @@
     }
     class="w-full {$profile?.id == prof.id ? 'font-bold' : ''}"
 >
-    
-    <ProfileAvatar profile={prof} {index} selected={$profile?.id == prof.id} slot="icon" />
+    {#if !switching} 
+        {#if prof.avatar}
+            <Avatar url={prof.avatar} ring={$profile?.id == prof.id} width={20} slot="icon"/>
+        {:else}
+            <ProfileAvatar bind:profile={prof} {index} selected={$profile?.id == prof.id} size={20} slot="icon" />
+        {/if}
+    {/if}
     
     <span class="flex flex-col gap-0">
         {prof.username ?? prof.user?.local_user_view.person.name}

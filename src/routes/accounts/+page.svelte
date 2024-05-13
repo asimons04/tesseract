@@ -132,7 +132,7 @@
                             {#if profile.avatar}
                                 <Avatar url={profile.avatar} ring={$currentProfile?.id == profile.id} width={36} />
                             {:else}
-                                <ProfileAvatar bind:profile {index} selected={$currentProfile?.id == profile.id} size={36} />
+                                <ProfileAvatar bind:profile {index} selected={$currentProfile?.id == profile.id} size={36} canSetColor={true}/>
                             {/if}
                             
 
