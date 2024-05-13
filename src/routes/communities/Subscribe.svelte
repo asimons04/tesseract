@@ -17,7 +17,6 @@
 
         try {
             const resolve = await getClient().resolveObject({
-                auth: $profile.jwt,
                 q: community.community.actor_id
             })
 
@@ -34,7 +33,6 @@
 
       
             const res = await getClient().followCommunity({
-                auth: $profile.jwt,
                 community_id: resolvedCommunity.community.id,
                 follow: community.subscribed == 'NotSubscribed',
             })

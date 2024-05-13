@@ -16,7 +16,7 @@ export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
     // Use current instance is not otherwise defiend
     if (!instanceURL)   instanceURL = get(instance)
 
-    // Add the authorization header if JWT is supplied or if present in profile
+    // Add the authorization header if JWT is supplied or if present in profile and instance is the same as the one the profile belongs to
     jwt = jwt ?? get(profile)?.jwt
     const headers = {} as { [key: string]: string; }
     if (jwt && instanceURL == get(instance)) headers['Authorization'] = `Bearer ${jwt}`
