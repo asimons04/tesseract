@@ -40,6 +40,7 @@
     import { page } from '$app/stores'
     import { scrollTo } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy'
+    import { toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
@@ -73,6 +74,7 @@
         ChatBubbleOvalLeftEllipsis,
         Funnel,
         MagnifyingGlass,
+        Share,
         User,
         UserCircle,
         UserGroup,
@@ -86,6 +88,48 @@
 
     export let data
     
+    // Default values for search filter.
+    let default_filter: SearchFilter = {
+        sort: 'New',
+        type: 'All',
+        query: '',
+        page: 1,
+        community: undefined,
+        person: undefined
+    }
+
+    let pageState = {
+        scrollY: 0,
+    }
+    
+    // Infinite scroll object to hold config parms
+    let infiniteScroll = {
+        loading: false,     // Used to toggle loading indicator
+        exhausted: false,   // Sets to true if the API returns 0 posts
+        // Maximum number of posts to keep in the FIFO
+        maxPosts: $userSettings.uiState.maxScrollPosts,      
+        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
+        truncating: false,  // Whether a timeout is active waiting to truncate the overlow
+        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
+        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+    }
+
+    // Current values for search filter
+    let filter = 
+    { 
+        ...default_filter,
+        query: data.query,
+        community: data.filters.community?.community_view.community,
+        person: data.filters.person?.person_view.person,
+        sort: data.sort,
+        page: data.page,
+        type: data.type
+    }
+
+    let searching = false
+    let searchURL: URL|undefined = new URL(window.location.href)
+
+
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
     beforeNavigate(() => {
         infiniteScroll.exhausted = false
@@ -134,7 +178,7 @@
         const origin = new URL(window.location.href).origin
         const path = new URL(window.location.href).pathname
 
-        const searchURL = new URL(origin)
+        searchURL = new URL(origin)
         searchURL.pathname = path
 
         if (filter.person)      searchURL.searchParams.set('person_id', filter.person.id.toString())
@@ -190,6 +234,8 @@
         data.results = []
         data.filters = {}
         
+        searchURL = undefined
+
         pageState.scrollY = 0
         PageSnapshot.clear() 
 
@@ -197,44 +243,7 @@
     }
    
     
-    let default_filter: SearchFilter = {
-        sort: 'New',
-        type: 'All',
-        query: '',
-        page: 1,
-        community: undefined,
-        person: undefined
-    }
 
-    let pageState = {
-        scrollY: 0,
-    }
-    
-    // Infinite scroll object to hold config parms
-    let infiniteScroll = {
-        loading: false,     // Used to toggle loading indicator
-        exhausted: false,   // Sets to true if the API returns 0 posts
-        // Maximum number of posts to keep in the FIFO
-        maxPosts: $userSettings.uiState.maxScrollPosts,      
-        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
-        truncating: false,  // Whether a timeout is active waiting to truncate the overlow
-        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
-    }
-
-
-    let filter = 
-    { 
-        ...default_filter,
-        query: data.query,
-        community: data.filters.community?.community_view.community,
-        person: data.filters.person?.person_view.person,
-        sort: data.sort,
-        page: data.page,
-        type: data.type
-    }
-
-    let searching = false
     
     onMount(() => {
         // If the page data provides filters for community or person, set the local filter objects to those details
@@ -252,6 +261,7 @@
 
 <SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
     sortMenu sortPreventDefault
+    
     sortOptions={['New', 'Old']} 
     sortOptionNames={['New', 'Old']} 
     bind:selectedSortOption={filter.sort} 
@@ -366,9 +376,22 @@
             <Button color="tertiary" size="sm" title="Clear Search" on:click={() => resetSearch() } >
                 <Icon src={XCircle} mini width={iconSize-2}/>
             </Button>
-        </form>
 
-        
+            <!---Share Permalink to this Search--->
+            <Button color="tertiary" size="sm" title="Copy Share Link" disabled={!searchURL} on:click={() => {
+                if (searchURL) {
+                    navigator.share?.( {url: searchURL.toString()} ) ?? navigator.clipboard.writeText(searchURL.toString())
+                    toast({
+                        type: 'success',
+                        content: `Copied search permalink to clipboard!`,
+                        title: 'Copied!'
+                    })
+                }
+                
+            }}>
+                <Icon src={Share} min width={24}/>
+            </Button>
+        </form>
     </span>
 </SubNavbar>
 
@@ -390,6 +413,21 @@
             <!---Reset Search Button--->
             <Button color="tertiary" size="sm" title="Clear Search" on:click={() => resetSearch() }>
                 <Icon src={XCircle} mini width={24}/>
+            </Button>
+
+            <!---Share Permalink to this Search--->
+            <Button color="tertiary" size="sm" title="Copy Share Link" disabled={!searchURL} on:click={() => {
+                if (searchURL) {
+                    navigator.share?.( {url: searchURL.toString()} ) ?? navigator.clipboard.writeText(searchURL.toString())
+                    toast({
+                        type: 'success',
+                        content: `Copied search permalink to clipboard!`,
+                        title: 'Copied!'
+                    })
+                }
+                
+            }}>
+                <Icon src={Share} min width={24}/>
             </Button>
         </form>
     </div>
