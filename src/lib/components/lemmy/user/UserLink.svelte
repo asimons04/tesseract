@@ -19,6 +19,7 @@
     //export let inComment: boolean = false
     export let showInstance: boolean = true
     export let mod:boolean = false
+    export let admin:boolean = false
     export let href:string | undefined = undefined
     export let distinguishAdminsMods:boolean = true
     
@@ -49,7 +50,7 @@
             
             <span class="flex flex-row ml-1 gap-1 items-center">
                 
-                {#if badges && distinguishAdminsMods && user.admin}
+                {#if badges && distinguishAdminsMods && admin}
                     <div class="text-red-500" title="Admin">
                         <ShieldIcon width={12} filled />
                     </div>

@@ -50,6 +50,10 @@
     export let moderates: CommunityModeratorView[]
     export let display = true
 
+    let is_admin = false
+
+    if ((person as PersonView).is_admin) is_admin=true
+    
     let blocking = false
     let loadingMessage = false
     let messaging = false
@@ -160,7 +164,7 @@
                     <div>
                         <h1 class="flex flex-row">
                             <span class="font-bold text-lg">
-                                <UserLink badges user={person.person} showInstance={false} />
+                                <UserLink badges user={person.person} showInstance={false} admin={is_admin}/>
                             </span>
 
                             

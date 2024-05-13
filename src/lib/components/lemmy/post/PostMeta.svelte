@@ -77,8 +77,8 @@
             {#if post.community && !inCommunity}
                 <span class="flex flex-col items-end gap-1">
                     <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
-                    
-                    {#if $profile?.user}
+                    <!---Only show for logged-in users and not on post create pages--->
+                    {#if $profile?.user && !$page.url.pathname.includes('create_post') && !$page.url.pathname.includes('create/post')}
                         <!---Overlay small subscribe/unsubscribe button on avatar--->
                         <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
                             on:click={async () => {
@@ -114,7 +114,7 @@
                     {#if !inProfile && post.creator}
                         <div class="flex flex-wrap items-center" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'}">Posted by&nbsp;</span>
-                            <UserLink avatarSize={20} bind:user={post.creator} mod={userIsModerator} avatar={!post.community} />
+                            <UserLink avatarSize={20} bind:user={post.creator} mod={post.creator_is_moderator} admin={post.creator_is_admin} avatar={!post.community} />
                         </div>
                     {/if}
                 </span>

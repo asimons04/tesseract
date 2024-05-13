@@ -96,12 +96,7 @@
     }
 >
     {#each nodes as node (node.comment_view.comment.id)}
-        <Comment
-            postId={post.id}
-            bind:node
-            op={post.creator_id == node.comment_view.creator.id}
-            mod={moderators?.filter((index) => index.moderator.id == node.comment_view.creator.id).length > 0}
-        >
+        <Comment postId={post.id} bind:node >
             {#if node.children?.length > 0}
                 <svelte:self {post} bind:nodes={node.children} moderators={moderators} isParent={false} />
             {/if}

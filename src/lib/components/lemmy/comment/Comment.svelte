@@ -34,8 +34,6 @@
     
     export let node: CommentNodeI
     export let postId: number
-    export let op: boolean = false
-    export let mod: boolean = false
     export let actions: boolean = true
     export let open = true
     export let replying = false
@@ -50,11 +48,12 @@
     let jumpToComment = false
     let commentContainer: HTMLLIElement
 
+    let op = node.comment_view.post.creator_id == node.comment_view.creator.id
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
         if (isThreadComment(node.comment_view.comment.id)) {
             jumpToComment = true
-            scrollToTop(commentContainer)
+            await scrollToTop(commentContainer)
         }
                     
     })
@@ -104,7 +103,7 @@
             text-slate-600 dark:text-zinc-400
         ">
             <span class:font-bold={op} class="flex flex-row flex-wrap gap-1 items-start w-full">
-                <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={mod} />
+                <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} />
                 
                 {#if op}
                     <span class="text-sky-500">OP</span>

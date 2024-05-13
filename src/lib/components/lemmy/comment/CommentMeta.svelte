@@ -24,18 +24,15 @@
     
 
     export let comment: CommentView                 
-    export let moderators = [] as Array<CommunityModeratorView>;
     export let avatarSize = 48;
     export let hideBadges = false
     
     let inCommunity:boolean = false
     let inProfile:boolean = false
-    let userIsModerator:boolean = false
     let subscribing:boolean = false
 
     $: inCommunity = ($page.url.pathname.startsWith("/c/"))
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
-    $: userIsModerator = (moderators.filter((index) => index.moderator.id == comment.creator.id).length > 0)
     $: subscribed = comment.subscribed == 'Subscribed' || comment.subscribed == 'Pending'
 
     function isNewAccount():boolean {
@@ -95,7 +92,7 @@
                         <div class="flex flex-wrap items-center" class:text-slate-900={!comment.community} class:dark:text-zinc-100={!comment.community}>
                             <span class="hidden md:block'">Commented by&nbsp;</span>
                             <UserLink avatarSize={20} user={comment.creator} 
-                                mod={userIsModerator} 
+                                mod={comment.creator_is_moderator} admin={comment.creator_is_admin}
                                 avatar={!comment.community} />
                         </div>
                     {/if}

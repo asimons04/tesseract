@@ -397,7 +397,7 @@
 
     <!---Previewing Post--->
     {:else if previewPost}
-        <div class="pb-3">
+        <div class="pb-3 pointer-events-none">
             <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
         </div>
     {/if}
