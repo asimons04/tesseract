@@ -51,7 +51,7 @@
 <Modal bind:open icon={Envelope} title="Send Direct Message">
     <form on:submit|preventDefault={sendMessage} class="flex flex-col gap-4">
         
-        <p class="inline-flex flex-row gap-2 items-center">
+        <p class="inline-flex flex-row gap-2 items-center pointer-events-none">
             To: <UserLink avatar user={person.person} />
         </p>
         <MarkdownEditor bind:value={message} label="Message" rows={8} previewButton>
