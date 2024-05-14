@@ -40,10 +40,10 @@
     
     <span class="ml-auto"/>
     
-    <span class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
+    <span class="hidden md:flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
         <RelativeDate date={crosspost.post.published} />
         {#if crosspost.post.updated}
-            <span class="hidden md:flex flex-row items-center gap-1 ml-1">•
+            <span class="flex flex-row items-center gap-1 ml-1">•
                 <Icon src={Pencil} solid size="12" title="Edited" />
                 <RelativeDate date={crosspost.post.updated}/>
             </span>
