@@ -18,11 +18,11 @@
     switch(size) {
         case 'xs':
             textSize = "text-xs";
-            iconSize = 18;
+            iconSize = 24;
             break;
         case 'sm':
             textSize = "text-sm";
-            iconSize = 22;
+            iconSize = 24;
             break;
         case 'base':
             textSize = "text-base";
@@ -30,12 +30,12 @@
             break;
         default:
             textSize = "text-xs";
-            iconSize = 18;
+            iconSize = 24;
     }
 </script>
 
 {#if post?.cross_posts && post.cross_posts.length > 0}
-    <details class="{textSize} font-bold w-full cursor-pointer pb-2 {$$props.class}" open={$userSettings.uiState.expandCrossPosts && post.cross_posts?.length <= 3}>
+    <details class="{textSize} font-bold w-full cursor-pointer py-2 {$$props.class}" open={$userSettings.uiState.expandCrossPosts && post.cross_posts?.length <= 3}>
         <summary class="inline-block w-full">
             <SectionTitle class="{textSize} text-inherit dark:text-inherit">
                 Crossposts 

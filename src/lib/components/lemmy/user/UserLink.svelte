@@ -16,12 +16,13 @@
     export let avatar: boolean = false
     export let avatarSize: number = 24
     export let badges: boolean = true
-    //export let inComment: boolean = false
     export let showInstance: boolean = true
     export let mod:boolean = false
     export let admin:boolean = false
     export let href:string | undefined = undefined
     export let distinguishAdminsMods:boolean = true
+
+    export let shortenDisplayName:boolean = false
     
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
@@ -38,7 +39,7 @@
         {/if}
 
         <span class="flex flex-row flex-wrap gap-0" class:ml-0.5={avatar} >
-            <span class="font-bold whitespace-nowrap">
+            <span class="font-bold whitespace-nowrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
                 {$userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             

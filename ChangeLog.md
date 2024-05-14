@@ -29,6 +29,8 @@ All major/minor changes between releases will be documented here.
 
 #### Community Settings Panel
 - [ ] Add report panel for reports in that community
+- [ ] Add 'local' check to not show community settings buttons to admins when browsing remote communities
+
 
 #### Instances List
 - [ ] Add `federation_state` data to instance list objects in `/instances`
@@ -52,6 +54,7 @@ All major/minor changes between releases will be documented here.
 ### Posts / Comments
 - [ ] Add `listPostLikes` and `listCommentLikes` options to post and comment action menus for admins
 - [X] Do not show (or disable) subscribe/unsubscribe button in Post Meta on post preview (disabled pointer events in containing div)
+- [X] De-clutter crosspost item in mobile (hide relative date)
 
 
 ### Search

@@ -219,7 +219,7 @@
                     {#if filter.moderator.set}
                         <div class="flex flex-row w-full justify-between">
                             {#if filter.moderator.person}
-                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderator.person} />
+                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderator.person} shortenDisplayName={true}/>
                             {:else}
                                 <span>
                                     { new URLSearchParams(window.location.search).get('mod_id') }
@@ -255,7 +255,7 @@
                     {#if filter.moderatee.set}
                         <div class="flex flex-row w-full justify-between">
                             {#if filter.moderatee.person}
-                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} badges={false}/>
+                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} badges={false} shortenDisplayName={true}/>
                             {:else}
                                 <span>
                                     { new URLSearchParams(window.location.search).get('other_person_id') }
