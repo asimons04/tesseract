@@ -37,7 +37,8 @@
         PencilSquare,
         Share,
         Trash, 
-        User, 
+        User,
+        Hashtag, 
     } from 'svelte-hero-icons'
     
     
@@ -143,14 +144,23 @@
                 </div>
             </Card>
 
+            <!--- Action Buttons for this User--->
             <div class="flex flex-col gap-2 mt-4 px-8 w-full items-center">
+                
                 <!---View User's Profile--->
                 <Button color="tertiary-border" icon={User} alignment="left" class="w-full" on:click={() => goto(`/u/${user.name}@${new URL(user.actor_id).host}`)}>
                     View Profile
                 </Button>
+
+                <!---View on Home Instance (if not same instance as current)--->
+                {#if $instance != new URL(user.actor_id).hostname}
+                <Button color="tertiary-border" icon={Home} alignment="left" class="w-full" href="{user.actor_id}" newtab={true}>
+                    View on User's Home Instance
+                </Button>
+                {/if}
                 
                 <!---Send Direct Message--->
-                {#if $profile?.user}
+                {#if $profile?.user && $profile?.user?.local_user_view.person.id != user.id}
                 <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
                     on:click={() => {
                         modal = false
@@ -161,12 +171,14 @@
                 </Button>
                 {/if}
 
-                <!---View on Home Instance (if not same instance as current)--->
-                {#if $instance != new URL(user.actor_id).hostname}
-                <Button color="tertiary-border" icon={Home} alignment="left" class="w-full" href="{user.actor_id}" newtab={true}>
-                    View on User's Home Instance
+                <!---Message in Matrix--->
+                {#if user.matrix_user_id && $profile?.user && $profile?.user?.local_user_view.person.id != user.id}
+                <Button color="tertiary-border" icon={Hashtag} class="w-full" alignment="left" href="https://matrix.to/#/{user.matrix_user_id}" newtab={true}>
+                    Message on Matrix
                 </Button>
                 {/if}
+
+                
 
                 <!---See User's Modlog History--->
                 <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full" href="/modlog?other_person_id={user.id.toString()}">
