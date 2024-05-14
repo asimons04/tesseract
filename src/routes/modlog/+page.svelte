@@ -172,7 +172,7 @@
         />
 
         <!--- Modlog Filter Menu --->
-        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[190%] md:!-left-[50%]">
+        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[107%] md:!-left-[50%]">
             <!--- Lookup a Community to Filter--->
             <MenuButton>
                 <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
@@ -219,7 +219,7 @@
                     {#if filter.moderator.set}
                         <div class="flex flex-row w-full justify-between">
                             {#if filter.moderator.person}
-                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderator.person} shortenDisplayName={true}/>
+                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderator.person} useDisplayNames={false} shortenDisplayName={true}/>
                             {:else}
                                 <span>
                                     { new URLSearchParams(window.location.search).get('mod_id') }
@@ -255,7 +255,7 @@
                     {#if filter.moderatee.set}
                         <div class="flex flex-row w-full justify-between">
                             {#if filter.moderatee.person}
-                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} badges={false} shortenDisplayName={true}/>
+                                <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} badges={false} useDisplayNames={false} shortenDisplayName={true}/>
                             {:else}
                                 <span>
                                     { new URLSearchParams(window.location.search).get('other_person_id') }

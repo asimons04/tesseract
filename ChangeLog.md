@@ -55,7 +55,15 @@ All major/minor changes between releases will be documented here.
 - [ ] Add `listPostLikes` and `listCommentLikes` options to post and comment action menus for admins
 - [X] Do not show (or disable) subscribe/unsubscribe button in Post Meta on post preview (disabled pointer events in containing div)
 - [X] De-clutter crosspost item in mobile (hide relative date)
-
+- [X] User links now load a modal with user card and action buttons
+    - [X] View Profile
+    - [X] Message in Lemmy
+    - [ ] Message in Matrix (if Matrix ID provided)
+    - [ ] View on user's home instance (need to conditionally hide if instance is same as current user's)
+    - [X] View user's modlog history
+    - [X] Copy Lemmyverse link to user
+    - [ ] Block User
+    - [X] Instance ban user (if current user is admin)
 
 ### Search
 - [X] Add permalink share button to search with currently-selected query and params

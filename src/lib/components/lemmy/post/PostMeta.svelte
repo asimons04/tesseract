@@ -110,10 +110,10 @@
                     <CommunityLink bind:community={post.community} {avatarSize} />
                 {/if}
                 
-                <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
+                <span class="flex flex-col sm:flex-row sm:gap-1 flex-wrap">
                     {#if !inProfile && post.creator}
                         <div class="flex flex-wrap items-center" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
-                            <span class="hidden {collapseBadges ? '' : 'md:block'}">Posted by&nbsp;</span>
+                            <span class="hidden {collapseBadges ? '' : 'md:block'} text-slate-600 dark:text-zinc-400">Posted by&nbsp;</span>
                             <UserLink avatarSize={20} bind:user={post.creator} mod={post.creator_is_moderator} admin={post.creator_is_admin} avatar={!post.community} />
                         </div>
                     {/if}

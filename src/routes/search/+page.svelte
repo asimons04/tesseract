@@ -288,7 +288,7 @@
         />
 
         <!--- Search Filter Menu --->
-        <SubnavbarMenu alignment="bottom-center" title="Search Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[106%] md:!-left-[50%]">
+        <SubnavbarMenu alignment="bottom-center" title="Search Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[107%] md:!-left-[50%]">
             
             <!--- Lookup a Community to Filter--->
             <MenuButton>
@@ -326,7 +326,7 @@
 
                     {#if filter.person}
                         <div class="flex flex-row w-full justify-between">
-                            <UserLink avatar={true} avatarSize={iconSize} user={filter.person} badges={false} shortenDisplayName={true}/>
+                            <UserLink avatar={true} avatarSize={iconSize} user={filter.person} badges={false} useDisplayNames={false} shortenDisplayName={true}/>
                         
                             <button class="cursor-pointer" on:click={() => filter.person = undefined}>
                                 <Icon src={XCircle} mini width={iconSize-2}/>

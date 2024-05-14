@@ -100,7 +100,6 @@
             {node.comment_view.comment.distinguished && !open ? 'border-b': ''} 
             flex flex-col md:flex-row flex-wrap w-full cursor-pointer gap-2 group text-xs 
             hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 hover:rounded-lg
-            text-slate-600 dark:text-zinc-400
         ">
             <span class:font-bold={op} class="flex flex-row flex-wrap gap-1 items-start w-full">
                 <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} />
@@ -110,19 +109,19 @@
                 {/if}
                 
                 {#if !open}
-                    <span class="flex items-center gap-0.5 mr-1 mb-auto">
+                    <span class="flex items-center gap-0.5 mr-1 mb-auto text-slate-600 dark:text-zinc-400">
                         <Icon src={ArrowUp} mini size="14" title="Score" />
                         {node.comment_view.counts.score}
                     </span>
                 {/if}
 
                 <!---If updated, only show edited time on mobile--->
-                <span class="{node.comment_view.comment.updated ? 'hidden sm:flex' : 'flex'} flex-row items-center whitespace-nowrap">
+                <span class="{node.comment_view.comment.updated ? 'hidden sm:flex' : 'flex'} flex-row items-center whitespace-nowrap text-slate-600 dark:text-zinc-400">
                     <RelativeDate date={node.comment_view.comment.published}/>
                 </span>
 
                 {#if node.comment_view.comment.updated}
-                    <span class="flex flex-row whitespace-nowrap items-center gap-1 ml-1">
+                    <span class="flex flex-row whitespace-nowrap items-center gap-1 ml-1 text-slate-600 dark:text-zinc-400">
                         <Icon src={Pencil} solid size="12" title="Edited" />
                         <RelativeDate date={node.comment_view.comment.updated}/>
                     </span>
@@ -139,7 +138,9 @@
                 <Button color="ghost" size="sm"
                     class="ml-auto translate-x-1 opacity-0 group-hover:translate-x-0 items-center
                     group-hover:opacity-100 text-xs !transition-all
-                    pointer-events-none border-none"
+                    pointer-events-none border-none
+                    text-slate-600 dark:text-zinc-400
+                    "
                 >
                     <Icon src={open ? Minus : Plus} width={16} height={16} mini />
                     {#if !open && node.children.length > 0}
