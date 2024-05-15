@@ -94,7 +94,9 @@
         <div class="flex flex-col divide-y divide-slate-200 dark:divide-zinc-500 mx-4">
             {#each votes as vote}
                 <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
-                    <UserLink bind:user={vote.creator} avatar avatarSize={iconSize} />
+                    <span class="flex">
+                        <UserLink bind:user={vote.creator} avatar avatarSize={iconSize} />
+                    </span>
                     
                     <span class="flex ml-auto {vote.score > 0 ? 'text-sky-500' : 'text-red-500'} font-bold">
                         <Icon mini width={iconSize} src={vote.score > 0 ? ArrowUp : ArrowDown}/>
