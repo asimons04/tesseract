@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { modals } from '$lib/components/lemmy/moderation/moderation.js'
-
+    import { modals } from '$lib/components/lemmy/moderation/moderation.js'
+    import UserProfileModal from '$lib/components/lemmy/user/UserProfileModal.svelte'
   
 </script>
 
@@ -41,11 +41,5 @@
 
 <!--- User Profile Modal--->
 {#if $modals.user.open}
-    {#await import('$lib/components/lemmy/user/UserProfileModal.svelte') then { default: UserProfileModal }}
-        <UserProfileModal 
-            bind:open={$modals.user.open}
-            personDetails={$modals.user.personDetails}
-            mod={$modals.user.mod}
-        />
-    {/await}
+    <UserProfileModal  bind:open={$modals.user.open} personDetails={$modals.user.personDetails} mod={$modals.user.mod} />
 {/if}

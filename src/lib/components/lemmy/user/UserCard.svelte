@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { CommunityModeratorView, LocalUserView, PersonView } from 'lemmy-js-client'
 
-    import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { isBlocked } from '$lib/lemmy/user.js'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
@@ -12,6 +12,7 @@
     import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import BanInstanceModal from '../moderation/BanInstanceModal.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
@@ -54,6 +55,7 @@
     
     let blocking = false
     let messaging = false
+    let banning = false
 
     async function blockUser(block: number) {
         if (!$profile?.user || !$profile?.jwt) throw new Error('Unauthenticated')
@@ -100,6 +102,10 @@
     <!---DM Compose Modal--->
     {#if $profile?.user}
         <UserSendMessageModal bind:open={messaging} bind:person={person} />
+    {/if}
+
+    {#if banning}
+        <BanInstanceModal bind:open={banning} bind:user={person.person} bind:banned={person.person.banned}/>
     {/if}
 
 
@@ -212,9 +218,7 @@
                                         {#if person.person.id != $profile.user.local_user_view.person.id}
                                             <MenuButton
                                                 color="dangerSecondary"
-                                                on:click={() =>
-                                                    ban(person.person.banned, person.person)
-                                                }
+                                                on:click={() => banning = true }
                                             >
                                                 <Icon slot="icon" mini size="16" src={ShieldExclamation} />
                                                 {person.person.banned ? 'Unban' : 'Ban'}

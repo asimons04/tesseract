@@ -48,7 +48,7 @@
 
 
 
-<Modal bind:open width="min-w-full sm:min-w-[25%]">
+<Modal bind:open width="min-w-full sm:min-w-[475px]">
     
     <!---DM and Ban Modals Inside This Modal--->
     {#if messaging && personDetails}
