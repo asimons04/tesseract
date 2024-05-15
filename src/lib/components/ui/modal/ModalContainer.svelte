@@ -1,7 +1,7 @@
 <script lang="ts">
     import { modals } from '$lib/components/lemmy/moderation/moderation.js'
     
-    import PostCommentVoteShowModal from '$lib/components/lemmy/post/utils/PostCommentVoteShowModal.svelte'
+    import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/user/UserProfileModal.svelte'
   
 </script>

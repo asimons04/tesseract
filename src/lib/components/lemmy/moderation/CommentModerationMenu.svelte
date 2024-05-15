@@ -94,6 +94,14 @@
             User Modlog
         </MenuButton>
 
+        <!---View Votes--->
+        {#if isAdmin($profile?.user)}
+            <MenuButton color="info" on:click={() => voteViewerModal('comment', item.comment.id)}>
+                <Icon src={HandThumbUp} size="16" mini />
+                View Votes
+            </MenuButton>
+        {/if}
+
         <!---Remove/Restore Comment--->
         <MenuButton color={item.comment.removed ? 'success' : 'dangerSecondary'} on:click={() => {
                 purging = false
@@ -119,11 +127,7 @@
         {/if}
     {/if}
 
-    {#if $profile?.user && isAdmin($profile.user)}
-        <MenuButton color="info" on:click={() => voteViewerModal('comment', item.comment.id)}>
-            <Icon src={HandThumbUp} size="16" mini />
-            View Votes
-        </MenuButton>
+    {#if isAdmin($profile?.user)}
         
         <MenuButton color="dangerSecondary" on:click={() => {
                 purging = true
@@ -135,7 +139,7 @@
         </MenuButton>
 
         <!--Hide ban button if viewing own profile--->
-        {#if item.creator.id != $profile.user.local_user_view.person.id}
+        {#if item.creator.id != $profile?.user?.local_user_view.person.id}
             <MenuButton
                 color={item.creator.banned ? 'success' : 'dangerSecondary'}
                 on:click={() => { banningInstance = true }}

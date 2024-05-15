@@ -152,6 +152,13 @@
             User Modlog
         </MenuButton>
 
+        {#if isAdmin($profile?.user)}
+            <MenuButton color="info" on:click={() => voteViewerModal('post', item.post.id)}>
+                <Icon src={HandThumbUp} size="16" mini />
+                View Votes
+            </MenuButton>
+        {/if}
+
 
         <!--- Mod Feature Post Community--->
         <MenuButton color="success"
@@ -209,10 +216,6 @@
 
         <!--- Admin Only Options--->
         {#if isAdmin($profile.user)}
-            <MenuButton color="info" on:click={() => voteViewerModal('post', item.post.id)}>
-                <Icon src={HandThumbUp} size="16" mini />
-                View Votes
-            </MenuButton>
         
             <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
                 <Icon src={Fire} size="16" mini />

@@ -90,10 +90,12 @@
         </div>
         
         <div class="flex w-full mt-4">
-            <Pageination bind:page on:change={async (e) => {
-                page = e.detail
-                await load()
-            }}/>
+            <Pageination bind:page disableNext={votes.length < 1} 
+                on:change={async (e) => {
+                    page = e.detail
+                    await load()
+                }}
+            />
         </div>
     {/if}
 

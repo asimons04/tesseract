@@ -64,6 +64,8 @@ All major/minor changes between releases will be documented here.
     - [X] Copy Lemmyverse link to user
     - [X] Block/Unblock User
     - [X] Instance ban user (if current user is admin)
+    - [ ] Move fetch logic into modal itself rather than on the page
+    
 - [ ] Optionally Preview Links in Modal
 
 ### Search
