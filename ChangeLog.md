@@ -68,6 +68,10 @@ All major/minor changes between releases will be documented here.
 
 - [ ] Optionally Preview Links in Modal
 
+
+### Moderation
+- [X] Do something about the ugly "confirm" checkbox
+
 ### Search
 - [X] Add permalink share button to search with currently-selected query and params
 

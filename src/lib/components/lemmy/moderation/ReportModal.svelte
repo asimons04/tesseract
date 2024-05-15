@@ -99,7 +99,7 @@
                 
             </div>
             {#if !hideSubmission}
-                <div class="flex flex-col pointer-events-none list-none">
+                <div class="flex flex-col pointer-events-none list-none overflow-hidden">
                     {#if isComment(item)}
                         <Comment actions={false}
                             node={{
