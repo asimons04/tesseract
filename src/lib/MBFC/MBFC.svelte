@@ -76,7 +76,7 @@
     </Badge>
 
 
-    <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check">
+    <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check" width="max-w-full lg:max-w-[80%] xl:max-w-[75%]">
         <div class="flex flex-col gap-4 w-full">
             <h2 class="flex flex-row items-center justify-between w-full">
                 <span class="font-bold text-lg">{results.name}</span>

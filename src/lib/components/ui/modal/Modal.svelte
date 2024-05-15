@@ -47,7 +47,11 @@
         role="button" tabindex=0
         transition:fade={{ duration: 200 }}
         on:keydown={(e) => {
-            if (e.key == 'Escape' || e.key == 'GoBack' || e.key == 'BrowserBack') open = false
+            if (e.key == 'Escape' || e.key == 'GoBack' || e.key == 'BrowserBack') {
+                e.preventDefault()
+                e.stopPropagation();
+                open = false
+            }
         }}
         on:click={(e) => {
 			if (!modalElement.contains(e.target) && !preventCloseOnClickOut) open = false

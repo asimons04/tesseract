@@ -13,7 +13,7 @@ All major/minor changes between releases will be documented here.
 - [X] Update `lemmy-js-client` 
 - [X] Remove admin flag check from `local_user_view.person` in moderation.ts
 - [ ] 
-- [ ] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
+- [/] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
 - [ ] Remove custom functions for `blockInstance` and `hideCommunity` and use the client-native ones
 - [X] Remove custom shim to conditionally add/remove `Scaled` sort option
 - [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
@@ -65,7 +65,7 @@ All major/minor changes between releases will be documented here.
     - [X] Block/Unblock User
     - [X] Instance ban user (if current user is admin)
     - [ ] Move fetch logic into modal itself rather than on the page
-    
+
 - [ ] Optionally Preview Links in Modal
 
 ### Search

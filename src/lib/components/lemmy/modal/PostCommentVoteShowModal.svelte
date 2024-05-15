@@ -31,15 +31,18 @@
 
     // Load the vote counts
     onMount(async () => {
+        votes = []
         await load()
     })
 
     async function load() {
         loading = true
         votes = []
+        votes = votes
         if (type == 'post')     votes = await listPostLikes(submission_id)
         if (type == 'comment')  votes = await listCommentLikes(submission_id)
         loading = false
+        votes = votes
     }
 
     async function listPostLikes(postID:number):Promise<VoteView[]> {

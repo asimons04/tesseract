@@ -113,12 +113,14 @@
                     if (personDetails) {
                         if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
                             goto ('/profile/user')
+                            open = false
                         }
                         else {    
-                            goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)   
+                            goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                            open = false
                         }
                     }
-                    open = false 
+                    
                 }}
                 >
                 View Profile
