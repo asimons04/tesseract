@@ -380,7 +380,12 @@
             <!---Share Permalink to this Search--->
             <Button color="tertiary" size="sm" title="Copy Share Link" disabled={!searchURL} on:click={() => {
                 if (searchURL) {
-                    navigator.share?.( {url: searchURL.toString()} ) ?? navigator.clipboard.writeText(searchURL.toString())
+                    
+                    // Force the search to page 1
+                    let url = new URL(searchURL)
+                    url.searchParams.set('page', '1')
+                    
+                    navigator.share?.( {url: url.toString()} ) ?? navigator.clipboard.writeText(url.toString())
                     toast({
                         type: 'success',
                         content: `Copied search permalink to clipboard!`,

@@ -71,6 +71,8 @@ All major/minor changes between releases will be documented here.
 
 ### Moderation
 - [X] Do something about the ugly "confirm" checkbox
+- [X] Fix horizontal overflow in report modal submission preview.
+
 
 ### Search
 - [X] Add permalink share button to search with currently-selected query and params
