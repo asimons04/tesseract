@@ -6,7 +6,7 @@
     import nProgress from 'nprogress'
     import 'nprogress/nprogress.css'
     import ToastContainer from '$lib/components/ui/toasts/ToastContainer.svelte'
-    import Moderation from '$lib/components/lemmy/moderation/Moderation.svelte'
+    import ModalContainer from '$lib/components/ui/modal/ModalContainer.svelte'
     import Sidebar from '$lib/components/ui/sidebar/Sidebar.svelte'
     import { onMount } from 'svelte'
     
@@ -51,7 +51,8 @@
 <div class="flex flex-col min-h-screen {$userSettings.font}">
     <Navbar />
     <ToastContainer />
-    <Moderation />
+    <ModalContainer />
+    
     <div class="flex flex-row h-full w-full max-w-full flex-1">
         <Sidebar />
         <main class="p-2 min-w-0 w-full flex flex-col flex-[3] gap-2 sm:rounded-tl-lg border-slate-200 dark:border-zinc-900 sm:border-l border-t">

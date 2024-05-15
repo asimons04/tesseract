@@ -386,7 +386,7 @@
             {#if moderators.length > 0}
                 <CollapseButton icon={HandRaised} title="Moderators">
                     {#each moderators as moderator}
-                        <UserLink user={moderator.moderator} avatar={true} />
+                        <UserLink user={moderator.moderator} avatar={true}/>
                     {/each}
                 </CollapseButton>
             {/if}

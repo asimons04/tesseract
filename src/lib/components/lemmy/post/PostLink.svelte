@@ -22,7 +22,7 @@
 </script>
 
 {#if post.post?.url}
-    <span class="flex flex-row w-full gap-4 items-center">
+    <span class="flex flex-row flex-wrap w-full gap-2 items-center">
         <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
         <Link class="text-xs" href="https://archive.ph/{removeURLParams(post.post.url)}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
     </span>

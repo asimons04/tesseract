@@ -80,7 +80,7 @@
             <PostTitle bind:post />
 
             {#if post.post.url && !isImage(post.post.url)}
-            <span class="flex flex-row w-full gap-4 items-center">
+            <span class="flex flex-row flex-wrap w-full gap-2 items-center">
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
             
                 <!---Show archive link if not a media post--->

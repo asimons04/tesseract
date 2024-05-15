@@ -1,45 +1,56 @@
 import type { SubmissionView } from '$lib/lemmy/contentview.js'
-import type { Community, MyUserInfo, Person } from 'lemmy-js-client'
+import type { Community, MyUserInfo, Person, GetPersonDetailsResponse } from 'lemmy-js-client'
 import { writable } from 'svelte/store'
 
 interface Modals {
-  reporting: {
-    open: boolean
-    item: SubmissionView | undefined
-    reason: string | undefined
-  }
-  removing: {
-    open: boolean
-    item: SubmissionView | undefined
-    purge: boolean
-    reason: string
-  }
-  banning: {
-    open: boolean
-    banned: boolean
-    user: Person | undefined
-    community: Community | undefined
-  }
+    reporting: {
+        open: boolean
+        item: SubmissionView | undefined
+        reason: string | undefined
+    }
+    removing: {
+        open: boolean
+        item: SubmissionView | undefined
+        purge: boolean
+        reason: string
+    }
+    banning: {
+        open: boolean
+        banned: boolean
+        user: Person | undefined
+        community: Community | undefined
+    }
+    user: {
+        open: boolean
+        personDetails: GetPersonDetailsResponse | undefined
+        mod: boolean
+    }
+
 }
 
 export let modals = writable<Modals>({
-  reporting: {
-    open: false,
-    item: undefined,
-    reason: ''
-  },
-  removing: {
-    open: false,
-    item: undefined,
-    purge: false,
-    reason: ''
-  },
-  banning: {
-    open: false,
-    banned: false,
-    user: undefined,
-    community: undefined,
-  },
+    reporting: {
+        open: false,
+        item: undefined,
+        reason: ''
+    },
+    removing: {
+        open: false,
+        item: undefined,
+        purge: false,
+        reason: ''
+    },
+    banning: {
+        open: false,
+        banned: false,
+        user: undefined,
+        community: undefined,
+    },
+    user: {
+        open: false,
+        personDetails: undefined,
+        mod: false,
+    }
 })
 
 export function report(item: SubmissionView, reason:string='') {
@@ -66,15 +77,28 @@ export function remove(item: SubmissionView, purge: boolean = false, reason:stri
 }
 
 export function ban(banned: boolean, item: Person, community?: Community) {
-  modals.update((m) => ({
-    ...m,
-    banning: {
-      open: true,
-      user: item,
-      banned: banned,
-      community,
-    },
-  }))
+    modals.update((m) => ({
+        ...m,
+        banning: {
+            open: true,
+            user: item,
+            banned: banned,
+            community,
+        },
+    }))
+}
+
+export function userProfileModal(personDetails:GetPersonDetailsResponse, mod:boolean=false) {
+    modals.update((m) => ({
+        ...m,
+        user: {
+            open: true,
+            personDetails: personDetails,
+            mod: mod,
+        },
+
+    }))
+
 }
 
 export function amMod(me: MyUserInfo|undefined, community: Community):boolean {

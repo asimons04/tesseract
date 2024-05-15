@@ -1,5 +1,7 @@
 <script lang="ts">
   import { modals } from '$lib/components/lemmy/moderation/moderation.js'
+
+  
 </script>
 
 <!--These weird await hacks are for lazy loading, better network performance-->
@@ -24,6 +26,8 @@
     />
   {/await}
 {/if}
+
+<!---Ban User Modal--->
 {#if $modals.banning.open}
   {#await import('$lib/components/lemmy/moderation/BanModal.svelte') then { default: BanModal }}
     <BanModal
@@ -33,4 +37,15 @@
       community={$modals.banning.community}
     />
   {/await}
+{/if}
+
+<!--- User Profile Modal--->
+{#if $modals.user.open}
+    {#await import('$lib/components/lemmy/user/UserProfileModal.svelte') then { default: UserProfileModal }}
+        <UserProfileModal 
+            bind:open={$modals.user.open}
+            personDetails={$modals.user.personDetails}
+            mod={$modals.user.mod}
+        />
+    {/await}
 {/if}

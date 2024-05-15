@@ -87,13 +87,12 @@
             }
         }}
     >
-        <CommentForm postId={node.comment_view.comment.id} bind:value={newComment} rows={15} actions={false} />
+        <CommentForm postId={node.comment_view.comment.id} bind:value={newComment} rows={7} actions={false} />
     </Modal>
 {/if}
 
 <li bind:this={commentContainer} class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}">
     <details bind:open class="flex flex-col gap-1">
-        <!--flex-wrap-->
         <summary class="
             {jumpToComment ? jumpToCommentClassSummary : ''}
             {node.comment_view.comment.distinguished ? distinguishedClassSummary : ''} 

@@ -154,7 +154,7 @@
             <MenuButton color="warning"
                 on:click={async () => {
                     if ($profile?.jwt) {
-                        comment.saved = await save(comment, !comment.saved, $profile.jwt)
+                        comment.saved = await save(comment, !comment.saved)
                     }
                     toast({
                         type: 'success',
@@ -176,7 +176,6 @@
                     comment.comment.deleted = await deleteItem(
                         comment,
                         !comment.comment.deleted,
-                        $profile.jwt
                     )
                 }}
             >

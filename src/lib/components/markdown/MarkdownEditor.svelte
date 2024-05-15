@@ -234,7 +234,7 @@
 
                     <!---Markdown editor resize slider--->
                     <span class="flex flex-row gap-1 w-full lg:w-fit lg:ml-auto items-center">
-                        <input type="range" bind:value={rows} min={minRows} max={minRows*4} class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                        <input type="range" bind:value={rows} min={minRows} max={minRows*3} class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                     </span>
                 
                     <!---
