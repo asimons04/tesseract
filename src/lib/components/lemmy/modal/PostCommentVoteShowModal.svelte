@@ -90,7 +90,7 @@
         </div>
         
         <div class="flex w-full mt-4">
-            <Pageination bind:page disableNext={votes.length < 1} 
+            <Pageination bind:page disableNext={votes.length < limit} 
                 on:change={async (e) => {
                     page = e.detail
                     await load()
