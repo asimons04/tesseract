@@ -52,7 +52,7 @@ All major/minor changes between releases will be documented here.
 - [X] Replace old admin check for post meta with new `user_is_admin`.
 
 ### Posts / Comments
-- [ ] Add `listPostLikes` and `listCommentLikes` options to post and comment action menus for admins
+- [X] Add `listPostLikes` and `listCommentLikes` options to post and comment moderation menus for admins
 - [X] Do not show (or disable) subscribe/unsubscribe button in Post Meta on post preview (disabled pointer events in containing div)
 - [X] De-clutter crosspost item in mobile (hide relative date)
 - [X] User links now load a modal with user card and action buttons

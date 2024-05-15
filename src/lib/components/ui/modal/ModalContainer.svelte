@@ -1,5 +1,7 @@
 <script lang="ts">
     import { modals } from '$lib/components/lemmy/moderation/moderation.js'
+    
+    import PostCommentVoteShowModal from '$lib/components/lemmy/post/utils/PostCommentVoteShowModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/user/UserProfileModal.svelte'
   
 </script>
@@ -39,7 +41,14 @@
   {/await}
 {/if}
 
+
+
+{#if $modals.votes.open}
+    <PostCommentVoteShowModal bind:open={$modals.votes.open} type={$modals.votes.type} submission_id={$modals.votes.submission_id} />
+{/if}
+
 <!--- User Profile Modal--->
 {#if $modals.user.open}
     <UserProfileModal  bind:open={$modals.user.open} personDetails={$modals.user.personDetails} mod={$modals.user.mod} />
 {/if}
+

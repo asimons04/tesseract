@@ -1,10 +1,11 @@
 <script lang="ts">
-    import Button from '$lib/components/input/Button.svelte'
+    import { type IconSource, Icon, XMark, ArrowsPointingIn, ArrowsPointingOut } from 'svelte-hero-icons'
 
     import { createEventDispatcher } from 'svelte'
-    import { type IconSource, Icon, XMark, ArrowsPointingIn, ArrowsPointingOut } from 'svelte-hero-icons'
     import { expoOut } from 'svelte/easing'
     import { fade, scale } from 'svelte/transition'
+
+    import Button from '$lib/components/input/Button.svelte'
 
     export let action: string | undefined = undefined
     export let open = false
@@ -16,6 +17,7 @@
     export let width:string = 'min-w-[50%]'
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
+    export let preventCloseOnClickOut:boolean = false
     
     let modalElement:any
     let originalWidth = width
@@ -45,10 +47,10 @@
         role="button" tabindex=0
         transition:fade={{ duration: 200 }}
         on:keydown={(e) => {
-            if (e.key == 'Escape') open = false
+            if (e.key == 'Escape' && !preventCloseOnClickOut) open = false
         }}
         on:click={(e) => {
-			if (!modalElement.contains(e.target)) open = false
+			if (!modalElement.contains(e.target) && !preventCloseOnClickOut) open = false
 		}}
     >
   

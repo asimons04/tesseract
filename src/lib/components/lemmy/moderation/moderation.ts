@@ -25,6 +25,11 @@ interface Modals {
         personDetails: GetPersonDetailsResponse | undefined
         mod: boolean
     }
+    votes: {
+        open: boolean,
+        type: 'post' | 'comment',
+        submission_id: number
+    }
 
 }
 
@@ -50,6 +55,11 @@ export let modals = writable<Modals>({
         open: false,
         personDetails: undefined,
         mod: false,
+    },
+    votes: {
+        open: false,
+        type: 'post',
+        submission_id: 0
     }
 })
 
@@ -99,6 +109,17 @@ export function userProfileModal(personDetails:GetPersonDetailsResponse, mod:boo
 
     }))
 
+}
+
+export function voteViewerModal(type:'post'|'comment', submission_id:number) {
+    modals.update((m) => ({
+        ...m,
+        votes: {
+            open: true,
+            type: type,
+            submission_id: submission_id
+        }
+    }))
 }
 
 export function amMod(me: MyUserInfo|undefined, community: Community):boolean {

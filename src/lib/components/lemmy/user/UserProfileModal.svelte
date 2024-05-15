@@ -48,7 +48,7 @@
 
 
 
-<Modal bind:open width="min-w-full sm:min-w-[475px]">
+<Modal bind:open preventCloseOnClickOut={true} width="min-w-full sm:min-w-[475px]">
     
     <!---DM and Ban Modals Inside This Modal--->
     {#if messaging && personDetails}
@@ -135,7 +135,6 @@
             {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
             <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
                 on:click={() => {
-                    //open = false
                     messaging = true
                 }}
             >

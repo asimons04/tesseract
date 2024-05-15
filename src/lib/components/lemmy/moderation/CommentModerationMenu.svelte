@@ -3,7 +3,7 @@
     import type {
         CommentView,
     } from 'lemmy-js-client'
-    import { amMod, isAdmin } from './moderation'
+    import { amMod, isAdmin, voteViewerModal } from './moderation'
     import { getClient } from '$lib/lemmy'
     import { isCommentView } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
@@ -20,6 +20,7 @@
 
     import { 
         Fire, 
+        HandThumbUp, 
         Icon, 
         Newspaper,
         ShieldExclamation, 
@@ -119,6 +120,11 @@
     {/if}
 
     {#if $profile?.user && isAdmin($profile.user)}
+        <MenuButton color="info" on:click={() => voteViewerModal('comment', item.comment.id)}>
+            <Icon src={HandThumbUp} size="16" mini />
+            View Votes
+        </MenuButton>
+        
         <MenuButton color="dangerSecondary" on:click={() => {
                 purging = true
                 removing = true

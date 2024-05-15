@@ -1,6 +1,5 @@
 import { goto } from '$app/navigation'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
-//import { crypto} from 'crypto'
 
 import { userSettings } from '$lib/settings.js'
 import { get, writable } from 'svelte/store'
@@ -68,6 +67,10 @@ export const objectCopy = function(input:any): any {
         console.log(err);
         return {}
     }
+}
+
+export function capitalizeFirstLetter(string:string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 

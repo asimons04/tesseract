@@ -3,7 +3,7 @@
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { CommentView, PostView } from 'lemmy-js-client'
     
-    import { amMod, isAdmin, remove } from './moderation'
+    import { amMod, isAdmin, remove, voteViewerModal } from './moderation'
     import type { ButtonColor } from '$lib/ui/colors.js'
     import { getClient } from '$lib/lemmy'
     import { isPostView } from '$lib/lemmy/item.js'
@@ -27,6 +27,7 @@
         Megaphone,
         Newspaper,
         ShieldExclamation,
+        HandThumbUp,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -208,6 +209,11 @@
 
         <!--- Admin Only Options--->
         {#if isAdmin($profile.user)}
+            <MenuButton color="info" on:click={() => voteViewerModal('post', item.post.id)}>
+                <Icon src={HandThumbUp} size="16" mini />
+                View Votes
+            </MenuButton>
+        
             <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
                 <Icon src={Fire} size="16" mini />
                 Purge Post
