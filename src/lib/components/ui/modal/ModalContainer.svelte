@@ -47,7 +47,7 @@
     <PostCommentVoteShowModal bind:open={$modals.votes.open} type={$modals.votes.type} submission_id={$modals.votes.submission_id} />
 {/if}
 
-<!--- User Profile Modal--->
+<!--- User Profile Modal (should be after so it's "above" other modals that would pop up a user profile (e.g. vote view)--->
 {#if $modals.user.open}
     <UserProfileModal  bind:open={$modals.user.open} personDetails={$modals.user.personDetails} mod={$modals.user.mod} />
 {/if}
