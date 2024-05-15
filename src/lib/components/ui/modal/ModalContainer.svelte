@@ -2,7 +2,7 @@
     import { modals } from '$lib/components/lemmy/moderation/moderation.js'
     
     import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
-    import UserProfileModal from '$lib/components/lemmy/user/UserProfileModal.svelte'
+    import UserProfileModal from '$lib/components/lemmy/modal/UserProfileModal.svelte'
   
 </script>
 

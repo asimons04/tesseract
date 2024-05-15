@@ -17,7 +17,7 @@
     import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
     import Modal from "$lib/components/ui/modal/Modal.svelte";
     import RelativeDate from "$lib/components/util/RelativeDate.svelte";
-    import UserLink from "./UserLink.svelte";
+    import UserLink from "../user/UserLink.svelte";
     import UserSendMessageModal from "./UserSendMessageModal.svelte";
 
     import { 
@@ -48,7 +48,7 @@
 
 
 
-<Modal bind:open preventCloseOnClickOut={true} width="min-w-full sm:min-w-[475px]">
+<Modal bind:open preventCloseOnClickOut={true} icon={User} title="Profile" width="min-w-full sm:min-w-[475px]">
     
     <!---DM and Ban Modals Inside This Modal--->
     {#if messaging && personDetails}

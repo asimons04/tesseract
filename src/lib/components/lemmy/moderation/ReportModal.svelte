@@ -11,10 +11,17 @@
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
+    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
+    import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
+    import Switch from '$lib/components/input/Switch.svelte'
 
     import {
+        ClipboardDocumentCheck,
+        EyeSlash,
         Flag
     } from 'svelte-hero-icons'
+    import NSFWOverlay from '../post/utils/NSFWOverlay.svelte';
+    
 
 
     export let open: boolean
@@ -27,7 +34,7 @@
 
     let loading = false
     let confirm = false
-  
+    let hideSubmission = false
 
     async function report() {
         if (!item || !$profile?.jwt || reason == '') return
@@ -68,7 +75,7 @@
 
 </script>
 
-<Modal bind:open title="Report Submission" icon={Flag}>
+<Modal bind:open title="Report Submission" icon={Flag} width="max-w-2xl">
   
     <form class="flex flex-col gap-4" on:submit|preventDefault={report}>
         {#if item}
@@ -77,34 +84,37 @@
                     {isComment(item) || isPost(item) ? `to the moderators of ${item.community?.name}@${new URL(item.community?.actor_id).host}` : ''}
                     {isPrivateMessage(item) ? `to the admins of ${new URL(item.creator.actor_id).hostname}` : ''}
                 </span>
-                <MarkdownEditor required rows={6} label="Reason" previewButton images={false} bind:value={reason} />
                 
+                <MarkdownEditor required rows={6} label="Reason" previewButton images={false} bind:value={reason}>
+                    <Button submit {loading} disabled={loading || !confirm} color="primary" size="lg" slot="actions">
+                        Submit
+                    </Button>
+                </MarkdownEditor>
+                
+                <SettingToggleContainer>
+                    <SettingToggle bind:value={confirm} icon={ClipboardDocumentCheck} title="Confirm" description="I confirm that this report is being made in good faith" />
+                    <SettingToggle bind:value={hideSubmission} icon={EyeSlash} title="Hide Submission" description="Hide the post/comment preview." />
+                </SettingToggleContainer>
 
-                <Checkbox bind:checked={confirm} defaultvalue={false} class="px-2">
-                    I confirm that this report is being made in good faith.
-                </Checkbox>
-
-
-                <Button submit {loading} disabled={loading || !confirm} color="primary" size="lg">
-                    Submit
-                </Button>
+                
             </div>
-
-            <div class="flex flex-col pointer-events-none list-none">
-                {#if isComment(item)}
-                    <Comment actions={false}
-                        node={{
-                            children: [],
-                            comment_view: item,
-                            depth: 1,
-                            loading: false,
-                        }}
-                        postId={item.post.id}
-                    />
-                {:else if isPost(item)}
-                    <Post actions={false} post={item} forceCompact={true}/>
-                {/if}
-            </div>
+            {#if !hideSubmission}
+                <div class="flex flex-col pointer-events-none list-none">
+                    {#if isComment(item)}
+                        <Comment actions={false}
+                            node={{
+                                children: [],
+                                comment_view: item,
+                                depth: 1,
+                                loading: false,
+                            }}
+                            postId={item.post.id}
+                        />
+                    {:else if isPost(item)}
+                        <Post actions={false} post={item} forceCompact={true}/>
+                    {/if}
+                </div>
+            {/if}
         {/if}
         
     </form>

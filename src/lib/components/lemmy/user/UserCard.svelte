@@ -24,7 +24,7 @@
     import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
-    import UserSendMessageModal from './UserSendMessageModal.svelte'
+    import UserSendMessageModal from '../modal/UserSendMessageModal.svelte'
 
     import {
         Cake,

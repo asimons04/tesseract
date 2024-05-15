@@ -111,6 +111,10 @@ export function userProfileModal(personDetails:GetPersonDetailsResponse, mod:boo
 
 }
 
+/** Launches the vote viewer modal
+ * @param type 'post' or 'comment'
+ * @param submission_id Post ID or comment ID of the submission to look up
+*/
 export function voteViewerModal(type:'post'|'comment', submission_id:number) {
     modals.update((m) => ({
         ...m,
