@@ -49,7 +49,6 @@
             personDetails = personDetails 
                 ? personDetails
                 : await getClient().getPersonDetails({
-                    //person_id: user.id,
                     username: `${user.name}@${new URL(user.actor_id).hostname}`
 
                 })

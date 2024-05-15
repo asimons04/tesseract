@@ -110,7 +110,14 @@
             <!---View User's Profile--->
             <Button color="tertiary-border" icon={User} alignment="left" class="w-full"
                 on:click={()=> {
-                    if (personDetails) goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                    if (personDetails) {
+                        if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
+                            goto ('/profile/user')
+                        }
+                        else {    
+                            goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)   
+                        }
+                    }
                     open = false 
                 }}
                 >
@@ -196,6 +203,8 @@
                     {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}
                 </Button>
             {/if}
+
+            
 
         </div>
     {/if}
