@@ -31,38 +31,49 @@
 
     // Load the vote counts
     onMount(async () => {
-        votes = []
         await load()
     })
 
     async function load() {
         loading = true
         votes = []
-        votes = votes
-        if (type == 'post')     votes = await listPostLikes(submission_id)
-        if (type == 'comment')  votes = await listCommentLikes(submission_id)
+        votes = (type == 'post')
+            ? await listPostLikes(submission_id)
+            : await listCommentLikes(submission_id)
         loading = false
-        votes = votes
+
     }
 
     async function listPostLikes(postID:number):Promise<VoteView[]> {
-        let result = await getClient().listPostLikes({
-            post_id: postID,
-            limit: limit,
-            page: page
-        })
-        if (result.post_likes) return result.post_likes
-        return [] as VoteView[]
+        try {
+            let result = await getClient().listPostLikes({
+                post_id: postID,
+                limit: limit,
+                page: page
+            })
+            if (result.post_likes) return result.post_likes
+            return [] as VoteView[]
+        }
+        catch {
+            fetchError = true
+            return [] as VoteView[]
+        }
     }
 
     async function listCommentLikes(commentID:number):Promise<VoteView[]> {
-        let result = await getClient().listCommentLikes({
-            comment_id: commentID,
-            limit: limit,
-            page: page
-        })
-        if (result.comment_likes) return result.comment_likes
-        return [] as VoteView[]
+        try {
+            let result = await getClient().listCommentLikes({
+                comment_id: commentID,
+                limit: limit,
+                page: page
+            })
+            if (result.comment_likes) return result.comment_likes
+            return [] as VoteView[]
+        }
+        catch {
+            fetchError = true
+            return [] as VoteView[]
+        }
     }
 
 </script>
@@ -80,9 +91,9 @@
     {/if}
 
     {#if votes}
-        <div class="flex flex-col divide-between gap-2">
+        <div class="flex flex-col divide-y divide-slate-200 dark:divide-zinc-500 mx-4">
             {#each votes as vote}
-                <div class="flex flex-row w-full items-center gap-2 text-sm">
+                <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
                     <UserLink bind:user={vote.creator} avatar avatarSize={iconSize} />
                     
                     <span class="flex ml-auto {vote.score > 0 ? 'text-sky-500' : 'text-red-500'} font-bold">
