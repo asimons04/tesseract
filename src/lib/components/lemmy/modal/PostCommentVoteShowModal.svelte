@@ -78,7 +78,7 @@
 
 </script>
 
-<Modal bind:open preventCloseOnClickOut title="{capitalizeFirstLetter(type)} Votes" icon={ArrowsUpDown} width="min-w-full sm:min-w-[475px]">
+<Modal bind:open preventCloseOnClickOut title="{capitalizeFirstLetter(type)} Votes" icon={ArrowsUpDown} width="max-w-xl">
     {#if loading}
         <div class="flex flex-col gap-4 mx-auto my-auto">
             <span class="text-sm font-bold">Loading...</span>
