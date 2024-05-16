@@ -18,16 +18,13 @@
 </script>
 
 <Card>
-    
-        
     <div class="flex flex-row gap-2 text-sm max-w-full p-2">
-        
         <div class="flex-shrink-0">
             <Avatar width={64} url={user.person.avatar} alt={user.person.name} />
         </div>
 
         <div class="flex flex-col gap-2">
-            <span class="break-words max-w-full w-max text-base font-bold text-sky-700 dark:text-sky-400 hover:underline" >
+            <span class="break-words max-w-full w-max text-base font-bold text-sky-500 dark:text-sky-400 hover:underline" >
                 <UserLink avatar={false} user={user.person} />
             </span>
             <!---Cake day and post/comment counts--->
@@ -51,5 +48,4 @@
             </div>
         </div>
     </div>
-    
 </Card>

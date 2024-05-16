@@ -32,7 +32,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div id={elementID.toString()} on:mouseover={() => lastSeenPost.set(elementID)} on:touchstart={() => lastSeenPost.set(elementID)}  bind:this={commentContainer} transition:fade>
-    <Card class="flex flex-col bg-white rounded-md p-5 flex-1 gap-1">
+    <Card class="flex flex-col rounded-md p-3 flex-1 gap-1">
         
         <div class="flex flex-row justify-between gap-1 items-center">
             <CommentMeta bind:comment />
