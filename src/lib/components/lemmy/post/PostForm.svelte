@@ -34,7 +34,6 @@
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import PostPreview from './Post.svelte'
-    //import PostPreview from './PostPreview.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     
