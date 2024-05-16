@@ -19,6 +19,8 @@ All major/minor changes between releases will be documented here.
 - [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
 - [X] Add `ModeratorView` to listing types if `modOfAny()`
 
+#### New Bugs
+- [ ] DM modal preview shrinks in mobile view
 
 
 #### Markdown Renderer

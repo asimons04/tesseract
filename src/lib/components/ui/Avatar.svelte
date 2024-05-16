@@ -4,7 +4,7 @@
     import { imageProxyURL } from '$lib/image-proxy'
     import * as initials from '@dicebear/initials'
 
-    const sizes = [48, 64, 128, 256, 512]
+    const sizes = [48, 64, 128, 256, 512, 1024]
 
     export let url: string | undefined
     export let alt: string = ''
@@ -19,7 +19,7 @@
 
 {#if url}
     <img
-        src="{imageProxyURL(url, findClosestNumber(sizes,res||width*3), 'webp')}"
+        src="{imageProxyURL(url, findClosestNumber(sizes,res||width), 'webp')}"
         {alt}
         {width}
         {title}
