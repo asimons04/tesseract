@@ -21,9 +21,10 @@ All major/minor changes between releases will be documented here.
 
 #### New Bugs
 - [X] DM modal preview shrinks in mobile view Fixed in [f74eb47](https://github.com/asimons04/tesseract/commit/f74eb47ad464ac5eea73d5ee928010c726e91ec4)
+- [ ] Ensure "Moderator View" only appears on main feed
 
 #### General UI
-- [X] Make light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
+- [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
 
 
 #### Markdown Renderer

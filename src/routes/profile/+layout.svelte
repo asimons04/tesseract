@@ -11,14 +11,17 @@
     
     import {
         Icon,
+        ArrowUturnLeft,
+        AtSymbol,
         Bookmark,
+        ChatBubbleLeftRight,
         Cog6Tooth,
+        Envelope,
         EnvelopeOpen,
         Inbox,
+        InboxStack,
         NoSymbol,
         UserCircle,
-        Envelope,
-        InboxStack,
     } from 'svelte-hero-icons'
     
     
@@ -45,7 +48,7 @@
 
 <!---Inbox --->
 {#if $page.url.pathname.startsWith('/profile/inbox')}
-    <SubNavbar  back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons>
+    <SubNavbar  back compactSwitch toggleMargins refreshButton toggleCommunitySidebar>
         <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="far-left">
             <SelectMenu
                 title="Read/Unread"
@@ -75,13 +78,24 @@
                 }}
             />
 
+            <!---Inbox Message Type (all/replies/mentions/messages) --->
             <SelectMenu
                 title="Message Type"    
                 selected={$page.url.searchParams.get('type') ?? 'all' }
                 options={['all', 'mentions', 'replies', 'messages']}
                 optionNames={['All', 'Mentions', 'Replies', 'Messages']}
                 iconSize={18}
-                icon={InboxStack}
+                icon={
+                    (!$page.url.searchParams.get('type') || $page.url.searchParams.get('type') == 'all')
+                        ? InboxStack
+                        : $page.url.searchParams.get('type') == 'mentions'
+                            ? AtSymbol
+                            : $page.url.searchParams.get('type') == 'replies'
+                                ? ArrowUturnLeft
+                                : $page.url.searchParams.get('type') == 'messages'
+                                    ? ChatBubbleLeftRight
+                                    : InboxStack
+                }
                 on:select={(e) => {
                     $page.url.searchParams.delete('page')
                     $page.url.searchParams.set('type', e.detail ?? 'all')
