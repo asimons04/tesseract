@@ -103,7 +103,7 @@
     }
 </script>
 
-<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User" icon={banned ? Check : NoSymbol}>
+<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User" icon={banned ? Check : NoSymbol}  width="max-w-2xl">
     
     {#if item}
         <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>

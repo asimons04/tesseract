@@ -8,17 +8,18 @@
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
-    import DateInput from '$lib/components/input/DateInput.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
-    
-    import {
-        Check,
-        NoSymbol
-    } from 'svelte-hero-icons'
-    
+    import SettingDateInput from '$lib/components/ui/settings/SettingDateInput.svelte';
+    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
+    import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
 
+    import {
+        CalendarDays,
+        Check,
+        NoSymbol,
+        Trash
+    } from 'svelte-hero-icons'
     
 
     export let open = false
@@ -92,7 +93,7 @@
     }
 </script>
 
-<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User From Instance" icon={banned ? Check : NoSymbol}>
+<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User From Instance" icon={banned ? Check : NoSymbol}  width="max-w-2xl">
     
     {#if user}
         <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>
@@ -107,18 +108,19 @@
                     ? 'unbanning'
                     : 'banning'} {user.name}@{new URL(user.actor_id).hostname}?"
             >
-                <div class="flex flex-row flex-wrap w-full items-center justify-between" slot="actions">
-                    {#if !banned}
-                        <Checkbox bind:checked={deleteData} class="ml-auto mr-4 md:mr-0 md:mx-auto">Remove Content</Checkbox>
-                        <DateInput bind:value={expires} class="ml-auto" label="Ban Expires" />
-                    {/if}
-                </div>
-
+                <Button submit color="primary" {loading} disabled={loading} size="lg" slot="actions">
+                    Submit
+                </Button>
             </MarkdownEditor>
+
+            {#if !banned}
+                <SettingToggleContainer>
+                    <SettingToggle bind:value={deleteData} icon={Trash} title="Remove Content" description="Remove all of this user's content when banning." />
+                    <SettingDateInput bind:value={expires} icon={CalendarDays} title="Ban Expires" description="To effect a temporary ban, enter a date for the ban to expire. Leave blank for a permanent ban." />
+                </SettingToggleContainer>
+            {/if}
         
-            <Button submit color="primary" {loading} disabled={loading} size="lg">
-                Submit
-            </Button>
+            
         </form>
     {/if}
 </Modal>

@@ -48,7 +48,7 @@
 
 
 
-<Modal bind:open preventCloseOnClickOut={true} icon={User} title="Profile" width="min-w-full sm:min-w-[475px]">
+<Modal bind:open preventCloseOnClickOut={true} icon={User} title="Profile" width="max-w-xl">
     
     <!---DM and Ban Modals Inside This Modal--->
     {#if messaging && personDetails}

@@ -59,7 +59,7 @@
     >
   
         <div bind:this={modalElement} transition:scale={{ start: 0.5, easing: expoOut }}
-            class="overflow-y-auto rounded-xl max-w-full box-border {width} {fullHeight ? 'h-[95svh]' : height} {$$props.class}"
+            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[95svh]' : height} {$$props.class}"
         >
             <div class="w-full dark:!bg-zinc-950 rounded-xl {width} box-border mx-auto {fullHeight ? 'h-full' : height}">
                 <div

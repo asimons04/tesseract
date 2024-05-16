@@ -48,7 +48,7 @@
 </script>
 
 
-<Modal bind:open icon={Envelope} title="Send Direct Message">
+<Modal bind:open icon={Envelope} title="Send Direct Message" width="max-w-4xl">
     <form on:submit|preventDefault={sendMessage} class="flex flex-col gap-4">
         
         <p class="inline-flex flex-row gap-2 items-center pointer-events-none">

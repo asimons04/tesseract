@@ -34,7 +34,7 @@
 
     let loading = false
     let confirm = false
-    let hideSubmission = false
+    let hideSubmission = true
 
     async function report() {
         if (!item || !$profile?.jwt || reason == '') return
