@@ -2,16 +2,17 @@
     
 
     import Button from "$lib/components/input/Button.svelte"
-    import Checkbox from "$lib/components/input/Checkbox.svelte";
+    import Card from "$lib/components/ui/Card.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import TextInput from "$lib/components/input/TextInput.svelte"
-
+    import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte"
+    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
+    
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { profile, profileData, setUserID } from "$lib/auth"
     import { toast } from "$lib/components/ui/toasts/toasts"
-    import { Trash } from "svelte-hero-icons"
-    
+    import { Icon, ExclamationTriangle, Trash } from "svelte-hero-icons"
 
     export let open:boolean = false
 
@@ -76,16 +77,27 @@
 
 
 
-<Modal bind:open title="Delete Account" icon={Trash} >
+<Modal bind:open title="Delete Account" icon={Trash} width="max-w-2xl" >
     <div class="flex flex-col gap-4">
+        <Card cardColor="warning">
+            <div class="flex flex-row gap-2 items-center p-2">
+                <span>
+                    <Icon src={ExclamationTriangle} mini width={24}/>
+                </span>
+                <span class="font-normal text-sm">
+                    <span class="font-bold">Warning</span>: 
+                    Deleting your account is irreversible. If you are sure you want to do this, enter your password below.
+                </span>
+            </div>
+        </Card>
         
-        <span class="font-normal text-base">
-            <span class="font-bold">Warning</span>: Deleting your account is irreversible. If you are sure you want to do this, enter your
-            password below. 
-            <!---If you want to leave your content visible for posterity, leave the "delete content" checkbox empty.--->
-        </span>
         
-        <Checkbox bind:checked={delete_content}>Delete Content</Checkbox>
+        <SettingToggleContainer>
+            <SettingToggle bind:value={delete_content} icon={Trash} title="Delete Content"
+                description="Set this option to delete your submissions along with your account. Leave it off to let your content remain for posterity"
+            />
+        </SettingToggleContainer>
+        
         <TextInput label="Password" type="password" bind:value={password} />
 
         <div class="flex flex-row justify-between mt-4">
