@@ -4,12 +4,14 @@
     import { createEventDispatcher } from 'svelte'
     import { deleteImageUpload } from './helpers';
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    
+    import Avatar from '$lib/components/ui/Avatar.svelte';
     import Button from "$lib/components/input/Button.svelte"
     import { Trash } from 'svelte-hero-icons';
 
     export let uploadResponse: UploadImageResponse | undefined
-    export let iconSize:number = 16
+    //export let iconSize:number = 16
+    export let previewSize:number = 48
     
     let dispatcher = createEventDispatcher<{ delete: boolean }>()
     
@@ -37,6 +39,15 @@
     }
 </script>
 
-<div class="flex flex-row gap-2 items-center">
-    <Button color="tertiary-border" size="square-form" title="Delete Upload" icon={Trash} iconSize={iconSize} disabled={!uploadResponse?.delete_url} on:click={deleteImage} />
+{#if uploadResponse}
+<div class="relative flex flex-row gap-0 items-center">
+    <Avatar url={uploadResponse.url} width={previewSize} circle={false}/>
+    
+    <span class="absolute bottom-0 right-0 bg-white dark:bg-black">
+        <Button color="danger" size="square-sm" title="Delete Upload"
+            icon={Trash} iconSize={12} 
+            disabled={!uploadResponse?.delete_url} on:click={deleteImage} 
+        />
+    </span>
 </div>
+{/if}

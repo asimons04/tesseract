@@ -10,6 +10,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import EmojiPicker from './EmojiPicker.svelte'
     import ImageUploadModal from '../lemmy/modal/ImageUploadModal.svelte';
+    import ImageUploadPreviewDeleteButton from '../uploads/ImageUploadPreviewDeleteButton.svelte';
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
@@ -23,7 +24,7 @@
         ListBullet,
         Photo,
     } from 'svelte-hero-icons'
-    import ImageUploadDeleteButton from '../uploads/ImageUploadDeleteButton.svelte';
+    
     
     
 
@@ -35,15 +36,15 @@
     export let rows: number = 4
     export let previewing:boolean = false;
     export let id:string = '';
-
+    
+    // Bind this to an outside value if need to persist between create/destroy of this component
+    export let imageUploads = [] as UploadImageResponse[]
+    
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
     let textArea: HTMLTextAreaElement
     let uploadingImage = false
-    let loading = false
-    let image: FileList | null = null
     let emojiPickerOpen:boolean = false
-
     let minRows = rows
 
 
@@ -82,14 +83,14 @@
         Enter: () => dispatcher('confirm', value),
     }
 
-    let imageUploads = [] as UploadImageResponse[]
     
+    let imageAltText: string
 </script>
 
 {#if uploadingImage && images}
-    <ImageUploadModal bind:open={uploadingImage} on:upload={(e) => {
+    <ImageUploadModal bind:open={uploadingImage} bind:altText={imageAltText} on:upload={(e) => {
             if (e.detail?.url) {
-                wrapSelection(`![](${imageProxyURL(e.detail.url)})`, '')
+                wrapSelection(`![${imageAltText}](${imageProxyURL(e.detail.url)})`, '')
                 imageUploads.push(e.detail)
                 imageUploads = imageUploads
             }
@@ -269,12 +270,20 @@
         <div class="flex flex-row gap-4 p-1.5 items-center">
             {#each imageUploads as upload, index}
                 {#if upload}
-                    <ImageUploadDeleteButton bind:uploadResponse={upload} on:delete={(e) => {
-                        if (e.detail) {
-                            console.log(index)
-                            
-                        }
-                    }}/>
+                    <ImageUploadPreviewDeleteButton uploadResponse={upload} previewSize={64}
+                        on:delete={(e) => {
+                            if (e.detail && upload?.url) {
+                                
+                                let proxiedURL = imageProxyURL(upload.url)?.replace('?', '\\?')
+                                if (proxiedURL) {
+                                    const URLRegex = new RegExp(`!\\[.*\\]\\(${proxiedURL}\\)`)
+                                    value = value.replace(URLRegex, '')
+                                }
+                                imageUploads.splice(index,1)
+                                imageUploads = imageUploads
+                            }
+                        }}
+                    />
                 {/if}
             {/each} 
             

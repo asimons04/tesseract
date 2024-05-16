@@ -17,7 +17,7 @@
 
 
 
-<Modal bind:open={open} fullHeight={false} icon={PencilSquare} title="Editing Post">
+<Modal bind:open={open} fullHeight={false} icon={PencilSquare} title="Editing Post" width="max-w-4xl">
     
     {#await import('$lib/components/lemmy/post/PostForm.svelte')}
         <div class="mx-auto flex justify-center items-center">

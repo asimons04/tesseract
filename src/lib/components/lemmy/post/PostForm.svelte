@@ -80,7 +80,10 @@
     let uploadingImage   = false
     let uploadResponse: UploadImageResponse | undefined
     let useImageProxyForPost:boolean = false
+    let bodyImages:UploadImageResponse[]
+    
     let deleteImage: () => Promise<void>
+
     
     let previewing       = false
     let fetchingMetadata = false
@@ -134,8 +137,6 @@
                 
             } 
             else {
-                let image = data.image ? await uploadImage(data.image[0]) : undefined
-                data.url = image || data.url || undefined
                 const post = await getClient().createPost({
                     community_id: data.community!.id,
                     name: data.name,
@@ -297,10 +298,11 @@
         } 
     }
 
+
 </script>
 
 
-<ImageUploadModal bind:open={uploadingImage} on:upload={(e) => {
+<ImageUploadModal bind:open={uploadingImage} useAltText={false} on:upload={(e) => {
         uploadResponse = e.detail
         if (uploadResponse?.url) data.url = uploadResponse.url
         uploadingImage = false
@@ -409,7 +411,7 @@
         </div>
 
         <!--- Post Body --->
-        <MarkdownEditor rows={10} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} />
+        <MarkdownEditor rows={10} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>
         
         <!---Options--->
         <SettingToggleContainer>
