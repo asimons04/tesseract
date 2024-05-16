@@ -33,6 +33,7 @@
             
             dispatcher('upload', uploadResponse)
             loading = false
+            image = null
         } catch (err) {
             toast({
                 content: err as any,

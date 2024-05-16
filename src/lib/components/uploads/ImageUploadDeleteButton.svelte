@@ -2,7 +2,7 @@
     import type { UploadImageResponse } from 'lemmy-js-client';
 
     import { createEventDispatcher } from 'svelte'
-    import { profile } from '$lib/auth.js'
+    import { deleteImageUpload } from './helpers';
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte';
@@ -11,21 +11,17 @@
 
     export let uploadResponse: UploadImageResponse | undefined
     export let iconSize:number = 16
-    export let showPreview:boolean = false
-    export let previewSize:number = 48
+    
+    //export let showPreview:boolean = false
+    //export let previewSize:number = 48
     
     let dispatcher = createEventDispatcher<{ delete: boolean }>()
     
     export async function deleteImage() {
-        if (!uploadResponse?.delete_url || !$profile?.jwt) return
-        const deleteResult = await fetch(uploadResponse.delete_url, 
-            { 
-                headers: {
-                    Authorization: `Bearer ${$profile.jwt}`
-                }
-            }
-        )
-        if (deleteResult.ok) {
+        if (!uploadResponse) return
+        
+        const deleteResult = await deleteImageUpload(uploadResponse)
+        if (deleteResult) {
             toast({
                 type: 'success',
                 title: 'Image Deleted',
@@ -46,10 +42,5 @@
 </script>
 
 <div class="flex flex-row gap-2 items-center">
-    <!---Delete the uploaded Image--->
-    {#if uploadResponse?.delete_url}
-        <Button color="tertiary-border" size="square-form" title="Delete Upload" icon={Trash} iconSize={iconSize} on:click={deleteImage} />
-    {:else}
-        <Button color="danger" size="square-form" title="Delete Upload" icon={Trash} iconSize={iconSize} disabled />
-    {/if}
+    <Button color="tertiary-border" size="square-form" title="Delete Upload" icon={Trash} iconSize={iconSize} disabled={!uploadResponse?.delete_url} on:click={deleteImage} />
 </div>

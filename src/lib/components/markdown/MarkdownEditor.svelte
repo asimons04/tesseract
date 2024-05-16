@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Community, Person } from 'lemmy-js-client'
+    import type { Community, Person, UploadImageResponse } from 'lemmy-js-client'
 
     import { createEventDispatcher } from 'svelte'
     import { imageProxyURL } from '$lib/image-proxy';    
@@ -9,11 +9,10 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import EmojiPicker from './EmojiPicker.svelte'
-    import FileInput from '$lib/components/input/FileInput.svelte'
+    import ImageUploadModal from '../lemmy/modal/ImageUploadModal.svelte';
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
 
     import {
         CodeBracket,
@@ -24,7 +23,8 @@
         ListBullet,
         Photo,
     } from 'svelte-hero-icons'
-    import ImageUploadModal from '../lemmy/modal/ImageUploadModal.svelte';
+    import ImageUploadDeleteButton from '../uploads/ImageUploadDeleteButton.svelte';
+    
     
 
     export let images: boolean = true
@@ -72,30 +72,6 @@
         value = textArea.value
     }
 
-    
-
-    async function upload() {
-        if (!$profile?.jwt || image == null) return
-
-        loading = true
-
-        try {
-            const uploaded = await uploadImage(image[0])
-            if (!uploaded) throw new Error('Image upload returned undefined')
-            
-            wrapSelection(`![](${imageProxyURL(uploaded)})`, '')
-            uploadingImage = false
-        } catch (err) {
-            toast({
-                content: err as any,
-                type: 'error',
-            })
-        }
-
-        loading = false
-    }
-
-
     const shortcuts = {
         KeyB: () => wrapSelection('**', '**'),
         KeyE: () => {emojiPickerOpen = !emojiPickerOpen},
@@ -106,23 +82,21 @@
         Enter: () => dispatcher('confirm', value),
     }
 
+    let imageUploads = [] as UploadImageResponse[]
     
 </script>
 
 {#if uploadingImage && images}
-    <ImageUploadModal bind:open={uploadingImage} />
+    <ImageUploadModal bind:open={uploadingImage} on:upload={(e) => {
+            if (e.detail?.url) {
+                wrapSelection(`![](${imageProxyURL(e.detail.url)})`, '')
+                imageUploads.push(e.detail)
+                imageUploads = imageUploads
+            }
+            uploadingImage = false
+        }}
+    />
     
-    <!--
-    <Modal bind:open={uploadingImage} title="Upload Image" icon={Photo}>
-        
-        <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
-            <FileInput image bind:files={image} />
-            <Button {loading} disabled={loading} submit color="primary" size="lg">
-                Upload
-            </Button>
-        </form>
-    </Modal>
-    -->
 {/if}
 
 <div class="flex flex-col w-full">
@@ -290,6 +264,21 @@
                 />
             </div>
         {/if}
+
+        <!---Bottom bar with upload image delete buttons--->
+        <div class="flex flex-row gap-4 p-1.5 items-center">
+            {#each imageUploads as upload, index}
+                {#if upload}
+                    <ImageUploadDeleteButton bind:uploadResponse={upload} on:delete={(e) => {
+                        if (e.detail) {
+                            console.log(index)
+                            
+                        }
+                    }}/>
+                {/if}
+            {/each} 
+            
+        </div>
         
         {#if $$slots.actions || previewButton}
             <!---Bottom Toolbar (edit/preview button, submit button--->

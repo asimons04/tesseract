@@ -29,10 +29,9 @@
     
 
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
     import CommunityAutocomplete from '../CommunityAutocomplete.svelte';
     import CommunityLink from '../community/CommunityLink.svelte'
-    import ImageUploadDeleteButton from '$lib/components/util/ImageUploadDeleteButton.svelte'
+    import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import PostPreview from './Post.svelte'
@@ -76,10 +75,10 @@
         embed_title: editingPost?.post.embed_title
     }
 
-    let data             = objectCopy(default_data)
+    let data = objectCopy(default_data)
     
     let uploadingImage   = false
-    let uploadResponse: UploadImageResponse|undefined
+    let uploadResponse: UploadImageResponse | undefined
     let useImageProxyForPost:boolean = false
     let deleteImage: () => Promise<void>
     
@@ -93,8 +92,10 @@
 
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
+    // If community is provided, set the data object's community key to that
     $: if (community) data.community = community
-
+    
+    // Automatically convert the uploaded image's URL to a proxy URL if the option is selected
     $: if (useImageProxyForPost && uploadResponse?.url)     data.url = imageProxyURL(uploadResponse.url)
     $: if (!useImageProxyForPost && uploadResponse?.url)    data.url = uploadResponse.url
 
@@ -401,7 +402,10 @@
             />
 
             <!---Image Upload Delete Button--->
-            <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage iconSize={18} on:delete={() => data.url = '' }/>
+            <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage iconSize={18} on:delete={(e) => {
+                    if (e.detail) data.url = '' 
+                }}
+            />
         </div>
 
         <!--- Post Body --->
