@@ -27,7 +27,7 @@
         </div>
 
         <div class="flex flex-col gap-2">
-            <span class="break-words max-w-full w-max text-base font-bold text-sky-400 hover:underline" >
+            <span class="break-words max-w-full w-max text-base font-bold text-sky-700 dark:text-sky-400 hover:underline" >
                 <UserLink avatar={false} user={user.person} />
             </span>
             <!---Cake day and post/comment counts--->
