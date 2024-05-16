@@ -8,6 +8,7 @@
     
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import Pageination from '$lib/components/ui/Pageination.svelte';
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte';
 
@@ -15,7 +16,8 @@
         Icon,
         ArrowDown, 
         ArrowUp, 
-        ArrowsUpDown 
+        ArrowsUpDown,
+        ExclamationTriangle
     } from "svelte-hero-icons";
 
     export let open:boolean = false
@@ -87,7 +89,7 @@
     {/if}
 
     {#if !loading && fetchError}
-        <p class="p-8">Unable to fetch votes for this submission.</p>
+        <Placeholder icon={ExclamationTriangle} title="Fetch Error" description="There was an error during the fetch for this request. Please try again later." />    
     {/if}
 
     {#if votes}
@@ -105,14 +107,16 @@
             {/each}
         </div>
         
-        <div class="flex w-full mt-4">
-            <Pageination bind:page disableNext={votes.length < limit} 
-                on:change={async (e) => {
-                    page = e.detail
-                    await load()
-                }}
-            />
-        </div>
+        {#if !loading && !fetchError}
+            <div class="flex w-full mt-4">
+                <Pageination bind:page disableNext={votes.length < limit} 
+                    on:change={async (e) => {
+                        page = e.detail
+                        await load()
+                    }}
+                />
+            </div>
+        {/if}
     {/if}
 
 
