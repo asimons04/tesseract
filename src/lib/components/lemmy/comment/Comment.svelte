@@ -14,7 +14,6 @@
     } from 'svelte-hero-icons'
     
     
-    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import CommentActions from '$lib/components/lemmy/comment/CommentActions.svelte'
     import CommentForm from './CommentForm.svelte'
@@ -24,13 +23,14 @@
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { getClient } from '$lib/lemmy.js'
-    import { isNewAccount, isThreadComment, scrollToTop } from '../post/helpers'
+    import { isThreadComment, scrollToTop } from '../post/helpers'
     import { onMount } from 'svelte'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
     import { slide } from 'svelte/transition'
     import { amModOfAny } from '../moderation/moderation';
+    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
     
     export let node: CommentNodeI
     export let postId: number
@@ -61,33 +61,35 @@
 </script>
 
 {#if editing}
-    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} action="Save"
-        on:action={async () => {
-            if (!$profile?.jwt || newComment.length <= 0) return
-
-            try {
-                await getClient().editComment({
-                    comment_id: node.comment_view.comment.id,
-                    content: newComment,
-                })
-
-                node.comment_view.comment.content = newComment
-                editing = false
-                toast({
-                    content: 'Successfully edited comment. You may need to refresh to see changes.',
-                    type: 'success',
-                    title: 'Comment Edited'
-                })
-            } catch (err) {
-                toast({
-                    content: "Unable to edit comment",
-                    type: 'error',
-                    title: 'Error'
-                })
-            }
-        }}
-    >
-        <CommentForm postId={node.comment_view.comment.id} bind:value={newComment} rows={7} actions={false} />
+    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} >
+        <MarkdownEditor rows={7} bind:value={newComment} previewButton={true}>
+            
+            <Button color="primary" slot="actions" on:click={async () => {
+                if (!$profile?.jwt || newComment.length <= 0) return
+    
+                try {
+                    await getClient().editComment({
+                        comment_id: node.comment_view.comment.id,
+                        content: newComment,
+                    })
+                    node.comment_view.comment.content = newComment
+                    editing = false
+                    toast({
+                        content: 'Successfully edited comment.',
+                        type: 'success',
+                        title: 'Comment Edited'
+                    })
+                } catch (err) {
+                    toast({
+                        content: "Unable to edit comment",
+                        type: 'error',
+                        title: 'Error'
+                    })
+                }
+            }}>
+                Save
+            </Button>
+        </MarkdownEditor>
     </Modal>
 {/if}
 
@@ -146,20 +148,14 @@
                         <span class="text-xs opacity-50">+{node.children.length}</span>
                     {/if}
                 </Button>
-                
-                
-
-                <!---
-                    <span class="flex flex-row flex-nowrap gap-4 items-center mb-auto w-full">
-                </span>
-                --->
-                
             </span>
         </summary>
 
         <div class="
             {jumpToComment ? jumpToCommentClassContent : ''}
-            {node.comment_view.comment.distinguished ? distinguishedClassContent : ''} flex flex-col gap-1">
+            {node.comment_view.comment.distinguished ? distinguishedClassContent : ''} flex flex-col gap-1"
+        >
+            
             <div class="max-w-full mt-0.5 break-words text-sm">
                 <Markdown source={
                     !amModOfAny($profile?.user) && (node.comment_view.comment.removed || node.comment_view.comment.deleted)
