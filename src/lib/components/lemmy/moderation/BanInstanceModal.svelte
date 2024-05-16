@@ -104,12 +104,15 @@
 
             <MarkdownEditor required previewButton images={false} rows={6} 
                 bind:value={reason} label="Reason"
-                placeholder="Why are you {banned
-                    ? 'unbanning'
-                    : 'banning'} {user.name}@{new URL(user.actor_id).hostname}?"
+                placeholder="Why are you 
+                    { banned
+                        ? 'unbanning'
+                        : 'banning'
+                    } 
+                    {user.name}@{new URL(user.actor_id).hostname}?"
             >
                 <Button submit color="primary" {loading} disabled={loading} size="lg" slot="actions">
-                    Submit
+                    {banned ? 'Unban' : 'Ban'}
                 </Button>
             </MarkdownEditor>
 

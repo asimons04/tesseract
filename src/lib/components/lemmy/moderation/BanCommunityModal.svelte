@@ -117,7 +117,7 @@
                 placeholder="Why are you {banned ? 'unbanning' : 'banning'} {user.name}@{new URL(user.actor_id).hostname} from {community.title ?? community.name}?"
             >
                 <Button submit color="primary" {loading} disabled={loading} size="lg" slot="actions">
-                    Submit
+                    {banned ? 'Unban' : 'Ban'}
                 </Button>
             </MarkdownEditor>
             
