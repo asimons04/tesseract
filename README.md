@@ -17,7 +17,20 @@ Tesseract has supported 0.19.x since version 1.2 point something.  As of 1.3.0, 
 
 When connected to an 0.18.x instance, the scaled sort and instance blocking are disabled and pagination falls back to offset-based.
 
+### API Compatibility
+#### Lemmy
+| Tesseract Version | Lemmy API Version | Compatible?   | Notes |
+| ---               | ---               | ---           | ---   |
+| 1.2.9.x           | 0.18.x            | Yes           | 
+| 1.2.9.x           | 0.19.x            | Yes           | Auth and basic user/mod functionality only. Admin functions inaccessible due to detection bug.
+| 1.3.0             | 0.18.x            | Yes           | Last version to support 0.18.x
+| 1.3.0             | 0.19.x            | Yes           | Auth, instance block, and cursor pagination supported.
+| 1.3.1             | 0.18.x            | No            | This release drops 0.18.x support
+| 1.3.1             | 0.19.0-2          | Yes           | Some features, such as post/comment vote views, will be broken as those API calls are not present until 0.19.3
+| 1.3.1             | 0.19.3            | Yes           | 0.19.3 is the current development target
 
+#### Sublinks
+Will be added once Sublinks is released.
 
 ## Feature Highlights
 The following features are unique to Tesseract:
