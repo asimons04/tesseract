@@ -1,8 +1,10 @@
 <script>
+    import { goto } from '$app/navigation';
     import { page } from '$app/stores'
 
     import Button from '$lib/components/input/Button.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import UserCard from '$lib/components/lemmy/user/UserCard.svelte'
@@ -11,9 +13,12 @@
         Icon,
         Bookmark,
         Cog6Tooth,
+        EnvelopeOpen,
         Inbox,
         NoSymbol,
         UserCircle,
+        Envelope,
+        InboxStack,
     } from 'svelte-hero-icons'
     
     
@@ -38,9 +43,60 @@
 </SubNavbar>
 {/if}
 
-<!---Inbox, Settings, Blocks --->
-{#if $page.url.pathname.startsWith('/profile/inbox') || $page.url.pathname.startsWith('/profile/settings') || $page.url.pathname.startsWith('/profile/blocks')}
-<SubNavbar back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons />
+<!---Inbox --->
+{#if $page.url.pathname.startsWith('/profile/inbox')}
+    <SubNavbar  back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons>
+        <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="far-left">
+            <SelectMenu
+                title="Read/Unread"
+                options={[false, true]}
+                optionNames={['All', 'Unread']}
+                selected={
+                        !$page.url.searchParams.get('unreadOnly')
+                            ? true
+                            : ($page.url.searchParams.get('unreadOnly') && $page.url.searchParams.get('unreadOnly') == 'false')
+                                ? false
+                                : true
+                }
+                icon={
+                    !$page.url.searchParams.get('unreadOnly')
+                        ? Envelope
+                        : ($page.url.searchParams.get('unreadOnly') && $page.url.searchParams.get('unreadOnly') == 'false')
+                            ? EnvelopeOpen
+                            : Envelope
+                }
+                iconSize={18}
+                on:select={(e) => {
+                    $page.url.searchParams.delete('page')
+                    $page.url.searchParams.set('unreadOnly', (e.detail ?? false).toString())
+                    goto($page.url.toString(), {
+                        invalidateAll: true,
+                    })
+                }}
+            />
+
+            <SelectMenu
+                title="Message Type"    
+                selected={$page.url.searchParams.get('type') ?? 'all' }
+                options={['all', 'mentions', 'replies', 'messages']}
+                optionNames={['All', 'Mentions', 'Replies', 'Messages']}
+                iconSize={18}
+                icon={InboxStack}
+                on:select={(e) => {
+                    $page.url.searchParams.delete('page')
+                    $page.url.searchParams.set('type', e.detail ?? 'all')
+                    goto($page.url.toString(), {
+                        invalidateAll: true,
+                    })
+                }}
+            />
+        </div>
+    </SubNavbar>
+{/if}
+
+<!--- Settings and Blocks--->
+{#if $page.url.pathname.startsWith('/profile/settings') || $page.url.pathname.startsWith('/profile/blocks')}
+    <SubNavbar back compactSwitch toggleMargins refreshButton toggleCommunitySidebar scrollButtons />
 {/if}
 
 <!---Saved--->

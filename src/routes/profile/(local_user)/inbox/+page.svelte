@@ -20,6 +20,7 @@
         Icon,
         Inbox,
     } from 'svelte-hero-icons'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     
     
 
@@ -39,9 +40,7 @@
 
         $profile.user.unreads = 0
 
-        goto($page.url, {
-            invalidateAll: true,
-        }).then(() => {
+        goto($page.url, {invalidateAll: true,}).then(() => {
             markingAsRead = false
         })
 
@@ -55,58 +54,25 @@
 
 <h1 class="flex flex-row justify-between">
     <span class="font-bold text-2xl">Inbox</span>
-</h1>
-
-<div class="flex flex-row gap-4 w-full">
-    <MultiSelect
-        selected={data.unreadOnly}
-        options={[false, true]}
-        optionNames={['All', 'Unread']}
-        headless={true}
-        on:select={(e) => {
-            $page.url.searchParams.delete('page')
-            $page.url.searchParams.set('unreadOnly', (e.detail ?? false).toString())
-            goto($page.url.toString(), {
-                invalidateAll: true,
-            })
-        }}
-    />
-
-    <MultiSelect
-        selected={data.type}
-        options={['all', 'mentions', 'replies', 'messages']}
-        optionNames={['All', 'Mentions', 'Replies', 'Messages']}
-        on:select={(e) => {
-            $page.url.searchParams.delete('page')
-            $page.url.searchParams.set('type', e.detail ?? 'all')
-            goto($page.url.toString(), {
-                invalidateAll: true,
-            })
-        }}
-        headless={true}
-        items={0}
-    />
-
-    <div class="ml-auto"/>
-
-    <Button on:click={markAllAsRead} loading={markingAsRead} disabled={markingAsRead} size="md" >
+    <Button on:click={markAllAsRead} loading={markingAsRead} disabled={markingAsRead} size="md" color="tertiary-border">
         <Icon src={Check} width={16} mini slot="icon" />
             Mark all as read
     </Button>
-</div>
+</h1>
 
-<div class="flex flex-col gap-4 list-none my-4 w-full h-full flex-1">
-    {#if !data.data || (data.data?.length ?? 0) == 0}
-        <div class="my-auto">
-            <Placeholder icon={Inbox} title="No new notifications" description="Messages, replies, and mentions will appear here." />
+<FeedContainer>
+
+{#if !data.data || (data.data?.length ?? 0) == 0}
+    <div class="my-auto">
+        <Placeholder icon={Inbox} title="No new notifications" description="Messages, replies, and mentions will appear here." />
+    </div>
+{:else}
+    {#each data.data as item}
+        <div in:fly={{ duration: 500, y: -6, opacity: 0 }}>
+            <InboxItem bind:item  />
         </div>
-    {:else}
-        {#each data.data as item}
-            <div in:fly={{ duration: 500, y: -6, opacity: 0 }}>
-                <InboxItem bind:item  />
-            </div>
-        {/each}
+    {/each}
 
-        <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
-    {/if}
-</div>  
+    <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
+{/if}
+</FeedContainer>

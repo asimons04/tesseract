@@ -43,10 +43,10 @@
     let distinguishedClassSummary = 'border-l border-r rounded-t-md border-t border-green-500/50 bg-green-500/5 p-1'
     let distinguishedClassContent = 'shadow-md border-l border-r rounded-b-md border-b border-green-500/50 bg-green-500/5 p-1'
 
-    let jumpToCommentClassSummary = 'border-l border-r rounded-t-md border-t border-amber-200/50 bg-amber-500/5 p-1'
+    let jumpToCommentClassSummary = `border-l border-r rounded-t-md border-t border-amber-200/50 bg-amber-500/5 p-1`
     let jumpToCommentClassContent = 'shadow-md border-l border-r rounded-b-md border-b border-amber-500/50 bg-amber-500/5 p-1'
     let jumpToComment = false
-    let commentContainer: HTMLLIElement
+    let commentContainer: HTMLDivElement
 
     let op = node.comment_view.post.creator_id == node.comment_view.creator.id
     // If linking to a thread, scroll to the speciic comment and highlight it
@@ -93,14 +93,21 @@
     </Modal>
 {/if}
 
-<li bind:this={commentContainer} class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}">
+<div bind:this={commentContainer} class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}">
     <details bind:open class="flex flex-col gap-1">
         <summary class="
             {jumpToComment ? jumpToCommentClassSummary : ''}
+            {jumpToComment && !open ? 'border-b rounded-b-md' : ''}
             {node.comment_view.comment.distinguished ? distinguishedClassSummary : ''} 
-            {node.comment_view.comment.distinguished && !open ? 'border-b': ''} 
+            {node.comment_view.comment.distinguished && !open ? 'border-b rounded-b-md': ''} 
             flex flex-col md:flex-row flex-wrap w-full cursor-pointer gap-2 group text-xs 
-            hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 hover:rounded-lg
+            {jumpToComment
+                ? 'hover:bg-amber-500/20'
+                : node.comment_view.comment.distinguished
+                    ? 'hover:bg-green-500/20'
+                    : 'hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700'
+            }
+             hover:rounded-lg
         ">
             <span class:font-bold={op} class="flex flex-row flex-wrap gap-1 items-start w-full">
                 <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} />
@@ -196,4 +203,4 @@
             <slot />
         </div>
     </details>
-</li>
+</div>
