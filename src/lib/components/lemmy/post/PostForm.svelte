@@ -13,8 +13,9 @@
         embed_title?: string
     }
 
-    import type { Community, PostView } from 'lemmy-js-client'
+    import type { Community, PostView, UploadImageResponse} from 'lemmy-js-client'
 
+    import { ENABLE_MEDIA_PROXY } from '$lib/settings'
     import { createEventDispatcher } from 'svelte'
     import { getClient, uploadImage } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
@@ -31,18 +32,20 @@
     import Checkbox from '$lib/components/input/Checkbox.svelte'
     import CommunityAutocomplete from '../CommunityAutocomplete.svelte';
     import CommunityLink from '../community/CommunityLink.svelte'
+    import ImageUploadDeleteButton from '$lib/components/util/ImageUploadDeleteButton.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import PostPreview from './Post.svelte'
+    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
+    import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
-    
-    
-    
     
     import { 
         ArrowUturnDown,
         CheckCircle,
+        Cloud,
         CloudArrowDown,
+        ExclamationCircle,
         Eye,
         Icon, 
         PencilSquare,
@@ -74,7 +77,12 @@
     }
 
     let data             = objectCopy(default_data)
+    
     let uploadingImage   = false
+    let uploadResponse: UploadImageResponse|undefined
+    let useImageProxyForPost:boolean = false
+    let deleteImage: () => Promise<void>
+    
     let previewing       = false
     let fetchingMetadata = false
     let previewPost: PostView | undefined
@@ -86,6 +94,9 @@
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
     $: if (community) data.community = community
+
+    $: if (useImageProxyForPost && uploadResponse?.url)     data.url = imageProxyURL(uploadResponse.url)
+    $: if (!useImageProxyForPost && uploadResponse?.url)    data.url = uploadResponse.url
 
     async function submit() {
         if (!data.name || !$profile?.jwt) return
@@ -289,7 +300,8 @@
 
 
 <ImageUploadModal bind:open={uploadingImage} on:upload={(e) => {
-        if (e.detail) data.url = imageProxyURL(e.detail)
+        uploadResponse = e.detail
+        if (uploadResponse?.url) data.url = uploadResponse.url
         uploadingImage = false
     }}
 />
@@ -322,6 +334,7 @@
          <!--- Reset Form --->
          <Button  loading={fetchingMetadata} disabled={previewing} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
             on:click={ () => {
+                if (uploadResponse) deleteImage()
                 data = objectCopy(default_data)
                 data = data
             }}
@@ -369,30 +382,42 @@
         <!--- Post Title--->
         <TextInput required label="Title" bind:value={data.name} />
         
-        <!--- Post URL --->
+        <!--- Post URL and URl-related buttons--->
         <div class="flex gap-2 w-full items-end">
             <TextInput label="URL" bind:value={data.url} class="w-full" />
-            
+                       
             <!---Fetch metadata from URL to populate title and append description to body--->
-            <Button size="square-md" style="width: 46px !important; height: 42px; padding: 0;" loading={fetchingMetadata} disabled={!data.url || fetchingMetadata} title="Fetch title and description"
+            <Button color="tertiary-border" size="square-form" 
+                icon={CloudArrowDown} iconSize={18}
+                loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || uploadResponse} title="Fetch title and description"
                 on:click={() => (getWebsiteMetadata())}
-            >
-            <Icon src={CloudArrowDown} size="18" mini slot="icon" />
-            </Button>
+            />
+            
 
             <!---Upload an Image--->
-            <Button size="square-md" style="width: 46px !important; height: 42px; padding: 0;" loading={uploadingImage} disabled={uploadingImage} title="Upload an image"
+            <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
+                loading={uploadingImage} disabled={uploadingImage|| data.url } title="Upload an image"
                 on:click={() => (uploadingImage = !uploadingImage)}
-            >
-                <Icon src={Photo} size="18" mini slot="icon" />
-            </Button>
-        </div>
+            />
 
-        <!--- NSFW Flag --->
-        <Checkbox bind:checked={data.nsfw}>NSFW</Checkbox>
+            <!---Image Upload Delete Button--->
+            <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage iconSize={18} on:delete={() => data.url = '' }/>
+        </div>
 
         <!--- Post Body --->
         <MarkdownEditor rows={10} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} />
+        
+        <!---Options--->
+        <SettingToggleContainer>
+            <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
+            
+            {#if ENABLE_MEDIA_PROXY}
+                <SettingToggle bind:value={useImageProxyForPost} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
+            {/if}
+        </SettingToggleContainer>
+
+
+        
 
     <!---Previewing Post--->
     {:else if previewPost}

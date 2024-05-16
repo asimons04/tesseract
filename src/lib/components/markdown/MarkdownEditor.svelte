@@ -24,6 +24,7 @@
         ListBullet,
         Photo,
     } from 'svelte-hero-icons'
+    import ImageUploadModal from '../lemmy/modal/ImageUploadModal.svelte';
     
 
     export let images: boolean = true
@@ -109,6 +110,9 @@
 </script>
 
 {#if uploadingImage && images}
+    <ImageUploadModal bind:open={uploadingImage} />
+    
+    <!--
     <Modal bind:open={uploadingImage} title="Upload Image" icon={Photo}>
         
         <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
@@ -118,6 +122,7 @@
             </Button>
         </form>
     </Modal>
+    -->
 {/if}
 
 <div class="flex flex-col w-full">
