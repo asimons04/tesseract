@@ -36,14 +36,14 @@
     
     // Bind this to an outside value if need to persist between create/destroy of this component
     export let imageUploads = [] as UploadImageResponse[]
-    
-    const dispatcher = createEventDispatcher<{ confirm: string }>()
 
     let textArea: HTMLTextAreaElement
     let uploadingImage = false
     let emojiPickerOpen:boolean = false
     let minRows = rows
+    let imageAltText: string
 
+    const dispatcher = createEventDispatcher<{ confirm: string }>()
 
     function replaceTextAtIndices(str: string, startIndex: number, endIndex: number, replacement: string) {
         return str.substring(0, startIndex) + replacement + str.substring(endIndex)
@@ -81,7 +81,7 @@
     }
 
     
-    let imageAltText: string
+    
 </script>
 
 {#if uploadingImage && images}
@@ -103,6 +103,7 @@
 
     <div class="flex flex-col border border-slate-300 dark:border-zinc-800 rounded-md overflow-hidden focus-within:border-black focus-within:dark:border-white transition-colors w-full h-full">
         {#if previewing}
+            
             <div class="bg-slate-100 dark:bg-zinc-900 px-3 py-2.5 border border-slate-300 dark:border-zinc-700 rounded-md overflow-auto text-sm resize-none" style="height: {(rows+3)*24}px">
                 <Markdown source={value} />
             </div>
@@ -263,26 +264,32 @@
         {/if}
 
         <!---Bottom bar with upload image delete buttons--->
-        <div class="flex flex-row gap-4 p-1.5 items-center">
-            {#each imageUploads as upload, index}
-                {#if upload}
-                    <ImageUploadPreviewDeleteButton uploadResponse={upload} previewSize={64}
-                        on:delete={(e) => {
-                            if (e.detail && upload?.url) {
-                                
-                                let proxiedURL = imageProxyURL(upload.url)?.replace('?', '\\?')
-                                if (proxiedURL) {
-                                    const URLRegex = new RegExp(`!\\[.*\\]\\(${proxiedURL}\\)`)
-                                    value = value.replace(URLRegex, '')
-                                }
-                                imageUploads.splice(index,1)
-                                imageUploads = imageUploads
-                            }
-                        }}
-                    />
-                {/if}
-            {/each} 
+        <div class="flex flex-col w-full px-1">
+            {#if imageUploads.length > 0}
+                <div class="block my-1 font-bold text-sm">Image Uploads</div>
+            {/if}
             
+            <div class="flex flex-row gap-4 p-1.5 items-center">
+                {#each imageUploads as upload, index}
+                    {#if upload}
+                        <ImageUploadPreviewDeleteButton uploadResponse={upload} previewSize={64}
+                            on:delete={(e) => {
+                                if (e.detail && upload?.url) {
+                                    // Generate a regex to match the markdown syntax for that image URL and remove it from the textarea value.
+                                    let proxiedURL = imageProxyURL(upload.url)?.replace('?', '\\?')
+                                    if (proxiedURL) {
+                                        const URLRegex = new RegExp(`!\\[.*\\]\\(${proxiedURL}\\)`)
+                                        value = value.replace(URLRegex, '')
+                                    }
+                                    // Remove this upload object from the array
+                                    imageUploads.splice(index,1)
+                                    imageUploads = imageUploads
+                                }
+                            }}
+                        />
+                    {/if}
+                {/each} 
+            </div>
         </div>
         
         {#if $$slots.actions || previewButton}

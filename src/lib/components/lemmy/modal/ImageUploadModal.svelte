@@ -53,6 +53,7 @@
 <Modal bind:open icon={Photo} title="Upload Image" width="max-w-lg">
     <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
         <FileInput image bind:files={image} accept="image/jpeg,image/png,image/webp"/>
+        
         {#if useAltText}
             <TextInput bind:value={altText} type="text" label="Alt Text" placeholder="Briefly describe the image"/>
         {/if}

@@ -111,6 +111,7 @@ All major/minor changes between releases will be documented here.
 
 
 ### Misc To-Do
+- [ ] In post form, when resetting values, loop over the image uploads in markdown and delete them all
 - [ ] Add  purge user button for admins.
 - [ ] Link preview option.  If enabled:
     - Ignore Tesseract links (links to posts, comments, communities, users, etc)
