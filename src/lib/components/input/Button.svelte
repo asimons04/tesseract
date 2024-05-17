@@ -135,7 +135,7 @@
             {:else if $$slots.icon}
                 <slot name="icon" />
             {:else if icon}
-                <Icon src={icon} size="16" mini />
+                <Icon src={icon} width={iconSize} mini />
             {/if}
             <slot />
         </div>

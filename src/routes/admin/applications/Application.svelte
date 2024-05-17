@@ -49,7 +49,7 @@
   }
 </script>
 
-<Card elevation={0} class="p-4 flex flex-col gap-2">
+<Card class="p-4 flex flex-col gap-2">
   <div class="flex flex-col gap-1">
     <SectionTitle>User</SectionTitle>
     <span class="text-sm">

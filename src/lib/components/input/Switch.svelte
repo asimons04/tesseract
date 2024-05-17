@@ -21,10 +21,7 @@
     <span class="flex justify-between">
         <slot/>
         
-        <input
-            type="checkbox"
-            bind:checked={enabled}
-            class="hidden"
+        <input type="checkbox" bind:checked={enabled} class="hidden"
             on:input={(e) => {
                 dispatcher('change', !enabled)
             }}
