@@ -179,7 +179,7 @@
                             {/if}
                         </Menu>
 
-                        <Button color={profile.id == $currentProfile?.id ? 'primary' : 'secondary'}
+                        <Button color={profile.id == $currentProfile?.id ? 'primary' : 'tertiary-border'}
                             on:click={async () => {
                                 if (profile.id == $currentProfile?.id) {
                                     setUserID(-1)
@@ -202,16 +202,17 @@
                 <!---Guest Instance Selection--->
                 <div class="flex flex-row gap-4 items-center py-4">
 
-                    <div class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined}>
+                    <form class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined} on:submit|preventDefault={changeGuestInstance}>
                         <TextInput placeholder="Instance URL" label="Guest instance" bind:value={newInstance}  disabled={LINKED_INSTANCE_URL != undefined} />
-                        <Button color="primary" {loading} disabled={loading || LINKED_INSTANCE_URL != undefined} class="h-8 self-end" on:click={changeGuestInstance}>
+                        
+                        <Button submit color="tertiary-border" {loading} disabled={loading || LINKED_INSTANCE_URL != undefined} class="h-8 self-end" >
                             Change
                         </Button>
-                    </div>
+                    </form>
 
                     <div class="ml-auto" />
                     
-                    <Button color={$currentProfile?.id == -1 ? 'primary' : 'secondary'} on:click={async () => {
+                    <Button color={$currentProfile?.id == -1 ? 'primary' : 'tertiary-border'} on:click={async () => {
                             setUserID(-1)
                             await validateInstance($profileData.defaultInstance ?? DEFAULT_INSTANCE_URL, true)
                         }}
@@ -222,7 +223,7 @@
 
                 <!--Add more button--->
                 <div class="flex w-full py-4">
-                    <Button href="/login" size="lg" class="w-full">
+                    <Button href="/login" size="lg" class="w-full" color="tertiary-border">
                         <Icon slot="icon" src={Plus} size="16" mini />
                             Add more
                     </Button>
