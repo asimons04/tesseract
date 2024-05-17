@@ -38,7 +38,7 @@
             <CommentMeta bind:comment />
             
             <Button
-                color="secondary"
+                color="tertiary-border"
                 href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}"
                 size="sm"
                 class="self-start"
