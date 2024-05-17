@@ -1,12 +1,12 @@
 <script lang="ts">
-    import type { Instance } from 'lemmy-js-client'
+    import type { InstanceWithFederationState } from 'lemmy-js-client'
     import Button from '$lib/components/input/Button.svelte';
     import Fediseer from '$lib/fediseer/Fediseer.svelte';   
     import RelativeDate from '$lib/components/util/RelativeDate.svelte';
 
     import { Icon, ArrowTopRightOnSquare, Eye, Calendar, Check, HandThumbDown, UserGroup  } from 'svelte-hero-icons'
 
-    export let instance: Instance
+    export let instance: InstanceWithFederationState
     export let filterTerm:string = ''
     export let hideDead:boolean = false
     export let softwareType:string = 'All'

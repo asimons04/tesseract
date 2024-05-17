@@ -32,16 +32,13 @@
     data.instances.blocked.sort(sortInstances)
     data.instances.linked.sort(sortInstances)
     data.instances.allowed.sort(sortInstances)
-
-
-      
     
-    let filterTerm:string = ''
-    let filterTermInput:string = ''
-    let hideDeadInstances = $page.url.searchParams.get('hideDead')?.toLowerCase() == 'true' ?? false
-    let selectedSoftwareType = $page.url.searchParams.get('software') ?? 'All'
+    let filterTerm:string       = $page.url.searchParams.get('instance') ?? ''
+    let filterTermInput:string  = $page.url.searchParams.get('instance') ?? ''
+    let hideDeadInstances       = $page.url.searchParams.get('hideDead')?.toLowerCase() == 'true' ?? false
+    let selectedSoftwareType    = $page.url.searchParams.get('software') ?? 'All'
     let selectedFederationState = $page.url.searchParams.get('state') ?? 'Linked'
-    
+
     let debounceTimer: ReturnType<typeof setTimeout>;
     
     function debounce(value:string,  timeout=300) {
