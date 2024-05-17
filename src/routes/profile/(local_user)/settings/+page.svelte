@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { SaveUserSettings } from 'lemmy-js-client'
     
-    import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
@@ -43,12 +43,13 @@
         if (!formData || !$profile?.jwt) return
 
         loading = true
+        let client = getClient()
 
         try {
-            let pfp = profileImage ? await uploadImage(profileImage[0]) : undefined
-            let banner = bannerImage ? await uploadImage(bannerImage[0]) : undefined
+            let pfp     = profileImage   ? (await client.uploadImage({image: profileImage[0]}))?.url    : undefined
+            let banner  = bannerImage    ? (await client.uploadImage({image: bannerImage[0]}))?.url     : undefined
 
-            const res = await getClient().saveUserSettings({
+            const res = await client.saveUserSettings({
                 ...formData,
                 avatar: pfp,
                 banner: banner

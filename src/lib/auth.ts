@@ -120,6 +120,7 @@ profile.subscribe(async (p:Profile|undefined) => {
 
 // Used at login to store a new user profile
 export async function setUser(jwt: string, inst: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined>  {
+    
     let user:{ user: PersonData; site: GetSiteResponse } | undefined = undefined
     
     // Test that the instance parameter can be a valid URL
