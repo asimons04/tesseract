@@ -1,11 +1,8 @@
 <script lang="ts">
-    import type { Community, Person, UploadImageResponse } from 'lemmy-js-client'
+    import type { UploadImageResponse } from 'lemmy-js-client'
 
     import { createEventDispatcher } from 'svelte'
     import { imageProxyURL } from '$lib/image-proxy';    
-    import { profile } from '$lib/auth.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { uploadImage } from '$lib/lemmy.js'
     
     import Button from '$lib/components/input/Button.svelte'
     import EmojiPicker from './EmojiPicker.svelte'

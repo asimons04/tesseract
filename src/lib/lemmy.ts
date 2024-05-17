@@ -133,7 +133,8 @@ export async function hideCommunity(communityID:number, hidden:boolean, reason:s
 
 }
 
-
+// Deprecated: 5/16/2024
+/*
 export async function uploadImage(image: File | null | undefined): Promise<string | undefined> {
     if (!image || !get(profile)?.jwt) return
     
@@ -164,6 +165,7 @@ export async function uploadImage(image: File | null | undefined): Promise<strin
         }: ${response.status}: ${response.statusText}`
     )
 }
+*/
 
 
 export let sortOptions:string[] = [

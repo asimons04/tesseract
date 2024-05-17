@@ -17,7 +17,7 @@
 
     import { ENABLE_MEDIA_PROXY } from '$lib/settings'
     import { createEventDispatcher } from 'svelte'
-    import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { getClient } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { isImage, isVideo } from './helpers'
     import { objectCopy } from '$lib/util'
