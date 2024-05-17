@@ -89,7 +89,7 @@
     <title>Federated Instances</title>
 </svelte:head>
 
-<SubNavbar home back toggleMargins refreshButton toggleCommunitySidebar scrollButtons >
+<SubNavbar home back toggleMargins refreshButton toggleCommunitySidebar scrollButtons on:navRefresh={() => search()} >
     <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="left">
         <!---Local/Subscribed/All Switcher--->
         <SelectMenu
@@ -179,8 +179,8 @@
     <FeedContainer>
         <div class="flex flex-col gap-4 w-full h-full">
             {#if batch.length > 0}
-                {#each batch as instance}
-                    <InstanceListItem instance={instance} />
+                {#each batch as instance, id (instance.id)}
+                    <InstanceListItem bind:instance />
                 {/each}
             {:else}
                 <Placeholder icon={MagnifyingGlass} title="No results"  description="No instances matched the filter." />

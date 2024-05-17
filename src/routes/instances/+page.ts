@@ -1,8 +1,9 @@
-import type { InstanceWithFederationState } from 'lemmy-js-client'
+import type { InstanceWithFederationState, ReadableFederationState } from 'lemmy-js-client'
 
 export interface InstanceWithFederationStateCustom extends InstanceWithFederationState {
     state: 'blocked' | 'allowed' | 'linked'
     dead: boolean
+    inbound_federation?: ReadableFederationState
 }
 
 import { getClient } from '$lib/lemmy'

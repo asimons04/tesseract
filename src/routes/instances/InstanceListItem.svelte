@@ -16,38 +16,32 @@
         ArrowTopRightOnSquare, 
         Calendar,
         Check,
-        ChevronDown, 
-        ChevronRight,
         Eye,
         HandThumbDown, 
         NoSymbol,
         UserGroup,
+        CloudArrowDown,
+        ArrowPath,
     } from 'svelte-hero-icons'
 
     export let instance: InstanceWithFederationStateCustom
 
     let fediseerModal = false
-    let federationDetailsOpen:boolean
-    
-    let inboundFederationDetailsOpen: boolean
-    let inboundFederationDetails: ReadableFederationState
     let inboundFederationDetailsLoading:boolean = false
 
-
-
     // Get inbound federation state from this instance
-    async function getFederationStateFromInstance(instance:string) {
-        if (!instance) return
+    async function getFederationStateFromInstance(domain:string) {
+        if (!domain) return
         
         try {
             inboundFederationDetailsLoading = true
             
-            const instances = await getClient(instance).getFederatedInstances();
+            const instances = await getClient(domain).getFederatedInstances();
             if (instances?.federated_instances?.linked) {
                 let thisInstance = instances.federated_instances.linked.find((instance:InstanceWithFederationState) => instance.domain = $currentInstance)
                 
                 if (thisInstance?.federation_state) {
-                    inboundFederationDetails = thisInstance.federation_state
+                    instance.inbound_federation = thisInstance.federation_state
                 }
             }
 
@@ -56,12 +50,12 @@
             
         }
         catch (err) {
-
+            inboundFederationDetailsLoading = false
         }
     }
     
 
-
+    
 
 </script>   
 
@@ -132,116 +126,126 @@
                 </Button>
             </span>
         </div>
-        
-        
-        <!--- Outbound Federation State --->
-        {#if instance.federation_state}
-            <details bind:open={federationDetailsOpen} class="text-sm mt-1">
-                
-                <summary class="flex flex-row -ml-2 cursor-pointer">
-                    <span class="flex flex-row gap-1 items-center font-bold">
-                        <Icon src={federationDetailsOpen ? ChevronDown : ChevronRight} mini width={16} />
-                        Federation State  ({$currentInstance} <Icon src={ArrowRight} mini width={14}/> {instance.domain})
-                    </span>
-                </summary>
-                
-                <span class="flex flex-col gap-1 pl-4">
-                    {#if instance.federation_state.fail_count}
-                        <span>
-                            <span class="font-bold">Fail Count</span>:
-                            {instance.federation_state.fail_count}
-                        </span>
-                    {/if}
-                    
-                    {#if instance.federation_state.last_retry}
-                        <span>
-                            <span class="font-bold">Last Retry</span>:
-                            {new Date(instance.federation_state.last_retry).toLocaleString()}
-                        </span>
-                    {/if}
-
-                    {#if instance.federation_state.last_successful_published_time}
-                        <span>
-                            <span class="font-bold">Last Successful Publish</span>:
-                            {new Date(instance.federation_state.last_successful_published_time).toLocaleString()}
-                        </span>
-                    {/if}
-
-                    {#if instance.federation_state.last_successful_id}
-                        <span>
-                            <span class="font-bold">Last Successful ID</span>:
-                            {instance.federation_state.last_successful_id}
-                        </span>
-                    {/if}
-                    
-                    {#if instance.federation_state.next_retry}
-                        <span>
-                            <span class="font-bold">Next Retry</span>:
-                            {new Date(instance.federation_state.next_retry).toLocaleString()}
-                        </span>
-                    {/if}
-                </span>
-
-            </details>
-        {/if}
-
-
-        <!--- Inbound Federation State --->
-        <details bind:open={inboundFederationDetailsOpen} class="text-sm mt-1">
-            
-            <summary class="flex flex-row -ml-2 cursor-pointer">
-                <span class="flex flex-row gap-1 items-center font-bold">
-                    <Icon src={federationDetailsOpen ? ChevronDown : ChevronRight} mini width={16} />
-                    Federation State  ({instance.domain} <Icon src={ArrowRight} mini width={14}/> {$currentInstance})
-                </span>
+        {#if !(instance.state == 'blocked')}
+        <details class="text-sm mt-1">
+            <summary class="cursor-pointer font-bold">
+                Federation State
             </summary>
-
-            {#if !inboundFederationDetails}
-                <Button on:click={() => getFederationStateFromInstance(instance.domain)}>
-                    Load
-                </Button>
-            {/if}
-
-
-            {#if inboundFederationDetails}
-                <span class="flex flex-col gap-1 pl-4">
-                    {#if inboundFederationDetails.fail_count}
-                        <span>
-                            <span class="font-bold">Fail Count</span>:
-                            {inboundFederationDetails.fail_count}
-                        </span>
-                    {/if}
+            
+            <div class="flex flex-col lg:flex-row gap-4 items-start mt-1">
+                
+                <!---Outbound Federation--->
+                <div class="flex flex-col gap-1 w-full lg:w-1/2">
+                    <span class="flex flex-row gap-1 items-center font-bold">
+                        {$currentInstance} <Icon src={ArrowRight} mini width={14}/> {instance.domain}
+                    </span>
                     
-                    {#if inboundFederationDetails.last_retry}
-                        <span>
-                            <span class="font-bold">Last Retry</span>:
-                            {new Date(inboundFederationDetails.last_retry).toLocaleString()}
-                        </span>
-                    {/if}
+                    {#if instance.federation_state}
+                        <span class="flex flex-col gap-1 pl-4">
+                            {#if instance.federation_state.fail_count}
+                                <span>
+                                    <span class="font-bold">Fail Count</span>:
+                                    {instance.federation_state.fail_count}
+                                </span>
+                            {/if}
+                            
+                            {#if instance.federation_state.last_retry}
+                                <span>
+                                    <span class="font-bold">Last Retry</span>:
+                                    {new Date(instance.federation_state.last_retry).toLocaleString()}
+                                </span>
+                            {/if}
 
-                    {#if inboundFederationDetails.last_successful_published_time}
-                        <span>
-                            <span class="font-bold">Last Successful Publish</span>:
-                            {new Date(inboundFederationDetails.last_successful_published_time).toLocaleString()}
-                        </span>
-                    {/if}
+                            {#if instance.federation_state.last_successful_published_time}
+                                <span>
+                                    <span class="font-bold">Last Successful Publish</span>:
+                                    {new Date(instance.federation_state.last_successful_published_time).toLocaleString()}
+                                </span>
+                            {/if}
 
-                    {#if inboundFederationDetails.last_successful_id}
-                        <span>
-                            <span class="font-bold">Last Successful ID</span>:
-                            {inboundFederationDetails.last_successful_id}
+                            {#if instance.federation_state.last_successful_id}
+                                <span>
+                                    <span class="font-bold">Last Successful ID</span>:
+                                    {instance.federation_state.last_successful_id}
+                                </span>
+                            {/if}
+                            
+                            {#if instance.federation_state.next_retry}
+                                <span>
+                                    <span class="font-bold">Next Retry</span>:
+                                    {new Date(instance.federation_state.next_retry).toLocaleString()}
+                                </span>
+                            {/if}
                         </span>
                     {/if}
+                </div>
+                
+                <!---Inbound Federation--->
+                <div class="flex flex-col gap-1 w-full lg:w-1/2">
+                    <span class="flex flex-row gap-1 items-center font-bold">
+                        {instance.domain} <Icon src={ArrowRight} mini width={14}/> {$currentInstance}
+                    </span>
                     
-                    {#if inboundFederationDetails.next_retry}
-                        <span>
-                            <span class="font-bold">Next Retry</span>:
-                            {new Date(inboundFederationDetails.next_retry).toLocaleString()}
+                    {#if !instance.dead && instance.software=='lemmy' && !(instance.state=='blocked') && instance.inbound_federation}
+                        <span class="flex flex-col gap-1 pl-4">
+                            {#if instance.inbound_federation.fail_count}
+                                <span>
+                                    <span class="font-bold">Fail Count</span>:
+                                    {instance.inbound_federation.fail_count}
+                                </span>
+                            {/if}
+                            
+                            {#if instance.inbound_federation.last_retry}
+                                <span>
+                                    <span class="font-bold">Last Retry</span>:
+                                    {new Date(instance.inbound_federation.last_retry).toLocaleString()}
+                                </span>
+                            {/if}
+
+                            {#if instance.inbound_federation.last_successful_published_time}
+                                <span>
+                                    <span class="font-bold">Last Successful Publish</span>:
+                                    {new Date(instance.inbound_federation.last_successful_published_time).toLocaleString()}
+                                </span>
+                            {/if}
+
+                            {#if instance.inbound_federation.last_successful_id}
+                                <span>
+                                    <span class="font-bold">Last Successful ID</span>:
+                                    {instance.inbound_federation.last_successful_id}
+                                </span>
+                            {/if}
+                            
+                            {#if instance.inbound_federation.next_retry}
+                                <span>
+                                    <span class="font-bold">Next Retry</span>:
+                                    {new Date(instance.inbound_federation.next_retry).toLocaleString()}
+                                </span>
+                            {/if}
                         </span>
                     {/if}
-                </span>
-            {/if}
+
+                    {#if !(instance.software == 'lemmy')}
+                        <p class="text-sm font-normal">
+                            Inbound federation stats not available for this instance.
+                        </p>
+                    
+                    {:else}
+                        <span class="pl-4 w-full">
+                            <Button color="tertiary-border" size="sm" class="w-full"
+                                loading={inboundFederationDetailsLoading} disabled={inboundFederationDetailsLoading}
+                                icon={instance.inbound_federation ? ArrowPath : CloudArrowDown}
+                                on:click={() => getFederationStateFromInstance(instance.domain)}
+                            >
+                                {instance.inbound_federation ? 'Refresh' : 'Load'}
+                            </Button>
+                        </span>
+                    {/if}
+                </div>
+
+            </div>
+
         </details>
-        
+        {/if}
     </Card>
 {/if}
