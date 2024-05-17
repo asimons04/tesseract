@@ -45,8 +45,8 @@ All major/minor changes between releases will be documented here.
 - [X] Replace old Photon image upload proxy for community icon/banner
 
 #### Instances List
-- [ ] Add `federation_state` data to instance list objects in `/instances`
-- [ ] Add button to fetch and display federation state for the current instance from the selected instance
+- [X] Add `federation_state` data to instance list objects in `/instances`
+- [X] Add button to fetch and display federation state for the current instance from the selected instance
 - [ ] For admins, add ability to add/remove an instance from the instance block list
 
 

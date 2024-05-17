@@ -186,7 +186,7 @@
                         {instance.domain} <Icon src={ArrowRight} mini width={14}/> {$currentInstance}
                     </span>
                     
-                    {#if !instance.dead && instance.software=='lemmy' && !(instance.state=='blocked') && instance.inbound_federation}
+                    {#if !instance.dead && instance.software=='lemmy' && instance.inbound_federation}
                         <span class="flex flex-col gap-1 pl-4">
                             {#if instance.inbound_federation.fail_count}
                                 <span>
