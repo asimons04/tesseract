@@ -82,7 +82,7 @@
                 {#if loadingPersonDetails}
                     <Spinner width={avatarSize} />
                 {:else}                    
-                    <Avatar url={user.avatar} alt={user.name} width={avatarSize} />
+                    <Avatar url={user.avatar} alt={user.name} width={avatarSize}/>
                 {/if}
             </span>
         {/if}
