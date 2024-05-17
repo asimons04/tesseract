@@ -92,6 +92,7 @@ All major/minor changes between releases will be documented here.
 ### Moderation
 - [X] Do something about the ugly "confirm" checkbox
 - [X] Fix horizontal overflow in report modal submission preview.
+- [X] Refreshed looked of remove/restore and ban/unban modals.
 
 ### User Links
 - [X] On UserLink component, instead of taking you directly to user page, open a modal with user-specific actions
@@ -102,7 +103,7 @@ All major/minor changes between releases will be documented here.
 ### Accounts
 - [ ] Add capability to reauthorize an existing account without deleting/re-adding it.
     - If profile is active but no MyLocalUser info returned from getSite, prompt for login
-- [X] Show avatars instead of color icons in account switcher
+- [X] Show avatars, if available, instead of color icons in account switcher
 - [ ] Fetch avatars for existing accounts (currently only pulls it when adding an account)
 
 

@@ -48,7 +48,7 @@
 
 <!---Inbox --->
 {#if $page.url.pathname.startsWith('/profile/inbox')}
-    <SubNavbar  back compactSwitch toggleMargins refreshButton toggleCommunitySidebar>
+    <SubNavbar  back toggleMargins refreshButton toggleCommunitySidebar>
         <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="far-left">
             <SelectMenu
                 title="Read/Unread"
