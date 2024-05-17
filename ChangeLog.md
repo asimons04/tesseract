@@ -66,7 +66,6 @@ All major/minor changes between releases will be documented here.
 - [X] Replace old Photon image upload proxy for post images
 - [X] Add support for deleting uploaded post image (during post creation only since the delete tokens aren't retrievable after that)
 - [X] Add `listPostLikes` and `listCommentLikes` options to post and comment moderation menus for admins
-- [X] Do not show (or disable) subscribe/unsubscribe button in Post Meta on post preview (disabled pointer events in containing div)
 - [X] De-clutter crosspost item in mobile (hide relative date)
 - [X] User links now load a modal with user card and action buttons
     - [X] View Profile

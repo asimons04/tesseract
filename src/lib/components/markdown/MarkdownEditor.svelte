@@ -269,7 +269,7 @@
                 <div class="block my-1 font-bold text-sm">Image Uploads</div>
             {/if}
             
-            <div class="flex flex-row gap-4 p-1.5 items-center">
+            <div class="flex flex-row gap-4 p-1.5 px-4 items-center">
                 {#each imageUploads as upload, index}
                     {#if upload}
                         <ImageUploadPreviewDeleteButton uploadResponse={upload} previewSize={64}
