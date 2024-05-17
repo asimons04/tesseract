@@ -317,9 +317,8 @@
         </div>
         
 
-        {#if data.page != 1 || data.modlog.length > 1 }
-            <Pageination page={data.page} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
-        {/if}
+        <Pageination page={data.page} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
+        
     {:else}
         <div class="mx-auto my-auto">
             <Placeholder title="No Results" description="There are no modlog results for the provided query." icon={ExclamationTriangle} />

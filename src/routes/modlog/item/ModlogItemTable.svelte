@@ -261,7 +261,7 @@
             </div>
 
             <!---Action Menu for mods/admins --->
-            {#if isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community) ) }
+            {#if item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community))) }
                 <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
                 
                     <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">
