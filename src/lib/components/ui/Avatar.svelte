@@ -14,12 +14,12 @@
 
     export let width: number
     export let res: number | undefined = undefined
-    
+    export let fullRes:boolean = false
 </script>
 
 {#if url}
     <img
-        src="{imageProxyURL(url, findClosestNumber(sizes,res||width), 'webp')}"
+        src="{imageProxyURL(url, (fullRes ? undefined : findClosestNumber(sizes,res||width)), 'webp')}"
         {alt}
         {width}
         {title}
