@@ -33,6 +33,8 @@ All major/minor changes between releases will be documented here.
 - [X] Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
 - [X] Replace old Photon image upload proxy for uploading images in markdown editir
 - [X] Add support to delete uploaded images
+    - Can delete post image as well as track and individually delete images posted in markdown (in both posts and comments)
+    - Automatically removes markdown code for the image being deleted.
 
 
 #### Admin Panel

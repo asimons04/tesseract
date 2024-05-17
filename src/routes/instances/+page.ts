@@ -6,7 +6,9 @@ export interface InstanceWithFederationStateCustom extends InstanceWithFederatio
     inbound_federation?: ReadableFederationState
 }
 
+import { capitalizeFirstLetter } from '$lib/util'
 import { getClient } from '$lib/lemmy'
+
 
 function sortInstances(a:InstanceWithFederationStateCustom, b:InstanceWithFederationStateCustom) {
     return a.domain.toLowerCase() < b.domain.toLowerCase() ? -1 : a.domain > b.domain ? 1 : 0
@@ -76,7 +78,7 @@ export async function load() {
     // Create an array of software types to select from
     let softwareTypes = ['All'] as string[]
     federated_instances.forEach((instance:InstanceWithFederationStateCustom) => {
-        if (instance.software && !softwareTypes.includes(instance.software)) softwareTypes.push(instance.software)
+        if (instance.software && !softwareTypes.includes(capitalizeFirstLetter(instance.software))) softwareTypes.push(capitalizeFirstLetter(instance.software))
     })
     softwareTypes.sort()
 
