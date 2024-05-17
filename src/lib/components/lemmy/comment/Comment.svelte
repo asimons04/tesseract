@@ -61,7 +61,7 @@
 </script>
 
 {#if editing}
-    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} >
+    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} width="max-w-4xl">
         <MarkdownEditor rows={7} bind:value={newComment} previewButton={true}>
             
             <Button color="primary" slot="actions" on:click={async () => {
