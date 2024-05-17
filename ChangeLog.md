@@ -19,25 +19,33 @@ All major/minor changes between releases will be documented here.
 - [X] Remove custom shim to conditionally add/remove `Scaled` sort option
 - [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
 - [X] Add `ModeratorView` to listing types if `modOfAny()`
+- [ ] Add components to export and import your Lemmy profile
+    - [ ] Export
+    - [ ] Import
 
-#### New Bugs
-- [X] DM modal preview shrinks in mobile view Fixed in [f74eb47](https://github.com/asimons04/tesseract/commit/f74eb47ad464ac5eea73d5ee928010c726e91ec4)
+#### Newly Introduced Bugs
+- [X] DM modal preview shrinks in mobile view
 - [ ] Ensure "Moderator View" only appears on main feed
+- [X] If guest instance is set, login was not sending auth token
 
 #### General UI
 - [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
 
 
-#### Markdown Renderer
+#### Markdown Renderer and Editor
 - [X] Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
+- [X] Replace old Photon image upload proxy for uploading images in markdown editir
+- [X] Add support to delete uploaded images
+
 
 #### Admin Panel
 - [ ] Add ability to define and edit custom emojis
+- [X] Replace old Photon image upload proxy for site icon/banner
 
 #### Community Settings Panel
 - [ ] Add report panel for reports in that community
 - [ ] Add 'local' check to not show community settings buttons to admins when browsing remote communities
-
+- [X] Replace old Photon image upload proxy for community icon/banner
 
 #### Instances List
 - [ ] Add `federation_state` data to instance list objects in `/instances`
@@ -46,6 +54,7 @@ All major/minor changes between releases will be documented here.
 
 #### User Settings
 - [ ] Add TOTP setup
+- [X] Replace old Photon image upload proxy for user avatar/banner
 
 #### Fediseer
 - [ ] Create custom components for Endorsements, Censures, Hesitations. Clean up presentation.
@@ -59,6 +68,8 @@ All major/minor changes between releases will be documented here.
 - [X] Replace old admin check for post meta with new `user_is_admin`.
 
 ### Posts / Comments
+- [X] Replace old Photon image upload proxy for post images
+- [X] Add support for deleting uploaded post image (during post creation only since the delete tokens aren't retrievable after that)
 - [X] Add `listPostLikes` and `listCommentLikes` options to post and comment moderation menus for admins
 - [X] Do not show (or disable) subscribe/unsubscribe button in Post Meta on post preview (disabled pointer events in containing div)
 - [X] De-clutter crosspost item in mobile (hide relative date)
@@ -74,47 +85,36 @@ All major/minor changes between releases will be documented here.
     - [ ] Move fetch logic into modal itself rather than on the page
 
 - [ ] Optionally Preview Links in Modal
+- [ ] Add support for pasting images into upload modal (don't want to deal with pasting them into the markdown editor itself)
+
 
 
 ### Moderation
 - [X] Do something about the ugly "confirm" checkbox
 - [X] Fix horizontal overflow in report modal submission preview.
 
+### User Links
+- [X] On UserLink component, instead of taking you directly to user page, open a modal with user-specific actions
 
 ### Search
 - [X] Add permalink share button to search with currently-selected query and params
 
+### Accounts
+- [ ] Add capability to reauthorize an existing account without deleting/re-adding it.
+    - If profile is active but no MyLocalUser info returned from getSite, prompt for login
+- [X] Show avatars instead of color icons in account switcher
+- [ ] Fetch avatars for existing accounts (currently only pulls it when adding an account)
 
-- Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 
-- Add  purge user button for admins.
-    - Acknowledge checkbox/dialog
-    - Ban user permanently with content removal
-    - Delay ~3-5 seconds for the federation activities to be created and queued
-    - Call purge user
-    - Redirect to homepage or somewhere appropriate
-
-- Link preview option.  If enabled:
+### Misc To-Do
+- [ ] Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
+- [ ] Add  purge user button for admins.
+- [ ] Link preview option.  If enabled:
     - Ignore Tesseract links (links to posts, comments, communities, users, etc)
     - Instead of taking you to the link directly, open a modal and call getSiteMetadata() for that URL to generate a preview
     - If the link is to some kind of media supported in Tesseract, render it in a modal
     - Provide option to create a post based on the link
     - Provide button to take you to the link (honoring "open in new tab" setting)
-
-- On UserLink component, instead of taking you directly to user page, open a modal with user-specific actions
-    - Use component export variable to determine if should be a link to the user or open the modal (where modal would be inappropriate or less useful)
-    - View Profile
-    - Block (or unblock)
-    - Send Message in Lemmy and/or Matrix
-    - Ban from community (mods only)
-    - Ban from instance (admins only)
-    - Make avatars clickable to enlarge to full size
-
-- Make back button close modals
-    - If this is added to the modal component, should apply it automatically to all modal types
-
-- If profile is active but no MyLocalUser info returned from getSite, prompt for login
-
 
 
 ## 1.3.0
