@@ -29,6 +29,7 @@
         form-text text-sm rounded-md shadow-sm px-3 h-8 w-full
         bg-slate-200 text-zinc-900
         dark:bg-zinc-800 dark:text-slate-200
+        disabled:opacity-75
         ${$$props.class}
     `
     

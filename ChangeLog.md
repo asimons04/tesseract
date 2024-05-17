@@ -12,7 +12,8 @@ All major/minor changes between releases will be documented here.
 - [X] Remove score from user pages (currently conditional upon presence of value)
 - [X] Update `lemmy-js-client` 
 - [X] Remove admin flag check from `local_user_view.person` in moderation.ts
-- [/] Remove image upload proxy since it _should_ no longer be needed
+- [X] Remove image upload proxy since it _should_ no longer be needed
+    - **Note**:  Left server-side handler in place and deprecated calling function in Lemmy library; you never know when the Lemmy devs are gonna fuck something up
 - [/] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
 - [ ] Remove custom functions for `blockInstance` and `hideCommunity` and use the client-native ones
 - [X] Remove custom shim to conditionally add/remove `Scaled` sort option

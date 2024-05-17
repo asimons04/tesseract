@@ -387,7 +387,7 @@
         
         <!--- Post URL and URl-related buttons--->
         <div class="flex gap-2 w-full items-end">
-            <TextInput label="URL" bind:value={data.url} class="w-full" />
+            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={uploadResponse ? true : false} />
                        
             <!---Fetch metadata from URL to populate title and append description to body--->
             <Button color="tertiary-border" size="square-form" 
