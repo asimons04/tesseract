@@ -19,9 +19,6 @@ All major/minor changes between releases will be documented here.
 - [X] Remove custom shim to conditionally add/remove `Scaled` sort option
 - [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
 - [X] Add `ModeratorView` to listing types if `modOfAny()`
-- [ ] Add components to export and import your Lemmy profile
-    - [ ] Export
-    - [ ] Import
 
 #### Newly Introduced Bugs
 - [X] DM modal preview shrinks in mobile view
@@ -52,9 +49,7 @@ All major/minor changes between releases will be documented here.
 - [ ] Add button to fetch and display federation state for the current instance from the selected instance
 - [ ] For admins, add ability to add/remove an instance from the instance block list
 
-#### User Settings
-- [ ] Add TOTP setup
-- [X] Replace old Photon image upload proxy for user avatar/banner
+
 
 #### Fediseer
 - [ ] Create custom components for Endorsements, Censures, Hesitations. Clean up presentation.
@@ -100,15 +95,22 @@ All major/minor changes between releases will be documented here.
 ### Search
 - [X] Add permalink share button to search with currently-selected query and params
 
-### Accounts
+### Accounts & User Settings
+- [X] Move read/unread and message type selector to sub-navbar at `/profile/inbox` and get rid of old, ugly buttons.
+- [ ] Add TOTP setup
+    - [ ] Find a QR code library
+- [X] Replace old Photon image upload proxy for user avatar/banner
 - [ ] Add capability to reauthorize an existing account without deleting/re-adding it.
     - If profile is active but no MyLocalUser info returned from getSite, prompt for login
 - [X] Show avatars, if available, instead of color icons in account switcher
 - [ ] Fetch avatars for existing accounts (currently only pulls it when adding an account)
+- [ ] Add components to export and import your Lemmy profile
+    - [ ] Export
+    - [ ] Import
+- [ ] Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 
 
 ### Misc To-Do
-- [ ] Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 - [ ] Add  purge user button for admins.
 - [ ] Link preview option.  If enabled:
     - Ignore Tesseract links (links to posts, comments, communities, users, etc)
