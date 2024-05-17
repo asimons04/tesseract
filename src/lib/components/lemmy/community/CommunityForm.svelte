@@ -1,6 +1,6 @@
 <script lang="ts">
     import { addSubscription } from '$lib/lemmy/user.js'
-    import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -53,35 +53,37 @@
         if ((!edit && formData.name == '') || formData.displayName == '') return
 
         formData.submitting = true
-
+        
+        let client = getClient()
+        
         try {
             let icon = formData.icon 
-                ? await uploadImage(formData.icon[0]) 
+                ? (await client.uploadImage({image:formData.icon[0]}))?.url
                 : undefined
 
             let banner = formData.banner
-                ? await uploadImage(formData.banner[0])
+                ? (await client.uploadImage({image:formData.banner[0]}))?.url
                 : undefined
 
             const res = edit
-                ? await getClient().editCommunity({
-                    title: formData.displayName,
-                    description: formData.sidebar,
-                    nsfw: formData.nsfw,
-                    posting_restricted_to_mods: formData.postsLockedToModerators,
-                    icon: icon,
-                    banner: banner,
-                    community_id: edit,
-                })
-                : await getClient().createCommunity({
-                    name: formData.name,
-                    title: formData.displayName,
-                    description: formData.sidebar,
-                    nsfw: formData.nsfw,
-                    posting_restricted_to_mods: formData.postsLockedToModerators,
-                    icon: icon,
-                    banner: banner,
-                })
+                ?   await client.editCommunity({
+                        title: formData.displayName,
+                        description: formData.sidebar,
+                        nsfw: formData.nsfw,
+                        posting_restricted_to_mods: formData.postsLockedToModerators,
+                        icon: icon,
+                        banner: banner,
+                        community_id: edit,
+                    })
+                :   await client.createCommunity({
+                        name: formData.name,
+                        title: formData.displayName,
+                        description: formData.sidebar,
+                        nsfw: formData.nsfw,
+                        posting_restricted_to_mods: formData.postsLockedToModerators,
+                        icon: icon,
+                        banner: banner,
+                    })
 
             toast({
                 content: `Your community was ${edit ? 'saved' : 'created'}.`,

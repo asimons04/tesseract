@@ -97,7 +97,6 @@
             uploadingImage = false
         }}
     />
-    
 {/if}
 
 <div class="flex flex-col w-full">

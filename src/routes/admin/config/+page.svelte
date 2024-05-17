@@ -4,7 +4,7 @@
     
     
     import { addAdmin } from '$lib/lemmy/user.js'
-    import { getClient, uploadImage } from '$lib/lemmy.js'
+    import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance.js'
     import { profile } from '$lib/auth.js'
@@ -150,8 +150,6 @@
         if (!formData) return;
         
         saving = true
-        const { jwt } = $profile
-        
         
         // Parse all of the rate_limit_ keys as integers
         let keys = Object.keys(formData);
@@ -166,11 +164,11 @@
         try {
             // Upload the site icon and banner if defined
             if (siteIcon) {
-                formData.icon   =  await uploadImage(siteIcon[0]);
+                formData.icon   =  (await getClient().uploadImage({image: siteIcon[0]}))?.url
             }
             
             if (siteBanner) {
-                formData.banner = await uploadImage(siteBanner[0])
+                formData.banner = (await getClient().uploadImage({image: siteBanner[0]}))?.url
             }
         }
         catch {
