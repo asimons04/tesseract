@@ -27,7 +27,8 @@
     export let instance: InstanceWithFederationStateCustom
 
     let fediseerModal = false
-    let inboundFederationDetailsLoading:boolean = false
+    let inboundFederationDetailsLoading = false
+    let inboundFederationLoadFail = false
 
     // Get inbound federation state from this instance
     async function getFederationStateFromInstance(domain:string) {
@@ -44,13 +45,14 @@
                     instance.inbound_federation = thisInstance.federation_state
                 }
             }
-
             inboundFederationDetailsLoading = false
+            inboundFederationLoadFail = false
 
             
         }
         catch (err) {
             inboundFederationDetailsLoading = false
+            inboundFederationLoadFail = true
         }
     }
     
@@ -225,6 +227,12 @@
                         </span>
                     {/if}
 
+                    {#if inboundFederationLoadFail}
+                        <p class="text-sm font-normal">
+                            Failed to load the federation stats from this instance.
+                        </p>
+                    {/if}
+
                     {#if !(instance.software == 'lemmy')}
                         <p class="text-sm font-normal">
                             Inbound federation stats not available for this instance.
@@ -237,7 +245,7 @@
                                 icon={instance.inbound_federation ? ArrowPath : CloudArrowDown}
                                 on:click={() => getFederationStateFromInstance(instance.domain)}
                             >
-                                {instance.inbound_federation ? 'Refresh' : 'Load'}
+                                {instance.inbound_federation ? 'Refresh' : inboundFederationLoadFail ? 'Retry' : 'Load'}
                             </Button>
                         </span>
                     {/if}

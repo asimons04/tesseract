@@ -62,10 +62,7 @@
     
     <!--- User Card and Action Buttons--->
     {#if personDetails?.person_view.person}
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, 384, 'webp') : ''}
-            class="font-normal text-slate-900 dark:text-zinc-200"
-        >
-            
+        <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, 384, 'webp') : ''} >
             <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
                 <div class="flex-shrink-0">
                     <Avatar width={128} fullRes url={personDetails.person_view.person.avatar} alt={personDetails.person_view.person.name} 
