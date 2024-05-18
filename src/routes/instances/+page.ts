@@ -1,9 +1,13 @@
 import type { InstanceWithFederationState, ReadableFederationState } from 'lemmy-js-client'
 
+export interface ReadableFederationStateCustom extends ReadableFederationState {
+    newest_id?: number,
+}
+
 export interface InstanceWithFederationStateCustom extends InstanceWithFederationState {
     state: 'blocked' | 'allowed' | 'linked'
     dead: boolean
-    inbound_federation?: ReadableFederationState
+    inbound_federation?: ReadableFederationStateCustom
 }
 
 import { capitalizeFirstLetter } from '$lib/util'
@@ -32,8 +36,10 @@ export async function load() {
     // Fetch the federated instances from the API
     const instances = await getClient().getFederatedInstances();
 
-    // Combine all instances into one array and add a 'state' key for blocked, allowed, linked status
+    // Get the highest activity ID from our federation stats
+    let newest_id = 0
     
+    // Combine all instances into one array and add a 'state' key for blocked, allowed, linked status
     // Linked Instances
     if (instances?.federated_instances?.linked) {
         instances.federated_instances.linked.forEach((instance:InstanceWithFederationState) => {
@@ -43,6 +49,11 @@ export async function load() {
                 dead: instanceIsDead(instance),
                 software: instance.software ?? 'Unknown'
             } as InstanceWithFederationStateCustom
+            
+            const last_id = instance.federation_state?.last_successful_id ?? 0
+            if ( last_id > newest_id) {
+                newest_id = last_id
+            }
             federated_instances.push(inst)  
         })
     }
@@ -94,7 +105,8 @@ export async function load() {
     return {
         instances: federated_instances,
         software_types: softwareTypes,
-        federation_states: federation_states
+        federation_states: federation_states,
+        newest_id: newest_id
     }
 }
 

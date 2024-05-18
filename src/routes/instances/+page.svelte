@@ -1,10 +1,10 @@
 <script lang="ts">
-    import type { Instance } from 'lemmy-js-client'
     import type { InstanceWithFederationStateCustom } from './+page'
 
     import { page } from '$app/stores';
     import { site } from '$lib/lemmy'
-
+    
+    import Button from '$lib/components/input/Button.svelte';
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import InstanceListItem from './InstanceListItem.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
@@ -23,7 +23,7 @@
         XCircle,
         Bars3
     } from 'svelte-hero-icons'
-    import Button from '$lib/components/input/Button.svelte';
+    
     
     export let data;
    
@@ -39,6 +39,8 @@
     let batch = [] as InstanceWithFederationStateCustom[]
     let pageLimit = 100
     let batchPage = 1
+    
+    //Do initial render
     search(batchPage)
     
     function search(page:number = 1) {
@@ -82,6 +84,8 @@
         selectedFederationState = 'All'
         batchPage = 1
     }
+
+    console.log(data)
 
 </script>
 
@@ -180,7 +184,7 @@
         <div class="flex flex-col gap-4 w-full h-full">
             {#if batch.length > 0}
                 {#each batch as instance, id (instance.id)}
-                    <InstanceListItem bind:instance />
+                    <InstanceListItem bind:instance newest_id={data.newest_id}/>
                 {/each}
             {:else}
                 <Placeholder icon={MagnifyingGlass} title="No results"  description="No instances matched the filter." />

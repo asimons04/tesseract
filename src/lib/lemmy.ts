@@ -207,3 +207,9 @@ export let sortOptionNames:string[] = [
     'Most Comments',
     'New Comments',
 ];
+
+// Do an initial fetch of the site so the logo and site name gets set properly
+// DummyJWT is so the auth module doesn't try to access the profile before it's initialized
+getClient(get(instance), 'dummyJWT').getSite().then((getSiteResponse) => {
+    site.set(getSiteResponse)
+})

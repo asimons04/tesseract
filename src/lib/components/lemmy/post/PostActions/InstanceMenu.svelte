@@ -81,6 +81,13 @@
             <span>Fediseer</span>
     </MenuButton>
 
+    <MenuButton title="Instance Stats for {new URL(post.community.actor_id).hostname}" color="info" link href="/instances?instance={new URL(post.community.actor_id).hostname}&stats" >
+        <Icon src={Server} width={16} mini />
+        <span>Instance Stats</span>
+    </MenuButton>
+
+
+
     <MenuButton link href="/communities?instance={new URL(post.community.actor_id).hostname}&type=Local" 
         title="Browse communities at {new URL(post.community.actor_id).hostname}" color="success"
     >
@@ -109,6 +116,11 @@
         >
                 <Icon src={Eye} width={16} mini />
                 <span>Fediseer</span>
+        </MenuButton>
+
+        <MenuButton title="Instance Stats for {new URL(post.creator.actor_id).hostname}" color="info" link href="/instances?instance={new URL(post.creator.actor_id).hostname}&stats" >
+            <Icon src={Server} width={16} mini />
+            <span>Instance Stats</span>
         </MenuButton>
 
         <MenuButton link href="/communities?instance={new URL(post.creator.actor_id).hostname}&type=Local" 
