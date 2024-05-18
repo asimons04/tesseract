@@ -25,7 +25,7 @@ All major/minor changes between releases will be documented here.
 - [X] DM modal preview shrinks in mobile view
 - [ ] Ensure "Moderator View" only appears on main feed
 - [X] If guest instance is set, login was not sending auth token
-- [ ] When switching between communites on create post page, moderator user links not reactive (shows previous lookup)
+- [X] When switching between communites on create post page, moderator user links not reactive (shows previous lookup)
 
 #### General UI
 - [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)

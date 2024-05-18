@@ -385,8 +385,8 @@
         <div class="hidden xl:block w-full mt-2 overflow-y-auto">
             {#if moderators.length > 0}
                 <CollapseButton icon={HandRaised} title="Moderators">
-                    {#each moderators as moderator}
-                        <UserLink user={moderator.moderator} avatar={true}/>
+                    {#each moderators as moderator (moderator.moderator.id)}
+                        <UserLink bind:user={moderator.moderator} avatar={true}/>
                     {/each}
                 </CollapseButton>
             {/if}
