@@ -70,18 +70,9 @@
         <div slot="actions" class="w-full mb-2">
             {#if actions}
                 <div class="flex flex-row items-center justify-between">
-                    {#if actions}
-                        <Button
-                            on:click={submit}
-                            color="primary"
-                            size="md"
-                            class="ml-auto w-28"
-                            {loading}
-                            disabled={locked || loading}
-                        >
-                            Submit
-                        </Button>
-                    {/if}
+                    <Button on:click={submit} color="primary" size="md" class="ml-auto w-28" {loading} disabled={locked || loading} >
+                        Submit
+                    </Button>
                 </div>
             {/if}
         </div>

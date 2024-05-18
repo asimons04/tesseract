@@ -30,7 +30,7 @@
     title={fixLemmyEncodings(community.title)}
 >
     {#if avatar}
-        <Avatar url={community.icon} alt={community.name} width={avatarSize} />
+        <Avatar url={community.icon} alt={community.name} width={avatarSize} community={true}/>
     {/if}
 
     {#if name}

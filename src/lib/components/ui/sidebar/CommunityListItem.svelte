@@ -107,7 +107,7 @@
         title="{community.title.replace('&amp;', '&')}@{new URL(community.actor_id).hostname}"
     >
         <div class="flex-none">
-            <Avatar url={community.icon} alt={community.name} title={community.title} width={20} slot="icon" />
+            <Avatar url={community.icon} alt={community.name} title={community.title} width={20} community={true} slot="icon" />
         </div>
         
         <span class="w-full break-words" class:hidden={!expanded}>

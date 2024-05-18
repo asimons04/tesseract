@@ -76,7 +76,7 @@
             <!---Show Community Icon if Not in Community--->
             {#if post.community && !inCommunity}
                 <span class="flex flex-col items-end gap-1">
-                    <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
+                    <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} community={true}/>
                     
                     <!---Only show for logged-in users and not on post create pages--->
                     {#if $profile?.user && !$page.url.pathname.includes('create_post') && !$page.url.pathname.includes('create/post')}

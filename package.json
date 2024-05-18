@@ -41,8 +41,9 @@
     "workbox-window": "^7.0.0"
   },
   "dependencies": {
-    "@dicebear/core": "^7.0.1",
-    "@dicebear/initials": "^7.0.1",
+    "@dicebear/core": "^8.0.1",
+    "@dicebear/initials": "^8.0.1",
+    "@dicebear/adventurer": "^8.0.1",
     "lemmy-js-client": "^0.19.3-alpha.6",
     "markdown-it": "^13.0.1"
   },
