@@ -1,6 +1,6 @@
 <script lang="ts">
     import { fly } from 'svelte/transition'
-    import { PanelWidths } from '../../lib/types'
+    import type { PanelWidths } from '../../lib/types'
 
     export let display:boolean = true;
     export let width:PanelWidths = 'w-1/3'

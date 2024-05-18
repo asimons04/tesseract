@@ -2,22 +2,20 @@
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { PostView } from 'lemmy-js-client'
     
-    import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { report} from '$lib/components/lemmy/moderation/moderation.js'
     import { blockUser, isBlocked } from '$lib/lemmy/user'
-    import { blockInstance, site } from '$lib/lemmy'
     import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
     import { profile } from '$lib/auth'
-    import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import PostEditorModal from './PostEditorModal.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    
 
     import {
         type IconSource,
@@ -29,7 +27,6 @@
         Eye,
         EyeSlash,
         Flag,
-        GlobeAlt,
         NoSymbol,
         PencilSquare,
         Share,
@@ -37,7 +34,6 @@
         Window
 
     } from 'svelte-hero-icons'
-    import { remove } from 'nprogress';
     
     
     export let post:PostView

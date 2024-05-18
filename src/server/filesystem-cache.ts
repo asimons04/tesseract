@@ -2,22 +2,21 @@ import { Buffer } from 'buffer';
 import { createHash } from 'node:crypto'
 import {fileTypeFromBuffer} from 'file-type';
 import { 
-    type Stats,
     access,
     constants,
     open,
     opendir,
-    readFile,
     rm,
     stat,
     utimes,
     writeFile,
-
 } from 'node:fs/promises'
+
+
 
 interface DirectoryList {
     path: string,
-    stats: Stats
+    stats: any
 }
 
 
@@ -80,7 +79,7 @@ export class FSCache {
         let evictedItems: number = 0;
     
         for ( let i:number=0; i<directoryList.length; i++) {
-            let entry:Stats = directoryList[i];
+            let entry:any = directoryList[i];
     
             let lastAccessTime:number   = entry.stats.atimeMs;
             let now:number              = new Date().valueOf();
@@ -113,7 +112,7 @@ export class FSCache {
         directoryList = this.sortDirectoryContents(directoryList, 'atimeMs', 'asc');
         
         for ( let i:number=0; i<numItems; i++) {
-            let entry:Stats = directoryList[i];
+            let entry:any = directoryList[i];
             console.log(`\t Evicting ${entry.path} to remain under quota.`);
                 try {
                     await rm(entry.path)
@@ -139,7 +138,7 @@ export class FSCache {
         let errors:number = 0;
 
         for ( let i:number=0; i<directoryList.length; i++) {
-            let entry:Stats = directoryList[i];
+            let entry:any = directoryList[i];
             try {
                 await rm(entry.path)
             }
@@ -170,6 +169,7 @@ export class FSCache {
                 // SVG tends to trip up, so do manual detection of those
                 let head:string = buffer.toString().slice(0,20);
                 if (head.startsWith('<svg xmlns')) {
+                    //@ts-ignore 
                     mime = 'image/svg+xml'
                 }
                 
@@ -333,15 +333,15 @@ export class FSCache {
         }
     }
 
-    sortDirectoryContents(contents:Array<Stats>, attr:string = 'atimeMs', dir:string='asc' ):Array<Stats> {
+    sortDirectoryContents(contents:Array<any>, attr:string = 'atimeMs', dir:string='asc' ):Array<any> {
     
-        const asc = function (a:Stats, b:Stats) {
+        const asc = function (a:any, b:any) {
             if (a[attr] > b[attr]) return 1
             if (a[attr] < b[attr]) return -1
             return 0
         }
     
-        const desc = function (a:Stats, b:Stats) {
+        const desc = function (a:any, b:any) {
             if (a[attr] > b[attr]) return -1
             if (a[attr] < b[attr]) return 1
             return 0
