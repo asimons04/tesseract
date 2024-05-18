@@ -97,7 +97,7 @@
             {#each votes as vote}
                 <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
                     <span class="flex">
-                        <UserLink bind:user={vote.creator} avatar avatarSize={iconSize} />
+                        <UserLink bind:user={vote.creator} avatar avatarSize={iconSize} ring />
                     </span>
                     
                     <span class="flex ml-auto {vote.score > 0 ? 'text-sky-500' : 'text-red-500'} font-bold">

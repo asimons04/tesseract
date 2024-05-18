@@ -65,10 +65,11 @@
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, 384, 'webp') : ''} >
             <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
                 <div class="flex-shrink-0">
-                    <Avatar width={128} fullRes url={personDetails.person_view.person.avatar} alt={personDetails.person_view.person.name} 
-                        ring={$profile?.user?.local_user_view.person.id == personDetails.person_view.person.id}
+                    <Avatar width={128} fullRes ring url={personDetails.person_view.person.avatar} alt={personDetails.person_view.person.actor_id} 
+                        
                         
                     />
+                    <!--ring={$profile?.user?.local_user_view.person.id == personDetails.person_view.person.id}-->
                 </div>
 
                 <div class="flex flex-col gap-1 w-full overflow-hidden">

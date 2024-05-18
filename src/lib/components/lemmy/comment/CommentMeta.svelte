@@ -47,7 +47,7 @@
             <!---Show user's avatar if viewing posts in a community--->
             {#if comment.community && !inCommunity}
                 <span class="flex flex-col items-end gap-1">    
-                    <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} />
+                    <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} community={true}/>
                 
                     {#if $profile?.user}
                         <!---Overlay small subscribe/unsubscribe button on avatar--->
@@ -72,7 +72,7 @@
                 </span>
             
             {:else if inCommunity && comment.creator}
-                <Avatar url={comment.creator.avatar} width={avatarSize} alt={comment.creator.name} />
+                <Avatar url={comment.creator.avatar} width={avatarSize} alt={comment.creator.actor_id} />
             {/if}
 
             <div class="flex flex-col text-xs">

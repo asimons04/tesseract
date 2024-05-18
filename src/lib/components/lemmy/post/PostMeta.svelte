@@ -103,7 +103,7 @@
             
             <!---Show user's avatar if viewing posts in a community--->
             {:else if inCommunity && post.creator}
-                <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.name} />
+                <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.actor_id} />
             {/if}
 
             <div class="flex flex-col text-xs">

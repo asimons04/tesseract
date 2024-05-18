@@ -33,7 +33,8 @@
     export let href:boolean = false
     export let distinguishAdminsMods:boolean = true
     export let shortenDisplayName:boolean = false
-    
+    export let ring:boolean = false
+
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
         return `/u/${user.name}@${domain}`
@@ -82,7 +83,7 @@
                 {#if loadingPersonDetails}
                     <Spinner width={avatarSize} />
                 {:else}                    
-                    <Avatar url={user.avatar} alt={user.name} width={avatarSize}/>
+                    <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
                 {/if}
             </span>
         {/if}

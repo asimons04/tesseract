@@ -20,7 +20,7 @@
 <Card>
     <div class="flex flex-row gap-2 text-sm max-w-full p-2">
         <div class="flex-shrink-0">
-            <Avatar width={64} url={user.person.avatar} alt={user.person.name} />
+            <Avatar width={64} url={user.person.avatar} alt={user.person.actor_id} />
         </div>
 
         <div class="flex flex-col gap-2">

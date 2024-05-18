@@ -33,7 +33,7 @@
 {:else}
     <div
         style="width: {width}px; height: {width}px;"
-        class="aspect-square object-cover overflow-hidden {ring ? 'ring-2 ring-sky-700' : ''} {$$props.class}"
+        class="aspect-square object-cover overflow-hidden ring-2 ring-sky-700 {$$props.class}"
         class:rounded-full={circle}
     >
         {#if community}
@@ -44,7 +44,8 @@
         {:else}
             {@html createAvatar(adventurer, {
                     seed: alt,
-                    scale: 125,
+                    //scale: 125,
+                    backgroundColor: ["ffffff"],
                     flip: true,
                     eyebrows: [
                         "variant01","variant02","variant03", "variant04","variant05",

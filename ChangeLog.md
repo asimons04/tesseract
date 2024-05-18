@@ -29,6 +29,7 @@ All major/minor changes between releases will be documented here.
 
 #### General UI
 - [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
+- [X] Add Dicebear avatar generator for blank user profiles.  Keep initials generator for communities without icons.
 
 
 #### Markdown Renderer and Editor
