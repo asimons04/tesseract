@@ -667,37 +667,6 @@ export const addMBFCResults = function (posts:PostView[]):PostView[] {
 
 }
 
-// Fix one hour ahead posts
-export const fixHourAheadPosts = function(posts:PostView[]): PostView[] {
-    try {
-        for (let i:number=0; i<posts.length; i++) {
-            let published = posts[i].post.published.endsWith('Z')
-                ? new Date(posts[i].post.published)
-                : new Date(posts[i].post.published + 'Z')
-            
-            let now = new Date()
-
-            if (published > now) {
-                console.log("Fixing post pub time")
-                console.log(`Old: ${posts[i].post.published}`)
-                posts[i].post.published = new Date(published.setHours(published.getHours() - 1)).toISOString()
-                console.log(`New: ${posts[i].post.published}`)
-
-            }
-        }
-        return posts
-    }
-    catch (err) {
-        console.log('fixHourAheadPosts(): An error has occurred. Returning original posts list');
-        console.log(err)
-        return posts
-    }
-
-
-    
-
-}
-
 // Crosspost a post
 export const crossPost = function(post:PostView):void {
     setSessionStorage('postDraft', {
@@ -774,8 +743,6 @@ export function isThreadComment(commentID:number):boolean {
 
 export function isNewAccount(date:string):boolean {
     return new Date().getTime()/1000/60 - (
-        date.endsWith('Z')
-            ? (Date.parse(date)/1000/60) 
-            : (Date.parse(date + 'Z')/1000/60) 
+            (Date.parse(date)/1000/60) 
     ) < 1440 * 5
 }

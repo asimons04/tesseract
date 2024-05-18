@@ -96,12 +96,8 @@ export interface Filters {
 const fullUserName = (user: Person) => `${user.name}@${new URL(user.actor_id).hostname}`
 
 function timestamp (when: string): number {
-    if (!when.endsWith('Z')) {
-        when += 'Z'
-    }
     return Date.parse(when)
 }
-//const timestamp = (when: string) => Date.parse(`${when}Z`)
 
 export const _toModLog = (item: ModAction): ModLog => {
     if ('mod_ban_from_community' in item) {

@@ -16,7 +16,6 @@ function sortInstances(a:InstanceWithFederationStateCustom, b:InstanceWithFedera
 
 function instanceIsDead(instance:InstanceWithFederationState):boolean {
     if (!instance.updated) return false
-    if (!instance.updated.endsWith('Z')) instance.updated += 'Z'
     
     let delta = 3 * 24 * 60 * 60 // 3 days -> seconds
     let lastUpdated = Math.floor(Date.parse(instance.updated)/1000)  // Date in ms->seconds

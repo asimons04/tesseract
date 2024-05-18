@@ -1,5 +1,6 @@
 <script lang="ts">
-    import type { CommunityModeratorView, CommentView } from 'lemmy-js-client'
+    import type { CommentView } from 'lemmy-js-client'
+    import { isNewAccount } from '../post/helpers.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { subscribe } from '../community/helpers.js'
@@ -35,14 +36,6 @@
     $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: subscribed = comment.subscribed == 'Subscribed' || comment.subscribed == 'Pending'
 
-    function isNewAccount():boolean {
-        return new Date().getTime()/1000/60 - (
-        comment.creator.published.endsWith('Z')
-            ? (Date.parse(comment.creator.published)/1000/60) 
-            : (Date.parse(comment.creator.published + 'Z')/1000/60) 
-        )
-        < 1440 * 5
-    }
 </script>
 
 
@@ -117,7 +110,7 @@
             <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
                 
                 <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
-                {#if comment?.creator?.published && isNewAccount()}
+                {#if comment?.creator?.published && isNewAccount(comment.creator.published)}
                     <Badge label="New Account" color="gray">
                         <Icon src={Cake} mini size="14"/>
                         <RelativeDate date={comment.creator.published} />

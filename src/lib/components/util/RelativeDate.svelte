@@ -6,17 +6,7 @@
         style: 'narrow',
     }
 
-    const stringToDate = (date: string): Date => {
-        try {
-            if (!date.endsWith('Z')) {
-                date += 'Z';
-            }
-            return (new Date(date))
-        }
-        catch {
-            return new Date(date)
-        }   
-    }
+    const stringToDate = (date: string): Date => new Date(date)
 
     const toLocaleDateString = (date: Date): string => {
         try {

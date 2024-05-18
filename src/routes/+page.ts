@@ -1,6 +1,6 @@
 import type { GetPostsResponse, GetSiteResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
-import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, sortPosts } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, findCrossposts, filterKeywords, sortPosts } from '$lib/components/lemmy/post/helpers'
 import { getClient, site } from '$lib/lemmy.js'
 import { get } from 'svelte/store'
 import { error } from '@sveltejs/kit'
@@ -32,9 +32,6 @@ export async function load({ url, passedSite }: LoadParams) {
         ])
         
         if (!passedSite) site.set(siteData)
-
-        // Fix posts that come in an hour ahead
-        posts.posts = fixHourAheadPosts(posts.posts)
 
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);

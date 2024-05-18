@@ -32,8 +32,8 @@ export function getItemPublished(item: Result) {
     // others
     if ('private_message' in item)        return item.private_message.published
     
-    if ('comment' in item)                return item.comment.published.endsWith('Z') ? item.comment.published : item.comment.published + 'Z'
-    else if ('post' in item)              return item.post.published.endsWith('Z') ? item.post.published : item.post.published + 'Z'
+    if ('comment' in item)                return item.comment.published 
+    else if ('post' in item)              return item.post.published 
 
     if ('person' in item)                 return item.person.published
     if ('community' in item)              return item.community.published
