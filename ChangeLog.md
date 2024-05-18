@@ -25,6 +25,7 @@ All major/minor changes between releases will be documented here.
 - [X] DM modal preview shrinks in mobile view
 - [ ] Ensure "Moderator View" only appears on main feed
 - [X] If guest instance is set, login was not sending auth token
+- [ ] When switching between communites on create post page, moderator user links not reactive (shows previous lookup)
 
 #### General UI
 - [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
@@ -126,6 +127,7 @@ All major/minor changes between releases will be documented here.
     - If the link is to some kind of media supported in Tesseract, render it in a modal
     - Provide option to create a post based on the link
     - Provide button to take you to the link (honoring "open in new tab" setting)
+- [ ] Admin -> [Legal, sidebar, taglines] markdown editor too smushed.
 
 
 ## 1.3.0

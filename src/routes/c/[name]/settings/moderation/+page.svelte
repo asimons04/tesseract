@@ -32,7 +32,7 @@
 
     let formData = {
         user: '',
-        ban: false,
+        ban: true,
         expires: '',
         reason: '',
         remove_data: false,
