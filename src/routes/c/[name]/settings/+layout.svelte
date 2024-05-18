@@ -1,15 +1,14 @@
 <script lang="ts">
     import type { PageData } from './$types.js'
 
+    import { amMod } from '$lib/components/lemmy/moderation/moderation.js';
     import { fullCommunityName } from '$lib/util.js'
     import { goto } from '$app/navigation'
-    import { amMod } from '$lib/components/lemmy/moderation/moderation.js';
     import { onMount } from 'svelte';
     import { profile } from '$lib/auth.js';
     import { page } from '$app/stores'
     import { toast } from '$lib/components/ui/toasts/toasts.js';
     
-
     import Button from '$lib/components/input/Button.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'

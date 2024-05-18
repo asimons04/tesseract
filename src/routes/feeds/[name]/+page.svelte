@@ -18,6 +18,8 @@
         PencilSquare,
     } from 'svelte-hero-icons'
     import Button from '$lib/components/input/Button.svelte';
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
 
 
     export let data
@@ -58,35 +60,33 @@
     </Button>
 </SubNavbar>
 
-<div class="flex flex-col-reverse  xl:flex-row gap-4 max-w-full w-full h-full py-2">
-    <div class="flex flex-col gap-4 max-w-full w-full min-w-0">
-        {#if data}
-            {#if data.posts.length > 0}
-                <PostFeed posts={data.posts} />
-            {:else}
-                <Placeholder
-                    icon={ArchiveBox}
-                    title="No posts"
-                    description={
-                        `There's nothing here.  
-                        ${data.feed 
-                            ? "You haven't added any communities to this group. Add communities or select a different group from the dropdown."
-                             : `The specified group does not seem to exist yet.`
-                        }
-                    `}
-                />
-            {/if}
-            
-            <div class="mt-auto px-2">
-                <Pageination
-                    page={data.page}
-                    on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
-                />
-            </div>
-        {/if}
-    </div>
+<MainContentArea>
 
-    <div class="lg:mb-[-24px]">
-        <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version}/>
-    </div>
-</div>
+    {#if data}
+        {#if data.posts.length > 0}
+            <PostFeed posts={data.posts} />
+        {:else}
+            <Placeholder
+                icon={ArchiveBox}
+                title="No posts"
+                description={
+                    `There's nothing here.  
+                    ${data.feed 
+                        ? "You haven't added any communities to this group. Add communities or select a different group from the dropdown."
+                            : `The specified group does not seem to exist yet.`
+                    }
+                `}
+            />
+        {/if}
+        
+        <div class="mt-auto px-2">
+            <Pageination page={data.page}
+                on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
+            />
+        </div>
+    {/if}
+
+    
+    <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} slot="right-panel"/>
+    
+</MainContentArea>
