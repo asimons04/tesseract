@@ -141,7 +141,7 @@
                     community_id: data.community!.id,
                     name: data.name,
                     body: data.body,
-                    url: data.url,
+                    url: data.url || undefined,
                     nsfw: data.nsfw,
                 })
 
