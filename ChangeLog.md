@@ -8,13 +8,14 @@ All major/minor changes between releases will be documented here.
 
 #### Drop Support for 0.18.x
 - [X] Remove all `auth` fields from API call POST bodies
-- [ ] Remove all the date checks that look for and append 'Z'
+- [X] Remove all the date checks that look for and append 'Z'
 - [X] Remove score from user pages (currently conditional upon presence of value)
 - [X] Update `lemmy-js-client` 
 - [X] Remove admin flag check from `local_user_view.person` in moderation.ts
 - [X] Remove image upload proxy since it _should_ no longer be needed
     - **Note**:  Left server-side handler in place and deprecated calling function in Lemmy library; you never know when the Lemmy devs are gonna fuck something up
-- [/] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
+- [X] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
+    - Some API calls still use this, but `page_cursor` is used everywhere it is implemented by the API
 - [ ] Remove custom functions for `blockInstance` and `hideCommunity` and use the client-native ones
 - [X] Remove custom shim to conditionally add/remove `Scaled` sort option
 - [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
@@ -40,11 +41,16 @@ All major/minor changes between releases will be documented here.
 #### Admin Panel
 - [ ] Add ability to define and edit custom emojis
 - [X] Replace old Photon image upload proxy for site icon/banner
+- [X] Restrict access to only local admins
+    - Previously, anyone could goto `/admin` and see the settings; API would not authorize them to make changes. All of these settings are also visible, unauthenticated, via API call to `/api/v3/site`, so didn't feel the need to restrict this.  Some people disagreed with that, so I locked it down in this release.
 
 #### Community Settings Panel
 - [ ] Add report panel for reports in that community
 - [ ] Add 'local' check to not show community settings buttons to admins when browsing remote communities
+    - I was drunk when I wrote this down.  Not sure how I triggered this or if I was just mistaken?
 - [X] Replace old Photon image upload proxy for community icon/banner
+- [X] Restrict access to only moderators or local admins
+    - Previously, anyone could goto `/c/{community}/settings` and see the community settings; API would not authorize them to make changes or see anything they couldn't otherwise see. All of these settings are also visible, unauthenticated, via API call, so didn't feel the need to restrict this.  Some people disagreed with that, so I locked it down in this release.
 
 #### Instances List
 - [X] Add `federation_state` data to instance list objects in `/instances`

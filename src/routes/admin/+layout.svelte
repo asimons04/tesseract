@@ -1,8 +1,13 @@
 <script lang="ts">
+        
     import { goto } from '$app/navigation'
+    import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js';
+    import { onMount } from 'svelte';
     import { page } from '$app/stores'
+    import { profile } from '$lib/auth';
     import { searchParam } from '$lib/util.js'
     import { site } from '$lib/lemmy'
+    import { toast } from '$lib/components/ui/toasts/toasts.js';
     
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
@@ -16,6 +21,17 @@
         EnvelopeOpen 
     } from 'svelte-hero-icons';
     
+    onMount(() => {
+        if (!$profile?.jwt || !isAdmin($profile.user)) {
+            goto(`/`)
+            toast({
+                title: 'Not Authorized',
+                type: 'warning',
+                content: 'You must be logged in as an administrator to access this section.'
+
+            })
+        }
+    })
 
 </script>
 
