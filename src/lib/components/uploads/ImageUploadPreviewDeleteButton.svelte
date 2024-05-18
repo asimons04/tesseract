@@ -10,10 +10,12 @@
     import { Trash } from 'svelte-hero-icons';
 
     export let uploadResponse: UploadImageResponse | undefined
-    //export let iconSize:number = 16
     export let previewSize:number = 48
     
-    let dispatcher = createEventDispatcher<{ delete: boolean }>()
+    let dispatcher = createEventDispatcher<{ 
+        delete: boolean 
+        insert: UploadImageResponse
+    }>()
     
     export async function deleteImage() {
         if (!uploadResponse) return
@@ -41,7 +43,14 @@
 
 {#if uploadResponse}
 <div class="relative flex flex-row gap-0 items-center">
-    <Avatar url={uploadResponse.url} width={previewSize} circle={false}/>
+    <button on:click={() => {
+        if (uploadResponse?.url) {
+            navigator.clipboard.writeText(uploadResponse.url)
+            dispatcher('insert', uploadResponse)
+        }
+    }}>
+        <Avatar url={uploadResponse.url} width={previewSize} circle={false}/>
+    </button>
     
     <span class="absolute bottom-0 right-0 bg-white dark:bg-black">
         <Button color="danger" size="square-sm" title="Delete Upload"

@@ -273,6 +273,10 @@
                 {#each imageUploads as upload, index}
                     {#if upload}
                         <ImageUploadPreviewDeleteButton uploadResponse={upload} previewSize={64}
+                            on:insert={(e) => {
+                                if (e.detail?.url) wrapSelection(`![](${imageProxyURL(e.detail.url)})`, '')
+                            }}
+                            
                             on:delete={(e) => {
                                 if (e.detail && upload?.url) {
                                     // Generate a regex to match the markdown syntax for that image URL and remove it from the textarea value.
