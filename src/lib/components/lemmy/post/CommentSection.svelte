@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { GetPostResponse, CommentSortType } from 'lemmy-js-client'
+    import type { GetPostResponse, CommentSortType, UploadImageResponse } from 'lemmy-js-client'
 
 
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
@@ -29,7 +29,8 @@
 
     export let data:any
     export let showCommentForm:boolean = true;
-
+    export let imageUploads = [] as UploadImageResponse[]
+    
     let commentSort: CommentSortType = data.commentSort;
 
     async function reloadComments() {
@@ -81,7 +82,7 @@
         {:then comments}
         
         {#if $profile?.user && showCommentForm}
-            <CommentForm postId={data.post.post_view.post.id}
+            <CommentForm postId={data.post.post_view.post.id} bind:imageUploads
                 locked={data.post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
                 on:comment={ (comment) =>
                     {

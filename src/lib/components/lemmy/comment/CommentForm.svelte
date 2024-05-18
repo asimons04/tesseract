@@ -1,19 +1,20 @@
 <script lang="ts">
-    import Button from '$lib/components/input/Button.svelte'
-    import { Color } from '$lib/ui/colors.js'
-    import type { CommentResponse } from 'lemmy-js-client'
-    import { getClient } from '$lib/lemmy.js'
+    import type { CommentResponse, UploadImageResponse } from 'lemmy-js-client'
+    
     import { createEventDispatcher } from 'svelte'
+    import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    
+    import Button from '$lib/components/input/Button.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
 
     export let postId: number
     export let parentId: number | undefined = undefined
     export let locked: boolean = false
     export let rows: number = 7
-
+    export let imageUploads = [] as UploadImageResponse[]
+    
     const dispatch = createEventDispatcher<{ comment: CommentResponse }>()
 
     export let value = ''
@@ -63,6 +64,7 @@
         }
         bind:value
         bind:previewing
+        bind:imageUploads
         disabled={locked || loading}
         previewButton={true}
         on:confirm={submit}

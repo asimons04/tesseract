@@ -1,4 +1,6 @@
 <script lang="ts">
+    import type { UploadImageResponse } from 'lemmy-js-client';
+
     import { goto } from '$app/navigation'
     import { getClient } from '$lib/lemmy.js'
     import { instance } from '$lib/instance.js'
@@ -7,6 +9,7 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
+    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers.js';
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
@@ -22,13 +25,15 @@
         ExclamationTriangle,
         Home
     } from 'svelte-hero-icons'
-    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers.js';
+    
+    
     
     
     export let data
    
     let showCommentForm:boolean = false;
     let postContainer: HTMLDivElement
+    let imageUploads = [] as UploadImageResponse[]
     
     //@ts-ignore (Add cross posts to post_view object for sanity)
     $: data.post.post_view.cross_posts = data.post.cross_posts
@@ -138,7 +143,7 @@
         
         />      
 
-        <CommentSection data={data} bind:showCommentForm={showCommentForm}/>
+        <CommentSection data={data} bind:showCommentForm={showCommentForm} bind:imageUploads/>
     </div>
 
     <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden xl:flex"/>

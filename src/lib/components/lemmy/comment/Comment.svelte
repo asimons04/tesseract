@@ -1,15 +1,15 @@
 <script lang="ts">
+    import type { UploadImageResponse } from 'lemmy-js-client';
     import type { CommentNodeI } from './comments'
+
     import {
         ArrowUp,
         Bookmark,
-        Cake,
         ChatBubbleLeftEllipsis,
         Icon,
         Minus,
         Pencil,
         Plus,
-        ShieldCheck,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -27,25 +27,27 @@
     import { onMount } from 'svelte'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    
     import { slide } from 'svelte/transition'
     import { amModOfAny } from '../moderation/moderation';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
+    
     
     export let node: CommentNodeI
     export let postId: number
     export let actions: boolean = true
     export let open = true
     export let replying = false
-
-    let editing = false
-    let newComment = node.comment_view.comment.content
+    
+    
+    let imageUploads              = [] as UploadImageResponse[]
+    let editing                   = false
+    let newComment                = node.comment_view.comment.content
     let distinguishedClassSummary = 'border-l border-r rounded-t-md border-t border-green-500/50 bg-green-500/5 p-1'
     let distinguishedClassContent = 'shadow-md border-l border-r rounded-b-md border-b border-green-500/50 bg-green-500/5 p-1'
 
     let jumpToCommentClassSummary = `border-l border-r rounded-t-md border-t border-amber-200/50 bg-amber-500/5 p-1`
     let jumpToCommentClassContent = 'shadow-md border-l border-r rounded-b-md border-b border-amber-500/50 bg-amber-500/5 p-1'
-    let jumpToComment = false
+    let jumpToComment             = false
     let commentContainer: HTMLDivElement
 
     let op = node.comment_view.post.creator_id == node.comment_view.creator.id
@@ -62,7 +64,7 @@
 
 {#if editing}
     <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} width="max-w-4xl">
-        <MarkdownEditor rows={7} bind:value={newComment} previewButton={true}>
+        <MarkdownEditor rows={7} bind:value={newComment} bind:imageUploads previewButton={true}>
             
             <Button color="primary" slot="actions" on:click={async () => {
                 if (!$profile?.jwt || newComment.length <= 0) return
@@ -184,7 +186,7 @@
         {#if replying}
             <div class="max-w-full my-2">
                 <h1 class="font-bold text-sm mb-2">Reply</h1>
-                <CommentForm {postId} parentId={node.comment_view.comment.id}
+                <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
                     on:comment={(e) => {
                         node.children = [
                             {
