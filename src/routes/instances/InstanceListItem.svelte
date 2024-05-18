@@ -170,8 +170,8 @@
             </span>
         </div>
 
-        <!---Show federation state if instance is not blocked--->
-        {#if !(instance.state == 'blocked')}
+        <!---Show federation state if instance is not blocked or dead --->
+        {#if !(instance.state == 'blocked') && !instance.dead}
             <details bind:open={federationStateOpen} class="text-sm mt-1">
                 <summary class="cursor-pointer font-bold">
                     Federation State
