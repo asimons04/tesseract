@@ -61,7 +61,7 @@
     >
     
         <MenuButton on:click={() => extractSelected(option)}>
-            <Avatar url={option.icon} alt={option.title} width={24} />
+            <Avatar url={option.icon} alt={option.title} width={24} community={true}/>
             
             <div class="flex flex-col text-left">
                 <span>{option.title}</span>
