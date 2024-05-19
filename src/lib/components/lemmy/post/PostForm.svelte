@@ -17,6 +17,7 @@
 
     import { ENABLE_MEDIA_PROXY } from '$lib/settings'
     import { createEventDispatcher } from 'svelte'
+    import { deleteImageUpload } from '$lib/components/uploads/helpers';
     import { getClient } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { isImage, isVideo } from './helpers'
@@ -83,13 +84,13 @@
     let useImageProxyForPost:boolean = false
     let bodyImages:UploadImageResponse[]
     
-    let deleteImage: () => Promise<void>
+    let deletePostImage: () => Promise<void>
 
     
     let previewing       = false
     let fetchingMetadata = false
     let previewPost: PostView | undefined
-
+    let resetting       = false
 
     let compactPosts = false
     let displayType = 'post' as 'post' | 'feed'
@@ -299,7 +300,6 @@
         } 
     }
 
-
 </script>
 
 
@@ -336,11 +336,17 @@
         </Button>
 
          <!--- Reset Form --->
-         <Button  loading={fetchingMetadata} disabled={previewing} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
-            on:click={ () => {
-                if (uploadResponse) deleteImage()
+         <Button  loading={resetting} disabled={previewing||resetting} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
+            on:click={async () => {
+                resetting = true
+                if (uploadResponse) deletePostImage()
+                for (let i=0; i < bodyImages.length; i++) {
+                    await deleteImageUpload(bodyImages[i])
+                }
+                bodyImages = bodyImages = []
                 data = objectCopy(default_data)
                 data = data
+                resetting = false
             }}
         >
             <Icon src={ArrowUturnDown} mini size="16"/>                
@@ -405,7 +411,7 @@
             />
 
             <!---Image Upload Delete Button--->
-            <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage iconSize={18} on:delete={(e) => {
+            <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage={deletePostImage} iconSize={18} on:delete={(e) => {
                     if (e.detail) data.url = '' 
                 }}
             />
