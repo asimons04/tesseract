@@ -741,8 +741,8 @@ export function isThreadComment(commentID:number):boolean {
     return false
 }
 
-export function isNewAccount(date:string):boolean {
+export function isNewAccount(date:string, daysOld?:number):boolean {
     return new Date().getTime()/1000/60 - (
             (Date.parse(date)/1000/60) 
-    ) < 1440 * 5
+    ) < 1440 * (daysOld ?? userSettings?.hidePosts?.newAccountMinAge ?? 5)
 }

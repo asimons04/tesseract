@@ -72,6 +72,7 @@ All major/minor changes between releases will be documented here.
 - [X] Add `user_is_moderator` flag to post meta header in feed
 - [X] Replace old admin check for post meta with new `user_is_admin`.
 
+
 ### Posts / Comments
 - [X] Replace old Photon image upload proxy for post images
 - [X] Add support for deleting uploaded post image (during post creation only since the delete tokens aren't retrievable after that)
@@ -87,7 +88,7 @@ All major/minor changes between releases will be documented here.
     - [X] Block/Unblock User
     - [X] Instance ban user (if current user is admin)
     - [ ] Move fetch logic into modal itself rather than on the page
-
+- [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
 - [ ] Optionally Preview Links in Modal
 - [ ] Add support for pasting images into upload modal (don't want to deal with pasting them into the markdown editor itself)
 
