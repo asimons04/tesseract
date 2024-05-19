@@ -60,35 +60,6 @@ export async function validateInstance(instance: string, setSite:boolean=false):
     }
 }
 
-
-export async function blockInstance(instance_id: number, block:boolean = false): Promise<BlockInstanceResponse> {
-    if (!instance_id || !get(profile)?.jwt) return { blocked: !block }
-
-    try {
-        const body = {
-            instance_id: instance_id,
-            block: block
-        }
-        const response = await fetch(`https://${get(instance)}/api/v3/site/block`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${get(profile)?.jwt}`,
-                },
-                body: JSON.stringify(body)
-            }
-        )
-
-        if (response.ok)    return { blocked: block }
-        else                return { blocked: !block }
-    }
-    catch (err) {
-        console.log(err)
-        return { blocked: !block }
-    }
-}
-
 export async function hideCommunity(communityID:number, hidden:boolean, reason:string = '') {
     if (!communityID || !get(profile)?.jwt) return
 

@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     
-    import { blockInstance, site } from '$lib/lemmy'
+    import { getClient,  site } from '$lib/lemmy'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
     import { profile } from '$lib/auth'
     import { userSettings } from '$lib/settings'
@@ -50,7 +50,11 @@
             title: 'Please wait...',
             content: `Please wait while ${hostname} is added to your blocklist.`
         })
-        await blockInstance(instance_id, true)
+        
+        await getClient().blockInstance({
+            instance_id: instance_id,
+            block: true
+        })
         blockingInstance = false
         
         // Hack to remove the post from the DOM since there's no instance block / hide option available
