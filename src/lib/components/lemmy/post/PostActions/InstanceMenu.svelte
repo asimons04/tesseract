@@ -33,7 +33,17 @@
 
     
     let blockingInstance = false;
-    async function doBlockInstance(instance_id:number, hostname:string):Promise<void> {
+    async function doBlockInstance(instance_id:number, hostname:string, confirm:boolean=false):Promise<void> {
+        if (!confirm) {
+            toast({
+                type: 'warning',
+                title: 'Confirm',
+                content: `Are you sure you want to block ${hostname}?`,
+                action: () => doBlockInstance(instance_id, hostname, true)
+            })
+            return
+        }
+        
         blockingInstance = true
         let pleaseWaitToast = toast({
             type: 'warning',
@@ -92,7 +102,7 @@
         title="Browse communities at {new URL(post.community.actor_id).hostname}" color="success"
     >
         <Icon src={GlobeAlt} width={16} mini />
-        <span>Communities @ {new URL(post.community.actor_id).hostname}</span>
+        <span>Browse Communities</span>
     </MenuButton>
 
     <!--- Block Instance of Post's Community (0.19+)--->
@@ -101,7 +111,7 @@
             on:click={async () => {doBlockInstance(post.community.instance_id, new URL(post.community.actor_id).hostname) }}
         >
             <Icon src={NoSymbol} width={16} mini />
-            Block Instance: {new URL(post.community.actor_id).hostname}
+            Block Instance
         </MenuButton>
     {/if}
 
@@ -127,7 +137,7 @@
             title="Browse communities at {new URL(post.creator.actor_id).hostname}" color="success"
         >
             <Icon src={GlobeAlt} width={16} mini />
-            <span>Communities @ {new URL(post.creator.actor_id).hostname}</span>
+            <span>Browse Communities</span>
         </MenuButton>
     {/if}
 
@@ -137,7 +147,7 @@
             on:click={async () => { doBlockInstance(post.creator.instance_id, new URL(post.creator.actor_id).hostname) }}
         >
             <Icon src={NoSymbol} width={16} mini />
-            Block Instance: {new URL(post.creator.actor_id).hostname}
+            Block Instance
         </MenuButton>
     {/if}
     
