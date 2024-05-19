@@ -61,6 +61,7 @@
     export let community: Community | undefined = undefined
     export let crosspostData: PostData | undefined = undefined
     export let hideCommunityInput = false
+    export let textEditorRows:number = 10
 
     let default_data: PostData = crosspostData ?? {
         community: editingPost?.community ?? community,
@@ -411,7 +412,7 @@
         </div>
 
         <!--- Post Body --->
-        <MarkdownEditor rows={10} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>
+        <MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>
         
         <!---Options--->
         <SettingToggleContainer>

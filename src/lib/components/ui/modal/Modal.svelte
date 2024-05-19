@@ -79,12 +79,16 @@
                         
                         <span class="flex flex-row gap-2 items-center ml-auto">
                             {#if allowMaximize}
-                            <Button size="md" rounded="lg" color="tertiary" on:click={() => (maximize())}>
-                                <Icon src={maximized ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" />
-                            </Button>
+                            <span class="hidden lg:flex">
+                                <Button title="{maximized ? 'Un-maximize' : 'Maximize'}" size="md" rounded="lg" color="tertiary" 
+                                    on:click={() => (maximize())}
+                                >
+                                    <Icon src={maximized ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" />
+                                </Button>
+                            </span>
                             {/if}
                             
-                            <Button size="md" rounded="lg" color="tertiary" on:click={() => (open = false)}>
+                            <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={() => (open = false)}>
                                 <Icon src={XMark} mini size="16" />
                             </Button>
                         </span>
