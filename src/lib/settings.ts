@@ -57,8 +57,10 @@ interface Settings {
     hidePosts: {
         deleted: boolean
         removed: boolean
-        keywords: boolean,
+        keywords: boolean
         keywordList: string[]
+        newAccounts: boolean
+        newAccountMinAge: number
         MBFCLowCredibility: boolean
     }
     notifications: {
@@ -192,6 +194,8 @@ export const defaultSettings: Settings = {
         keywords:                                                       false,
         keywordList:                                                    [],
         MBFCLowCredibility:                                             false,
+        newAccounts:                                                    false,
+        newAccountMinAge:                                               5
 
     },
    
