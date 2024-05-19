@@ -121,7 +121,7 @@ All major/minor changes between releases will be documented here.
 
 
 ### Misc To-Do
-- [ ] In post form, when resetting values, loop over the image uploads in markdown and delete them all
+- [X] In post form, when resetting values, loop over the image uploads in markdown and delete them all
 - [ ] Add  purge user button for admins.
 - [ ] Link preview option.  If enabled:
     - Ignore Tesseract links (links to posts, comments, communities, users, etc)
@@ -130,6 +130,12 @@ All major/minor changes between releases will be documented here.
     - Provide option to create a post based on the link
     - Provide button to take you to the link (honoring "open in new tab" setting)
 - [ ] Admin -> [Legal, sidebar, taglines] markdown editor too smushed.
+
+### Misc
+#### Always use full-res avatars/icons.  
+I kept the original behavior from Photon, and while its intentions were good, it puts extra load on the instance servers having to generate various sizes of thumbnails. It also causes lag, issues with some icons/avatars not resizing correctly and failing, and clutters up multiple layers of caching.  
+
+For now, the code that handles that is still present but disabled with a flag.  If I decide to keep it this way, that code will be removed rather than simply bypassed.
 
 
 ## 1.3.0
