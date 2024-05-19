@@ -228,6 +228,9 @@ function getProfile() {
 export function resetProfile() {
     profile.set(getDefaultProfile())
     profileData.update((p) => ({ ...p, profile: -1 }))
+    getClient().getSite().then((guestSiteInfo) => {
+        site.set(guestSiteInfo)
+    })
 }
 
 // Update the profile in the profileData object in localStorage
