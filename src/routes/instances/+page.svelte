@@ -134,7 +134,7 @@
         }}/>
 
         <!---Search--->
-        <TextInput type="text" placeholder="Filter Instances" class="h-8" bind:value={filterTerm} />
+        <TextInput type="text" placeholder="Filter Instances" class="h-8" bind:value={filterTerm} on:change={() => filterTerm=filterTerm.toLowerCase() }/>
         <Button submit color="tertiary" icon={MagnifyingGlass} {iconSize} size="sm" title="Reset Search Filter"/>
        
 
@@ -168,7 +168,7 @@
         }}/>
 
         <!---Search--->
-        <TextInput type="text" placeholder="Filter Instances" class="h-8" bind:value={filterTerm} />
+        <TextInput type="text" placeholder="Filter Instances" class="h-8" bind:value={filterTerm} on:change={() => filterTerm=filterTerm.toLowerCase() }/>
         <Button submit color="tertiary" icon={MagnifyingGlass} iconSize={24} size="sm" title="Reset Search Filter"/>
         
 
