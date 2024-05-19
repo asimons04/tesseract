@@ -108,11 +108,12 @@
 
 
     <StickyCard class="{$$props.class}">
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, 384, 'webp') : ''}>
-            <div class="flex flex-row gap-3 items-start p-3">
-                <div class="flex-shrink-0">
-                    <Avatar width={96} url={person.person.avatar} alt={person.person.actor_id} />
-                </div>
+        <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, undefined, 'webp') : ''}>
+            
+            <div class="flex flex-row gap-2 items-start p-3">
+                
+                <Avatar ring width={96} url={person.person.avatar} alt={person.person.actor_id} />
+                
 
                 <div class="flex flex-col gap-0 w-full">
                     <div>
