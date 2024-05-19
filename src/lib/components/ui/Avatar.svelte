@@ -32,7 +32,6 @@
             class:rounded-full={circle}
         />
     {:else}
-        <!--style="width: {width}px; height: {width}px;"-->
         <div
             class="w-full h-full aspect-square object-cover overflow-hidden ring-2 ring-sky-700 {$$props.class}"
             class:rounded-full={circle}
