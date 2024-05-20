@@ -44,6 +44,7 @@
     let minRows = rows
     let imageAltText: string
     let pasteImage: FileList | null
+    let processingPastedImage = false
 
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
@@ -132,8 +133,12 @@
                                 on:click={() => (uploadingImage = !uploadingImage)}
                                 title="Image"
                                 size="square-md"
+                                loading={processingPastedImage}
+                                disabled={processingPastedImage}
                             >
-                                <Icon src={Photo} size="16" mini />
+                                {#if !processingPastedImage}
+                                    <Icon src={Photo} size="16" mini />
+                                {/if}
                             </Button>
                         {/if}
                     
@@ -248,7 +253,9 @@
                     bind:value
                     bind:item={textArea}
                     allowImagePasting={images}
+                    disabled={processingPastedImage}
                     on:paste={async (e) => { 
+                        processingPastedImage = true
                         const imageBlob = await readImageFromClipboard(e.detail) 
                         if (imageBlob) {
                             pasteImage = blobToFileList(imageBlob)
@@ -257,6 +264,7 @@
                         else {
                             wrapSelection(await readTextFromClipboard(e.detail), '')
                         }
+                        processingPastedImage = false
                     }}
 
                     on:keydown={(e) => {
