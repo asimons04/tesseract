@@ -92,9 +92,16 @@ All major/minor changes between releases will be documented here.
 - [ ] Optionally Preview Links in Modal
 
 #### Can Now Paste Images
-**Note**: This only works on Chrome since it uses the Clipboard API. 
-- [/] Can now paste images directly into post URL field: will populate and open the upload modal with the pasted image.
-- [/] Can now paste images directly into markdown editor: will pipulate and open the upload modal with the pasted image. Can then supply alt text.
+**Note**: This works best in Chromium browsers since they have access to the Clipboard API.  In FF and other browsers without Clipboard API support, pasting images still works but there are quirks.  
+- Pasting into the URL field works as expected; if there is a text component in the clipboard alongside the image, it will be overwritten upon upload with the image URL
+
+- Pasting into the markdown editor will paste the text component as well (usually the filename).  I've tried working around this, but there's no real clean way to to do it.  In Chromium, I just use `navigator.clipboard.readText()` if the paste data is not an image (have to prevent default so the local filename doesn't paste in as well).
+
+- FF nightly has support for Clipboard.read(), readText(), writeText().  Once that's in mainline, I'll just use Clipboard API and get rid of the old clipboard data method.  Safari can get on board or get out of the way :shrug:
+
+
+- [X] Can now paste images directly into post URL field: will populate and open the upload modal with the pasted image.
+- [X] Can now paste images directly into markdown editor: will pipulate and open the upload modal with the pasted image. Can then supply alt text.
 - [ ] Resize images and, if possible, convert to webp prior to upload
 
 

@@ -249,13 +249,13 @@
                     bind:item={textArea}
                     allowImagePasting={images}
                     on:paste={async (e) => { 
-                        const imageBlob = await readImageFromClipboard() 
+                        const imageBlob = await readImageFromClipboard(e.detail) 
                         if (imageBlob) {
                             pasteImage = blobToFileList(imageBlob)
                             uploadingImage = true
                         }
                         else {
-                            wrapSelection(await readTextFromClipboard(), '')
+                            wrapSelection(await readTextFromClipboard(e.detail), '')
                         }
                     }}
 

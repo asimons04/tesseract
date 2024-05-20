@@ -26,20 +26,35 @@ export async function deleteImageUploads(uploads:UploadImageResponse[]) {
     })
 }
 
-export async function readImageFromClipboard(): Promise<Blob|undefined> {
-    if (typeof(navigator.clipboard.read) != 'function') return
-    const items = await navigator.clipboard.read()
-
-    for (const item of items) {
-        const imageTypes = item.types.find(type => type.startsWith('image/'))
-        if (!imageTypes) return
-        return await item.getType(imageTypes);
+/** Reads an image from the clipboard with both classic and clipboard API methods
+ * @param e Event details for the paste event
+*/
+export async function readImageFromClipboard(e:any): Promise<Blob|undefined> {
+    
+    // If Clipboard API not available, use old method (Firefox/Safari)
+    if (typeof(navigator.clipboard.read) == 'undefined') {
+        for (const clipboardItem of e.clipboardData.files) {
+            if (clipboardItem.type.startsWith('image/')) {
+              return clipboardItem
+            }
+        }
+    }
+    // Use Clipboard API if avaiable (Chromium)
+    else {
+        const items = await navigator.clipboard.read()
+        for (const item of items) {
+            const imageTypes = item.types.find(type => type.startsWith('image/'))
+            if (!imageTypes) return
+            return await item.getType(imageTypes);
+        }
     }
 }
 
-export async function readTextFromClipboard(): Promise<string> {
-    if (typeof(navigator.clipboard.read) != 'function') return ''
-    return await navigator.clipboard.readText()
+export async function readTextFromClipboard(e:any): Promise<string> {
+    if (typeof(navigator.clipboard.read) != 'undefined') {
+        return await navigator.clipboard.readText()
+    }
+    return ''
 }
 
 

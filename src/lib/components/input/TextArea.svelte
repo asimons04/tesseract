@@ -39,8 +39,8 @@
         on:input={(e) => dispatcher('input', e)}
         on:keydown
         on:paste={(e) => {
-            if (allowImagePasting && typeof(navigator.clipboard.read) == 'function') {
-                e.preventDefault()
+            if (allowImagePasting) {
+                if (typeof(navigator.clipboard.readText) != 'undefined') e.preventDefault()
                 dispatcher('paste', e)
             }
         }}

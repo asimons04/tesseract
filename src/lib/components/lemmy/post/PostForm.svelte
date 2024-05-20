@@ -404,7 +404,7 @@
         <div class="flex gap-2 w-full items-end">
             <TextInput label="URL" bind:value={data.url} class="w-full" readonly={uploadResponse ? true : false} 
                 on:paste={async (e) => { 
-                    const imageBlob = await readImageFromClipboard() 
+                    const imageBlob = await readImageFromClipboard(e.detail) 
                     if (imageBlob) {
                         postImage = blobToFileList(imageBlob)
                         uploadingImage = true
