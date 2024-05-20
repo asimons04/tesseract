@@ -79,10 +79,16 @@
 
     let data = objectCopy(default_data)
     
+    // Holds the data from the upload response for use in the form
     let uploadResponse: UploadImageResponse | undefined
+    
+    // Bound from the markdown editor so that they can be referenced by the reset script in order to delete them
     let bodyImages:UploadImageResponse[]
+    
+    // Bound to the upload modal. Used when pasting an image into the URL field to pre-populate the preview and supply the upload data
     let postImage: FileList | null
     
+    // Bound from the delete image button so its inner delete function can be called
     let deletePostImage: () => Promise<void>
 
     let uploadingImage   = false
