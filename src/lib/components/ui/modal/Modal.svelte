@@ -47,7 +47,7 @@
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <div class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] 
         flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal cursor-default"
-        role="dialog" tabindex=-1
+        role="button" tabindex="0"
         transition:fade={{ duration: 200 }}
         on:keydown={(e) => {
             if (e.key == 'Escape' || e.key == 'GoBack' || e.key == 'BrowserBack') {
@@ -61,17 +61,18 @@
 		}}
     >
   
-        <div bind:this={modalElement} transition:scale={{ start: 0.5, easing: expoOut }}
+        <div transition:scale={{ start: 0.5, easing: expoOut }}
             class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[95svh]' : height} {$$props.class}"
-            tabindex="-1"
+            
         >
             <div class="w-full dark:!bg-zinc-950 rounded-xl {width} box-border mx-auto {fullHeight ? 'h-full' : height}">
-                <div
+                <div bind:this={modalElement} tabindex="-1" role="dialog"
                     class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
                     dark:bg-zinc-950 dark:border-zinc-800
                     bg-white border border-slate-200  {fullHeight ? 'h-[95vh]' : 'h-auto'}"
                     class:rounded-b-none={action}
                     class:border-b-0={action}
+                    
                 >
                     <div class="flex flex-row max-w-full">
                         <h1 class="flex flex-row items-center font-bold text-xl gap-2 w-fit">
