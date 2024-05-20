@@ -24,7 +24,6 @@
     import { objectCopy } from '$lib/util'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { userSettings } from '$lib/settings'
     import { validateURL } from '$lib/blacklists'
 
     
