@@ -3,16 +3,20 @@
 
     import { createEventDispatcher } from 'svelte'
     import { getClient } from '$lib/lemmy.js'
+    import { blobToFileList, imageBlobToWebp } from '$lib/components/uploads/helpers'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-  
+    import { userSettings } from '$lib/settings'
+
     import Button from '$lib/components/input/Button.svelte'
     import FileInput from '$lib/components/input/FileInput.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
+    import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
+    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
 
-    import { CloudArrowUp, Photo, XCircle } from 'svelte-hero-icons'
-    
+    import { CloudArrowUp, EyeDropper, Photo, XCircle } from 'svelte-hero-icons'
 
     export let open: boolean
     export let image: FileList | null = null
@@ -30,7 +34,11 @@
         loading = true
 
         try {
-            uploadResponse = await getClient().uploadImage({image: image[0]} )
+            let imageFile: Blob | FileList
+            imageFile = await imageBlobToWebp(image[0])
+            imageFile = blobToFileList(imageFile)
+
+            uploadResponse = await getClient().uploadImage({image: imageFile[0]} )
             if (uploadResponse?.msg != 'ok') throw new Error(`Image upload returned an error: ${uploadResponse?.msg}`)
             dispatcher('upload', uploadResponse)
             loading = false
@@ -57,6 +65,18 @@
         {#if useAltText}
             <TextInput bind:value={altText} type="text" label="Alt Text" placeholder="Briefly describe the image"/>
         {/if}
+
+        <SettingToggleContainer>
+            <SettingToggle icon={Photo} title="Convert Images to WebP" bind:value={$userSettings.convertUploadsToWebp}
+                description="Convert any images to webP prior to uploading. Will reduce bandwidth and save work on the instance server"
+            />
+
+            <SettingMultiSelect icon={EyeDropper} title="WebP Quality" bind:selected={$userSettings.convertUploadQuality}
+                options={[10, 20, 30, 40, 50, 60, 70, 75, 80, 85, 95, 100]}
+                description="What quality level to use when converting the image to webP. Lower gives a smaller file, higher gives better quality."
+            />
+        </SettingToggleContainer>
+        
         
         <div class="flex flex-row gap-4 items-center">
             <Button disabled={loading} icon={XCircle} color="danger" size="lg" class="w-full" on:click={() => {
@@ -68,7 +88,7 @@
                 Cancel
             </Button>
             
-            <Button {loading} disabled={loading} icon={CloudArrowUp} submit color="primary" size="lg" class="w-full">
+            <Button {loading} disabled={loading||!image} icon={CloudArrowUp} submit color="primary" size="lg" class="w-full">
                 Upload
             </Button>
         </div>
