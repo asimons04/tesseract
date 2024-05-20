@@ -90,7 +90,14 @@ All major/minor changes between releases will be documented here.
     - [ ] Move fetch logic into modal itself rather than on the page
 - [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
 - [ ] Optionally Preview Links in Modal
-- [ ] Add support for pasting images into upload modal (don't want to deal with pasting them into the markdown editor itself)
+
+#### Can Now Paste Images
+**Note**: This only works on Chrome since it uses the Clipboard API. 
+- [/] Can now paste images directly into post URL field: will populate and open the upload modal with the pasted image.
+- [/] Can now paste images directly into markdown editor: will pipulate and open the upload modal with the pasted image. Can then supply alt text.
+- [ ] Resize images and, if possible, convert to webp prior to upload
+
+
 
 
 
@@ -110,14 +117,18 @@ All major/minor changes between releases will be documented here.
 - [ ] Add TOTP setup
     - [ ] Find a QR code library
 - [X] Replace old Photon image upload proxy for user avatar/banner
+
 - [ ] Add capability to reauthorize an existing account without deleting/re-adding it.
     - If profile is active but no MyLocalUser info returned from getSite, prompt for login
+
 - [X] Show avatars, if available, instead of color icons in account switcher
 
 - [ ] Fetch avatars for existing accounts (currently only pulls it when adding an account)
+
 - [ ] Add components to export and import your Lemmy profile
     - [ ] Export
     - [ ] Import
+
 - [ ] Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 
 

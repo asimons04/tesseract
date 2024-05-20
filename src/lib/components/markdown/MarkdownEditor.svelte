@@ -247,7 +247,7 @@
                     class="border-0 rounded-none h-full focus-within:border-none resize-none"
                     bind:value
                     bind:item={textArea}
-                    allowImagePasting={true}
+                    allowImagePasting={images}
                     on:paste={async (e) => { 
                         const imageBlob = await readImageFromClipboard() 
                         if (imageBlob) {
