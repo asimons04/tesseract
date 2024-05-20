@@ -17,7 +17,7 @@
 
     import { ENABLE_MEDIA_PROXY } from '$lib/settings'
     import { createEventDispatcher } from 'svelte'
-    import { deleteImageUpload } from '$lib/components/uploads/helpers';
+    import { blobToFileList, deleteImageUpload, readImageFromClipboard } from '$lib/components/uploads/helpers';
     import { getClient } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { isImage, isVideo } from './helpers'
@@ -79,20 +79,20 @@
 
     let data = objectCopy(default_data)
     
-    let uploadingImage   = false
     let uploadResponse: UploadImageResponse | undefined
-    let useImageProxyForPost:boolean = false
     let bodyImages:UploadImageResponse[]
+    let postImage: FileList | null
     
     let deletePostImage: () => Promise<void>
 
-    
+    let uploadingImage   = false
     let previewing       = false
     let fetchingMetadata = false
     let previewPost: PostView | undefined
     let resetting       = false
-
+    let useImageProxyForPost:boolean = false
     let compactPosts = false
+
     let displayType = 'post' as 'post' | 'feed'
 
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
@@ -300,10 +300,12 @@
         } 
     }
 
+
+   
 </script>
 
 
-<ImageUploadModal bind:open={uploadingImage} useAltText={false} on:upload={(e) => {
+<ImageUploadModal bind:open={uploadingImage} bind:image={postImage} useAltText={false} on:upload={(e) => {
         uploadResponse = e.detail
         if (uploadResponse?.url) data.url = uploadResponse.url
         uploadingImage = false
@@ -394,7 +396,15 @@
         
         <!--- Post URL and URl-related buttons--->
         <div class="flex gap-2 w-full items-end">
-            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={uploadResponse ? true : false} />
+            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={uploadResponse ? true : false} 
+                on:paste={async (e) => { 
+                    const imageBlob = await readImageFromClipboard() 
+                    if (imageBlob) {
+                        postImage = blobToFileList(imageBlob)
+                        uploadingImage = true
+                    }
+                }}
+            />
                        
             <!---Fetch metadata from URL to populate title and append description to body--->
             <Button color="tertiary-border" size="square-form" 

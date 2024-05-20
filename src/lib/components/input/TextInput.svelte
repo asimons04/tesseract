@@ -61,6 +61,7 @@
         on:keyup={(e) => dispatcher('keyup', e)}
         on:input={(e) => dispatcher('input', e)}
         on:change={(e) => dispatcher('change', e)}
+        on:paste={(e) => dispatcher('paste', e)}
         on:focus
         {...$$restProps}
         class={className}

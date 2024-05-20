@@ -113,6 +113,7 @@ All major/minor changes between releases will be documented here.
 - [ ] Add capability to reauthorize an existing account without deleting/re-adding it.
     - If profile is active but no MyLocalUser info returned from getSite, prompt for login
 - [X] Show avatars, if available, instead of color icons in account switcher
+
 - [ ] Fetch avatars for existing accounts (currently only pulls it when adding an account)
 - [ ] Add components to export and import your Lemmy profile
     - [ ] Export
@@ -122,7 +123,9 @@ All major/minor changes between releases will be documented here.
 
 ### Misc To-Do
 - [X] In post form, when resetting values, loop over the image uploads in markdown and delete them all
+
 - [ ] Add  purge user button for admins.
+
 - [ ] Link preview option.  If enabled:
     - Ignore Tesseract links (links to posts, comments, communities, users, etc)
     - Instead of taking you to the link directly, open a modal and call getSiteMetadata() for that URL to generate a preview

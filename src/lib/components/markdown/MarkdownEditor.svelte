@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { UploadImageResponse } from 'lemmy-js-client'
 
+    import { blobToFileList, readImageFromClipboard, readTextFromClipboard } from '../uploads/helpers';
     import { createEventDispatcher } from 'svelte'
     import { imageProxyURL } from '$lib/image-proxy';    
     
@@ -42,6 +43,7 @@
     let emojiPickerOpen:boolean = false
     let minRows = rows
     let imageAltText: string
+    let pasteImage: FileList | null
 
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
@@ -85,7 +87,7 @@
 </script>
 
 {#if uploadingImage && images}
-    <ImageUploadModal bind:open={uploadingImage} bind:altText={imageAltText} on:upload={(e) => {
+    <ImageUploadModal bind:open={uploadingImage} bind:image={pasteImage} bind:altText={imageAltText} on:upload={(e) => {
             if (e.detail?.url) {
                 wrapSelection(`![${imageAltText}](${imageProxyURL(e.detail.url)})`, '')
                 imageUploads.push(e.detail)
@@ -245,6 +247,18 @@
                     class="border-0 rounded-none h-full focus-within:border-none resize-none"
                     bind:value
                     bind:item={textArea}
+                    allowImagePasting={true}
+                    on:paste={async (e) => { 
+                        const imageBlob = await readImageFromClipboard() 
+                        if (imageBlob) {
+                            pasteImage = blobToFileList(imageBlob)
+                            uploadingImage = true
+                        }
+                        else {
+                            wrapSelection(await readTextFromClipboard(), '')
+                        }
+                    }}
+
                     on:keydown={(e) => {
                         if (disabled) return
                         if (e.ctrlKey || e.metaKey) {

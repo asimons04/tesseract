@@ -25,3 +25,26 @@ export async function deleteImageUploads(uploads:UploadImageResponse[]) {
         await deleteImageUpload(upload)
     })
 }
+
+export async function readImageFromClipboard(): Promise<Blob|undefined> {
+    if (typeof(navigator.clipboard.read) != 'function') return
+    const items = await navigator.clipboard.read()
+
+    for (const item of items) {
+        const imageTypes = item.types.find(type => type.startsWith('image/'))
+        if (!imageTypes) return
+        return await item.getType(imageTypes);
+    }
+}
+
+export async function readTextFromClipboard(): Promise<string> {
+    if (typeof(navigator.clipboard.read) != 'function') return ''
+    return await navigator.clipboard.readText()
+}
+
+
+export function blobToFileList(blob:Blob): FileList {
+        const dt = new DataTransfer();
+        dt.items.add(new File([blob], 'image.png'))
+        return dt.files
+}
