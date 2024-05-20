@@ -130,6 +130,8 @@ interface Settings {
         enabled: boolean,
         fallback: boolean
     }
+    convertUploadsToWebp: boolean,
+    convertUploadQuality: number
     
 
 
@@ -232,6 +234,8 @@ export const defaultSettings: Settings = {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
         fallback:                                                       true,
     },
+    convertUploadsToWebp:                                               true,
+    convertUploadQuality:                                               70
    
 }
 
