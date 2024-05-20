@@ -35,7 +35,7 @@ export async function readImageFromClipboard(e:any): Promise<Blob|undefined> {
     if (typeof(navigator.clipboard.read) == 'undefined') {
         for (const clipboardItem of e.clipboardData.files) {
             if (clipboardItem.type.startsWith('image/')) {
-              return clipboardItem
+                return await imageBlobToWebp(clipboardItem)
             }
         }
     }
@@ -45,7 +45,10 @@ export async function readImageFromClipboard(e:any): Promise<Blob|undefined> {
         for (const item of items) {
             const imageTypes = item.types.find(type => type.startsWith('image/'))
             if (!imageTypes) return
-            return await item.getType(imageTypes);
+            
+            const imageData = await item.getType(imageTypes)
+            const imageBlob = await imageBlobToWebp(imageData)
+            return imageBlob
         }
     }
 }
@@ -63,3 +66,28 @@ export function blobToFileList(blob:Blob): FileList {
         dt.items.add(new File([blob], 'image.png'))
         return dt.files
 }
+
+
+export async function imageBlobToWebp(blob:Blob): Promise<Blob> {
+    try {
+        const bmp = await createImageBitmap(blob)
+        const {width, height} = bmp
+
+        const canvas = new OffscreenCanvas(width, height)
+        const ctx = canvas.getContext("2d")
+
+        if (!ctx) return blob
+
+        ctx.drawImage(bmp, 0, 0)
+        bmp.close()
+        return await canvas.convertToBlob({type: 'image/webp', quality: 0.6})
+    }
+    catch (err) {
+        console.log("Error converting image to webp", err)
+        return blob
+    }
+
+    
+    
+}
+
