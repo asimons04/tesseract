@@ -128,7 +128,8 @@ interface Settings {
     experimentalFeatures: boolean
     proxyMedia: {
         enabled: boolean,
-        fallback: boolean
+        fallback: boolean,
+        useForImageUploads: boolean
     }
     convertUploadsToWebp: boolean,
     convertUploadQuality: number
@@ -233,6 +234,7 @@ export const defaultSettings: Settings = {
     proxyMedia: {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
         fallback:                                                       true,
+        useForImageUploads:                                             false,
     },
     convertUploadsToWebp:                                               true,
     convertUploadQuality:                                               70

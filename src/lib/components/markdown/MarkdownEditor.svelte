@@ -3,7 +3,8 @@
 
     import { blobToFileList, readImageFromClipboard, readTextFromClipboard } from '../uploads/helpers';
     import { createEventDispatcher } from 'svelte'
-    import { imageProxyURL } from '$lib/image-proxy';    
+    import { imageProxyURL } from '$lib/image-proxy'
+    import { userSettings } from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte'
     import EmojiPicker from './EmojiPicker.svelte'
@@ -91,7 +92,9 @@
 {#if uploadingImage && images}
     <ImageUploadModal bind:open={uploadingImage} bind:image={pasteImage} bind:altText={imageAltText} on:upload={(e) => {
             if (e.detail?.url) {
-                wrapSelection(`![${imageAltText}](${imageProxyURL(e.detail.url)})`, '')
+                $userSettings.proxyMedia.useForImageUploads
+                    ? wrapSelection(`![${imageAltText}](${imageProxyURL(e.detail.url)})`, '')
+                    : wrapSelection(`![${imageAltText}](${e.detail.url})`, '')
                 imageUploads.push(e.detail)
                 imageUploads = imageUploads
             }
@@ -254,7 +257,10 @@
                     bind:value
                     bind:item={textArea}
                     allowImagePasting={images}
-                    disabled={processingPastedImage}
+                    {rows}
+                    {id}
+                    {...$$restProps}
+
                     on:paste={async (e) => { 
                         processingPastedImage = true
                         const imageBlob = await readImageFromClipboard(e.detail) 
@@ -262,9 +268,11 @@
                             pasteImage = blobToFileList(imageBlob)
                             uploadingImage = true
                         }
+                        
                         else {
                             wrapSelection(await readTextFromClipboard(e.detail), '')
                         }
+                        
                         processingPastedImage = false
                     }}
 
@@ -279,9 +287,6 @@
                             }
                         }
                     }}
-                    {rows}
-                    {id}
-                    {...$$restProps}
                 />
             </div>
         {/if}
@@ -297,15 +302,22 @@
                     {#if upload}
                         <ImageUploadPreviewDeleteButton uploadResponse={upload} previewSize={64}
                             on:insert={(e) => {
-                                if (e.detail?.url) wrapSelection(`![](${imageProxyURL(e.detail.url)})`, '')
+                                if (e.detail?.url) {
+                                    $userSettings.proxyMedia.useForImageUploads
+                                        ? wrapSelection(`![](${imageProxyURL(e.detail.url)})`, '')
+                                        : wrapSelection(`![](${e.detail.url})`, '')
+                                }
                             }}
                             
                             on:delete={(e) => {
+                                // Delete the image and remove its markdown code from the editor
                                 if (e.detail && upload?.url) {
                                     // Generate a regex to match the markdown syntax for that image URL and remove it from the textarea value.
-                                    let proxiedURL = imageProxyURL(upload.url)?.replace('?', '\\?')
-                                    if (proxiedURL) {
-                                        const URLRegex = new RegExp(`!\\[.*\\]\\(${proxiedURL}\\)`)
+                                    let imageURL = $userSettings.proxyMedia.useForImageUploads
+                                            ? imageProxyURL(upload.url)?.replace('?', '\\?')
+                                            : upload.url?.replace('?', '\\?')
+                                    if (imageURL) {
+                                        const URLRegex = new RegExp(`!\\[.*\\]\\(${imageURL}\\)`)
                                         value = value.replace(URLRegex, '')
                                     }
                                     // Remove this upload object from the array

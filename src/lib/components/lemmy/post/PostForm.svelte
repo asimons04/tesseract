@@ -24,6 +24,7 @@
     import { objectCopy } from '$lib/util'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
     import { validateURL } from '$lib/blacklists'
 
     
@@ -96,7 +97,6 @@
     let fetchingMetadata = false
     let previewPost: PostView | undefined
     let resetting       = false
-    let useImageProxyForPost:boolean = false
     let compactPosts = false
 
     let displayType = 'post' as 'post' | 'feed'
@@ -107,8 +107,8 @@
     $: if (community) data.community = community
     
     // Automatically convert the uploaded image's URL to a proxy URL if the option is selected
-    $: if (useImageProxyForPost && uploadResponse?.url)     data.url = imageProxyURL(uploadResponse.url)
-    $: if (!useImageProxyForPost && uploadResponse?.url)    data.url = uploadResponse.url
+    $: if ($userSettings.proxyMedia.useForImageUploads && uploadResponse?.url)     data.url = imageProxyURL(uploadResponse.url)
+    $: if (!$userSettings.proxyMedia.useForImageUploads && uploadResponse?.url)    data.url = uploadResponse.url
 
     async function submit() {
         if (!data.name || !$profile?.jwt) return
@@ -402,7 +402,7 @@
         
         <!--- Post URL and URl-related buttons--->
         <div class="flex gap-2 w-full items-end">
-            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse || pastingImage) ? true : false} 
+            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse) ? true : false} 
                 on:paste={async (e) => { 
                     pastingImage = true
                     const imageBlob = await readImageFromClipboard(e.detail) 
@@ -443,7 +443,7 @@
             <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
             
             {#if ENABLE_MEDIA_PROXY}
-                <SettingToggle bind:value={useImageProxyForPost} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
+                <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
             {/if}
         </SettingToggleContainer>
 

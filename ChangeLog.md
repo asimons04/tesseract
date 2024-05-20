@@ -36,7 +36,7 @@ All major/minor changes between releases will be documented here.
 - [X] Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
 - [X] Replace old Photon image upload proxy for uploading images in markdown editir
 - [X] Add support to delete uploaded images
-    - Can delete post image as well as track and individually delete images posted in markdown (in both posts and comments)
+    - Track and individually delete images posted in markdown (in both posts and comments)
     - Automatically removes markdown code for the image being deleted.
 
 
@@ -75,7 +75,6 @@ All major/minor changes between releases will be documented here.
 
 ### Posts / Comments
 - [X] Replace old Photon image upload proxy for post images
-- [X] Add support for deleting uploaded post image (during post creation only since the delete tokens aren't retrievable after that)
 - [X] Add `listPostLikes` and `listCommentLikes` options to post and comment moderation menus for admins
 - [X] De-clutter crosspost item in mobile (hide relative date)
 - [X] User links now load a modal with user card and action buttons
@@ -91,25 +90,24 @@ All major/minor changes between releases will be documented here.
 - [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
 - [ ] Optionally Preview Links in Modal
 
-#### Can Now Paste Images
-**Note**: This works best in Chromium browsers since they have access to the Clipboard API.  In FF and other browsers without Clipboard API support, pasting images still works but there are quirks.  
-- Pasting into the URL field works as expected; if there is a text component in the clipboard alongside the image, it will be overwritten upon upload with the image URL
+#### Image Upload Handling
+- [X] Add support for deleting uploaded post image (during post creation only since the delete tokens aren't retrievable after that)
+- [X] Add support for pasting images in both the post URL field as well as into the markdown editor
+- [X] Paste images directly into post URL field: will populate and open the upload modal with the pasted image.
+- [X] Paste images directly into markdown editor: will pipulate and open the upload modal with the pasted image. Can then supply alt text.
+- [X] Convert pasted images to webp prior to uploading
+- [X] Convert uploaded images to webp prior to uploading
+- [X] Unchain the functions that handle the webp conversion, add options to enable/disable that behavior (default on)
+
+**Note**: This works best in Chromium browsers since they have access to the Clipboard API.  
+
+In FF and other browsers without Clipboard API support, pasting images still works but there are quirks:
+
+- Pasting into the URL field works as expected in any browser; if there is a text component in the clipboard alongside the image, it will be overwritten upon upload with the image URL.
 
 - Pasting into the markdown editor will paste the text component as well (usually the filename).  I've tried working around this, but there's no real clean way to to do it.  In Chromium, I just use `navigator.clipboard.readText()` if the paste data is not an image (have to prevent default so the local filename doesn't paste in as well).
 
 - FF nightly has support for Clipboard.read(), readText(), writeText().  Once that's in mainline, I'll just use Clipboard API and get rid of the old clipboard data method.  Safari can get on board or get out of the way :shrug:
-
-
-- [X] Can now paste images directly into post URL field: will populate and open the upload modal with the pasted image.
-- [X] Can now paste images directly into markdown editor: will pipulate and open the upload modal with the pasted image. Can then supply alt text.
-- [X] Convert pasted images to webp prior to uploading
-- [ ] Convert uploaded images to webp prior to uploading
-- [ ] Unchain the functions that handle the webp conversion, add options to enable/disable that behavior (default on)
-
-
-
-
-
 
 
 ### Moderation
