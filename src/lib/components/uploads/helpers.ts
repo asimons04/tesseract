@@ -1,5 +1,9 @@
 import type { UploadImageResponse } from 'lemmy-js-client'
+
+import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy'
+import { userSettings } from '$lib/settings'
+
 
 /** Deletes an image given an Upload Image Response object
  * @param uploadResponse The response object from uploadImage()
@@ -34,8 +38,9 @@ export async function readImageFromClipboard(e:any): Promise<Blob|undefined> {
     // If Clipboard API not available, use old method (Firefox/Safari)
     if (typeof(navigator.clipboard.read) == 'undefined') {
         for (const clipboardItem of e.clipboardData.files) {
+            
             if (clipboardItem.type.startsWith('image/')) {
-                return await imageBlobToWebp(clipboardItem)
+                return clipboardItem
             }
         }
     }
@@ -46,9 +51,7 @@ export async function readImageFromClipboard(e:any): Promise<Blob|undefined> {
             const imageTypes = item.types.find(type => type.startsWith('image/'))
             if (!imageTypes) return
             
-            const imageData = await item.getType(imageTypes)
-            const imageBlob = await imageBlobToWebp(imageData)
-            return imageBlob
+            return await item.getType(imageTypes)
         }
     }
 }
@@ -69,6 +72,11 @@ export function blobToFileList(blob:Blob): FileList {
 
 
 export async function imageBlobToWebp(blob:Blob): Promise<Blob> {
+    const $userSettings = get(userSettings)
+    
+    if (!$userSettings?.convertUploadsToWebp) return blob
+    
+    const quality = Number( ($userSettings.convertUploadQuality/100).toFixed(2))
     try {
         const bmp = await createImageBitmap(blob)
         const {width, height} = bmp
@@ -80,7 +88,7 @@ export async function imageBlobToWebp(blob:Blob): Promise<Blob> {
 
         ctx.drawImage(bmp, 0, 0)
         bmp.close()
-        return await canvas.convertToBlob({type: 'image/webp', quality: 0.6})
+        return await canvas.convertToBlob({type: 'image/webp', quality: quality })
     }
     catch (err) {
         console.log("Error converting image to webp", err)
