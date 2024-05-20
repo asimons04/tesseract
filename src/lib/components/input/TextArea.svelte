@@ -12,8 +12,9 @@
     export let spellcheck:any = 'true';
     export let id:string = '';
     export let allowImagePasting:boolean = false
-  let clazz = ''
-  export { clazz as class }
+    export let disabled:boolean = false
+    let clazz = ''
+    export { clazz as class }
 
   const dispatcher = createEventDispatcher()
 </script>
@@ -46,6 +47,7 @@
         }}
         {id}
         {placeholder}
+        {disabled}
         {maxlength}
         {rows}
         {spellcheck}
