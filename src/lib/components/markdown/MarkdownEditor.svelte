@@ -43,6 +43,7 @@
     let emojiPickerOpen:boolean = false
     let minRows = rows
     let imageAltText: string
+
     let pasteImage: FileList | null
     let processingPastedImage = false
 
