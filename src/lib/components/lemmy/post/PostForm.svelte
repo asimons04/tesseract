@@ -91,6 +91,7 @@
     // Bound from the delete image button so its inner delete function can be called
     let deletePostImage: () => Promise<void>
 
+    let pastingImage     = false
     let uploadingImage   = false
     let previewing       = false
     let fetchingMetadata = false
@@ -402,13 +403,15 @@
         
         <!--- Post URL and URl-related buttons--->
         <div class="flex gap-2 w-full items-end">
-            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={uploadResponse ? true : false} 
+            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse || pastingImage) ? true : false} 
                 on:paste={async (e) => { 
+                    pastingImage = true
                     const imageBlob = await readImageFromClipboard(e.detail) 
                     if (imageBlob) {
                         postImage = blobToFileList(imageBlob)
                         uploadingImage = true
                     }
+                    pastingImage = false
                 }}
             />
                        
@@ -422,7 +425,7 @@
 
             <!---Upload an Image--->
             <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
-                loading={uploadingImage} disabled={uploadingImage|| data.url } title="Upload an image"
+                loading={uploadingImage||pastingImage} disabled={uploadingImage|| data.url || pastingImage} title="Upload an image"
                 on:click={() => (uploadingImage = !uploadingImage)}
             />
 

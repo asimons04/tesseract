@@ -102,7 +102,11 @@ All major/minor changes between releases will be documented here.
 
 - [X] Can now paste images directly into post URL field: will populate and open the upload modal with the pasted image.
 - [X] Can now paste images directly into markdown editor: will pipulate and open the upload modal with the pasted image. Can then supply alt text.
-- [ ] Resize images and, if possible, convert to webp prior to upload
+- [X] Convert pasted images to webp prior to uploading
+- [ ] Convert uploaded images to webp prior to uploading
+- [ ] Unchain the functions that handle the webp conversion, add options to enable/disable that behavior (default on)
+
+
 
 
 
