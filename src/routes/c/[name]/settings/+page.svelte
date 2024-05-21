@@ -9,8 +9,6 @@
 </svelte:head>
 
 <div class="flex flex-col gap-4">
-    <h1 class="font-bold text-2xl">Settings</h1>
-  
     <CommunityForm
         edit={data.community.community_view.community.id}
         formData={{
@@ -20,13 +18,11 @@
             postsLockedToModerators:
             data.community.community_view.community.posting_restricted_to_mods,
             sidebar: data.community.community_view.community.description ?? '',
-            icon: null,
-            banner: null,
+            icon: data.community.community_view.community.icon,
+            banner: data.community.community_view.community.banner,
             submitting: false,
-            currentIcon: data.community.community_view.community.icon,
-            currentBanner: data.community.community_view.community.banner,
         }}
   >
-    <svelte:fragment slot="formtitle">{''}</svelte:fragment>
+    <svelte:fragment slot="formtitle">Settings</svelte:fragment>
   </CommunityForm>
 </div>
