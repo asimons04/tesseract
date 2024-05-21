@@ -3,12 +3,13 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { getInstance } from '$lib/lemmy.js'
-    import { imageSize, removeURLParams } from './helpers.js'
+    import { imageSize } from './helpers.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings.js'
 
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
 
     export let post:PostView
     export let displayType: PostDisplayType
@@ -22,9 +23,9 @@
 </script>
 
 {#if post.post?.url}
-    <span class="flex flex-row flex-wrap w-full gap-2 items-center">
+    <span class="flex flex-row flex-wrap w-full gap-2 px-1 items-center">
+        <ArchiveLinkSelector url={post.post?.url} />
         <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-        <Link class="text-xs" href="https://archive.ph/{removeURLParams(post.post.url)}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
     </span>
 {/if}
 

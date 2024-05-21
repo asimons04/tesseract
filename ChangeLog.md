@@ -90,7 +90,7 @@ All major/minor changes between releases will be documented here.
 - [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
 - [ ] Optionally Preview Links in Modal
 
-#### Image Upload Handling
+#### Image Upload Handling Improvements
 - [X] Add support for deleting uploaded post image (during post creation only since the delete tokens aren't retrievable after that)
 - [X] Add support for pasting images in both the post URL field as well as into the markdown editor
 - [X] Paste images directly into post URL field: will populate and open the upload modal with the pasted image.
