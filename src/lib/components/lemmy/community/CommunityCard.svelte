@@ -159,7 +159,7 @@
 
     <!--- Hideable div to contain the main part of the community sidebar --->
     <StickyCard class="{$$props.class}" >
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, 384, 'webp') : ''}>
+        <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''}>
             <div class="flex flex-col gap-2 h-full">
                 <!--- Commuinity Avatar, display name, and federation name--->
                 <div class="flex flex-row gap-3 items-start p-3">
