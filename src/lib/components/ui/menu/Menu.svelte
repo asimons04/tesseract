@@ -46,8 +46,7 @@
   </script>
   
   <!--- Closes the profile menu if clicking outside of it --->
-  <svelte:body
-    on:click={(e) => {
+  <svelte:body on:click={(e) => {
         if (!element.contains(e.target)) {
             open = false
         }
@@ -56,16 +55,13 @@
   
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="overflow-visible 
-    {absolute
-        ? 'absolute'
-        : 'relative'
-    }
+    {absolute ? 'absolute' : 'relative'}
     cursor-auto {clazz} {itemsClass}
     "
     bind:this={element}
     tabindex="-1"
 >
-    <slot name="button" {toggleOpen} />
+    <slot name="button" {open} {toggleOpen} />
     
     {#if open}
         <menu transition:scale|local={{
