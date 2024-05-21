@@ -7,6 +7,7 @@
 
     
     import Modal from "$lib/components/ui/modal/Modal.svelte"
+    import InfiniteScrollDiv from '$lib/components/ui/InfiniteScrollDiv.svelte';
     import Pageination from '$lib/components/ui/Pageination.svelte';
     import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
@@ -24,26 +25,48 @@
     export let type: 'post' | 'comment'
     export let submission_id: number
 
-    let votes:VoteView[] | undefined = undefined
+    let votes:VoteView[] = []
     let loading = false
     let fetchError = false
     let page = 1
-    let limit = 10
+    let limit = 50
     let iconSize = 24
-
+    
+    let scrollArea: HTMLDivElement
+    let infiniteScroll = {
+        loading: false,
+        exhausted: false,
+    }
+    
     // Load the vote counts
     onMount(async () => {
-        await load()
-    })
-
-    async function load() {
         loading = true
         votes = []
         votes = (type == 'post')
             ? await listPostLikes(submission_id)
             : await listCommentLikes(submission_id)
         loading = false
+    })
 
+    async function loadMore() {
+        page++;
+        let nextBatch = (type == 'post')
+            ? await listPostLikes(submission_id)
+            : await listCommentLikes(submission_id)
+        
+        if (nextBatch.length < 1) { 
+            infiniteScroll.exhausted = true
+            infiniteScroll.loading = false
+            return
+        }
+        
+        nextBatch.forEach((vote) => {
+            const index = votes?.findIndex((v) => v.creator.id == vote.creator.id)
+            if (index< 0) votes.push(vote)
+        })
+        votes = votes
+        infiniteScroll.loading = false
+        
     }
 
     async function listPostLikes(postID:number):Promise<VoteView[]> {
@@ -78,6 +101,8 @@
         }
     }
 
+    
+
 </script>
 
 <Modal bind:open preventCloseOnClickOut title="{capitalizeFirstLetter(type)} Votes" icon={ArrowsUpDown} width="max-w-xl">
@@ -93,7 +118,7 @@
     {/if}
 
     {#if votes}
-        <div class="flex flex-col divide-y divide-slate-200 dark:divide-zinc-500 mx-4">
+        <div bind:this={scrollArea} class="flex flex-col overflow-y-scroll max-h-[500px] divide-y divide-slate-200 dark:divide-zinc-500 px-4">
             {#each votes as vote}
                 <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
                     <span class="flex">
@@ -105,21 +130,16 @@
                     </span>
                 </div>
             {/each}
-        </div>
+            
+            <InfiniteScrollDiv bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} bind:element={scrollArea} threshold={300}
+                on:loadMore={ () => {
+                    if (!infiniteScroll.exhausted) {
+                        infiniteScroll.loading = true
+                        loadMore()
+                    }
+                }}
+            />
         
-        {#if !loading && !fetchError}
-            <div class="flex w-full mt-4">
-                <Pageination bind:page disableNext={votes.length < limit} 
-                    on:change={async (e) => {
-                        page = e.detail
-                        await load()
-                    }}
-                />
-            </div>
-        {/if}
+        </div>
     {/if}
-
-
-
-
 </Modal>
