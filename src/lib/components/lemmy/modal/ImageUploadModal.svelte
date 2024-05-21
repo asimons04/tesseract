@@ -69,9 +69,9 @@
         {/if}
 
         <SettingToggleContainer>
-            <SettingToggle icon={Photo} title="Pre Process Image to WebP" bind:value={$userSettings.convertUploadsToWebp}
+            <SettingToggle icon={Photo} title="Pre-process Image to WebP" bind:value={$userSettings.convertUploadsToWebp}
                 description="Convert the image to webP prior to uploading. Will reduce bandwidth and save work on the instance server. 
-                    Also useful if your instance as a small maximum upload limit."
+                    Also useful if your instance has a small maximum upload limit."
             />
 
             <SettingMultiSelect icon={EyeDropper} title="WebP Quality" bind:selected={$userSettings.convertUploadQuality}
