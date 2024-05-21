@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { VoteView } from 'lemmy-js-client'
+    import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
     
     import { capitalizeFirstLetter } from '$lib/util'
     import { getClient } from '$lib/lemmy';
@@ -7,8 +8,7 @@
 
     
     import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import InfiniteScrollDiv from '$lib/components/ui/InfiniteScrollDiv.svelte';
-    import Pageination from '$lib/components/ui/Pageination.svelte';
+    import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte';
     import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte';
@@ -33,10 +33,7 @@
     let iconSize = 24
     
     let scrollArea: HTMLDivElement
-    let infiniteScroll = {
-        loading: false,
-        exhausted: false,
-    }
+    let infiniteScrollState:InfiniteScrollStateVars
     
     // Load the vote counts
     onMount(async () => {
@@ -45,18 +42,24 @@
         votes = (type == 'post')
             ? await listPostLikes(submission_id)
             : await listCommentLikes(submission_id)
+        
+        if (page == 1 && votes.length < limit) {
+            infiniteScrollState.exhausted = true
+        }
+        
         loading = false
     })
 
     async function loadMore() {
-        page++;
+        page++
         let nextBatch = (type == 'post')
             ? await listPostLikes(submission_id)
             : await listCommentLikes(submission_id)
         
         if (nextBatch.length < 1) { 
-            infiniteScroll.exhausted = true
-            infiniteScroll.loading = false
+            page--
+            infiniteScrollState.exhausted = true
+            infiniteScrollState.loading = false
             return
         }
         
@@ -65,7 +68,7 @@
             if (index< 0) votes.push(vote)
         })
         votes = votes
-        infiniteScroll.loading = false
+        infiniteScrollState.loading = false
         
     }
 
@@ -131,14 +134,12 @@
                 </div>
             {/each}
             
-            <InfiniteScrollDiv bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} bind:element={scrollArea} threshold={300}
-                on:loadMore={ () => {
-                    if (!infiniteScroll.exhausted) {
-                        infiniteScroll.loading = true
-                        loadMore()
-                    }
-                }}
-            />
+            
+            <div class="flex flex-col items-center pt-2 w-full">
+                <InfiniteScrollDiv bind:state={infiniteScrollState} bind:element={scrollArea} threshold={300}
+                    on:loadMore={ () => loadMore() }
+                />
+            </div>
         
         </div>
     {/if}

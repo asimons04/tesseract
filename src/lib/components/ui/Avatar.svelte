@@ -16,7 +16,7 @@
 
     export let width: number
     export let res: number | undefined = undefined
-    export let fullRes:boolean = true
+    export let fullRes:boolean = false
     export let community:boolean = false
 </script>
 
