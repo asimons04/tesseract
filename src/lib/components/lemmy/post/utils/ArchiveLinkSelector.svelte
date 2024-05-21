@@ -19,7 +19,7 @@
 
 {#if url}
     <Menu alignment="bottom-left">
-        <Button slot="button" size="square-sm" aria-label="Archive Link Selector" let:toggleOpen let:open on:click={toggleOpen} title="Archive Links">
+        <Button slot="button" size="sm" aria-label="Archive Link Selector" let:toggleOpen let:open on:click={toggleOpen} title="Archive Links">
             <span class="flex flex-row gap-1 items-center">
                 <Icon src={LinkIcon} width={14} mini />
                 <Icon src={open ? ChevronUp : ChevronDown} min width={14}/>

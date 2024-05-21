@@ -88,6 +88,9 @@ All major/minor changes between releases will be documented here.
     - [X] Instance ban user (if current user is admin)
     - [ ] Move fetch logic into modal itself rather than on the page
 - [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
+- [X] Add 12ft.io as an archive link option
+- [X] Replace static/ugly archive link button with nice menu to select from one of multiple sources (currently archive.ph and 12ft.io)
+
 - [ ] Optionally Preview Links in Modal
 
 #### Image Upload Handling Improvements
