@@ -125,54 +125,8 @@
     
     <!---Custom Sub-Navbar Buttons for Modlog--->
     <span class="flex flex-row gap-1 md:gap-2 items-center" slot="far-left" let:iconSize>
-        
-        <!---Modlog Action Select Menu--->
-        <SelectMenu
-            options={[
-                'All',
-                'ModRemovePost',
-                'ModRemoveComment',
-                'ModBan',
-                'ModBanFromCommunity',
-                'ModLockPost',
-                'ModFeaturePost',
-                'ModRemoveCommunity',
-                'ModAddCommunity',
-                'ModTransferCommunity',
-                'ModAdd',
-                'ModHideCommunity',
-                'AdminPurgePerson',
-                'AdminPurgeCommunity',
-                'AdminPurgePost',
-                'AdminPurgeComment',
-            ]}
-
-            optionNames={[
-                'All',
-                'Remove Post',
-                'Remove Comment',
-                'Ban',
-                'Ban From Community',
-                'Lock Post',
-                'Feature Post',
-                'Remove Community',
-                'Add Community',
-                'Transfer Community',
-                'Add',
-                'Hide Community',
-                'Purge Person',
-                'Purge Community',
-                'Purge Post',
-                'Purge Comment',
-            ]}
-            selected={data.type}
-            on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
-            icon={HandRaised}
-            title="Modlog Action"
-        />
-
         <!--- Modlog Filter Menu --->
-        <SubnvarbarMenu alignment="bottom-center" title="Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[107%] md:!-left-[50%]">
+        <SubnvarbarMenu alignment="bottom-left" title="Filters" icon={Funnel} containerClass="!w-80 md:!w-96 !overflow-visible">
             <!--- Lookup a Community to Filter--->
             <MenuButton>
                 <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
@@ -288,6 +242,51 @@
                 Reset Modlog Filters
             </MenuButton>
         </SubnvarbarMenu>
+
+        <!---Modlog Action Select Menu--->
+        <SelectMenu
+            options={[
+                'All',
+                'ModRemovePost',
+                'ModRemoveComment',
+                'ModBan',
+                'ModBanFromCommunity',
+                'ModLockPost',
+                'ModFeaturePost',
+                'ModRemoveCommunity',
+                'ModAddCommunity',
+                'ModTransferCommunity',
+                'ModAdd',
+                'ModHideCommunity',
+                'AdminPurgePerson',
+                'AdminPurgeCommunity',
+                'AdminPurgePost',
+                'AdminPurgeComment',
+            ]}
+
+            optionNames={[
+                'All',
+                'Remove Post',
+                'Remove Comment',
+                'Ban',
+                'Ban From Community',
+                'Lock Post',
+                'Feature Post',
+                'Remove Community',
+                'Add Community',
+                'Transfer Community',
+                'Add',
+                'Hide Community',
+                'Purge Person',
+                'Purge Community',
+                'Purge Post',
+                'Purge Comment',
+            ]}
+            selected={data.type}
+            on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+            icon={HandRaised}
+            title="Modlog Action"
+        />
     </span>
 
 </SubNavbar>
