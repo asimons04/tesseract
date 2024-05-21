@@ -195,7 +195,7 @@
                     <!--- Commuinity Avatar, display name, and federation name--->
                     <div class="flex flex-row gap-3 items-start p-3">
                         <div class="flex-shrink-0">
-                            <Avatar width={64} bind:url={formData.icon} alt="Icon for {formData.name}" community={true}/>
+                            <Avatar width={64} bind:url={formData.icon} alt={formData.name ?? 'Untitled'} community={true}/>
                         </div>
 
                         <div class="flex flex-col gap-0 w-full">
