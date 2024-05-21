@@ -18,7 +18,7 @@
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
     export let preventCloseOnClickOut:boolean = false
-    
+
     let modalElement:any
     let originalWidth = width
     
@@ -93,7 +93,11 @@
                             </span>
                             {/if}
                             
-                            <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={() => (open = false)}>
+                            <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={() => {
+                                open = false
+                                dispatcher('close')
+                            }}
+                            >
                                 <Icon src={XMark} mini size="16" />
                             </Button>
                         </span>
