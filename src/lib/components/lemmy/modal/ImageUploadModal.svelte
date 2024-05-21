@@ -22,7 +22,8 @@
     export let image: FileList | null = null
     export let altText: string = ''
     export let useAltText = true
-    
+    export let purpose:string = 'Image'
+
     let loading = false
     let uploadResponse:UploadImageResponse | undefined = undefined
 
@@ -58,7 +59,7 @@
     }
 </script>
 
-<Modal bind:open icon={Photo} title="Upload Image" width="max-w-lg">
+<Modal bind:open icon={Photo} title="Upload {purpose}" width="max-w-lg">
     <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
         
         <FileInput image bind:files={image} accept="image/jpeg,image/png,image/webp"/>
