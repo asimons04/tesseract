@@ -73,10 +73,9 @@ export function blobToFileList(blob:Blob): FileList {
 
 export async function imageBlobToWebp(blob:Blob): Promise<Blob> {
     const $userSettings = get(userSettings)
-    
     if (!$userSettings?.convertUploadsToWebp) return blob
-    
     const quality = Number( ($userSettings.convertUploadQuality/100).toFixed(2))
+
     try {
         const bmp = await createImageBitmap(blob)
         const {width, height} = bmp
@@ -84,14 +83,14 @@ export async function imageBlobToWebp(blob:Blob): Promise<Blob> {
         const canvas = new OffscreenCanvas(width, height)
         const ctx = canvas.getContext("2d")
 
-        if (!ctx) return blob
+        if (!ctx) throw new Error('Unable to create canvas context')
 
         ctx.drawImage(bmp, 0, 0)
         bmp.close()
         return await canvas.convertToBlob({type: 'image/webp', quality: quality })
     }
     catch (err) {
-        console.log("Error converting image to webp", err)
+        console.log("Error converting image to webp:", err)
         return blob
     }
 

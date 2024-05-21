@@ -34,9 +34,9 @@
         loading = true
 
         try {
-            let imageFile: Blob | FileList
-            imageFile = await imageBlobToWebp(image[0])
-            imageFile = blobToFileList(imageFile)
+            const imageFile = $userSettings.convertUploadsToWebp 
+                ? blobToFileList(await imageBlobToWebp(image[0]))
+                : image
 
             uploadResponse = await getClient().uploadImage({image: imageFile[0]} )
             if (uploadResponse?.msg != 'ok') throw new Error(`Image upload returned an error: ${uploadResponse?.msg}`)
@@ -60,6 +60,7 @@
 
 <Modal bind:open icon={Photo} title="Upload Image" width="max-w-lg">
     <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
+        
         <FileInput image bind:files={image} accept="image/jpeg,image/png,image/webp"/>
         
         {#if useAltText}
@@ -67,12 +68,14 @@
         {/if}
 
         <SettingToggleContainer>
-            <SettingToggle icon={Photo} title="Convert Images to WebP" bind:value={$userSettings.convertUploadsToWebp}
-                description="Convert any images to webP prior to uploading. Will reduce bandwidth and save work on the instance server"
+            <SettingToggle icon={Photo} title="Pre Process Image to WebP" bind:value={$userSettings.convertUploadsToWebp}
+                description="Convert the image to webP prior to uploading. Will reduce bandwidth and save work on the instance server. 
+                    Also useful if your instance as a small maximum upload limit."
             />
 
             <SettingMultiSelect icon={EyeDropper} title="WebP Quality" bind:selected={$userSettings.convertUploadQuality}
                 options={[10, 20, 30, 40, 50, 60, 70, 75, 80, 85, 95, 100]}
+                condition={$userSettings.convertUploadsToWebp}
                 description="What quality level to use when converting the image to webP. Lower gives a smaller file, higher gives better quality."
             />
         </SettingToggleContainer>
