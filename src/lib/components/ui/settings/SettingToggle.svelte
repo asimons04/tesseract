@@ -1,6 +1,9 @@
 <script lang="ts">
 
 import { Icon, InformationCircle, type IconSource } from 'svelte-hero-icons'
+
+import { createEventDispatcher } from 'svelte'
+
 import Switch from '$lib/components/input/Switch.svelte';
 
 export let icon:IconSource = InformationCircle
@@ -9,6 +12,7 @@ export let description:string = ''
 export let value:boolean = false
 export let condition:boolean = true
 
+const dispatcher = createEventDispatcher<{ change: boolean }>()
 </script>
 
 {#if condition}
@@ -30,6 +34,6 @@ export let condition:boolean = true
         </div>
         
         <div class="mx-auto"/>
-        <Switch bind:enabled={value} />
+        <Switch bind:enabled={value} on:change={(e) => dispatcher('change', value)}/>
     </div>
 {/if}

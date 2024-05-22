@@ -6,7 +6,8 @@
     import { fade, scale } from 'svelte/transition'
 
     import Button from '$lib/components/input/Button.svelte'
-
+    import Card from '../Card.svelte'
+    
     export let action: string | undefined = undefined
     export let open = false
     export let title:string = '';
@@ -18,6 +19,7 @@
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
     export let preventCloseOnClickOut:boolean = false
+    export let card:boolean = true
 
     let modalElement:any
     let originalWidth = width
@@ -104,7 +106,13 @@
                     </div>
                     
                     <div class="flex flex-col overflow-y-auto w-full h-full">
-                        <slot />
+                        {#if card}
+                            <Card class="flex flex-col p-4">
+                                <slot />
+                            </Card>
+                        {:else}
+                            <slot />
+                        {/if}
                     </div>
 
                 </div>

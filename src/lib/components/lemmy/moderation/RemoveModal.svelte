@@ -12,12 +12,8 @@
     import { userSettings } from '$lib/settings.js'
 
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
-    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import Post from '$lib/components/lemmy/post/Post.svelte'
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'

@@ -30,6 +30,7 @@
     
 
     import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte';
     import CommunityAutocomplete from '../CommunityAutocomplete.svelte';
     import CommunityLink from '../community/CommunityLink.svelte'
     import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
@@ -317,144 +318,145 @@
         uploadingImage = false
     }}
 />
-
-<form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full pb-6">
-    
-    <div class="flex flex-row justify-between">
-        <!--- Edit / Preview Toggle --->
-        <Button  loading={fetchingMetadata} disabled={(!data || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
-            on:click={ async () => {
-                previewPost = await generatePostPreview()
-                if (previewPost) previewing = !previewing;
-            }}
-        >
-            <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
-            {previewing ? 'Edit' : 'Preview'}
-        </Button>
-
-        <!---Card/Compact Switch--->
-        <Button title="Switch to {compactPosts ? 'card view' : 'compact view'}" disabled={!previewing} color="tertiary-border"
-            on:click={async () => {
-                compactPosts = !compactPosts
-                if (compactPosts) displayType='feed'
-                else displayType='post'
-            }}
-        >
-            <Icon src={compactPosts ? Window : QueueList} width={16} />
-        </Button>
-
-         <!--- Reset Form --->
-         <Button  loading={resetting} disabled={previewing||resetting} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
-            on:click={async () => {
-                resetting = true
-                if (uploadResponse) deletePostImage()
-                for (let i=0; i < bodyImages.length; i++) {
-                    await deleteImageUpload(bodyImages[i])
-                }
-                bodyImages = bodyImages = []
-                data = objectCopy(default_data)
-                data = data
-                resetting = false
-            }}
-        >
-            <Icon src={ArrowUturnDown} mini size="16"/>                
-        </Button>
+<Card class="flex flex-col p-4">
+    <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full {previewing ? '' : 'pb-6'}">
         
-        <!--- Submit/Save--->
-        <Button submit color="tertiary-border" loading={data.loading} size="lg" title="{editingPost ? 'Save' : 'Create' }" disabled={!data || data.loading || !data.name || !data.community} >
-            <Icon src={CheckCircle} mini size="16"/>
-            {editingPost ? 'Save' : 'Create' }
-        </Button>
-    </div>
+        <div class="flex flex-row justify-between">
+            <!--- Edit / Preview Toggle --->
+            <Button  loading={fetchingMetadata} disabled={(!data || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
+                on:click={ async () => {
+                    previewPost = await generatePostPreview()
+                    if (previewPost) previewing = !previewing;
+                }}
+            >
+                <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
+                {previewing ? 'Edit' : 'Preview'}
+            </Button>
 
-    
+            <!---Card/Compact Switch--->
+            <Button title="Switch to {compactPosts ? 'card view' : 'compact view'}" disabled={!previewing} color="tertiary-border"
+                on:click={async () => {
+                    compactPosts = !compactPosts
+                    if (compactPosts) displayType='feed'
+                    else displayType='post'
+                }}
+            >
+                <Icon src={compactPosts ? Window : QueueList} width={16} />
+            </Button>
 
-    <!--- Show Form Fields if not Previewing--->
-    {#if !previewing}
-        
-        <!--- Hide Community Selection Field if Editing Existing Post--->
-        <div class="flex flex-col gap-4" class:hidden={editingPost}>
+            <!--- Reset Form --->
+            <Button  loading={resetting} disabled={previewing||resetting} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
+                on:click={async () => {
+                    resetting = true
+                    if (uploadResponse) deletePostImage()
+                    for (let i=0; i < bodyImages.length; i++) {
+                        await deleteImageUpload(bodyImages[i])
+                    }
+                    bodyImages = bodyImages = []
+                    data = objectCopy(default_data)
+                    data = data
+                    resetting = false
+                }}
+            >
+                <Icon src={ArrowUturnDown} mini size="16"/>                
+            </Button>
             
-            <!---If community is not set, display autocomplete input to select one--->
-            {#if !data.community}
+            <!--- Submit/Save--->
+            <Button submit color="tertiary-border" loading={data.loading} size="lg" title="{editingPost ? 'Save' : 'Create' }" disabled={!data || data.loading || !data.name || !data.community} >
+                <Icon src={CheckCircle} mini size="16"/>
+                {editingPost ? 'Save' : 'Create' }
+            </Button>
+        </div>
+        <!--- Show Form Fields if not Previewing--->
+        {#if !previewing}
+            
+            <!--- Hide Community Selection Field if Editing Existing Post--->
+            <div class="flex flex-col gap-4" class:hidden={editingPost}>
+                
+                <!---If community is not set, display autocomplete input to select one--->
+                {#if !data.community}
 
-                <CommunityAutocomplete label="Community" containerClass="!w-full" placeholder="Community" listing_type="All"
-                    on:select={(e) => {
-                        data.community = e.detail
+                    <CommunityAutocomplete label="Community" containerClass="!w-full" placeholder="Community" listing_type="All"
+                        on:select={(e) => {
+                            data.community = e.detail
+                        }}
+                    />
+                
+                <!---If community is set, show a community link object and button to unselect it--->
+                {:else if !hideCommunityInput}
+                    <div class="flex flex-row items-center justify-between">
+                        <CommunityLink avatar={true} community={data.community} />
+                        
+                        <Button size="md" color="tertiary" on:click={()=> data.community=undefined}>
+                            <Icon src={XCircle} mini size="20"/>
+                        </Button>
+                    </div>
+                {/if}
+            </div>
+            
+
+            <!--- Post Title--->
+            <TextInput required label="Title" bind:value={data.name} />
+            
+            <!--- Post URL and URl-related buttons--->
+            <div class="flex gap-2 w-full items-end">
+                <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse) ? true : false} 
+                    on:paste={async (e) => { 
+                        pastingImage = true
+                        const imageBlob = await readImageFromClipboard(e.detail) 
+                        if (imageBlob) {
+                            postImage = blobToFileList(imageBlob)
+                            uploadingImage = true
+                        }
+                        pastingImage = false
                     }}
                 />
-            
-            <!---If community is set, show a community link object and button to unselect it--->
-            {:else if !hideCommunityInput}
-                <div class="flex flex-row items-center justify-between">
-                    <CommunityLink avatar={true} community={data.community} />
-                    
-                    <Button size="md" color="tertiary" on:click={()=> data.community=undefined}>
-                        <Icon src={XCircle} mini size="20"/>
-                    </Button>
-                </div>
-            {/if}
-        </div>
-        
+                        
+                <!---Fetch metadata from URL to populate title and append description to body--->
+                <Button color="tertiary-border" size="square-form" 
+                    icon={CloudArrowDown} iconSize={18}
+                    loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || uploadResponse} title="Fetch title and description"
+                    on:click={() => (getWebsiteMetadata())}
+                />
+                
 
-        <!--- Post Title--->
-        <TextInput required label="Title" bind:value={data.name} />
-        
-        <!--- Post URL and URl-related buttons--->
-        <div class="flex gap-2 w-full items-end">
-            <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse) ? true : false} 
-                on:paste={async (e) => { 
-                    pastingImage = true
-                    const imageBlob = await readImageFromClipboard(e.detail) 
-                    if (imageBlob) {
-                        postImage = blobToFileList(imageBlob)
-                        uploadingImage = true
-                    }
-                    pastingImage = false
-                }}
-            />
-                       
-            <!---Fetch metadata from URL to populate title and append description to body--->
-            <Button color="tertiary-border" size="square-form" 
-                icon={CloudArrowDown} iconSize={18}
-                loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || uploadResponse} title="Fetch title and description"
-                on:click={() => (getWebsiteMetadata())}
-            />
+                <!---Upload an Image--->
+                <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
+                    loading={uploadingImage||pastingImage} disabled={uploadingImage|| data.url || pastingImage} title="Upload an image"
+                    on:click={() => (uploadingImage = !uploadingImage)}
+                />
+
+                <!---Image Upload Delete Button--->
+                <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage={deletePostImage} iconSize={18} on:delete={(e) => {
+                        if (e.detail) data.url = '' 
+                    }}
+                />
+            </div>
+
+            <!--- Post Body --->
+            <MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>
+            
+            <!---Options--->
+            <SettingToggleContainer>
+                <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
+                
+                {#if ENABLE_MEDIA_PROXY}
+                    <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
+                {/if}
+            </SettingToggleContainer>
+
+
             
 
-            <!---Upload an Image--->
-            <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
-                loading={uploadingImage||pastingImage} disabled={uploadingImage|| data.url || pastingImage} title="Upload an image"
-                on:click={() => (uploadingImage = !uploadingImage)}
-            />
-
-            <!---Image Upload Delete Button--->
-            <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage={deletePostImage} iconSize={18} on:delete={(e) => {
-                    if (e.detail) data.url = '' 
-                }}
-            />
-        </div>
-
-        <!--- Post Body --->
-        <MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>
         
-        <!---Options--->
-        <SettingToggleContainer>
-            <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
-            
-            {#if ENABLE_MEDIA_PROXY}
-                <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
-            {/if}
-        </SettingToggleContainer>
-
-
+        {/if}
         
+    </form>
+</Card>
 
-    <!---Previewing Post--->
-    {:else if previewPost}
-        <div class="pb-3">
-            <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
-        </div>
-    {/if}
-    
-</form>
+<!---Previewing Post--->
+{#if previewPost && previewing}
+    <div class="mt-8 pb-3">
+        <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
+    </div>
+{/if}

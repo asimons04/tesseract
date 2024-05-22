@@ -6,7 +6,7 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
     import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
     import Modal from '$lib/components/ui/modal/Modal.svelte'
@@ -20,8 +20,7 @@
         EyeSlash,
         Flag
     } from 'svelte-hero-icons'
-    import NSFWOverlay from '../post/utils/NSFWOverlay.svelte';
-    
+   
 
 
     export let open: boolean

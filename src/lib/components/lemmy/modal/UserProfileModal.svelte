@@ -48,7 +48,7 @@
 
 
 
-<Modal bind:open preventCloseOnClickOut={true} icon={User} title="Profile" width="max-w-xl">
+<Modal bind:open preventCloseOnClickOut={true} icon={User} card={false} title="Profile" width="max-w-xl">
     
     <!---DM and Ban Modals Inside This Modal--->
     {#if messaging && personDetails}
@@ -62,6 +62,7 @@
     
     <!--- User Card and Action Buttons--->
     {#if personDetails?.person_view.person}
+        
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, 384, 'webp') : ''} >
             <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
                 <div class="flex-shrink-0">
