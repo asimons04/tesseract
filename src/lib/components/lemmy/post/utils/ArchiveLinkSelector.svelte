@@ -47,7 +47,7 @@
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!---Archive Link Providers for 'link' Post Types--->
-        {#if postType == 'link'}
+        {#if ['link', 'thumbLink'].includes(postType)}
             <MenuButton color="info" link href="https://archive.ph/{removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Archive.ph">
                 Archive.ph
             </MenuButton>
