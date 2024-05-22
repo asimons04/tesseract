@@ -27,7 +27,7 @@
             <Spinner width={32} />
         </div>
     {:then { default: PostForm }}
-        <PostForm editingPost={post} bind:textEditorRows
+        <PostForm editingPost={post} bind:textEditorRows inModal={true}
             on:submit={(e) => {
                 open = false
                 post = e.detail

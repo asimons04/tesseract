@@ -66,6 +66,7 @@
     export let crosspostData: PostData | undefined = undefined
     export let hideCommunityInput = false
     export let textEditorRows:number = 10
+    export let inModal = false
 
     let default_data: PostData = crosspostData ?? {
         community: editingPost?.community ?? community,
@@ -458,9 +459,16 @@
 
 <!---Previewing Post--->
 {#if previewPost && previewing}
-    <FeedContainer>
+    {#if inModal}
         <div class="mt-8 pb-3">
             <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
         </div>
-    </FeedContainer>>
+    {:else}
+    
+        <FeedContainer>
+            <div class="mt-8 pb-3">
+                <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
+            </div>
+        </FeedContainer>
+    {/if}
 {/if}
