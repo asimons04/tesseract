@@ -33,6 +33,7 @@
     import Card from '$lib/components/ui/Card.svelte';
     import CommunityAutocomplete from '../CommunityAutocomplete.svelte';
     import CommunityLink from '../community/CommunityLink.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
@@ -55,6 +56,7 @@
         Window,
         XCircle
     } from 'svelte-hero-icons'
+    
     
     // The post to edit, as passed from the PostActions component
     export let editingPost: PostView | undefined = undefined
@@ -456,7 +458,9 @@
 
 <!---Previewing Post--->
 {#if previewPost && previewing}
-    <div class="mt-8 pb-3">
-        <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
-    </div>
+    <FeedContainer>
+        <div class="mt-8 pb-3">
+            <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
+        </div>
+    </FeedContainer>>
 {/if}
