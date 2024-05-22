@@ -49,7 +49,7 @@
         fetchError: false,
         inboundFetchError: false,
         inboundLoading: false,
-        autoRefresh: true,
+        autoRefresh: false,
         autoRefreshInterval: 30,
         refreshing: false,
     }    
