@@ -648,10 +648,15 @@
             />
 
             <!--- Invidious Instance--->
-            <SettingMultiSelect title="Invidious Instance" icon={Film} description="Select the Invidious instance you wish to use as your YouTube frontend."
-                condition={$userSettings.embeddedMedia.YTFrontend == 'Invidious'}
+            <SettingMultiSelect title="Preferred Invidious Instance" icon={Film} description="Select the Invidious instance you wish to use as your YouTube frontend."
                 options={YTFrontends.invidious}
                 bind:selected={$userSettings.embeddedMedia.customInvidious}
+            />
+
+            <!--- Invidious Instance--->
+            <SettingMultiSelect title="Preferred Piped Instance" icon={Film} description="Select the Piped instance you wish to use as your YouTube frontend."
+                options={YTFrontends.piped}
+                bind:selected={$userSettings.embeddedMedia.customPiped}
             />
 
             <!--- Image Proxying --->

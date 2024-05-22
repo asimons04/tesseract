@@ -85,6 +85,7 @@ interface Settings {
         post: boolean
         YTFrontend: "YouTube" | "Invidious"
         customInvidious: string
+        customPiped: string
         autoplay: boolean
         loop:boolean
         enabledSources: {
@@ -217,7 +218,8 @@ export const defaultSettings: Settings = {
         feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  true,
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
         YTFrontend: env.PUBLIC_YOUTUBE_FRONTEND as "YouTube" | "Invidious" ??  "YouTube" ,
-        customInvidious:                                                    'yewtu.be',
+        customInvidious:                                                'yewtu.be',
+        customPiped:                                                    'piped.video',
         autoplay:                                                       false,
         loop:                                                           true,
         enabledSources: {
