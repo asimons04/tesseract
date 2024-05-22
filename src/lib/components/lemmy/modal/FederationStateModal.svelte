@@ -42,8 +42,6 @@
 
     let instance: InstanceWithFederationStateCustom | undefined
     let data: GetFederatedInstancesData
-    let refresher: typeof window.setInterval
-
     let state = {
         loading: false,
         fetchError: false,
@@ -55,7 +53,8 @@
     }    
     
     onMount(async () => await load() )
-
+    onDestroy(() => {clearInterval(timer) })
+    
     async function load(spinner = true) {
         if (spinner) state.loading = true
         
@@ -132,9 +131,7 @@
         (state.autoRefreshInterval * 1000)
     )
 
-    onDestroy(() => {
-        clearInterval(timer)
-    })
+    
     
     
 </script>
