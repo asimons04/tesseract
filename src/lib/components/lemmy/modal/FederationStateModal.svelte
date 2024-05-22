@@ -8,7 +8,7 @@
 
     import { instance as currentInstance } from '$lib/instance'
     import { getClient } from '$lib/lemmy'
-    import { onMount } from 'svelte'
+    import { onDestroy, onMount } from 'svelte'
 
     import Button from '$lib/components/input/Button.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
@@ -42,7 +42,8 @@
 
     let instance: InstanceWithFederationStateCustom | undefined
     let data: GetFederatedInstancesData
-    
+    let refresher: typeof window.setInterval
+
     let state = {
         loading: false,
         fetchError: false,
@@ -50,9 +51,8 @@
         inboundLoading: false,
         autoRefresh: true,
         autoRefreshInterval: 30,
-        refreshing: false
-    }
-    
+        refreshing: false,
+    }    
     
     onMount(async () => await load() )
 
@@ -125,6 +125,16 @@
         }
        
     }
+    
+    const timer = setInterval(() => {
+            if (state.autoRefresh) refresh()
+        },
+        (state.autoRefreshInterval * 1000)
+    )
+
+    onDestroy(() => {
+        clearInterval(timer)
+    })
     
     
 </script>
@@ -338,6 +348,8 @@
                 {/if}
             </div>
         </div>
+
+        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
 
         <SettingToggleContainer>
             <SettingToggle bind:value={state.autoRefresh} title="Auto Refresh" icon={ArrowPath} description="Automatically refresh the state every 30 seconds" />
