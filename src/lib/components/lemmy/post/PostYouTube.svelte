@@ -10,6 +10,7 @@
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
 
     export let post: PostView
     export let displayType: PostDisplayType
@@ -32,12 +33,17 @@
 <PostIsInViewport bind:postContainer bind:inViewport />
 
 {#if showAsEmbed && embedURL}
-    <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
-        href={ embedURL
-                ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-                : post.post.url
-        }
-    />
+    <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+        <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
+        
+        <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
+            href={ embedURL
+                    ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+                    : post.post.url
+            }
+        />
+    </span>
+
     <IFrame bind:embedURL bind:size bind:title={post.post.name} />
 
 {:else if post.post.thumbnail_url}
