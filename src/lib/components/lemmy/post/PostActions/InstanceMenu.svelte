@@ -10,6 +10,7 @@
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import FederationStateModal from '../../modal/FederationStateModal.svelte'
 
     import {
         Icon,
@@ -26,9 +27,19 @@
         instance: '',
         modal: false
     }
+
+    let federationStateModal = {
+        domain: '',
+        open: false
+    }
     function openFediseerModal(instance:string):void {
         fediseer.instance = instance;
         fediseer.modal = true;
+    }
+
+    function openFederationStateModal(instance:string):void {
+        federationStateModal.domain = instance
+        federationStateModal.open = true
     }
 
     
@@ -74,6 +85,10 @@
     <Fediseer bind:open={fediseer.modal} instance={fediseer.instance} />
 {/if}
 
+{#if federationStateModal.open}
+    <FederationStateModal bind:open={federationStateModal.open} domain={federationStateModal.domain} />
+{/if}
+
 <!---Explore Menu--->
 <Menu alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}" containerClass="overflow-auto">
     <Button slot="button" aria-label="Explore" let:toggleOpen on:click={toggleOpen} size="square-md" title="Instances" color="tertiary-border">
@@ -95,9 +110,11 @@
             <span>Fediseer</span>
     </MenuButton>
 
-    <MenuButton title="Instance Stats for {new URL(post.community.actor_id).hostname}" color="info" link href="/instances?instance={new URL(post.community.actor_id).hostname}&stats" >
+    <MenuButton title="Federation Stats for {new URL(post.community.actor_id).hostname}" color="info" 
+        on:click={async () => openFederationStateModal(new URL(post.community.actor_id).hostname) }
+    >
         <Icon src={Server} width={16} mini />
-        <span>Instance Stats</span>
+        <span>Federatation Stats</span>
     </MenuButton>
 
 
@@ -132,9 +149,11 @@
                 <span>Fediseer</span>
         </MenuButton>
 
-        <MenuButton title="Instance Stats for {new URL(post.creator.actor_id).hostname}" color="info" link href="/instances?instance={new URL(post.creator.actor_id).hostname}&stats" >
+        <MenuButton title="Federation Stats for {new URL(post.creator.actor_id).hostname}" color="info" 
+            on:click={async () => openFederationStateModal(new URL(post.creator.actor_id).hostname) }
+        >
             <Icon src={Server} width={16} mini />
-            <span>Instance Stats</span>
+            <span>Federation Stats</span>
         </MenuButton>
 
         <MenuButton link href="/communities?instance={new URL(post.creator.actor_id).hostname}&type=Local" 
