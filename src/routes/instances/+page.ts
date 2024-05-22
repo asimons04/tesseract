@@ -1,5 +1,12 @@
 import type { InstanceWithFederationState, ReadableFederationState } from 'lemmy-js-client'
 
+export interface GetFederatedInstancesData {
+    instances: InstanceWithFederationStateCustom[],
+    software_types: string[],
+    federation_states: string[],
+    newest_id: number
+}
+
 export interface ReadableFederationStateCustom extends ReadableFederationState {
     newest_id?: number,
 }
@@ -29,7 +36,7 @@ function instanceIsDead(instance:InstanceWithFederationState):boolean {
     return false
 }
 
-export async function load() {
+export async function load(): Promise<GetFederatedInstancesData> {
     // Empty array to fill up with instance list with extended attributes
     const federated_instances = [] as InstanceWithFederationStateCustom[]
 
