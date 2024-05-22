@@ -48,8 +48,12 @@
         
         <!---Archive Link Providers for 'link' Post Types--->
         {#if ['link', 'thumbLink'].includes(postType)}
-            <MenuButton color="info" link href="https://archive.ph/{removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Archive.ph">
-                Archive.ph
+            <MenuButton color="info" link href="https://archive.ph/{removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Archive Today">
+                Archive Today
+            </MenuButton>
+
+            <MenuButton color="info" link href="https://ghostarchive.org/search?term={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Ghost Archive">
+                Ghost Archive
             </MenuButton>
 
             <MenuButton color="info" link href="https://12ft.io/proxy?q={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="12ft IO">
