@@ -310,7 +310,7 @@ export const YTFrontends = {
         'yt.artemislena.eu',
         'yt.whateveritworks.org',
         ...strToArray(env.PUBLIC_CUSTOM_INVIDIOUS)
-    ],
+    ].sort(),
 
     piped: [
         'cf.piped.video',
@@ -352,7 +352,7 @@ export const YTFrontends = {
         'piped.syncpundit.io',
         'piped.yt',
         ...strToArray(env.PUBLIC_CUSTOM_PIPED)
-    ]
+    ].sort()
 }
 
 // Create a writable store for the user settings
