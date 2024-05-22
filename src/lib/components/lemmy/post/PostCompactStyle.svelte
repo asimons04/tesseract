@@ -82,6 +82,7 @@
 
             {#if post.post.url && !isImage(post.post.url)}
             <span class="flex flex-row flex-wrap w-full gap-2">
+                
                 <!---Show archive link if not a media post--->
                 {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
                     <ArchiveLinkSelector url={post.post?.url} {postType}/>
