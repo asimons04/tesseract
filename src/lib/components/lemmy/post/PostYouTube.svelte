@@ -49,12 +49,16 @@
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts but disabled in feed--->    
     {#if $userSettings.embeddedMedia.post}
-        <Link title={post.post.name} newtab={$userSettings.openInNewTab.links} highlight nowrap href={
-                embedURL
-                ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-                : post.post.url
-            }
-        />
+        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
+            
+            <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
+                href={ embedURL
+                        ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+                        : post.post.url
+                }
+            />
+        </span>
 
         <PostImage bind:post displayType={displayType} />
     

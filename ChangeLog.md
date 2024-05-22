@@ -27,6 +27,7 @@ All major/minor changes between releases will be documented here.
 - [X] If guest instance is set, login was not sending auth token
 - [X] When switching between communites on create post page, moderator user links not reactive (shows previous lookup)
 - [ ] Jumping to comment from profile when logged into another instance takes you to /comment/{default_instance/{id} which is wrong.
+    - Only when opening in new tab.  Seems `get(instance)` isn't returning as expected and falls back to `DEFAULT_INSTANCE_URL`
 #### General UI
 - [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
 - [X] Add Dicebear avatar generator for blank user profiles.  Keep initials generator for communities without icons.
