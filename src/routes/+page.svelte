@@ -2,13 +2,14 @@
     import type { Snapshot } from './$types';
     import { PageSnapshot } from '$lib/storage'
     
+    import { amModOfAny } from '$lib/components/lemmy/moderation/moderation';
     import { beforeNavigate, goto } from '$app/navigation'
     import { 
         mergeNewInfiniteScrollBatch,
         scrollToLastSeenPost, 
     } from '$lib/components/lemmy/post/helpers'
-    
     import { load } from './+page'
+    import { profile } from '$lib/auth';
     import { userSettings } from '$lib/settings'
     
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
@@ -18,9 +19,12 @@
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    
 
     export let data
     
+    
+
     // Page state that will persist in snapshots
     let pageState = {
         scrollY: 0,
@@ -96,6 +100,21 @@
         })
     }
 
+    
+    // These exist so the subnavbar component can bind/export its values to them and so we can modify them to add/remove moderator view
+    let listingTypeOptions: string[]
+    let listingTypeOptionNames: string[]
+    
+    // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
+    $:  if (listingTypeOptions && listingTypeOptionNames && $profile?.user && amModOfAny($profile.user)) {
+            if (!listingTypeOptions.includes('ModeratorView')) listingTypeOptions.push('ModeratorView')
+            if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Moderator View")
+        }
+        else if (listingTypeOptions && listingTypeOptionNames ){
+            if (listingTypeOptions.includes('ModeratorView')) listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
+            if (listingTypeOptionNames.includes('ModeratorView')) listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Moderator View'), 1)
+        }
+
 </script>
 
 <svelte:head>
@@ -104,6 +123,7 @@
 
 
 <SubNavbar
+    bind:listingTypeOptions bind:listingTypeOptionNames
     compactSwitch  toggleMargins toggleCommunitySidebar scrollButtons 
     listingType={true}      bind:selectedListingType={data.listingType}
     sortMenu={true}         bind:selectedSortOption={data.sort}

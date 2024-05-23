@@ -93,15 +93,7 @@
     let addCommunityGroup:boolean               = false
     let editPostModal:boolean                   = false
 
-    // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
-    $:  if ($profile?.user && amModOfAny($profile.user)) {
-            if (!listingTypeOptions.includes('ModeratorView')) listingTypeOptions.push('ModeratorView')
-            if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Moderator View")
-        }
-        else {
-            if (listingTypeOptions.includes('ModeratorView')) listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
-            if (listingTypeOptionNames.includes('ModeratorView')) listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Moderator View'), 1)
-        }
+    
 
     //const dispatcher = createEventDispatcher();
     const dispatcher = createEventDispatcher
