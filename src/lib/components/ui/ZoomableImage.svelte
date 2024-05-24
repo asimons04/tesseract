@@ -21,32 +21,36 @@
     let toolbarElement: any
     
     let zoom = {
-        current: 1,
-        min: 0.25,
-        max: 4,
-        step: 0.15,
-        translateX: 0,
-        translateY: 0,
-        startX: 0,
-        startY:0,
-        panning: false,
+        current: 1,         // Default / 'zero' scale value
+        min: 0.25,          // Minimum scale value
+        max: 4,             // Maximum scale value
+        step: 0.15,         // Amount of scale to apply per scroll/click
+        translateX: 0,      // The cacluated X coordinate used in the translate()
+        translateY: 0,      // The cacluated Y coordinate used in the translate() 
+        startX: 0,          // X coordinate for panning to begin
+        startY:0,           // Y coordinate for panning to begin
+        panning: false,     // Flag used internally to determine if currently panning
     }
     let defaultZoom = {...zoom}
     
+    // Resets the zoom parameters to default
     function resetZoom() {
         zoom = {...defaultZoom}
         applyTranslations()
     }   
 
+    // Resets the zoom parameters to default and closes the modal
     function close() {
         resetZoom()
         zoomed = false
     }
 
+    // Applies the scale and translation values to the image element
     function applyTranslations() {
         imageElement.style.transform=`scale(${zoom.current}) translate(${zoom.translateX}px, ${zoom.translateY}px)`
     }
 
+    // Calculates the current scale value
     function zoomImage(direction: number) {
         const newZoom = zoom.current + direction * zoom.step; 
     
@@ -58,25 +62,29 @@
         applyTranslations()
     }
 
+    // Fires when clicking and calculates the starting coordinates of the translate (current mouse coords - current translation coords) and sets the panning flag
     const panStart = (e:PointerEvent) => {
         e.preventDefault();
         zoom.panning = true;
         zoom.startX = e.clientX - zoom.translateX
         zoom.startY = e.clientY - zoom.translateY
-    };
+    }
 
+    // Fires on mouse move. If not also mousedown, returns. Otherwise, cacluates the translation values (current mouse x/y - the starting coordinates from panStart
     const panMove = (e:PointerEvent) => {
         if (!zoom.panning) return; // Do nothing
         zoom.translateX = (e.clientX - zoom.startX) 
         zoom.translateY = (e.clientY - zoom.startY) 
         applyTranslations()
-    };
+    }
 
+    // Fires when mouse is released and clears the panning flag
     const panEnd = () => {
         zoom.panning = false;
-    };
+    }
 
-    function pinchZoom(event:CustomEvent<{
+    // Fires on pinch event and sets the scale to the value reported from the event. Does not pan while pinch-zooming
+    function pinchZoom(e:CustomEvent<{
             scale: number
             center: {
                 x: number
@@ -85,8 +93,15 @@
         }>) {
         
         zoom.panning = false
-        zoom.current = event.detail.scale
+        zoom.current = e.detail.scale
         applyTranslations()
+    }
+
+    function scrollZoom(e:WheelEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+        let direction = e.deltaY > 0 ? -1 : 1; 
+        zoomImage(direction); 
     }
 
 
@@ -139,30 +154,18 @@
         <div bind:this={imageContainerElement} class="flex top-16 p-4 w-full h-full"
             use:pinch
             on:pinch={(e) => pinchZoom(e) }
+            on:wheel={(e) => scrollZoom(e) }
             on:pointerdown={ (e) => panStart(e) }
             on:pointermove={ (e) => panMove(e) }
             on:pointerup={ () => panEnd() }
-            on:wheel={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                let direction = e.deltaY > 0 ? -1 : 1; 
-                zoomImage(direction); 
-            }}
         >
             
             <img bind:this={imageElement}
                 src="{imageProxyURL(url, resolution, 'webp')}"
-                class="flex mx-auto my-auto max-h-[100%] {zoom.panning ? 'cursor-grabbing' : 'cursor-default'}"
+                class="flex mx-auto my-auto w-full !max-h-[100%] {zoom.panning ? 'cursor-grabbing' : 'cursor-default'}"
                 alt={altText}
-                
-
             />
-
         </div>
-
-        <!--<div class="absolute bottom-0 h-16 bg-slate-50/70 dark:bg-zinc-950/80 backdrop-blur-3xl w-full z-50 p-1 cursor-default" />-->
-
-
     </div> 
 
 {/if}
