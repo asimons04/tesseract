@@ -29,7 +29,7 @@ All major/minor changes between releases will be documented here.
 - [X] Jumping to comment from profile when logged into another instance takes you to /comment/{default_instance/{id} which is wrong.
     - Only when opening in new tab.  Seems `get(instance)` isn't returning as expected and falls back to `DEFAULT_INSTANCE_URL`
     - Fixed by using $profile.instances instead of get(instance) since the profile one is backed by local storage 
-- [ ] Viewing instance stats from the instances menu for your own instance causes some kind of infinite loop
+- [X] Viewing instance stats from the instances menu for your own instance causes some kind of infinite loop
     - Best to just not show that option if post/comment is for your own instance. Not useful anyway
     
     
@@ -55,7 +55,9 @@ All major/minor changes between releases will be documented here.
 #### Community Settings Panel
 - [ ] Add report panel for reports in that community
 - [ ] Add 'local' check to not show community settings buttons to admins when browsing remote communities
-    - I was drunk when I wrote this down.  Not sure how I triggered this or if I was just mistaken?
+    - Reproduce:  Go to /post/{other_instance}/12345 and you'll see the community settings if you're a local admin
+    - Not sure how to easily fix
+    - 
 - [X] Replace old Photon image upload proxy for community icon/banner
 - [X] Restrict access to only moderators or local admins
     - Previously, anyone could goto `/c/{community}/settings` and see the community settings; API would not authorize them to make changes or see anything they couldn't otherwise see. All of these settings are also visible, unauthenticated, via API call, so didn't feel the need to restrict this.  Some people disagreed with that, so I locked it down in this release.
@@ -162,6 +164,7 @@ In FF and other browsers without Clipboard API support, pasting images still wor
 
 ### Misc To-Do
 - [X] In post form, when resetting values, loop over the image uploads in markdown and delete them all
+- [ ] Make feature/unfeature require a confirmation
 
 - [ ] Add  purge user button for admins.
 
@@ -173,11 +176,8 @@ In FF and other browsers without Clipboard API support, pasting images still wor
     - Provide button to take you to the link (honoring "open in new tab" setting)
 - [ ] Admin -> [Legal, sidebar, taglines] markdown editor too smushed.
 
-### Misc
-#### Always use full-res avatars/icons.  
-I kept the original behavior from Photon, and while its intentions were good, it puts extra load on the instance servers having to generate various sizes of thumbnails. It also causes lag, issues with some icons/avatars not resizing correctly and failing, and clutters up multiple layers of caching.  
 
-For now, the code that handles that is still present but disabled with a flag.  If I decide to keep it this way, that code will be removed rather than simply bypassed.
+---
 
 
 ## 1.3.0
