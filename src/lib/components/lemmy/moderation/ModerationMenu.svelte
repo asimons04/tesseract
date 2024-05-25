@@ -21,7 +21,6 @@
     import {
         Fire,
         Icon,
-        InformationCircle,
         LockClosed,
         LockOpen,
         Megaphone,
@@ -87,7 +86,7 @@
             item.post.featured_community = pinned
 
             toast({
-                content: `Successfully ${pinned ? 'pinned' : 'unpinned'} that post. You must refresh to see changes.`,
+                content: `Successfully ${pinned ? 'pinned' : 'unpinned'} that post.`,
                 type: 'success',
             })
         } catch (err) {
@@ -163,7 +162,12 @@
         <!--- Mod Feature Post Community--->
         <MenuButton color="success"
             on:click={() =>
-                pin(isPostView(item) ? !item.post.featured_community : false)
+                toast({
+                    type: 'warning',
+                    title: 'Confirmation',
+                    content: `Are you sure you want to ${item.post.featured_community ? 'unfeature' : 'feature'} this post in the community?`,
+                    action: () => pin(isPostView(item) ? !item.post.featured_community : false)
+                })
             }
             loading={pinning}
             disabled={pinning}
@@ -179,7 +183,12 @@
         {#if isAdmin($profile.user)}
             <MenuButton color="success"
                 on:click={() =>
-                    pin(isPostView(item) ? !item.post.featured_local : false, true)
+                toast({
+                    type: 'warning',
+                    title: 'Confirmation',
+                    content: `Are you sure you want to ${item.post.featured_local ? 'unfeature' : 'feature'} this post for the instance?`,
+                    action: () => pin(isPostView(item) ? !item.post.featured_local : false, true)
+                })
                 }
             >
                 <Icon src={Megaphone} size="16" mini />

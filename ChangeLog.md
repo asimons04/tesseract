@@ -164,7 +164,7 @@ In FF and other browsers without Clipboard API support, pasting images still wor
 
 ### Misc To-Do
 - [X] In post form, when resetting values, loop over the image uploads in markdown and delete them all
-- [ ] Make feature/unfeature require a confirmation
+- [X] Make feature/unfeature require a confirmation
 
 - [ ] Add  purge user button for admins.
 
