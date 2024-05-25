@@ -112,7 +112,7 @@
             
             <div class="flex flex-row gap-2 items-start p-3">
                 
-                <Avatar ring width={96} url={person.person.avatar} alt={person.person.actor_id} zoomable={true} fullRes={true}/>
+                <Avatar ring width={64} url={person.person.avatar} alt={person.person.actor_id} zoomable={true} fullRes={true}/>
                 
 
                 <div class="flex flex-col gap-0 w-full">
