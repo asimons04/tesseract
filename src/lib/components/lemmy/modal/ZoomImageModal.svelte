@@ -44,6 +44,8 @@
     import { pinch, swipe } from 'svelte-gestures'
     
     import { 
+    ArrowUturnLeft,
+        ArrowUturnRight,
         Icon, 
         MagnifyingGlassMinus, 
         MagnifyingGlassPlus, 
@@ -72,6 +74,9 @@
         startY:0,           // Y coordinate for panning to begin
         panning: false,     // Flag used internally to determine if currently panning
         doubleClick: false, // Flag used to determine if double-click quick zoom is enabled
+        rotateDeg: 0,       // Number of degrees to rotate
+        rotateStep: 90      // Number of degrees to rotate per step
+
     }
     let defaultZoom = {...zoom}
     
@@ -82,7 +87,13 @@
     // Applies the scale and translation values to the image element
     function applyTranslations() {
         imageElement.style.transformOrigin = "center"
-        imageElement.style.transform=`scale(${zoom.current}) translate(${zoom.translateX}px, ${zoom.translateY}px)`
+        imageElement.style.transform=`scale(${zoom.current}) translate(${zoom.translateX}px, ${zoom.translateY}px) rotate(${zoom.rotateDeg}deg)`
+    }
+
+    function bumpRotate(dir:number) {
+        (dir > 0)
+            ? rotate(zoom.rotateDeg + zoom.rotateStep)
+            : rotate(zoom.rotateDeg - zoom.rotateStep)
     }
 
     // Bumps the zoom by the step amount. dir > 0 is zoom in, dir < 0 is zoom out.
@@ -156,7 +167,12 @@
     function resetZoom() {
         zoom = {...defaultZoom}
         applyTranslations()
-    }  
+    }
+
+    function rotate(deg:number) {
+        zoom.rotateDeg = deg
+        applyTranslations()
+    }
 
     function scrollZoom(e:WheelEvent) {
         e.preventDefault();
@@ -214,6 +230,11 @@
                     <Card class="flex flex-row gap-2 items-center rounded-lg p-2 lg:ml-auto">
                         <span class="flex flex-row gap-1 w-fit mr-auto items-center">
                             
+                            <button title="Rotate Counter-Clockwise" class="mr-8" on:click={()=>bumpRotate(-1)}>
+                                <Icon src={ArrowUturnLeft} mini width={24} />
+                            </button>
+
+
                             <button title="Reset Zoom" on:click={()=>bumpZoom(-1)}>
                                 <Icon src={MagnifyingGlassMinus} mini width={24} />
                             </button>
@@ -231,6 +252,10 @@
 
                         <button title="Reset Zoom" on:click={()=>resetZoom()}>
                             <Icon src={ViewfinderCircle} mini width={32}/>
+                        </button>
+
+                        <button title="Rotate Clockwise" class="ml-8" on:click={()=>bumpRotate(1)}>
+                            <Icon src={ArrowUturnRight} mini width={24} />
                         </button>
                     </Card>
                     
