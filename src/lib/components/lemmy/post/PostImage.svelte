@@ -7,17 +7,18 @@
     import { userSettings } from '$lib/settings.js'
 
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
-    
+    import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte'
+
     export let post:PostView 
     export let displayType: PostDisplayType
-    
+    export let zoomable:boolean = true
+
     $: url           = post.post.url as string
     $: thumbnail_url = post.post.thumbnail_url as string ?? post.post.url as string
     $: name          = post.post.name
     
     let instance     = getInstance()
     let id           = post.post.id ?? undefined
-    let loaded       = false
 
     // Hack to get Imgur gifs to render without having to click through to the site.
     $: if (!url?.endsWith('.gif') && post.post.embed_video_url && post.post.embed_video_url.endsWith('.gif')) {
@@ -35,16 +36,14 @@
 
 
 {#if displayType == 'feed'}
-<a
-    href="/post/{instance}/{id}"
-    
+<a href="/post/{instance}/{id}"
     data-sveltekit-preload-data="off"
     aria-label={name}
     title={name}
 >
     <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
         <div class="ml-auto mr-auto {$userSettings.imageSize.feed ?? 'max-w-3xl'}"> 
-            <picture class="rounded-md overflow-hidden w-full max-h-[min(50vh,500px)]  max-w-full"> <!---w-full max-h-[min(50vh,500px)]--->
+            <picture class="rounded-md overflow-hidden w-full max-h-[min(50vh,500px)]  max-w-full"> 
                 <source srcset="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 768, 'webp')}"
                     media="(max-width: 768px)"
                 />
@@ -56,14 +55,10 @@
                 
                 <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
                 
-                <img
-                    src="{imageProxyURL(thumbnail_url, 768, 'webp') ?? imageProxyURL(url, 1024, 'webp')}"
-                    class="ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)] z-20 opacity-0 transition-opacity duration-150"
-                    class:opacity-100={loaded}
-                    class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur)}
-                    on:load={() => (loaded = true)}
-                    alt={name}
+                <ZoomableImage url={thumbnail_url ?? url} limitHeight={true} bind:nsfw={post.post.nsfw} altText={name} zoomable={false}
+                    class="ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)] z-20"
                 />
+
             </picture>
         </div>
     </div>
@@ -78,15 +73,9 @@
     aria-label={name}
 >
     <div class="ml-auto mr-auto {$userSettings.imageSize.post ?? 'max-w-3xl'}">
-        <picture class="rounded-md overflow-hidden  max-h-[min(50vh,500px)] max-w-full"> <!--max-h-[min(50vh,500px)]--->
-            <img
-                src="{imageProxyURL(url, undefined, 'webp')}"
-                alt="{name}"
-                loading="lazy"
-                class="ml-auto mr-auto object-contain rounded-md h-auto xl:min-h-[500px] z-30 opacity-0 transition-opacity duration-150"
-                class:opacity-100={loaded}
-                on:load={() => (loaded = true)}
-                
+        <picture class="rounded-md overflow-hidden  max-w-full"> 
+            <ZoomableImage url={thumbnail_url ?? url} limitHeight={false} bind:nsfw={post.post.nsfw} altText={name} {zoomable}
+                class="ml-auto mr-auto object-contain rounded-md h-auto xl:min-h-[500px] z-30"
             />
         </picture>
     </div>
