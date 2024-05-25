@@ -22,6 +22,16 @@
         }
     }
 
+    interface PressEvent extends CustomEvent {
+        detail: {
+            x: number
+            y: number
+            pointerType?: 'touch' | 'mouse' | 'pen'
+            target: EventTarget
+        }
+    }
+    
+
     interface SwipeEvent extends CustomEvent {
         detail: {
             direction: 'top' | 'right' | 'bottom' | 'left',
@@ -30,7 +40,6 @@
     }
 
     import { imageProxyURL } from "$lib/image-proxy";
-    import { userSettings } from "$lib/settings";
     import { fade } from "svelte/transition";
     import { pinch, swipe } from 'svelte-gestures'
     
@@ -72,6 +81,7 @@
 
     // Applies the scale and translation values to the image element
     function applyTranslations() {
+        imageElement.style.transformOrigin = "center"
         imageElement.style.transform=`scale(${zoom.current}) translate(${zoom.translateX}px, ${zoom.translateY}px)`
     }
 
@@ -92,7 +102,8 @@
     
     // Quick zooms to double scale and back to normal on double-tap
     function doubleClickZoom() {
-        
+        zoom.translateX = 0
+        zoom.translateY = 0 
         zoom.current = zoom.doubleClick
             ? 1
             : 2
@@ -100,18 +111,19 @@
         applyTranslations()
     }
 
+
     // Fires on swipe events
     function onSwipe(e:SwipeEvent) {
         if (['top', 'bottom'].includes(e.detail.direction)) {
             close()
         }
+
+        if (['left', 'right'].includes(e.detail.direction)) {
+            doubleClickZoom()
+        }
     }
 
-    // Zooms the image in if direction is > 0, zooms out if < 0
-    function zoomImage(direction: number) {
-        setZoom(zoom.current + direction * zoom.step)
-        applyTranslations()
-    }
+    
     // Fires when mouse is released and clears the panning flag
     function panEnd() {
         zoom.panning = false;
@@ -122,7 +134,6 @@
         if (!zoom.panning) return; // Do nothing
         zoom.translateX = (e.clientX - zoom.startX)
         zoom.translateY = (e.clientY - zoom.startY)
-        //await sleep(10 * zoom.current)
         applyTranslations()
     }
 
@@ -158,6 +169,12 @@
         if (val >= zoom.max) zoom.current = zoom.max
         else if (val <= zoom.min) zoom.current = zoom.min
         else zoom.current = val
+    }
+
+    // Zooms the image in if direction is > 0, zooms out if < 0
+    function zoomImage(direction: number) {
+        setZoom(zoom.current + direction * zoom.step)
+        applyTranslations()
     }
 
 
@@ -231,11 +248,11 @@
         <!---Image Container--->
         <div class="flex top-16 p-4 w-full h-full cursor-zoom-out" role="button" tabindex="0"
             bind:this={imageContainerElement}
-            on:wheel        ={ (e) => scrollZoom(e) }
-            on:pointerdown  ={ (e) => panStart(e) }
-            on:pointermove  ={ (e) => panMove(e) }
-            on:pointerup    ={ () => panEnd() }
-            on:dblclick     ={ () => doubleClickZoom() }
+            on:wheel        = { (e) => scrollZoom(e) }
+            on:pointerdown  = { (e) => panStart(e) }
+            on:pointermove  = { (e) => panMove(e) }
+            on:pointerup    = { () => panEnd() }
+            on:dblclick     = { () => doubleClickZoom() }
             use:pinch   on:pinch={(e) => pinchZoom(e) }
             use:swipe   on:swipe={(e) => onSwipe(e) }
         >
