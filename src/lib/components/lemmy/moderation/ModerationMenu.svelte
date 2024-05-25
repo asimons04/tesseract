@@ -59,7 +59,7 @@
             item.post.locked = lock
 
             toast({
-                content: `Successfully ${lock ? 'locked' : 'unlocked' } that post. You must refresh to see changes.`,
+                content: `Successfully ${lock ? 'locked' : 'unlocked' } that post.`,
                 type: 'success',
                 title: "Success"
             })
