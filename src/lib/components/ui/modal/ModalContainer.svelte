@@ -3,6 +3,7 @@
     
     import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/modal/UserProfileModal.svelte'
+    import ZoomImageModal from '$lib/components/lemmy/modal/ZoomImageModal.svelte';
   
 </script>
 
@@ -50,5 +51,9 @@
 <!--- User Profile Modal (should be after so it's "above" other modals that would pop up a user profile (e.g. vote view)--->
 {#if $modals.user.open}
     <UserProfileModal  bind:open={$modals.user.open} personDetails={$modals.user.personDetails} mod={$modals.user.mod} />
+{/if}
+
+{#if $modals.zooming.open}
+    <ZoomImageModal bind:open={$modals.zooming.open} bind:url={$modals.zooming.url} altText={$modals.zooming.altText} />
 {/if}
 

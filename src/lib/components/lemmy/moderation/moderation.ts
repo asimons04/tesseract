@@ -30,6 +30,11 @@ interface Modals {
         type: 'post' | 'comment',
         submission_id: number
     }
+    zooming: {
+        open: boolean
+        url: string
+        altText?: string
+    }
 
 }
 
@@ -60,6 +65,11 @@ export let modals = writable<Modals>({
         open: false,
         type: 'post',
         submission_id: 0
+    },
+    zooming:{
+        open: false,
+        url: '',
+        altText: ''
     }
 })
 
@@ -108,7 +118,17 @@ export function userProfileModal(personDetails:GetPersonDetailsResponse, mod:boo
         },
 
     }))
+}
 
+export function zoomImageModal(url:string, altText?:string) {
+    modals.update((m) => ({
+        ...m,
+        zooming: {
+            open: true,
+            url: url,
+            altText: altText
+        }
+    }))
 }
 
 /** Launches the vote viewer modal
