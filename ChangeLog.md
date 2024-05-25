@@ -167,6 +167,14 @@ In FF and other browsers without Clipboard API support, pasting images still wor
 - [X] Make feature/unfeature require a confirmation
 
 - [ ] Add  purge user button for admins.
+    - Purge user flow:
+        - Instance ban with remove content
+        - Sleep 10 seconds or so
+        - Purge user
+        - If user not local:
+            - Resolve user since purging removes their person entry and any local ban
+            - Ban user now that their content has been removed
+
 
 - [ ] Link preview option.  If enabled:
     - Ignore Tesseract links (links to posts, comments, communities, users, etc)

@@ -25,7 +25,7 @@
     {#if url}
         <ZoomableImage url={url} title={title} altText={alt} 
             resolution={fullRes ? undefined : findClosestNumber(sizes,res||width)} 
-            zoomable={zoomable && !community && fullRes}
+            zoomable={zoomable && fullRes}
             class="aspect-square object-cover overflow-hidden 
                 {ring ? 'ring-2 ring-sky-700' : ''} 
                 {circle ? 'rounded-full' : ''}
