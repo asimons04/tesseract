@@ -21,15 +21,16 @@ All major/minor changes between releases will be documented here.
 - [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
 - [X] Add `ModeratorView` to listing types if `modOfAny()`
 
-#### Newly Introduced Bugs
+#### Newly Introduced/Discovered Bugs
 - [X] DM modal preview shrinks in mobile view
-- [ ] Ensure "Moderator View" only appears on main feed
+- [X] Ensure "Moderator View" only appears on main feed
 - [X] If guest instance is set, login was not sending auth token
 - [X] When switching between communites on create post page, moderator user links not reactive (shows previous lookup)
 - [X] Jumping to comment from profile when logged into another instance takes you to /comment/{default_instance/{id} which is wrong.
     - Only when opening in new tab.  Seems `get(instance)` isn't returning as expected and falls back to `DEFAULT_INSTANCE_URL`
     - Fixed by using $profile.instances instead of get(instance) since the profile one is backed by local storage 
-    
+- [ ] Viewing instance stats from the instances menu for your own instance causes some kind of infinite loop
+    - Best to just not show that option if post/comment is for your own instance. Not useful anyway
     
     
 #### General UI
@@ -94,7 +95,17 @@ All major/minor changes between releases will be documented here.
     - [ ] Move fetch logic into modal itself rather than on the page
 - [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
 - [X] Add 12ft.io as an archive link option
+- [X] Re-write archive link selector be more generic
+    - Youtube-like links now have selector to choose from Invidious, Piped, or YouTube
+    - Will use your preferred Invidious or Piped instance
 - [X] Replace static/ugly archive link button with nice menu to select from one of multiple sources (currently archive.ph and 12ft.io)
+- [X] Make post and comment images zoomable
+    - All the pan/zoom libraries I tried *suuuuuuucked* so I ended up rolling my own.
+    - Can both pan and zoom the image
+    - Double click to quick zoom in and out (desktop only until I figure out how to differentiate tap from click)
+    - Scroll to zoom
+    - Swipe up/down to close
+    - Pinch zoom is supprted but needs some work
 
 - [ ] Optionally Preview Links in Modal
 

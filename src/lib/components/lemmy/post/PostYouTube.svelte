@@ -47,25 +47,20 @@
     <IFrame bind:embedURL bind:size bind:title={post.post.name} />
 
 {:else if post.post.thumbnail_url}
-    <!---Create image post if user has media embeds enabled for posts but disabled in feed--->    
-    {#if $userSettings.embeddedMedia.post}
-        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
-            <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
-            
-            <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
-                href={ embedURL
-                        ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
-                        : post.post.url
-                }
-            />
-        </span>
+    <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+        <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
+        
+        <Link highlight nowrap 
+            domainOnly={!$userSettings.uiState.showFullURL} 
+            newtab={$userSettings.openInNewTab.links} 
+            href={ embedURL
+                    ? embedURL.href.replace('embed','watch').replace('www.youtube-nocookie','youtube')
+                    : post.post.url
+            }
+        />
+    </span>
 
-        <PostImage bind:post displayType={displayType} />
-    
-    <!---Create PostLink to external link if user does not have embeds enaled for posts--->
-    {:else}
-        <PostLink bind:post displayType={displayType}/>
-    {/if}
+    <PostImage bind:post displayType={displayType} zoomable={false}/>
 
 {:else if !post.post.thumbnail_url}
     <Link title={post.post.name} highlight nowrap href={

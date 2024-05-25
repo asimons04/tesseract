@@ -73,7 +73,7 @@
             <!---Image--->
             {:else}
                 <!---<img src={imageProxyURL(token.href)} title={token.title} alt={token.text} loading="lazy" class="mx-auto rounded-xl" />--->
-                <ZoomableImage url={token.href} altText={token.text} />
+                <ZoomableImage url={token.href} altText={token.text} class="mx-auto rounded-xl"/>
             {/if}
 
             <!---Show Alt Text as Caption--->
