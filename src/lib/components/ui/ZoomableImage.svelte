@@ -241,9 +241,9 @@
     // Fires on mouse move. If not also mousedown, returns. Otherwise, cacluates the translation values (current mouse x/y - the starting coordinates from panStart
     async function panMove(e:PointerEvent) {
         if (!zoom.panning) return; // Do nothing
-        zoom.translateX = (e.clientX - zoom.startX) 
-        zoom.translateY = (e.clientY - zoom.startY) 
-        await sleep(10 * zoom.current)
+        zoom.translateX = (e.clientX - zoom.startX)
+        zoom.translateY = (e.clientY - zoom.startY)
+        //await sleep(10 * zoom.current)
         applyTranslations()
     }
 
@@ -256,11 +256,10 @@
     }
 
     // Fires on pinch event and sets the scale to the value reported from the event. Does not pan while pinch-zooming
-    function pinchZoom(e:PinchEvent) {
-        
+    async function pinchZoom(e:PinchEvent) {
         zoom.panning = false
-        setZoom(e.detail.scale)
-        applyTranslations()
+        if (e.detail.scale > zoom.current) bumpZoom(1)
+        if (e.detail.scale < zoom.current) bumpZoom(-1)
     }
 
     // Resets the zoom parameters to default
@@ -358,12 +357,11 @@
             on:pointermove  ={ (e) => panMove(e) }
             on:pointerup    ={ () => panEnd() }
             on:dblclick     ={ () => doubleClickZoom() }
-            
+            use:pinch   on:pinch={(e) => pinchZoom(e) }
+            use:swipe   on:swipe={(e) => onSwipe(e) }
         >
             
             <img bind:this={imageElement}
-                use:pinch   on:pinch={(e) => pinchZoom(e) }
-                use:swipe   on:swipe={(e) => onSwipe(e) }
                 src="{imageProxyURL(url, resolution, 'webp')}"
                 class="flex mx-auto my-auto pt-8 !max-h-[100%] {zoom.panning ? 'cursor-grabbing' : 'cursor-default'}"
                 alt={altText}
@@ -382,8 +380,6 @@
             class="{$$props.class} opacity-0 transition-opacity duration-150 
                 {limitHeight ? 'max-h-[min(80vh,800px)]' : ''}    
                 {zoomable ? 'cursor-zoom-in' : ''}
-                
-                
             "
             class:opacity-100={loaded}
             class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
