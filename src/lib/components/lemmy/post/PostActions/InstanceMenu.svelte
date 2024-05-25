@@ -110,12 +110,14 @@
             <span>Fediseer</span>
     </MenuButton>
 
+    {#if new URL(post.community.actor_id).hostname != $profile?.instance}
     <MenuButton title="Federation Stats for {new URL(post.community.actor_id).hostname}" color="info" 
         on:click={async () => openFederationStateModal(new URL(post.community.actor_id).hostname) }
     >
         <Icon src={Server} width={16} mini />
         <span>Federatation Stats</span>
     </MenuButton>
+    {/if}
 
 
 
@@ -149,12 +151,14 @@
                 <span>Fediseer</span>
         </MenuButton>
 
+        {#if new URL(post.creator.actor_id).hostname != $profile?.instance}
         <MenuButton title="Federation Stats for {new URL(post.creator.actor_id).hostname}" color="info" 
             on:click={async () => openFederationStateModal(new URL(post.creator.actor_id).hostname) }
         >
             <Icon src={Server} width={16} mini />
             <span>Federation Stats</span>
         </MenuButton>
+        {/if}
 
         <MenuButton link href="/communities?instance={new URL(post.creator.actor_id).hostname}&type=Local" 
             title="Browse communities at {new URL(post.creator.actor_id).hostname}" color="success"
