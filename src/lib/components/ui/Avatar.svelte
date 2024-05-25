@@ -21,7 +21,7 @@
     export let zoomable:boolean = true
 </script>
 
-<div class="shrink" style="width: {width}px; height: {width}px;">
+<div class="flex shrink" style="width: {width}px; height: {width}px;">
     {#if url}
         <ZoomableImage url={url} title={title} altText={alt} 
             resolution={fullRes ? undefined : findClosestNumber(sizes,res||width)} 
