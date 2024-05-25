@@ -125,7 +125,7 @@
                     
                 }}
                 >
-                View Profile
+                Go to Profile
             </Button>
 
             <!---View on Home Instance (if not same instance as current)--->
@@ -162,7 +162,7 @@
                     open = false
                 }}
             >
-                User Modlog
+                User's Modlog History
             </Button>
 
             <!---Copy Lemmyverse Link to User--->
