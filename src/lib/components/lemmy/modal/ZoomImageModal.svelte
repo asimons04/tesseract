@@ -65,9 +65,9 @@
     
     let zoom = {
         current: 1,         // Default / 'zero' scale value
-        min: 0.25,          // Minimum scale value
+        min: 0.9,           // Minimum scale value
         max: 4,             // Maximum scale value
-        step: 0.15,         // Amount of scale to apply per scroll/click
+        step: 0.5,          // Amount of scale to apply per scroll/click
         translateX: 0,      // The cacluated X coordinate used in the translate()
         translateY: 0,      // The cacluated Y coordinate used in the translate() 
         startX: 0,          // X coordinate for panning to begin
@@ -97,10 +97,14 @@
     }
 
     // Bumps the zoom by the step amount. dir > 0 is zoom in, dir < 0 is zoom out.
-    function bumpZoom(dir:number) {
+    function bumpZoom(dir:number, keepCenter=false) {
         (dir > 0)
             ? setZoom(zoom.current + zoom.step)
             : setZoom(zoom.current - zoom.step)
+        if (keepCenter) {
+            zoom.translateX = 0
+            zoom.translateY = 0
+        }
         applyTranslations()
 
     }
@@ -125,13 +129,10 @@
 
     // Fires on swipe events
     function onSwipe(e:SwipeEvent) {
-        if (['top', 'bottom'].includes(e.detail.direction)) {
-            close()
-        }
-
-        if (['left', 'right'].includes(e.detail.direction)) {
-            doubleClickZoom()
-        }
+        if (e.detail.direction == 'top')    close()
+        if (e.detail.direction == 'bottom') doubleClickZoom()
+        if (e.detail.direction == 'left')   bumpZoom(-1, true)
+        if (e.detail.direction == 'right')  bumpZoom(1, true)
     }
 
     
@@ -142,6 +143,8 @@
 
     // Fires on mouse move. If not also mousedown, returns. Otherwise, cacluates the translation values (current mouse x/y - the starting coordinates from panStart
     async function panMove(e:PointerEvent) {
+        e.preventDefault()
+        e.stopPropagation()
         if (!zoom.panning) return; // Do nothing
         zoom.translateX = (e.clientX - zoom.startX)
         zoom.translateY = (e.clientY - zoom.startY)
@@ -150,7 +153,8 @@
 
     // Fires when clicking and calculates the starting coordinates of the translate (current mouse coords - current translation coords) and sets the panning flag
     function panStart(e:PointerEvent) {
-        e.preventDefault();
+        e.preventDefault()
+        e.stopPropagation()
         zoom.panning = true;
         zoom.startX = e.clientX - zoom.translateX
         zoom.startY = e.clientY - zoom.translateY
@@ -158,9 +162,19 @@
 
     // Fires on pinch event and sets the scale to the value reported from the event. Does not pan while pinch-zooming
     async function pinchZoom(e:PinchEvent) {
+        e.preventDefault()
+        e.stopPropagation()
         zoom.panning = false
-        if (e.detail.scale > zoom.current) bumpZoom(1)
-        if (e.detail.scale < zoom.current) bumpZoom(-1)
+        zoom.current = (e.detail.scale * 0.5)
+        
+        // Force to stay centered when zooming
+        zoom.translateX = 0
+        zoom.translateY = 0        
+        if (zoom.current > zoom.max) zoom.current = zoom.max
+        if (zoom.current < zoom.min) zoom.current = zoom.min
+        
+        applyTranslations()
+        
     }
 
     // Resets the zoom parameters to default

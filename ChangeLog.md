@@ -105,9 +105,13 @@ All major/minor changes between releases will be documented here.
     - All the pan/zoom libraries I tried *suuuuuuucked* so I ended up rolling my own.
     - Can both pan and zoom the image
     - Double click to quick zoom in and out (desktop only until I figure out how to differentiate tap from click)
-    - Scroll to zoom
-    - Swipe up/down to close
-    - Pinch zoom is supprted but needs some work
+    - Mouse scroll to zoom (desktop)
+    - Pinch zoom is supprted but isn't quite where I want it (possibly library limitation)
+    - **Swipe gestures**:
+        - Up:  Close image
+        - Down:  Toggle quick 2x zoom
+        - Left: Zoom out one step
+        - Right:  Zoom in one step
 
 - [ ] Optionally Preview Links in Modal
 
