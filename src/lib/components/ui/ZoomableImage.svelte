@@ -33,9 +33,16 @@
     import { userSettings } from "$lib/settings";
     import { fade } from "svelte/transition";
     import { pinch, swipe } from 'svelte-gestures'
-    import { Icon, MagnifyingGlassMinus, MagnifyingGlassPlus, ViewfinderCircle, XMark } from "svelte-hero-icons";
+    
+    import { 
+        Icon, 
+        MagnifyingGlassMinus, 
+        MagnifyingGlassPlus, 
+        ViewfinderCircle, 
+        XMark 
+    } from "svelte-hero-icons";
+    
     import Card from "./Card.svelte";
-
 
     export let url:string
     export let resolution: number|undefined =  undefined
@@ -64,6 +71,7 @@
     }
     let defaultZoom = {...zoom}
     
+    // Class not used due to chicken/egg, but leaving in until I move it to a util library for outside use
     export class Zoomable {
         element: any
         zoom: ZoomParams
@@ -212,17 +220,12 @@
         applyTranslations()
     }
 
-
-     
-
-
     // Fires on swipe events
     function onSwipe(e:SwipeEvent) {
         if (['top', 'bottom'].includes(e.detail.direction)) {
             close()
         }
     }
-
 
     // Zooms the image in if direction is > 0, zooms out if < 0
     function zoomImage(direction: number) {
@@ -251,10 +254,6 @@
         zoom.startY = e.clientY - zoom.translateY
     }
 
-
-
-
-
     // Fires on pinch event and sets the scale to the value reported from the event. Does not pan while pinch-zooming
     function pinchZoom(e:PinchEvent) {
         
@@ -275,13 +274,10 @@
         let direction = e.deltaY > 0 ? -1 : 1; 
         zoomImage(direction); 
     }
-    
-
-
 
     function setZoom(val:number) {
-        if (val > zoom.max) zoom.current = zoom.max
-        else if (val < zoom.min) zoom.current = zoom.min
+        if (val >= zoom.max) zoom.current = zoom.max
+        else if (val <= zoom.min) zoom.current = zoom.min
         else zoom.current = val
     }
 
@@ -326,9 +322,10 @@
                                 <Icon src={MagnifyingGlassMinus} mini width={24} />
                             </button>
                             
-                            <input type="range" bind:value={zoom.current} min={zoom.min} max={zoom.max} step={0.5} 
+                            <input type="range" bind:value={zoom.current} min={zoom.min} max={zoom.max+zoom.step} step={zoom.step} 
                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                                 on:input={() => applyTranslations() }
+                                on:drag|preventDefault
                             >
                             
                             <button title="Reset Zoom" on:click={()=>bumpZoom(1)}>
@@ -381,9 +378,11 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <img src="{imageProxyURL(url, resolution, 'webp')}"
-            class="ml-auto mr-auto object-cover rounded-md  z-20 opacity-0 transition-opacity duration-150 
+            class="{$$props.class} opacity-0 transition-opacity duration-150 
                 {limitHeight ? 'max-h-[min(80vh,800px)]' : ''}    
                 {zoomable ? 'cursor-zoom-in' : ''}
+                
+                
             "
             class:opacity-100={loaded}
             class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
