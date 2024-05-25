@@ -21,12 +21,12 @@
     export let zoomable:boolean = true
 </script>
 
-<div class="flex shrink" style="width: {width}px; height: {width}px;">
+<div style="width: {width}px; height: {width}px;">
     {#if url}
         <ZoomableImage url={url} title={title} altText={alt} 
             resolution={fullRes ? undefined : findClosestNumber(sizes,res||width)} 
             zoomable={zoomable && fullRes}
-            class="aspect-square object-cover overflow-hidden 
+            class="aspect-square object-cover overflow-hidden !w-full
                 {ring ? 'ring-2 ring-sky-700' : ''} 
                 {circle ? 'rounded-full' : ''}
                 {$$props.class}
