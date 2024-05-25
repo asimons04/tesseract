@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { findClosestNumber } from '$lib/util.js'
     import { createAvatar } from '@dicebear/core'
+    import { findClosestNumber } from '$lib/util.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import * as initials from '@dicebear/initials'
     import * as adventurer from '@dicebear/adventurer'
-    
+    import ZoomableImage from './ZoomableImage.svelte';
 
     const sizes = [48, 64, 128, 256, 512, 1024]
 
@@ -18,18 +18,19 @@
     export let res: number | undefined = undefined
     export let fullRes:boolean = false
     export let community:boolean = false
+    export let zoomable:boolean = true
 </script>
 
 <div class="shrink" style="width: {width}px; height: {width}px;">
     {#if url}
-        <img
-            src="{imageProxyURL(url, (fullRes ? undefined : findClosestNumber(sizes,res||width)), 'webp')}"
-            {alt}
-            {width}
-            {title}
-            loading="lazy"
-            class="aspect-square object-cover overflow-hidden {ring ? 'ring-2 ring-sky-700' : ''} {$$props.class} "
-            class:rounded-full={circle}
+        <ZoomableImage url={url} title={title} altText={alt} 
+            resolution={fullRes ? undefined : findClosestNumber(sizes,res||width)} 
+            zoomable={zoomable && !community && fullRes}
+            class="aspect-square object-cover overflow-hidden 
+                {ring ? 'ring-2 ring-sky-700' : ''} 
+                {circle ? 'rounded-full' : ''}
+                {$$props.class}
+            "
         />
     {:else}
         <div
