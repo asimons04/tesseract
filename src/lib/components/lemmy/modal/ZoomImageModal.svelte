@@ -283,7 +283,7 @@
         >
             
             <img bind:this={imageElement}
-                src="{imageProxyURL(url, undefined, 'webp')}"
+                src="{imageProxyURL(url)}"
                 class="flex mx-auto my-auto pt-8 !max-h-[100%] {zoom.panning ? 'cursor-grabbing' : 'cursor-default'}"
                 alt={altText}
             />
