@@ -49,6 +49,7 @@
     export let nsfw:boolean = false
     export let altText:string = ''
     export let limitHeight:boolean = true
+    export let title:string = ''
     export let zoomable:boolean = true
     
     let loaded = false
@@ -387,6 +388,7 @@
             class:opacity-100={loaded}
             class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
             alt={altText}
+            title={title}
             on:load={() => (loaded = true)}
             on:click={async (e) => {
                 if (zoomable) {
