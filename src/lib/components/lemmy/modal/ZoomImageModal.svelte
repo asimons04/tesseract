@@ -253,7 +253,7 @@
                                 <Icon src={MagnifyingGlassMinus} mini width={24} />
                             </button>
                             
-                            <input type="range" bind:value={zoom.current} min={zoom.min} max={zoom.max+zoom.step} step={zoom.step} 
+                            <input type="range" bind:value={zoom.current} min={zoom.min} max={zoom.max} step={zoom.step} 
                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                                 on:input={() => applyTranslations() }
                                 on:drag|preventDefault
