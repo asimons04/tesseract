@@ -179,6 +179,19 @@ export let sortOptionNames:string[] = [
     'New Comments',
 ];
 
+
+export function parseAPIError(err:any) {
+    let errMsg:string
+    try { 
+        let parsed = JSON.parse(err.body.message)
+        errMsg = parsed.error
+    }
+    catch {
+        errMsg = ''
+    }
+    return errMsg
+}
+
 // Do an initial fetch of the site so the logo and site name gets set properly
 // DummyJWT is so the auth module doesn't try to access the profile before it's initialized
 getClient(get(instance), 'dummyJWT').getSite().then((getSiteResponse) => {
