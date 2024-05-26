@@ -165,8 +165,8 @@
         e.preventDefault()
         e.stopPropagation()
         zoom.panning = false
-        zoom.current = (e.detail.scale * 0.5)
-        
+        zoom.current = (e.detail.scale * 0.75)
+
         // Force to stay centered when zooming
         zoom.translateX = 0
         zoom.translateY = 0        
