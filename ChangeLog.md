@@ -31,8 +31,8 @@ All major/minor changes between releases will be documented here.
     - Fixed by using $profile.instances instead of get(instance) since the profile one is backed by local storage 
 - [X] Viewing instance stats from the instances menu for your own instance causes some kind of infinite loop
     - Best to just not show that option if post/comment is for your own instance. Not useful anyway
-- [X] Imgur embed gifs not showing GIF in post view.
-- [X] NSFW images showing blurred in post view
+- [X] Imgur embed gifs not showing GIF in post view. (New when switching to zoomable image)
+- [X] NSFW images showing blurred in post view. (New when switching to zoomable image)
 
     
 #### General UI
@@ -150,16 +150,14 @@ In FF and other browsers without Clipboard API support, pasting images still wor
 
 ### Accounts & User Settings
 - [X] Move read/unread and message type selector to sub-navbar at `/profile/inbox` and get rid of old, ugly buttons.
-- [ ] Add TOTP setup
-    - [ ] Find a QR code library
+- [X] Add TOTP setup
 - [X] Replace old Photon image upload proxy for user avatar/banner
 
-- [ ] Add capability to reauthorize an existing account without deleting/re-adding it.
-    - If profile is active but no MyLocalUser info returned from getSite, prompt for login
+- [X] Add capability to reauthorize an existing account without deleting/re-adding it.
+    - Toast pops up letting you know your login session is expired with an action to take you to /login/{instance}
 
 - [X] Show avatars, if available, instead of color icons in account switcher
-
-- [ ] Fetch avatars for existing accounts (currently only pulls it when adding an account)
+- [X] Fetch avatars for existing accounts
 
 - [ ] Add components to export and import your Lemmy profile
     - [ ] Export
