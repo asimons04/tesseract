@@ -120,22 +120,14 @@ profile.subscribe(async (p:Profile|undefined) => {
 // Used at login to store a new user profile
 export async function setUser(jwt: string, inst: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined>  {
     
-    let user:{ user: PersonData; site: GetSiteResponse } | undefined = undefined
-    
-    try {
-        // Make authenticated call to getSite to grab the my_user key.
-        user = await userFromJwt(jwt, inst)
-
-    }
-    catch (err) {
-        console.log("auth.ts->setUser(jwt, inst) -> userFromJwt:", err);
-    }
+    const user = await userFromJwt(jwt, inst)
 
     // If user object unresolved for any reason, toast an error and return
     if (!user) {
         toast({
             content: 'Failed to fetch your user. Is your instance down?',
             type: 'error',
+            title: 'Auth Error'
         })
         return
     }
@@ -220,10 +212,13 @@ function getProfile() {
     const id = get(profileData).profile
 
     if (id == -1) return getDefaultProfile()
-
     const pd = get(profileData)
 
-    return pd.profiles.find((p:Profile) => p.id == id)
+    // Set the current instance if the profile is found
+    let pFile = pd.profiles.find((p:Profile) => p.id == id)
+    if (pFile) instance.set(pFile.instance)
+    
+    return pFile
 }
 
 
@@ -306,7 +301,9 @@ export async function setUserID(id: number) {
                 duration: 30 * 1000,
                 action: () => goto(`/login/${prof!.instance}`)
             })
-            return profile.update(() => getDefaultProfile())
+            
+            //return prof 
+            //profile.update(() => getDefaultProfile())
         }
 
         // Set the instance, site, and current user details from the API
