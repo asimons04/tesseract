@@ -32,7 +32,9 @@
         PencilSquare,
         Share,
         Trash,
-        User 
+        User, 
+        MagnifyingGlass
+
     } from "svelte-hero-icons";
     
     export let personDetails: GetPersonDetailsResponse|undefined
@@ -178,6 +180,16 @@
                 }}
             >
                 Copy Lemmyverse Link
+            </Button>
+
+            <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} alignment="left"
+                on:click={() => {
+                    if (!personDetails) return
+                    goto(`/search?type=Users&q=${personDetails.person_view.person.name}`, {invalidateAll: true})
+                    open=false
+                }}
+            >
+                Search for Alts
             </Button>
             
             <!---Block User--->
