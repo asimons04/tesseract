@@ -65,7 +65,7 @@ function saveToStorage(key: string, item: any, stringify: boolean = true) {
 
 // Initialize profileData store with either the content of localStorave->profileData or a blank starter entry
 export let profileData = writable<ProfileData>( getFromStorage<ProfileData>('profileData') ?? { profiles: [], profile: -1 } )
-
+export let profile = writable<Profile | undefined>(getProfile())
 
 let guestInstance = get(profileData).defaultInstance
 
@@ -81,8 +81,6 @@ profileData.subscribe(async (pd:ProfileData) => {
     
 })
 
-
-export let profile = writable<Profile | undefined>(getProfile())
 
 profile.subscribe(async (p:Profile|undefined) => {
     // If profile ID is -1 (default), set the instnace to the currently selected guest instance or the system-defined DEFAULT_INSTANCE_URL
@@ -152,38 +150,50 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
     // Set the instance store value to the provided instance (it's confirmed to be valid since userFromJwt would have to return successfully)
     instance.set(inst)
 
-    // Update the profileData store and localStorage and add a new profile.
-    profileData.update((pd:ProfileData) => {
-        
-        // Generate a random number to use as the profile ID
-        const id = Math.floor(Math.random() * 100000)
-
-        // Create a new profile object that will be added to the localStorage store
-        const newProfile: Profile = {
-            id: id,
-            instance: inst,
+    // Check if profile exists for this username+instance combo
+    let pIndex = get(profileData).profiles.findIndex((p:Profile) => (p.username == user!.user.local_user_view.person.name && p.instance == inst))
+    if (pIndex>0) {
+        profile.set({
+            ...get(profileData).profiles[pIndex],
+            user: user!.user,
             jwt: jwt,
             username: user!.user.local_user_view.person.name,
             avatar: user!.user.local_user_view.person.avatar,
-            favorites: [],
-            groups: []
-
-        }
-
-        // Set the value of the current profile store to the one we just created and attach the my_user data to that (as to not srore it in localStorage
-        profile.set({
-            ...newProfile,
-            user: user!.user,
         })
+        saveProfileToProfileData()
+    }
+    else {
+        // Add a new profile:  Update the profileData store and localStorage and add a new profile.
+        profileData.update((pd:ProfileData) => {
+            // Use existing profile ID or generate a random number if one doesn't exist
+            const id = Math.floor(Math.random() * 100000)
+            // Create a new profile object that will be added to the localStorage store
+            const newProfile: Profile = {
+                id: id,
+                instance: inst,
+                jwt: jwt,
+                username: user!.user.local_user_view.person.name,
+                avatar: user!.user.local_user_view.person.avatar,
+                favorites: [],
+                groups: []
 
-        // Return data that gets written to localStorage->profileData
-        // Sets the active profile to the one just created
-        // Appends the new profile to the aray of profiles already stored.
-        return {
-            profile: id,
-            profiles: [...pd.profiles, newProfile],
-        }
-    })
+            }
+
+            // Set the value of the current profile store to the one we just created and attach the my_user data to that (as to not srore it in localStorage
+            profile.set({
+                ...newProfile,
+                user: user!.user,
+            })
+            // Return data that gets written to localStorage->profileData
+            // Sets the active profile to the one just created
+            // Appends the new profile to the aray of profiles already stored.
+            return {
+                profile: id,
+                profiles: [...pd.profiles, newProfile],
+            }
+            
+        })
+    }
 
     return user
 }
@@ -215,9 +225,7 @@ async function userFromJwt(jwt: string, instance: string): Promise<{ user: Perso
 function getProfile() {
     const id = get(profileData).profile
 
-    if (id == -1) {
-        return getDefaultProfile()
-    }
+    if (id == -1) return getDefaultProfile()
 
     const pd = get(profileData)
 
