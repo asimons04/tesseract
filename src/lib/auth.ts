@@ -5,6 +5,7 @@ import { DEFAULT_INSTANCE_URL, instance } from '$lib/instance.js'
 import { get, writable } from 'svelte/store'
 import { getClient, site } from '$lib/lemmy.js'
 import { getInbox, getInboxItemPublished } from '$lib/lemmy/inbox.js'
+import { goto } from '$app/navigation'
 import { moveItem } from '$lib/util.js'
 import { userSettings } from '$lib/settings.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -121,14 +122,6 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
     
     let user:{ user: PersonData; site: GetSiteResponse } | undefined = undefined
     
-    // Test that the instance parameter can be a valid URL
-    try {
-        new URL(`https://${inst}`)
-    } catch (err) {
-        console.log("auth.ts->setUser(jwt, inst) -> Invalid instance URL", err);
-        return
-    }
-    
     try {
         // Make authenticated call to getSite to grab the my_user key.
         user = await userFromJwt(jwt, inst)
@@ -153,10 +146,11 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
     // Check if profile exists for this username+instance combo
     let pIndex = get(profileData).profiles.findIndex((p:Profile) => (p.username == user!.user.local_user_view.person.name && p.instance == inst))
     if (pIndex>0) {
+        // Set it twice:  Once to populate it with what we want saved to localStorage and again to add the transient user data
         profile.set({
             ...get(profileData).profiles[pIndex],
-            user: user!.user,
             jwt: jwt,
+            user: user!.user,
             username: user!.user.local_user_view.person.name,
             avatar: user!.user.local_user_view.person.avatar,
         })
@@ -198,9 +192,9 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
     return user
 }
 
-async function userFromJwt(jwt: string, instance: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
+async function userFromJwt(jwt: string, inst: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
     try {
-        const getSite = await getClient(instance, jwt).getSite()
+        const getSite = await getClient(inst, jwt).getSite()
         const myUser = getSite.my_user
         
         if (!myUser) return undefined
@@ -248,7 +242,7 @@ export function saveProfileToProfileData() {
     
     profileData.update((pd:ProfileData) => {
         let newProfileData:ProfileData = {...pd}
-        newProfileData.profiles[pIndex] = {...get(profile)!}
+        newProfileData.profiles[pIndex] = {...serializeUser(get(profile)!)}
         return { ...newProfileData}
     })
 }
@@ -280,27 +274,50 @@ const serializeUser = (user: Profile): Profile => ({
 
 export async function setUserID(id: number) {
     const pd = get(profileData)
-
+    
+    // Set Guest profile
     if (id == -1) {
         resetProfile()
         return
     }
 
+    // Get current profile
     let prof = pd.profiles.find((p) => p.id == id)
 
+    // If current profile doesn't exist, return default/guest profile
     if (!prof) return profile.update(() => getDefaultProfile())
     
+    // Remove the 'user' key from the profile (if present)
     prof = serializeUser(prof)
+    
+    // Set the current profile as the active one in profileData
     profileData.update((p) => ({ ...p, profile: id }))
 
+    // Check for JWT in profile and fetch the current user information (goes into 'user' key)
     if (prof?.jwt) {
         const user = await userFromJwt(prof.jwt, prof.instance)
+        
+        // If the given JWT doesn't resolve to a user (expired/invalid), throw a toast message and redirect to login
+        if (!user) {
+            toast({
+                type: 'warning',
+                title: 'Login Expired',
+                content: ' Your login session is expired. Please log in again',
+                duration: 30 * 1000,
+                action: () => goto(`/login/${prof!.instance}`)
+            })
+            return profile.update(() => getDefaultProfile())
+        }
+
+        // Set the instance, site, and current user details from the API
         instance.set(prof.instance)
-        prof.user = user?.user
         site.set(user?.site)
+        prof.user = user?.user
     }
+    // Update the profile store (in memory only) with the data pulled from the API
     profile.update(() => prof ?? getDefaultProfile())
 
+    // Return the profile to the caller
     return prof
 }
 
