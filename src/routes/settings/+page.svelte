@@ -623,7 +623,6 @@
         <SettingGroup>
             <!--- Enable Embedded Content In Feed--->
             <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed}
-                condition={$userSettings.embeddedMedia.YTFrontend == 'YouTube' }
                 description="Enable embedded content in the feed. When disabled, a thumbnail will be shown instead."
             />
 
@@ -648,11 +647,6 @@
                 those are often rate-limited. They will be forced to click-to-play."
                 options={['YouTube', 'Invidious', 'Piped']}
                 bind:selected={$userSettings.embeddedMedia.YTFrontend}
-                on:select={(e) => {
-                    if (['Invidious', 'Piped'].includes(e.detail)) {
-                        $userSettings.embeddedMedia.feed = false
-                    }
-                }}
             />
 
             <!--- Invidious Instance--->

@@ -26,7 +26,12 @@
 
     $:  showAsEmbed = embedURL && (
             (clickToPlayClicked && inViewport) ||
-            (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+            (   displayType == 'feed' && 
+                $userSettings.embeddedMedia.YTFrontend == 'YouTube' && 
+                inViewport && 
+                $userSettings.embeddedMedia.feed && 
+                (!post.post.nsfw || !$userSettings.nsfwBlur)
+            ) ||
             (displayType == 'post' && $userSettings.embeddedMedia.post)
         )
 

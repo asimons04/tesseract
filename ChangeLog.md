@@ -102,7 +102,15 @@ All major/minor changes between releases will be documented here.
 - [X] Re-write archive link selector be more generic
     - Youtube-like links now have selector to choose from Invidious, Piped, or YouTube
     - Will use your preferred Invidious or Piped instance
-- [X] Replace static/ugly archive link button with nice menu to select from one of multiple sources (currently archive.ph and 12ft.io)
+- [X] Replace static/ugly archive link button with nice menu to select from one of multiple sources.
+
+
+### Media
+- If embedded media in the feed is disabled, the thumbnail images will be "click to play" which will load the embed on click.
+- Re-introduced Piped as an option for the YouTube frontend.
+- Only YouTube frontend will allow YT-like embeds in the feed.  This is to prevent getting rate-limited by volunteer-run Invidious/Piped instances
+- There is now an "alternative source" dropdown to provide links to YouTube, Invidious, and Piped to any YT-like video
+    - Invidious/Piped will link to your defined instance as defined in your app settings.
 - [X] Make post and comment images zoomable
     - All the pan/zoom libraries I tried *suuuuuuucked* so I ended up rolling my own.
     - Can both pan and zoom the image
