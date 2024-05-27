@@ -15,11 +15,11 @@ export interface BlockInstanceResponse {
 export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
     // Use current instance is not otherwise defiend
     if (!instanceURL)   instanceURL = get(instance)
+    jwt = jwt ?? get(profile)?.jwt
 
     // Add the authorization header if JWT is supplied or if present in profile and instance is the same as the one the profile belongs to
-    jwt = jwt ?? get(profile)?.jwt
     const headers = {} as { [key: string]: string; }
-    if (jwt && instanceURL == get(instance)) headers['Authorization'] = `Bearer ${jwt}`
+    if (jwt) headers['Authorization'] = `Bearer ${jwt}`
 
     // Override Lemmy's stupid server-side cache on the only fscking endpoint that will return the local_user profile
     const cachelessFetch = async function (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
@@ -194,6 +194,7 @@ export function parseAPIError(err:any) {
 
 // Do an initial fetch of the site so the logo and site name gets set properly
 // DummyJWT is so the auth module doesn't try to access the profile before it's initialized
+
 getClient(get(instance), 'dummyJWT').getSite().then((getSiteResponse) => {
     site.set(getSiteResponse)
 })
