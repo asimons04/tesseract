@@ -226,7 +226,7 @@
             {#if panel=='groups' && $userSettings.uiState.expandSidebar}
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
                     
-                    {#if $profile?.groups && $profile?.groups?.length > 1}
+                    {#if $profile?.groups && $profile?.groups?.length > 0}
                         {#each $profile.groups.sort(sortGroups) as group}
                             <CommunityGroup group={group} bind:showEmptyGroups/>
                         {/each}
