@@ -22,9 +22,9 @@
     let size: string = imageSize(displayType);
     let clickToPlayClicked = false
 
-    $: if (post?.post?.url) embedURL = buildYouTubeEmbedLink(post.post.url, displayType, autoplay)
-
-    $:  showAsEmbed = embedURL && (
+    
+    // Determine whether the video should be an embed or a click to play
+    $:  showAsEmbed = (
             (clickToPlayClicked && inViewport) ||
             (   displayType == 'feed' && 
                 $userSettings.embeddedMedia.YTFrontend == 'YouTube' && 
@@ -34,8 +34,22 @@
             ) ||
             (displayType == 'post' && $userSettings.embeddedMedia.post)
         )
+    
+    // Build the embed URL basing it on the user's preferred YT frontend. *Attempt* to autoplay the video on click to play (some Invidious/Piped instances don't allow/support this
+    $:  if (post?.post?.url && !clickToPlayClicked) {
+            embedURL = buildYouTubeEmbedLink(post.post.url, displayType, autoplay)
+        }
+        else if (post?.post.url && clickToPlayClicked) {
+            embedURL = buildYouTubeEmbedLink(post.post.url, displayType, true)
+        }
+    
+    // Unset click to play when out of viewport (revert to thumbnail)
+    $:  if (!inViewport) clickToPlayClicked = false
 
-    $: if (!inViewport) clickToPlayClicked = false
+    function clickToPlay() {
+        if (post?.post?.url) embedURL = buildYouTubeEmbedLink(post.post.url, displayType, true)
+        clickToPlayClicked = true
+    }
 </script>
 
 
@@ -65,12 +79,7 @@
             bind:href={post.post.url}
         />
     </span>
-    <PostImage bind:post displayType={displayType} clickToPlay={true} zoomable={false} on:click={(e)=> {
-            e.preventDefault()
-            e.stopPropagation()
-            clickToPlayClicked = true
-        }}
-    />
+    <PostImage bind:post displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> {clickToPlay() }}/>
 
 <!---If embeds disabled and no thumbnail image is available, show as a bare link--->
 {:else if !post.post.thumbnail_url}
