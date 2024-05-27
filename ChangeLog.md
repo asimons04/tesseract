@@ -87,6 +87,9 @@ All major/minor changes between releases will be documented here.
 - [X] Replace old Photon image upload proxy for post images
 - [X] Add `listPostLikes` and `listCommentLikes` options to post and comment moderation menus for admins
 - [X] De-clutter crosspost item in mobile (hide relative date)
+- [X] Image posts now zoom when clicking on image. Click title or comments button to go into the post
+    - Article posts still load the post when clicking the image. Not sure if want to change that to match or not
+    
 - [X] User links now load a modal with user card and action buttons
     - [X] View Profile
     - [X] Message in Lemmy
@@ -96,7 +99,6 @@ All major/minor changes between releases will be documented here.
     - [X] Copy Lemmyverse link to user
     - [X] Block/Unblock User
     - [X] Instance ban user (if current user is admin)
-    - [ ] Move fetch logic into modal itself rather than on the page
 - [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
 - [X] Add 12ft.io as an archive link option
 - [X] Re-write archive link selector be more generic
@@ -107,6 +109,15 @@ All major/minor changes between releases will be documented here.
 
 ### Media
 - If embedded media in the feed is disabled, the thumbnail images will be "click to play" which will load the embed on click.
+    - [X] YouTube
+    - [ ] Spotify
+    - [ ] Peertube
+    - [ ] Bandcamp
+    - [ ] Odysee
+    - [ ] Soundcloud
+    - [ ] Songlink
+    - [ ] Vimeo
+
 - Re-introduced Piped as an option for the YouTube frontend.
 - Only YouTube frontend will allow YT-like embeds in the feed.  This is to prevent getting rate-limited by volunteer-run Invidious/Piped instances
 - There is now an "alternative source" dropdown to provide links to YouTube, Invidious, and Piped to any YT-like video
