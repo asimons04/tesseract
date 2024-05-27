@@ -136,7 +136,7 @@
             
             
             <div class="flex flex-col items-center pt-2 w-full">
-                <InfiniteScrollDiv bind:state={infiniteScrollState} bind:element={scrollArea} threshold={300}
+                <InfiniteScrollDiv bind:state={infiniteScrollState} bind:element={scrollArea} threshold={500}
                     on:loadMore={ () => loadMore() }
                 />
             </div>
