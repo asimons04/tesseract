@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { createEventDispatcher } from 'svelte'
+    
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte';
 
     import { Icon, InformationCircle, type IconSource } from 'svelte-hero-icons'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte';
 
     export let icon:IconSource = InformationCircle
     export let title:string = ''
@@ -10,7 +12,9 @@
     export let condition:boolean = true
     export let options:any[]
     export let optionNames:any[] = []
-
+    
+    const dispatcher = createEventDispatcher<{ select: string }>()
+    $: { dispatcher('select', selected)}
 </script>
 
 {#if condition}
