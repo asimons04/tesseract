@@ -74,7 +74,7 @@
 >
     <div class="ml-auto mr-auto {$userSettings.imageSize.post ?? 'max-w-3xl'}">
         <picture class="rounded-md overflow-hidden  max-w-full"> 
-            <ZoomableImage url={thumbnail_url ?? url} limitHeight={false} bind:nsfw={post.post.nsfw} altText={name} {zoomable}
+            <ZoomableImage url={url} limitHeight={false} altText={name} {zoomable}
                 class="ml-auto mr-auto object-contain rounded-md h-auto xl:min-h-[500px] z-30"
             />
         </picture>
