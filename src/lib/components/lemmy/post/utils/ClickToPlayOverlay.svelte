@@ -26,8 +26,8 @@
         }}
     >  
         <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-lg font-bold 
-            rounded-full border border-slate-500 whitespace-nowrap shadow-lg p-4 cursor-pointer
-            bg-white dark:bg-black
+            rounded-full border-2 border-slate-200 whitespace-nowrap shadow-lg p-4 cursor-pointer
+            bg-white/50 dark:bg-black/50 hover:text-sky-500
             "
         >
             <Icon src={Play} mini width={64} />
