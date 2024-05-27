@@ -83,7 +83,7 @@ interface Settings {
     embeddedMedia: {
         feed: boolean
         post: boolean
-        YTFrontend: "YouTube" | "Invidious"
+        YTFrontend: "YouTube" | "Invidious" | "Piped"
         customInvidious: string
         customPiped: string
         autoplay: boolean

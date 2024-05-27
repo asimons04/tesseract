@@ -623,6 +623,7 @@
         <SettingGroup>
             <!--- Enable Embedded Content In Feed--->
             <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed}
+                condition={$userSettings.embeddedMedia.YTFrontend == 'YouTube' }
                 description="Enable embedded content in the feed. When disabled, a thumbnail will be shown instead."
             />
 
@@ -642,9 +643,16 @@
             />
 
             <!--- YouTube Frontend--->
-            <SettingMultiSelect title="YouTube Frontend" icon={Tv} description="Choose whether to use YouTube or Invidious for YouTube links."
-                options={['YouTube', 'Invidious']}
+            <SettingMultiSelect title="YouTube Frontend" icon={Tv} 
+                description="Choose whether to use YouTube, Invidious, or Piped for YouTube links. Feed embeds will be disabled for Invidious/Piped since
+                those are often rate-limited. They will be forced to click-to-play."
+                options={['YouTube', 'Invidious', 'Piped']}
                 bind:selected={$userSettings.embeddedMedia.YTFrontend}
+                on:select={(e) => {
+                    if (['Invidious', 'Piped'].includes(e.detail)) {
+                        $userSettings.embeddedMedia.feed = false
+                    }
+                }}
             />
 
             <!--- Invidious Instance--->

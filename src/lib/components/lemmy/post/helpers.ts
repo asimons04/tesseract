@@ -203,6 +203,9 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
     if (userSettings.embeddedMedia.YTFrontend == "Invidious" && userSettings.embeddedMedia.customInvidious !='') {
         embedURL = new URL('https://' + userSettings.embeddedMedia.customInvidious);
     }
+    else if (userSettings.embeddedMedia.YTFrontend == "Piped" && userSettings.embeddedMedia.customPiped !='') {
+        embedURL = new URL('https://' + userSettings.embeddedMedia.customPiped);
+    }
     else {
         embedURL = new URL('https://www.youtube-nocookie.com')
     }
