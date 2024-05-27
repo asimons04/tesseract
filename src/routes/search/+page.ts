@@ -43,7 +43,8 @@ export async function load({ url }: LoadParams) {
 
     if (person) {
         filters.person = await getClient().getPersonDetails({
-            person_id: person
+            person_id: person,
+            limit: 1
         })
     }
 
