@@ -263,11 +263,15 @@ export function deleteProfile(id: number) {
     }
 }
 
+/** Strips out the `my_user` data so the returned value can be stored in profile->profileData without that*/
 const serializeUser = (user: Profile): Profile => ({
     ...user,
     user: undefined,
 })
 
+/** Sets the currently active profile to the profile ID provided. 
+ * @param id The profile ID (not the profile index)
+*/
 export async function setUserID(id: number) {
     const pd = get(profileData)
     
@@ -291,6 +295,8 @@ export async function setUserID(id: number) {
 
     // Check for JWT in profile and fetch the current user information (goes into 'user' key)
     if (prof?.jwt) {
+        
+        // Set instance so the JS client will send the auth header
         instance.set(prof.instance)
 
         const user = await userFromJwt(prof.jwt, prof.instance)
@@ -306,7 +312,7 @@ export async function setUserID(id: number) {
             })
         }
 
-        // Set the instance, site, and current user details from the API
+        // Set the site and current user details from the API
         site.set(user?.site)
         prof.user = user?.user
     }
