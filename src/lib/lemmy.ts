@@ -8,13 +8,18 @@ export interface BlockInstanceResponse {
     blocked: boolean
 }
 
+/** Returns the current instance */
+export const getInstance = () => get(instance)
+
+export const site = writable<GetSiteResponse | undefined>(undefined)
+
 /** Returns a LemmyHttp API client
  * @param instanceURL is the instance domain it should work against (default is current instance)
  * @param jwt is the auth token to be used (defaults to profile, but need to supply it in some cases to bootstrap profile
 */
 export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
     // Use current instance is not otherwise defiend
-    if (!instanceURL)   instanceURL = get(instance)
+    if (!instanceURL)   instanceURL = get(profile)?.instance ?? get(instance)
     jwt = jwt ?? get(profile)?.jwt
 
     // Add the authorization header if JWT is supplied or if present in profile and instance is the same as the one the profile belongs to
@@ -39,11 +44,7 @@ export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
     )
 }
 
-/** Returns the current instance */
-export const getInstance = () => get(instance)
 
-
-export const site = writable<GetSiteResponse | undefined>(undefined)
 
 /** Validates an instance by calling getSite() and optionallly sets the current site store to its GetSiteResponse
  * @param instance The instance domain to check
@@ -53,7 +54,7 @@ export async function validateInstance(instance: string, setSite:boolean=false):
     if (!instance) return false
     try {
         let siteData = await getClient(instance).getSite()
-        if (setSite) site.set(siteData);
+        if (setSite) site.update(() => siteData)
         return true
     } catch (err) {
         return false
@@ -195,6 +196,6 @@ export function parseAPIError(err:any) {
 // Do an initial fetch of the site so the logo and site name gets set properly
 // DummyJWT is so the auth module doesn't try to access the profile before it's initialized
 
-getClient(get(instance), 'dummyJWT').getSite().then((getSiteResponse) => {
-    site.set(getSiteResponse)
-})
+//getClient(get(instance), 'dummyJWT').getSite().then((getSiteResponse) => {
+//    site.set(getSiteResponse)
+//})
