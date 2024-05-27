@@ -209,12 +209,13 @@ async function userFromJwt(jwt: string, inst: string): Promise<{ user: PersonDat
 
 // Returns the Profile data of the currently selected profile (profileData.profile -> profileData.profiles[profileData.profile])
 function getProfile() {
+    // Get currently active profile
     const id = get(profileData).profile
 
     if (id == -1) return getDefaultProfile()
-    const pd = get(profileData)
-
+    
     // Set the current instance if the profile is found
+    const pd = get(profileData)
     let pFile = pd.profiles.find((p:Profile) => p.id == id)
     if (pFile) instance.set(pFile.instance)
     
@@ -290,8 +291,10 @@ export async function setUserID(id: number) {
 
     // Check for JWT in profile and fetch the current user information (goes into 'user' key)
     if (prof?.jwt) {
+        instance.set(prof.instance)
+
         const user = await userFromJwt(prof.jwt, prof.instance)
-        
+
         // If the given JWT doesn't resolve to a user (expired/invalid), throw a toast message and redirect to login
         if (!user) {
             toast({
@@ -301,13 +304,9 @@ export async function setUserID(id: number) {
                 duration: 30 * 1000,
                 action: () => goto(`/login/${prof!.instance}`)
             })
-            
-            //return prof 
-            //profile.update(() => getDefaultProfile())
         }
 
         // Set the instance, site, and current user details from the API
-        instance.set(prof.instance)
         site.set(user?.site)
         prof.user = user?.user
     }
