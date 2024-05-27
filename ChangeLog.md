@@ -31,7 +31,9 @@ All major/minor changes between releases will be documented here.
     - Fixed by using $profile.instances instead of get(instance) since the profile one is backed by local storage 
 - [X] Viewing instance stats from the instances menu for your own instance causes some kind of infinite loop
     - Best to just not show that option if post/comment is for your own instance. Not useful anyway
-    
+- [X] Imgur embed gifs not showing GIF in post view.
+- [X] NSFW images showing blurred in post view
+
     
 #### General UI
 - [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
