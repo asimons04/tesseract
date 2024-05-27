@@ -2,7 +2,7 @@
     import type { SaveUserSettings } from 'lemmy-js-client'
     
     import { getClient } from '$lib/lemmy.js'
-    import { profile } from '$lib/auth.js'
+    import { profile, saveProfileToProfileData } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -63,6 +63,12 @@
                     type: 'success',
                     title: "Success"
                 })
+
+                // If profile avatar changes, update the stored value in localStorage so the UI uses the most recent in account selector
+                if (pfp) {
+                    $profile.avatar = pfp
+                    saveProfileToProfileData()
+                }
             }   
             else {
                 throw new Error('Failed to save user settings')
