@@ -229,8 +229,10 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
 
 
     // Enable autoplay videos in post if setting is enabled
-    
     if (displayType ==  'post' && (autoplay ?? userSettings.embeddedMedia.autoplay)) {
+        embedURL.searchParams.set('autoplay', '1');
+    }
+    else if (autoplay) {
         embedURL.searchParams.set('autoplay', '1');
     }
     else {
