@@ -19,12 +19,12 @@ export const site = writable<GetSiteResponse | undefined>(undefined)
 */
 export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
     // Use current instance is not otherwise defiend
-    if (!instanceURL)   instanceURL = get(profile)?.instance ?? get(instance)
+    if (!instanceURL)   instanceURL = get(instance)
     jwt = jwt ?? get(profile)?.jwt
 
     // Add the authorization header if JWT is supplied or if present in profile and instance is the same as the one the profile belongs to
     const headers = {} as { [key: string]: string; }
-    if (jwt) headers['Authorization'] = `Bearer ${jwt}`
+    if (jwt && instanceURL == get(instance)) headers['Authorization'] = `Bearer ${jwt}`
 
     // Override Lemmy's stupid server-side cache on the only fscking endpoint that will return the local_user profile
     const cachelessFetch = async function (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
