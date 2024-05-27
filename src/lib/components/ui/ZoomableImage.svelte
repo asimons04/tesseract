@@ -28,7 +28,7 @@
             target: EventTarget
         }
     }
-
+    import { createEventDispatcher } from "svelte";
     import { imageProxyURL } from "$lib/image-proxy";
     import { userSettings } from "$lib/settings";
     import { zoomImageModal } from "../lemmy/moderation/moderation";
@@ -37,10 +37,10 @@
     export let resolution: number|undefined =  undefined
     export let nsfw:boolean = false
     export let altText:string = ''
-    export let limitHeight:boolean = true
     export let title:string = ''
     export let zoomable:boolean = true
     
+    let dispatcher = createEventDispatcher()
     let loaded = false
     
     // Class not used due to chicken/egg, but leaving in until I move it to a util library for outside use
@@ -166,7 +166,6 @@
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <img src="{imageProxyURL(url, resolution)}"
         class="{$$props.class} opacity-0 transition-opacity duration-150 
-            {limitHeight ? 'max-h-[min(80vh,800px)]' : ''}    
             {zoomable ? 'cursor-zoom-in' : ''}
         "
         class:opacity-100={loaded}
@@ -179,6 +178,9 @@
                 e.preventDefault()
                 e.stopPropagation()
                 zoomImageModal(url, altText)
+            }
+            else {
+                dispatcher('click', e)
             }
         }}
     />
