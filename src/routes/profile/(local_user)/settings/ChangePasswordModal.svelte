@@ -66,7 +66,7 @@
                     content:' Password successfully changed.'
                 })
                 changingPassword = false
-                open = false
+                close()
             }
             else {
                 throw new Error('New JWT was not returned from API');
@@ -82,10 +82,17 @@
         }
 
     }
+
+    function close() {
+        oldPassword = ''
+        newPassword = ''
+        newPassword2 = ''
+        open = false
+    }   
 </script>
 
 
-<Modal bind:open icon={Key} title="Change Password" width="max-w-2xl">
+<Modal bind:open icon={Key} title="Change Password" width="max-w-2xl" on:close={() => close()}>
     <form class="flex flex-col gap-4" autocomplete="off">
         <Card cardColor="warning">
             <div class="flex flex-row gap-2 items-center p-2">
