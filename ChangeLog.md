@@ -224,13 +224,13 @@ This isn't really a Tesseract issue since the Lemmy backend handles that.  Just 
 ### Media
 - If embedded media in the feed is disabled, the thumbnail images will be "click to play" which will load the embed on click.
     - [X] YouTube
-    - [ ] Spotify
+    - [X] Spotify
     - [X] Peertube
     - [ ] Bandcamp
     - [ ] Odysee
-    - [ ] Soundcloud
+    - [X] Soundcloud
     - [ ] Songlink
-    - [ ] Vimeo
+    - [X] Vimeo
 
 - Re-introduced Piped as an option for the YouTube frontend.
 - Only YouTube frontend will allow YT-like embeds in the feed.  This is to prevent getting rate-limited by volunteer-run Invidious/Piped instances

@@ -17,46 +17,49 @@
     let embedURL:   string | undefined = undefined
     let extraParams:string = ""
     let inViewport = false
-    
+    let clickToPlayClicked = false
     
 
     // Generate the embed URL for the given post URL
-    $: if (post?.post?.url) {
-        
-        // e.g. https://open.spotify.com/embed/track/2RUs0cO0KpvuZJ0J4hqFFC
-        if (post.post.url.startsWith('https://open.spotify.com/embed')) {
-            embedURL = post.post.url;
+    $:  if (post?.post?.url) {
+            // e.g. https://open.spotify.com/embed/track/2RUs0cO0KpvuZJ0J4hqFFC
+            if (post.post.url.startsWith('https://open.spotify.com/embed')) {
+                embedURL = post.post.url;
+            }
+
+            if (post.post.url.startsWith('https://open.spotify.com/track')) {
+                trackID = new URL(post.post.url).pathname.replace('/track/','');
+                embedURL = `https://open.spotify.com/embed/track/${trackID}?theme=0&height=100%`
+            }
+
+            if (post.post.url.startsWith('https://open.spotify.com/playlist')) {
+                trackID = new URL(post.post.url).pathname.replace('/playlist/','');
+                embedURL = `https://open.spotify.com/embed/playlist/${trackID}?theme=0&height=100%`
+            }
+
+            if (post.post.url.startsWith('https://open.spotify.com/album')) {
+                trackID = new URL(post.post.url).pathname.replace('/album/','');
+                embedURL = `https://open.spotify.com/embed/album/${trackID}?theme=0&height=100%`
+            }
+
+            if (post.post.url.startsWith('https://open.spotify.com/episode')) {
+                trackID = new URL(post.post.url).pathname.replace('/episode/','');
+                embedURL = `https://open.spotify.com/embed/episode/${trackID}?theme=0&height=100%`
+            }
         }
 
-        if (post.post.url.startsWith('https://open.spotify.com/track')) {
-            trackID = new URL(post.post.url).pathname.replace('/track/','');
-            embedURL = `https://open.spotify.com/embed/track/${trackID}?theme=0&height=100%`
-        }
+    $:  showAsEmbed = embedURL && (clickToPlayClicked && inViewport) || (
+            (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+            (displayType == 'post' && $userSettings.embeddedMedia.post)
+        )
 
-        if (post.post.url.startsWith('https://open.spotify.com/playlist')) {
-            trackID = new URL(post.post.url).pathname.replace('/playlist/','');
-            embedURL = `https://open.spotify.com/embed/playlist/${trackID}?theme=0&height=100%`
-        }
-
-        if (post.post.url.startsWith('https://open.spotify.com/album')) {
-            trackID = new URL(post.post.url).pathname.replace('/album/','');
-            embedURL = `https://open.spotify.com/embed/album/${trackID}?theme=0&height=100%`
-        }
-
-        if (post.post.url.startsWith('https://open.spotify.com/episode')) {
-            trackID = new URL(post.post.url).pathname.replace('/episode/','');
-            embedURL = `https://open.spotify.com/embed/episode/${trackID}?theme=0&height=100%`
-        }
-    }
-
-    $: showAsEmbed = embedURL && (
-        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
-        (displayType == 'post' && $userSettings.embeddedMedia.post)
-    )
-
-    $: height = embedURL && (embedURL.includes('/track') || embedURL.includes('/episode/'))
-        ? 'h-[352px]'
-        : 'h-[500px]'
+    // Set height differently for track versus album
+    $:  height = embedURL && (embedURL.includes('/track') || embedURL.includes('/episode/'))
+            ? 'h-[352px]'
+            : 'h-[500px]'
+    
+    // Unset click to play when out of viewport (revert to thumbnail)
+    $:  if (!inViewport) clickToPlayClicked = false
 
 </script>
 
@@ -105,25 +108,20 @@
     </div>
 
 {:else if post.post.thumbnail_url}
-    <!---Create image post if user has media embeds enabled for posts--->    
-    {#if $userSettings.embeddedMedia.post}
-        <Link
-            href={post.post.url}
-            title={post.post.name}
-            newtab={$userSettings.openInNewTab.links}
-            highlight nowrap
-        />
-        <PostImage bind:post={post} displayType={displayType} />
+    <Link
+        href={post.post.url}
+        title={post.post.name}
+        newtab={$userSettings.openInNewTab.links}
+        highlight nowrap
+    />
+    <PostImage bind:post={post} displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
     
-    <!---Create PostLink to external link if user does not have embeds enaled for posts--->
-    {:else}
-        <PostLink bind:post={post}  displayType={displayType}/>
-    {/if}
+
 
 {:else if !post.post.thumbnail_url}
-<Link
-    href={post.post.url}
-    title={post.post.name}
-    highlight nowrap
-/>
+    <Link
+        href={post.post.url}
+        title={post.post.name}
+        highlight nowrap
+    />
 {/if}
