@@ -86,18 +86,10 @@ interface Settings {
         YTFrontend: "YouTube" | "Invidious" | "Piped"
         customInvidious: string
         customPiped: string
+        userDefinedInvidious: string[],
+        userDefinedPiped: string[],
         autoplay: boolean
         loop:boolean
-        enabledSources: {
-            youtube: boolean,
-            spotify: boolean,
-            soundcloud: boolean,
-            bandcamp: boolean,
-            vimeo: boolean,
-            odysee: boolean,
-            songlink: boolean,
-            generic: boolean
-        }
     }
     imageSize: {
         feed: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
@@ -141,7 +133,7 @@ interface Settings {
 
 // Default settings
 export const defaultSettings: Settings = {
-    version: 0.8,
+    version: 0.9,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -155,7 +147,7 @@ export const defaultSettings: Settings = {
     font: 'font-roboto',
     debugInfo: false,
     imageSize: {
-        feed: 'max-w-3xl',
+        feed: 'w-full',
         post: 'w-full'
     },
     highlightCode: true,
@@ -215,23 +207,15 @@ export const defaultSettings: Settings = {
     experimentalFeatures:                                               false,
     
     embeddedMedia: {
-        feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  true,
+        feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  false,
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
         YTFrontend: env.PUBLIC_YOUTUBE_FRONTEND as "YouTube" | "Invidious" ??  "YouTube" ,
         customInvidious:                                                'yewtu.be',
         customPiped:                                                    'piped.video',
+        userDefinedInvidious:                                          [],
+        userDefinedPiped:                                               [],
         autoplay:                                                       false,
         loop:                                                           true,
-        enabledSources: {
-            youtube:    true,
-            spotify:    true,
-            soundcloud: true,
-            bandcamp:   true,
-            vimeo:      true,
-            odysee:     true,
-            songlink:   true,
-            generic:    true
-        },
     },
     proxyMedia: {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
@@ -404,12 +388,6 @@ export function migrateSettings(old:any) {
 
     // Version 0 -> 0.1
     if (old.version == 0) {
-        // Add individual selectors for embedded media
-        if (!old.embeddedMedia.enabledSources) {
-            if (old.embeddedMedia.feed || old.embeddedMedia.post) {
-                old.embeddedMedia.enabledSources = {...defaultSettings.embeddedMedia.enabledSources}
-            }
-        }
         old.version = 0.1;
     }
 
@@ -469,6 +447,12 @@ export function migrateSettings(old:any) {
         old.version = 0.8
     }
 
+    // 0.8 -> 0.9
+    if (old.version == 0.8) {
+        delete old.embeddedMedia.enabledSources
+        old.version = 0.9
+    }
+
     return { 
         ...defaultSettings, 
         ...old, 
@@ -480,7 +464,6 @@ export function migrateSettings(old:any) {
         embeddedMedia:  {
             ...defaultSettings.embeddedMedia,
             ...old.embeddedMedia,
-            enabledSources: { ...defaultSettings.embeddedMedia.enabledSources, ...old.embeddedMedia.enabledSources }
         },
         imageSize:      {...defaultSettings.imageSize, ...old.imageSize},
         uiState:        {...defaultSettings.uiState, ...old.uiState},
