@@ -74,7 +74,8 @@ Removed the `[Archive Link]` next to the post URL and replacd it with a fancy me
 - On posts with links, it currently has buttons to search for the article at Archive Today, Ghost Archive, and 12ft.io
 - On Youtube-like posts, can select alternalte links for YouTube, Invidious, or Piped
     - Invidious/Piped will open with your preferred instance (defined in settings)
-
+    - Useful if someone posts a video to an Invidious instance that performs poorly for you and you would prefer to view it on your preferred Invidious/Piped instance or canonically on YouTube.
+    
 #### TOTP 2FA Setup
 Can now enable and enroll in 2FA as well as disable it.
 
