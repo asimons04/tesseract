@@ -103,7 +103,8 @@ export const isPeertube = (embed_video_url:string): boolean => {
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
 // Invidious
 export const isInvidious = (url: string):boolean => {
-    for (let i=0; i<YTFrontends.invidious.length; i++) {
+    const frontends = [...YTFrontends.invidious, ...userSettings.embeddedMedia.userDefinedInvidious]
+    for (let i=0; i<frontends.length; i++) {
         if (url.startsWith(`https://${YTFrontends.invidious[i]}`)) {
             return true;
         }
@@ -134,7 +135,8 @@ export const isYouTube = (url:string):boolean => {
 
 //  Piped
 export const isPiped = (url: string):boolean => {
-    for (let i=0; i<YTFrontends.piped.length; i++) {
+    const frontends = [...YTFrontends.piped, ...userSettings.embeddedMedia.userDefinedPiped]
+    for (let i=0; i<frontends.length; i++) {
         if (url.startsWith(`https://${YTFrontends.piped[i]}`)) {
             return true;
         }
