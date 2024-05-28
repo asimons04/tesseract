@@ -19,8 +19,6 @@
     let embedURL: URL
     let clickToPlayClicked = false
 
-//    $:  if (post.post.embed_video_url) embedURL = new URL(post.post.embed_video_url)
-
     $:  showAsEmbed = embedURL && 
             (clickToPlayClicked && inViewport) || (
                 (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
