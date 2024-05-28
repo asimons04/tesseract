@@ -20,13 +20,13 @@ Most images are now zoomable:  post images, user/site/community avatars, images 
 
 #### User Profile Modals
 Clicking on usernames throughout the application will now load a modal with their user card and relevant options. Old behavior was taking you to their profile directly.  Actions include:
-    - Go to profile
-    - Message in Lemmy / Matrix
-    - Block User
-    - Search for alts / simiarly-named accounts
-    - Ban user from instance (admins only)
-    - View user on their home instance
-    - Copy Lemmyverse link for user
+- Go to profile
+- Message in Lemmy / Matrix
+- Block User
+- Search for alts / simiarly-named accounts
+- Ban user from instance (admins only)
+- View user on their home instance
+- Copy Lemmyverse link for user
 
 #### Image Management on  Posts/Comments
 - Images can be pasted in the post's URL field as well as in the markdown editor.  
@@ -92,11 +92,11 @@ Admins can now see votes like in Lemmy-UI.  Uses infinite scroll and deduplicati
 
 
 #### Various Enhancements to Auth Module.
-    - Added safety check so that the auth token is only ever sent to the profile's associated instance and cannot accidentally send to non-home instance
-    - Fixed a few chicken/egg situations where the profile store needed to be accessed before it was initialized
-    - If your auth token is invalid, such as after changing your password on another device, you will get a toast message you can click to take you to the login screen.
-    - If a profile exists for a username/instance combo, logging in will update the auth token for that existing profile rather than creating a new one.
-    - User avatars are now fetched when logging in.
+- Added safety check so that the auth token is only ever sent to the profile's associated instance and cannot accidentally send to non-home instance
+- Fixed a few chicken/egg situations where the profile store needed to be accessed before it was initialized
+- If your auth token is invalid, such as after changing your password on another device, you will get a toast message you can click to take you to the login screen.
+- If a profile exists for a username/instance combo, logging in will update the auth token for that existing profile rather than creating a new one.
+- User avatars are now fetched when logging in.
 
 #### Grace Period Before Media Embeds are Destroyed When Scrolling out of Viewport
 - Embeds now have a short timeout when leaving the viewport before they're removed from the DOM and turn back into thumbnails.  Fixes annoyance when resizing the window while a video is playing and the video temporarily leaves the viewport and is destroyed. Timeout is 2 seconds and will reset/disarm if the post returns to the viewport before it expires.
