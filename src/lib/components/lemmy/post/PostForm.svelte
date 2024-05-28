@@ -443,7 +443,7 @@
             <SettingToggleContainer>
                 <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
                 
-                {#if ENABLE_MEDIA_PROXY}
+                {#if ENABLE_MEDIA_PROXY && $userSettings.proxyMedia.enabled}
                     <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
                 {/if}
             </SettingToggleContainer>
