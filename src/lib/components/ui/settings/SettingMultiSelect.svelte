@@ -27,6 +27,12 @@
             <p class="text-xs font-normal">
                 {description}
             </p>
+
+            {#if $$slots.default}
+                <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4">
+                    <slot />
+                </div>
+            {/if}
         </div>
         
         <div class="mx-auto"/>
