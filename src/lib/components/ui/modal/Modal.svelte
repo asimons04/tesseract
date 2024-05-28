@@ -40,9 +40,6 @@
     }
 
     const dispatcher = createEventDispatcher()
-
-    $: if (open && modalElement) modalElement.focus()
-
 </script>
 
 {#if open}
@@ -79,8 +76,8 @@
             <div class="w-full dark:!bg-zinc-950 rounded-xl {width} box-border mx-auto {fullHeight ? 'h-full' : height}">
                 <div bind:this={modalElement} tabindex="-1" role="dialog"
                     class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
-                        dark:bg-zinc-950 dark:border-zinc-800
-                        bg-white border border-slate-200  
+                        bg-white dark:bg-zinc-950 
+                        border border-slate-200 dark:border-zinc-800 
                         {fullHeight ? 'h-[95vh]' : 'h-auto'}
                         {action ? 'border-b-0 rounded-b-none' : ''}
                     "
