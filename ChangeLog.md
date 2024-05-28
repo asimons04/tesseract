@@ -7,7 +7,7 @@ All major/minor changes between releases will be documented here.
 ### New Features
 
 #### Zoomable Images
-Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  The pinch zoom isn't quite where I want it, but I may be hitting a library limitation.
+Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  The pinch zoom isn't quite where I want it, but I may be hitting a library limitation.  All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch.
 - Support zoom, pan, and rotate
     - Mouse scroll to zoom
     - Click/grab to pan
@@ -17,7 +17,8 @@ Most images are now zoomable:  post images, user/site/community avatars, images 
     - Swipe up to dismiss zoom modal
     - Swipe down to toggle quick zoom/unzoom
     - Swipe left to zoom out, right to zoom in (one zoom step per swipe)
-
+    - Other gestures may be added once I figure out a clean way to differentiate them from conflicting mouse events
+    
 #### User Profile Modals
 Clicking on usernames throughout the application will now load a modal with their user card and relevant options. Old behavior was taking you to their profile directly.  Actions include:
 - Go to profile
