@@ -6,42 +6,33 @@
     import { userSettings  } from '$lib/settings.js'
 
     import Link from '$lib/components/input/Link.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
+    import PostIsInViewport from './utils/PostIsInViewport.svelte'
 
     export let post: PostView
     export let displayType: PostDisplayType
     export let postContainer: HTMLDivElement
-
+    
+    let clickToPlayClicked = false
     let embedURL:   string = ""
-
-    // Determine if the post is in the viewport and use that to determine whether to render it as an embed in the feed.
-    // Should reduce memory consumption by a lot on video-heavy feeds.
     let inViewport = false
-    const observer = new window.IntersectionObserver( ([entry]) => {
-        if (entry.isIntersecting) {
-            inViewport = true
-            return
-        }
-        inViewport = false
-        }, 
-        { root: null, threshold: 0,}
-    )
-    $: if (postContainer) observer.observe(postContainer)
 
     // Generate the embed URL for the given post URL
-    $: if (post.post && post.post.embed_video_url) {
-        embedURL = post.post.embed_video_url
+    $:  if (post.post && post.post.embed_video_url) {
+            embedURL = post.post.embed_video_url
+            let opts = "/bgcol=1F1F24/";
+            opts += "/linkcol=F4F4F5/";
+            //opts += "/transparent=true/"
+            embedURL += opts;
+        }
 
-        let opts = "/bgcol=1F1F24/";
-        opts += "/linkcol=F4F4F5/";
-        //opts += "/transparent=true/"
-        embedURL += opts;
-    }
-
-    $: showAsEmbed = embedURL &&
-        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
-        (displayType == 'post' && $userSettings.embeddedMedia.post)
+    $:  showAsEmbed = embedURL && (clickToPlayClicked && inViewport) || (
+            (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+            (displayType == 'post' && $userSettings.embeddedMedia.post)
+        )
+    
+    // Unset click to play when out of viewport (revert to thumbnail)
+    $:  if (!inViewport) clickToPlayClicked = false
 
 </script>
 
@@ -63,7 +54,7 @@
     }
 </style>
 
-
+<PostIsInViewport bind:postContainer bind:inViewport />
 
 {#if showAsEmbed}
     <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
@@ -111,20 +102,16 @@
 
 {:else if post.post.thumbnail_url}
     <!---Create image post if user has media embeds enabled for posts--->    
-    {#if $userSettings.embeddedMedia.post}
-        <Link
-            href={post.post.url}
-            title={post.post.name}
-            newtab={$userSettings.openInNewTab.links}
-            highlight nowrap
-            domainOnly={!$userSettings.uiState.showFullURL}
-        />
-        <PostImage bind:post={post}  displayType={displayType} />
+    <Link
+        href={post.post.url}
+        title={post.post.name}
+        newtab={$userSettings.openInNewTab.links}
+        highlight nowrap
+        domainOnly={!$userSettings.uiState.showFullURL}
+    />
+    <PostImage bind:post={post}  displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
     
-    <!---Create PostLink to external link if user does not have embeds enaled for posts--->
-    {:else}
-        <PostLink bind:post={post}  displayType={displayType}/>
-    {/if}
+
 
 {:else if !post.post.thumbnail_url}
     <Link
