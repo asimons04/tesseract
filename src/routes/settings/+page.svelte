@@ -16,6 +16,7 @@
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import SettingEditArray from '$lib/components/ui/settings/SettingEditArray.svelte'
     import SettingGroup from '$lib/components/ui/settings/SettingGroup.svelte'
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
@@ -82,12 +83,6 @@
 
 
     } from 'svelte-hero-icons'
-    
-    
-    
-    //import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
-    
-    
 
     let data = {
         loading: false,
@@ -104,59 +99,6 @@
         lemmy: undefined
     }
 
-    // Keyword filtering helpers
-    let keywordInput:string
-    const addKeyword = function(input:string):void {
-        // Initialize an empty keyword list if it doesn't exist
-        if (!$userSettings.hidePosts.keywordList) {
-            $userSettings.hidePosts.keywordList = [];
-        }
-        
-        if (input.trim() == '') return;
-
-        let words = input.split(',');
-        let ignored:boolean = false;
-
-        words.forEach((item) => {
-            let word = item.trim();
-            if ($userSettings.hidePosts.keywordList.includes(word)) {
-                ignored = true;
-            }
-            else {
-                $userSettings.hidePosts.keywordList.push(word);
-            }
-        })
-        
-        $userSettings.hidePosts.keywordList.sort();
-        $userSettings.hidePosts.keywordList = $userSettings.hidePosts.keywordList
-        keywordInput = '';
-
-        if (ignored) {
-            toast( {
-                content: "Some words were ignored because they are already in the filter list.",
-                type: "warning"
-
-            })
-        }
-        else {
-            toast( {
-                content: "Keywords added to personal filter.",
-                type: "success"
-
-            })
-        }
-    }
-
-    const delKeyword = function(input:string):void {
-        if ($userSettings.hidePosts.keywordList.includes(input)) {
-            let index = $userSettings.hidePosts.keywordList.indexOf(input);
-            
-            $userSettings.hidePosts.keywordList.splice(index,1);
-            $userSettings.hidePosts.keywordList = $userSettings.hidePosts.keywordList;
-        }
-
-
-    }
 
     const exportSettings = function():void {
         if (!$profile?.groups) return
@@ -369,6 +311,17 @@
     // Watch for a file to be uploaded for Tesseract settings
     $: if (uploadFiles.tesseract && uploadFiles.tesseract.length > 0) {
         importSettings(uploadFiles.tesseract)
+    }
+
+    
+    // If the custom invidious selection gets cleared, set it to the first in the list
+    $:  if (!$userSettings.embeddedMedia.customInvidious) {
+            $userSettings.embeddedMedia.customInvidious = YTFrontends.invidious[0]
+        }
+    
+        // If the custom piped selection gets cleared, set it to the first in the list
+    $:  if (!$userSettings.embeddedMedia.customPiped) {
+            $userSettings.embeddedMedia.customPiped = YTFrontends.piped[0]
     }
 
     let open = {
@@ -651,18 +604,39 @@
 
             <!--- Invidious Instance--->
             <SettingMultiSelect title="Preferred Invidious Instance" icon={Film} description="Select the Invidious instance you wish to use as your YouTube frontend."
-                options={YTFrontends.invidious}
+                options={ [...YTFrontends.invidious, ...$userSettings.embeddedMedia.userDefinedInvidious].sort() }
                 bind:selected={$userSettings.embeddedMedia.customInvidious}
             />
-
-            <!--- Invidious Instance--->
-            <SettingMultiSelect title="Preferred Piped Instance" icon={Film} description="Select the Piped instance you wish to use as your YouTube frontend."
-                options={YTFrontends.piped}
-                bind:selected={$userSettings.embeddedMedia.customPiped}
+            
+            <!---Custom Invidious Instance Editor--->
+            <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedInvidious}  icon={Server} showPlaceholder={false}
+                textInputPlaceholder="inv.example.com"
+                title="Define Custom Invidious Instances"
+                description="Specify here any custom Invidious intances you wish to use.  These will be used for both detection of Invidious links in posts
+                as well as selectable preferred instances for YT-like posts."
             />
 
+
+            <!--- Piped Instance--->
+            <SettingMultiSelect title="Preferred Piped Instance" icon={Film} description="Select the Piped instance you wish to use as your YouTube frontend."
+                options={ [...YTFrontends.piped, ...$userSettings.embeddedMedia.userDefinedPiped].sort() }    
+                bind:selected={$userSettings.embeddedMedia.customPiped}
+                on:select={(e) => {
+                    if (!e.detail) $userSettings.embeddedMedia.customPiped = YTFrontends.piped[0]
+                }}
+            />
+            
+            <!---Custom Piped Instance Editor--->
+            <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedPiped} icon={Server} showPlaceholder={false}
+                textInputPlaceholder="piped.example.com"
+                title="Define Custom Piped Instances"
+                description="Specify here any custom Piped intances you wish to use.  These will be used for both detection of Piped links in posts
+                as well as selectable preferred instances for YT-like posts."
+            />
+            
+
             <!--- Image Proxying --->
-            <SettingToggle title="Proxy Image" icon={GlobeAlt} bind:value={$userSettings.proxyMedia.enabled}
+            <SettingToggle title="Proxy Images" icon={GlobeAlt} bind:value={$userSettings.proxyMedia.enabled}
                 condition={ENABLE_MEDIA_PROXY}
                 description="When enabled, images will be proxied through the Tesseract UI rather than fetched directly."
             />
@@ -743,75 +717,32 @@
             <SettingToggle title="Keyword Filtering" icon={FaceFrown} bind:value={$userSettings.hidePosts.keywords}
                 description="Enable hiding posts based on keywords you've configured."
             >
-                <!---Keyword Filter Editor --->
-                <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4" class:hidden={!$userSettings.hidePosts.keywords}>
-                                
-                    <div class="flex flex-col w-full gap-2 lg:w-1/3">
-                        <div class="flex flex-row gap-2 mt-2 w-full">
-                            <TextInput  bind:value={keywordInput}  type="text" class="w-full" placeholder="Keyword(s) to filter"
-                                on:keydown={(e) => {
-                                    if (e.detail?.key == "Enter") {
-                                        e.preventDefault();
-                                        addKeyword(keywordInput);
-                                    }
-                                }}
-                            />
+                <SettingEditArray bind:list={$userSettings.hidePosts.keywordList} condition={$userSettings.hidePosts.keywords}
+                    title="Define Keywords" 
+                    textInputPlaceholder="Keyword(s) to filter"
+                    description="Enter a keyword you wish you filter. You can specify multiple keywords by separating them with a comma. Post titles,
+                    bodies, and embed descriptions will be evaluated for the keywords."
+                >
+                    <details open={true}>
+                        <summary class="font-bold cursor-pointer">Special Control Characters</summary>
+                        <ul>
+                            <li class="flex flex-row gap-4 pl-4">
+                                <span class="font-bold text-sm">^</span>
+                                <span class="text-xs font-normal">Content must start with this keyword.</span>
+                            </li>
                             
-                            <Button color="primary" class="h-8" on:click={() => { addKeyword(keywordInput); }}>
-                                <Icon src={PlusCircle} mini width={18}/>
-                                Add
-                            </Button>
-                        </div>
-                        
-                        <div class="flex flex-col gap-2">
-                            <p class="text-xs font-normal">Enter a keyword you wish you filter. You can specify multiple keywords by separating them with a comma. Post titles,
-                                bodies, and embed descriptions will be evaluated for the keywords.
-                            </p>
-                            
-                            <details open={true}>
-                                <summary class="font-bold cursor-pointer">Special Control Characters</summary>
-                                <ul>
-                                    <li class="flex flex-row gap-4 pl-4">
-                                        <span class="font-bold text-sm">^</span>
-                                        <span class="text-xs font-normal">Content must start with this keyword.</span>
-                                    </li>
-                                    
-                                    <li class="flex flex-row gap-4 pl-4">
-                                        <span class="font-bold text-sm">!</span>
-                                        <span class="text-xs font-normal">Evaluate the keyword as case-sensitive.</span>
-                                    </li>
+                            <li class="flex flex-row gap-4 pl-4">
+                                <span class="font-bold text-sm">!</span>
+                                <span class="text-xs font-normal">Evaluate the keyword as case-sensitive.</span>
+                            </li>
 
-                                    <li class="flex flex-row gap-4 pl-4">
-                                        <span class="font-bold text-sm">*</span>
-                                        <span class="text-xs font-normal">Disable whole-word matching for the keyword.</span>
-                                    </li>
-                                </ul>
-                            </details>
-
-                        </div>
-                    </div>
-                
-                    <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full lg:w-2/3 overflow-y-scroll px-4">
-                        {#if $userSettings?.hidePosts?.keywordList.length > 0}
-                            {#each $userSettings.hidePosts.keywordList as keyword}
-                                
-                                <div class="w-full rounded-md bg-slate-200 dark:bg-zinc-700 flex flex-row gap-2 items-center">
-                                    <p class="pl-4 py-2 text-sm font-bold">{keyword}</p>
-
-                                    <div class="mx-auto"/>
-                                    
-                                    <Button color="ghost" class="mr-4 border-none" on:click={() => { delKeyword(keyword); }} >
-                                        <Icon src={XCircle} mini width={22}/>
-                                    </Button>
-                                </div>
-                                
-                            {/each}
-                        {:else}
-                            <Placeholder icon={ArchiveBoxXMark} title="No keywords" description="You have not set any keywords to filter." />
-                        {/if}
-                    </div>
-                </div>
-
+                            <li class="flex flex-row gap-4 pl-4">
+                                <span class="font-bold text-sm">*</span>
+                                <span class="text-xs font-normal">Disable whole-word matching for the keyword.</span>
+                            </li>
+                        </ul>
+                    </details>
+                </SettingEditArray>
             </SettingToggle>
                 
         </SettingGroup>
