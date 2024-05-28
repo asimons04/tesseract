@@ -132,7 +132,9 @@ This isn't really a Tesseract issue since the Lemmy backend handles that.  Just 
 I keep kicking the can on the custom feed and infinite scroll re-writes, but for a good reason.  I want to start using IndexedDB to get around storage constraints in the browser's LocalStorage API.  I need to write and integrate a library for this (or find one I don't hate), and that's going to take some dedicated development time.  Switching to IndexDB is also a step in the direction I want to go towords providing offline support.  So, at some point, there will be a release that only focuses on that.  Not sure if it'll be in the 1.4.x series or later, but ultimately, that is where I want to go.
 
 
+--- 
 ### Goals 
+These are my checklist-items of goals for this release.  Mostly here for my own use, but they also are useful to track changes, so I'll leave them.
 
 #### Drop Support for 0.18.x
 - [X] Remove all `auth` fields from API call POST bodies
