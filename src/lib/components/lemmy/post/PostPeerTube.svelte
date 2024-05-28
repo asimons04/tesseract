@@ -29,6 +29,7 @@
     $:  if (post.post.embed_video_url && !clickToPlayClicked) {
             embedURL = new URL(post.post.embed_video_url)
         }
+        
         else if (post.post.embed_video_url && clickToPlayClicked) {
             let tempURL = new URL(post.post.embed_video_url)
             tempURL.searchParams.set('autoplay', '1')
