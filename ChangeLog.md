@@ -18,7 +18,7 @@ Most images are now zoomable:  post images, user/site/community avatars, images 
     - Swipe down to toggle quick zoom/unzoom
     - Swipe left to zoom out, right to zoom in (one zoom step per swipe)
     - Other gestures may be added once I figure out a clean way to differentiate them from conflicting mouse events
-    
+
 #### User Profile Modals
 Clicking on usernames throughout the application will now load a modal with their user card and relevant options. Old behavior was taking you to their profile directly.  Actions include:
 - Go to profile
@@ -36,6 +36,8 @@ Clicking on usernames throughout the application will now load a modal with thei
 - Images pasted/uploaded into the markdown editor are tracked in a bar along the bottom of the editor. Individual images can be deleted as needed along with the corresponding markdown code for them.
 
 
+#### Hide Posts/Comments From New Users
+In App Settings -> Filters, you can now opt to hide posts/comments made by new users.  You can also set the number of days an account is considered new: 1 to 30 days.  That setting also is applied to the new user badges (if you set the minimum age to 15 days, any account 15 days or younger will show the new user badge).
 
 
 #### Federation State Viewer
