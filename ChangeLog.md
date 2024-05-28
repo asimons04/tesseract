@@ -108,9 +108,19 @@ Admins can now see votes like in Lemmy-UI.  Uses infinite scroll and deduplicati
 - Embeds now have a short timeout when leaving the viewport before they're removed from the DOM and turn back into thumbnails.  Fixes annoyance when resizing the window while a video is playing and the video temporarily leaves the viewport and is destroyed. Timeout is 2 seconds and will reset/disarm if the post returns to the viewport before it expires.
 
 #### Community Creation / Editing
-- Uses new upload handler
+- Uses new upload handler for banner/icon
 - Can pre-process the banner/icon to webP before uploading
 - Shows a live preview of how the community card will look
+
+#### General
+- Slightly darkened background color in light mode cards (bg-white->bg-slate-100)
+- Can now close modals with Escape key
+- Some modals can be closed by clicking out of them.
+    - I need to disable this or make it more consistent.  Some workflows utilize nested modals, so I do need to be able to keep them open when interacting with a child modal.
+- Added "share" link for searches.
+    - Will generate a URL with the current search params and copy to your clipboard.
+
+
 
 ### Other Stuff
 
