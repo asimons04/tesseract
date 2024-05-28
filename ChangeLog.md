@@ -39,6 +39,9 @@ Clicking on usernames throughout the application will now load a modal with thei
 #### Hide Posts/Comments From New Users
 In App Settings -> Filters, you can now opt to hide posts/comments made by new users.  You can also set the number of days an account is considered new: 1 to 30 days.  That setting also is applied to the new user badges (if you set the minimum age to 15 days, any account 15 days or younger will show the new user badge).
 
+This setting behaves differently for mods and admins:
+- **Mods**:  Filter will be applied to all posts/comments _except_ in communities of which you are a moderator. 
+- **Admins**:  Filter will be applied to all posts/coments _except_ those made to communities local to your instance or those made to remote communities of which you are a moderator.
 
 #### Federation State Viewer
 From the instances menu on a post, there's a new option called "Federation Stats" which will show you the stats from your instance to the target _and_ from the target to your instance.  Also included in that is an estimated cacluation of the number of activities each instance is behind (useful for troubleshooting federation delays).
