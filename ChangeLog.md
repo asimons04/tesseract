@@ -2,7 +2,7 @@
 All major/minor changes between releases will be documented here.  
 
 
-## 1.3.1
+## 1.4.0
 
 ### New Features
 
