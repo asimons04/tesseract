@@ -75,7 +75,7 @@ Removed the `[Archive Link]` next to the post URL and replacd it with a fancy me
 - On Youtube-like posts, can select alternalte links for YouTube, Invidious, or Piped
     - Invidious/Piped will open with your preferred instance (defined in settings)
     - Useful if someone posts a video to an Invidious instance that performs poorly for you and you would prefer to view it on your preferred Invidious/Piped instance or canonically on YouTube.
-    
+
 #### TOTP 2FA Setup
 Can now enable and enroll in 2FA as well as disable it.
 
@@ -143,7 +143,7 @@ This isn't really a Tesseract issue since the Lemmy backend handles that.  Just 
 - Custom emoji management
 - Fediseer Rewrite
 
-I keep kicking the can on the custom feed and infinite scroll re-writes, but for a good reason.  I want to start using IndexedDB to get around storage constraints in the browser's LocalStorage API.  I need to write and integrate a library for this (or find one I don't hate), and that's going to take some dedicated development time.  Switching to IndexDB is also a step in the direction I want to go towords providing offline support.  So, at some point, there will be a release that only focuses on that.  Not sure if it'll be in the 1.4.x series or later, but ultimately, that is where I want to go.
+I keep kicking the can on the custom feed and infinite scroll re-writes, but for a good reason.  I want to start using IndexedDB to get around storage constraints in the browser's LocalStorage API.  I need to write and integrate a library for this (or find one I don't hate), and that's going to take some dedicated development time.  Switching to IndexDB is also a step in the direction I want to go towards providing offline support.  So, at some point, there will be a release that only focuses on that.  Not sure if it'll be in the 1.4.x series or later, but ultimately, that is where I want to go.
 
 
 --- 
