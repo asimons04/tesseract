@@ -118,6 +118,17 @@ Also confirmed that commenting on a PT video (from the channel feed, not an embe
 This isn't really a Tesseract issue since the Lemmy backend handles that.  Just figured since I do support Peertube, it would be worth mentioning that it seems to work.
 
 
+### What Didn't Make the Cut This Release
+- User profile import/export
+- Link previews
+- Custom feed rewrite
+- Cleanup Infinite Scroll Implementation (though I did start this; it's only used in one place right now)
+- Custom emoji management
+- Fediseer Rewrite
+
+I keep kicking the can on the custom feed and infinite scroll re-writes, but for a good reason.  I want to start using IndexedDB to get around storage constraints in the browser's LocalStorage API.  I need to write and integrate a library for this (or find one I don't hate), and that's going to take some dedicated development time.  Switching to IndexDB is also a step in the direction I want to go towords providing offline support.  So, at some point, there will be a release that only focuses on that.  Not sure if it'll be in the 1.4.x series or later, but ultimately, that is where I want to go.
+
+
 ### Goals 
 
 #### Drop Support for 0.18.x
@@ -226,10 +237,10 @@ This isn't really a Tesseract issue since the Lemmy backend handles that.  Just 
     - [X] YouTube
     - [X] Spotify
     - [X] Peertube
-    - [ ] Bandcamp
-    - [ ] Odysee
+    - [X] Bandcamp
+    - [X] Odysee
     - [X] Soundcloud
-    - [ ] Songlink
+    - [X] Songlink
     - [X] Vimeo
 
 - Re-introduced Piped as an option for the YouTube frontend.
