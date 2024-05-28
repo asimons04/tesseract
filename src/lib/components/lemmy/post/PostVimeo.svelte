@@ -8,7 +8,6 @@
     import IFrame from './utils/IFrame.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     
 
@@ -29,6 +28,9 @@
                 (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
                 (displayType == 'post' && $userSettings.embeddedMedia.post)
             )
+
+    // Unset click to play when out of viewport (revert to thumbnail)
+    $:  if (!inViewport) clickToPlayClicked = false
 </script>
 
 

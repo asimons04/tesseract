@@ -6,9 +6,9 @@
     import IFrame from './utils/IFrame.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import { imageSize} from './helpers.js'
+
+    import { imageSize } from './helpers.js'
 
     export let post: PostView
     export let displayType: PostDisplayType
@@ -36,6 +36,9 @@
             embedURL = tempURL
         }
     
+    // Unset click to play when out of viewport (revert to thumbnail)
+    $:  if (!inViewport) clickToPlayClicked = false
+    
     function clickToPlay() {
         clickToPlayClicked = true
     }
@@ -51,8 +54,6 @@
     
     <Link href={post.post.url} title={post.post.name} newtab={$userSettings.openInNewTab.links} highlight nowrap />
     <PostImage bind:post={post} displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> {clickToPlay() }}/>
-    
-    
 
 {:else if !post.post.thumbnail_url}
     <Link href={post.post.url} title={post.post.name} highlight nowrap />
