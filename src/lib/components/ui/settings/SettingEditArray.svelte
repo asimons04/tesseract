@@ -13,27 +13,27 @@
         PlusCircle,
         XCircle
     } from 'svelte-hero-icons'
-
     
-    export let list:string[]
-    export let title:string = ''
-    export let description:string = ''
-    export let icon:IconSource = PlusCircle
-    export let condition:boolean = true
-    export let textInputPlaceholder:string = ''
-    export let showPlaceholder:boolean = true
+    export let list:string[]                        // Array of strings to manage (should be bound from parent in most cases)
+    export let title:string = ''                    // Title of the setting
+    export let description:string = ''              // Text description of the setting
+    export let icon:IconSource = PlusCircle         // Icon used for the setting entry
+    export let condition:boolean = true             // Boolean condition to show/hide the component
+    export let textInputPlaceholder:string = ''     // Placeholder for text input field
+    export let showPlaceholder:boolean = true       // Show empty list placeholder
     
     
     let input_text:string
+    
     let dispatcher = createEventDispatcher<{
         add: string,
         delete: string,
     }>()
 
     /** Updates a provided array by adding or removing an input value
-    * @param input A string value to add to or remove from the array
-    * @param arr A string array to manipulate
-    * @param add `true` (default) to add the input string to the array, `false` to remove it
+    * @param input  A string value to add to or remove from the array
+    * @param arr    A string array to manipulate
+    * @param add    `true` (default) to add the input string to the array, `false` to remove it
     */
     const updateArray = function(input:string, arr:string[], add=true) {
         if (!input) return arr
