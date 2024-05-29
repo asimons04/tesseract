@@ -1,6 +1,7 @@
 <script lang="ts">
     
-    
+    import { createEventDispatcher } from "svelte";
+
     import Button from "$lib/components/input/Button.svelte"
     import Placeholder from "../Placeholder.svelte"
     import TextInput from "$lib/components/input/TextInput.svelte";
@@ -24,7 +25,10 @@
     
     
     let input_text:string
-
+    let dispatcher = createEventDispatcher<{
+        add: string,
+        delete: string,
+    }>()
 
     /** Updates a provided array by adding or removing an input value
     * @param input A string value to add to or remove from the array
@@ -76,6 +80,7 @@
                 <form class="flex flex-row gap-2 mt-2 w-full" on:submit|preventDefault={(e) => {
                         list = updateArray(input_text, list, true)
                         input_text = ''
+                        dispatcher('add', input_text)
                     }}
                 >
                     
@@ -99,6 +104,7 @@
                             
                             <Button color="ghost" class="mr-4 border-none" on:click={() => { 
                                     list = updateArray(item, list, false); 
+                                    dispatcher('delete', item)
                                 }} 
                             >
                                 <Icon src={XCircle} mini width={22}/>
