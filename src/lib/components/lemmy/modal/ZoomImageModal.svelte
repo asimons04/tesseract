@@ -73,10 +73,15 @@
         translateY: 0,      // The cacluated Y coordinate used in the translate() 
         startX: 0,          // X coordinate for panning to begin
         startY:0,           // Y coordinate for panning to begin
+        origin: 'center',   // Transform origin
         panning: false,     // Flag used internally to determine if currently panning
         doubleClick: false, // Flag used to determine if double-click quick zoom is enabled
         rotateDeg: 0,       // Number of degrees to rotate
-        rotateStep: 90      // Number of degrees to rotate per step
+        rotateStep: 90,     // Number of degrees to rotate per step
+        pinchActive: false, // Flag to control whether the pinch readings should be applied or measured
+        pinchPrevious: 0,   // Last measurement of the pinch zoom to determine delta
+        //pinchDelta: 0,      // Record the direction of the pinch
+        pinchDirection: 1   // 1 for zoom in, -1 for zoom out
 
     }
     let defaultZoom = {...zoom}
@@ -87,7 +92,7 @@
 
     // Applies the scale and translation values to the image element
     function applyTranslations() {
-        imageElement.style.transformOrigin = "center"
+        imageElement.style.transformOrigin = zoom.origin
         imageElement.style.transform=`scale(${zoom.current}) translate(${zoom.translateX}px, ${zoom.translateY}px) rotate(${zoom.rotateDeg}deg)`
     }
 
@@ -147,6 +152,7 @@
         e.preventDefault()
         e.stopPropagation()
         if (!zoom.panning) return; // Do nothing
+        
         zoom.translateX = (e.clientX - zoom.startX)
         zoom.translateY = (e.clientY - zoom.startY)
         applyTranslations()
@@ -165,17 +171,35 @@
     async function pinchZoom(e:PinchEvent) {
         e.preventDefault()
         e.stopPropagation()
-        zoom.panning = false
-        zoom.current = (e.detail.scale * 0.75)
 
-        // Force to stay centered when zooming
-        zoom.translateX = 0
-        zoom.translateY = 0        
-        if (zoom.current > zoom.max) zoom.current = zoom.max
-        if (zoom.current < zoom.min) zoom.current = zoom.min
-        
-        applyTranslations()
-        
+        zoom.panning = false
+        const pinch = e.detail.scale
+
+        //Reset the pinch direction 50ms after the last pinch event is fired
+        let reset = setTimeout(() => {
+            zoom.pinchDirection = 0
+        }, 50)
+
+        if (zoom.pinchDirection != 0) {
+            zoom.current = zoom.current + (pinch * 0.05 * zoom.pinchDirection)
+
+            // Force to stay centered when zooming
+            zoom.translateX = 0
+            zoom.translateY = 0
+
+            if (zoom.current > zoom.max) zoom.current = zoom.max
+            if (zoom.current < zoom.min) zoom.current = zoom.min
+            
+            applyTranslations()
+            clearTimeout(reset)
+        }
+        // Don't react to the pinch until we know it's direction.
+        const delta = pinch - zoom.pinchPrevious
+        zoom.pinchPrevious = e.detail.scale
+        zoom.pinchDirection = (delta != 0 && delta > 0)
+            ?  1
+            : -1
+        clearTimeout(reset)
     }
 
     // Resets the zoom parameters to default
