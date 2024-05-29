@@ -20,11 +20,13 @@ Most images are now zoomable:  post images, user/site/community avatars, images 
     - Other gestures may be added once I figure out a clean way to differentiate them from conflicting mouse events
 
 #### Basic Gesture Support
-First, I should point out that I am *not* a fan of gesture navigation; absolutely hate it as a primary method of interaction.  Like, I'm old and hate having guess whether I need to do the Macarena or the Hokey-Pokey with my fingers to perform the, what should be intuitive, action I want.  That said, I *do* like waving things (and people) away.
+First, I should point out that I am *not* a fan of gesture navigation; absolutely hate it as a primary method of interaction.  Like, I'm old and hate having guess whether I need to do the Macarena or the Hokey-Pokey with my fingers to perform the, what should be intuitive, action I want.  
+
+That said, I *do* like waving things (and people) away.
 
 To that end, I've added some gesture recognition in a few places, mostly modals.  Any modal can now be dismissed with a left or right swipe in an area not bound by other event handlers.
 - e.g.  You can't swipe in the text field to dismiss an edit/report/ban/remove modal; you have to swipe outside of that. 
-- Left/right swipe was chosen as to not interfere with scrolling since it could be used consistently across all modal types.
+- Left/right swipe was chosen as to not interfere with scrolling so it could be used consistently across all modal types.
 
 The only other place, currently, with gesture support is the image zoom modal (described above).
 
