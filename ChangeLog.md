@@ -14,10 +14,21 @@ Most images are now zoomable:  post images, user/site/community avatars, images 
     - Pinch to zoom/unzoom
     - Rotate via on-screen buttons
 - Gesture support
-    - Swipe up to dismiss zoom modal
-    - Swipe down to toggle quick zoom/unzoom
-    - Swipe left to zoom out, right to zoom in (one zoom step per swipe)
+    - Swipe up to zoom in
+    - Swipe down to zoom out
+    - Swipe left or right to close the zoom modal
     - Other gestures may be added once I figure out a clean way to differentiate them from conflicting mouse events
+
+#### Basic Gesture Support
+First, I should point out that I am *not* a fan of gesture navigation; absolutely hate it as a primary method of interaction.  Like, I'm old and hate having guess whether I need to do the Macarena or the Hokey-Pokey with my fingers to perform the, what should be intuitive, action I want.  That said, I *do* like waving things (and people) away.
+
+To that end, I've added some gesture recognition in a few places, mostly modals.  Any modal can now be dismissed with a left or right swipe in an area not bound by other event handlers.
+- e.g.  You can't swipe in the text field to dismiss an edit/report/ban/remove modal; you have to swipe outside of that. 
+- Left/right swipe was chosen as to not interfere with scrolling since it could be used consistently across all modal types.
+
+The only other place, currently, with gesture support is the image zoom modal (described above).
+
+I may add some additional swipe actions where it's intuitive to do so.  For now, I'm content with modals being easier to dismiss on mobile without having to reach up to the close button in the top corner.
 
 #### User Profile Modals
 Clicking on usernames throughout the application will now load a modal with their user card and relevant options. Old behavior was taking you to their profile directly.  Actions include:
