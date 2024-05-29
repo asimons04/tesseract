@@ -7,7 +7,7 @@ All major/minor changes between releases will be documented here.
 ### New Features
 
 #### Zoomable Images
-Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  The pinch zoom isn't quite where I want it, but I may be hitting a library limitation.  All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch.
+Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  The pinch zoom isn't quite where I want it, but I may be hitting a library limitation with `svelte-gestures`.  All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch.
 - Support zoom, pan, and rotate
     - Mouse scroll to zoom
     - Click/grab to pan
