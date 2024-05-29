@@ -129,10 +129,10 @@
 
     // Fires on swipe events
     function onSwipe(e:SwipeEvent) {
-        if (e.detail.direction == 'top')    close()
-        if (e.detail.direction == 'bottom') doubleClickZoom()
-        if (e.detail.direction == 'left')   bumpZoom(-1, true)
-        if (e.detail.direction == 'right')  bumpZoom(1, true)
+        if (e.detail.direction == 'top')    bumpZoom(1, true) 
+        if (e.detail.direction == 'bottom') bumpZoom(-1, true) 
+        if (e.detail.direction == 'left')   close()
+        if (e.detail.direction == 'right')  close()
     }
 
     
