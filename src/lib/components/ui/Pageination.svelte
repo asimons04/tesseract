@@ -4,7 +4,6 @@
     import {
         ChevronDoubleLeft,
         ChevronDoubleRight,
-        ChevronDoubleUp,
         Icon
     } from 'svelte-hero-icons'
 
