@@ -236,7 +236,7 @@
 		}}
     >
         <!---Toolbar with zoom in/out buttons and button to close the overlay--->
-        <div bind:this={toolbarElement} class="absolute top-0 bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl w-full z-50 p-1 cursor-default">
+        <div bind:this={toolbarElement} class="absolute top-0 bg-slate-50/30 dark:bg-zinc-950/80 backdrop-blur-3xl w-full z-50 p-1 cursor-default">
             <div class="flex flex-row w-full">
                 <span class="flex flex-row gap-4 px-4 w-full items-center">
                     
@@ -276,10 +276,11 @@
                     
                     
 
-
-                    <button title="Close" class="ml-auto" on:click={()=> close()}>
-                        <Icon src={XMark} mini width={48} />
-                    </button>
+                    <Card class="flex flex-col items-center ml-auto">
+                        <button title="Close" on:click={()=> close()}>
+                            <Icon src={XMark} mini width={48} />
+                        </button>
+                    </Card>
                 </span>
             </div>
         </div>
