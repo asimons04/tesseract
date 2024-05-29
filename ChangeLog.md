@@ -1,4 +1,4 @@
-# Changelog for 1.4.x Series
+# Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
 
@@ -11,9 +11,10 @@ Most images are now zoomable:  post images, user/site/community avatars, images 
 - Support zoom, pan, and rotate
     - Mouse scroll to zoom
     - Click/grab to pan
-    - Pinch to zoom/unzoom
     - Rotate via on-screen buttons
+    - Double-click to quick zoom in/out by 2x
 - Gesture support
+    - Pinch zoom in/out
     - Swipe up to zoom in
     - Swipe down to zoom out
     - Swipe left or right to close the zoom modal

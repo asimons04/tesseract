@@ -65,8 +65,8 @@
     
     let zoom = {
         current: 1,         // Default / 'zero' scale value
-        min: 0.9,           // Minimum scale value
-        max: 4,             // Maximum scale value
+        min: 0.75,          // Minimum scale value
+        max: 5,             // Maximum scale value
         step: 0.5,          // Amount of scale to apply per scroll/click
         translateX: 0,      // The cacluated X coordinate used in the translate()
         translateY: 0,      // The cacluated Y coordinate used in the translate() 
