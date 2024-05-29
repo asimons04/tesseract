@@ -1,9 +1,17 @@
 <script lang="ts">
+    interface SwipeEvent extends CustomEvent {
+        detail: {
+            direction: 'top' | 'right' | 'bottom' | 'left',
+            target: EventTarget
+        }
+    }
+
     import { type IconSource, Icon, XMark, ArrowsPointingIn, ArrowsPointingOut } from 'svelte-hero-icons'
 
     import { createEventDispatcher } from 'svelte'
     import { expoOut } from 'svelte/easing'
     import { fade, scale } from 'svelte/transition'
+    import { swipe } from 'svelte-gestures'
 
     import Button from '$lib/components/input/Button.svelte'
     import Card from '../Card.svelte'
@@ -40,6 +48,10 @@
     }
 
     const dispatcher = createEventDispatcher()
+
+    function onSwipe(e:SwipeEvent) {
+        if (['left', 'right'].includes(e.detail.direction)) open = false
+    }
 </script>
 
 {#if open}
@@ -111,7 +123,10 @@
                         </span>
                     </div>
                     
-                    <div class="flex flex-col overflow-y-auto w-full h-full">
+                    <div class="flex flex-col overflow-y-auto w-full h-full"
+                        use:swipe={{touchAction: 'pan-y'}} 
+                        on:swipe={(e) => onSwipe(e)   }
+                    >
                         {#if card}
                             <Card class="flex flex-col p-4">
                                 <slot />
