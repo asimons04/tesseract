@@ -223,8 +223,6 @@
                 e.preventDefault()
                 e.stopPropagation();
                 close()
-                open = false
-
             }
         }}
         on:click={(e) => {
@@ -232,7 +230,6 @@
             e.stopPropagation();
             if (!imageElement.contains(e.target) && !toolbarElement.contains(e.target)) { 
                 close()
-                open = false
             }
 		}}
     >
