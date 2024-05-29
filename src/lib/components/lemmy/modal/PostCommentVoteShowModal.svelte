@@ -1,11 +1,17 @@
 <script lang="ts">
+    interface SwipeEvent extends CustomEvent {
+        detail: {
+            direction: 'top' | 'right' | 'bottom' | 'left',
+            target: EventTarget
+        }
+    }
     import type { VoteView } from 'lemmy-js-client'
     import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
     
     import { capitalizeFirstLetter } from '$lib/util'
     import { getClient } from '$lib/lemmy';
     import { onMount } from 'svelte'
-
+    import { swipe } from 'svelte-gestures'
     
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte';
@@ -104,8 +110,9 @@
         }
     }
 
-    
-
+    function onSwipe(e:SwipeEvent) {
+        if (['left', 'right'].includes(e.detail.direction)) open = false
+    }
 </script>
 
 <Modal bind:open preventCloseOnClickOut title="{capitalizeFirstLetter(type)} Votes" icon={ArrowsUpDown} width="max-w-xl">
@@ -121,7 +128,10 @@
     {/if}
 
     {#if votes}
-        <div bind:this={scrollArea} class="flex flex-col overflow-y-scroll max-h-[500px] divide-y divide-slate-200 dark:divide-zinc-500 px-4">
+        <div bind:this={scrollArea} class="flex flex-col overflow-y-scroll max-h-[500px] divide-y divide-slate-200 dark:divide-zinc-500 px-4"
+            use:swipe={{touchAction: 'pan-y'}} 
+            on:swipe={(e) => onSwipe(e)   }
+        >
             {#each votes as vote}
                 <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
                     <span class="flex">
