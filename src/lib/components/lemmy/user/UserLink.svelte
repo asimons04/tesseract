@@ -51,7 +51,8 @@
                 ? personDetails
                 : await getClient().getPersonDetails({
                     username: `${user.name}@${new URL(user.actor_id).hostname}`,
-                    limit: 1
+                    limit: 1,
+                    sort: 'New'
 
                 })
             userProfileModal(personDetails)

@@ -33,7 +33,10 @@
         Share,
         Trash,
         User, 
-        MagnifyingGlass
+        MagnifyingGlass,
+
+        Clock
+
 
     } from "svelte-hero-icons";
     
@@ -46,6 +49,27 @@
     let messaging = false
     let userBlocked = ($profile?.user && personDetails?.person_view.person) ? isBlocked($profile.user, personDetails.person_view.person.id) : false
 
+    $:  mostRecentItem = lastActivity()
+    
+    /** Returns the date of the most recent post or comment or undefined if no submissions */
+    function lastActivity() {
+        let latestPost: string | undefined = undefined
+        let latestComment: string | undefined = undefined
+    
+        if ((personDetails?.comments?.length ?? 0) > 0) latestComment = personDetails?.comments[0].comment.published
+        if ((personDetails?.posts?.length ?? 0) > 0) latestPost = personDetails?.posts[0].post.published
+
+        if (latestPost && latestComment) {
+            return Date.parse(latestPost) > Date.parse(latestComment)
+                ? latestPost
+                : latestComment
+        }
+
+        if (latestPost && !latestComment) return latestPost
+        if (latestComment && !latestPost) return latestComment
+
+        return undefined
+    }
 </script>
 
 
@@ -102,6 +126,13 @@
                                 <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
                                 <FormattedNumber number={personDetails.person_view.counts.comment_count} />
                             </span>
+
+                            {#if mostRecentItem}
+                                <span class="flex flex-row items-center gap-1 md:gap-2" title="Last Activity">
+                                    <Icon src={Clock} width={16} height={16} mini />
+                                    <RelativeDate date={mostRecentItem}/>
+                                </span>
+                            {/if}
                         </div>
                     </div>
                 </div>
