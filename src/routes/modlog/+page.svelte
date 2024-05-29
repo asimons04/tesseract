@@ -9,14 +9,18 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ModlogItemTable from './item/ModlogItemTable.svelte'
     import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import SubnvarbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte';
+
     import { 
         Icon, 
         ArrowPathRoundedSquare, 
@@ -28,11 +32,6 @@
         User,
         XCircle 
     } from 'svelte-hero-icons'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte';
-    
-    
 
     export let data
     
@@ -314,9 +313,7 @@
                 {/if}
             {/each}
         </div>
-        
 
-        <Pageination page={data.page} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
         
     {:else}
         <div class="mx-auto my-auto">
@@ -324,6 +321,12 @@
         </div>
     
     {/if}
+    
+    <!---Vite does NOT like this being here, but everything works fine :shrug:--->
+    <Pageination page={data.page} disableNext={data.modlog.length < 1} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
+    
+    
+    
 
 </MainContentArea>
 
