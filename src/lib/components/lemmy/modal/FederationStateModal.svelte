@@ -222,7 +222,7 @@
                         <!---Activities Behind Estimate--->
                         {#if data.newest_id && instance.federation_state.last_successful_id}
                             <span>
-                                <span class="font-bold">Activities Behind</span>:
+                                <span class="font-bold">Est. Activities Behind</span>:
                                 {data.newest_id - instance.federation_state.last_successful_id}
                             </span>
                         {/if}
@@ -283,7 +283,7 @@
                         <!---Activities Behind Estimate--->
                         {#if instance.inbound_federation.newest_id && instance.inbound_federation.last_successful_id}
                             <span>
-                                <span class="font-bold">Activities Behind</span>:
+                                <span class="font-bold">Est. Activities Behind</span>:
                                 {instance.inbound_federation.newest_id - instance.inbound_federation.last_successful_id}
                             </span>
                         {/if}
