@@ -264,14 +264,16 @@
                     on:paste={async (e) => { 
                         processingPastedImage = true
                         const imageBlob = await readImageFromClipboard(e.detail) 
+                        
                         if (imageBlob) {
                             pasteImage = blobToFileList(imageBlob)
                             uploadingImage = true
                         }
-                        
+                        /*
                         else {
                             wrapSelection(await readTextFromClipboard(e.detail), '')
                         }
+                        */
                         
                         processingPastedImage = false
                     }}

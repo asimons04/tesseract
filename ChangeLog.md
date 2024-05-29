@@ -7,7 +7,7 @@ All major/minor changes between releases will be documented here.
 ### New Features
 
 #### Zoomable Images
-Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  The pinch zoom isn't quite where I want it, but I may be hitting a library limitation with `svelte-gestures`.  All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch.
+Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  The pinch zoom isn't *quite* where I want it, but I may be hitting a library limitation with `svelte-gestures`.  All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch.
 - Support zoom, pan, and rotate
     - Mouse scroll to zoom
     - Click/grab to pan
@@ -21,7 +21,7 @@ Most images are now zoomable:  post images, user/site/community avatars, images 
     - Other gestures may be added once I figure out a clean way to differentiate them from conflicting mouse events
 
 #### Basic Gesture Support
-First, I should point out that I am *not* a fan of gesture navigation; absolutely hate it as a primary method of interaction.  Like, I'm old and hate having guess whether I need to do the Macarena or the Hokey-Pokey with my fingers to perform the, what should be intuitive, action I want.  
+First, I should point out that I am *not* a fan of gesture navigation; absolutely hate it as a primary method of interaction.  Like, I'm old and hate having to guess whether my fingers need to do the Macarena or the Hokey-Pokey to perform what should be an intuitive action.
 
 That said, I *do* like waving things (and people) away.
 
@@ -34,7 +34,9 @@ The only other place, currently, with gesture support is the image zoom modal (d
 I may add some additional swipe actions where it's intuitive to do so.  For now, I'm content with modals being easier to dismiss on mobile without having to reach up to the close button in the top corner.
 
 #### User Profile Modals
-Clicking on usernames throughout the application will now load a modal with their user card and relevant options. Old behavior was taking you to their profile directly.  Actions include:
+Clicking on usernames throughout the application will now load a modal with their user card and relevant action buttons. Old behavior was taking you to their profile directly.  
+
+Actions include:
 - Go to profile
 - Message in Lemmy / Matrix
 - Block User
@@ -46,7 +48,7 @@ Clicking on usernames throughout the application will now load a modal with thei
 #### Image Management on  Posts/Comments
 - Images can be pasted in the post's URL field as well as in the markdown editor.  
 - Images can optionally be pre-processed to webP along with a user-selectable quality level. Especially useful if your instance limits the size of uploads
-- Can delete post images (only before you save the post; unfortunately there's no way to retrieve the delete token after that even though it is stored in the DB)
+- Can delete post images (only before you save the post; unfortunately there's no way to retrieve the delete token after that even though it is stored in the DB. Yet another dumbass API limitation :sigh:)
 - Images pasted/uploaded into the markdown editor are tracked in a bar along the bottom of the editor. Individual images can be deleted as needed along with the corresponding markdown code for them.
 
 
@@ -90,6 +92,15 @@ Removed the `[Archive Link]` next to the post URL and replacd it with a fancy me
     - Invidious/Piped will open with your preferred instance (defined in settings)
     - Useful if someone posts a video to an Invidious instance that performs poorly for you and you would prefer to view it on your preferred Invidious/Piped instance or canonically on YouTube.
 
+#### Users Can Now Add Their Own Preferred Invidious/Piped Instances
+Prior to this release, any Piped or Invidious instances needed to be added by the administrator via environment variables.  In addition to that, users can now add any number of custom Invidious and/or Piped instances in the app settings.
+
+These will be combined with the built-in list and the admin-extended list and be available for use as your preferred YT frontend and for detection of Piped/Invidious links in posts.
+
+Be aware that those custom instances will only render as embeds for you; they will be thumbnails for anyone else who hasn't added them to Tesseract.  If you feel that instance should be added to Tesseract's built-in list, please submit a Github issue with the details.
+
+Tesseract is pre-populated with the official list of public instances for each, but it can get out of date easily.
+
 #### TOTP 2FA Setup
 Can now enable and enroll in 2FA as well as disable it.
 
@@ -97,23 +108,23 @@ Can now enable and enroll in 2FA as well as disable it.
 Icons in the account switcher and account screens now sync to your profile avatar, if defined.
 
 #### New Placeholder User Avatars
-Instead of the initials as used previously on accounts without avatars, now uses Dicebear Adventurer pseudorandom avatars.
+Instead of the initials as used previously on accounts without avatars, now uses Dicebear Adventurer pseudorandom avatars.  Initials are still used for placeholder community icons when the community mods haven't set one.
 
 #### Vote Viewer (Admins Only)
 Admins can now see votes like in Lemmy-UI.  Uses infinite scroll and deduplication to compensate for the stupid API that returns multiple/duplicate votes on each page.
 
-
+---
 
 
 ### Bugfixes and Enhancements
 
 #### Removed 0.18.x Backwards Compatibility
-- Or, more specifically, removed 0.18.x JS client and the extensions to make that compatible with 0.19.x.  Now uses the 0.19.3 JS client.
-- Removed the image upload proxy which was needed in 0.18x due to CORS limitations.
+- Or, more specifically, removed 0.18.x JS client and the extensions I wrote to make that compatible with 0.19.x.  Now uses the 0.19.3 JS client.
+- Removed the image upload proxy which was needed in 0.18x due to CORS restrictions.
 
 
 #### Various Enhancements to Auth Module.
-- Added safety check so that the auth token is only ever sent to the profile's associated instance and cannot accidentally send to non-home instance
+- Added safety check so that the auth token is only ever sent to the profile's associated instance and cannot accidentally send to non-home instance (e.g. when browsing communities on a remote instance).
 - Fixed a few chicken/egg situations where the profile store needed to be accessed before it was initialized
 - If your auth token is invalid, such as after changing your password on another device, you will get a toast message you can click to take you to the login screen.
 - If a profile exists for a username/instance combo, logging in will update the auth token for that existing profile rather than creating a new one.

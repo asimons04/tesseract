@@ -41,7 +41,9 @@
         on:keydown
         on:paste={(e) => {
             if (allowImagePasting) {
-                if (typeof(navigator.clipboard.readText) != 'undefined') e.preventDefault()
+                // Disabled so don't have to manually handle text pasting. Will just have to deal with the clipboard text component (usually image filepath)
+                // getting pasted alongside.
+                //if (typeof(navigator.clipboard.readText) != 'undefined') e.preventDefault()
                 dispatcher('paste', e)
             }
         }}
