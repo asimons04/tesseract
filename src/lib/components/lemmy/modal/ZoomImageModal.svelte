@@ -239,13 +239,10 @@
                 <span class="flex flex-row gap-4 px-4 w-full items-center">
                     
                     <!---Markdown editor resize slider--->
-                    <Card class="flex flex-row gap-2 items-center rounded-lg p-2 lg:mx-auto">
+                    <Card class="flex flex-row gap-2 items-center rounded-lg lg:mx-auto">
                         <span class="flex flex-row gap-1 w-fit mr-auto items-center">
                             
-                            <Button title="Rotate Counter-Clockwise" color="tertiary" class="mr-4" 
-                                icon={ArrowUturnLeft} iconSize={24}
-                                on:click={()=>bumpRotate(-1)}
-                            />
+                            <Button title="Rotate Counter-Clockwise" color="tertiary"  icon={ArrowUturnLeft} iconSize={24} on:click={()=>bumpRotate(-1)} />
 
                             <Button title="Reset Zoom" color="tertiary" icon={MagnifyingGlassMinus} iconSize={24} on:click={()=>bumpZoom(-1)} />
                             
@@ -258,16 +255,13 @@
                             <Button title="Reset Zoom" color="tertiary" icon={MagnifyingGlassPlus} iconSize={24} on:click={()=>bumpZoom(1)} />
                         </span>
 
-                        <Button title="Reset Zoom" color="tertiary" icon={ViewfinderCircle} iconSize={32} on:click={()=>resetZoom()} />
+                        <Button title="Reset Zoom" color="tertiary" icon={ViewfinderCircle} iconSize={24} on:click={()=>resetZoom()} />
 
-                        <Button title="Rotate Clockwise" color="tertiary" class="ml-4" 
-                            icon={ArrowUturnRight} iconSize={24}
-                            on:click={()=>bumpRotate(1)}
-                        />
+                        <Button title="Rotate Clockwise" color="tertiary" icon={ArrowUturnRight} iconSize={24} on:click={()=>bumpRotate(1)} />
                     </Card>
                     
                     <Card>
-                        <Button title="Close" color="tertiary" size="sm" icon={XMark} iconSize={48} on:click={()=> close()} />
+                        <Button title="Close" color="tertiary" size="sm" icon={XMark} iconSize={24} on:click={()=> close()} />
                     </Card>
                 </span>
             </div>
