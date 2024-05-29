@@ -53,6 +53,7 @@
         XMark 
     } from "svelte-hero-icons";
     
+    import Button from "$lib/components/input/Button.svelte";
     import Card from "$lib/components/ui/Card.svelte";
 
     export let url:string
@@ -241,17 +242,15 @@
                 <span class="flex flex-row gap-4 px-4 w-full items-center">
                     
                     <!---Markdown editor resize slider--->
-                    <Card class="flex flex-row gap-2 items-center rounded-lg p-2 lg:ml-auto">
+                    <Card class="flex flex-row gap-2 items-center rounded-lg p-2 lg:mx-auto">
                         <span class="flex flex-row gap-1 w-fit mr-auto items-center">
                             
-                            <button title="Rotate Counter-Clockwise" class="mr-8" on:click={()=>bumpRotate(-1)}>
-                                <Icon src={ArrowUturnLeft} mini width={24} />
-                            </button>
+                            <Button title="Rotate Counter-Clockwise" color="tertiary" class="mr-4" 
+                                icon={ArrowUturnLeft} iconSize={24}
+                                on:click={()=>bumpRotate(-1)}
+                            />
 
-
-                            <button title="Reset Zoom" on:click={()=>bumpZoom(-1)}>
-                                <Icon src={MagnifyingGlassMinus} mini width={24} />
-                            </button>
+                            <Button title="Reset Zoom" color="tertiary" icon={MagnifyingGlassMinus} iconSize={24} on:click={()=>bumpZoom(-1)} />
                             
                             <input type="range" bind:value={zoom.current} min={zoom.min} max={zoom.max} step={zoom.step} 
                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
@@ -259,27 +258,19 @@
                                 on:drag|preventDefault
                             >
                             
-                            <button title="Reset Zoom" on:click={()=>bumpZoom(1)}>
-                                <Icon src={MagnifyingGlassPlus} mini width={24} />
-                            </button>
+                            <Button title="Reset Zoom" color="tertiary" icon={MagnifyingGlassPlus} iconSize={24} on:click={()=>bumpZoom(1)} />
                         </span>
 
-                        <button title="Reset Zoom" on:click={()=>resetZoom()}>
-                            <Icon src={ViewfinderCircle} mini width={32}/>
-                        </button>
+                        <Button title="Reset Zoom" color="tertiary" icon={ViewfinderCircle} iconSize={32} on:click={()=>resetZoom()} />
 
-                        <button title="Rotate Clockwise" class="ml-8" on:click={()=>bumpRotate(1)}>
-                            <Icon src={ArrowUturnRight} mini width={24} />
-                        </button>
+                        <Button title="Rotate Clockwise" color="tertiary" class="ml-4" 
+                            icon={ArrowUturnRight} iconSize={24}
+                            on:click={()=>bumpRotate(1)}
+                        />
                     </Card>
                     
-                    
-                    
-
-                    <Card class="flex flex-col items-center ml-auto">
-                        <button title="Close" on:click={()=> close()}>
-                            <Icon src={XMark} mini width={48} />
-                        </button>
+                    <Card>
+                        <Button title="Close" color="tertiary" size="sm" icon={XMark} iconSize={48} on:click={()=> close()} />
                     </Card>
                 </span>
             </div>
