@@ -83,9 +83,8 @@
         req.url.searchParams.set('limit', $userSettings?.uiState.postsPerPage.toString() || '10')
         req.url.searchParams.set('community_name', data.community_name)
         req.url.searchParams.set('sort', data.sort ?? 'New')
-        
-        //@ts-ignore since using 0.18.x client wihout next_page in type def
-        req.url.searchParams.set('page_cursor', data.posts.next_page)
+
+        if (data.posts.next_page) req.url.searchParams.set('page_cursor', data.posts.next_page)
         
         load(req).then((nextBatch) => {
             if (!nextBatch || !data?.posts) return
