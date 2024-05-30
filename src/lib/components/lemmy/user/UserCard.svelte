@@ -119,7 +119,7 @@
                     <div>
                         <h1 class="flex flex-row">
                             <span class="font-bold text-lg">
-                                <UserLink badges bind:user={person.person} showInstance={false} bind:admin={is_admin} href/>
+                                <UserLink badges bind:user={person.person} showInstance={false} bind:admin={is_admin}/>
                             </span>
 
                             
