@@ -217,6 +217,10 @@
         e.preventDefault();
         e.stopPropagation();
         let direction = e.deltaY > 0 ? -1 : 1; 
+
+        // Force to stay centered when zooming
+        zoom.translateX = 0
+        zoom.translateY = 0
         zoomImage(direction); 
     }
 
