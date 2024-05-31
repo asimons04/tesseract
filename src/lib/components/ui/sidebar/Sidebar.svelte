@@ -156,7 +156,7 @@
         </div>
 
         <!--- Search field to filter the subscribed communities--->
-        {#if $userSettings.uiState.expandSidebar}
+        {#if $userSettings.uiState.expandSidebar && panel=='subscribed'}
             <form class="p-2 flex flex-row gap-1" on:submit|preventDefault>
                 <TextInput 
                     bind:value={communityFiltervalue}
