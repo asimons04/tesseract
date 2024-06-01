@@ -41,7 +41,7 @@
 
 
 <CollapseButton>
-    <Avatar width={48} alt={community.community.title ?? community.community.name} url={community.community.icon ?? undefined} slot="icon"/>
+    <Avatar width={48} alt={community.community.title ?? community.community.name} url={community.community.icon ?? undefined} community={true} slot="icon"/>
     
     <div class="flex flex-row items-center w-full justify-between" slot="title">
         
