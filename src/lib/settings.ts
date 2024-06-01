@@ -43,6 +43,8 @@ const isBrowser = () => {
 
 export type FeedType = 'All' | 'Subscribed' | 'Local'
 
+export type YouTubeFrontend = "YouTube" | "Invidious" | "Piped" 
+
 interface Settings {
     version: number
     markReadPosts: boolean
@@ -209,10 +211,10 @@ export const defaultSettings: Settings = {
     embeddedMedia: {
         feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  false,
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
-        YTFrontend: env.PUBLIC_YOUTUBE_FRONTEND as "YouTube" | "Invidious" ??  "YouTube" ,
-        customInvidious:                                                'yewtu.be',
-        customPiped:                                                    'piped.video',
-        userDefinedInvidious:                                          [],
+        YTFrontend: env.PUBLIC_YOUTUBE_FRONTEND as YouTubeFrontend      ??  "YouTube" ,
+        customInvidious:    env.PUBLIC_DEFAULT_CUSTOM_INVIDIOUS ??      'yewtu.be',
+        customPiped:        env.PUBLIC_DEFAULT_CUSTOM_PIPED     ??      'piped.video',
+        userDefinedInvidious:                                           [],
         userDefinedPiped:                                               [],
         autoplay:                                                       false,
         loop:                                                           true,
