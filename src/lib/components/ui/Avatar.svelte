@@ -40,6 +40,7 @@
             {#if community}
                 {@html createAvatar(initials, {
                     seed: alt,
+                    chars: 1,
                     }).toString()
                 }
             {:else}
