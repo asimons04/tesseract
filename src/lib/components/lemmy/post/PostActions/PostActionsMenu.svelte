@@ -7,7 +7,9 @@
     import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
+    import { goto } from '$app/navigation';
     import { instance } from '$lib/instance'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
@@ -28,14 +30,14 @@
         Eye,
         EyeSlash,
         Flag,
+        Home,
         NoSymbol,
         PencilSquare,
         Share,
         Trash,
-        Window
-
+        Window,
     } from 'svelte-hero-icons'
-    import { goto } from '$app/navigation';
+    
     
     
     export let post:PostView
@@ -48,6 +50,8 @@
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
     let editing = false;
+
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
 </script>
 <PostEditorModal bind:open={editing} bind:post />
@@ -109,13 +113,15 @@
             goto(`/post/${homeInstance}/${homePostID}`)
         }}
     >
-        <Icon src={Share} width={16} mini />
+        <Icon src={Home} width={16} mini />
             View Post on Home Instance
     </MenuButton>
     {/if}
 
     <!--- Mark as Read/Unread --->
-    {#if $profile?.jwt}
+    {#if $profile?.jwt }
+        
+        {#if onHomeInstance}
         <MenuButton title="Mark as {post.read ? 'Unread' : 'Read'}" color="info"
             on:click={async () => {
                 if ($profile?.jwt)
@@ -129,6 +135,7 @@
             <Icon src={post.read ? EyeSlash : Eye} width={16} mini />
             Mark as {post.read ? 'Unread' : 'Read'}
         </MenuButton>
+        {/if}
     
         <!---Crosspost--->
         <MenuButton title="Crosspost" color="info" on:click={() => crossPost(post)} >
@@ -137,6 +144,7 @@
         </MenuButton>    
 
         <!--- Save/Unsave Post --->
+        {#if onHomeInstance}
         <MenuButton title="{post.saved ? 'Unsave' : 'Save'} Post" color="warning"
             on:click={async () => {
                 if ($profile?.jwt) post.saved = await save(post, !post.saved)
@@ -145,14 +153,15 @@
             <Icon src={post.saved ? BookmarkSlash : Bookmark} width={16} mini />
             {post.saved ? 'Unsave' : 'Save'}
         </MenuButton>
+        {/if}
 
         
 
         
 
 
-        <!--- Hide for Self--->
-        {#if $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
+        <!--- Hide for Self and/or if not on home instance--->
+        {#if onHomeInstance && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
             
             <!---Report Post--->
             <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary">
