@@ -50,7 +50,7 @@ interface Settings {
     markReadPosts: boolean
     instance?: string
     showCompactPosts: boolean
-    font: 'font-system' | 'font-sans' | 'font-serif' | 'font-roboto' | 'font-inter' | 'font-reddit' | 'font-ubuntu' | 'font-urbanist'
+    font: 'font-system' | 'font-sans' | 'font-serif' | 'font-roboto' | 'font-inter' | 'font-opendyslexic' | 'font-reddit' | 'font-ubuntu' | 'font-urbanist'
     defaultSort: {
         sort: SortType
         feed: FeedType

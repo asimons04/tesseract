@@ -8,6 +8,7 @@ export default {
             'system': ['system-ui'], 
             'serif': ['serif'],
             'inter': ['Inter', 'sans-serif', 'system-ui'],
+            'opendyslexic' : ['OpenDyslexic', 'serif', 'system-ui'],
             'roboto': ['Roboto', 'sans-serif', 'system-ui'],
             'reddit': ['RedditMono', 'sans-serif', 'system-ui'],
             'ubuntu': ['Ubuntu', 'sans-serif', 'system-ui'],
