@@ -6,6 +6,8 @@
     import { blockCommunity, createPost, subscribe } from '$lib/components/lemmy/community/helpers'
     import { createEventDispatcher } from 'svelte'
     import { goto } from '$app/navigation'
+    import { instance } from '$lib/instance'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { userSettings } from '$lib/settings'
     
@@ -43,6 +45,7 @@
     const dispatch = createEventDispatcher()
 
     $: subscribed = ['Subscribed', 'Pending'].includes(post.subscribed)
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 </script>
 
 <!---Community Group Modal--->
@@ -63,6 +66,7 @@
     </li>
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     
+    <!---Create Post--->
     {#if $profile?.user}
         <MenuButton on:click={() => createPost(post.community)} title="Create Post" color="info">
             <Icon src={PencilSquare} width={16} mini />
@@ -75,18 +79,21 @@
         <Icon src={QueueList} width={16} mini />
         Browse Community
     </MenuButton>
+    
+    
+    {#if onHomeInstance}
+        <!---Posts In This Community by This Creator--->
+        <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" color="info">
+            <Icon src={User} mini size="16" />
+            More from {post.creator.display_name ? post.creator.display_name : post.creator.name}@{new URL(post.creator.actor_id).hostname}
+        </MenuButton>
 
-    <!---Posts In This Community by This Creator--->
-    <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" color="info">
-        <Icon src={User} mini size="16" />
-        More from {post.creator.display_name ? post.creator.display_name : post.creator.name}@{new URL(post.creator.actor_id).hostname}
-    </MenuButton>
-
-    <!---Modlog--->
-    <MenuButton link href="/modlog?community={post.community.id}" title="Modlog for {post.community.title}" color="info" >
-        <Icon src={Newspaper} mini size="16" />
-        Modlog
-    </MenuButton>
+        <!---Modlog--->
+        <MenuButton link href="/modlog?community={post.community.id}" title="Modlog for {post.community.title}" color="info" >
+            <Icon src={Newspaper} mini size="16" />
+            Modlog
+        </MenuButton>
+    {/if}
 
     {#if $profile?.user}
         <!---Add/Remove to Favorites--->
@@ -111,24 +118,29 @@
             Add/Remove to Group(s)
         </MenuButton>
 
-        <MenuButton color="{subscribed ? 'dangerSecondary' : 'success'}" title="{subscribed ? 'Unsubscribe' : 'Subscribe'}" 
-            on:click={async () => {
-                subscribed = await subscribe(post.community, subscribed)
-                subscribed = subscribed
-                subscribed
-                    ? post.subscribed = 'Subscribed'
-                    : post.subscribed = 'NotSubscribed'
-            }}
-        > 
-            <Icon src={subscribed ? Minus : Rss} width={16} mini />
-            {subscribed ? 'Unsubscribe' : 'Subscribe'}
-        </MenuButton>
+        <!---These only apply if not viewing on remote instance e.g./post/notyourinstance.xyz/12345 --->
+        {#if onHomeInstance}
+            <!---Subscribe/Unsubscribe--->    
+            <MenuButton color="{subscribed ? 'dangerSecondary' : 'success'}" title="{subscribed ? 'Unsubscribe' : 'Subscribe'}" 
+                on:click={async () => {
+                    subscribed = await subscribe(post.community, subscribed)
+                    subscribed = subscribed
+                    subscribed
+                        ? post.subscribed = 'Subscribed'
+                        : post.subscribed = 'NotSubscribed'
+                }}
+            > 
+                <Icon src={subscribed ? Minus : Rss} width={16} mini />
+                {subscribed ? 'Unsubscribe' : 'Subscribe'}
+            </MenuButton>
+            
 
-        <!---Block Community--->
-        <MenuButton color="dangerSecondary" title="Block Community" on:click={(e) =>  blockCommunity(post.community.id) } >
-            <Icon src={NoSymbol} mini size="16" />
-            Block {post.community.name}@{new URL(post.community.actor_id).hostname}
-        </MenuButton>
+            <!---Block Community--->
+            <MenuButton color="dangerSecondary" title="Block Community" on:click={(e) =>  blockCommunity(post.community.id) } >
+                <Icon src={NoSymbol} mini size="16" />
+                Block {post.community.name}@{new URL(post.community.actor_id).hostname}
+            </MenuButton>
+        {/if}
     {/if}
 
 </Menu>
