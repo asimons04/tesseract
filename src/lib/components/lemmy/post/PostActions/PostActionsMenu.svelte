@@ -7,6 +7,7 @@
     import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
+    import { instance } from '$lib/instance'
     import { profile } from '$lib/auth'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
@@ -34,6 +35,7 @@
         Window
 
     } from 'svelte-hero-icons'
+    import { goto } from '$app/navigation';
     
     
     export let post:PostView
@@ -95,6 +97,22 @@
         <Icon src={Share} width={16} mini />
             Share
     </MenuButton>
+
+    <!--- View Post on Home Instance--->
+    {#if $instance != new URL(post.post.ap_id).hostname}
+    <MenuButton title="View Post on Home Instance" color="info"
+        on:click={() => {
+            const postURL = new URL(post.post.ap_id)
+            const homeInstance = postURL.hostname
+            const path = postURL.pathname.split('/')
+            const homePostID = path[2]
+            goto(`/post/${homeInstance}/${homePostID}`)
+        }}
+    >
+        <Icon src={Share} width={16} mini />
+            View Post on Home Instance
+    </MenuButton>
+    {/if}
 
     <!--- Mark as Read/Unread --->
     {#if $profile?.jwt}

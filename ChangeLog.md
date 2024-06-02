@@ -357,7 +357,15 @@ In FF and other browsers without Clipboard API support, pasting images still wor
 ### Misc To-Do
 - [X] In post form, when resetting values, loop over the image uploads in markdown and delete them all
 - [X] Make feature/unfeature require a confirmation
-
+- [ ] Re-decouple video size from image size in posts.
+- [ ] Add quick settings modal to main / community page subnavars
+    - Change feed image size
+    - Change YT frontend and their options
+    - Enable/disable media embeds
+    - Enable/disable image proxying (if enabled system-side)
+    - Application font
+    - 
+    - Link to full settings page
 - [ ] Add  purge user button for admins.
     - Purge user flow:
         - Instance ban with remove content
