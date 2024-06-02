@@ -3,6 +3,8 @@
     
     import { getClient,  site } from '$lib/lemmy'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
+    import { instance } from '$lib/instance'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { userSettings } from '$lib/settings'
 
@@ -23,6 +25,8 @@
 
     export let post:PostView
     
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
+
     let fediseer = {
         instance: '',
         modal: false
@@ -129,7 +133,7 @@
     </MenuButton>
 
     <!--- Block Instance of Post's Community (0.19+)--->
-    {#if $profile?.jwt && $site?.version.startsWith('0.19') && new URL(post.community.actor_id).hostname != $profile?.instance}
+    {#if onHomeInstance && $profile?.jwt && new URL(post.community.actor_id).hostname != $profile?.instance}
         <MenuButton color="dangerSecondary"loading={blockingInstance} disabled={blockingInstance}
             on:click={async () => {doBlockInstance(post.community.instance_id, new URL(post.community.actor_id).hostname) }}
         >
@@ -169,7 +173,7 @@
     {/if}
 
     <!--- Block Instance of Post's Creator (0.19+ only)--->
-    {#if $profile?.jwt && $site?.version.startsWith('0.19') && new URL(post.creator.actor_id).hostname != $profile?.instance && post.community.instance_id != post.creator.instance_id}
+    {#if onHomeInstance && $profile?.jwt && new URL(post.creator.actor_id).hostname != $profile?.instance && post.community.instance_id != post.creator.instance_id}
         <MenuButton color="dangerSecondary" loading={blockingInstance} disabled={blockingInstance}
             on:click={async () => { doBlockInstance(post.creator.instance_id, new URL(post.creator.actor_id).hostname) }}
         >
