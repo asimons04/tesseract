@@ -137,7 +137,12 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
 
     // Check if profile exists for this username+instance combo
     let pIndex = get(profileData).profiles.findIndex((p:Profile) => (p.username == user!.user.local_user_view.person.name && p.instance == inst))
+    
     if (pIndex>0) {
+        // Switch to the profile to be updated in case it isn't already active
+        const pid = get(profileData).profiles[pIndex].id
+        setUserID(pid)
+
         // Set it twice:  Once to populate it with what we want saved to localStorage and again to add the transient user data
         profile.set({
             ...get(profileData).profiles[pIndex],
