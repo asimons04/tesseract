@@ -3,6 +3,8 @@
     import type { PostType, PostDisplayType } from './helpers.js'
     
     import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { instance } from '$lib/instance.js'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { scrollToTop } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
@@ -31,6 +33,8 @@
     export let expandCompact: boolean
     export let showCommentForm:boolean = false;
     export let postContainer: HTMLDivElement
+
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
 </script>
 
@@ -73,7 +77,7 @@
     {/if}
 
     <!--- Moderation Menu--->
-    {#if $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+    {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
         <ModerationMenu bind:item={post} />
     {/if}
 
