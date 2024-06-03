@@ -37,8 +37,7 @@
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
                     <ZoomableImage url={post.post.thumbnail_url ?? post.post.url} 
-                        limitHeight={false} bind:nsfw={post.post.nsfw} altText={post.post.name} 
-                        zoomable={false}
+                        bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={false}
                         class="max-w-full ml-auto mr-auto object-cover rounded-md"
                     />
                 </div>
@@ -50,8 +49,7 @@
             <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                 <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-                <ZoomableImage url={post.post.thumbnail_url ?? post.post.url} 
-                    limitHeight={false} bind:nsfw={post.post.nsfw} altText={post.post.name} 
+                <ZoomableImage url={post.post.thumbnail_url ?? post.post.url}  altText={post.post.name} 
                     class="max-w-full ml-auto mr-auto object-cover rounded-md"
                 />
             </div>

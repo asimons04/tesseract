@@ -140,7 +140,9 @@ Admins can now see votes like in Lemmy-UI.  Uses infinite scroll and deduplicati
 
 #### General
 - Slightly darkened background color in light mode cards (bg-white->bg-slate-100)
+- Added "OpenDyslexic" as a UI font option
 - Can now close modals with Escape key
+- Added button to reveal password fields
 - Some modals can be closed by clicking out of them.
     - I need to disable this or make it more consistent.  Some workflows utilize nested modals, so I do need to be able to keep them open when interacting with a child modal.
 - Added "share" link for searches.
