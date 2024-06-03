@@ -159,7 +159,7 @@
                         assistance.
                     </span>
 
-                    <TextInput label="Enter TOTP Code From Authenticator App" autocomplete="one-time-code" type="number" class="mt-auto"
+                    <TextInput label="Enter TOTP Code From Authenticator App" autocomplete="one-time-code" type="number" class="mt-4"
                         bind:value={totpToken} 
                         on:input={(e) => {
                             totpToken = totpToken.length > 6
