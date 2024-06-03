@@ -94,6 +94,7 @@
 
 <Modal bind:open icon={Key} title="Change Password" width="max-w-2xl" on:close={() => close()}>
     <form class="flex flex-col gap-4" autocomplete="off">
+        
         <Card cardColor="warning">
             <div class="flex flex-row gap-2 items-center p-2">
                 <span>
@@ -101,7 +102,7 @@
                 </span>
                 <span class="font-normal text-sm">
                     Note that changing your password will log you out of any other active sessions. This session will be updated automatically, but 
-                    you will need to remove and re-add the account on those devices to log back in.
+                    you will need to login again on any other devices/sessions.
                 </span>
             </div>
         </Card>
@@ -111,7 +112,7 @@
         <TextInput label="Confirm New Password" autocomplete="new-password" type="password" bind:value={newPassword2} />
 
         <div class="flex flex-row justify-between mt-4">
-            <Button color="primary" size="lg" on:click={() => open=false}>Cancel</Button>
+            <Button color="danger" size="lg" on:click={() => open=false}>Cancel</Button>
             <Button color="primary" size="lg" loading={changingPassword} on:click={async () => await changePassword()}>Change Password</Button>
         </div>
     </form>
