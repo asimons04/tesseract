@@ -21,9 +21,8 @@
     }
 
     const dispatcher = createEventDispatcher()
-
+    // ${!value ? 'invalid:border-red-400' : ''}
     let className =`
-        ${!value ? 'invalid:border-red-400' : ''}
         form-text text-sm rounded-md shadow-sm px-3 h-8 w-full
         bg-slate-200 text-zinc-900
         dark:bg-zinc-800 dark:text-slate-200
@@ -31,11 +30,11 @@
         ${$$props.class}
     `
     
-    let element: any;
+    let element: HTMLInputElement;
 </script>
 
 <label class="flex flex-col items-center {$$props.class}">
-    {#if label != ''}
+    {#if label}
         <span class="font-bold text-sm text-left mb-1 w-max self-start">
             {label}
             {#if required}
