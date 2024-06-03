@@ -40,6 +40,7 @@
         GlobeAlt,
         Home,
         Icon,
+        MagnifyingGlass,
         NoSymbol,
         PencilSquare,
         Square2Stack,
@@ -156,6 +157,17 @@
         >
             <Icon src={Home} width={16} mini />
                 View Comment on Home Instance
+        </MenuButton>
+        {/if}
+
+        <!---View More Comments from this User in this Community--->
+        {#if onHomeInstance}
+        <MenuButton title="More Comments From {comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}"
+            color="info"
+            link href="/search?type=Comments&community_id={comment.community.id}&person_id={comment.creator.id}&q=%20"
+        >
+            <Icon src={MagnifyingGlass} width={16} mini />
+            More From {comment.creator.display_name || comment.creator.name}@{new URL(comment.creator.actor_id).hostname}
         </MenuButton>
         {/if}
 
