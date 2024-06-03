@@ -46,6 +46,9 @@
     // Unset click to play when out of viewport (revert to thumbnail)
     $:  if (!inViewport) clickToPlayClicked = false
 
+    // Give a generic placehodler thumbnail so click to play can work for videos that don't provide thumbanil url
+    $:  if (!post?.post?.thumbnail_url) post.post.thumbnail_url = "/img/placeholder.png"
+
     function clickToPlay() {
         if (post?.post?.url) embedURL = buildYouTubeEmbedLink(post.post.url, displayType, true)
         clickToPlayClicked = true
