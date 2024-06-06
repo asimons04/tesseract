@@ -21,7 +21,7 @@
     export let zoomable:boolean = true
 </script>
 
-<div style="width: {width}px; height: {width}px;">
+<div class="{circle ? 'rounded-full' : ''} bg-white/85" style="width: {width}px; height: {width}px;">
     {#if url}
         <ZoomableImage url={url} title={title} altText={alt} 
             resolution={fullRes ? undefined : findClosestNumber(sizes,res||width)} 
@@ -33,10 +33,7 @@
             "
         />
     {:else}
-        <div
-            class="w-full h-full aspect-square object-cover overflow-hidden ring-2 ring-sky-700 {$$props.class}"
-            class:rounded-full={circle}
-        >
+        <div class="w-full h-full aspect-square object-cover overflow-hidden {circle ? 'rounded-full' : ''} {ring ? 'ring-2 ring-sky-700' : ''}  {$$props.class}" >
             {#if community}
                 {@html createAvatar(initials, {
                     seed: alt,
