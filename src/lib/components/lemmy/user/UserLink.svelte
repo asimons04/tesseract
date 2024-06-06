@@ -26,8 +26,8 @@
     export let avatar: boolean = false
     export let avatarSize: number = 24
     export let badges: boolean = true
-    export let showInstance: boolean = $userSettings.uiState.showInstances ?? true
-    export let useDisplayNames:boolean = $userSettings.displayNames ?? true
+    export let showInstance: boolean|undefined = undefined 
+    export let useDisplayNames:boolean|undefined = undefined 
     export let mod:boolean = false
     export let admin:boolean = false
     export let href:boolean = false
@@ -92,10 +92,10 @@
 
         <span class="flex flex-row flex-wrap gap-0" class:ml-0.5={avatar} >
             <span class="font-bold whitespace-nowrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
-                {useDisplayNames ? user.display_name?.split('@')[0] || user.name : user.name}
+                {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             
-            {#if showInstance}
+            {#if showInstance ?? $userSettings.uiState.showInstances}
                 <span class="text-slate-500 dark:text-zinc-500 font-normal">
                     @{new URL(user.actor_id).hostname}
                 </span>
