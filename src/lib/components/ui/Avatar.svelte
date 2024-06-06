@@ -19,9 +19,10 @@
     export let fullRes:boolean = false
     export let community:boolean = false
     export let zoomable:boolean = true
+    export let background:boolean = false
 </script>
 
-<div class="{circle ? 'rounded-full' : ''} bg-white/85" style="width: {width}px; height: {width}px;">
+<div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/85' : ''}" style="width: {width}px; height: {width}px;">
     {#if url}
         <ZoomableImage url={url} title={title} altText={alt} 
             resolution={fullRes ? undefined : findClosestNumber(sizes,res||width)} 
