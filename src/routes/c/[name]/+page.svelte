@@ -118,7 +118,7 @@
 </svelte:head>
 
 
-<SubNavbar home back compactSwitch toggleMargins toggleCommunitySidebar scrollButtons
+<SubNavbar home back quickSettings toggleMargins toggleCommunitySidebar scrollButtons
     sortMenu={true}         bind:selectedSortOption={data.sort}
     refreshButton           on:navRefresh={()=> refresh()}
 >
