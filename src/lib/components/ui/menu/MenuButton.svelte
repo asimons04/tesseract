@@ -48,7 +48,7 @@
             "
 
         >
-
+            <slot name="icon" />
             <slot/>
         </a>
     {:else}
