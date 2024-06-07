@@ -24,7 +24,7 @@
     export let title:string = '';
     export let icon:any = undefined;
     export let iconSize:number = 16
-    
+    export let fullWidth:boolean = false
     let open = false
 
     if (!selected && selectedFunc) {
@@ -35,12 +35,13 @@
 </script>
 
 
-<Menu {alignment} containerClass="!z-[30]" >
-    <button slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
+<Menu {alignment} {fullWidth} containerClass="!z-[30]" >
+    <button slot="button" let:toggleOpen on:click={toggleOpen} class="{fullWidth ? 'w-full' : 'w-max'} relative" title="{title}">
         
         <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer p-2
             border border-slate-200 dark:border-zinc-700 rounded-lg bg-transparent 
             hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none 
+            {fullWidth ? 'w-full' : ''}
             {$$props.class}
         ">
             {#if icon}
@@ -53,7 +54,7 @@
             
             <slot>
                 <!--Hide selected text in mobile view or until width is at least 'large'--->
-                <span class="hidden lg:flex">
+                <span class="{fullWidth ? 'flex' : 'hidden'} lg:flex">
                     {optionNames[options.findIndex((o) => selected == o)] || selected}
                 </span>
             </slot>
