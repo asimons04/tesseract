@@ -13,9 +13,8 @@
     export let icon:any = undefined;
     export let iconSize:number = 16
     export let containerClass:string
-    
-
-
+    export let showTitleOnButton:boolean = false
+    export let topHR:boolean = true
 </script>
 
 
@@ -32,9 +31,11 @@
             {/if}
 
             <!--Hide selected text in mobile view or until width is at least 'large'--->
-            <span class="hidden lg:flex">
-                {title}
-            </span>
+            {#if title && showTitleOnButton}
+                <span class="hidden lg:flex">
+                    {title}
+                </span>
+            {/if}
             
             <span class="ml-auto"/>
             <Icon src={ChevronDown} mini width={14}/>
@@ -47,7 +48,9 @@
             {title}
             <Icon src={icon} mini width={iconSize}/>
         </li>
-        <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+        {#if topHR}
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+        {/if}
     {/if}
     
     <slot />
