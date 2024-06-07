@@ -79,8 +79,13 @@
         UserCircle,
         UserGroup,
         Window,
-        XCircle
+        XCircle,
+
+        BarsArrowDown
+
     } from 'svelte-hero-icons'
+    import Card from '$lib/components/ui/Card.svelte';
+    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
     
     
     
@@ -241,6 +246,11 @@
 
         goto('/search', {invalidateAll: true})
     }
+
+    function submitSearch() {
+        filter.page = 1
+        search()
+    }
    
     
 
@@ -259,103 +269,132 @@
     <title>Search</title>
 </svelte:head>
 
-<SubNavbar home scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar
-    sortMenu sortPreventDefault
-    
-    sortOptions={['New', 'Old']} 
-    sortOptionNames={['New', 'Old']} 
-    bind:selectedSortOption={filter.sort} 
-    on:navChangeSort={(e) => {
-        if (e && e.detail) {
-            filter.sort = e.detail
-        }
-    }}
->
+<SubNavbar home back scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar >
 
-    <!---Custom Sub-Navbar Buttons for Search--->
-    <span class="flex flex-row gap-1 md:gap-2 items-center" slot="far-left" let:iconSize>
-        <SelectMenu
-            options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
-            selected={filter.type}
-            icon={Bars3}
-            title="Search Type"
-            on:select={(e) => {
-                if (e.detail) {
-                    filter.type = e.detail
-                    //pageState.panel = e.detail
-                }
-            }}
-        />
-
-        <!--- Search Filter Menu --->
-        <SubnavbarMenu alignment="bottom-center" title="Search Filters" icon={Funnel} containerClass="!w-96 !overflow-visible !-left-[107%] md:!-left-[50%]">
+    <!--- Search Filter Menu --->
+    <SubnavbarMenu alignment="bottom-left" icon={Funnel} containerClass="max-h-[79svh] overflow-visible" slot="far-left" let:iconSize>
+        <div class="flex flex-col w-full p-2 gap-2 min-w-[40vw] md:min-w-[25vw] cursor-default">
             
-            <!--- Lookup a Community to Filter--->
-            <MenuButton>
-                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
-                    <Icon mini src={UserGroup} width={iconSize-2} />
-                    
-                    {#if filter.community?.id}
-                        <div class="flex flex-row w-full justify-between">
-                            <CommunityLink avatar={true} avatarSize={iconSize} community={filter.community} />
-                            
-                            <button class="cursor-pointer" on:click={() => filter.community = undefined }>
-                                <Icon src={XCircle} mini width={iconSize-2}/>
-                            </button>
-                        </div>
-                    {:else}
-                        <span class="flex flex-row gap-2 w-full">
-                            <CommunityAutocomplete
-                                containerClass="!w-full"
-                                placeholder="Community"
-                                listing_type="All"
-                                on:select={(e) => {
-                                    filter.community = e.detail
-                                }}
-                            />
-                        </span>
-                    {/if}
-                </button>
-            </MenuButton>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <div class="flex flex-col w-full gap-2 cursor-default" on:click|preventDefault|stopPropagation>
+
+                <Card class="flex flex-col gap-0 p-2">
+                    <!---Search Type--->
+                    <SettingMultiSelect
+                        padding={false} small={true} justify={true}    
+                        options={['All', 'Posts', 'Comments', 'Communities', 'Users']}
+                        selected={filter.type}
+                        icon={Bars3}
+                        title="Search Type"
+                        on:select={(e) => {
+                            if (e.detail) {
+                                filter.type = e.detail
+                            }
+                        }}
+                    />
+
+                    <!---Sort Direction--->
+                    <SettingMultiSelect
+                        padding={false} small={true} justify={true}    
+                        options={['New', 'Old']} 
+                        selected={filter.sort}
+                        icon={BarsArrowDown}
+                        title="Sort Direction"
+                        on:select={(e) => {
+                            if (e.detail) {
+                                filter.sort = e.detail
+                            }
+                        }}
+                    />
+                </Card>
             
 
-            <!---Filter for a Person--->
-            <MenuButton>
-                <button class="flex flex-row gap-4 w-full" on:click|stopPropagation>
-                    <Icon mini src={User} width={iconSize-2} />
-
-                    {#if filter.person}
-                        <div class="flex flex-row w-full justify-between">
-                            <UserLink avatar={true} avatarSize={iconSize} user={filter.person} badges={false} useDisplayNames={false} shortenDisplayName={true}/>
+                <!--Community and User Filters--->
+                <Card class="flex flex-col gap-4 p-2">
+                    <!--- Lookup a Community to Filter--->
+                    <div class="flex flex-row gap-4 w-full items-center">
+                        <Icon mini src={UserGroup} width={16} />
                         
-                            <button class="cursor-pointer" on:click={() => filter.person = undefined}>
-                                <Icon src={XCircle} mini width={iconSize-2}/>
-                            </button>
-                        </div>
-                    {:else}
-                        <span class="flex flex-row gap-2 w-full">
-                            <PersonAutocomplete
-                                containerClass="!w-full"
-                                placeholder="Creator"
-                                on:select={(e) => {
-                                    filter.person = e.detail
+                        {#if filter.community?.id}
+                            <div class="flex flex-row w-full justify-between">
+                                <CommunityLink avatar={true} avatarSize={16} community={filter.community} />
+                                
+                                <button class="cursor-pointer ml-2" on:click={() => filter.community = undefined }>
+                                    <Icon src={XCircle} mini width={24}/>
+                                </button>
+                            </div>
+                        {:else}
+                            <span class="flex flex-row gap-2 w-full">
+                                <CommunityAutocomplete
+                                    containerClass="!w-full"
+                                    placeholder="Community"
+                                    listing_type="All"
+                                    on:select={(e) => {
+                                        filter.community = e.detail
+                                    }}
+                                />
+                            </span>
+                        {/if}
+                    </div>
+
+                    <!---Filter for a Person--->
+                    <div class="flex flex-row gap-4 w-full items-center">
+                        <Icon mini src={User} width={16} />
+
+                        {#if filter.person}
+                            <div class="flex flex-row w-full justify-between">
+                                <UserLink avatar={true} avatarSize={16} user={filter.person} badges={false} useDisplayNames={false} shortenDisplayName={true}/>
+                            
+                                <button class="cursor-pointer ml-2" on:click={() => filter.person = undefined}>
+                                    <Icon src={XCircle} mini width={24}/>
+                                </button>
+                            </div>
+                        {:else}
+                            <span class="flex flex-row gap-2 w-full">
+                                <PersonAutocomplete
+                                    containerClass="!w-full"
+                                    placeholder="Creator"
+                                    on:select={(e) => {
+                                        filter.person = e.detail
+                                    }}
+                                />
+                            </span>
+                        {/if}
+                    </div>
+
+                    <!---Search Term--->
+                    <form class="flex flex-col gap-4 w-full items-center">
+                        <span class="flex flex-row gap-4 w-full items-center">
+                            <Icon src={MagnifyingGlass} mini width={16} />
+
+                            <TextInput type="text" placeholder="Keywords" class="w-full" bind:value={filter.query}
+                                on:keydown={(e) => {
+                                    if (e.detail.key == 'Enter') submitSearch()
                                 }}
                             />
                         </span>
-                    {/if}
-                </button>
-            </MenuButton>
-            
-            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-            <!--- Reset Search Filters--->
-            <MenuButton class="!gap-4" on:click={() => { resetSearch() }}
-            >
-                <Icon src={ArrowPathRoundedSquare} class="h-8" mini width={iconSize-2}/>
-                Reset Search Filters
-            </MenuButton>
-        </SubnavbarMenu>
+                        
+                        <span class="flex flex-row gap-4 w-full items-center">
+                            <!---Reset Search Button--->
+                            <Button color="danger" size="sm" class="w-full" title="Clear Search" on:click={() => resetSearch() } >
+                                <Icon src={XCircle} mini width={24}/>
+                                Clear
+                            </Button>
 
-    </span>
+                            <Button color="tertiary-border" class="w-full" on:click={() => submitSearch() }>
+                                <Icon src={MagnifyingGlass} mini width={16} />
+                                Search
+                            </Button>
+                        </span>
+                       
+                    </form>
+                </Card>
+            </div>
+        </div>
+    </SubnavbarMenu>
+
+    
     
     <!---Search Input in Subnavbar-->
     <span class="hidden xl:flex flex-row gap-0" let:iconSize slot="center">
