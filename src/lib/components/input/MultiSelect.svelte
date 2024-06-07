@@ -28,7 +28,7 @@
     flex flex-row items-center min-w-[120px] ${fullWidth ? 'w-full' : ''} max-w-full overflow-auto
     ${
       headless
-        ? 'pb-1'
+        ? 'py-1'
         : 'bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-1'
     }
     gap-1
@@ -50,9 +50,9 @@
     relative
   `
 </script>
-<div class="flex flex-col {fullWidth ? 'w-full' : ''}">
+<div class="flex flex-col gap-1 {fullWidth ? 'w-full' : ''}">
     
-    <span class="flex flex-row gap-1 my-1">
+    <span class="flex flex-row gap-1">
         <span><slot name="icon"/></span>
         <span class="text-sm font-bold"><slot name="label"/></span>
     </span>
