@@ -25,13 +25,13 @@ export const buttonColor = {
         hover:dark:text-inherit border-none`,
 
     tertiary:
-      'border border-transparent bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none',
+      'border border-transparent bg-transparent hover:bg-slate-200 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none',
     
     "tertiary-border":
-      'border border-slate-200 dark:border-zinc-800 rounded-lg bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none',
+      'border border-slate-300 dark:border-zinc-800 rounded-lg bg-transparent hover:bg-slate-200 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none',
 
     "tertiary-border-bottom":
-        'border-b border-slate-200 dark:border-zinc-800 bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200',
+        'border-b border-slate-300 dark:border-zinc-800 bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200',
 
     danger:
       'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',
