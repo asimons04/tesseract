@@ -12,15 +12,18 @@
     export let condition:boolean = true
     export let options:any[]
     export let optionNames:any[] = []
-    
+    export let padding:boolean = true
+    export let small:boolean = false
+    export let justify:boolean = false
+
     const dispatcher = createEventDispatcher<{ select: string }>()
     $: { dispatcher('select', selected)}
 </script>
 
 {#if condition}
-    <div class="flex flex-row w-full gap-2 py-2">
-        <div class="flex flex-col">
-            <p class="text-sm font-bold flex flex-row gap-2">
+    <div class="flex flex-row w-full gap-2 items-center {padding ? 'py-2' : ''}">
+        <div class="flex flex-col {justify ? 'w-1/2' : ''}">
+            <p class="{small ? 'text-xs' : 'text-sm'} font-bold flex flex-row items-center gap-2">
                 <Icon src={icon} mini width={16}/>
                 {title}
             </p>
@@ -42,6 +45,7 @@
             bind:selected
             headless={true}
             items={0}
+            class="{justify ? 'w-1/2' : ''}"
         />
     </div>
 {/if}
