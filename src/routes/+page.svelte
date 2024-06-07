@@ -107,12 +107,12 @@
     
     // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
     $:  if (listingTypeOptions && listingTypeOptionNames && $profile?.user && amModOfAny($profile.user)) {
-            if (!listingTypeOptions.includes('ModeratorView')) listingTypeOptions.push('ModeratorView')
+            if (!listingTypeOptions.includes('ModeratorView'))      listingTypeOptions.push('ModeratorView')
             if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Moderator View")
         }
         else if (listingTypeOptions && listingTypeOptionNames ){
-            if (listingTypeOptions.includes('ModeratorView')) listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
-            if (listingTypeOptionNames.includes('ModeratorView')) listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Moderator View'), 1)
+            if (listingTypeOptions.includes('ModeratorView'))       listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
+            if (listingTypeOptionNames.includes('ModeratorView'))   listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Moderator View'), 1)
         }
 
 </script>
@@ -122,16 +122,13 @@
 </svelte:head>
 
 
-<SubNavbar
-    bind:listingTypeOptions bind:listingTypeOptionNames
-    compactSwitch  toggleMargins toggleCommunitySidebar scrollButtons 
-    listingType={true}      bind:selectedListingType={data.listingType}
-    sortMenu={true}         bind:selectedSortOption={data.sort}
-    refreshButton           on:navRefresh={()=> refresh()}
+<SubNavbar  quickSettings toggleMargins toggleCommunitySidebar scrollButtons 
+    listingType     bind:listingTypeOptions bind:listingTypeOptionNames bind:selectedListingType={data.listingType}
+    sortMenu        bind:selectedSortOption={data.sort}
+    refreshButton   on:navRefresh={()=> refresh()}
 >
     <!---Inline Search in Middle--->
     <SiteSearch placeholder="Search {data?.site?.site_view?.site?.name ?? "everything"}" slot="center"/>
-
 </SubNavbar>
 
 
