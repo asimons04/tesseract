@@ -62,7 +62,14 @@ export const imageSize = (displayType:PostDisplayType, ) => {
 // Check if the provided URL is an image
 export const isImage = (url: string | undefined) => {
     if (!url) return false
-    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(new URL(url).pathname)
+    // Account for Lemmy's godawfully fucking stupid method of image proxying. My god, it's like they went out of their way to do this the dumbest way possible.
+    let imageURL = new URL(url)
+    
+    let testPath = imageURL.searchParams.get('url')
+        ? decodeURI(imageURL.searchParams.get('url') as string)
+        : imageURL.pathname
+    
+    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testPath)
 }
 
 // Check if the provided URL is an embeddable audio file
@@ -80,6 +87,17 @@ export const isVideo = (inputUrl: string | undefined) => {
 
   // (/videos/embed) is for Peertube embed video detection
   return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
+}
+
+/* Unproxies Lemmy's godawfully stupid method of image proxying */
+export const unproxyImage = (inputURL:string) => {
+    //https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png
+    
+    let testURL = new URL(inputURL)
+    if (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) {
+        return decodeURI(testURL.searchParams.get('url') as string)
+    }
+    return inputURL
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding

@@ -3,7 +3,7 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { getInstance } from '$lib/lemmy.js'
-    import { imageSize } from './helpers.js'
+    import { imageSize, unproxyImage } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
     import Link from '$lib/components/input/Link.svelte'
@@ -36,9 +36,9 @@
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-                    <ZoomableImage url={post.post.thumbnail_url ?? post.post.url} 
+                    <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
                         bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={false}
-                        class="max-w-full ml-auto mr-auto object-cover rounded-md"
+                        class="max-w-full ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)]"
                     />
                 </div>
                 
@@ -49,7 +49,7 @@
             <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                 <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-                <ZoomableImage url={post.post.thumbnail_url ?? post.post.url}  altText={post.post.name} 
+                <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 
                     class="max-w-full ml-auto mr-auto object-cover rounded-md"
                 />
             </div>

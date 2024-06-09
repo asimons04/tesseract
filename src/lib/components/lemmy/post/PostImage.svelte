@@ -3,7 +3,8 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { createEventDispatcher } from 'svelte'
-
+    import { unproxyImage } from './helpers'
+    
     import ImageContainer from './utils/ImageContainer.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte'
@@ -19,10 +20,13 @@
     
     let dispatcher = createEventDispatcher()
     
+
+
     // Finesse the url and thumbnail URL to accommodate GIFs (and not thumbnail webms ugh) or when the thumbnanil is a static image but the embed URL is a GIF (Imgur)
     $:  {
-            url = post.post.url as string
-            
+            //https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png
+            url = unproxyImage(post.post.url as string)
+
             // Get Imgur gifs to render without having to click through to the site.
             if (!url?.endsWith('.gif')  && post?.post?.embed_video_url?.endsWith('.gif')) {
                 url = post.post.embed_video_url
@@ -33,7 +37,7 @@
                 thumbnail_url = url;
             }
             else {
-                thumbnail_url = post.post.thumbnail_url as string ?? post.post.url as string
+                thumbnail_url = unproxyImage(post.post.thumbnail_url as string ?? post.post.url as string)
             }
         }
    
