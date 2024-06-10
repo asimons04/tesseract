@@ -99,11 +99,11 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
 }
 
 /** If community title is > 40 characters, split it at the hyphen or colon and only return the text to the left of that */
-export function shortenCommunityName(name:string) {
+export function shortenCommunityName(name:string, maxLength=25) {
     if (!name) return
-    let shortened =  name.length > 25
+    let shortened =  name.length > maxLength
         ? fixLemmyEncodings(name).split(':')[0].split('-')[0].trim()
         : fixLemmyEncodings(name)
     
-    return shortened.substring(0,25)
+    return shortened.substring(0,maxLength)
 }
