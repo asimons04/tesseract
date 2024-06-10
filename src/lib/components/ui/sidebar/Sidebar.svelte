@@ -155,28 +155,7 @@
             <div class="mr-auto"/>
         </div>
 
-        <!--- Search field to filter the subscribed communities--->
-        {#if $userSettings.uiState.expandSidebar && panel=='subscribed'}
-            <form class="p-2 flex flex-row gap-1" on:submit|preventDefault>
-                <TextInput 
-                    bind:value={communityFiltervalue}
-                    type="text" autocomplete="new-password"
-                    placeholder="Jump to a Community"
-                    on:keyup={(e) => { 
-                        debounce(e.detail.srcElement.value);
-                        panel = 'subscribed'
-                    }}
-                    class="h-8 w-full"
-                />
-                <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
-                        debounce('');
-                        communityFiltervalue = '';
-                    }}
-                >
-                    <Icon src={XCircle} mini size="22"/>
-                </button>
-            </form>
-        {/if}
+        
         
         <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
         
@@ -184,6 +163,30 @@
             
             <!--- Subscribed/Moderating Community list --->
             {#if panel=='subscribed'}
+
+                <!--- Search field to filter the subscribed communities--->
+                {#if $userSettings.uiState.expandSidebar}
+                    <form class="p-2 flex flex-row gap-1" on:submit|preventDefault>
+                        <TextInput 
+                            bind:value={communityFiltervalue}
+                            type="text" autocomplete="new-password"
+                            placeholder="Jump to a Community"
+                            on:keyup={(e) => { 
+                                debounce(e.detail.srcElement.value);
+                                panel = 'subscribed'
+                            }}
+                            class="h-8 w-full"
+                        />
+                        <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
+                                debounce('');
+                                communityFiltervalue = '';
+                            }}
+                        >
+                            <Icon src={XCircle} mini size="22"/>
+                        </button>
+                    </form>
+                {/if}
+
                 <div class="flex flex-col gap-1 h-full overflow-y-auto">
                     {#if $profile.user.follows.length > 0}
                         
