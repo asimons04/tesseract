@@ -234,10 +234,7 @@ export const defaultSettings: Settings = {
 export const ENABLE_MEDIA_PROXY             = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY)                     ?? false
 export const MEDIA_PROXY_LEMMY_ONLY         = toBool(env.PUBLIC_MEDIA_PROXY_LEMMY_ONLY)                 ?? false
 export const MEDIA_PROXY_BLACKLIST          = [
-    'burgit.moe',
-    'iili.io',
     'img.shields.io',
-    'mintboard.org',
     ...strToArray(env.PUBLIC_MEDIA_PROXY_BLACKLIST)
 ]
 export const ENABLE_MEDIA_PROXY_LOCAL       = toBool(env.PUBLIC_ENABLE_MEDIA_PROXY_LOCAL)               ?? true
