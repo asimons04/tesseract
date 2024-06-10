@@ -62,42 +62,32 @@ export const imageSize = (displayType:PostDisplayType, ) => {
 // Check if the provided URL is an image
 export const isImage = (url: string | undefined) => {
     if (!url) return false
-    // Account for Lemmy's godawfully fucking stupid method of image proxying. My god, it's like they went out of their way to do this the dumbest way possible.
-    let imageURL = new URL(url)
-    
-    let testPath = imageURL.searchParams.get('url')
-        ? decodeURI(imageURL.searchParams.get('url') as string)
-        : imageURL.pathname
-    
-    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testPath)
+    const testURL = new URL(unproxyImage(url))
+    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
 }
 
 // Check if the provided URL is an embeddable audio file
 export const isAudio = (url: string | undefined) => {
     if (!url) return false
-    return /\.(mp3|oga|opus|aac)$/i.test(new URL(url).pathname)
+    const testURL = new URL(unproxyImage(url))
+    return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
 }
 
 
-// Check if provided URL is a video
+/** Check if provided URL is a video */
 export const isVideo = (inputUrl: string | undefined) => {
   if (!inputUrl) return false
-
-  const url = new URL(inputUrl).pathname.toLowerCase()
-
-  // (/videos/embed) is for Peertube embed video detection
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
+  const url = new URL(unproxyImage(inputUrl)).pathname.toLowerCase()
+  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
 }
 
-/* Unproxies Lemmy's godawfully stupid method of image proxying */
+/** Unproxies Lemmy's godawfully stupid method of image proxying */
 export const unproxyImage = (inputURL:string) => {
-    //https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png
-    
+    //Blech!  https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png
     let testURL = new URL(inputURL)
-    if (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) {
-        return decodeURI(testURL.searchParams.get('url') as string)
-    }
-    return inputURL
+    return (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
+        ? decodeURI(testURL.searchParams.get('url') as string)
+        : inputURL
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
@@ -114,8 +104,7 @@ export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
 export const isPeertube = (embed_video_url:string): boolean => {
     const regex = `\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
     const found = embed_video_url.match(regex)
-    if (found) return true
-    return false
+    return found ? true : false
 }
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
