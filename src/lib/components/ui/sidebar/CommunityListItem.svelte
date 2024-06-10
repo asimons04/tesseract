@@ -51,7 +51,7 @@
             toast({
                 type: "warning",
                 title: "Confirm Remove",
-                content: `Are you sure you want to remove ${shortenCommunityName(community.title) || community.name} from ${group}?`,
+                content: `Are you sure you want to remove ${shortenCommunityName(community.title, 30) || community.name} from ${group}?`,
                 action: () => removeFromCurrentGroup(true),
             })
             return
@@ -111,7 +111,7 @@
         </div>
         
         <span class="w-full break-words" class:hidden={!expanded}>
-            {shortenCommunityName(community.title)}
+            {shortenCommunityName(community.title, 30)}
         </span>
 
         <span class="ml-auto"/>
@@ -126,7 +126,7 @@
         
         <!---Community Name Header--->
         <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
-            {shortenCommunityName(community.title) ?? community.name}@{new URL(community.actor_id).host}
+            {shortenCommunityName(community.title, 30) ?? community.name}@{new URL(community.actor_id).host}
         </span>
 
         <!---Create Post --->
