@@ -24,7 +24,6 @@
 
     // Finesse the url and thumbnail URL to accommodate GIFs (and not thumbnail webms ugh) or when the thumbnanil is a static image but the embed URL is a GIF (Imgur)
     $:  {
-            //https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png
             url = unproxyImage(post.post.url as string)
 
             // Get Imgur gifs to render without having to click through to the site.
