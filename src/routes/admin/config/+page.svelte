@@ -436,7 +436,7 @@
     
         <div class="flex flex-col lg:flex-row gap-2">
             <!---Section Selection Menu--->
-            <div class="flex flex-shrink-0 flex-row w-full overflow-auto overflow-y-hidden lg:flex-col lg:max-w-[15%] lg:justify-start gap-2">
+            <div class="flex flex-shrink-0 flex-row w-full overflow-auto overflow-y-hidden py-2 lg:py-0 lg:flex-col lg:max-w-[15%] lg:justify-start gap-2">
                 <Button
                     color="tertiary"
                     title="General"
@@ -1714,7 +1714,7 @@
                         </span>
                         
                         <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
-                            <div class="flex flex-col lg:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col w-full gap-2 py-2">
                                 <div class="flex flex-col">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={DocumentText} mini width={16}/>
@@ -1753,7 +1753,7 @@
                         </span>
                         
                         <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
-                            <div class="flex flex-col lg:flex-row w-full gap-2 py-2">
+                            <div class="flex flex-col w-full gap-2 py-2">
                                 <div class="flex flex-col">
                                     <p class="text-sm font-bold flex flex-row gap-2">
                                         <Icon src={DocumentText} mini width={16}/>
