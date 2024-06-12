@@ -18,12 +18,8 @@
     
     import { userSettings } from '$lib/settings'
     
-    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
+    
     import Button from '$lib/components/input/Button.svelte'
-    import CommunityActionMenu from '$lib/components/lemmy/post/PostActions/CommunityActionMenu.svelte'
-    import ModerationMenu       from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
-    import PostActionsMenu from '$lib/components/lemmy/post/PostActions/PostActionsMenu.svelte'
-    import PostEditorModal from '$lib/components/lemmy/post/PostActions/PostEditorModal.svelte'
     import QuickSettings from './QuickSettings.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
@@ -63,7 +59,7 @@
     export let refreshPreventDefault:boolean = false    // Prevent the default reload with invalidate 
     export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
     export let quickSettings:boolean = false
-
+    export let qsShiftLeft:number = 0           // Number of button slots to shift the quick settings menu to the left of
 
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
@@ -115,15 +111,13 @@
         
         <!--Home Button-->
         {#if home }
-            <span class="hidden md:flex">
-                <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary" >
-                    <Icon src={Home} width={iconSize} />
-                </Button>
-            </span>
+            <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary" >
+                <Icon src={Home} width={iconSize} />
+            </Button>
         {/if}
 
-        {#if back && history.length > 1}
-            <!--Return to Feed Button-->
+        {#if back}
+            <!--Back Button-->
             <Button title="Back" data-sveltekit-preload-data="hover"
                 color="tertiary"
                 size="sm"
@@ -150,6 +144,7 @@
                 bind:sortOptionNames
                 bind:selectedSortOption
                 bind:sortPreventDefault
+                bind:shiftLeft={qsShiftLeft}
             />
         {/if}
         
