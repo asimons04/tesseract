@@ -63,8 +63,9 @@
                 <Avatar url={option.avatar} alt={option.actor_id} width={24} />
                 <div class="flex flex-col text-left">
                     <span class="font-bold">{option.display_name ?? option.name}</span>
-                    <span class="text-xs opacity-80">
-                        {option.name}@{new URL(option.actor_id).hostname}
+                    <span class="flex flex-row flex-wrap gap-0 text-xs opacity-80">
+                        <span>{option.name}</span>
+                        <span>@{new URL(option.actor_id).hostname}</span>
                     </span>
                 </div>
             </MenuButton>
