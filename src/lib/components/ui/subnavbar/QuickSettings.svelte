@@ -44,12 +44,13 @@
     export let sortOptionNames:string[]
     export let selectedSortOption:string
     export let sortPreventDefault:boolean
-
+    export let shiftLeft:number = 0
+    
 </script>
 
 
 <!-- svelte-ignore missing-declaration -->
-<SubnavbarMenu alignment="bottom-left" icon={Cog6Tooth} containerClass="max-h-[79svh]">
+<SubnavbarMenu alignment="bottom-left" {shiftLeft} icon={Cog6Tooth} containerClass="max-h-[79svh]">
     
     
     <div class="flex flex-col w-full p-2 gap-2 cursor-default">
@@ -67,7 +68,7 @@
                         selected={selectedListingType}
                         title={listingTypeTitle}
                         icon={Bars3}
-                        padding={false} small={true} justify={true}
+                        padding={false} small={true}
                         on:select={listingTypeOnSelect}
                     />
 
@@ -79,7 +80,7 @@
                         selected={selectedSortOption}
                         title="Sort Direction"
                         icon={BarsArrowDown}
-                        padding={false} small={true} justify={true}
+                        padding={false} small={true}
                         on:select={(e) => {
                             if (!sortPreventDefault) searchParam($page.url, 'sort', e.detail, 'page')
                         }}
