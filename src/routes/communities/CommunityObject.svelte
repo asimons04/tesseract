@@ -50,15 +50,16 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span class="break-words  text-base font-bold text-sky-400 hover:underline" on:click={(e) => e.stopPropagation()}>
-                <CommunityLink  showInstance={false} avatar={false} avatarSize={48} community={community.community} />
+                <CommunityLink  showInstance={false} avatar={false} community={community.community} />
             </span>
             
-            <span class="opacity-80 text-xs">
-                !{community.community.name}@{new URL(community.community.actor_id).hostname}
+            <span class="flex flex-row flex-wrap opacity-80 text-xs">
+                <span>!{community.community.name}</span>
+                <span>@{new URL(community.community.actor_id).hostname}</span>
             </span>
 
             <!--- Icons/Counts Row --->
-            <div class="flex flex-row gap-3 mt-2 font-normal items-center">
+            <div class="flex flex-row flex-wrap gap-3 mt-2 font-normal items-center">
                 
                 <!---Community Created Date (Relative) --->
                 <div class="flex flex-row gap-1 items-center">
@@ -112,6 +113,7 @@
            
         <Subscribe {community} let:subscribe let:subscribing class="mr-4">
             <Button
+                class="{['Subscribed', 'Pending'].includes(community.subscribed) ? '!bg-sky-500' : ''}"
                 disabled={subscribing || !$profile?.jwt}
                 loading={subscribing}
                 color="tertiary-border"
@@ -134,7 +136,7 @@
                 
             >
                 {#if !subscribing}
-                    <span class="{['Subscribed', 'Pending'].includes(community.subscribed) ? 'text-green-500 font-bold' : ''}">
+                    <span class="{['Subscribed', 'Pending'].includes(community.subscribed) ? 'text-zinc-950 font-bold' : ''}">
                         <Icon mini src={Check} width={18}/>
                     </span>
                 {/if}
