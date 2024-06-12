@@ -76,12 +76,13 @@
                 bg-white/95  border-slate-200 
                 dark:bg-zinc-950/95 dark:border-zinc-800
                 backdrop-blur-3xl
+                min-w-[255px] max-w-[90vw] max-h-[79svh]
                 {$$props.containerClass}
             "
         >
 
             {#if open}
-                <div on:click={toggleOpen} class="flex flex-col gap-0 min-w-[155px] max-w-[90vw]" role="button" tabindex=0>
+                <div on:click={toggleOpen} class="flex flex-col gap-0 w-full" role="button" tabindex=0>
                     <slot {toggleOpen} />
                 </div>
             {/if}
