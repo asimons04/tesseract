@@ -136,7 +136,7 @@
 
 <!---Only show on /u/{username} routes since the /profile/user route will use the navbar from its layout page--->
 {#if $page.url.pathname.startsWith('/u/')}
-<SubNavbar  back quickSettings toggleMargins toggleCommunitySidebar scrollButtons
+<SubNavbar  home back quickSettings qsShiftLeft={2} toggleMargins toggleCommunitySidebar scrollButtons
     refreshButton   on:navRefresh={()=> refresh()}
     sortMenu        sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
     listingType     listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}

@@ -272,13 +272,14 @@
 <SubNavbar home back scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar >
 
     <!--- Search Filter Menu --->
-    <SubnavbarMenu alignment="bottom-left" icon={Funnel} containerClass="max-h-[79svh] overflow-visible" slot="far-left" let:iconSize>
+    <SubnavbarMenu alignment="bottom-left" icon={Funnel} shiftLeft={2} slot="far-left" let:iconSize>
         <div class="flex flex-col w-full p-2 gap-2 min-w-[40vw] md:min-w-[25vw] cursor-default">
             
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div class="flex flex-col w-full gap-2 cursor-default" on:click|preventDefault|stopPropagation>
-
+                
+                <!--Search Type and Sorting--->
                 <Card class="flex flex-col gap-0 p-2">
                     <!---Search Type--->
                     <SettingMultiSelect
@@ -409,11 +410,13 @@
 
             <Button submit color="tertiary">
                 <Icon src={MagnifyingGlass} mini width={iconSize} />
+                Search
             </Button>
 
             <!---Reset Search Button--->
             <Button color="tertiary" size="sm" title="Clear Search" on:click={() => resetSearch() } >
                 <Icon src={XCircle} mini width={iconSize-2}/>
+                Reset
             </Button>
 
             <!---Share Permalink to this Search--->
