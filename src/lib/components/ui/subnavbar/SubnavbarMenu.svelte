@@ -12,14 +12,29 @@
     export let title:string = '';
     export let icon:any = undefined;
     export let iconSize:number = 16
-    export let containerClass:string
+    export let containerClass:string = ""
     export let showTitleOnButton:boolean = false
     export let topHR:boolean = true
+    export let shiftLeft:number = 0
+
+    const translateX = 50 * shiftLeft
+    let translate = ''
+    switch(translateX) {
+        case 50:
+            translate='translate-x-[-50px]'
+            break
+        case 100:
+            translate='translate-x-[-100px]'
+            break
+        case 150:
+            translate='translate-x-[-150px]'
+            break
+    }
 </script>
 
 
-<Menu {alignment} containerClass="!z-[30] {containerClass}" >
-    <button slot="button" let:toggleOpen on:click={toggleOpen} class="w-max relative" title="{title}">
+<Menu {alignment} containerClass="!z-[30] max-h-[79svh] min-w-[97vw] md:min-w-[50vw] lg:min-w-[40vw] xl:min-w-[25vw] overflow-visible {translate} {containerClass}" >
+    <button slot="button" let:toggleOpen on:click={toggleOpen} class="w-max" title="{title}">
         
         <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer p-2
             border border-slate-200 dark:border-zinc-700 rounded-lg bg-transparent 
