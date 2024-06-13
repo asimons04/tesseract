@@ -33,6 +33,10 @@
         }
     })
 
+    $: path = $page.url.pathname.endsWith('/')
+        ? $page.url.pathname.substring(0, $page.url.pathname.length-1)
+        : $page.url.pathname
+
 </script>
 
 <SubNavbar home back refreshButton toggleCommunitySidebar>
@@ -41,9 +45,9 @@
         <SelectMenu
             title="Administration"
             icon={
-                $page.url.pathname.startsWith('/admin/config')
+                path.startsWith('/admin/config')
                     ? CommandLine
-                    : $page.url.pathname.startsWith('/admin/applications')
+                    : path.startsWith('/admin/applications')
                         ? ClipboardDocumentCheck
                         : CommandLine
                 }
@@ -52,14 +56,14 @@
                 '/admin/applications',
             ]}
             optionNames={['Configuration', 'Applications']}
-            selected={$page.url.pathname}
+            selected={path}
             on:select={(e) => {
                 goto(e.detail)
             }}
         />
         
         <!---Read/Unread Selector for Applications Page--->
-        {#if $page.url.pathname.startsWith('/admin/applications')}
+        {#if path.startsWith('/admin/applications')}
             <SelectMenu
                 title="Read/Unread"
                 icon={
