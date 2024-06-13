@@ -84,6 +84,11 @@ export const isVideo = (inputUrl: string | undefined) => {
 /** Unproxies Lemmy's godawfully stupid method of image proxying */
 export const unproxyImage = (inputURL:string) => {
     //Blech!  https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png
+    
+    // Fix any relative image URLs
+    if (inputURL.startsWith('/'))
+        inputURL = window.origin + inputURL
+    
     const testURL = new URL(inputURL)
     return (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
         ? decodeURI(testURL.searchParams.get('url') as string)
