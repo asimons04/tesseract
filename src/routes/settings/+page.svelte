@@ -40,10 +40,13 @@
         Beaker,
         BugAnt,
         ArrowTopRightOnSquare,
+        Cake,
+        CalendarDays,
         ChartBar,
         ChatBubbleBottomCenterText,
         CheckBadge,
         ChevronUp,
+        ChevronDoubleDown,
         CloudArrowDown,
         CloudArrowUp,
         CodeBracketSquare,
@@ -77,9 +80,8 @@
         Window,
         XCircle,
 
-        Cake,
+        
 
-        CalendarDays
 
 
     } from 'svelte-hero-icons'
@@ -460,11 +462,17 @@
                 bind:selected={$userSettings.uiState.postsPerPage}
             />
 
+            <!---Infinite Scroll--->
+            <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll}
+                description="Use infinite scrolling instead of manual pagination."
+            />
+
             <!---Infinite Scroll Size--->
             <SettingMultiSelect title="Infinite Scroll Size" icon={TableCells}
                 description="How many posts should be rendered before the oldest in the feed are removed (off-screen). Increasing this will increase memory consumption and may also reduce performance depending on your device."
                 options={[50, 75, 100, 125, 150]}
                 bind:selected={$userSettings.uiState.maxScrollPosts}
+                condition={$userSettings.uiState.infiniteScroll}
             />
 
             <!---Post Style--->

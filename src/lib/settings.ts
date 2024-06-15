@@ -116,6 +116,7 @@ interface Settings {
         showScores: boolean
         showAltText:boolean
         filterAnnoyingCCLicense: boolean
+        infiniteScroll: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -174,6 +175,7 @@ export const defaultSettings: Settings = {
         showScores:                                                     true,
         showAltText:                                                    true,
         filterAnnoyingCCLicense:                                        false,
+        infiniteScroll:                                                 true,
 
     },
 
