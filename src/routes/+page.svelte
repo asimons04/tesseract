@@ -36,17 +36,14 @@
     
     // Infinite scroll object to hold config parms
     let infiniteScroll = {
-        loading: false,     // Used to toggle loading indicator
-        exhausted: false,   // Sets to true if the API returns 0 posts
-        // Maximum number of posts to keep in the FIFO
+        loading: false,
+        exhausted: false,
         maxPosts: $userSettings.uiState.maxScrollPosts,      
-        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
-        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: false,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+        truncated: false,   
+        enabled: $userSettings.uiState.infiniteScroll,      
     }
 
-    //$: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
-    
+   
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
     beforeNavigate(() => {
         infiniteScroll.exhausted = false
@@ -150,22 +147,18 @@
     <!---The actual feed--->
     <PostFeed bind:posts={data.posts.posts} />
 
-    {#if infiniteScroll.enabled}
-        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
-            on:loadMore={ () => {
-                if (!infiniteScroll.exhausted) {
-                    infiniteScroll.loading = true
-                    loadPosts()
-                }
-            }}
-        />
-    {:else}
-        <Button color="tertiary-border" on:click={
-            () => searchParam($page.url, 'page_cursor', data.posts.next_page ?? '', 'page')
-        }>
-            Next Page
-        </Button>
-    {/if}
+    <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} bind:enabled={infiniteScroll.enabled} threshold={750} 
+        on:loadMore={ () => {
+            if (!infiniteScroll.exhausted) {
+                infiniteScroll.loading = true
+                loadPosts()
+            }
+        }}
+
+        on:next={ () => {
+            searchParam($page.url, 'page_cursor', data.posts.next_page ?? '', 'page')
+        }}
+    />
 
     <!---Show the site card on the right side--->
     <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} slot="right-panel"/>

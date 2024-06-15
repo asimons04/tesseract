@@ -16,6 +16,8 @@
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import { searchParam } from '$lib/util';
+    import { page } from '$app/stores';
     
     
 
@@ -31,12 +33,11 @@
     }
 
     let infiniteScroll = {
-        loading: false,     // Used to toggle loading indicator
-        exhausted: false,   // Sets to true if the API returns 0 posts
-        maxPosts: $userSettings.uiState.maxScrollPosts,      // Maximum number of posts to keep in the FIFO
-        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
-        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+        loading: false,     
+        exhausted: false,   
+        maxPosts: $userSettings.uiState.maxScrollPosts,
+        truncated: false,   
+        enabled: $userSettings.uiState.infiniteScroll,
     }
     $: infiniteScroll.truncated = (data?.posts?.posts && data.posts.posts.length > infiniteScroll.maxPosts-2) ?? false
     
@@ -48,13 +49,15 @@
     export const snapshot: Snapshot<void> = {
         capture: () => {
             pageState.scrollY = window.scrollY
-            PageSnapshot.capture({data: data, state: pageState})
+            if (infiniteScroll.enabled) PageSnapshot.capture({data: data, state: pageState})
         },
         restore: async () => {
             try { 
-                let snapshot = PageSnapshot.restore() 
-                if (snapshot.data)  data = snapshot.data
-                if (snapshot.state) pageState = snapshot.state
+                if (infiniteScroll.enabled)  {
+                    let snapshot = PageSnapshot.restore() 
+                    if (snapshot.data)  data = snapshot.data
+                    if (snapshot.state) pageState = snapshot.state
+                }
 
                 await scrollToLastSeenPost()
             }
@@ -137,12 +140,15 @@
         />
         <PostFeed posts={data.posts.posts}/>
         
-        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} bind:enabled={infiniteScroll.enabled}
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted) {
                     infiniteScroll.loading = true
                     loadPosts()
                 }
+            }}
+            on:next={ () => {
+                searchParam($page.url, 'page_cursor', data?.posts?.next_page ?? '', 'page')
             }}
         />
         
