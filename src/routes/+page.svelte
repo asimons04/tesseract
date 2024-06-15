@@ -9,16 +9,20 @@
         scrollToLastSeenPost, 
     } from '$lib/components/lemmy/post/helpers'
     import { load } from './+page'
-    import { profile } from '$lib/auth';
+    import { page } from '$app/stores'
+    import { profile } from '$lib/auth'
     import { userSettings } from '$lib/settings'
     
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
-    import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
+    import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
-    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
+    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import { searchParam } from '$lib/util';
+    import Button from '$lib/components/input/Button.svelte';
     
 
     export let data
@@ -38,7 +42,7 @@
         maxPosts: $userSettings.uiState.maxScrollPosts,      
         truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
         automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+        enabled: false,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
     }
 
     //$: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
@@ -53,14 +57,15 @@
     export const snapshot: Snapshot<void> = {
         capture: () => {
             pageState.scrollY = window.scrollY
-            PageSnapshot.capture({data: data, state: pageState})
+            if (infiniteScroll.enabled) PageSnapshot.capture({data: data, state: pageState})
         },
         restore: async () => {
             try { 
-                let snapshot = PageSnapshot.restore() 
-                if (snapshot.data)  data = snapshot.data
-                if (snapshot.state) pageState = snapshot.state
-                
+                if (infiniteScroll.enabled) {
+                    let snapshot = PageSnapshot.restore() 
+                    if (snapshot.data)  data = snapshot.data
+                    if (snapshot.state) pageState = snapshot.state
+                }
                 await scrollToLastSeenPost(data.posts.posts.length + 200)
             }
             catch { 
@@ -145,14 +150,22 @@
     <!---The actual feed--->
     <PostFeed bind:posts={data.posts.posts} />
 
-    <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
-        on:loadMore={ () => {
-            if (!infiniteScroll.exhausted) {
-                infiniteScroll.loading = true
-                loadPosts()
-            }
-        }}
-    />
+    {#if infiniteScroll.enabled}
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
+            on:loadMore={ () => {
+                if (!infiniteScroll.exhausted) {
+                    infiniteScroll.loading = true
+                    loadPosts()
+                }
+            }}
+        />
+    {:else}
+        <Button color="tertiary-border" on:click={
+            () => searchParam($page.url, 'page_cursor', data.posts.next_page ?? '', 'page')
+        }>
+            Next Page
+        </Button>
+    {/if}
 
     <!---Show the site card on the right side--->
     <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} slot="right-panel"/>
