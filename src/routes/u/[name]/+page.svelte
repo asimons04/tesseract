@@ -170,6 +170,7 @@
         </FeedContainer>
 
         <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} bind:enabled={infiniteScroll.enabled}
+            disableBack={ data.page < 2 ? true : false }
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
                     infiniteScroll.loading = true

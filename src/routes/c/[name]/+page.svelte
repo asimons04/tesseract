@@ -141,6 +141,7 @@
         <PostFeed posts={data.posts.posts}/>
         
         <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} bind:enabled={infiniteScroll.enabled}
+            disableBack={ $page.url.searchParams.get('page_cursor') ? false : true }
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted) {
                     infiniteScroll.loading = true
