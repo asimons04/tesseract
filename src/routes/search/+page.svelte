@@ -109,14 +109,11 @@
     
     // Infinite scroll object to hold config parms
     let infiniteScroll = {
-        loading: false,     // Used to toggle loading indicator
-        exhausted: false,   // Sets to true if the API returns 0 posts
-        // Maximum number of posts to keep in the FIFO
+        loading: false,     
+        exhausted: false,   
         maxPosts: $userSettings.uiState.maxScrollPosts,      
-        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
-        truncating: false,  // Whether a timeout is active waiting to truncate the overlow
-        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+        truncated: false,   
+        enabled: $userSettings.uiState.infiniteScroll,
     }
 
     // Current values for search filter
@@ -143,6 +140,8 @@
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {
         capture: () => {
+            if (!infiniteScroll.enabled) return
+
             pageState.scrollY = window.scrollY
             PageSnapshot.capture(
                 {
@@ -151,13 +150,17 @@
                     filter: filter
                 }
             )
+            
         },
         restore: async () => {
             try { 
-                let snapshot = PageSnapshot.restore() 
-                if (snapshot.data)  data = snapshot.data
-                if (snapshot.state) pageState = snapshot.state
-                if (snapshot.filter) filter = snapshot.filter
+                if (infiniteScroll.enabled) {
+                    let snapshot = PageSnapshot.restore() 
+                    if (snapshot.data)  data = snapshot.data
+                    if (snapshot.state) pageState = snapshot.state
+                    if (snapshot.filter) filter = snapshot.filter
+                }
+                else PageSnapshot.clear()
             }
             catch { 
                 PageSnapshot.clear() 
@@ -605,13 +608,24 @@
         (filter.type == 'Users' && data.counts && data.counts.users > 1) ||
         (filter.type == 'All' && data.counts && data.counts.total > 1)
     }
-        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} automatic={infiniteScroll.automatic}
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} bind:enabled={infiniteScroll.enabled}
+            enableBack={(filter.page ?? 1) > 1}
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
                     infiniteScroll.loading = true
                     if (filter.page) filter.page = filter.page + 1
                     search(false)
                 }
+            }}
+
+            on:next={ () => {
+                if (filter.page) filter.page++
+                search(true)
+            }}
+
+            on:prev={ () => {
+                if (filter.page && filter.page > 1) filter.page--
+                search(true)
             }}
         />
     {/if}
