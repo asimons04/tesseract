@@ -18,16 +18,9 @@
     export let loading: boolean  = false            // Disable events when a loading event is already processing
     export let exhausted:boolean = false            // Flag to disable automatic loading if API returns no more data
     export let enabled: boolean  = true
-    export let enableBack:boolean|undefined = undefined // Whether the manual "previous" button should be enabled. Default (undefined) = automatic
+    export let disableBack:boolean = false
 
     const dispatcher = createEventDispatcher();
-
-    // If enableBack set, use the passed value.  If undefined, determine a boolean based on the page or page_cursor URL param.
-    $:  enableBack = enableBack ?? 
-        ($page.url.searchParams.get('page_cursor') || ($page.url.searchParams.get('page') && Number($page.url.searchParams.get('page')) > 1))
-            ? true
-            : false
-
 
     onMount( () => {
         if (enabled) window.addEventListener("scroll", onScroll)
@@ -69,7 +62,7 @@
 <!---Show manual Pagination Buttons if Infinite Scroll Disabled--->
 {:else}
     <div class="flex flex-row gap-4 items-center w-full">
-        <Button color="tertiary-border" class="w-full" disabled={!enableBack} on:click={() => { dispatcher('prev')} } >
+        <Button color="tertiary-border" class="w-full" bind:disabled={disableBack} on:click={() => { dispatcher('prev')} } >
             <Icon src={ChevronDoubleLeft} mini size="16" />
             Previous
         </Button>
