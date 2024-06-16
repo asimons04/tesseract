@@ -3,11 +3,23 @@ All major/minor changes between releases will be documented here.
 
 
 ## 1.4.0
+This is the first release which completely drops "legacy" support for 0.18.x and below.  The minimum required API level is now 0.19.3 (though it will work with any 0.19.x series, there will be broken features that require 0.19.3).
+
+None of the 0.19.4 features are implemented yet.  Updating my instance to 0.19.4 is not on my priority list at the moment.
+
+One thing 0.19.4 did, which is _incredibly stupid_, is federate out the proxied image URLs rather than do image proxying sanely by rewriting the URLs via the API for local users.  This completely broke both Tesseract's proxying and certain instances of its post-type detection when those dumbass proxied URLs are encoutered.  To work around that, I'm simply unproxying them, running the detections, and then fetching the images directly (or optionally through Tesseract's proxy/cache). 
+
+They said that feature was "experimental", so I sincerely hope they realize how fscking stupid their implementation is and change it in the next release (but knowing them, they'll probably double down and make it worse.).
+
+Anyway, here's what's new and improved:
 
 ### New Features
 
 #### Zoomable Images
-Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  The pinch zoom isn't *quite* where I want it, but I may be hitting a library limitation with `svelte-gestures`.  All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch.
+Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  
+
+All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch. The pinch zoom isn't *quite* where I want it, it's a start.  If anyone wants to contribute some code for improving that, please let me know.  
+
 - Support zoom, pan, and rotate
     - Mouse scroll to zoom
     - Click/grab to pan
@@ -49,6 +61,7 @@ Actions include:
 - Images can be pasted in the post's URL field as well as in the markdown editor.  
 - Images can optionally be pre-processed to webP along with a user-selectable quality level. Especially useful if your instance limits the size of uploads
 - Can delete post images (only before you save the post; unfortunately there's no way to retrieve the delete token after that even though it is stored in the DB. Yet another dumbass API limitation :sigh:)
+    - This is addressed in 0.19.4, but I don't have support for that yet as I'm not planning to upgrade my instance in the near future.
 - Images pasted/uploaded into the markdown editor are tracked in a bar along the bottom of the editor. Individual images can be deleted as needed along with the corresponding markdown code for them.
 
 
@@ -92,6 +105,12 @@ Removed the `[Archive Link]` next to the post URL and replacd it with a fancy me
     - Invidious/Piped will open with your preferred instance (defined in settings)
     - Useful if someone posts a video to an Invidious instance that performs poorly for you and you would prefer to view it on your preferred Invidious/Piped instance or canonically on YouTube.
 
+#### Quick Action Menus
+On mobile, the navbar was getting cluttered, so most of the discrete dropdowns there have been moved into Quick Actions menus.
+- Main, Community, and User feed pages:  Quick Actions has replaced all discrete menus
+- Search Page, Modlog, and Community Browser:  All of the filtering options are in a quick action menu
+
+
 #### Users Can Now Add Their Own Preferred Invidious/Piped Instances
 Prior to this release, any Piped or Invidious instances needed to be added by the administrator via environment variables.  In addition to that, users can now add any number of custom Invidious and/or Piped instances in the app settings.
 
@@ -101,6 +120,9 @@ Be aware that those custom instances will only render as embeds for you; they wi
 
 Tesseract is pre-populated with the official list of public instances for each, but it can get out of date easily.
 
+#### Can Disable Infinite Scroll if you Want
+If you're not a fan of the infinite scroll, you can go to App Settings -> Feed and disable infinite scroll.  
+
 #### TOTP 2FA Setup
 Can now enable and enroll in 2FA as well as disable it.
 
@@ -109,6 +131,9 @@ Icons in the account switcher and account screens now sync to your profile avata
 
 #### New Placeholder User Avatars
 Instead of the initials as used previously on accounts without avatars, now uses Dicebear Adventurer pseudorandom avatars.  Initials are still used for placeholder community icons when the community mods haven't set one.
+
+#### Passwords Can Now Be Revealed
+All password elements will now allow you to toggle them to reveal. Should make a big improvement when logging-in on mobile.
 
 #### Vote Viewer (Admins Only)
 Admins can now see votes like in Lemmy-UI.  Uses infinite scroll and deduplication to compensate for the stupid API that returns multiple/duplicate votes on each page.
@@ -139,7 +164,7 @@ Admins can now see votes like in Lemmy-UI.  Uses infinite scroll and deduplicati
 - Shows a live preview of how the community card will look
 
 #### General
-- Slightly darkened background color in light mode cards (bg-white->bg-slate-100)
+- Slightly darkened background color in light mode cards (bg-white->bg-slate-100) for better contrast. Did similarly for some button colors
 - Added "OpenDyslexic" as a UI font option
 - Can now close modals with Escape key, close button, or by swiping left/right
 - Added button to reveal password fields
@@ -166,12 +191,10 @@ This isn't really a Tesseract issue since the Lemmy backend handles that.  Just 
 - User profile import/export
 - Link previews
 - Custom feed rewrite
-- Cleanup Infinite Scroll Implementation (though I did start this; it's only used in one place right now)
 - Custom emoji management
 - Fediseer Rewrite
 
 I keep kicking the can on the custom feed and infinite scroll re-writes, but for a good reason.  I want to start using IndexedDB to get around storage constraints in the browser's LocalStorage API.  I need to write and integrate a library for this (or find one I don't hate), and that's going to take some dedicated development time.  Switching to IndexDB is also a step in the direction I want to go towards providing offline support.  So, at some point, there will be a release that only focuses on that.  Not sure if it'll be in the 1.4.x series or later, but ultimately, that is where I want to go.
-
 
 --- 
 ### Goals 
