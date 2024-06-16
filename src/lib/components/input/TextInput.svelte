@@ -14,10 +14,13 @@
     export let max:number|undefined = undefined
     export let readonly:boolean = false
     export let autocomplete:string = 'off'
+    export let name:string = 'textInput'
 
     function typeAction(node: Node) {
         // @ts-ignore
         node.type = type
+        // @ts-ignore
+        node.name = name
     }
 
     const dispatcher = createEventDispatcher()
