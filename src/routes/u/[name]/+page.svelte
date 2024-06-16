@@ -40,8 +40,7 @@
         exhausted: false,
         maxPosts: $userSettings.uiState.maxScrollPosts,
         truncated: false,
-        automatic: true,
-        enabled: true,
+        enabled: $userSettings.uiState.infiniteScroll,
     }
 
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
@@ -59,14 +58,16 @@
                 data.items.shift()
                 infiniteScroll.truncated = true
             }
-            PageSnapshot.capture({data: data, state: pageState, infiniteScroll: infiniteScroll})
+            if (infiniteScroll.enabled) PageSnapshot.capture({data: data, state: pageState, infiniteScroll: infiniteScroll})
         },
         restore: async () => {
             try { 
-                let snapshot = PageSnapshot.restore() 
-                if (snapshot.data)              data = snapshot.data
-                if (snapshot.state)             pageState = snapshot.state
-                if (snapshot.infiniteScroll)    infiniteScroll = snapshot.infiniteScroll
+                if (infiniteScroll.enabled) {
+                    let snapshot = PageSnapshot.restore() 
+                    if (snapshot.data)              data = snapshot.data
+                    if (snapshot.state)             pageState = snapshot.state
+                    if (snapshot.infiniteScroll)    infiniteScroll = snapshot.infiniteScroll
+                }
 
                 await scrollToLastSeenPost(data.items.length + 200)
             }
@@ -168,12 +169,19 @@
             {/each}
         </FeedContainer>
 
-        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} automatic={infiniteScroll.automatic}
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} bind:enabled={infiniteScroll.enabled}
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
                     infiniteScroll.loading = true
                     loadPosts()
                 }
+            }}
+
+            on:next={ () => {
+                searchParam($page.url, 'page', (++data.page).toString())
+            }}
+            on:prev={ () => {
+                if (data.page > 1) searchParam($page.url, 'page', (--data.page).toString())
             }}
         />
         
