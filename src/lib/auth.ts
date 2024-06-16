@@ -1,3 +1,8 @@
+interface UserFromJWTResponse {
+    user: PersonData;
+    site: GetSiteResponse;
+} 
+
 import type { Community, GetSiteResponse, MyUserInfo, SortType } from 'lemmy-js-client'
 
 import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
@@ -104,21 +109,26 @@ profile.subscribe(async (p:Profile|undefined) => {
     const user = await userFromJwt(p.jwt, p.instance)
     
     // Set the site store to the data returned from the getSite() call in userFromJwt
-    site.set(user?.site)
+    
 
-    // Update the profile store with the retrieved data
-    profile.update(() => ({
-        ...p,
-        user: user!.user,
-        username: user?.user.local_user_view.person.name,
-    }))
+    if (user?.user && user?.site) {
+        
+        site.set(user.site)
+        
+        // Update the profile store with the retrieved data
+        profile.update(() => ({
+            ...p,
+            user: user.user,
+            username: user.user.local_user_view.person.name,
+        }))
+    }
 })
 
 
 
 
 // Used at login to store a new user profile
-export async function setUser(jwt: string, inst: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined>  {
+export async function setUser(jwt: string, inst: string): Promise<UserFromJWTResponse| undefined>  {
     
     const user = await userFromJwt(jwt, inst)
 
@@ -136,20 +146,20 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
     instance.set(inst)
 
     // Check if profile exists for this username+instance combo
-    let pIndex = get(profileData).profiles.findIndex((p:Profile) => (p.username == user!.user.local_user_view.person.name && p.instance == inst))
+    let pIndex = get(profileData).profiles.findIndex((p:Profile) => (p.username == user.user.local_user_view.person.name && p.instance == inst))
     
     if (pIndex>0) {
         // Switch to the profile to be updated in case it isn't already active
         const pid = get(profileData).profiles[pIndex].id
-        setUserID(pid)
+        await setUserID(pid, user) 
 
         // Set it twice:  Once to populate it with what we want saved to localStorage and again to add the transient user data
         profile.set({
             ...get(profileData).profiles[pIndex],
             jwt: jwt,
-            user: user!.user,
-            username: user!.user.local_user_view.person.name,
-            avatar: user!.user.local_user_view.person.avatar,
+            user: user.user,
+            username: user.user.local_user_view.person.name,
+            avatar: user.user.local_user_view.person.avatar,
         })
         saveProfileToProfileData()
     }
@@ -163,8 +173,8 @@ export async function setUser(jwt: string, inst: string): Promise<{ user: Person
                 id: id,
                 instance: inst,
                 jwt: jwt,
-                username: user!.user.local_user_view.person.name,
-                avatar: user!.user.local_user_view.person.avatar,
+                username: user.user.local_user_view.person.name,
+                avatar: user.user.local_user_view.person.avatar,
                 favorites: [],
                 groups: []
 
@@ -276,8 +286,9 @@ const serializeUser = (user: Profile): Profile => ({
 
 /** Sets the currently active profile to the profile ID provided. 
  * @param id The profile ID (not the profile index)
+ * @param userDetails Response from userFromJWT(), if available, to avoid another call to getUser()
 */
-export async function setUserID(id: number) {
+export async function setUserID(id: number, userDetails?:UserFromJWTResponse) {
     const pd = get(profileData)
     
     // Set Guest profile
@@ -304,7 +315,7 @@ export async function setUserID(id: number) {
         // Set instance so the JS client will send the auth header
         instance.set(prof.instance)
 
-        const user = await userFromJwt(prof.jwt, prof.instance)
+        const user = userDetails ?? await userFromJwt(prof.jwt, prof.instance)
 
         // If the given JWT doesn't resolve to a user (expired/invalid), throw a toast message and redirect to login
         if (!user) {
