@@ -11,24 +11,19 @@
     import { load } from './+page'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
+    import { searchParam } from '$lib/util';
     import { userSettings } from '$lib/settings'
     
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import Pageination from '$lib/components/ui/Pageination.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import { searchParam } from '$lib/util';
-    import Button from '$lib/components/input/Button.svelte';
-    
 
     export let data
     
-    
-
     // Page state that will persist in snapshots
     let pageState = {
         scrollY: 0,
@@ -124,7 +119,8 @@
 </svelte:head>
 
 
-<SubNavbar  quickSettings toggleMargins toggleCommunitySidebar scrollButtons 
+<SubNavbar home back quickSettings qsShiftLeft={2}
+    toggleMargins toggleCommunitySidebar scrollButtons 
     listingType     bind:listingTypeOptions bind:listingTypeOptionNames bind:selectedListingType={data.listingType}
     sortMenu        bind:selectedSortOption={data.sort}
     refreshButton   on:navRefresh={()=> refresh()}
@@ -148,6 +144,7 @@
     <PostFeed bind:posts={data.posts.posts} />
 
     <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} bind:enabled={infiniteScroll.enabled} threshold={750} 
+        disableBack={ $page.url.searchParams.get('page_cursor') ? false : true }
         on:loadMore={ () => {
             if (!infiniteScroll.exhausted) {
                 infiniteScroll.loading = true
