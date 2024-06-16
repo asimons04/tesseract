@@ -158,6 +158,7 @@
         on:next={ () => {
             searchParam($page.url, 'page_cursor', data.posts.next_page ?? '', 'page')
         }}
+        on:prev={ () => history.back() }
     />
 
     <!---Show the site card on the right side--->

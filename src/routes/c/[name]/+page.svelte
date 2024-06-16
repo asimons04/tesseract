@@ -150,6 +150,7 @@
             on:next={ () => {
                 searchParam($page.url, 'page_cursor', data?.posts?.next_page ?? '', 'page')
             }}
+            on:prev={ () => history.back() }
         />
         
         <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
