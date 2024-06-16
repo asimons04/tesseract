@@ -28,10 +28,10 @@ export async function load({ url, passedSite }: LoadParams) {
                 type_: listingType,
                 page_cursor: page_cursor,
             }),
-            passedSite ?? getClient().getSite()
+            passedSite ?? get(site) ?? getClient().getSite()
         ])
         
-        if (!passedSite) site.set(siteData)
+        site.set(siteData)
 
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
@@ -43,7 +43,7 @@ export async function load({ url, passedSite }: LoadParams) {
         posts.posts = addMBFCResults(posts.posts);
         
         // Only sort the first fetch. If a site object is passed, it can be used to indicate this is a re-fetch (which are sorted after being retrieved)
-        if (!passedSite) posts.posts = sortPosts(posts.posts, sort)
+        //if (!passedSite) posts.posts = sortPosts(posts.posts, sort)
 
         // Return the data to the frontend
         return {
