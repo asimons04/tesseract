@@ -33,7 +33,7 @@
 </script>
 
 
-<Menu {alignment} containerClass="!z-[30] max-h-[79svh] min-w-[97vw] md:min-w-[50vw] lg:min-w-[40vw] xl:min-w-[25vw] overflow-visible {translate} {containerClass}" >
+<Menu {alignment} containerClass="!z-[30] max-h-[79svh] min-w-[95vw] sm:min-w-[87vw] md:min-w-[50vw] lg:min-w-[40vw] xl:min-w-[25vw] overflow-visible {translate} {containerClass}" >
     <button slot="button" let:toggleOpen on:click={toggleOpen} class="w-max" title="{title}">
         
         <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer p-2
