@@ -461,19 +461,7 @@
                 options={[10,20,30]}
                 bind:selected={$userSettings.uiState.postsPerPage}
             />
-
-            <!---Infinite Scroll--->
-            <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll}
-                description="Use infinite scrolling instead of manual pagination."
-            />
-
-            <!---Infinite Scroll Size--->
-            <SettingMultiSelect title="Infinite Scroll Size" icon={TableCells}
-                description="How many posts should be rendered before the oldest in the feed are removed (off-screen). Increasing this will increase memory consumption and may also reduce performance depending on your device."
-                options={[50, 75, 100, 125, 150]}
-                bind:selected={$userSettings.uiState.maxScrollPosts}
-                condition={$userSettings.uiState.infiniteScroll}
-            />
+            
 
             <!---Post Style--->
             <SettingMultiSelect title="Post Style" icon={QueueList} description="Style of posts to display in the feed by default"
@@ -487,6 +475,19 @@
                 optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
                 options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
                 bind:selected={$userSettings.imageSize.feed}
+            />
+
+            <!---Infinite Scroll--->
+            <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll}
+                description="Use infinite scrolling instead of manual pagination."
+            />
+
+            <!---Infinite Scroll Size--->
+            <SettingMultiSelect title="Infinite Scroll Size" icon={TableCells}
+                description="How many posts should be rendered before the oldest in the feed are removed (off-screen). Increasing this will increase memory consumption and may also reduce performance depending on your device."
+                options={[50, 75, 100, 125, 150]}
+                bind:selected={$userSettings.uiState.maxScrollPosts}
+                condition={$userSettings.uiState.infiniteScroll}
             />
             
             <!---Fade Title of Read Posts--->
