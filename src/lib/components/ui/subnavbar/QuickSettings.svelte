@@ -7,9 +7,7 @@
     
     import Card from '../Card.svelte';
     import MenuButton from '../menu/MenuButton.svelte';
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SettingMultiSelect from '../settings/SettingMultiSelect.svelte';
-    import SettingToggleContainer from "../settings/SettingToggleContainer.svelte"
     import SettingToggle from "../settings/SettingToggle.svelte"
     import SubnavbarMenu from "./SubnavbarMenu.svelte"
 
