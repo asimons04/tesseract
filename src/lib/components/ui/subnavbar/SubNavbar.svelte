@@ -121,7 +121,6 @@
             <Button title="Back" data-sveltekit-preload-data="hover"
                 color="tertiary"
                 size="sm"
-                hidden={history.length<2}
                 on:click={() => {
                     dispatcher('navBack')
                     if (!backPreventDefault) history.back();
