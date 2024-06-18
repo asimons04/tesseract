@@ -80,7 +80,7 @@ export async function getFediseerInfo(instance:string) {
     let siteInfo: GetSiteResponse | undefined
     
     try {
-        siteInfo = await getClient(instance, undefined).getSite({})
+        siteInfo = await getClient(instance, undefined).getSite()
     } catch {
         siteInfo = undefined
     }
