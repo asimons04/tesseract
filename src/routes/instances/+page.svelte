@@ -92,9 +92,6 @@
         selectedFederationState = 'All'
         batchPage = 1
     }
-
-    console.log(data)
-
 </script>
 
 <svelte:head>
@@ -235,7 +232,7 @@
         <div class="flex flex-col gap-4 w-full h-full">
             {#if batch.length > 0}
                 {#each batch as instance, id (instance.id)}
-                    <InstanceListItem bind:instance newest_id={data.newest_id}/>
+                    <InstanceListItem bind:instance />
                 {/each}
             {:else}
                 <Placeholder icon={MagnifyingGlass} title="No results"  description="No instances matched the filter." />
