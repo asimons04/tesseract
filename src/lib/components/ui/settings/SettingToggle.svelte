@@ -35,6 +35,6 @@ const dispatcher = createEventDispatcher<{ change: boolean }>()
         </div>
         
         <div class="mx-auto"/>
-        <Switch bind:enabled={value} on:change={(e) => dispatcher('change', value)}/>
+        <Switch bind:enabled={value} on:change={(e) => dispatcher('change', e.detail)}/>
     </div>
 {/if}
