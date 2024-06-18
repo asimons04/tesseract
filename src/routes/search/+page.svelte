@@ -386,7 +386,7 @@
                                 Clear
                             </Button>
 
-                            <Button color="tertiary-border" class="w-full" on:click={() => submitSearch() }>
+                            <Button color="primary" class="w-full" on:click={() => submitSearch() }>
                                 <Icon src={MagnifyingGlass} mini width={16} />
                                 Search
                             </Button>
@@ -609,7 +609,7 @@
         (filter.type == 'All' && data.counts && data.counts.total > 1)
     }
         <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={75} bind:enabled={infiniteScroll.enabled}
-            enableBack={(filter.page ?? 1) > 1}
+            disableBack={filter.page < 2}
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted && !infiniteScroll.loading) {
                     infiniteScroll.loading = true
