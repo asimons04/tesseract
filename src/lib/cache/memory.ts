@@ -6,9 +6,6 @@ interface IDictionary {
     }
 }
 
-
-//import { writable } from "svelte/store";
-//let store = writable({} as IDictionary)
 let store = {} as IDictionary
 let defaultTTL:number = 3600
 
