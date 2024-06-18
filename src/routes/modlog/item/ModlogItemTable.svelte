@@ -249,9 +249,9 @@
                         <li class="flex flex-nowrap gap-1">
                             <strong>Item:</strong>
                             {#if item.link && item.content}
-                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}>{item.content}</Link>
+                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links} title={item.content}> {item.content.substring(0, 250)} </Link>
                             {:else if item.content}
-                                {item.content}
+                                <span title="{item.content}">{item.content.substring(0,250)}</span>
                             {:else if item.link}
                                 <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
                             {/if}
