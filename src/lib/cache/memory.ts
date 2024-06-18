@@ -1,6 +1,15 @@
 // In-memory cache
-import { writable } from "svelte/store";
-let store = writable([])
+interface IDictionary {
+    [index: string]: {
+        value: string,
+        ttl: number
+    }
+}
+
+
+//import { writable } from "svelte/store";
+//let store = writable({} as IDictionary)
+let store = {} as IDictionary
 let defaultTTL:number = 3600
 
 export const cache = {
@@ -17,7 +26,7 @@ export const cache = {
     },
 
     flush: function() {
-        store.set([]);
+        store = {} as IDictionary
     },
     
     length: function() {
@@ -41,7 +50,7 @@ export const cache = {
         }
     },
     
-    ttl: function(key:string, seconds:number | undefined) {
+    ttl: function(key:string, seconds?:number) {
         if (store[key] && seconds) {
             store[key].ttl = seconds;
             return true;
