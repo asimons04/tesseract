@@ -1,27 +1,35 @@
 <script lang="ts">
     import type { InstanceWithFederationStateCustom } from './+page'
 
-    import { page } from '$app/stores';
+    import { page } from '$app/stores'
     import { site } from '$lib/lemmy'
     
-    import Button from '$lib/components/input/Button.svelte';
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
-    import InstanceListItem from './InstanceListItem.svelte';
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
+    import InstanceListItem from './InstanceListItem.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
-    import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import Switch from '$lib/components/input/Switch.svelte';
-    import TextInput from '$lib/components/input/TextInput.svelte';
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
+    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
+    import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
+    import Switch from '$lib/components/input/Switch.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
 
     import {
         Icon,
+        Funnel,
+        HandThumbDown,
         Link,
         MagnifyingGlass,
         XCircle,
-        Bars3
+        Bars3,
+        Server,
+        
     } from 'svelte-hero-icons'
     
     
@@ -94,44 +102,87 @@
 </svelte:head>
 
 <SubNavbar home back toggleMargins refreshButton toggleCommunitySidebar scrollButtons on:navRefresh={() => search()} >
-    <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="left">
-        <!---Local/Subscribed/All Switcher--->
-        <SelectMenu
-            options={data.software_types}
-            selected={selectedSoftwareType}
-            on:select={(e) => { 
-                selectedSoftwareType = e.detail
-                search()
-            }}
-            title="Software Type"
-            icon={Bars3}
-        />
+    <SubnavbarMenu alignment="bottom-left" shiftLeft={2} icon={Funnel} containerClass="max-h-[79svh]" slot="far-left">
+        
+        <div class="flex flex-col w-full p-2 gap-2 cursor-default" >
+            <Card class="p-2">
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <div on:click|stopPropagation>
+                    
+                    <!---Software Type--->
+                    <SettingMultiSelect
+                        title="Software Type"
+                        options={data.software_types}
+                        selected={selectedSoftwareType}
+                        icon={Server}
+                        padding={false} small={true}
+                        on:select={(e) => { 
+                            selectedSoftwareType = e.detail
+                            search()
+                        }}
+                    />
 
-        <SelectMenu
-            options={data.federation_states}
-            selected={selectedFederationState}
-            on:select={(e) => { 
-                selectedFederationState = e.detail
-                search()
-            }}
-            title="Federation State"
-            icon={Link}
+                    <!---Federation State--->
+                    <SettingMultiSelect
+                        title="Federation State"    
+                        options={data.federation_states}
+                        selected={selectedFederationState}
+                        icon={Link}
+                        padding={false} small={true}
+                        on:select={(e) => { 
+                            selectedFederationState = e.detail
+                            search()
+                        }}
+                    />
 
-        />
-    </div>
+                    <SettingToggle
+                        title="Show Dead?"
+                        icon={HandThumbDown}
+                        bind:value={showDeadInstances}
+                        on:change={(e) => {
+                            showDeadInstances = e.detail
+                            search()
+                        }}
+                    />
+            
+
+                    <form class="flex flex-col gap-2 mt-4 w-full" on:submit|preventDefault={()=> {
+                        batchPage = 1
+                        search()
+                    }}>
+
+                        <TextInput type="text" placeholder="Filter Instances" label="Keyword" bind:value={filterTerm} on:change={() => filterTerm=filterTerm.toLowerCase() } />
+                        
+                        <div class="flex flex-row gap-4 items-center p-2 mt-4">
+                            <!---Reset--->
+                            <Button color="danger" size="lg" class="w-full" icon={XCircle} width={16} title="Reset Search Filter"  
+                                on:click={() => {
+                                    clearFilter()
+                                    search()
+                                }}
+                            >
+                                Reset
+                            </Button>
+                            
+                            <Button submit color="primary" size="lg" class="w-full"  icon={MagnifyingGlass} width={16} title="Reset Search Filter">
+                                Search
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </Card>
+
+        </div>
+
+    </SubnavbarMenu>
+    
 
     <!---Filters--->
-    <form class="hidden xl:flex flex-row gap-2 items-center" let:iconSize slot="center" on:submit|preventDefault={()=> {
+    <form class="hidden xl:flex flex-row gap-2 mx-auto items-center w-fit" let:iconSize slot="center" on:submit|preventDefault={()=> {
         batchPage = 1
         search()
     }}>
-
-        <span class="font-bold text-xs whitespace-nowrap ml-4">Show dead</span>
-        
-        <Switch bind:enabled={showDeadInstances}  on:change={(e) => {
-            showDeadInstances = e.detail
-            search()
-        }}/>
 
         <!---Search--->
         <TextInput type="text" placeholder="Filter Instances" class="h-8" bind:value={filterTerm} on:change={() => filterTerm=filterTerm.toLowerCase() }/>
