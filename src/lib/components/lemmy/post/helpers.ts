@@ -117,7 +117,7 @@ export const isPeertube = (embed_video_url:string): boolean => {
 export const isInvidious = (url: string):boolean => {
     const frontends = [...YTFrontends.invidious, ...userSettings.embeddedMedia.userDefinedInvidious]
     for (let i=0; i<frontends.length; i++) {
-        if (url.startsWith(`https://${YTFrontends.invidious[i]}`)) {
+        if (url.startsWith(`https://${frontends[i]}`)) {
             return true;
         }
     }
@@ -149,7 +149,7 @@ export const isYouTube = (url:string):boolean => {
 export const isPiped = (url: string):boolean => {
     const frontends = [...YTFrontends.piped, ...userSettings.embeddedMedia.userDefinedPiped]
     for (let i=0; i<frontends.length; i++) {
-        if (url.startsWith(`https://${YTFrontends.piped[i]}`)) {
+        if (url.startsWith(`https://${frontends[i]}`)) {
             return true;
         }
     }
