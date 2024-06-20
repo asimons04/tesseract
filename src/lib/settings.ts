@@ -284,6 +284,7 @@ export const YTFrontends = {
         'inv.makerlab.tech',
         'inv.zzls.xyz',
         'invidious.perennialte.ch',
+        'invidious.privacyredirect.com',
         'anontube.lvkaszus.pl',
         'invidious.fdn.fr',
         'iv.datura.network',
