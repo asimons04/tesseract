@@ -142,7 +142,7 @@
 {/if}
 
 
-<div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full" >
+<div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full overflow-hidden" >
     
     <!---Date/time column--->
     <div class="flex flex-row gap-2 text-xs w-full lg:w-[5%]">
@@ -179,7 +179,7 @@
         <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
             {#if item.moderator}
             <span class="flex flex-row gap-2 items-center w-full">    
-                <span class="lg:hidden text-xs font-bold">Moderator:</span>
+                <span class="lg:hidden text-xs font-bold">Mod:</span>
                 
                 <button class="cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
                     filter.moderator.set = !filter.moderator.set;
@@ -204,7 +204,7 @@
     <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
         {#if item.moderatee}
         <span class="flex flex-row gap-2 items-center w-full">        
-            <span class="lg:hidden text-xs font-bold">Moderatee:</span>
+            <span class="lg:hidden text-xs font-bold">User:</span>
             
             <button class="cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
                 filter.moderatee.set = !filter.moderatee.set;

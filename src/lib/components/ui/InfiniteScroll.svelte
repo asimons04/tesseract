@@ -67,6 +67,8 @@
             Previous
         </Button>
 
+        <span class="flex w-full" />
+        
         <Button color="tertiary-border" class="w-full" on:click={ () => { dispatcher('next') }} >
             Next
             <Icon src={ChevronDoubleRight} mini size="16" />
