@@ -97,6 +97,7 @@ interface Settings {
         feed: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
         post: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
     }
+    linkifyHashtags: boolean
     uiState: {
         expandSidebar: boolean
         expandCommunitySidebar: boolean
@@ -111,7 +112,6 @@ interface Settings {
         matchCrossPostOnTitle: boolean
         showBannersInCards: boolean
         stretchCardBanner: boolean
-        modalOpen: boolean
         reverseActionBar: boolean
         showScores: boolean
         showAltText:boolean
@@ -156,6 +156,7 @@ export const defaultSettings: Settings = {
     highlightCode: true,
     highlightInlineCode: false,
     inlineImages: true,
+    linkifyHashtags: true,
     uiState: {
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
@@ -170,7 +171,6 @@ export const defaultSettings: Settings = {
         matchCrossPostOnTitle: toBool(env.PUBLIC_MATCH_XPOST_TITLE)     ?? true,
         showBannersInCards:                                             true,
         stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
-        modalOpen:                                                      false,
         reverseActionBar:                                               false,
         showScores:                                                     true,
         showAltText:                                                    true,

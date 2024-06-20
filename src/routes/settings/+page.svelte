@@ -63,6 +63,7 @@
         Gif,
         GlobeAlt,
         HandRaised,
+        Hashtag,
         Identification,
         InformationCircle,
         Language,
@@ -382,6 +383,10 @@
                 Disable to have them cover the card which may crop them."
             />
 
+            <!---Linkify Hashtags--->
+            <SettingToggle icon={Hashtag} title="Enable Hashtags" bind:value={$userSettings.linkifyHashtags}
+                description="Detect hashtags and turn them into search links."
+            />
 
             <!---Reverse Action Bar Direction--->
             <SettingToggle icon={ArrowsRightLeft} title="Reverse Action Bar Direction"  bind:value={$userSettings.uiState.reverseActionBar}
