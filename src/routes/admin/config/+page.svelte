@@ -1710,31 +1710,19 @@
                             Sidebar
                         </span>
                         <span slot="description" class="text-xs font-normal">
-                            Configure the contents of your site sidebar.
+                            <p>
+                                The information to be displayed in the site sidebar.  Welcome your visitors, define the site rules, or otherwise provide a general
+                                description of your instance.
+                            </p>
                         </span>
                         
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
-                            <div class="flex flex-col w-full gap-2 py-2">
-                                <div class="flex flex-col">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={DocumentText} mini width={16}/>
-                                        Sidebar Contents
-                                    </p>
-                                    <p class="text-xs font-normal">
-                                        The information to be displayed in the site sidebar.  Welcome your visitors, define the site rules, or otherwise provide a general
-                                        description of your instance.
-                                    </p>
-                                </div>
-                                
-                                <div class="mx-auto"/>
-                                
-                                <MarkdownEditor
-                                    previewButton
-                                    bind:value={formData.sidebar}
-                                    rows={15}
-                                />
-                                
-                            </div>
+                        <div class="flex flex-col gap-4 w-full">
+                                                            
+                            <MarkdownEditor
+                                previewButton
+                                bind:value={formData.sidebar}
+                                rows={15}
+                            />
                         </div>
                         
                         
@@ -1749,34 +1737,25 @@
                             Legal
                         </span>
                         <span slot="description" class="text-xs font-normal">
-                            Configure the contents of your Legal page.
+                            <p>
+                                The contents provided here will be used to generate what is shown on the /legal page 
+                                of your instance.
+                            </p>
+
+                            <p>
+                                Provide any relevant information such as DMCA contact points, privacy, data retention,
+                                and any other policy that is applicable to your instance.
+                            </p>
                         </span>
                         
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
-                            <div class="flex flex-col w-full gap-2 py-2">
-                                <div class="flex flex-col">
-                                    <p class="text-sm font-bold flex flex-row gap-2">
-                                        <Icon src={DocumentText} mini width={16}/>
-                                        Legal Page Contents
-                                    </p>
-                                    <p class="text-xs font-normal">
-                                        The contents provided here will be used to generate what is shown on the /legal page of your instance.
-                                    </p>
+                        <div class="flex flex-col gap-4 w-full">
+                                   
+                            <MarkdownEditor
+                                previewButton
+                                bind:value={formData.legal_information}
+                                rows={15}
+                            />
 
-                                    <p class="text-xs font-normal">
-                                        Provide any relevant information such as DMCA contact points, privacy, data retention, and any other policy that is applicable to your instance.
-                                    </p>
-                                </div>
-                                
-                                <div class="mx-auto"/>
-                                
-                                <MarkdownEditor
-                                    previewButton
-                                    bind:value={formData.legal_information}
-                                    rows={15}
-                                />
-                                
-                            </div>
                         </div>
                     </Setting>
                 </div>
