@@ -20,6 +20,14 @@ interface Modals {
         user: Person | undefined
         community: Community | undefined
     }
+    federationState: {
+        open: boolean,
+        domain:string
+    },
+    fediseer: {
+        open: boolean
+        instance: string
+    },
     user: {
         open: boolean
         personDetails: GetPersonDetailsResponse | undefined
@@ -55,6 +63,14 @@ export let modals = writable<Modals>({
         banned: false,
         user: undefined,
         community: undefined,
+    },
+    federationState: {
+        open: false,
+        domain: ''
+    },
+    fediseer: {
+        open: false,
+        instance: '',
     },
     user: {
         open: false,
@@ -117,6 +133,26 @@ export function userProfileModal(personDetails:GetPersonDetailsResponse, mod:boo
             mod: mod,
         },
 
+    }))
+}
+
+export function fediseerModal(instance:string) {
+    modals.update((m) => ({
+        ...m,
+        fediseer: {
+            open: true,
+            instance: instance
+        }
+    }))
+}
+
+export function federationStateModal(domain:string) {
+    modals.update((m) => ({
+        ...m,
+        federationState: {
+            open: true,
+            domain: domain
+        }
     }))
 }
 

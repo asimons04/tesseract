@@ -1,6 +1,8 @@
 <script lang="ts">
     import { modals } from '$lib/components/lemmy/moderation/moderation.js'
     
+    import FederationStateModal from '$lib/components/lemmy/modal/FederationStateModal.svelte'
+    import Fediseer from '$lib/fediseer/Fediseer.svelte';
     import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/modal/UserProfileModal.svelte'
     import ZoomImageModal from '$lib/components/lemmy/modal/ZoomImageModal.svelte';
@@ -46,6 +48,16 @@
 
 {#if $modals.votes.open}
     <PostCommentVoteShowModal bind:open={$modals.votes.open} type={$modals.votes.type} submission_id={$modals.votes.submission_id} />
+{/if}
+
+<!---Fediseer Modal--->
+{#if $modals.fediseer.open}
+    <Fediseer bind:open={$modals.fediseer.open} instance={$modals.fediseer.instance} />
+{/if}
+
+<!---Federation State <Viewer--->
+{#if $modals.federationState.open}
+    <FederationStateModal bind:open={$modals.federationState.open} domain={$modals.federationState.domain} />
 {/if}
 
 <!--- User Profile Modal (should be after so it's "above" other modals that would pop up a user profile (e.g. vote view)--->
