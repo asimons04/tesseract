@@ -3,7 +3,7 @@
     import type {
         CommentView,
     } from 'lemmy-js-client'
-    import { amMod, isAdmin } from './moderation'
+    import { amMod, isAdmin, voteViewerModal } from './moderation'
     import { getClient } from '$lib/lemmy'
     import { isCommentView } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
@@ -20,6 +20,7 @@
 
     import { 
         Fire, 
+        HandThumbUp, 
         Icon, 
         Newspaper,
         ShieldExclamation, 
@@ -39,8 +40,7 @@
         if (!$profile?.jwt) return
 
         try {
-            await getClient(undefined, fetch).distinguishComment({
-                auth: $profile?.jwt,
+            await getClient(undefined).distinguishComment({
                 comment_id: comment.comment.id,
                 distinguished: !distinguished
             });
@@ -94,6 +94,14 @@
             User Modlog
         </MenuButton>
 
+        <!---View Votes--->
+        {#if isAdmin($profile?.user)}
+            <MenuButton color="info" on:click={() => voteViewerModal('comment', item.comment.id)}>
+                <Icon src={HandThumbUp} size="16" mini />
+                View Votes
+            </MenuButton>
+        {/if}
+
         <!---Remove/Restore Comment--->
         <MenuButton color={item.comment.removed ? 'success' : 'dangerSecondary'} on:click={() => {
                 purging = false
@@ -119,7 +127,8 @@
         {/if}
     {/if}
 
-    {#if $profile?.user && isAdmin($profile.user)}
+    {#if isAdmin($profile?.user)}
+        
         <MenuButton color="dangerSecondary" on:click={() => {
                 purging = true
                 removing = true
@@ -130,7 +139,7 @@
         </MenuButton>
 
         <!--Hide ban button if viewing own profile--->
-        {#if item.creator.id != $profile.user.local_user_view.person.id}
+        {#if item.creator.id != $profile?.user?.local_user_view.person.id}
             <MenuButton
                 color={item.creator.banned ? 'success' : 'dangerSecondary'}
                 on:click={() => { banningInstance = true }}

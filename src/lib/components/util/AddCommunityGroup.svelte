@@ -58,7 +58,7 @@
 
 </script>
 
-<Modal bind:open={open} icon={UserGroup} title="Add Community to Group">
+<Modal bind:open={open} icon={UserGroup} title="Add Community to Group" width="max-w-4xl">
     <div class="flex flex-col gap-2">
         {#if community}
             <CommunityLink avatar avatarSize={42} community={community} />

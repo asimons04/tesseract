@@ -49,7 +49,6 @@
 
         try {
             await getClient().lockPost({
-                auth: $profile.jwt,
                 locked: lock,
                 post_id: item.id,
             })
@@ -78,7 +77,6 @@
         try {
             await getClient().featurePost({
                 feature_type: toInstance ? 'Local' : 'Community',
-                auth: $profile.jwt,
                 featured: pinned,
                 post_id: item.id,
             })
@@ -192,7 +190,7 @@
         </div>
     
         <!---Action Button--->
-        {#if isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community) ) }
+        {#if item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community))) }
             <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
             
                 <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">

@@ -3,7 +3,7 @@
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { CommentView, PostView } from 'lemmy-js-client'
     
-    import { amMod, isAdmin, remove } from './moderation'
+    import { amMod, isAdmin, remove, voteViewerModal } from './moderation'
     import type { ButtonColor } from '$lib/ui/colors.js'
     import { getClient } from '$lib/lemmy'
     import { isPostView } from '$lib/lemmy/item.js'
@@ -21,12 +21,12 @@
     import {
         Fire,
         Icon,
-        InformationCircle,
         LockClosed,
         LockOpen,
         Megaphone,
         Newspaper,
         ShieldExclamation,
+        HandThumbUp,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -52,7 +52,6 @@
 
         try {
             await getClient().lockPost({
-                auth: $profile.jwt,
                 locked: lock,
                 post_id: item.post.id,
             })
@@ -60,7 +59,7 @@
             item.post.locked = lock
 
             toast({
-                content: `Successfully ${lock ? 'locked' : 'unlocked' } that post. You must refresh to see changes.`,
+                content: `Successfully ${lock ? 'locked' : 'unlocked' } that post.`,
                 type: 'success',
                 title: "Success"
             })
@@ -81,14 +80,13 @@
         try {
             await getClient().featurePost({
                 feature_type: toInstance ? 'Local' : 'Community',
-                auth: $profile.jwt,
                 featured: pinned,
                 post_id: item.post.id,
             })
             item.post.featured_community = pinned
 
             toast({
-                content: `Successfully ${pinned ? 'pinned' : 'unpinned'} that post. You must refresh to see changes.`,
+                content: `Successfully ${pinned ? 'pinned' : 'unpinned'} that post.`,
                 type: 'success',
             })
         } catch (err) {
@@ -153,11 +151,23 @@
             User Modlog
         </MenuButton>
 
+        {#if isAdmin($profile?.user)}
+            <MenuButton color="info" on:click={() => voteViewerModal('post', item.post.id)}>
+                <Icon src={HandThumbUp} size="16" mini />
+                View Votes
+            </MenuButton>
+        {/if}
+
 
         <!--- Mod Feature Post Community--->
         <MenuButton color="success"
             on:click={() =>
-                pin(isPostView(item) ? !item.post.featured_community : false)
+                toast({
+                    type: 'warning',
+                    title: 'Confirmation',
+                    content: `Are you sure you want to ${item.post.featured_community ? 'unfeature' : 'feature'} this post in the community?`,
+                    action: () => pin(isPostView(item) ? !item.post.featured_community : false)
+                })
             }
             loading={pinning}
             disabled={pinning}
@@ -173,7 +183,12 @@
         {#if isAdmin($profile.user)}
             <MenuButton color="success"
                 on:click={() =>
-                    pin(isPostView(item) ? !item.post.featured_local : false, true)
+                toast({
+                    type: 'warning',
+                    title: 'Confirmation',
+                    content: `Are you sure you want to ${item.post.featured_local ? 'unfeature' : 'feature'} this post for the instance?`,
+                    action: () => pin(isPostView(item) ? !item.post.featured_local : false, true)
+                })
                 }
             >
                 <Icon src={Megaphone} size="16" mini />
@@ -210,6 +225,7 @@
 
         <!--- Admin Only Options--->
         {#if isAdmin($profile.user)}
+        
             <MenuButton color="dangerSecondary" on:click={() => remove(item, true)}>
                 <Icon src={Fire} size="16" mini />
                 Purge Post

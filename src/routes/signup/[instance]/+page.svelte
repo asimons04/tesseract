@@ -4,7 +4,7 @@
     
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
-    import { LINKED_INSTANCE_URL } from "$lib/instance.js";
+    import { LINKED_INSTANCE_URL, instance as Instance } from "$lib/instance.js";
     import { page } from '$app/stores'
     import { setUser } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -61,7 +61,7 @@
     submitting: boolean = false,
     honeypot: string | undefined = undefined
 
-    const getCaptcha = async () => (captcha = await getClient(instance, fetch).getCaptcha())
+    const getCaptcha = async () => (captcha = await getClient(instance).getCaptcha())
 
     $: captchaAudio = captcha?.ok?.wav
         ? `data:audio/wav;base64,${captcha.ok.wav}`
@@ -71,7 +71,7 @@
         submitting = true
 
         try {
-            const res = await getClient(instance, fetch).register({
+            const res = await getClient(instance).register({
                 username: username,
                 email: email,
                 password: password,
@@ -96,6 +96,7 @@
             }
 
             if (res?.jwt) {
+                $Instance = instance
                 await setUser(res.jwt, $page.params.instance)
                 toast({ 
                     content: 'Successfully registered and logged in. Welcome!', 

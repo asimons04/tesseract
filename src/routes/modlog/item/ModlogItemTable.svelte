@@ -54,7 +54,6 @@
 
         try {
             await getClient().lockPost({
-                auth: $profile.jwt,
                 locked: lock,
                 post_id: item.id,
             })
@@ -83,7 +82,6 @@
         try {
             await getClient().featurePost({
                 feature_type: toInstance ? 'Local' : 'Community',
-                auth: $profile.jwt,
                 featured: pinned,
                 post_id: item.id,
             })
@@ -144,7 +142,7 @@
 {/if}
 
 
-<div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full" >
+<div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full overflow-hidden" >
     
     <!---Date/time column--->
     <div class="flex flex-row gap-2 text-xs w-full lg:w-[5%]">
@@ -181,7 +179,7 @@
         <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
             {#if item.moderator}
             <span class="flex flex-row gap-2 items-center w-full">    
-                <span class="lg:hidden text-xs font-bold">Moderator:</span>
+                <span class="lg:hidden text-xs font-bold">Mod:</span>
                 
                 <button class="cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
                     filter.moderator.set = !filter.moderator.set;
@@ -206,7 +204,7 @@
     <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
         {#if item.moderatee}
         <span class="flex flex-row gap-2 items-center w-full">        
-            <span class="lg:hidden text-xs font-bold">Moderatee:</span>
+            <span class="lg:hidden text-xs font-bold">User:</span>
             
             <button class="cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
                 filter.moderatee.set = !filter.moderatee.set;
@@ -251,9 +249,9 @@
                         <li class="flex flex-nowrap gap-1">
                             <strong>Item:</strong>
                             {#if item.link && item.content}
-                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}>{item.content}</Link>
+                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links} title={item.content}> {item.content.substring(0, 250)} </Link>
                             {:else if item.content}
-                                {item.content}
+                                <span title="{item.content}">{item.content.substring(0,250)}</span>
                             {:else if item.link}
                                 <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
                             {/if}
@@ -263,7 +261,7 @@
             </div>
 
             <!---Action Menu for mods/admins --->
-            {#if isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community) ) }
+            {#if item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community))) }
                 <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
                 
                     <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">

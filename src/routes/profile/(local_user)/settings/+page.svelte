@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { SaveUserSettings } from 'lemmy-js-client'
     
-    import { getClient, uploadImage } from '$lib/lemmy.js'
-    import { profile } from '$lib/auth.js'
+    import { getClient } from '$lib/lemmy.js'
+    import { profile, saveProfileToProfileData } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -15,9 +15,11 @@
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
+    import TotpSetupModal from './TOTPSetupModal.svelte'
 
     import { 
     ArrowDownTray,
+        DevicePhoneMobile,
         Envelope, 
         EnvelopeOpen, 
         ExclamationTriangle, 
@@ -28,7 +30,6 @@
         Trash
 
     } from 'svelte-hero-icons'
-    
 
     export let data
 
@@ -44,31 +45,35 @@
         if (!formData || !$profile?.jwt) return
 
         loading = true
+        let client = getClient()
 
         try {
-            let pfp = profileImage ? await uploadImage(profileImage[0]) : undefined
-            let banner = bannerImage ? await uploadImage(bannerImage[0]) : undefined
+            let pfp     = profileImage   ? (await client.uploadImage({image: profileImage[0]}))?.url    : undefined
+            let banner  = bannerImage    ? (await client.uploadImage({image: bannerImage[0]}))?.url     : undefined
 
-            const res = await getClient().saveUserSettings({
-                auth: $profile.jwt,
+            const res = await client.saveUserSettings({
                 ...formData,
                 avatar: pfp,
                 banner: banner
             })
-
-            toast({
-                content: 'Saved your user settings.',
-                type: 'success',
-                title: "Success"
-            })
-    
-            if (res.verify_email_sent) {
+            
+            if (res.success) {
                 toast({
-                    content: 'A verification email was sent.',
-                    type: 'info',
-                    title: "Notice"
+                    content: 'Saved your user settings.',
+                    type: 'success',
+                    title: "Success"
                 })
+
+                // If profile avatar changes, update the stored value in localStorage so the UI uses the most recent in account selector
+                if (pfp) {
+                    $profile.avatar = pfp
+                    saveProfileToProfileData()
+                }
+            }   
+            else {
+                throw new Error('Failed to save user settings')
             }
+    
         } catch (err) {
             toast({
                 content: err as any,
@@ -83,16 +88,23 @@
     let loading = false
     let changingPassword = false
     let deletingAccount = false
-
+    let updatingTotp = false
 </script>
 
 <DeleteAccountModal bind:open={deletingAccount} />
 <ChangePasswordModal bind:open={changingPassword} />
 
+<TotpSetupModal bind:open={updatingTotp} bind:totp_enabled={data.local_user_view.local_user.totp_2fa_enabled} />
+
 <form class="flex flex-col gap-4 h-full" on:submit|preventDefault={save}>
     
     <h1 class="flex flex-row justify-between">
         <span class="font-bold text-2xl">Profile Settings</span>
+        
+        <Button submit size="lg" color="primary" {loading} disabled={loading}>
+            <Icon src={ArrowDownTray} mini width={18} />
+            Save Settings
+        </Button>
     </h1>
     <p class="text-sm">
         The settings here are only ones that affect the behavior of the API. Please see
@@ -149,14 +161,16 @@
         <div class="flex flex-col w-full lg:w-1/3 gap-4 px-4">
             <div class="mt-auto"/>
             
-            <Button submit size="lg" color="primary" {loading} disabled={loading}>
-                <Icon src={ArrowDownTray} mini width={18} />
-                Save Settings
-            </Button>
+            
             
             <Button size="lg" color="primary" on:click={()=> {changingPassword = true }}>
                 <Icon src={Key} min width={18} />
                 Change Password
+            </Button>
+
+            <Button size="lg" color="primary" on:click={()=> {updatingTotp = true }}>
+                <Icon src={DevicePhoneMobile} min width={18} />
+                {data.local_user_view.local_user.totp_2fa_enabled ? 'Disable 2FA' : 'Enable 2FA'}
             </Button>
 
             <Button size="lg" color="danger" on:click={() => { deletingAccount=true }}>

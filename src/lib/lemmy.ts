@@ -4,84 +4,60 @@ import { profile, profileData } from '$lib/auth.js'
 import { error } from '@sveltejs/kit'
 import { LINKED_INSTANCE_URL, instance } from '$lib/instance.js'
 
-interface CustomFetchFunction {
-    ( input: RequestInfo | URL, init?: RequestInit | undefined):  Promise<Response>
-}
-
 export interface BlockInstanceResponse {
     blocked: boolean
 }
 
-
-async function customFetch(func: CustomFetchFunction, input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
-    const res = await func(input, init)
-    if (!res.ok) throw error(res.status, await res.text())
-    return res
-}
-
-export function getClient(instanceURL?: string, func?: CustomFetchFunction ,jwt?:string): LemmyHttp {
-    if (!instanceURL)   instanceURL = get(instance)
-    
-    try {
-        if (!jwt) jwt = get(profile)?.jwt 
-    } catch {
-        jwt = ''
-    }
-
-    return new LemmyHttp(`https://${instanceURL}`, 
-        {
-            fetchFunction: func
-                ? (input: RequestInfo | URL, init: RequestInit | undefined) => customFetch(func, input, init)
-                : undefined,
-            headers: jwt ? { 'Authorization': `Bearer ${jwt}`} : undefined
-        }
-    )
-}
-
+/** Returns the current instance */
 export const getInstance = () => get(instance)
 
 export const site = writable<GetSiteResponse | undefined>(undefined)
 
-export async function validateInstance(instance: string, setSite:boolean=false): Promise<boolean> {
-    if (instance == '') return false
-    try {
-        let siteData = await getClient(instance).getSite({})
-        // Optionally 
-        if (setSite) {
-            site.set(siteData);
-        }
-        return true
-    } catch (err) {
-        return false
+/** Returns a LemmyHttp API client
+ * @param instanceURL is the instance domain it should work against (default is current instance)
+ * @param jwt is the auth token to be used (defaults to profile, but need to supply it in some cases to bootstrap profile
+*/
+export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
+    // Use current instance is not otherwise defiend
+    if (!instanceURL)   instanceURL = get(instance)
+    jwt = jwt ?? get(profile)?.jwt
+
+    // Add the authorization header if JWT is supplied or if present in profile and instance is the same as the one the profile belongs to
+    const headers = {} as { [key: string]: string; }
+    if (jwt && instanceURL == get(instance)) headers['Authorization'] = `Bearer ${jwt}`
+
+    // Override Lemmy's stupid server-side cache on the only fscking endpoint that will return the local_user profile
+    const cachelessFetch = async function (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
+        if (init) init.cache = 'no-store'
+        else init = { cache: 'no-store'}
+        
+        const res = await fetch(input, init)
+        if (!res.ok) throw error(res.status, await res.text())
+        return res
     }
+
+    return new LemmyHttp(`https://${instanceURL}`, 
+        {
+            fetchFunction: cachelessFetch,
+            headers: headers
+        }
+    )
 }
 
 
-export async function blockInstance(instance_id: number, block:boolean = false): Promise<BlockInstanceResponse> {
-    if (!instance_id || !get(profile)?.jwt) return { blocked: !block }
 
+/** Validates an instance by calling getSite() and optionallly sets the current site store to its GetSiteResponse
+ * @param instance The instance domain to check
+ * @param setSite Default false to discard the results and true to set the current site store details to the results of that
+*/
+export async function validateInstance(instance: string, setSite:boolean=false): Promise<boolean> {
+    if (!instance) return false
     try {
-        const body = {
-            instance_id: instance_id,
-            block: block
-        }
-        const response = await fetch(`https://${get(instance)}/api/v3/site/block`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${get(profile)?.jwt}`,
-                },
-                body: JSON.stringify(body)
-            }
-        )
-
-        if (response.ok)    return { blocked: block }
-        else                return { blocked: !block }
-    }
-    catch (err) {
-        console.log(err)
-        return { blocked: !block }
+        let siteData = await getClient(instance).getSite()
+        if (setSite) site.update(() => siteData)
+        return true
+    } catch (err) {
+        return false
     }
 }
 
@@ -91,7 +67,6 @@ export async function hideCommunity(communityID:number, hidden:boolean, reason:s
     try {
         const body = {
             community_id: communityID,
-            auth: get(profile)?.jwt,
             hidden: hidden,
             reason: reason
         }
@@ -130,7 +105,8 @@ export async function hideCommunity(communityID:number, hidden:boolean, reason:s
 
 }
 
-
+// Deprecated: 5/16/2024
+/*
 export async function uploadImage(image: File | null | undefined): Promise<string | undefined> {
     if (!image || !get(profile)?.jwt) return
     
@@ -161,10 +137,12 @@ export async function uploadImage(image: File | null | undefined): Promise<strin
         }: ${response.status}: ${response.statusText}`
     )
 }
+*/
 
 
 export let sortOptions:string[] = [
     'Active',
+    'Scaled',
     'Hot',
     'New',
     'Old',
@@ -184,6 +162,7 @@ export let sortOptions:string[] = [
 
 export let sortOptionNames:string[] = [
     'Active',
+    'Scaled',
     'Hot',
     'New',
     'Old',
@@ -201,10 +180,22 @@ export let sortOptionNames:string[] = [
     'New Comments',
 ];
 
-// Set the current site
-getClient(LINKED_INSTANCE_URL ? LINKED_INSTANCE_URL : getInstance())
-    .getSite({})
-    .then((s) => {
-            site.set(s)
-        }
-    )
+
+export function parseAPIError(err:any) {
+    let errMsg:string
+    try { 
+        let parsed = JSON.parse(err.body.message)
+        errMsg = parsed.error
+    }
+    catch {
+        errMsg = ''
+    }
+    return errMsg
+}
+
+// Do an initial fetch of the site so the logo and site name gets set properly
+// DummyJWT is so the auth module doesn't try to access the profile before it's initialized
+
+getClient(get(instance), 'dummyJWT').getSite().then((getSiteResponse) => {
+    site.set(getSiteResponse)
+})

@@ -16,6 +16,8 @@
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import { searchParam } from '$lib/util';
+    import { page } from '$app/stores';
     
     
 
@@ -31,12 +33,11 @@
     }
 
     let infiniteScroll = {
-        loading: false,     // Used to toggle loading indicator
-        exhausted: false,   // Sets to true if the API returns 0 posts
-        maxPosts: $userSettings.uiState.maxScrollPosts,      // Maximum number of posts to keep in the FIFO
-        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
-        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+        loading: false,     
+        exhausted: false,   
+        maxPosts: $userSettings.uiState.maxScrollPosts,
+        truncated: false,   
+        enabled: $userSettings.uiState.infiniteScroll,
     }
     $: infiniteScroll.truncated = (data?.posts?.posts && data.posts.posts.length > infiniteScroll.maxPosts-2) ?? false
     
@@ -48,13 +49,15 @@
     export const snapshot: Snapshot<void> = {
         capture: () => {
             pageState.scrollY = window.scrollY
-            PageSnapshot.capture({data: data, state: pageState})
+            if (infiniteScroll.enabled) PageSnapshot.capture({data: data, state: pageState})
         },
         restore: async () => {
             try { 
-                let snapshot = PageSnapshot.restore() 
-                if (snapshot.data)  data = snapshot.data
-                if (snapshot.state) pageState = snapshot.state
+                if (infiniteScroll.enabled)  {
+                    let snapshot = PageSnapshot.restore() 
+                    if (snapshot.data)  data = snapshot.data
+                    if (snapshot.state) pageState = snapshot.state
+                }
 
                 await scrollToLastSeenPost()
             }
@@ -83,10 +86,8 @@
         req.url.searchParams.set('limit', $userSettings?.uiState.postsPerPage.toString() || '10')
         req.url.searchParams.set('community_name', data.community_name)
         req.url.searchParams.set('sort', data.sort ?? 'New')
-        
-        //@ts-ignore since using 0.18.x client wihout next_page in type def
+
         if (data.posts.next_page) req.url.searchParams.set('page_cursor', data.posts.next_page)
-        else if (data.page) req.url.searchParams.set('page', (++data.page).toString())
         
         load(req).then((nextBatch) => {
             if (!nextBatch || !data?.posts) return
@@ -119,8 +120,8 @@
     {/if}
 </svelte:head>
 
-<!--pageSelection={true}    bind:currentPage={data.page}-->
-<SubNavbar home back compactSwitch toggleMargins toggleCommunitySidebar scrollButtons
+
+<SubNavbar home back quickSettings qsShiftLeft={2} toggleMargins toggleCommunitySidebar scrollButtons
     sortMenu={true}         bind:selectedSortOption={data.sort}
     refreshButton           on:navRefresh={()=> refresh()}
 >
@@ -139,13 +140,18 @@
         />
         <PostFeed posts={data.posts.posts}/>
         
-        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} automatic={infiniteScroll.automatic}
+        <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} bind:enabled={infiniteScroll.enabled}
+            disableBack={ $page.url.searchParams.get('page_cursor') ? false : true }
             on:loadMore={ () => {
                 if (!infiniteScroll.exhausted) {
                     infiniteScroll.loading = true
                     loadPosts()
                 }
             }}
+            on:next={ () => {
+                searchParam($page.url, 'page_cursor', data?.posts?.next_page ?? '', 'page')
+            }}
+            on:prev={ () => history.back() }
         />
         
         <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />

@@ -43,7 +43,6 @@
         if (purge) {
             try {
                 await getClient().purgeComment({
-                    auth: $profile.jwt,
                     comment_id: comment.id,
                     reason: reason || undefined,
                 })
@@ -71,7 +70,6 @@
         else {
             try {
             await getClient().removeComment({
-                auth: $profile.jwt,
                 comment_id: comment.id,
                 removed: !removed,
                 reason: reason || undefined,
@@ -103,21 +101,22 @@
     }
 </script>
 
-<Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Comment" icon={purge ? Fire : removed ? HandThumbUp : Trash}>
+<Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Comment" icon={purge ? Fire : removed ? HandThumbUp : Trash} width="max-w-2xl">
   
     {#if comment}
         <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
 
-            <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={reason} />
+            <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={reason}>
 
-            <Button color={purge ? 'danger' : 'primary'} size="lg" {loading} disabled={loading} submit >
-                <Icon src={purge ? Fire : Trash} mini size="16" slot="icon" />
-                {#if purge}
-                    Purge
-                {:else}
-                    {removed ? 'Restore' : 'Remove'}
-                {/if}
-            </Button>
+                <Button color={purge ? 'danger' : 'primary'} size="lg" {loading} disabled={loading} submit slot="actions">
+                    <Icon src={purge ? Fire : Trash} mini size="16" slot="icon" />
+                    {#if purge}
+                        Purge
+                    {:else}
+                        {removed ? 'Restore' : 'Remove'}
+                    {/if}
+                </Button>
+            </MarkdownEditor>
             
         </form>
     {/if}

@@ -19,35 +19,40 @@
     let embedURL:   URL 
     let size: string = imageSize(displayType);
     let inViewport = false
-
+    let clickToPlayClicked = false
     
     
-    $: if (post.post?.url) {
-        // Parse URLs to pick out video IDs to create embed URLs
-        videoID = new URL(post.post.url).pathname.replace('/','')
-        
-        embedURL = new URL("https://odysee.com")
-        embedURL.searchParams.set('autopause', '0')
+    $:  if (post.post?.url) {
+            // Parse URLs to pick out video IDs to create embed URLs
+            videoID = new URL(post.post.url).pathname.replace('/','')
+            
+            embedURL = new URL("https://odysee.com")
+            embedURL.searchParams.set('autopause', '0')
 
-        // Append the video ID to the embed URL
-        embedURL.pathname = `/$/embed/${videoID}`
+            // Append the video ID to the embed URL
+            embedURL.pathname = `/$/embed/${videoID}`
 
+            
+            if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
+                embedURL.searchParams.set('autoplay', '1')
+            }
         
-        if (displayType ==  'post' && (autoplay ?? $userSettings.embeddedMedia.autoplay)) {
-            embedURL.searchParams.set('autoplay', '1')
+            // Start time: Can be either t (legacy) or start
+            let startTime = new URL(post.post.url!).searchParams.get('t');
+            if (startTime) {
+                embedURL.searchParams.set('t', startTime)
+            }
+            
         }
-    
-        // Start time: Can be either t (legacy) or start
-        let startTime = new URL(post.post.url!).searchParams.get('t');
-        if (startTime) {
-            embedURL.searchParams.set('t', startTime)
-        }
-        
-    }
 
-    $: showAsEmbed = embedURL &&
-        (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
-        (displayType == 'post' && $userSettings.embeddedMedia.post)
+    $:  showAsEmbed = embedURL && (clickToPlayClicked && inViewport) || (
+            (displayType == 'feed' && inViewport && $userSettings.embeddedMedia.feed && (!post.post.nsfw || !$userSettings.nsfwBlur)) ||
+            (displayType == 'post' && $userSettings.embeddedMedia.post)
+        )
+
+    // Unset click to play when out of viewport (revert to thumbnail)
+    $:  if (!inViewport) clickToPlayClicked = false
+
 </script>
 
 
@@ -58,15 +63,9 @@
     <IFrame bind:embedURL bind:size bind:title={post.post.name} />
 
 {:else if post?.post?.thumbnail_url}
-    <!---Create image post if user has media embeds enabled for posts--->    
-    {#if $userSettings.embeddedMedia.post}
-        <Link href={post.post.url} title={post.post.name} newtab={$userSettings.openInNewTab.links} highlight nowrap />
-        <PostImage bind:post={post} displayType={displayType}/>
     
-    <!---Create PostLink to external link if user does not have embeds enaled for posts--->
-    {:else}
-        <PostLink bind:post={post} displayType={displayType}/>
-    {/if}
+    <Link href={post.post.url} title={post.post.name} newtab={$userSettings.openInNewTab.links} highlight nowrap />
+    <PostImage bind:post={post} displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
 
 {:else if !post?.post?.thumbnail_url}
     <Link href={post.post.url} title={post.post.name} highlight nowrap />

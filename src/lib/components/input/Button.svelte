@@ -24,6 +24,7 @@
     'square-sm': 'w-6 h-6',
     'square-md': 'w-8 h-8',
     'square-lg': 'w-10 h-10',
+    'square-form': 'w-[46px] h-[42px] p-0'
   }
 
   const buttonRoundness = {
@@ -41,6 +42,7 @@
   export let rounded: ButtonRoundness = 'md'
   export let alignment: ButtonAlignment = 'center'
   export let icon: IconSource | undefined = undefined
+  export let iconSize:number = 16
   export let title: string = ''
   export let hidden:boolean = false
   export let loaderWidth: number | undefined = undefined
@@ -89,7 +91,7 @@
             {:else if $$slots.icon}
                 <slot name="icon" />
             {:else if icon}
-                <Icon src={icon} size="16" mini />
+                <Icon src={icon} width={iconSize} mini />
             {/if}
             <slot />
         </div>
@@ -133,7 +135,7 @@
             {:else if $$slots.icon}
                 <slot name="icon" />
             {:else if icon}
-                <Icon src={icon} size="16" mini />
+                <Icon src={icon} width={iconSize} mini />
             {/if}
             <slot />
         </div>

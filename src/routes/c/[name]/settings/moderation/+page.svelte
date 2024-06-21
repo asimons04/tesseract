@@ -32,7 +32,7 @@
 
     let formData = {
         user: '',
-        ban: false,
+        ban: true,
         expires: '',
         reason: '',
         remove_data: false,
@@ -77,13 +77,11 @@
 
         try {
             const res = await getClient().resolveObject({
-                auth: $profile.jwt,
                 q: formData.user,
             })
 
             if (res.person) {
                 const banUserRes = await getClient().banFromCommunity({
-                    auth: $profile.jwt,
                     ban: formData.ban,
                     expires: date || undefined,
                     person_id: res.person.person.id,

@@ -48,7 +48,7 @@
             "
 
         >
-
+            <slot name="icon" />
             <slot/>
         </a>
     {:else}
@@ -56,7 +56,7 @@
             on:click={(e) => click('click', e)}
             title="{title}"
             type="button"
-            class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm
+            class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm text-start
                 transition-colors {buttonColors[color]} 
                 disabled:opacity-50 disabled:pointer-events-none
                 {$$props.class}

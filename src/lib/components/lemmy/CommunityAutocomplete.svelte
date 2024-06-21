@@ -37,7 +37,6 @@
         on:search={async () => {
             const results = await getClient().search({
                 q: q || ' ',
-                auth: $profile?.jwt || undefined,
                 type_: 'Communities',
                 limit: 50,
                 listing_type: listing_type,
@@ -62,7 +61,7 @@
     >
     
         <MenuButton on:click={() => extractSelected(option)}>
-            <Avatar url={option.icon} alt={option.title} width={24} />
+            <Avatar url={option.icon} alt={option.title} width={24} community={true}/>
             
             <div class="flex flex-col text-left">
                 <span>{option.title}</span>

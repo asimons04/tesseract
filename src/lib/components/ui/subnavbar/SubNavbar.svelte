@@ -1,27 +1,26 @@
 <script lang="ts">
     import type { PostView, SortType } from 'lemmy-js-client'
 
-    import { amMod, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
+    import { amMod, amModOfAny, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
     import { arrayRange, searchParam } from '$lib/util.js'
     import { createEventDispatcher } from 'svelte'
-    import { getSessionStorage, setSessionStorage } from '$lib/session'
+    import { setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
-    import { site } from '$lib/lemmy'
+    
     import { fixLemmyEncodings, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    
     import { 
         sortOptions as defaultSortOptions, 
         sortOptionNames as defaultSortOptionNames
     } from '$lib/lemmy'
+    
     import { userSettings } from '$lib/settings'
     
-    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
+    
     import Button from '$lib/components/input/Button.svelte'
-    import CommunityActionMenu from '$lib/components/lemmy/post/PostActions/CommunityActionMenu.svelte'
-    import ModerationMenu       from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
-    import PostActionsMenu from '$lib/components/lemmy/post/PostActions/PostActionsMenu.svelte'
-    import PostEditorModal from '$lib/components/lemmy/post/PostActions/PostEditorModal.svelte'
+    import QuickSettings from './QuickSettings.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
     import {
@@ -59,11 +58,14 @@
     export let refreshButton:boolean = false    // Button to refresh the current page
     export let refreshPreventDefault:boolean = false    // Prevent the default reload with invalidate 
     export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
+    export let quickSettings:boolean = false
+    export let qsShiftLeft:number = 0           // Number of button slots to shift the quick settings menu to the left of
 
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
     export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All']
-    export let listingTypeOptionNames:string[]  = listingTypeOptions
+    export let listingTypeOptionNames:string[]  = [...listingTypeOptions]
+
     export let listingTypeOnSelect              = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
     export let selectedListingType:string       = ''
     export let listingTypeTitle:string          = 'Listing Type'
@@ -81,16 +83,9 @@
     export let pageSelectPreventDefault:boolean = false
 
     // Post/Community/Moderator Action Menus
-    export let postActionsMenu:boolean          = false
-    export let communityActionsMenu:boolean     = false
-    export let moderationMenu:boolean           = false
     export let post:PostView | undefined        = undefined
     export let postTitle:boolean                = false     // Post title in center of bar
 
-    let addCommunityGroup:boolean               = false
-    let editPostModal:boolean                   = false
-
-    //const dispatcher = createEventDispatcher();
     const dispatcher = createEventDispatcher
         <{ 
             navChangeSort?: string,
@@ -99,28 +94,13 @@
             navPageSelect?: number
         }>()
 
-    $:  if ($site && $site.version?.startsWith('0.19')) {
-            if (!sortOptions.includes('Scaled')) sortOptions.unshift('Scaled')
-            if (!sortOptionNames.includes('Scaled')) sortOptionNames.unshift('Scaled')
-        }
-        else {
-            if (sortOptions.indexOf('Scaled') > -1) sortOptions.splice(sortOptions.indexOf('Scaled'), 1)
-            if (sortOptionNames.indexOf('Scaled') > -1) sortOptionNames.splice(sortOptionNames.indexOf('Scaled'), 1)
-        }
-    
-    
-   
+    let toggleCardCompactView = async () => {
+        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+        if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
+        else $userSettings.uiState.feedMargins = true
+        await scrollToLastSeenPost()
+    }
 </script>
-
-<!---Hacks to launch the editor modals and keep them over the outer layout since they're inside a fixed element--->
-<!-- Note: Plan to add the modals to the layout pass data to them like the moderation modals--->
-{#if addCommunityGroup && post?.community}
-    <AddCommunityGroup bind:open={addCommunityGroup} community={post.community} />
-{/if}
-
-{#if editPostModal && post}
-    <PostEditorModal bind:open={editPostModal} bind:post on:edit={(e) => { console.log(e) }}/>
-{/if}
 
 
 <header class="sticky top-16 ml-[-0.5rem] w-[calc(100%+1rem)] h-[3rem] px-2 py-1 bg-slate-50/80 dark:bg-zinc-950/80 backdrop-blur-3xl z-20 mt-[-0.9rem] {$$props.class}">
@@ -131,19 +111,16 @@
         
         <!--Home Button-->
         {#if home }
-            <span class="hidden md:flex">
-                <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary" >
-                    <Icon src={Home} width={iconSize} />
-                </Button>
-            </span>
+            <Button link href="/" title="Home" data-sveltekit-preload-data="hover" size="sm" color="tertiary" >
+                <Icon src={Home} width={iconSize} />
+            </Button>
         {/if}
 
-        {#if back && history.length > 1}
-            <!--Return to Feed Button-->
+        {#if back}
+            <!--Back Button-->
             <Button title="Back" data-sveltekit-preload-data="hover"
                 color="tertiary"
                 size="sm"
-                hidden={history.length<2}
                 on:click={() => {
                     dispatcher('navBack')
                     if (!backPreventDefault) history.back();
@@ -152,30 +129,32 @@
                 <Icon src={ArrowLeftCircle} width={iconSize} />
             </Button>
         {/if}
+
+        {#if quickSettings}
+            <QuickSettings 
+                bind:listingType
+                bind:selectedListingType
+                bind:listingTypeOptions
+                bind:listingTypeOptionNames
+                bind:listingTypeTitle
+                bind:listingTypeOnSelect
+                bind:sortMenu
+                bind:sortOptions
+                bind:sortOptionNames
+                bind:selectedSortOption
+                bind:sortPreventDefault
+                bind:shiftLeft={qsShiftLeft}
+            />
+        {/if}
         
         <!--- Custom Items to the left of the spacer--->
         <slot {iconSize} name="far-left"/>
 
-        <!--- Post Community Actions Menu--->
-        {#if communityActionsMenu && post}
-            <CommunityActionMenu bind:post alignment="bottom-left" menuIconSize={iconSize} suppressModal on:addGroup={()=>{ addCommunityGroup = true }}
-            />
-        {/if}
         
-        <!-- Post Action Button (only used in posts)--->
-        {#if postActionsMenu && post}
-            <PostActionsMenu bind:post alignment="bottom-left" menuIconSize={iconSize} icon={Window} suppressModal on:edit={()=> {editPostModal = true}}
-            />
-        {/if}
-
-        <!--- Moderation Menu--->
-        {#if moderationMenu && $profile?.user && post && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-            <ModerationMenu bind:item={post} community={post.community} color="ghost" menuIconSize={iconSize-4} alignment="bottom-left"/>
-        {/if}
 
         <span class="flex flex-row gap-1 md:gap-2 items-center">
             <!--- Post Listing Type--->
-            {#if listingType && selectedListingType}
+            {#if listingType && selectedListingType && !quickSettings}
                 <!---Listing Type--->
                 <SelectMenu
                     alignment="bottom-left"
@@ -190,7 +169,7 @@
             {/if}
 
             <!---Sort Menu--->
-            {#if sortMenu && sortOptions && sortOptionNames && selectedSortOption}
+            {#if sortMenu && sortOptions && sortOptionNames && selectedSortOption && !quickSettings}
                 <SelectMenu
                     alignment="bottom-left"
                     options={sortOptions}
@@ -209,7 +188,6 @@
             
             <!---Page Selector (Deprecated)--->
             {#if pageSelection && currentPage}
-               
                 <SelectMenu
                     class="{$page.url.pathname.includes('/feeds') ? 'hidden sm:flex' : ''}"    
                     alignment="bottom-left"
@@ -330,10 +308,11 @@
             <Button title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
                 size="sm" color="tertiary"
                 on:click={async () => {
-                    $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                    if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
-                    else $userSettings.uiState.feedMargins = true
-                    await scrollToLastSeenPost()
+                    await toggleCardCompactView()
+                    //$userSettings.showCompactPosts = !$userSettings.showCompactPosts
+                    //if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
+                    //else $userSettings.uiState.feedMargins = true
+                    //await scrollToLastSeenPost()
                 }}
                 >
                 <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />

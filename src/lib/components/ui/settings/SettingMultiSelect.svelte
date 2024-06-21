@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { createEventDispatcher } from 'svelte'
+    
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte';
 
     import { Icon, InformationCircle, type IconSource } from 'svelte-hero-icons'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte';
 
     export let icon:IconSource = InformationCircle
     export let title:string = ''
@@ -10,19 +12,30 @@
     export let condition:boolean = true
     export let options:any[]
     export let optionNames:any[] = []
+    export let padding:boolean = true
+    export let small:boolean = false
+    export let justify:boolean = false
 
+    const dispatcher = createEventDispatcher<{ select: string }>()
+    $: { dispatcher('select', selected)}
 </script>
 
 {#if condition}
-    <div class="flex flex-row w-full gap-2 py-2">
-        <div class="flex flex-col">
-            <p class="text-sm font-bold flex flex-row gap-2">
+    <div class="flex flex-row w-full gap-2 items-center {padding ? 'py-2' : ''}">
+        <div class="flex flex-col {justify ? 'w-1/2' : ''}">
+            <p class="{small ? 'text-xs' : 'text-sm'} font-bold flex flex-row items-center gap-2">
                 <Icon src={icon} mini width={16}/>
                 {title}
             </p>
             <p class="text-xs font-normal">
                 {description}
             </p>
+
+            {#if $$slots.default}
+                <div class="flex flex-row flex-wrap lg:flex-nowrap gap-2 w-full mt-4">
+                    <slot />
+                </div>
+            {/if}
         </div>
         
         <div class="mx-auto"/>
@@ -32,6 +45,7 @@
             bind:selected
             headless={true}
             items={0}
+            class="{justify ? 'w-1/2' : ''}"
         />
     </div>
 {/if}

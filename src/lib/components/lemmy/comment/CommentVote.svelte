@@ -33,7 +33,6 @@
         if (!$profile?.jwt) return comment.counts
         try {
             return (await getClient().likeComment({
-                    auth: $profile.jwt,
                     comment_id: comment.comment.id,
                     score: vote,
                 })

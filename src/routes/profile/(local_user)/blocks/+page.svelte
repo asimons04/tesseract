@@ -3,7 +3,7 @@
     import type { PageData } from './$types.js'
 
     import { flip } from 'svelte/animate'
-    import { blockInstance, getClient, site } from '$lib/lemmy.js'
+    import { getClient, site } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { slide } from 'svelte/transition'
 
@@ -54,14 +54,16 @@
         data.person_blocks = data.person_blocks
 
         await getClient().blockPerson({
-            auth: $profile.jwt,
             block: false,
             person_id: item.target.id,
         })
     }
     
     async function unblockInstance(item: InstanceBlockView) {
-        const blocked = await blockInstance(item.instance.id, false)
+        const blocked = await getClient().blockInstance({
+            instance_id: item.instance.id,
+            block: false
+        })
         
         if (!blocked.blocked) {
             data.instance_blocks?.splice(
@@ -84,7 +86,6 @@
         data.community_blocks = data.community_blocks
 
         await getClient().blockCommunity({
-            auth: $profile.jwt,
             block: false,
             community_id: item.community.id,
         })

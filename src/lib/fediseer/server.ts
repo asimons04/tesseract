@@ -14,7 +14,7 @@ export async function fediseer_router(event:any) {
             
             let results
             if(cache.get(key)) {
-                results = JSON.parse(cache.get(key));
+                results = JSON.parse(cache.get(key)!);
                 res.setHeader('X-Cache-Status', 'hit');
                 res.setHeader('X-Cache-TTL', cache.ttl(key));
             }

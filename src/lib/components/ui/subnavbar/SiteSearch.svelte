@@ -16,7 +16,7 @@
 
 
 <div class="flex mx-auto">
-    <form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
+    <form name="search" class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
         on:submit={(e) => {
             e.preventDefault();
             let url = new URL(window.location.href);
@@ -33,7 +33,7 @@
         }}
     >
 
-        <TextInput type="search" placeholder="{placeholder ?? 'Search'}" bind:value={searchTerm}/>
+        <TextInput type="search" name="search_input" placeholder="{placeholder ?? 'Search'}" bind:value={searchTerm}/>
 
         <Button submit color="tertiary">
             <Icon src={MagnifyingGlass} mini width={24} />

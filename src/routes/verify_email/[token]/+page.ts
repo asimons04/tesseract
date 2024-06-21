@@ -1,14 +1,13 @@
-import { getClient, getInstance } from '$lib/lemmy.js'
+import { getClient } from '$lib/lemmy.js'
+import { DEFAULT_INSTANCE_URL } from '$lib/instance'
 
 let success: boolean = false;
 
 export async function load({ params, fetch }) {
-
-    const instance:String = getInstance();
-    const token:String = params.token;
+    const token = params.token;
 
     try {
-        const res = await getClient(instance, fetch).verifyEmail({
+        const res = await getClient(DEFAULT_INSTANCE_URL).verifyEmail({
             token: token
         })
         success = true

@@ -3,7 +3,7 @@
     
     import { PageSnapshot } from '$lib/storage.js';
     import { scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers.js';
-
+    import { userSettings } from '$lib/settings'
     import UserPage from '../../u/[name]/+page.svelte'
 
     export let data
@@ -18,13 +18,15 @@
     export const snapshot: Snapshot<void> = {
         capture: () => {
             pageState.scrollY = window.scrollY
-            PageSnapshot.capture({data: data, state: pageState})
+            if ($userSettings.uiState.infiniteScroll) PageSnapshot.capture({data: data, state: pageState})
         },
         restore: async () => {
             try { 
-                let snapshot = PageSnapshot.restore() 
-                if (snapshot.data)  data = snapshot.data
-                if (snapshot.state) pageState = snapshot.state
+                if ($userSettings.uiState.infiniteScroll)  {
+                    let snapshot = PageSnapshot.restore() 
+                    if (snapshot.data)  data = snapshot.data
+                    if (snapshot.state) pageState = snapshot.state
+                }
 
                 await scrollToLastSeenPost(data.items.length + 200)
             }

@@ -6,18 +6,25 @@ In addition to the user experience, care has also been taken to enhance the defa
 
 The full list of changes can be found in the [change log](./ChangeLog.md).
 
-## 0.18.x Support
-Lemmy API version 0.18.x is still fully supported.  Tesseract 1.3.x will be the last version to support the 0.18.x API.  Starting with 1.4.0, the 0.19.3 API will be the minimum supported version.
+### API Compatibility
+As of version 1.4.0, the required minimum server version is 0.19.0.  The recommended server version is 0.19.3 as some features require the new API calls that were introduced between 0.19.0 and 0.19.3.
 
-## 0.19.x Support
-Tesseract has supported 0.19.x since version 1.2 point something.  As of 1.3.0, the following 0.19.x specific features are supported:
-- Scaled sort
-- Instance blocking
-- Cursor-based pagination
+If you want to run Tesseract and are still on an 0.18.x instace, you will need to pull an image from the 1.3.0 series or build from the newest 1.3.x branch.
 
-When connected to an 0.18.x instance, the scaled sort and instance blocking are disabled and pagination falls back to offset-based.
+#### Lemmy
+| Tesseract Version | Lemmy API Version | Compatible?   | Notes |
+| ---               | ---               | ---           | ---   |
+| 1.2.9.x           | 0.18.x            | Yes           | 
+| 1.2.9.x           | 0.19.x            | Yes           | Auth and basic user/mod functionality only. Admin functions inaccessible due to detection bug.
+| 1.3.0             | 0.18.x            | Yes           | Last version to support 0.18.x
+| 1.3.0             | 0.19.x            | Yes           | Auth, instance block, admin functions, and cursor pagination supported.  Admin detection bug fixed.
+| 1.3.x             | 0.18.x            | Yes           | 1.3.x is the maintenance series for 1.3.0. It will be limited to bugfixes. No features are likely to be backported from 1.4.0
+| 1.4.0             | 0.18.x            | No            | This release drops 0.18.x support.  Can still browse but cannot login or perform any action which requires authentication
+| 1.4.0             | 0.19.0-2          | Yes           | Some features, such as post/comment vote views, will be present but broken as those API calls are not present until 0.19.3
+| 1.4.0             | 0.19.3            | Yes           | 0.19.3 is the current development target and recommended minimum server version.
 
-
+#### Sublinks
+Will be added once Sublinks is released.
 
 ## Feature Highlights
 The following features are unique to Tesseract:
@@ -165,11 +172,23 @@ Replace `example.com` in the line below with the base URL of your instance.  Thi
 
 Additional environment variables for configuring Tesseract can be found further down in the README.
 
+### Tags Used
+The base image is `ghcr.io/asimons04/tesseract`.  Tags are used to specify the version.
+
+`latest` tag will always be to the latest release version.  This is generally safe to use unless you're running a non-standard config or an old Lemmy version.
+
+If you want to run a specific version, they are tagged as `v{version}`  where `{version}` corresponds to the [release branch](https://github.com/asimons04/tesseract/releases).
+
+
+
+
+
+
 `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com ghcr.io/asimons04/tesseract:latest`
 
 ### Building From the Repo
 1. Clone the repo from a release branch
-2. docker build -t tesseract:latest ./
+2. `docker build -t tesseract:latest ./`
 3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com tesseract:latest`
 
 

@@ -3,17 +3,17 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { getInstance } from '$lib/lemmy.js'
-    import { imageSize, removeURLParams } from './helpers.js'
-    import { imageProxyURL } from '$lib/image-proxy'
+    import { imageSize, unproxyImage } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
+    import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
 
     export let post:PostView
     export let displayType: PostDisplayType
 
-    let loaded          = false;
     let size: string    = imageSize(displayType);
     
 
@@ -22,36 +22,38 @@
 </script>
 
 {#if post.post?.url}
-    <span class="flex flex-row w-full gap-4 items-center">
+    <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+        <ArchiveLinkSelector url={post.post?.url} postType='link'/>
         <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-        <Link class="text-xs" href="https://archive.ph/{removeURLParams(post.post.url)}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
     </span>
 {/if}
 
 
 {#if post.post?.thumbnail_url}
-    <a 
-        href={displayType == 'feed' ? `/post/${getInstance()}/${post.post.id}` : `${post.post.url}`}
-        target={
-            (displayType== 'feed' && $userSettings.openInNewTab.posts) || (displayType == 'post' && $userSettings.openInNewTab.links)
-                ? '_blank'
-                : undefined
-        }
-    >
-        <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+    {#if displayType == 'feed'}
+        <a href="/post/{getInstance()}/{post.post.id}" target={ (displayType== 'feed' && $userSettings.openInNewTab.posts) ? '_blank' : undefined } >
+            <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
-                    <img
-                        src="{imageProxyURL(post.post?.thumbnail_url, (displayType=='feed' ? 1024 : undefined), 'webp')}"
-                        class="max-w-full ml-auto mr-auto object-cover rounded-md opacity-0 transition-opacity duration-300"
-                        class:opacity-100={loaded}
-                        on:load={() => (loaded = true)}
-                        class:blur-3xl={post.post.nsfw && $userSettings.nsfwBlur && displayType==='feed'}
-                        alt="{post.post.name}"
+
+                    <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
+                        bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={false}
+                        class="max-w-full ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)]"
                     />
                 </div>
-            
+                
+            </div>
+        </a>
+    {:else if displayType == 'post'}
+        <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+            <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
+                <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
+
+                <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 
+                    class="max-w-full ml-auto mr-auto object-cover rounded-md"
+                />
+            </div>
         </div>
-    </a>
+    {/if}
 {/if}
 

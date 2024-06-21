@@ -12,19 +12,24 @@
     import { userSettings } from '$lib/settings.js'
 
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
-    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import Post from '$lib/components/lemmy/post/Post.svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
+    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
+    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
+    import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
+
+    
 
     import { 
         Icon,
         Fire,
         HandThumbUp,
-        Trash 
+        Trash, 
+        ChatBubbleLeft,
+
+        ChatBubbleLeftRight
+
+
     } from 'svelte-hero-icons'
 
     export let open: boolean
@@ -34,7 +39,7 @@
     
     const dispatcher = createEventDispatcher<{remove: { removed:boolean, purged:boolean}}>()
 
-    let commentReason: boolean = false
+    let replyWithReason: boolean = false
     let privateMessage: boolean = false
     let loading = false
 
@@ -55,7 +60,7 @@
         })
     }
 
-    $: replyReason = commentReason ? getReplyReason(reason) : ''
+    $: replyReason = replyWithReason ? getReplyReason(reason) : ''
 
     async function remove() {
         if (!item) return
@@ -65,14 +70,12 @@
         try {
             if (purge) {
                 if (isCommentView(item)) {
-                    await getClient(undefined, fetch).purgeComment({
-                        auth: $profile.jwt,
+                    await getClient(undefined).purgeComment({
                         comment_id: item.comment.id,
                         reason: reason,
                     })
                 } else {
-                    await getClient(undefined, fetch).purgePost({
-                        auth: $profile.jwt,
+                    await getClient(undefined).purgePost({
                         post_id: item.post.id,
                         reason: reason,
                     })
@@ -89,7 +92,7 @@
                 return
             }
 
-            if (commentReason) {
+            if (replyWithReason) {
                 if (replyReason == '') {
                     toast({
                         content: 'Your reply cannot be empty if "Reply reason" is enabled.',
@@ -102,7 +105,6 @@
                 if (privateMessage) {
                     await getClient()
                         .createPrivateMessage({
-                            auth: $profile.jwt,
                             content: replyReason,
                             recipient_id: isCommentView(item)
                             ? item.comment.creator_id
@@ -116,7 +118,6 @@
                         })
                 } else {
                     await getClient().createComment({
-                        auth: $profile.jwt,
                         content: replyReason,
                         post_id: item.post.id,
                         parent_id: isCommentView(item) ? item.comment.id : undefined,
@@ -132,7 +133,6 @@
 
             if (isCommentView(item)) {
                 await getClient().removeComment({
-                    auth: $profile.jwt,
                     comment_id: item.comment.id,
                     removed: !removed,
                     reason: reason || undefined,
@@ -141,7 +141,6 @@
             } 
             else if (isPostView(item)) {
                 await getClient().removePost({
-                    auth: $profile.jwt,
                     post_id: item.post.id,
                     removed: !removed,
                     reason: reason || undefined,
@@ -170,52 +169,46 @@
 
     const resetText = () => {
         replyReason = ''
-        commentReason = false
+        replyWithReason = false
     }
-
-    $: {
-        if (item) {
-            resetText()
-        }
-    }
+    
+    // Reset text on load
+    $: if (item) resetText()
 </script>
 
-<Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}>
+<Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}  width="max-w-2xl">
   
     {#if item}
         <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
             
 
-            <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={reason} />
+            <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={reason}>
+                <Button color={purge ? 'danger' : 'primary'} size="lg" {loading} disabled={loading} submit slot="actions">
+                    <Icon src={purge ? Fire : Trash} mini size="16" slot="icon" />
+                    { purge ? 'Purge' : removed ? 'Restore' : 'Remove' }
+                </Button>
+            </MarkdownEditor>
             
             <!--- Only show "Reply with reason" if you're a mod of the community or an admin and the content is local--->
-            {#if !removed && ( amMod($profile?.user, item.community) || (isAdmin($profile?.user) && item.community.local))}
-                <div class="flex flex-row gap-2 items-center justify-between">
-                    <Checkbox bind:checked={commentReason}>Reply with reason</Checkbox>
-                    {#if commentReason}
-                        <MultiSelect options={[false, true]} optionNames={['Comment', 'Message']} bind:selected={privateMessage} />
-                    {/if}
-                </div>
-                
-                {#if commentReason}
+            {#if !removed &&  !purge && ( amMod($profile?.user, item.community) || (isAdmin($profile?.user) && item.community.local))}
+                <SettingToggleContainer>
+                    <SettingToggle bind:value={replyWithReason} icon={ChatBubbleLeft} title="Reply with Reason" 
+                        description="Send the user a comment or DM with the reason for the the mod action" 
+                    />
+                    
+                    <SettingMultiSelect icon={ChatBubbleLeftRight} title="Message Type" 
+                        description="Choose whether to reply as a comment to the removed item or as a direct message"
+                        options={[false, true]} optionNames={['Comment', 'Message']} bind:selected={privateMessage}
+                        condition={replyWithReason}
+                    />
+                </SettingToggleContainer>
+
+                {#if replyWithReason}
                     <MarkdownEditor previewButton images={false} bind:value={replyReason} placeholder={replyReason} rows={6} label="Reply"/>
                 {/if}
             {/if}
 
-            <Button
-                color={purge ? 'danger' : 'primary'}
-                size="lg"
-                {loading}
-                disabled={loading}
-                submit
-            >
-                <Icon src={purge ? Fire : Trash} mini size="16" slot="icon" />
-                {#if purge}
-                    Purge
-                {:else}
-                    {removed ? 'Restore' : 'Remove'}
-                {/if}
-            </Button>
+            
             
             <!---
             <div class="pointer-events-none list-none overflow-x-hidden">

@@ -2,22 +2,23 @@
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { PostView } from 'lemmy-js-client'
     
-    import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { report} from '$lib/components/lemmy/moderation/moderation.js'
     import { blockUser, isBlocked } from '$lib/lemmy/user'
-    import { blockInstance, site } from '$lib/lemmy'
     import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
+    import { goto } from '$app/navigation';
+    import { instance } from '$lib/instance'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
-    import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import PostEditorModal from './PostEditorModal.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    
 
     import {
         type IconSource,
@@ -29,15 +30,14 @@
         Eye,
         EyeSlash,
         Flag,
-        GlobeAlt,
+        Home,
         NoSymbol,
         PencilSquare,
         Share,
         Trash,
-        Window
-
+        Window,
     } from 'svelte-hero-icons'
-    import { remove } from 'nprogress';
+    
     
     
     export let post:PostView
@@ -50,6 +50,8 @@
 
     const dispatcher = createEventDispatcher<{ edit: PostView }>()
     let editing = false;
+
+    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
 </script>
 <PostEditorModal bind:open={editing} bind:post />
@@ -100,8 +102,26 @@
             Share
     </MenuButton>
 
+    <!--- View Post on Home Instance--->
+    {#if $instance != new URL(post.post.ap_id).hostname}
+    <MenuButton title="View Post on Home Instance" color="info"
+        on:click={() => {
+            const postURL = new URL(post.post.ap_id)
+            const homeInstance = postURL.hostname
+            const path = postURL.pathname.split('/')
+            const homePostID = path[2]
+            goto(`/post/${homeInstance}/${homePostID}`)
+        }}
+    >
+        <Icon src={Home} width={16} mini />
+            View Post on Home Instance
+    </MenuButton>
+    {/if}
+
     <!--- Mark as Read/Unread --->
-    {#if $profile?.jwt}
+    {#if $profile?.jwt }
+        
+        {#if onHomeInstance}
         <MenuButton title="Mark as {post.read ? 'Unread' : 'Read'}" color="info"
             on:click={async () => {
                 if ($profile?.jwt)
@@ -115,6 +135,7 @@
             <Icon src={post.read ? EyeSlash : Eye} width={16} mini />
             Mark as {post.read ? 'Unread' : 'Read'}
         </MenuButton>
+        {/if}
     
         <!---Crosspost--->
         <MenuButton title="Crosspost" color="info" on:click={() => crossPost(post)} >
@@ -123,22 +144,24 @@
         </MenuButton>    
 
         <!--- Save/Unsave Post --->
+        {#if onHomeInstance}
         <MenuButton title="{post.saved ? 'Unsave' : 'Save'} Post" color="warning"
             on:click={async () => {
-                if ($profile?.jwt) post.saved = await save(post, !post.saved, $profile.jwt)
+                if ($profile?.jwt) post.saved = await save(post, !post.saved)
             }}
         >
             <Icon src={post.saved ? BookmarkSlash : Bookmark} width={16} mini />
             {post.saved ? 'Unsave' : 'Save'}
         </MenuButton>
+        {/if}
 
         
 
         
 
 
-        <!--- Hide for Self--->
-        {#if $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
+        <!--- Hide for Self and/or if not on home instance--->
+        {#if onHomeInstance && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
             
             <!---Report Post--->
             <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary">
@@ -173,7 +196,6 @@
                         post.post.deleted = await deleteItem(
                             post,
                             !post.post.deleted,
-                            $profile.jwt
                         )
                         post=post
                     }

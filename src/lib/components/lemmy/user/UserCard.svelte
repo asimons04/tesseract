@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { CommunityModeratorView, LocalUserView, PersonView } from 'lemmy-js-client'
 
-    import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { isBlocked } from '$lib/lemmy/user.js'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
@@ -12,6 +12,7 @@
     import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import BanInstanceModal from '../moderation/BanInstanceModal.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
@@ -19,12 +20,11 @@
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    import UserSendMessageModal from '../modal/UserSendMessageModal.svelte'
 
     import {
         Cake,
@@ -34,26 +34,26 @@
         Hashtag,
         Home,
         Icon,
-        InformationCircle,
         NoSymbol,
         Newspaper,
         PencilSquare,
         Share,
         ShieldCheck,
         ShieldExclamation,
-        Trophy,
         UserCircle,
     } from 'svelte-hero-icons'
+    
     
     
     export let person: PersonView | LocalUserView
     export let moderates: CommunityModeratorView[]
     export let display = true
 
+    $: is_admin = (person as PersonView).is_admin ?? (person as LocalUserView).local_user.admin ?? false
+    
     let blocking = false
-    let loadingMessage = false
     let messaging = false
-    let message = ''
+    let banning = false
 
     async function blockUser(block: number) {
         if (!$profile?.user || !$profile?.jwt) throw new Error('Unauthenticated')
@@ -63,7 +63,6 @@
             const blocked = isBlocked($profile.user, block)
 
             await getClient().blockPerson({
-                auth: $profile.jwt,
                 block: !blocked,
                 person_id: block,
             })
@@ -78,6 +77,7 @@
             toast({
                 content: `Successfully ${blocked ? 'unblocked' : 'blocked'} that user.`,
                 type: 'success',
+                title: 'Blocked'
             })
 
             goto($page.url, {
@@ -87,82 +87,39 @@
             toast({
                 content: err as any,
                 type: 'error',
+                title: 'Error'
             })
         }
         blocking = false
     }
 
-    async function sendMessage() {
-        if (!$profile?.jwt || message == '') return
-        
-        loadingMessage = true
-
-        try {
-            await getClient().createPrivateMessage({
-                auth: $profile.jwt,
-                content: message,
-                recipient_id: person.person.id,
-            })
-
-            toast({
-                content: 'Successfully sent that person a message.',
-                type: 'success',
-            })
-
-            messaging = false
-        } catch (err) {
-            toast({
-                content: err as any,
-                type: 'error',
-            })
-        }
-
-        loadingMessage = false
-    }
 </script>
 
 {#if display}
     
     <!---DM Compose Modal--->
     {#if $profile?.user}
-        <Modal bind:open={messaging} title="Message">
-            <form on:submit|preventDefault={sendMessage} class="flex flex-col gap-4">
-                <p class="inline-flex flex-row gap-2 items-center">
-                    Sending <UserLink avatar user={person.person} /> a message
-                </p>
-                <TextArea
-                    bind:value={message}
-                    label="Message"
-                    rows={8}
-                />
-                <Button
-                    color="primary"
-                    size="lg"
-                    submit
-                    loading={loadingMessage}
-                    disabled={loadingMessage}
-                >
-                    Send
-                </Button>
-            </form>
-        </Modal>
+        <UserSendMessageModal bind:open={messaging} bind:person={person} />
+    {/if}
+
+    {#if banning}
+        <BanInstanceModal bind:open={banning} bind:user={person.person} bind:banned={person.person.banned}/>
     {/if}
 
 
-
-
     <StickyCard class="{$$props.class}">
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, 384, 'webp') : ''}>
-            <div class="flex flex-row gap-3 items-start p-3">
-                <div class="flex-shrink-0">
-                    <Avatar width={48} url={person.person.avatar} alt={person.person.name} />
-                </div>
+        <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, undefined, 'webp') : ''}>
+            
+            <div class="flex flex-row gap-2 items-start p-3">
+                
+                <Avatar ring width={64} url={person.person.avatar} alt={person.person.actor_id} zoomable={true} fullRes={true}/>
+                
 
                 <div class="flex flex-col gap-0 w-full">
                     <div>
                         <h1 class="flex flex-row">
                             <span class="font-bold text-lg">
-                                <UserLink badges user={person.person} showInstance={false} />
+                                <UserLink badges bind:user={person.person} showInstance={false} bind:admin={is_admin}/>
                             </span>
 
                             
@@ -219,9 +176,7 @@
                                     <!--- Actions for Logged-in <Users--->
                                     {#if $profile?.user && $profile.jwt && person.person.id != $profile.user.local_user_view.person.id}
                                         <!--- Message in Lemmy--->
-                                        <MenuButton
-                                            on:click={() => (messaging = true)}
-                                        >
+                                        <MenuButton on:click={() => (messaging = true)} >
                                             <Icon solid size="16" src={Envelope} />
                                             Message in Lemmy
                                         </MenuButton>
@@ -262,9 +217,7 @@
                                         {#if person.person.id != $profile.user.local_user_view.person.id}
                                             <MenuButton
                                                 color="dangerSecondary"
-                                                on:click={() =>
-                                                    ban(person.person.banned, person.person)
-                                                }
+                                                on:click={() => banning = true }
                                             >
                                                 <Icon slot="icon" mini size="16" src={ShieldExclamation} />
                                                 {person.person.banned ? 'Unban' : 'Ban'}
@@ -304,12 +257,14 @@
                         <FormattedNumber number={person.counts.comment_count} />
                     </span>
                     
+                    <!---
                     {#if person.counts.post_score && person.counts.comment_score}
                     <span class="flex flex-row items-center gap-2" title="Content Score">
                         <Icon src={Trophy} width={16} height={16} mini />
                         <FormattedNumber number={(person.counts.post_score + person.counts.comment_score)} />
                     </span>
                     {/if}
+                    --->
                     
                 </div>
             </div>

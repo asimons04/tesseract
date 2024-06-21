@@ -39,7 +39,6 @@
 
             const results = await getClient().search({
                 q: q || ' ',
-                auth: $profile?.jwt || undefined,
                 type_: 'Users',
                 limit: 50,
             })
@@ -61,11 +60,12 @@
     
         {#if option}
             <MenuButton on:click={() => extractSelected(option)}>
-                <Avatar url={option.avatar} alt={option.name} width={24} />
+                <Avatar url={option.avatar} alt={option.actor_id} width={24} />
                 <div class="flex flex-col text-left">
                     <span class="font-bold">{option.display_name ?? option.name}</span>
-                    <span class="text-xs opacity-80">
-                        {option.name}@{new URL(option.actor_id).hostname}
+                    <span class="flex flex-row flex-wrap gap-0 text-xs opacity-80">
+                        <span>{option.name}</span>
+                        <span>@{new URL(option.actor_id).hostname}</span>
                     </span>
                 </div>
             </MenuButton>

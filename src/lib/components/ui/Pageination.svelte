@@ -4,11 +4,11 @@
     import {
         ChevronDoubleLeft,
         ChevronDoubleRight,
-        ChevronDoubleUp,
         Icon
     } from 'svelte-hero-icons'
 
     export let page: number
+    export let disableNext:boolean = false
 
     const dispatcher = createEventDispatcher<{ change: number }>()
 </script>
@@ -31,7 +31,7 @@
         </span>
     </div>
     
-    <Button  class="flex-1 font-normal w-full" title="Next Page"  color="tertiary-border"
+    <Button  class="flex-1 font-normal w-full" title="Next Page"  color="tertiary-border" disabled={disableNext}
         on:click={() => {
             dispatcher('change', ++page)
         }}

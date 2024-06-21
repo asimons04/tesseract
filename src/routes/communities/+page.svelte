@@ -1,22 +1,19 @@
 <script lang="ts">
-    import type { CommunityView } from 'lemmy-js-client'
-
     import { FEATURED_INSTANCES } from '$lib/settings'
-    import { goto } from '$app/navigation'
     import { instance as homeInstance} from '$lib/instance'
-    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { validateInstance } from '$lib/lemmy.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte';
     import CommunityObject from './CommunityObject.svelte';
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
@@ -28,6 +25,7 @@
         Bars3,
         ChartBar,
         Check,
+        Cog6Tooth,
         Icon,
         MagnifyingGlass,
         QuestionMarkCircle,
@@ -37,6 +35,8 @@
     } from 'svelte-hero-icons'
     
     import { load } from './+page'
+    
+    
 
     export let data
     
@@ -92,16 +92,59 @@
     <title>Communities at {data.site.site_view.site.name}</title>
 </svelte:head>
 
-<SubNavbar home scrollButtons toggleMargins toggleCommunitySidebar 
-    refreshButton refreshPreventDefault on:navRefresh={() => {
-        search(true)
-    }}
+<SubNavbar home back scrollButtons toggleMargins toggleCommunitySidebar
+    refreshButton refreshPreventDefault on:navRefresh={() => search(true) }
 >
-    <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="far-left">
         
-        <!--- Select Instance Menu --->
-        <SubnvarbarMenu alignment="bottom-left" title="Instance" icon={ServerStack} containerClass="!w-96 !overflow-visible">
+    <SubnvarbarMenu alignment="bottom-left" icon={Cog6Tooth} shiftLeft={2} slot="far-left">
+        
 
+        <div class="flex flex-col w-full p-2 gap-2 cursor-default">    
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div on:click|preventDefault|stopPropagation>
+                <Card class="p-2">
+                    <!---Listing Type--->
+                    <SettingMultiSelect
+                        title="Listing Type"
+                        icon={Bars3}
+                        padding={false} small={true}
+                        options={
+                            data.instance == $homeInstance
+                            ?  ['Subscribed', 'Local', 'All']
+                            :  ['Local', 'All']
+                        }
+                        selected={searchParams.type}
+                        on:select={(e) => { 
+                            searchParams.type = e.detail
+                            search()
+                        }}
+                    />
+
+                    <SettingMultiSelect
+                        title="Sort Direction"    
+                        icon={ChartBar}
+                        padding={false} small={true}
+                        options={["asc", "desc", "posts_desc", "subscribers_desc"]}
+                        optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
+                        selected={searchParams.sort}
+                        on:select={(e) => { 
+                            searchParams.sort = e.detail
+                            search()
+                        }}
+                    />
+                </Card>
+            </div>
+        </div>
+
+        <Card class="p-2 m-2 overflow-y-scroll max-h-[40vh]">
+            <!---List of Instances to Choose From--->
+            <li class="flex flex-row w-full text-left items-center justify-between text-xs font-bold px-4 py-1 my-1 opacity-80">
+                Select Instance
+                <Icon src={ServerStack} mini width={24}/>
+            </li>
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+            
             <!--- List the featured instances provided by the admin--->
             {#each INSTANCE_LIST as instance}
                 <MenuButton on:click={() => {
@@ -112,7 +155,7 @@
                     }
                     search()
                 }}>
-                    <Icon mini src={Server} width={iconSize-2} />
+                    <Icon mini src={Server} width={24} />
                     
                     <span class="flex flex-row w-full text-left justify-between" class:font-bold={searchParams.instance == instance.toLowerCase()}>
                         {instance}
@@ -127,80 +170,49 @@
                     </span>
                 </MenuButton>
             {/each}
-            
-            <!--- Manual Instance Input--->
-            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-            <MenuButton>
+        </Card>
+        
+        <!--- Manual Instance Input--->
+        <Card class="p-2 m-2">
+            <!-- svelte-ignore a11y-click-events-have-key-events --> <!-- svelte-ignore a11y-no-noninteractive-element-interactions --> <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <div class="flex flex-col gap-1 w-full" on:click|stopPropagation>
+                <span class="font-bold text-xs text-left">Browse another instance:</span>
                 
-                <!-- svelte-ignore a11y-click-events-have-key-events --> <!-- svelte-ignore a11y-no-noninteractive-element-interactions --> <!-- svelte-ignore a11y-no-static-element-interactions -->
-                <div class="flex flex-col gap-1 w-full" on:click={(e) => {e.stopPropagation()}}>
-                    <span class="font-bold text-xs text-left">Browse another instance:</span>
-                    
-                    <form class="flex flex-row gap-4 w-full justify-between"  on:submit={ async() => {
-                        if (!(INSTANCE_LIST.includes(customInstance))) {
-                            
-                            if (await validateInstance(customInstance)) {
-                                INSTANCE_LIST.push(customInstance)
-                                INSTANCE_LIST.sort()
-                                INSTANCE_LIST = INSTANCE_LIST
-                                searchParams.instance = customInstance
-                                searchParams.type = 'Local'
-                                customInstance = ''
-
-                                search(true)
-                            }
-                            else {
-                                toast({
-                                    title: 'Invalid Instance',
-                                    type: 'error',
-                                    content: 'Unable to contact the provided instance. Please check the domain and try again.'
-                                })
-                            }
-                        }
-                    }}>
-                        <TextInput bind:value={customInstance} placeholder={searchParams.instance} focus={false} class="w-full"/>
+                <form class="flex flex-row gap-4 w-full justify-between"  on:submit={ async() => {
+                    if (!(INSTANCE_LIST.includes(customInstance))) {
                         
-                        <button class="flex flex-row gap-1 ml-auto" type="submit">
-                            <Icon mini src={ArrowRightOnRectangle} width={iconSize-2} />
-                        </button>
-                    </form>
-                </div>
-            </MenuButton>
-        </SubnvarbarMenu>
-        
-        <!---Local/Subscribed/All Switcher--->
-        <SelectMenu
-            options={
-                data.instance == $homeInstance
-                ?  ['Subscribed', 'Local', 'All']
-                :  ['Local', 'All']
-            }
-            selected={searchParams.type}
-            on:select={(e) => { 
-                searchParams.type = e.detail
-                search()
-            }}
-            title="Listing Type"
-            icon={Bars3}
-        />
-        
-        <!---Sort Selector--->
-        <SelectMenu
-            options={["asc", "desc", "posts_desc", "subscribers_desc"]}
-            optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
-            selected={searchParams.sort}
-            on:select={(e) => { 
-                searchParams.sort = e.detail
-                search()
-            }}
-            title="Sort Direction"
-            icon={ChartBar}
-            containerClass="min-w-[200px]"
-        />
-    </div>
+                        if (await validateInstance(customInstance)) {
+                            INSTANCE_LIST.push(customInstance)
+                            INSTANCE_LIST.sort()
+                            INSTANCE_LIST = INSTANCE_LIST
+                            searchParams.instance = customInstance
+                            searchParams.type = 'Local'
+                            customInstance = ''
+
+                            search(true)
+                        }
+                        else {
+                            toast({
+                                title: 'Invalid Instance',
+                                type: 'error',
+                                content: 'Unable to contact the provided instance. Please check the domain and try again.'
+                            })
+                        }
+                    }
+                }}>
+                    <TextInput bind:value={customInstance} placeholder={searchParams.instance} focus={false} class="w-full"/>
+                    
+                    <button class="flex flex-row gap-1 ml-auto" type="submit">
+                        <Icon mini src={ArrowRightOnRectangle} width={24} />
+                    </button>
+                </form>
+            </div>
+        </Card>
+    </SubnvarbarMenu>
+    
 
     <!---Community keyword search input--->
-    <form class="hidden xl:flex flex-row gap-2 items-center" slot="center"
+    <form class="hidden xl:flex flex-row gap-2 items-center w-fit mx-auto" slot="center"
         on:submit={async (e) => {
             e.preventDefault();
             await search(true)

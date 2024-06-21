@@ -6,17 +6,21 @@
         Post 
     } from 'lemmy-js-client'
 
-    import Comment from './Comment.svelte'
-    import { buildCommentsTree, type CommentNodeI } from './comments'
-    import { page } from '$app/stores'
-    import { onMount, setContext } from 'svelte'
     import Button from '$lib/components/input/Button.svelte'
-    import { ChevronDown, Icon } from 'svelte-hero-icons'
-    import { getClient } from '$lib/lemmy.js'
+    import Comment from './Comment.svelte'
     
+    import { amMod } from '../moderation/moderation'
+    import { buildCommentsTree, type CommentNodeI } from './comments'
     import { fly } from 'svelte/transition'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { getClient } from '$lib/lemmy.js'
+    import { isNewAccount } from '../post/helpers'
+    import { onMount, setContext } from 'svelte'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
+
+    import { ChevronDown, Icon } from 'svelte-hero-icons'
 
     export let nodes: CommentNodeI[]
     export let isParent: boolean
@@ -36,9 +40,6 @@
         try {
             parent.loading = true
             const newComments = await getClient($page.params.instance).getComments({
-                auth: $page.params.instance == $profile?.instance
-                    ? $profile?.jwt
-                    : undefined,
                 max_depth: 5,
                 parent_id: parent.comment_view.comment.id,
                 type_: 'All',
@@ -99,33 +100,36 @@
     }
 >
     {#each nodes as node (node.comment_view.comment.id)}
-        <Comment
-            postId={post.id}
-            bind:node
-            op={post.creator_id == node.comment_view.creator.id}
-            mod={moderators?.filter((index) => index.moderator.id == node.comment_view.creator.id).length > 0}
-        >
-            {#if node.children?.length > 0}
-                <svelte:self {post} bind:nodes={node.children} moderators={moderators} isParent={false} />
-            {/if}
+        <!---Optionally hide comments from new accoutsn (and any replies)--->
+        {#if !(
+                $userSettings.hidePosts.newAccounts &&  isNewAccount(node.comment_view.creator.published) &&
+                node.comment_view.creator.id != $profile?.user?.local_user_view?.person?.id && !amMod($profile?.user, node.comment_view.community)
+            )
+        }
+            <Comment postId={post.id} bind:node >
+                {#if node.children?.length > 0}
+                    <svelte:self {post} bind:nodes={node.children} moderators={moderators} isParent={false} />
+                {/if}
 
-            {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}
-                <div class="my-2 w-max h-8 border-l-2 border-slate-200 dark:border-zinc-900 pl-2">
-                    <Button
-                        loading={node.loading}
-                        disabled={node.loading}
-                        size="sm"
-                        color="tertiary"
-                        on:click={() => {
-                            node.loading = true
-                            fetchChildren(node).then(() => (node.loading = false))
-                        }}
-                    >
-                        <Icon src={ChevronDown} width={16} mini slot="icon" />
-                        {node.comment_view.counts.child_count} more
-                    </Button>
-                </div>
-            {/if}
-        </Comment>
+                {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}
+                    <div class="my-2 w-max h-8 border-l-2 border-slate-200 dark:border-zinc-900 pl-2">
+                        <Button
+                            loading={node.loading}
+                            disabled={node.loading}
+                            size="sm"
+                            color="tertiary"
+                            on:click={() => {
+                                node.loading = true
+                                fetchChildren(node).then(() => (node.loading = false))
+                            }}
+                        >
+                            <Icon src={ChevronDown} width={16} mini slot="icon" />
+                            {node.comment_view.counts.child_count} more
+                        </Button>
+                    </div>
+                {/if}
+            </Comment>
+        {/if}
+
     {/each}
 </ul>

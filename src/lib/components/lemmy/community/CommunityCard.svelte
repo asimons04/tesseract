@@ -77,7 +77,6 @@
         const subscribed = community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
         try {
             await getClient().followCommunity({
-                auth: $profile.jwt,
                 community_id: community_view.community.id,
                 follow: !subscribed,
             })
@@ -99,7 +98,6 @@
 
         try {
             await getClient().removeCommunity({
-                auth: $profile.jwt,
                 community_id: community_view.community.id,
                 removed: !removed,
             })
@@ -117,7 +115,6 @@
 
         try {
             await getClient().blockCommunity({
-                auth: $profile.jwt,
                 community_id: community_view.community.id,
                 block: !blocked,
             })
@@ -162,12 +159,12 @@
 
     <!--- Hideable div to contain the main part of the community sidebar --->
     <StickyCard class="{$$props.class}" >
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, 384, 'webp') : ''}>
+        <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''}>
             <div class="flex flex-col gap-2 h-full">
                 <!--- Commuinity Avatar, display name, and federation name--->
                 <div class="flex flex-row gap-3 items-start p-3">
                     <div class="flex-shrink-0">
-                        <Avatar width={64} url={community_view.community.icon} alt={community_view.community.name} />
+                        <Avatar width={64} url={community_view.community.icon} alt={community_view.community.name} fullRes={true} community={true} />
                     </div>
                     
                     
@@ -222,7 +219,7 @@
                                                 e.stopPropagation();
                                                 subscribe();
                                             }}>
-                                                <Icon src={community_view.subscribed == 'Subscribed' ? Minus : Rss} mini size="16" />
+                                                <Icon src={community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending' ? Minus : Rss} mini size="16" />
                                                 {
                                                     community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
                                                     ? 'Unsubscribe'
@@ -388,8 +385,8 @@
         <div class="hidden xl:block w-full mt-2 overflow-y-auto">
             {#if moderators.length > 0}
                 <CollapseButton icon={HandRaised} title="Moderators">
-                    {#each moderators as moderator}
-                        <UserLink user={moderator.moderator} avatar={true} />
+                    {#each moderators as moderator (moderator.moderator.id)}
+                        <UserLink bind:user={moderator.moderator} avatar={true}/>
                     {/each}
                 </CollapseButton>
             {/if}

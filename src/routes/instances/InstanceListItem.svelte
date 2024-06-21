@@ -1,56 +1,44 @@
 <script lang="ts">
-    import type { Instance } from 'lemmy-js-client'
+    
+    import type { InstanceWithFederationStateCustom } from './+page'
+    
+    import { federationStateModal, fediseerModal } from '$lib/components/lemmy/moderation/moderation'
     import Button from '$lib/components/input/Button.svelte';
-    import Fediseer from '$lib/fediseer/Fediseer.svelte';   
+    import Card from '$lib/components/ui/Card.svelte'
+    import Menu from '$lib/components/ui/menu/Menu.svelte';
+    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte';
     import RelativeDate from '$lib/components/util/RelativeDate.svelte';
 
-    import { Icon, ArrowTopRightOnSquare, Eye, Calendar, Check, HandThumbDown, UserGroup  } from 'svelte-hero-icons'
+    import { 
+        Icon, 
+        ArrowTopRightOnSquare, 
+        Bars3,
+        Calendar,
+        Check,
+        Eye,
+        HandThumbDown, 
+        NoSymbol,
+        Server,
+        UserGroup,
+    } from 'svelte-hero-icons'
 
-    export let instance: Instance
-    export let filterTerm:string = ''
-    export let hideDead:boolean = false
-    export let softwareType:string = 'All'
-
-    let fediseerModal = false
-
-
-    // Check if instance is dead (not updated for > 3 days
-    function isDead(updated:string|undefined):boolean {
-        if (!updated) return true
-        if (!updated.endsWith('Z')) updated += 'Z'
-        
-        let delta = 3 * 24 * 60 * 60 // 3 days -> seconds
-        let lastUpdated = Math.floor(Date.parse(updated)/1000)  // Date in ms->seconds
-        let now = Math.floor(Number(Date.now().toString()) /1000)
-
-        if ( (now-delta) > lastUpdated) return true
-        return false
-    }
-    
-    $: dead = instance.updated
-        ? isDead(instance.updated) && hideDead
-        : true
-
-    $: showInstance = (
-        instance.domain && 
-        (filterTerm == '' || instance.domain.includes(filterTerm)) && 
-        (softwareType=='All' || softwareType == instance.software) &&
-        !dead
-
-    )
+    export let instance: InstanceWithFederationStateCustom
 </script>   
 
-{#if showInstance}
-    {#if fediseerModal}
-        <Fediseer bind:open={fediseerModal} instance={instance.domain} />
-    {/if}
-
-    <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
+{#if instance}
+    <!---<div class="flex flex-col gap-2 bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    --->
+    <Card class="p-4">        
         <div class="flex flex-row gap-2 items-center w-full">
             
-            <div class="flex flex-col w-full gap-1">
-                <span class="text-base font-bold">
-                    {instance.domain} 
+            <div class="flex flex-col w-full gap-0">
+                <span class="flex flex-row text-base font-bold items-center">
+                    {instance.domain}
+                    
+                    {#if instance.state == 'blocked'}
+                        <span class="ml-4 text-red-500">
+                            <Icon src={NoSymbol} mini width={18} />
+                        </span>
+                    {/if}
                 </span>
                 
                 <span class="flex flex-row text-xs gap-4 font-normal">
@@ -70,7 +58,7 @@
                     {/if}
 
                     <span class="flex flex-row gap-1">
-                        {#if isDead(instance.updated)}
+                        {#if instance.dead}
                             <Icon mini src={HandThumbDown} width={18} />
                             Dead
                         {:else}
@@ -84,22 +72,50 @@
                 </span>
             </div>    
 
-            <span class="flex flex-row ml-auto gap-2 items-center">
-                {#if instance.software == 'lemmy'}
-                    <Button size="square-lg" color="tertiary-border" href="/communities?instance={instance.domain}&type=Local" newtab={true} title="Browse communities at {instance.domain}">
-                        <Icon src={UserGroup} width={24} mini />
-                    </Button>
-                {/if}
+
+            <!---Action Menu--->
+            <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
                 
-                <Button size="square-lg" color="tertiary-border" href="https://{instance.domain}" newtab={true} title="Visit Instance">
-                    <Icon src={ArrowTopRightOnSquare} mini width={24}/>
+                <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">
+                    <Icon src={Bars3} mini size="16" slot="icon" />
                 </Button>
 
-                <Button size="square-lg" color="tertiary-border"  on:click={(e) => fediseerModal = true} title="Fediseer">
-                    <Icon src={Eye} mini width={24}/>
-                </Button>
-            </span>
-            
+                <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
+                    Instance Actions
+                    <span class="ml-auto" />
+                    <Icon slot="icon" src={Server} width={16} mini />
+                </li>
+                <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+
+                <!---Browse Communities on Instance (if Lemmy)--->
+                {#if instance.software == 'lemmy'}
+                    <MenuButton link href="/communities?instance={instance.domain}&type=Local" newtab={true} title="Browse communities at {instance.domain}">
+                        <Icon src={UserGroup} width={14} mini />
+                        Browse Communities
+                    </MenuButton>
+                {/if}
+
+                <!---Federation State--->
+                <MenuButton title="Federation State" on:click={() => federationStateModal(instance.domain) } >
+                    <Icon src={Server} mini width={14}/>
+                    Federation State
+                </MenuButton>
+
+                <!---Fediseer Lookup for Instance--->
+                <MenuButton on:click={() => fediseerModal(instance.domain)} title="Fediseer">
+                    <Icon src={Eye} mini width={14}/>
+                    Fediseer
+                </MenuButton>
+
+                <!---Visit Instance (open to that instance in new tab--->
+                <MenuButton link  href="https://{instance.domain}" newtab={true} title="Visit Instance">
+                    <Icon src={ArrowTopRightOnSquare} mini width={14}/>
+                    Visit
+                </MenuButton>
+
+            </Menu>
         </div>
-    </div>
+
+
+    </Card>
 {/if}

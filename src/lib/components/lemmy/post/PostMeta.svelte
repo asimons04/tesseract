@@ -76,9 +76,10 @@
             <!---Show Community Icon if Not in Community--->
             {#if post.community && !inCommunity}
                 <span class="flex flex-col items-end gap-1">
-                    <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} />
+                    <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} community={true}/>
                     
-                    {#if $profile?.user}
+                    <!---Only show for logged-in users and not on post create pages--->
+                    {#if $profile?.user && !$page.url.pathname.includes('create_post') && !$page.url.pathname.includes('create/post')}
                         <!---Overlay small subscribe/unsubscribe button on avatar--->
                         <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
                             on:click={async () => {
@@ -102,7 +103,7 @@
             
             <!---Show user's avatar if viewing posts in a community--->
             {:else if inCommunity && post.creator}
-                <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.name} />
+                <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.actor_id} />
             {/if}
 
             <div class="flex flex-col text-xs">
@@ -110,11 +111,11 @@
                     <CommunityLink bind:community={post.community} {avatarSize} />
                 {/if}
                 
-                <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
+                <span class="flex flex-col sm:flex-row sm:gap-1 flex-wrap">
                     {#if !inProfile && post.creator}
                         <div class="flex flex-wrap items-center" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
-                            <span class="hidden {collapseBadges ? '' : 'md:block'}">Posted by&nbsp;</span>
-                            <UserLink avatarSize={20} bind:user={post.creator} mod={userIsModerator} avatar={!post.community} />
+                            <span class="hidden {collapseBadges ? '' : 'md:block'} text-slate-600 dark:text-zinc-400">Posted by&nbsp;</span>
+                            <UserLink avatarSize={20} bind:user={post.creator} mod={post.creator_is_moderator} admin={post.creator_is_admin} avatar={!post.community} />
                         </div>
                     {/if}
                 </span>

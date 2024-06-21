@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { SidePanelTypes } from '../../lib/types'
     import Button from '$lib/components/input/Button.svelte'
-    import { Icon, IconSource, Bars4 } from 'svelte-hero-icons'
+    import { Icon, type IconSource, Bars4 } from 'svelte-hero-icons'
 
     export let sidePanel:SidePanelTypes
     export let value:SidePanelTypes

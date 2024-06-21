@@ -9,8 +9,8 @@
     
     import { blockUser, isBlocked } from '$lib/lemmy/user'
     import { createEventDispatcher } from 'svelte'
-    import { getFediseerInfo } from '$lib/fediseer/client.js'
     import { deleteItem, save } from '$lib/lemmy/contentview.js'
+    import { goto } from '$app/navigation'
     import { instance } from '$lib/instance'
     import { isCommentMutable } from '$lib/components/lemmy/post/helpers.js'
     import { page } from '$app/stores'
@@ -38,12 +38,15 @@
         Eye,
         Flag,
         GlobeAlt,
+        Home,
         Icon,
+        MagnifyingGlass,
         NoSymbol,
         PencilSquare,
         Square2Stack,
         Trash,
     } from 'svelte-hero-icons'
+    
 
     export let comment: CommentView
     export let replying: boolean = false
@@ -99,7 +102,7 @@
     {/if}
 
     <!--- Comment Moderation Menu--->
-    {#if $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
+    {#if onHomeInstance && $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
         <CommentModerationMenu bind:item={comment} />
     {/if}
   
@@ -141,8 +144,36 @@
             <span>Copy Link</span>
         </MenuButton>
 
-        {#if $profile?.jwt}
+        <!--- View Comment on Home Instance--->
+        {#if $instance != new URL(comment.comment.ap_id).hostname}
+        <MenuButton title="View Comment on Home Instance" color="info"
+            on:click={() => {
+                const commentURL = new URL(comment.comment.ap_id)
+                const homeInstance = commentURL.hostname
+                const path = commentURL.pathname.split('/')
+                const homeCommentID = path[2]
+                goto(`/comment/${homeInstance}/${homeCommentID}`)
+            }}
+        >
+            <Icon src={Home} width={16} mini />
+                View Comment on Home Instance
+        </MenuButton>
+        {/if}
+
+        <!---View More Comments from this User in this Community--->
+        {#if onHomeInstance}
+        <MenuButton title="More Comments From {comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}"
+            color="info"
+            link href="/search?type=Comments&community_id={comment.community.id}&person_id={comment.creator.id}&q=%20"
+        >
+            <Icon src={MagnifyingGlass} width={16} mini />
+            More From {comment.creator.display_name || comment.creator.name}@{new URL(comment.creator.actor_id).hostname}
+        </MenuButton>
+        {/if}
+
+        {#if onHomeInstance && $profile?.jwt}
             {#if comment.creator.id == $profile.user?.local_user_view.person.id}
+            
             <!--- Edit Comment--->
             <MenuButton color="info" on:click={() => dispatcher('edit', comment)}>
                 <Icon src={PencilSquare} mini size="16" />
@@ -154,7 +185,7 @@
             <MenuButton color="warning"
                 on:click={async () => {
                     if ($profile?.jwt) {
-                        comment.saved = await save(comment, !comment.saved, $profile.jwt)
+                        comment.saved = await save(comment, !comment.saved)
                     }
                     toast({
                         type: 'success',
@@ -169,35 +200,36 @@
             
 
             {#if $profile?.user && $profile.jwt && isCommentMutable(comment, $profile.user.local_user_view)}
-            <!---Delete Comment--->
-            <MenuButton color="dangerSecondary"
-                on:click={async () => {
-                    if ($profile?.jwt)
-                    comment.comment.deleted = await deleteItem(
-                        comment,
-                        !comment.comment.deleted,
-                        $profile.jwt
-                    )
-                }}
-            >
-                <Icon src={Trash} mini size="16" />
-                <span>{comment.comment.deleted ? 'Restore' : 'Delete'}</span>
-            </MenuButton>
+                <!---Delete Comment--->
+                <MenuButton color="dangerSecondary"
+                    on:click={async () => {
+                        if ($profile?.jwt)
+                        comment.comment.deleted = await deleteItem(
+                            comment,
+                            !comment.comment.deleted,
+                        )
+                    }}
+                >
+                    <Icon src={Trash} mini size="16" />
+                    <span>{comment.comment.deleted ? 'Restore' : 'Delete'}</span>
+                </MenuButton>
             {/if}
         
+            
             {#if $profile.jwt && $profile?.user && $profile.user?.local_user_view.person.id != comment.creator.id}
-            <MenuButton on:click={() => report(comment)} color="dangerSecondary">
-                <Icon src={Flag} mini size="16" />
-                <span>Report</span>
-            </MenuButton>
+                <!---Report Comment--->    
+                <MenuButton on:click={() => report(comment)} color="dangerSecondary">
+                    <Icon src={Flag} mini size="16" />
+                    <span>Report</span>
+                </MenuButton>
 
-            <!---Block User--->
-            <MenuButton on:click={() => blockUser(comment.creator.id)} color="dangerSecondary" title="{isBlocked($profile?.user, comment.creator.id) ? 'Unblock' : 'Block'} {comment.creator.display_name || comment.creator.name}">
-                <Icon src={NoSymbol} width={16} mini />
-                {isBlocked($profile?.user, comment.creator.id) 
-                    ? `Unblock ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`
-                    : `Block ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`}
-            </MenuButton>
+                <!---Block User--->
+                <MenuButton on:click={() => blockUser(comment.creator.id)} color="dangerSecondary" title="{isBlocked($profile?.user, comment.creator.id) ? 'Unblock' : 'Block'} {comment.creator.display_name || comment.creator.name}">
+                    <Icon src={NoSymbol} width={16} mini />
+                    {isBlocked($profile?.user, comment.creator.id) 
+                        ? `Unblock ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`
+                        : `Block ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`}
+                </MenuButton>
             {/if}
         {/if}
         

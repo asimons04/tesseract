@@ -1,322 +1,419 @@
-# Changelog
+# Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
 
+## 1.4.0
+This is the first release which completely drops "legacy" support for 0.18.x and below.  The minimum required API level is now 0.19.3 (though it will work with any 0.19.x series, there will be broken features that require 0.19.3).
 
-## 1.3.0
+None of the 0.19.4 features are implemented yet.  Updating my instance to 0.19.4 is not on my priority list at the moment.
 
-### Overview
-Not really doing anything groundbreaking with this release.  There are a few new minor features, but almost all of the work has been refining the existing features and adding polish throughout.  
+One thing 0.19.4 did, which is _incredibly stupid_, is federate out the proxied image URLs rather than do image proxying sanely by rewriting the URLs via the API for local users.  This completely broke both Tesseract's proxying and certain instances of its post-type detection when those dumbass proxied URLs are encoutered.  To work around that, I'm simply unproxying them, running the detections, and then fetching the images directly (or optionally through Tesseract's sanely-implemented proxy/cache if configured and enabled). 
 
+They said that feature was "experimental", so I sincerely hope they realize how fscking stupid their implementation is and change it in the next release (but knowing them, they'll probably double down and make it worse.).
 
-### Important API Compatibility Notes
-**This will be the last version to support 0.18.x.  Once development of 1.4.0 begins, 0.18.x support will be dropped.**
-- 1.3.0 remains fully compatible with 0.18.x and 0.19.x
+Anyway, here's what's new and improved:
 
-### 0.19.x Features Currently Supported
-- Cursor-based pagination (will fallback to offset-based pagination for 0.18.x)
-- Instance blocking
-    - Note:  Intentionall will not allow you to block your home instance
-- Scaled sort (dynamically added/removed from sort options if switching between an 0.18.x instance and 0.19.x instance)
+### New Features
 
+#### Zoomable Images
+Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  
 
+All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch. The pinch zoom isn't *quite* where I want it, but it's a start.  If anyone wants to contribute some code for improving that, please let me know.  
 
+- Support zoom, pan, and rotate
+    - Mouse scroll to zoom
+    - Click/grab to pan
+    - Rotate via on-screen buttons
+    - Double-click to quick zoom in/out by 2x
+- Gesture support
+    - Pinch zoom in/out
+    - Swipe up to zoom in
+    - Swipe down to zoom out
+    - Swipe left or right to close the zoom modal
+    - Other gestures may be added once I figure out a clean way to differentiate them from conflicting mouse events
 
-### General Bugfixes
-- General Typescript and a11y fixes (too numerous to list individually)
-- Fixed reactivity bug where comment counts weren't updated on screen when you "load more" comments and vote one one of the newly loaded ones.
-- Reimplemented vote functions for comments and posts.
-- Added more forwards/backwards-compatible date format checks (to work with both 0.18.x and 0.19.x)
-- Deprecated lots of old functions that were holdovers from the original Photon code
-- Fixed bug where refreshing a user profile would throw an unhandled JS error on 0.19.x (but strangly, the same flow worked on initial load). Was a bad index key for the Svelte `{#each}` loop.
-- Fixed a bug where direct linking to a post (/post/123456) would sometimes return the wrong post or fail to load the post
-    - The circumstances required to hit this bug were pretty rare, but it was a bug.  Basically, if you have Tesseract in place as your instance's default UI, _and_ it's unlocked to allow logging into other instances, _and_ the current or guest session was _not_ the home instance, then if you tried to load the canonical AP link to a local post (https://dubvee.org/post/12345), it would try to redirect you to the current guest/foreign instance's post 12345.  
-- Direct linking to comments (/comment/12345) now works properly (similar to above bug for posts)
-- Linking to a comment in a theread now properly scrolls the actual linked post to the top
-    - The linked comment is now highlighted for easier reference.  e.g. Someome replies "See https://example.com/comment/12345", and it will now take you to that comment( as it always has) as well as properly scroll that comment to the top and give it a highlighted background and border.
+#### Basic Gesture Support
+First, I should point out that I am *not* a fan of gesture navigation; absolutely hate it as a primary method of interaction.  Like, I'm old and hate having to guess whether my fingers need to do the Macarena or the Hokey-Pokey to perform what should be an intuitive action.
 
+That said, I *do* like waving things (and people) away.
 
-### New Features (That Aren't Refinements to Existing Features)
-- New markdown renderer
-    - Removed `markdown-it` and all of its plugins as it was too cumbersome to extend to do some things I wanted to do
-    - Replaced with `svelte-plugin-marked` and wrote custom renderers for that to match the old behavior.
-    - **Note**:  Since `marked` uses Github-style markdown, subscript and superscript are not supported.  I really don't have the energy right now to look into custom-writing those (if it's even feasible without forking), so for now, support for sub/super-script has been removed.  Those seem to be rarely used, anyway, so I may be content living without them indefinitely.  The buttons in the editor toolbar for those have also been removed.
-    - Now some new features I want to add are possible:
-        - Link previews where you can click a link and preview the site in a modal using the data from `getSiteMetadata()`
-        - Load embeddable videos (Youtube-like, Vimeo, Peertube, etc) in a modal rather than leaving the app
-        - Enlarge or otherwise add other features to images posted in markdown
+To that end, I've added some gesture recognition in a few places, mostly modals.  Any modal can now be dismissed with a left or right swipe in an area not bound by other event handlers.
+- e.g.  You can't swipe in the text field to dismiss an edit/report/ban/remove modal; you have to swipe outside of that. 
+- Left/right swipe was chosen as to not interfere with scrolling so it could be used consistently across all modal types.
 
-- New Community Moderation Panel
-    - In the community settings, mods can now direct ban/unban users
-    - There's now a mini-modlog available in the moderation section. Can perform quick actions, see recent (or all) history, and link to the main modlog pre-filtered for that community.
+The only other place, currently, with gesture support is the image zoom modal (described above).
 
-- Community browser now shows subscribed/not-subscribed status on remote communities
-    - Can now one-click subscribe to remote communities
-    - Each community item is now collapsible to view the community details (if available). Formerly, these popped up in a modal.
+I may add some additional swipe actions where it's intuitive to do so.  For now, I'm content with modals being easier to dismiss on mobile without having to reach up to the close button in the top corner.
 
-- Added `/instances` route to view the federated (allowed, linked, blocked) instances.
-    - Can filter by software and keyword (e.g. lemmy instances with `.xyz` TLDs)
-    - Dead instances are indicated
-    - Can filter out dead instances
-    - Action buttons to browse communities on that instance (Lemmy instances only), visit the instance, or view Fediseer data for it.
+#### User Profile Modals
+Clicking on usernames throughout the application will now load a modal with their user card and relevant action buttons. Old behavior was taking you to their profile directly.  
 
-- Added button to community avatars in the feed to quickly subscribe/unsubscribe to communities
-    - Browsing all and see an interesting community?  Now you can quick-subscribe to it without having to click the community menu
+Actions include:
+- Go to profile
+- Message in Lemmy / Matrix
+- Block User
+- Search for alts / simiarly-named accounts
+- Ban user from instance (admins only)
+- View user on their home instance
+- Copy Lemmyverse link for user
 
-- Can now swap the post / comment action bar button direction
-    - Useful on mobile if you want to put the vote buttons on the right
-
-- Can now hide scores and show only your own upvote/downvote status
-    - This is in app settings rather than user settings. With Tesseract, the config options in "User Settings" are only settings that affect the behavior of the API.  Lemmy-UI keeps its frontend options there, but I don't want to have to fight those.
-
-- If the instance you're on has disabled downvotes, the downvote buttons on posts and comments will be hidden.
-
-- Can now fetch the metadata during post creation.
-    - Can fill in the title automatically as well as provide the thumbnail image for the post preview
-- Peertube video embeds are now supported
-
-- Can reset password now (thought this was already implemented, but that was just 'forgot password' process).
-
-- Infinite scroll has replaced the old pagination in all but the modlog (may add it there, just haven't bothered yet).
-
-- Can now select one of multiple fonts for use in the UI.  Also has the benefit of looking more uniform between Firefox/Chromium as FF's default font looked less than 
-ideal.   Current options are:
-    - Default sans
-    - Default serif
-    - Browser default
-    - Inter
-    - Roboto
-    - Reddit Mono
-    - Ubuntu
-    - Urbanist
-
-- Admins can define three different types of URL blacklists to disallow submitting posts to those domains.
-    - Can disable submissions that use a link shortener as the URL
-    - Can enable the option to deny submissions to domains MBFC has deemed low-credibility.
-    - All of these are disabled by default and must be explicitly enabled / configured by the admin
-    - Note: These are only effective when submitting through Tesseract UI, obviously. These will not prevent those from being submitted from another frontend or via API calls. 
-
-- Added some 0.19 features (disabled on 0.18 instances)
-    - Scaled sort 
-    - Instance blocking
+#### Image Management on  Posts/Comments
+- Images can be pasted in the post's URL field as well as in the markdown editor.  
+- Images can optionally be pre-processed to webP along with a user-selectable quality level. Especially useful if your instance limits the size of uploads
+- Can delete post images (only before you save the post; unfortunately there's no way to retrieve the delete token after that even though it is stored in the DB. Yet another API limitation :sigh:)
+    - This is addressed in 0.19.4, but I don't have support for that yet.
+- Images pasted/uploaded into the markdown editor are tracked in a bar along the bottom of the editor. Individual images can be deleted as needed along with the corresponding markdown code for them.
 
 
-### Top Navigation Bar
-- All buttons are icons now
-- Created new notification widget
-    - Inbox notifications removed from profile button
-    - Shows a colored dot for each type of notification
-        - Red: Inbox notification
-        - Green: Unread Report
-        - Blue:  Unprocessed registration applications (admins only)
-    - Is now the way to get to the mod reports section (Notifications -> Reports)
-- Added Favorites menu to quick-access your favorited communities
-- Search removed from here and added to context navigation bar below
-- Button to collapse the sidebar is now at the far left of the main nav bar instead of within the sidebar
+#### Hide Posts/Comments From New Users
+In App Settings -> Filters, you can now opt to hide posts/comments made by new users.  You can also set the number of days an account is considered new: 1 to 30 days.  That setting also is applied to the new user badges (if you set the minimum age to 15 days, any account 15 days or younger will show the new user badge).
 
-### Sidebar
-- Shrunk button text
-- Added Hot, Popular (Active), and Top Day buttons for quick switching to different feed sorts
-- Community list area is now larger
-- Moved collapse sidebar button out of teh sidebar and to the top navigation bar (to the left of the site name/logo)
-- Site taglines now automatically rotate every 30 seconds in the site sidebar (if taglines are set by admin)
+This setting behaves differently for mods and admins:
+- **Mods**:  Filter will be applied to all posts/comments _except_ in communities of which you are a moderator. 
+- **Admins**:  Filter will be applied to all posts/coments _except_ those made to communities local to your instance or those made to remote communities of which you are a moderator.
 
-### Frontpage and Feeds
-- Moved search out of main navigation bar and into the context-sensitive navigation bar below it (hidden on mobile; use top search button)
-- Added scroll to top / bottom buttons to navigation bar
-    - With infinite scrolling, this will basically take you to the next "page"
-- Implemented infinite scrolling
-    - A lot of effort was taken to ensure you get back to your same scroll position
-- Refreshing data is *mostly* manual now so that returning to the homepage will resume your former scroll position
-- Embed media objects are destroyed (or not rendered) when not within the viewport. 
-    - This should reduce memory consumption considerably as before, once an iframe was loaded after it was scrolled into the viewport, it remained in the DOM
-    - If you're done with a video, you can now just scroll past it without it continuing to play
-- Mostly got rid of Svelte's "sometimes it works, sometimes it doesn't" scroll position resumption 
-  - Now will keep your place when changing post/compact view and changing margins
-  - Makes liberal use of `on:mouseover` and `on:touchstart` to keep track of the most recent post in the feed
-- Removed feed setting for number of posts per page
-  - Changed behavior and values of "Posts per Page" to "Posts per Fetch".  Now values are 10, 20, and 30.  Too many and infinite scrolling became sluggish when adding to DOM
-- Blocking a community/user will no longer refresh the page
-    - As a result, the blocked item will not leave the DOM unti you refresh since there is no API data to indicate a community is blocked
-    - Behavior change was needed to avoid having to recreate the post feed list with infinite scrolling
-- Added user setting to reverse the action buttons in the post and comment action bar
-    - Will put the vote buttons on the right and the action menus on the left
+Comments made by new users will be hidden, and that includes any replies (essentially behaves the same way as blocked users)
+
+#### Federation State Viewer
+From the instances menu on a post, there's a new option called "Federation Stats" which will show you the stats from your instance to the target _and_ from the target to your instance.  Also included in that is an estimated cacluation of the number of activities each instance is behind (useful for troubleshooting federation delays).
+
+This information has also been added to the instance items at `/instances`
+
+Please note that the "Activities behind" counter is only an estimate. The value for `newest_activity_id` is not provided by the API (because that would be useful, so why would the Lemmy devs include it?), so it has to be estimated.  The estimation is done by looking at the `last_successful_id` of all the linked instances and grabbing the highest number and subtracting the `last_successful_id` for the selected instance.  Not all of those activities would necessarily be coming to your instance (votes/posts/comments to communities yours isn't subscribed to, etc), so it is merely an estimation.  Just because it shows you are behind by *X* number doesn't necessarily mean it's behind by that many.
+
+
+#### Instances Page
+Re-wrote this to do manual pagination, searching, and filtering.  _Much_ more responsive now that it is not rendering several thousand components each with actions items.
+
+#### "Click to Play" Media Embeds
+If media is disabled in the feed, the thumbnail will now have an overlay button that will convert it to an embed on-the-fly.  
+
+When loading a video via click-to-play, I'm conditionally setting the "autoplay" flag where the embed API supports it, but it doesn't always seem to be honored.  This is an attempt to not have to press "play" twice for a video.  So far, the only video frontend that seems to honor it is YouTube. Invidious/Piped, so far, do not, and neither does PeerTube.  
+
+Ok, so autoplay works if muted (no idea how YouTube's player gets around this; probably some chicanery).  I think that's worse because you still have to click twice on the videos,  and the "unmute" button is harder to reach than "play".  So I think I'm going to just settle on having to click play twice. 
+
+This seems to be be a Chrome/Chromium thing (and explains why YT gets to bypass this).  In Firefox, the autoplay flag is respected without having to mute the video.
+
+
+#### Re-Integrated Piped Support as an Embeddable Youtube Frontend
+Now that click to play has been added, Piped support has been added back. It was removed due to poor performance and rate limiting when used with feed embeds.  
+
+If media embeds are enabed in the feed, only YouTube frontend will show direct embeds. Piped/Invidious will always be click to play regardless of embed setting due to above mentioned rate limiting / performance.
+
+#### Alternate Source Dropdown
+Removed the `[Archive Link]` next to the post URL and replacd it with a fancy menu to the left of it.
+- On posts with links, it currently has buttons to search for the article at Archive Today, Ghost Archive, and 12ft.io
+- On Youtube-like posts, can select alternalte links for YouTube, Invidious, or Piped
+    - Invidious/Piped will open with your preferred instance (defined in settings)
+    - Useful if someone posts a video to an Invidious instance that performs poorly for you and you would prefer to view it on your preferred Invidious/Piped instance or canonically on YouTube.
+
+#### Quick Action Menus
+On mobile, the navbar was getting cluttered, so most of the discrete dropdowns there have been moved into Quick Actions menus.
+- Main, Community, and User feed pages:  Quick Actions has replaced all discrete menus
+- Search Page, Modlog, and Community Browser:  All of the filtering options are in a quick action menu
+
+
+#### Users Can Now Add Their Own Preferred Invidious/Piped Instances
+Prior to this release, any Piped or Invidious instances needed to be added by the administrator via environment variables.  In addition to that, users can now add any number of custom Invidious and/or Piped instances in the app settings.
+
+These will be combined with the built-in list and the admin-extended list and be available for use as your preferred YT frontend and for detection of Piped/Invidious links in posts.
+
+Be aware that those custom instances will only render as embeds for you; they will be thumbnails for anyone else who hasn't added them to Tesseract.  If you feel that instance should be added to Tesseract's built-in list, please submit a Github issue with the details.
+
+Tesseract is pre-populated with the official list of public instances for each, but it can get out of date easily.
+
+**Note**:  As of 6/20/2024, I've noticed a lot of Invidious/Piped instances are now requiring login, and embeds through them no longer work.  I believe if you have an account with one, log in, and enable 3rd party cookies for that domain, the embeds _should_ work.  I have not tried that, but it does work with Spotify.  This isn't a Tesseract bug, unfortunately, or I'd fix it.  
+
+#### Can Disable Infinite Scroll if you Want
+If you're not a fan of the infinite scroll, you can go to App Settings -> Feed and disable infinite scroll.  
+
+#### TOTP 2FA Setup
+Can now enable and enroll in 2FA as well as disable it.
+
+#### Account Icons Now Use Your Profile Avatar
+Icons in the account switcher and account screens now sync to your profile avatar, if defined.
+
+#### New Placeholder User Avatars
+Instead of the initials as used previously on accounts without avatars, now uses Dicebear Adventurer pseudorandom avatars.  Initials are still used for placeholder community icons when the community mods haven't set one.
+
+#### Passwords Can Now Be Revealed
+All password elements will now allow you to toggle them to reveal. Should make a big improvement when logging-in on mobile.
+
+#### Vote Viewer (Admins Only)
+Admins can now see votes like in Lemmy-UI.  Uses infinite scroll and deduplication to compensate for the stupid API that returns multiple/duplicate votes on each page.
+
+---
+
+
+### Bugfixes and Enhancements
+
+#### Removed 0.18.x Backwards Compatibility
+- Or, more specifically, removed 0.18.x JS client and the extensions I wrote to make that compatible with 0.19.x.  Now uses the 0.19.3 JS client.
+- Removed the image upload proxy which was needed in 0.18x due to CORS restrictions.
+
+
+#### Various Enhancements to Auth Module.
+- Added safety check so that the auth token is only ever sent to the profile's associated instance and cannot accidentally send to non-home instance (e.g. when browsing communities on a remote instance).
+- Fixed a few chicken/egg situations where the profile store needed to be accessed before it was initialized
+- If your auth token is invalid, such as after changing your password on another device, you will get a toast message you can click to take you to the login screen.
+- If a profile exists for a username/instance combo, logging in will update the auth token for that existing profile rather than creating a new one.
+- User avatars are now fetched when logging in.
+
+#### Grace Period Before Media Embeds are Destroyed When Scrolling out of Viewport
+- Embeds now have a short timeout when leaving the viewport before they're removed from the DOM and turn back into thumbnails.  Fixes annoyance when resizing the window while a video is playing and the video temporarily leaves the viewport and is destroyed. Timeout is 2 seconds and will reset/disarm if the post returns to the viewport before it expires.
+
+#### Community Creation / Editing
+- Uses new upload handler for banner/icon
+- Can pre-process the banner/icon to webP before uploading
+- Shows a live preview of how the community card will look
+
+#### General
+- Slightly darkened background color in light mode cards (bg-white->bg-slate-100) for better contrast. Did similarly for some button colors
+- Added "OpenDyslexic" as a UI font option
+- Can now close modals with Escape key, close button, or by swiping left/right
+- Added button to reveal password fields
+- Some modals can be closed by clicking out of them.
+    - I need to disable this or make it more consistent.  Some workflows utilize nested modals, so I do need to be able to keep them open when interacting with a child modal.
+- Added "share" link for searches.
+    - Will generate a URL with the current search params and copy to your clipboard.
+
+
+
+### Other Stuff
+
+#### Peertube Follows
+On my last release post, someone mentioned that following Peertube channels may be broken.  At the time I was still on 0.18.5 and had followed a PT channel, and _seemed_ to be getting updates from it.  Then I wasn't sure.
+
+I can say that I _have_ been getting at least some updates to the PT channel I follow (mostly as a test).  While there have been videos posted there that did not come through to Lemmy, I don't know enough about PeerTube to know if they were published differently or what.  However, I have gotten at least 2-3 that someone posted to Lemmy that would absolutely had to have come in via Federation.
+
+Also confirmed that commenting on a PT video (from the channel feed, not an embed to a Lemmy community) does federate out and show up on Peertube's side along with any votes you give in Lemmy.
+
+This isn't really a Tesseract issue since the Lemmy backend handles that.  Just figured since I do support Peertube, it would be worth mentioning that it seems to work.
+
+
+### What Didn't Make the Cut This Release
+- User profile import/export
+- Link previews
+- Custom feed rewrite
+- Custom emoji management
+- Fediseer Rewrite
+
+I keep kicking the can on the custom feed and infinite scroll re-writes, but for a good reason.  I want to start using IndexedDB to get around storage constraints in the browser's LocalStorage API.  I need to write and integrate a library for this (or find one I don't hate), and that's going to take some dedicated development time.  Switching to IndexDB is also a step in the direction I want to go towards providing offline support.  So, at some point, there will be a release that only focuses on that.  Not sure if it'll be in the 1.4.x series or later, but ultimately, that is where I want to go.
+
+--- 
+### Goals 
+These are my checklist-items of goals for this release.  Mostly here for my own use, but they also are useful to track changes, so I'll leave them.
+
+#### Drop Support for 0.18.x
+- [X] Remove all `auth` fields from API call POST bodies
+- [X] Remove all the date checks that look for and append 'Z'
+- [X] Remove score from user pages (currently conditional upon presence of value)
+- [X] Update `lemmy-js-client` 
+- [X] Remove admin flag check from `local_user_view.person` in moderation.ts
+- [X] Remove image upload proxy since it _should_ no longer be needed
+    - **Note**:  Left server-side handler in place and deprecated calling function in Lemmy library; you never know when the Lemmy devs are gonna fuck something up
+- [X] Remove `page` offset-pagination parameter and detection from main and community feeds and exclusively use `page_cursor`
+    - Some API calls still use this, but `page_cursor` is used everywhere it is implemented by the API
+- [ ] Remove custom functions for ~~`blockInstance`~~ and `hideCommunity` and use the client-native ones
+- [X] Remove custom shim to conditionally add/remove `Scaled` sort option
+- [X] Update `sortOptions` and `sortOptionNames` arrays to include `Scaled`
+- [X] Add `ModeratorView` to listing types if `modOfAny()`
+
+#### Newly Introduced/Discovered Bugs
+- [X] DM modal preview shrinks in mobile view
+- [X] Ensure "Moderator View" only appears on main feed
+- [X] If guest instance is set, login was not sending auth token
+- [X] When switching between communites on create post page, moderator user links not reactive (shows previous lookup)
+- [X] Jumping to comment from profile when logged into another instance takes you to /comment/{default_instance/{id} which is wrong.
+    - Only when opening in new tab.  Seems `get(instance)` isn't returning as expected and falls back to `DEFAULT_INSTANCE_URL`
+    - Fixed by using $profile.instances instead of get(instance) since the profile one is backed by local storage 
+- [X] Viewing instance stats from the instances menu for your own instance causes some kind of infinite loop
+    - Best to just not show that option if post/comment is for your own instance. Not useful anyway
+- [X] Imgur embed gifs not showing GIF in post view. (New when switching to zoomable image)
+- [X] NSFW images showing blurred in post view. (New when switching to zoomable image)
+
+    
+#### General UI
+- [X] Better contrast: Made light mode cards a little darker for better contrast (bg-white -> bg-slate-100)
+- [X] Add Dicebear avatar generator for blank user profiles.  Keep initials generator for communities without icons.
+
+
+#### Markdown Renderer and Editor
+- [X] Fix markdown table column width. When tables have two columns, the first is always 99.9% width and the second all smushed.
+- [X] Replace old Photon image upload proxy for uploading images in markdown editir
+- [X] Add support to delete uploaded images
+    - Track and individually delete images posted in markdown (in both posts and comments)
+    - Automatically removes markdown code for the image being deleted.
+
+
+#### Admin Panel
+- [ ] Add ability to define and edit custom emojis
+- [X] Replace old Photon image upload proxy for site icon/banner
+- [X] Restrict access to only local admins
+    - Previously, anyone could goto `/admin` and see the settings; API would not authorize them to make changes. All of these settings are also visible, unauthenticated, via API call to `/api/v3/site`, so didn't feel the need to restrict this.  Some people disagreed with that, so I locked it down in this release.
+
+#### Community Settings Panel
+- [ ] Add report panel for reports in that community
+- [ ] Add 'local' check to not show community settings buttons to admins when browsing remote communities
+    - Reproduce:  Go to /post/{other_instance}/12345 and you'll see the community settings if you're a local admin
+    - Not sure how to easily fix
+    - 
+- [X] Replace old Photon image upload proxy for community icon/banner
+- [X] Restrict access to only moderators or local admins
+    - Previously, anyone could goto `/c/{community}/settings` and see the community settings; API would not authorize them to make changes or see anything they couldn't otherwise see. All of these settings are also visible, unauthenticated, via API call, so didn't feel the need to restrict this.  Some people disagreed with that, so I locked it down in this release.
+
+#### Instances List
+- [X] Add `federation_state` data to instance list objects in `/instances`
+- [X] Add button to fetch and display federation state for the current instance from the selected instance
+- [ ] For admins, add ability to add/remove an instance from the instance block list
+
+
+
+#### Fediseer
+- [ ] Create custom components for Endorsements, Censures, Hesitations. Clean up presentation.
+- [ ] Make each instance that endorses/censures/hesitates clickable to view their Fediseer records
+
+
+
+#### Feeds
+- [X] Add "Moderator View" listing type option
+- [X] Add `user_is_moderator` flag to post meta header in feed
+- [X] Replace old admin check for post meta with new `user_is_admin`.
+
+
+### Posts / Comments
+- [X] Replace old Photon image upload proxy for post images
+- [X] Add `listPostLikes` and `listCommentLikes` options to post and comment moderation menus for admins
+- [X] De-clutter crosspost item in mobile (hide relative date)
+- [X] Image posts now zoom when clicking on image. Click title or comments button to go into the post
+    - Article posts still load the post when clicking the image. Not sure if want to change that to match or not
+    
+- [X] User links now load a modal with user card and action buttons
+    - [X] View Profile
+    - [X] Message in Lemmy
+    - [X] Message in Matrix (if Matrix ID provided)
+    - [X] View on user's home instance (need to conditionally hide if instance is same as current user's)
+    - [X] View user's modlog history
+    - [X] Copy Lemmyverse link to user
+    - [X] Block/Unblock User
+    - [X] Instance ban user (if current user is admin)
+- [X] Create setting to allow hiding posts/comments from new accounts. Minimum age is configurable by the user (1,2,3,5,7,10,14, and 30 days)
+- [X] Add 12ft.io as an archive link option
+- [X] Re-write archive link selector be more generic
+    - Youtube-like links now have selector to choose from Invidious, Piped, or YouTube
+    - Will use your preferred Invidious or Piped instance
+- [X] Replace static/ugly archive link button with nice menu to select from one of multiple sources.
 
 
 ### Media
-- Add support for detecting and rendering Peertube embeds
-    - Since Lemmy can subscribe to PeerTube channels, you can now follow them and have the channel's videos show up / embed in your feed
-    - Votes on Peertube videos will translate to thumbs-up on PT's end
+- If embedded media in the feed is disabled, the thumbnail images will be "click to play" which will load the embed on click.
+    - [X] YouTube
+    - [X] Spotify
+    - [X] Peertube
+    - [X] Bandcamp
+    - [X] Odysee
+    - [X] Soundcloud
+    - [X] Songlink
+    - [X] Vimeo
 
-- Media embeds now only render when the post is actually in the viewport. 
-    - This should keep memory from ballooning in embed-heavy feeds. Before, all iframes were kept in the DOM
-    - Will show as thumbnail art until 10% of the post is in the viewport and then automatically switch to embed (if embeds enabled)
+- Re-introduced Piped as an option for the YouTube frontend.
+- Only YouTube frontend will allow YT-like embeds in the feed.  This is to prevent getting rate-limited by volunteer-run Invidious/Piped instances
+- There is now an "alternative source" dropdown to provide links to YouTube, Invidious, and Piped to any YT-like video
+    - Invidious/Piped will link to your defined instance as defined in your app settings.
+- [X] Make post and comment images zoomable
+    - All the pan/zoom libraries I tried *suuuuuuucked* so I ended up rolling my own.
+    - Can both pan and zoom the image
+    - Double click to quick zoom in and out (desktop only until I figure out how to differentiate tap from click)
+    - Mouse scroll to zoom (desktop)
+    - Pinch zoom is supprted but isn't quite where I want it (possibly library limitation)
+    - **Swipe gestures**:
+        - Up:  Close image
+        - Down:  Toggle quick 2x zoom
+        - Left: Zoom out one step
+        - Right:  Zoom in one step
 
-### Archive Links
-- Link posts now have an "[Archive Link]" button automatically applied to the right of the source URL.
-- Please, for the love of god, stop lazily commenting "PaYWalLed!".  Seriously. You're making your laziness everyone else's problem, and it's obnoxious.
-- Support for submitting archive links when creating posts will *not* be implemented. Among other things, that's one of the *worst* things Lemmy UI has done and allows absolute shit garbage "news" sources to masquerade as legitimate ones since the URL only shows the archive link and the real source is obfuscated. 
+- [ ] Optionally Preview Links in Modal
 
+#### Image Upload Handling Improvements
+- [X] Add support for deleting uploaded post image (during post creation only since the delete tokens aren't retrievable after that)
+- [X] Add support for pasting images in both the post URL field as well as into the markdown editor
+- [X] Paste images directly into post URL field: will populate and open the upload modal with the pasted image.
+- [X] Paste images directly into markdown editor: will pipulate and open the upload modal with the pasted image. Can then supply alt text.
+- [X] Convert pasted images to webp prior to uploading
+- [X] Convert uploaded images to webp prior to uploading
+- [X] Unchain the functions that handle the webp conversion, add options to enable/disable that behavior (default on)
 
-### Create Post Page/Form
-- Basically gutted the old logic and re-implemented it all.  Man that was a mess.
-- Created new route at /c/{name}/create_post for community-specific post creations
-- Added metadata fetch option to pre-set title, grab thumbnail URL for post preview, and append embed description to the post body.
-- Removed "Save/Load" draft functionality as it was rarely used and more trouble than it was worth.
-- Added "Undo/Reset" button to revert a post you're editing back to its initial state or to clear the post form if creating a new post
-    - If crossposting, will restore the current state to the original crosspost information
+**Note**: This works best in Chromium browsers since they have access to the Clipboard API.  
 
-- Image upload will now use the Tesseract image proxy, if configured and enabled.
+In FF and other browsers without Clipboard API support, pasting images still works but there are quirks:
 
+- Pasting into the URL field works as expected in any browser; if there is a text component in the clipboard alongside the image, it will be overwritten upon upload with the image URL.
 
-### Post Pages
-- Added post title to navigation bar (not shown in mobile).  
-    - Have you ever gotten deep into the comments, which have gone far off the rails, and completely forgotten what the post was about? This is why that was added.
-- Added a placeholder element if there are no comments
-- Removed action buttons (moderation, post, community) from navigation bar. Best I can tell they were rarely used and were problematic to implement.
-- Now uses standardized layout components.
-- Sidebar no longer jiggles
-- Removed comment count button from post card; redundant since those are displayed again below where it makes more sense
+- Pasting into the markdown editor will paste the text component as well (usually the filename).  I've tried working around this, but there's no real clean way to to do it.  In Chromium, I just use `navigator.clipboard.readText()` if the paste data is not an image (have to prevent default so the local filename doesn't paste in as well).
 
-
-### Modlog Enhancements
-- Added the context-sensitive navigation bar
-- Removed "Modlog" title since it's pretty obvious where you are
-- Moved filter options to navigation bar
-- Made filter selections fancy
-- Reimplemented community and person autocomplete components
-- Person details in filter now transparently fetch via API if not in the modlog data
-- Added quick action menu to modlog entries
-    - Can be used to quicky undo a mod ation or take an additional related action
-    - Can turn a temporary instnace ban into a permanent one without the intermediate step of unbanning first
-- Reversed reflow direction on mobile
-- Hide "moderator" column if not logged in since most instances hide that data for unauthenticated users
-
-
-### Search Page
-Can use the filters to do things like see your (or anyone's) posts/comments to a specific community 
-- Added the context-sensitive navigation bar
-- Moved filtering options to the navigation ba r
-- Results are grouped by type, including "all", and can be toggled 
-- Used standardized layout components
-- Added site sidebar 
-- Reimplemented search handling logic
-
-### Moderation/Reports Section
-Rewrote this fix a lot of "WTF was I thinking when I did that?" code as well as to support private message reports.
-- All reports are now pre-processed into a standardized report format.
-- Removed "Close" button.  
-- Added "Resolve" button so reports can be resolved without having to open them (useful in < 0.19.x to resolve reports that have already been taken care of)
-- Integrated the context-sensitive navbar into the cleanup
+- FF nightly has support for Clipboard.read(), readText(), writeText().  Once that's in mainline, I'll just use Clipboard API and get rid of the old clipboard data method.  Safari can get on board or get out of the way :shrug:
 
 
+### Moderation
+- [X] Do something about the ugly "confirm" checkbox
+- [X] Fix horizontal overflow in report modal submission preview.
+- [X] Refreshed looked of remove/restore and ban/unban modals.
 
-### Community Pages
-- Refactor to use standardized layout components
-- Implemented infinite scrolling
-- Community name no longer appears in post headers in community feed
-- User avatars are shown in post headers now
-- Search bar now lets you search for content posted to that community.
+### User Links
+- [X] On UserLink component, instead of taking you directly to user page, open a modal with user-specific actions
 
-### Community Button on Posts
-- Added button called "More from {user@instance}" which will take you to a pre-populated search page showing only submission from that user in that community
+### Search
+- [X] Add permalink share button to search with currently-selected query and params
 
-### Moderation Section
-- Re-wrote pretty much all of it
-- Comment, Post, and Private Message reports are now pre-processed into a common/standard report format; makes working with the reports _much_ easier now.
-- Can now resolve private message reports
+### Accounts & User Settings
+- [X] Move read/unread and message type selector to sub-navbar at `/profile/inbox` and get rid of old, ugly buttons.
+- [X] Add TOTP setup
+- [X] Replace old Photon image upload proxy for user avatar/banner
 
+- [X] Add capability to reauthorize an existing account without deleting/re-adding it.
+    - Toast pops up letting you know your login session is expired with an action to take you to /login/{instance}
 
+- [X] Show avatars, if available, instead of color icons in account switcher
+- [X] Fetch avatars for existing accounts
 
-### Profile Section
-- Now has infinite scroll for post/comment history
-- Replaced the ad-hoc context bar with the standardized one
-- Moved profile section buttons below nav bar
-- Profile section buttons are now stickied to the top for easier navigation
-- Re-wrote the main layout and subpages to use the standardized layout components
-- Can now set banner image
-- Updated layout of settings
-- Removed "show scores" option since it is not used by Tesseract and doesn't change API behavior
-    - Moved this fro profile settings to app settings
-- Can now change password (I _swear_ I thought I already implemented this ages ago)
-- Note:  TOTP settings will be added when 0.18.x support is dropped.  The 0.18.x implementation is bonkers, and I don't want to have to shim around that.
-- Inbox has been re-written
-    - Can now report private messages
-    - Private messages can be marked as read individually
+- [ ] Add components to export and import your Lemmy profile
+    - [ ] Export
+    - [ ] Import
 
-### Misc Pages
-- Reimplemented /legal page to use standardized layout
-- Reimplemented /signup, /signup/[instance], /login, and /login/[instance] to use new standardized layout.
-    - Added site card to the login and signup pages and removed old static site icon
-
-### Domain Blacklisting
-Tesseract can deny submissions (currently only in the post URL) to a set of admin-defined list of domains.  
-
-There are 3 independent blacklists which can be specified:
-
-- General
-- Link Shorteners
-- Fake news
-
-Please see the [Domain Blacklisting](docs/DomainBlacklisting.md) document for more details.
+- [ ] Separate posts/comments in /u/ page data and set infinite scroll truncated status separately if filter not set to all
 
 
+### Misc To-Do
+- [X] In post form, when resetting values, loop over the image uploads in markdown and delete them all
+- [X] Make feature/unfeature require a confirmation
+- [ ] Re-decouple video size from image size in posts.
+- [ ] Add quick settings modal to main / community page subnavars
+    - Change feed image size
+    - Change YT frontend and their options
+    - Enable/disable media embeds
+    - Enable/disable image proxying (if enabled system-side)
+    - Application font
+    - 
+    - Link to full settings page
+- [ ] Add  purge user button for admins.
+    - Purge user flow:
+        - Instance ban with remove content
+        - Sleep 10 seconds or so
+        - Purge user
+        - If user not local:
+            - Resolve user since purging removes their person entry and any local ban
+            - Ban user now that their content has been removed
 
-### UI
-- Reimplemented account switching menu
-- "Explore" menu is now "Instances" menu
-    - Contains same items plus the optiosn to block the instance of the post creator or the community the post belongs to
-- Add "Copy Lemmyverse Link" to user profile menu. Useful for sharing instance-agnostic links to users (mostly used by admins/mods to report spammers/trolls)
-- Site, community, and user info are now collapsible in the sidebars
-- Added transition effects in more places, removed from others
 
-- Various visual tweaks to posts, comments, and badges
-    - Post titles are now bolded
-    - New user badges now show the relative age of the account (5m, 1h, 2d, etc)
-    - Deleted accounts are now indicated with a trash can
-    - Increase icon/avatar size -- rather than reflow to 3 rows from two + column (community, user, published), always display in a column
-    - Posts in the feed, when browsing a community, now show the creator's avatar instead of the community's
-    - Deprecated and removed "Theater Mode" button on videos.  Was somewhat ill-conceived when I created it, and maintaining it is annoying.
-    - Compact posts are now slightly more compact
+- [ ] Link preview option.  If enabled:
+    - Ignore Tesseract links (links to posts, comments, communities, users, etc)
+    - Instead of taking you to the link directly, open a modal and call getSiteMetadata() for that URL to generate a preview
+    - If the link is to some kind of media supported in Tesseract, render it in a modal
+    - Provide option to create a post based on the link
+    - Provide button to take you to the link (honoring "open in new tab" setting)
+- [ ] Admin -> [Legal, sidebar, taglines] markdown editor too smushed.
 
-- Shamelessly stole the post body preview fade from Photon (ok, I reimplemented it rather than stole it outright, but it does the exact same thing but with better contrast)
 
-- Reimplemented vote buttons
-    - Shows upvote and downvote counts
-    - Now disabled when non-applicable (viewing post on non-home instance, not logged in, etc)
-
-- Un-flattened all other buttons    
-- Long community names are now shortened where needed
-    - Full name still shown in community sidebar
-
-- Cleaned up top navigation bar
-    - Using icons instead of text+icons
-    - Most are now dropdown menus (community/explore is still just a link)
-    - Profile avatar now has a ring effect
-
-- Added notification center in nav bar
-    - Replaces the "Reports" button as well as the notification dot on the profile menu
-    - Has three color-coded notification dots for inbox (red), reports (green), and registration applications (blue)
-    - Dropdown shows counts for each of inbox, reports, and applications
-    - Hidden if not logged in
-    - Users will just see "Inbox"
-    - Mods will see Inbox and Reports
-    - Admins will see Inbox, Reports, and Registration Applications
-
-- Removed "Favorites" button from Navigation bar and replaced with dropdown menu
-
-- Reimplemented the dropdown menus
-    - Looks a lot cleaner
-    - Hide the currently selected label on mobile (to not overflow the navbar)
-    - Add menu label to top of dropdown and check icon indicator to currently selected option
-
-### What Didn't Make the Cut?
-#### Reimplement custom feeds
-
-Since this is the last 0.18.x release, and I'm having to support both cursor and offset-based pagination, I've decided to push the custom feed rewrite to 1.4.0 which is dropping 0.18.x support.  That will make implementation easier and cleaner than having to support both methods.
-
-#### TOTP 2FA Setup
-Same as with the custom feeds, I want to do this cleanly.  Since 0.18.5's TOTP setup is bonkers and can easily lead to accounts being locked out, I've decided to skip adding this until 0.19.x is the minimum-supported version.
-
+---
 
 

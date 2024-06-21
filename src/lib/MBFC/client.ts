@@ -7,6 +7,7 @@ function normalizeDomain(domain:string):string {
     // Normalize domains to remove any "www', "amp", and other prefixes that trip up detection.  Also replace some subdomains with their main aliases
     domain = domain
         .replace('www.', '')
+        .replace('aje.io', 'aljazeera.com')
         .replace('amp.', '')
         .replace(/^m\./,'')
         .replace('bbc.co.uk', 'bbc.com')

@@ -32,7 +32,7 @@
         if (!email) return
         
         try {
-            const res = await getClient(instance, fetch).passwordReset({
+            const res = await getClient(instance).passwordReset({
                 email: email,
             })
 

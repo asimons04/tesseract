@@ -22,10 +22,6 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import NotificationButton from '$lib/components/ui/navbar/NotificationButton.svelte'
     import ProfileButton from '$lib/components/ui/navbar/ProfileButton.svelte'
-    //import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    //import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    //import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
     
     import {
         AdjustmentsHorizontal,
@@ -54,27 +50,12 @@
         UserCircle,
         UserGroup,
     } from 'svelte-hero-icons'
-    //import { searchParam } from '../../util';
   
     let scrollY = 0
     
     export const DISABLE_MODLOG_USERS = (env.PUBLIC_DISABLE_MODLOG_USERS ?? 'false').toLowerCase() == 'true'
     
     let expandAccountsMenu:boolean = false;
-    
-    let searchTerm:string = '';
-    let searchType:string = 'All';
-    
-    function search() {
-        let url = new URL(window.location.href);
-        url.pathname = '/search';
-        url.searchParams.set('type', searchType)
-        url.searchParams.set('q', searchTerm);
-        
-        goto(url, {
-            invalidateAll: true,
-        })
-    }
 </script>
   
 <svelte:window bind:scrollY />
@@ -100,7 +81,7 @@
     <div data-sveltekit-preload-data="hover" class="flex flex-row gap-2 items-center mr-auto">
         <a href="/" class="flex flex-row items-center gap-2">
             
-            {#if $site && new URL($site.site_view.site.actor_id).hostname == $instance}
+            {#if $site && $site.site_view.site.icon && new URL($site.site_view.site.actor_id).hostname == $instance}
                 <Avatar url={$site.site_view.site.icon} alt={$site.site_view.site.name} width={32} res={64} circle={false}/>
                 <div class="flex flex-row items-center gap-2 max-[500px]:hidden">
                     
@@ -118,27 +99,6 @@
             {/if}
         </a>
     </div>
-
-    <!---Inline Search in Middle--->
-    <!---
-    <form class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
-        class:lg:hidden={$page.url.pathname.includes('/search')}
-        on:submit={(e) => {
-            e.preventDefault();
-            search();
-        }}
-    >
-
-        <TextInput type="search" placeholder="Search" bind:value={searchTerm}/>
-
-        <Button
-            class="max-md:w-9 max-md:h-8 max-md:!p-0 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:dark:text-inherit hover:bg-slate-200 hover:border-slate-300 !px-1"
-            on:click={search}
-        >
-            <Icon src={MagnifyingGlass} mini width={18} />
-        </Button>
-    </form>
-    --->
 
     <!---Right-side Buttons--->
     <div class="flex flex-row gap-2 py-2 px-2 items-center">

@@ -70,7 +70,7 @@ export async function load( req: any) {
 
     try { 
         // Pull in site info to load into sidebar
-        let site = passedSite ? passedSite : await getClient(instance).getSite({})
+        let site = passedSite ? passedSite : await getClient(instance).getSite()
         
         if (query) { 
             communities = await getClient(instance).search({
@@ -80,9 +80,6 @@ export async function load( req: any) {
                 type_: 'Communities',
                 listing_type: type,
                 q: query,
-                auth: instance == get(homeInstance)
-                    ? get(profile)?.jwt
-                    : undefined
             })
         }
         else { 
@@ -91,9 +88,6 @@ export async function load( req: any) {
                 page: page,
                 sort: 'TopAll',
                 type_: type,
-                auth: instance == get(homeInstance)
-                    ? get(profile)?.jwt
-                    : undefined
             })
         }
         

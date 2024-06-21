@@ -1,4 +1,4 @@
-import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType, CommentReplyView, PersonMentionView } from 'lemmy-js-client'
+import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType, CommentReplyView, PersonMentionView, LocalUserView } from 'lemmy-js-client'
 import type { MBFCReport } from '$lib/MBFC/types'
 
 export interface PostView extends LemmyPostView {
@@ -40,9 +40,9 @@ export type PostType =
 // Check whether current user can make changes to posts/comments
 // Note:  These appear to be no longer referenced anywhere.  Marking as deprecated.
 export const isMutable = (post: PostView, me: PersonView) =>
-    (me.person.admin && post.post.local) || me.person.id == post.creator.id
+    (me.is_admin && post.post.local) || me.person.id == post.creator.id
 
-export const isCommentMutable = (comment: CommentView, me: PersonView) =>
+export const isCommentMutable = (comment: CommentView, me: PersonView|LocalUserView) =>
     me.person.id == comment.creator.id
 
 export function isPostView(item: PostView | CommentReplyView | PersonMentionView): item is PostView {
@@ -62,24 +62,37 @@ export const imageSize = (displayType:PostDisplayType, ) => {
 // Check if the provided URL is an image
 export const isImage = (url: string | undefined) => {
     if (!url) return false
-    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(new URL(url).pathname)
+    const testURL = new URL(unproxyImage(url))
+    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
 }
 
 // Check if the provided URL is an embeddable audio file
 export const isAudio = (url: string | undefined) => {
     if (!url) return false
-    return /\.(mp3|oga|opus|aac)$/i.test(new URL(url).pathname)
+    const testURL = new URL(unproxyImage(url))
+    return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
 }
 
 
-// Check if provided URL is a video
+/** Check if provided URL is a video */
 export const isVideo = (inputUrl: string | undefined) => {
   if (!inputUrl) return false
+  const url = new URL(unproxyImage(inputUrl)).pathname.toLowerCase()
+  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
+}
 
-  const url = new URL(inputUrl).pathname.toLowerCase()
-
-  // (/videos/embed) is for Peertube embed video detection
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
+/** Unproxies Lemmy's godawfully stupid method of image proxying */
+export const unproxyImage = (inputURL:string) => {
+    //Blech!  https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png
+    
+    // Fix any relative image URLs
+    if (inputURL.startsWith('/'))
+        inputURL = window.origin + inputURL
+    
+    const testURL = new URL(inputURL)
+    return (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
+        ? decodeURI(testURL.searchParams.get('url') as string)
+        : inputURL
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
@@ -96,15 +109,15 @@ export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
 export const isPeertube = (embed_video_url:string): boolean => {
     const regex = `\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
     const found = embed_video_url.match(regex)
-    if (found) return true
-    return false
+    return found ? true : false
 }
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
 // Invidious
 export const isInvidious = (url: string):boolean => {
-    for (let i=0; i<YTFrontends.invidious.length; i++) {
-        if (url.startsWith(`https://${YTFrontends.invidious[i]}`)) {
+    const frontends = [...YTFrontends.invidious, ...userSettings.embeddedMedia.userDefinedInvidious]
+    for (let i=0; i<frontends.length; i++) {
+        if (url.startsWith(`https://${frontends[i]}`)) {
             return true;
         }
     }
@@ -134,8 +147,9 @@ export const isYouTube = (url:string):boolean => {
 
 //  Piped
 export const isPiped = (url: string):boolean => {
-    for (let i=0; i<YTFrontends.piped.length; i++) {
-        if (url.startsWith(`https://${YTFrontends.piped[i]}`)) {
+    const frontends = [...YTFrontends.piped, ...userSettings.embeddedMedia.userDefinedPiped]
+    for (let i=0; i<frontends.length; i++) {
+        if (url.startsWith(`https://${frontends[i]}`)) {
             return true;
         }
     }
@@ -193,12 +207,18 @@ export const isSongLink = (url:string):boolean => {
 export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
     if (!postURL) return
     
+    try { new URL(postURL) }
+    catch { return }
+
     let embedURL: URL
     let videoID: string|null
     
     // Base the embed URL from the user's chosen YouTube frontend
     if (userSettings.embeddedMedia.YTFrontend == "Invidious" && userSettings.embeddedMedia.customInvidious !='') {
         embedURL = new URL('https://' + userSettings.embeddedMedia.customInvidious);
+    }
+    else if (userSettings.embeddedMedia.YTFrontend == "Piped" && userSettings.embeddedMedia.customPiped !='') {
+        embedURL = new URL('https://' + userSettings.embeddedMedia.customPiped);
     }
     else {
         embedURL = new URL('https://www.youtube-nocookie.com')
@@ -223,8 +243,10 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
 
 
     // Enable autoplay videos in post if setting is enabled
-    
     if (displayType ==  'post' && (autoplay ?? userSettings.embeddedMedia.autoplay)) {
+        embedURL.searchParams.set('autoplay', '1');
+    }
+    else if (autoplay) {
         embedURL.searchParams.set('autoplay', '1');
     }
     else {
@@ -238,7 +260,7 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
     // Start time: Can be either t (legacy) or start
     let startTime = new URL(postURL).searchParams.get('t') ?? new URL(postURL).searchParams.get('start');
     if (startTime) {
-        embedURL.searchParams.set('start', startTime);
+        embedURL.searchParams.set('t', startTime);
     }
 
     // End time: 
@@ -252,7 +274,10 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
 
 // Build a Vimeo embed link from the post URL
 export const buildVimeoEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
-    if(!postURL) return
+    if (!postURL) return
+
+    try { new URL(postURL) }
+    catch { return }
     
     let embedURL = new URL('https://player.vimeo.com')
     embedURL.searchParams.set('autopause', '0')
@@ -661,37 +686,6 @@ export const addMBFCResults = function (posts:PostView[]):PostView[] {
 
 }
 
-// Fix one hour ahead posts
-export const fixHourAheadPosts = function(posts:PostView[]): PostView[] {
-    try {
-        for (let i:number=0; i<posts.length; i++) {
-            let published = posts[i].post.published.endsWith('Z')
-                ? new Date(posts[i].post.published)
-                : new Date(posts[i].post.published + 'Z')
-            
-            let now = new Date()
-
-            if (published > now) {
-                console.log("Fixing post pub time")
-                console.log(`Old: ${posts[i].post.published}`)
-                posts[i].post.published = new Date(published.setHours(published.getHours() - 1)).toISOString()
-                console.log(`New: ${posts[i].post.published}`)
-
-            }
-        }
-        return posts
-    }
-    catch (err) {
-        console.log('fixHourAheadPosts(): An error has occurred. Returning original posts list');
-        console.log(err)
-        return posts
-    }
-
-
-    
-
-}
-
 // Crosspost a post
 export const crossPost = function(post:PostView):void {
     setSessionStorage('postDraft', {
@@ -712,9 +706,9 @@ export const sortPosts = function(posts:PostView[], direction:SortType): PostVie
 
     if (direction == 'New')          posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
     if (direction == 'Old')          posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-    if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
-    if (direction == 'Active')       posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
-    if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
+    //if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+    //if (direction == 'Active')       posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
+    //if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
     if (direction == 'MostComments') posts.sort((a, b) => b.counts.comments - a.counts.comments)
     if (direction.startsWith('Top')) posts.sort((a, b) => b.counts.score - a.counts.score)
     
@@ -766,10 +760,8 @@ export function isThreadComment(commentID:number):boolean {
     return false
 }
 
-export function isNewAccount(date:string):boolean {
+export function isNewAccount(date:string, daysOld?:number):boolean {
     return new Date().getTime()/1000/60 - (
-        date.endsWith('Z')
-            ? (Date.parse(date)/1000/60) 
-            : (Date.parse(date + 'Z')/1000/60) 
-    ) < 1440 * 5
+            (Date.parse(date)/1000/60) 
+    ) < 1440 * (daysOld ?? userSettings?.hidePosts?.newAccountMinAge ?? 5)
 }

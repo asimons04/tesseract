@@ -2,21 +2,24 @@
     import type { Snapshot } from './$types';
     import { PageSnapshot } from '$lib/storage'
     
+    import { amModOfAny } from '$lib/components/lemmy/moderation/moderation';
     import { beforeNavigate, goto } from '$app/navigation'
     import { 
         mergeNewInfiniteScrollBatch,
         scrollToLastSeenPost, 
     } from '$lib/components/lemmy/post/helpers'
-    
     import { load } from './+page'
+    import { page } from '$app/stores'
+    import { profile } from '$lib/auth'
+    import { searchParam } from '$lib/util';
     import { userSettings } from '$lib/settings'
     
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
-    import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
+    import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
-    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
+    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     export let data
@@ -28,17 +31,14 @@
     
     // Infinite scroll object to hold config parms
     let infiniteScroll = {
-        loading: false,     // Used to toggle loading indicator
-        exhausted: false,   // Sets to true if the API returns 0 posts
-        // Maximum number of posts to keep in the FIFO
+        loading: false,
+        exhausted: false,
         maxPosts: $userSettings.uiState.maxScrollPosts,      
-        truncated: false,   // Once maxPosts has been reached and oldest pushed out, set to true
-        automatic: true,    // Whether to fetch new posts automatically on scroll or only on button press
-        enabled: true,      // Whether to use infinite scroll or manual paging (assumes automatic = false)
+        truncated: false,   
+        enabled: $userSettings.uiState.infiniteScroll,      
     }
 
-    //$: infiniteScroll.truncated = data.posts.posts.length > infiniteScroll.maxPosts-2
-    
+   
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
     beforeNavigate(() => {
         infiniteScroll.exhausted = false
@@ -49,14 +49,15 @@
     export const snapshot: Snapshot<void> = {
         capture: () => {
             pageState.scrollY = window.scrollY
-            PageSnapshot.capture({data: data, state: pageState})
+            if (infiniteScroll.enabled) PageSnapshot.capture({data: data, state: pageState})
         },
         restore: async () => {
             try { 
-                let snapshot = PageSnapshot.restore() 
-                if (snapshot.data)  data = snapshot.data
-                if (snapshot.state) pageState = snapshot.state
-                
+                if (infiniteScroll.enabled) {
+                    let snapshot = PageSnapshot.restore() 
+                    if (snapshot.data)  data = snapshot.data
+                    if (snapshot.state) pageState = snapshot.state
+                }
                 await scrollToLastSeenPost(data.posts.posts.length + 200)
             }
             catch { 
@@ -78,10 +79,7 @@
         url.searchParams.set('limit', $userSettings?.uiState.postsPerPage.toString() || '10')
         url.searchParams.set('sort', data.sort)
         url.searchParams.set('listingType', data.type)
-                
-        //@ts-ignore
         if (data.posts.next_page) url.searchParams.set('page_cursor', data.posts.next_page)
-        else if (data.page) url.searchParams.set('page', (++data.page).toString())
 
         load({url: url, passedSite: data.site}).then((nextBatch) => {
             if (nextBatch.posts.posts.length < 1) infiniteScroll.exhausted = true
@@ -99,6 +97,21 @@
         })
     }
 
+    
+    // These exist so the subnavbar component can bind/export its values to them and so we can modify them to add/remove moderator view
+    let listingTypeOptions: string[]
+    let listingTypeOptionNames: string[]
+    
+    // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
+    $:  if (listingTypeOptions && listingTypeOptionNames && $profile?.user && amModOfAny($profile.user)) {
+            if (!listingTypeOptions.includes('ModeratorView'))      listingTypeOptions.push('ModeratorView')
+            if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Moderator View")
+        }
+        else if (listingTypeOptions && listingTypeOptionNames ){
+            if (listingTypeOptions.includes('ModeratorView'))       listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
+            if (listingTypeOptionNames.includes('ModeratorView'))   listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Moderator View'), 1)
+        }
+
 </script>
 
 <svelte:head>
@@ -106,15 +119,14 @@
 </svelte:head>
 
 
-<SubNavbar
-    compactSwitch  toggleMargins toggleCommunitySidebar scrollButtons 
-    listingType={true}      bind:selectedListingType={data.listingType}
-    sortMenu={true}         bind:selectedSortOption={data.sort}
-    refreshButton           on:navRefresh={()=> refresh()}
+<SubNavbar home back quickSettings qsShiftLeft={2}
+    toggleMargins toggleCommunitySidebar scrollButtons 
+    listingType     bind:listingTypeOptions bind:listingTypeOptionNames bind:selectedListingType={data.listingType}
+    sortMenu        bind:selectedSortOption={data.sort}
+    refreshButton   on:navRefresh={()=> refresh()}
 >
     <!---Inline Search in Middle--->
     <SiteSearch placeholder="Search {data?.site?.site_view?.site?.name ?? "everything"}" slot="center"/>
-
 </SubNavbar>
 
 
@@ -131,13 +143,19 @@
     <!---The actual feed--->
     <PostFeed bind:posts={data.posts.posts} />
 
-    <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={750} automatic={infiniteScroll.automatic}
+    <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} bind:enabled={infiniteScroll.enabled} threshold={750} 
+        disableBack={ $page.url.searchParams.get('page_cursor') ? false : true }
         on:loadMore={ () => {
             if (!infiniteScroll.exhausted) {
                 infiniteScroll.loading = true
                 loadPosts()
             }
         }}
+
+        on:next={ () => {
+            searchParam($page.url, 'page_cursor', data.posts.next_page ?? '', 'page')
+        }}
+        on:prev={ () => history.back() }
     />
 
     <!---Show the site card on the right side--->

@@ -129,7 +129,7 @@
 </script>
 
 {#if formData && open}
-    <Modal bind:open={open} icon={UserGroup} fullHeight title="Edit Group: {group.name}">
+    <Modal bind:open={open} icon={UserGroup} fullHeight title="Edit Group: {group.name}"  width="max-w-4xl">
         <div class="flex flex-col h-full gap-2 pr-2">
             
             <TextInput bind:value={formData.name} readonly={group.name == 'Favorites'} label="Group Name" class="{group.name == 'Favorites' ? 'hidden' : ''}"/>

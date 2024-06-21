@@ -1,14 +1,18 @@
-import { getClient, site as siteStore } from '$lib/lemmy.js'
-import type { GetSite, GetFederatedInstances } from 'lemmy-js-client'
+import { getClient } from '$lib/lemmy.js'
 
 export async function load({ fetch }) {
-    const site:GetSite = await getClient(undefined, fetch).getSite({})
+    const client = getClient()
 
-    const federated_instances: GetFederatedInstances = await getClient(undefined, fetch).getFederatedInstances({});
+    const [site, federated_instances] = await Promise.all([
+        client.getSite(),
+        client.getFederatedInstances()
+    ])
     
-    site.federated_instances = federated_instances.federated_instances;
+    //const site = await client.getSite()
+    //const federated_instances = await client.getFederatedInstances();
 
   return {
     site: site,
+    federated_instances: federated_instances.federated_instances
   }
 }

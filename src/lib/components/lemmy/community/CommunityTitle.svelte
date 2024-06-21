@@ -6,7 +6,7 @@
 </script>
 
 <div class="flex flex-row gap-3 items-center">
-    <Avatar width={48} url={community.icon} alt={community.name} />
+    <Avatar width={48} url={community.icon} alt={community.name} community={true}/>
     <div class="flex flex-col gap-0">
         <h1 class="font-bold text-xl">{community.title}</h1>
         <span class="dark:text-zinc-400 text-slate-600 text-sm">

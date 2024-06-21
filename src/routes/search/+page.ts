@@ -1,13 +1,16 @@
-import { profile } from '$lib/auth.js'
+import type {
+    GetCommunityResponse,
+    GetPersonDetailsResponse,
+    SearchType,
+    SortType,
+} from 'lemmy-js-client'
+  
+import { get } from 'svelte/store'
 import { getClient, getInstance } from '$lib/lemmy.js'
 import { getItemPublished } from '$lib/lemmy/item.js'
-import type {
-  GetCommunityResponse,
-  GetPersonDetailsResponse,
-  SearchType,
-  SortType,
-} from 'lemmy-js-client'
-import { get } from 'svelte/store'
+import { profile } from '$lib/auth.js'
+
+
 interface LoadParams {
     url: URL
 }
@@ -18,13 +21,19 @@ interface Filters {
 } 
 
 export async function load({ url }: LoadParams) {
-    const query     = url.searchParams.get('q')
+    const community = url.searchParams.get('community_id')
+        ? Number(url.searchParams.get('community_id'))
+        : undefined
+
+    const person    =  url.searchParams.get('person_id')
+        ? Number(url.searchParams.get('person_id'))
+        : undefined
+
     const page      = Number(url.searchParams.get('page')) || 1
-    const community = Number(url.searchParams.get('community_id'))
     const sort      = url.searchParams.get('sort') ?? 'New'
     const type      = url.searchParams.get('type') ?? 'All'
-    const person    = Number(url.searchParams.get('person_id'));
     const limit     = Number(url.searchParams.get('limit')) || 50;
+    const query     = url.searchParams.get('q') ?? ((community || person) ? ' ' : undefined)
 
     const filters: Filters = {
         community: undefined,
@@ -40,7 +49,8 @@ export async function load({ url }: LoadParams) {
 
     if (person) {
         filters.person = await getClient().getPersonDetails({
-            person_id: person
+            person_id: person,
+            limit: 1
         })
     }
 
@@ -48,7 +58,6 @@ export async function load({ url }: LoadParams) {
     if (query) {
         const results = await getClient().search({
             q: query ?? ' ',
-            auth: get(profile)?.jwt,
             community_id: community ?? undefined,
             creator_id: person ?? undefined,
             limit: limit,
@@ -100,7 +109,6 @@ export async function load({ url }: LoadParams) {
             streamed: {
                 object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@') || query.startsWith('https://') ))
                 ? getClient().resolveObject({
-                    auth: get(profile)!.jwt!,
                     q: query,
                 })
                 : undefined,

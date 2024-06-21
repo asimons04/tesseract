@@ -18,15 +18,15 @@
 <SubNavbar home back toggleMargins toggleCommunitySidebar compactSwitch/>
 
 <MainContentArea>
-    <FeedContainer>
-            <h1 class="text-2xl font-bold">
-                Create Post in {shortenCommunityName(data.community.community_view.community.title ?? data.community.community_view.community.name)}
-            </h1>    
-            <PostForm bind:community={data.community.community_view.community} hideCommunityInput={true}
-                on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
-            >
-            </PostForm>
-    </FeedContainer>
+    
+    <h1 class="text-2xl font-bold">
+        Create Post in {data.community.community_view.community.title ?? data.community.community_view.community.name}
+    </h1>    
+    <PostForm bind:community={data.community.community_view.community} hideCommunityInput={true}
+        on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
+    >
+    </PostForm>
+    
 
     <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
 </MainContentArea>

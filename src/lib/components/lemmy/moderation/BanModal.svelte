@@ -66,7 +66,6 @@
 
             if (community) {
                 await getClient().banFromCommunity({
-                    auth: $profile.jwt,
                     ban: !banned,
                     community_id: community.id,
                     person_id: item.id,
@@ -76,7 +75,6 @@
                 })
             } else {
                 await getClient().banPerson({
-                    auth: $profile.jwt,
                     ban: !banned,
                     person_id: item.id,
                     reason: reason || undefined,
@@ -105,7 +103,7 @@
     }
 </script>
 
-<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User" icon={banned ? Check : NoSymbol}>
+<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User" icon={banned ? Check : NoSymbol}  width="max-w-2xl">
     
     {#if item}
         <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>

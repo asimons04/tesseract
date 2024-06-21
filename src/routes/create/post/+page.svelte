@@ -33,12 +33,12 @@
 <SubNavbar home back toggleMargins toggleCommunitySidebar />
 
 <MainContentArea>
-    <FeedContainer>
-            <h1 class="text-2xl font-bold">Create Post</h1>
-            <PostForm crosspostData={data.crosspost ? draft : undefined}
-                on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
-            />
-    </FeedContainer>
+    
+    <h1 class="text-2xl font-bold">Create Post</h1>
+    <PostForm crosspostData={data.crosspost ? draft : undefined}
+        on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
+    />
+    
 
     <div class="h-full" slot="right-panel">
         {#if $site }

@@ -30,14 +30,14 @@
     title={fixLemmyEncodings(community.title)}
 >
     {#if avatar}
-        <Avatar url={community.icon} alt={community.name} width={avatarSize} />
+        <Avatar url={community.icon} alt={community.name} width={avatarSize} community={true}/>
     {/if}
 
     {#if name}
         <span class="flex flex-wrap gap-0 {boldCommunityName ? 'font-bold' : 'font-normal'}">
             
             {$userSettings.displayNames 
-                ? shortenCommunityName(community.title)
+                ? shortenCommunityName(community.title, 30)
                 : `/c/${community.name}`
             }
 

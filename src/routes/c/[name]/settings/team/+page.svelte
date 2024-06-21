@@ -40,13 +40,11 @@
 
         try {
             const res = await getClient().resolveObject({
-                auth: $profile.jwt,
                 q: formData.newModerator,
             })
 
             if (res.person) {
                 const addModRes = await getClient().addModToCommunity({
-                    auth: $profile.jwt,
                     added: true,
                     person_id: res.person.person.id,
                     community_id: data.community.community_view.community.id,
@@ -87,7 +85,6 @@
         try {
             const res = await getClient().addModToCommunity({
                 added: false,
-                auth: $profile.jwt,
                 community_id: data.community.community_view.community.id,
                 person_id: id,
             })

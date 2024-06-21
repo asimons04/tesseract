@@ -1,135 +1,198 @@
 <script lang="ts">
-    import type { Instance } from 'lemmy-js-client'
+    import type { InstanceWithFederationStateCustom } from './+page'
 
-    import { page } from '$app/stores';
+    import { page } from '$app/stores'
     import { site } from '$lib/lemmy'
-
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
-    import InstanceListItem from './InstanceListItem.svelte';
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
-    import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import Switch from '$lib/components/input/Switch.svelte';
-    import TextInput from '$lib/components/input/TextInput.svelte';
+    
+    import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
+    import InstanceListItem from './InstanceListItem.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
+    import Pageination from '$lib/components/ui/Pageination.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
+    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
+    import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
+    import Switch from '$lib/components/input/Switch.svelte'
+    import TextInput from '$lib/components/input/TextInput.svelte'
 
     import {
         Icon,
+        Funnel,
+        HandThumbDown,
         Link,
+        MagnifyingGlass,
         XCircle,
-        Bars3
+        Bars3,
+        Server,
+        
     } from 'svelte-hero-icons'
-
-    
     
     
     export let data;
+   
+    let filterTerm:string       = $page.url.searchParams.get('instance') ?? ''
+    let showDeadInstances       = $page.url.searchParams.has('showDead') || false
+    let selectedSoftwareType    = $page.url.searchParams.get('software') ?? 'All'
+    let selectedFederationState = $page.url.searchParams.get('state') ?? 'All'
+    
+    
+   
+    // Paginate instances so page doesn't use close to 1 GB RAM
+    let filteredList            = [] as InstanceWithFederationStateCustom[]
+    let batch = [] as InstanceWithFederationStateCustom[]
+    let pageLimit = 100
+    let batchPage = 1
+    
+    //Do initial render
+    search(batchPage)
+    
+    function search(page:number = 1) {
+        batch = [] as InstanceWithFederationStateCustom[]
+        let startIndex = (page-1) * pageLimit
+        let endIndex = startIndex + pageLimit
+        
+        if (page == 1) {
+            filteredList = [] as InstanceWithFederationStateCustom[]
+        
+            // Filter the instances first
+            for (let i:number=0; i < data.instances.length; i++) {
+                let instance = data.instances[i]
 
-    function sortInstances(a:Instance, b:Instance) {
-        return a.domain < b.domain ? -1 : a.domain > b.domain ? 1 : 0
+                // Filters
+                if (
+                        (instance.domain) && 
+                        (!filterTerm || instance.domain.includes(filterTerm))  &&
+                        (selectedSoftwareType == 'All' || (instance.software && instance.software.toLowerCase() == selectedSoftwareType.toLowerCase())) &&
+                        (selectedFederationState == 'All' || selectedFederationState.toLowerCase() == instance.state.toLowerCase()) &&
+                        ( showDeadInstances || (!showDeadInstances && !instance.dead))
+                    ) {
+                    filteredList.push(instance)
+                }
+            }
+        }
+        
+        // Paginate the filtered list
+        for (let i = startIndex; i < endIndex; i++) {
+            if(filteredList[i]) batch.push(filteredList[i])
+            else break;
+        }
+        
+        batch = batch
     }
 
-    data.instances.blocked.sort(sortInstances)
-    data.instances.linked.sort(sortInstances)
-    data.instances.allowed.sort(sortInstances)
-
-
-      
-    
-    let filterTerm:string = ''
-    let filterTermInput:string = ''
-    let hideDeadInstances = $page.url.searchParams.get('hideDead')?.toLowerCase() == 'true' ?? false
-    let selectedSoftwareType = $page.url.searchParams.get('software') ?? 'All'
-    let selectedFederationState = $page.url.searchParams.get('state') ?? 'Linked'
-    
-    let debounceTimer: ReturnType<typeof setTimeout>;
-    
-    function debounce(value:string,  timeout=300) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(
-            () => {
-                filterTerm = value.toLowerCase();
-                clearTimeout(debounceTimer);
-            }, timeout
-        )
+    function clearFilter() {
+        filterTerm = ''
+        selectedSoftwareType = 'All'
+        showDeadInstances = false
+        selectedFederationState = 'All'
+        batchPage = 1
     }
-
-    // Get a list of the software types to filter by
-
-    let softwareTypes = ['All'] as string[]
-    data.instances.blocked.forEach((instance:Instance) => {
-        if (instance.software && !softwareTypes.includes(instance.software)) softwareTypes.push(instance.software)
-    })
-
-    data.instances.linked.forEach((instance:Instance) => {
-        if (instance.software && !softwareTypes.includes(instance.software)) softwareTypes.push(instance.software)
-    })
-
-    data.instances.allowed.forEach((instance:Instance) => {
-        if (instance.software && !softwareTypes.includes(instance.software)) softwareTypes.push(instance.software)
-    })
-
-    softwareTypes.sort()
-
-    // Populate arrays for federation state dropdown
-    let federationStates = ['Linked'] 
-    
-
-    if (data.instances.allowed.length > 0) federationStates.push('Allowed')
-    else federationStates.push('Blocked')
-
 </script>
 
 <svelte:head>
     <title>Federated Instances</title>
 </svelte:head>
 
-<SubNavbar home back toggleMargins refreshButton toggleCommunitySidebar scrollButtons >
-    <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="left">
-        <!---Local/Subscribed/All Switcher--->
-        <SelectMenu
-            options={softwareTypes}
-            selected={selectedSoftwareType}
-            on:select={(e) => { 
-                selectedSoftwareType = e.detail
-            }}
-            title="Software Type"
-            icon={Bars3}
-        />
+<SubNavbar home back toggleMargins refreshButton toggleCommunitySidebar scrollButtons on:navRefresh={() => search()} >
+    <SubnavbarMenu alignment="bottom-left" shiftLeft={2} icon={Funnel} containerClass="max-h-[79svh]" slot="far-left">
+        
+        <div class="flex flex-col w-full p-2 gap-2 cursor-default" >
+            <Card class="p-2">
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <div on:click|stopPropagation>
+                    
+                    <!---Software Type--->
+                    <SettingMultiSelect
+                        title="Software Type"
+                        options={data.software_types}
+                        selected={selectedSoftwareType}
+                        icon={Server}
+                        padding={false} small={true}
+                        on:select={(e) => { 
+                            selectedSoftwareType = e.detail
+                            search()
+                        }}
+                    />
 
-        <SelectMenu
-            options={federationStates}
-            selected={selectedFederationState}
-            on:select={(e) => { 
-                selectedFederationState = e.detail
-            }}
-            title="Federation State"
-            icon={Link}
+                    <!---Federation State--->
+                    <SettingMultiSelect
+                        title="Federation State"    
+                        options={data.federation_states}
+                        selected={selectedFederationState}
+                        icon={Link}
+                        padding={false} small={true}
+                        on:select={(e) => { 
+                            selectedFederationState = e.detail
+                            search()
+                        }}
+                    />
 
-        />
-    </div>
+                    <SettingToggle
+                        title="Show Dead?"
+                        icon={HandThumbDown}
+                        bind:value={showDeadInstances}
+                        on:change={(e) => {
+                            showDeadInstances = e.detail
+                            search()
+                        }}
+                    />
+            
+
+                    <form class="flex flex-col gap-2 mt-4 w-full" on:submit|preventDefault={()=> {
+                        batchPage = 1
+                        search()
+                    }}>
+
+                        <TextInput type="text" placeholder="Filter Instances" label="Keyword" bind:value={filterTerm} on:change={() => filterTerm=filterTerm.toLowerCase() } />
+                        
+                        <div class="flex flex-row gap-4 items-center p-2 mt-4">
+                            <!---Reset--->
+                            <Button color="danger" size="lg" class="w-full" icon={XCircle} width={16} title="Reset Search Filter"  
+                                on:click={() => {
+                                    clearFilter()
+                                    search()
+                                }}
+                            >
+                                Reset
+                            </Button>
+                            
+                            <Button submit color="primary" size="lg" class="w-full"  icon={MagnifyingGlass} width={16} title="Reset Search Filter">
+                                Search
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </Card>
+
+        </div>
+
+    </SubnavbarMenu>
+    
 
     <!---Filters--->
-    <div class="hidden xl:flex flex-row gap-2 items-center" slot="center">
-  
-        <TextInput type="text" placeholder="Filter Instances" class="h-8"
-            bind:value={filterTermInput}
-            on:keyup={(e) => { 
-                debounce(e.detail.srcElement.value);
+    <form class="hidden xl:flex flex-row gap-2 mx-auto items-center w-fit" let:iconSize slot="center" on:submit|preventDefault={()=> {
+        batchPage = 1
+        search()
+    }}>
+
+        <!---Search--->
+        <TextInput type="text" placeholder="Filter Instances" class="h-8" bind:value={filterTerm} on:change={() => filterTerm=filterTerm.toLowerCase() }/>
+        <Button submit color="tertiary" icon={MagnifyingGlass} {iconSize} size="sm" title="Reset Search Filter"/>
+       
+
+        <!---Reset--->
+        <Button color="tertiary" size="sm" icon={XCircle} {iconSize} title="Reset Search Filter" on:click={async () => {
+                clearFilter()
+                search()
             }}
         />
-        <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
-                debounce('');
-                filterTermInput = ''
-            }}
-        >
-            <Icon src={XCircle} mini size="22"/>
-        </button>
-
-        <span class="font-bold text-xs whitespace-nowrap ml-4">Hide dead</span>
-        <Switch bind:enabled={hideDeadInstances}/>
-
-    </div>
+    </form>
 
 </SubNavbar>
 
@@ -140,49 +203,48 @@
 <MainContentArea>
     
     <!---Filter for mobile view--->
-    <span class="flex xl:hidden flex-row gap-1 mx-auto items-center">
-        <TextInput type="text" placeholder="Filter Instances" class="h-8 w-full"
-            bind:value={filterTermInput}
-            on:keyup={(e) => { 
-                debounce(e.detail.srcElement.value);
+    <form class="flex xl:hidden flex-row gap-1 mx-auto items-center" on:submit|preventDefault={()=> {
+        batchPage = 1
+        search()
+    }}>
+
+        <span class="font-bold text-xs whitespace-nowrap ml-4">Show dead</span>
+        
+        <Switch bind:enabled={showDeadInstances}  on:change={(e) => {
+            showDeadInstances = e.detail
+            search()
+        }}/>
+
+        <!---Search--->
+        <TextInput type="text" placeholder="Filter Instances" class="h-8" bind:value={filterTerm} on:change={() => filterTerm=filterTerm.toLowerCase() }/>
+        <Button submit color="tertiary" icon={MagnifyingGlass} iconSize={24} size="sm" title="Reset Search Filter"/>
+        
+
+        <!---Reset--->
+        <Button color="tertiary" size="sm" icon={XCircle} iconSize={24} title="Reset Search Filter" on:click={async () => {
+                clearFilter()
+                search()
             }}
         />
-        <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
-                debounce('');
-                filterTermInput = ''
-            }}
-        >
-            <Icon src={XCircle} mini size="22"/>
-        </button>
-
-        <span class="font-bold text-xs whitespace-nowrap">Hide dead instances</span>
-        <Switch bind:enabled={hideDeadInstances}/>
-    </span>
-
+    </form>
     
     <FeedContainer>
-        <div class="flex flex-col gap-4 w-full">
-            {#if selectedFederationState == 'Linked'}
-                {#each data.instances.linked as instance}
-                    <InstanceListItem instance={instance} bind:filterTerm bind:hideDead={hideDeadInstances} bind:softwareType={selectedSoftwareType}/>
+        <div class="flex flex-col gap-4 w-full h-full">
+            {#if batch.length > 0}
+                {#each batch as instance, id (instance.id)}
+                    <InstanceListItem bind:instance />
                 {/each}
-
-            {/if}
-
-            {#if selectedFederationState == 'Blocked'}
-                {#each data.instances.blocked as instance}
-                    <InstanceListItem instance={instance} bind:filterTerm bind:hideDead={hideDeadInstances} bind:softwareType={selectedSoftwareType}/>
-                {/each}
-
-            {/if}
-
-            {#if selectedFederationState == 'Allowed'}
-                {#each data.instances.allowed as instance}
-                    <InstanceListItem instance={instance} bind:filterTerm bind:hideDead={hideDeadInstances} bind:softwareType={selectedSoftwareType}/>
-                {/each}
+            {:else}
+                <Placeholder icon={MagnifyingGlass} title="No results"  description="No instances matched the filter." />
             {/if}
         </div>
     </FeedContainer>
+
+    <Pageination bind:page={batchPage} disableNext={batch.length < pageLimit} on:change={(e) => {
+        batchPage = e.detail
+        search(batchPage)
+        window.scrollTo(0,0)
+    }}/>
 
     <div class="h-full" slot="right-panel">
         {#if $site}

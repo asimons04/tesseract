@@ -1,6 +1,6 @@
 import type { GetPostsResponse, GetSiteResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 
-import { addMBFCResults, findCrossposts, filterKeywords, fixHourAheadPosts, sortPosts } from '$lib/components/lemmy/post/helpers'
+import { addMBFCResults, findCrossposts, filterKeywords, sortPosts } from '$lib/components/lemmy/post/helpers'
 import { getClient, site } from '$lib/lemmy.js'
 import { get } from 'svelte/store'
 import { error } from '@sveltejs/kit'
@@ -16,11 +16,6 @@ interface LoadParams {
 
 export async function load({ url, passedSite }: LoadParams) {
     const page_cursor = url.searchParams.get('page_cursor')
-    
-    const page = page_cursor 
-        ? undefined
-        : Number(url.searchParams.get('page') || 1) || 1
-    
     const sort: SortType = (url.searchParams.get('sort') as SortType) || get(userSettings).defaultSort.sort
     const listingType: ListingType = (url.searchParams.get('type') as ListingType) || get(userSettings).defaultSort.feed
     
@@ -31,18 +26,12 @@ export async function load({ url, passedSite }: LoadParams) {
                 limit: get(userSettings)?.uiState.postsPerPage || 10,
                 sort: sort,
                 type_: listingType,
-                page: page,
-                //@ts-ignore
                 page_cursor: page_cursor,
-                auth: get(profile)?.jwt,
             }),
-            passedSite ?? getClient().getSite({})
+            passedSite ?? get(site) ?? getClient().getSite()
         ])
         
-        if (!passedSite) site.set(siteData)
-
-        // Fix posts that come in an hour ahead
-        posts.posts = fixHourAheadPosts(posts.posts)
+        site.set(siteData)
 
         // Filter the posts for keywords
         posts.posts = filterKeywords(posts.posts);
@@ -54,13 +43,12 @@ export async function load({ url, passedSite }: LoadParams) {
         posts.posts = addMBFCResults(posts.posts);
         
         // Only sort the first fetch. If a site object is passed, it can be used to indicate this is a re-fetch (which are sorted after being retrieved)
-        if (!passedSite) posts.posts = sortPosts(posts.posts, sort)
+        //if (!passedSite) posts.posts = sortPosts(posts.posts, sort)
 
         // Return the data to the frontend
         return {
             sort: sort,
             listingType: listingType,
-            page: page,
             posts: posts,
             site: siteData,
             type: listingType

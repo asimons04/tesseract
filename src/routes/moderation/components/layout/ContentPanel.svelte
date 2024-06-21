@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { PanelWidths, SidePanelTypes } from '../../lib/types'
+    import type { SidePanelTypes } from '../../lib/types'
 
     import { fly } from 'svelte/transition'
     

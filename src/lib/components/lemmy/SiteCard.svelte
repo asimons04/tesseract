@@ -50,10 +50,10 @@
 </script>
 
 <StickyCard class="{$$props.class}">
-    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, 384, 'webp') : undefined}>
-        <div class="flex flex-row gap-3 items-center p-3">
+    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, undefined, 'webp') : undefined}>
+        <div class="flex flex-row gap-3 items-start p-3">
             {#if site.site.icon}
-                <Avatar width={64} url={site.site.icon} alt={site.site.name} circle={false} />
+                <Avatar width={64} url={site.site.icon} alt={site.site.name} zoomable={true} fullRes={true} circle={false} />
             {/if}
             
             

@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from "$lib/components/input/Button.svelte";
+    import Card from "$lib/components/ui/Card.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte";
     import TextInput from "$lib/components/input/TextInput.svelte";
 
@@ -7,7 +8,7 @@
     import { profile, saveProfileToProfileData } from "$lib/auth";
     import { toast } from "$lib/components/ui/toasts/toasts";
 
-    import { Key } from "svelte-hero-icons";    
+    import { Icon, ExclamationTriangle, Key } from "svelte-hero-icons";    
     
     export let open:boolean = false
 
@@ -52,7 +53,6 @@
                 old_password: oldPassword,
                 new_password: newPassword,
                 new_password_verify: newPassword2,
-                auth: $profile.jwt
             })
 
             
@@ -66,7 +66,7 @@
                     content:' Password successfully changed.'
                 })
                 changingPassword = false
-                open = false
+                close()
             }
             else {
                 throw new Error('New JWT was not returned from API');
@@ -82,23 +82,37 @@
         }
 
     }
+
+    function close() {
+        oldPassword = ''
+        newPassword = ''
+        newPassword2 = ''
+        open = false
+    }   
 </script>
 
 
-<Modal bind:open icon={Key} title="Change Password">
+<Modal bind:open icon={Key} title="Change Password" width="max-w-2xl" on:close={() => close()}>
     <form class="flex flex-col gap-4" autocomplete="off">
         
-        <span class="font-normal text-base">
-            Note that changing your password will log you out of any other active sessions. This session will be updated automatically, but 
-            you will need to remove and re-add the account on those devices to log back in.
-        </span>
+        <Card cardColor="warning">
+            <div class="flex flex-row gap-2 items-center p-2">
+                <span>
+                    <Icon src={ExclamationTriangle} mini width={24}/>
+                </span>
+                <span class="font-normal text-sm">
+                    Note that changing your password will log you out of any other active sessions. This session will be updated automatically, but 
+                    you will need to login again on any other devices/sessions.
+                </span>
+            </div>
+        </Card>
 
         <TextInput label="Old Password" autocomplete="current-password" type="password" bind:value={oldPassword} />
         <TextInput label="New Password" autocomplete="new-password"type="password" bind:value={newPassword} />
         <TextInput label="Confirm New Password" autocomplete="new-password" type="password" bind:value={newPassword2} />
 
         <div class="flex flex-row justify-between mt-4">
-            <Button color="primary" size="lg" on:click={() => open=false}>Cancel</Button>
+            <Button color="danger" size="lg" on:click={() => open=false}>Cancel</Button>
             <Button color="primary" size="lg" loading={changingPassword} on:click={async () => await changePassword()}>Change Password</Button>
         </div>
     </form>

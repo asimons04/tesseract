@@ -5,11 +5,11 @@
     
     import { imageProxyURL } from '$lib/image-proxy'
     import {isImage, postType as identifyPostType} from './helpers.js'
-    import { removeURLParams, scrollToTop } from './helpers.js'
+    import { scrollToTop } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
-
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import Link from '$lib/components/input/Link.svelte'
@@ -17,6 +17,7 @@
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
+    
 
     export let post: PostView
     export let actions: boolean = true
@@ -80,13 +81,14 @@
             <PostTitle bind:post />
 
             {#if post.post.url && !isImage(post.post.url)}
-            <span class="flex flex-row w-full gap-4 items-center">
-                <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-            
+            <span class="flex flex-row flex-wrap w-full gap-2">
+                
                 <!---Show archive link if not a media post--->
-                {#if postType == "link" || postType == "thumbLink"}
-                    <Link class="text-xs" href="https://archive.ph/{removeURLParams(post.post.url)}" newtab={$userSettings.openInNewTab.links} title="Archive Link" domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap text="[Archive Link]"/>
+                {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
+                    <ArchiveLinkSelector url={post.post?.url} {postType}/>
                 {/if}
+                
+                <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
             </span>
             {/if}
             

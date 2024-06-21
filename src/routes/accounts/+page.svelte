@@ -50,6 +50,7 @@
         Plus,
         Trash,
     } from 'svelte-hero-icons'
+    import Avatar from '$lib/components/ui/Avatar.svelte';
     
     
     
@@ -127,18 +128,13 @@
                 {#each $profileData.profiles as profile, index (profile.id)}
                     <div class="flex flex-row gap-2 items-center py-4" animate:flip={{ duration: 250, easing: expoOut }} >
                         <div class="flex items-center gap-2">
-                            <div class="relative group flex-col items-center">
-                                <ProfileAvatar {profile} {index} selected={$currentProfile?.id == profile.id} size={24} />
-
-                                <div
-                                    class="absolute top-0 left-0 w-full h-full opacity-0 grid group-hover:opacity-100 z-20 place-items-center
-                                    bg-slate-200 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-full transition-all"
-                                >
-                                    <Icon src={PaintBrush} mini size="14" />
-                                </div>
-                                
-                                <input type="color" class="opacity-0 absolute top-0 left-0 h-full w-full rounded-full cursor-pointer z-30" bind:value={profile.color}/>
-                            </div>
+                            
+                            {#if profile.avatar}
+                                <Avatar url={profile.avatar} ring={$currentProfile?.id == profile.id} width={36} />
+                            {:else}
+                                <ProfileAvatar bind:profile {index} selected={$currentProfile?.id == profile.id} size={36} canSetColor={true}/>
+                            {/if}
+                            
 
                             <div class="flex flex-col">
                                 <span class="font-bold">{profile.username}</span>
@@ -183,7 +179,7 @@
                             {/if}
                         </Menu>
 
-                        <Button color={profile.id == $currentProfile?.id ? 'primary' : 'secondary'}
+                        <Button color={profile.id == $currentProfile?.id ? 'primary' : 'tertiary-border'}
                             on:click={async () => {
                                 if (profile.id == $currentProfile?.id) {
                                     setUserID(-1)
@@ -206,16 +202,17 @@
                 <!---Guest Instance Selection--->
                 <div class="flex flex-row gap-4 items-center py-4">
 
-                    <div class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined}>
+                    <form class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined} on:submit|preventDefault={changeGuestInstance}>
                         <TextInput placeholder="Instance URL" label="Guest instance" bind:value={newInstance}  disabled={LINKED_INSTANCE_URL != undefined} />
-                        <Button color="primary" {loading} disabled={loading || LINKED_INSTANCE_URL != undefined} class="h-8 self-end" on:click={changeGuestInstance}>
+                        
+                        <Button submit color="tertiary-border" {loading} disabled={loading || LINKED_INSTANCE_URL != undefined} class="h-8 self-end" >
                             Change
                         </Button>
-                    </div>
+                    </form>
 
                     <div class="ml-auto" />
                     
-                    <Button color={$currentProfile?.id == -1 ? 'primary' : 'secondary'} on:click={async () => {
+                    <Button color={$currentProfile?.id == -1 ? 'primary' : 'tertiary-border'} on:click={async () => {
                             setUserID(-1)
                             await validateInstance($profileData.defaultInstance ?? DEFAULT_INSTANCE_URL, true)
                         }}
@@ -226,7 +223,7 @@
 
                 <!--Add more button--->
                 <div class="flex w-full py-4">
-                    <Button href="/login" size="lg" class="w-full">
+                    <Button href="/login" size="lg" class="w-full" color="tertiary-border">
                         <Icon slot="icon" src={Plus} size="16" mini />
                             Add more
                     </Button>

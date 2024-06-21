@@ -12,6 +12,7 @@
     import { DEFAULT_INSTANCE_URL, LINKED_INSTANCE_URL } from '$lib/instance.js'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
+    import { instance } from '$lib/instance.js';
     import { page } from '$app/stores'
     import { setUser } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -43,9 +44,9 @@
             })
 
             if (response?.jwt) {
+                $instance = formData.instance
                 await setUser(response.jwt, formData.instance)
-
-                toast({ content: 'Successfully logged in.', type: 'success' })
+                toast({ content: 'Successfully logged in.', type: 'success', title: 'Logged In' })
                 goto('/')
             } else {
                 throw new Error('Invalid credentials')
@@ -54,6 +55,7 @@
             toast({
                 content: error as any,
                 type: 'error',
+                title: 'Login Error'
             })
         }
         formData.loading = false

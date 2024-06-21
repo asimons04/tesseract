@@ -39,21 +39,23 @@ export const addSubscription = (community: Community, subscribe: boolean = true)
 export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
     trycatch(async () => {
             const user = await getClient().resolveObject({
-            auth: jwt,
             q: handle,
         })
 
         if (!user.person) throw new Error('No user found')
 
         return await getClient().addAdmin({
-            auth: jwt,
             added: true,
             person_id: user.person.person.id,
         })
     })
 
 
-export const blockUser = async function (personID: number, confirm:boolean=false):Promise<void> {
+export const blockUser = async function (personID: number, confirm:boolean=false, block?:boolean):Promise<boolean> {
+    const userProfile = get(profile)
+    if (!userProfile?.user || !userProfile?.jwt) throw new Error('Unauthenticated')
+    const blocked = isBlocked(userProfile.user, personID)
+    
     if (!confirm) {
         toast({
             title: "Confirmation",
@@ -61,22 +63,16 @@ export const blockUser = async function (personID: number, confirm:boolean=false
             type: "warning",
             action: async () => await blockUser(personID, true)
         })
-        return
+        return false
     }
     else {
         try {
-            const userProfile = get(profile)
-            if (!userProfile?.user || !userProfile?.jwt) throw new Error('Unauthenticated')
-
-            const blocked = isBlocked(userProfile.user, personID)
-
-            await getClient().blockPerson({
-                auth: userProfile.jwt,
-                block: !blocked,
+            let blockResponse = await getClient().blockPerson({
+                block: block ?? !blocked,
                 person_id: personID,
             })
 
-            if (blocked) {
+            if (blockResponse?.blocked) {
                 const index = userProfile.user.person_blocks
                     .map((p) => p.target.id)
                     .indexOf(personID)
@@ -85,23 +81,19 @@ export const blockUser = async function (personID: number, confirm:boolean=false
             
             toast({
                 title: "Succcess",
-                content: `Successfully ${blocked ? 'unblocked' : 'blocked'} that user.`,
+                content: `Successfully ${blockResponse.blocked ? 'blocked' : 'unblocked'} that user.`,
                 type: 'success',
             })
 
-            return
-
-            // Refresh the page to effect the change in block status
-            //goto(window.location.href, {
-            //    invalidateAll: true,
-            //})
+            return blockResponse.blocked
 
         } catch (err) {
             toast({
                 content: err as any,
                 type: 'error',
+                title: 'Error'
             })
-            return
+            return blocked
         }
     }
 }

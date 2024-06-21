@@ -46,7 +46,6 @@
 
         try {
             await getClient().createPrivateMessage({
-                auth: $profile.jwt,
                 content: reply,
                 recipient_id: message.creator.id,
             })
@@ -80,21 +79,18 @@
 
         if ('person_mention' in item) {
             await getClient().markPersonMentionAsRead({
-                auth: $profile?.jwt,
                 person_mention_id: item.person_mention.id,
                 read: isRead,
             })
         } 
         else if ('comment_reply' in item) {
             await getClient().markCommentReplyAsRead({
-                auth: $profile?.jwt,
                 comment_reply_id: item.comment_reply.id,
                 read: isRead,
             })
         }
         else if ('private_message' in item) {
             await getClient().markPrivateMessageAsRead({
-                auth: $profile?.jwt,
                 private_message_id: item.private_message.id,
                 read: isRead
             })
@@ -108,8 +104,8 @@
 
 <ReportModal bind:open={reporting} bind:item={item} />
 
-<Card elevation={0} class="flex flex-col rounded-md p-5 max-w-full gap-2">
-    <!---{#if !isPrivateMessage(item)}--->
+<Card class="flex flex-col rounded-md p-3 flex-1 max-w-full gap-1">
+
     {#if 'person_mention' in item || 'comment_reply' in item}
         <PostMeta post={item}/>
         
