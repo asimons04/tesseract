@@ -84,7 +84,7 @@
             {#if site}
                 <div class="flex flex-col md:flex-row gap-3 items-center p-3">
                     {#if site.icon}
-                        <Avatar width={64} url={site.icon} alt={site.name} circle={false} />
+                        <Avatar width={64} fullRes url={site.icon} alt={site.name} circle={false} />
                     {/if}
                             
                     <div class="flex flex-col w-full">
