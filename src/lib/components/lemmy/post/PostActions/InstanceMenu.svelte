@@ -1,7 +1,8 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     
-    import { getClient,  site } from '$lib/lemmy'
+    import { federationStateModal, fediseerModal } from '$lib/components/lemmy/moderation/moderation'
+    import { getClient } from '$lib/lemmy'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
@@ -9,10 +10,8 @@
     import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
-    import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import FederationStateModal from '../../modal/FederationStateModal.svelte'
 
     import {
         Icon,
@@ -26,27 +25,7 @@
     export let post:PostView
     
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
-
-    let fediseer = {
-        instance: '',
-        modal: false
-    }
-
-    let federationStateModal = {
-        domain: '',
-        open: false
-    }
-    function openFediseerModal(instance:string):void {
-        fediseer.instance = instance;
-        fediseer.modal = true;
-    }
-
-    function openFederationStateModal(instance:string):void {
-        federationStateModal.domain = instance
-        federationStateModal.open = true
-    }
-
-    
+   
     let blockingInstance = false;
     async function doBlockInstance(instance_id:number, hostname:string, confirm:boolean=false):Promise<void> {
         if (!confirm) {
@@ -84,14 +63,7 @@
     }
 </script>
 
-<!---Note: Needs to be inside if block so it is mounted/destroyed on each invocation--->
-{#if fediseer.modal}
-    <Fediseer bind:open={fediseer.modal} instance={fediseer.instance} />
-{/if}
 
-{#if federationStateModal.open}
-    <FederationStateModal bind:open={federationStateModal.open} domain={federationStateModal.domain} />
-{/if}
 
 <!---Explore Menu--->
 <Menu alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}" containerClass="overflow-auto">
@@ -109,14 +81,14 @@
     <!---Actions for the instance the post was submitted to--->
     <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>
     
-    <MenuButton title="Fediseer Info" color="info" on:click={async (e) => openFediseerModal(new URL(post.community.actor_id).hostname)} >
+    <MenuButton title="Fediseer Info" color="info" on:click={async (e) => fediseerModal(new URL(post.community.actor_id).hostname)} >
             <Icon src={Eye} width={16} mini />
             <span>Fediseer</span>
     </MenuButton>
 
     {#if new URL(post.community.actor_id).hostname != $profile?.instance}
     <MenuButton title="Federation Stats for {new URL(post.community.actor_id).hostname}" color="info" 
-        on:click={async () => openFederationStateModal(new URL(post.community.actor_id).hostname) }
+        on:click={() => federationStateModal(new URL(post.community.actor_id).hostname) }
     >
         <Icon src={Server} width={16} mini />
         <span>Federatation Stats</span>
@@ -149,7 +121,7 @@
         <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{(new URL(post.creator.actor_id).hostname)}</li>    
         
         <MenuButton title="Fediseer Info" color="info"
-            on:click={async (e) => openFediseerModal(new URL(post.creator.actor_id).hostname)}
+            on:click={async (e) => fediseerModal(new URL(post.creator.actor_id).hostname)}
         >
                 <Icon src={Eye} width={16} mini />
                 <span>Fediseer</span>
@@ -157,7 +129,7 @@
 
         {#if new URL(post.creator.actor_id).hostname != $profile?.instance}
         <MenuButton title="Federation Stats for {new URL(post.creator.actor_id).hostname}" color="info" 
-            on:click={async () => openFederationStateModal(new URL(post.creator.actor_id).hostname) }
+            on:click={() => federationStateModal(new URL(post.creator.actor_id).hostname) }
         >
             <Icon src={Server} width={16} mini />
             <span>Federation Stats</span>
