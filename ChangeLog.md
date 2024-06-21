@@ -7,7 +7,7 @@ This is the first release which completely drops "legacy" support for 0.18.x and
 
 None of the 0.19.4 features are implemented yet.  Updating my instance to 0.19.4 is not on my priority list at the moment.
 
-One thing 0.19.4 did, which is _incredibly stupid_, is federate out the proxied image URLs rather than do image proxying sanely by rewriting the URLs via the API for local users.  This completely broke both Tesseract's proxying and certain instances of its post-type detection when those dumbass proxied URLs are encoutered.  To work around that, I'm simply unproxying them, running the detections, and then fetching the images directly (or optionally through Tesseract's proxy/cache). 
+One thing 0.19.4 did, which is _incredibly stupid_, is federate out the proxied image URLs rather than do image proxying sanely by rewriting the URLs via the API for local users.  This completely broke both Tesseract's proxying and certain instances of its post-type detection when those dumbass proxied URLs are encoutered.  To work around that, I'm simply unproxying them, running the detections, and then fetching the images directly (or optionally through Tesseract's sanely-implemented proxy/cache if configured and enabled). 
 
 They said that feature was "experimental", so I sincerely hope they realize how fscking stupid their implementation is and change it in the next release (but knowing them, they'll probably double down and make it worse.).
 
@@ -18,7 +18,7 @@ Anyway, here's what's new and improved:
 #### Zoomable Images
 Most images are now zoomable:  post images, user/site/community avatars, images posted in comments, etc.  
 
-All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch. The pinch zoom isn't *quite* where I want it, it's a start.  If anyone wants to contribute some code for improving that, please let me know.  
+All the pan/zoom libraries I tried *suuuuuuucked*, so I ended up rolling my own from scratch. The pinch zoom isn't *quite* where I want it, but it's a start.  If anyone wants to contribute some code for improving that, please let me know.  
 
 - Support zoom, pan, and rotate
     - Mouse scroll to zoom
@@ -60,8 +60,8 @@ Actions include:
 #### Image Management on  Posts/Comments
 - Images can be pasted in the post's URL field as well as in the markdown editor.  
 - Images can optionally be pre-processed to webP along with a user-selectable quality level. Especially useful if your instance limits the size of uploads
-- Can delete post images (only before you save the post; unfortunately there's no way to retrieve the delete token after that even though it is stored in the DB. Yet another dumbass API limitation :sigh:)
-    - This is addressed in 0.19.4, but I don't have support for that yet as I'm not planning to upgrade my instance in the near future.
+- Can delete post images (only before you save the post; unfortunately there's no way to retrieve the delete token after that even though it is stored in the DB. Yet another API limitation :sigh:)
+    - This is addressed in 0.19.4, but I don't have support for that yet.
 - Images pasted/uploaded into the markdown editor are tracked in a bar along the bottom of the editor. Individual images can be deleted as needed along with the corresponding markdown code for them.
 
 
@@ -71,6 +71,8 @@ In App Settings -> Filters, you can now opt to hide posts/comments made by new u
 This setting behaves differently for mods and admins:
 - **Mods**:  Filter will be applied to all posts/comments _except_ in communities of which you are a moderator. 
 - **Admins**:  Filter will be applied to all posts/coments _except_ those made to communities local to your instance or those made to remote communities of which you are a moderator.
+
+Comments made by new users will be hidden, and that includes any replies (essentially behaves the same way as blocked users)
 
 #### Federation State Viewer
 From the instances menu on a post, there's a new option called "Federation Stats" which will show you the stats from your instance to the target _and_ from the target to your instance.  Also included in that is an estimated cacluation of the number of activities each instance is behind (useful for troubleshooting federation delays).
@@ -119,6 +121,8 @@ These will be combined with the built-in list and the admin-extended list and be
 Be aware that those custom instances will only render as embeds for you; they will be thumbnails for anyone else who hasn't added them to Tesseract.  If you feel that instance should be added to Tesseract's built-in list, please submit a Github issue with the details.
 
 Tesseract is pre-populated with the official list of public instances for each, but it can get out of date easily.
+
+**Note**:  As of 6/20/2024, I've noticed a lot of Invidious/Piped instances are now requiring login, and embeds through them no longer work.  I believe if you have an account with one, log in, and enable 3rd party cookies for that domain, the embeds _should_ work.  I have not tried that, but it does work with Spotify.  This isn't a Tesseract bug, unfortunately, or I'd fix it.  
 
 #### Can Disable Infinite Scroll if you Want
 If you're not a fan of the infinite scroll, you can go to App Settings -> Feed and disable infinite scroll.  
