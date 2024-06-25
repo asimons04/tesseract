@@ -6,6 +6,10 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - Modlog action menus clipping
 
+### General Changes
+- Remove Fediseer badge option for posts (rarely used and accessible via Instance menu and from instances page)
+
+
 
 ## 1.4.0
 This is the first release which completely drops "legacy" support for 0.18.x and below.  The minimum required API level is now 0.19.3 (though it will work with any 0.19.x series, there will be broken features that require 0.19.3).

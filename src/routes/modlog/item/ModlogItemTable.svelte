@@ -142,7 +142,7 @@
 {/if}
 
 
-<div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full overflow-hidden" >
+<div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full" >
     
     <!---Date/time column--->
     <div class="flex flex-row gap-2 text-xs w-full lg:w-[5%]">

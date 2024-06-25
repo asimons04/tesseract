@@ -104,7 +104,6 @@ interface Settings {
         feedMargins:boolean
         postsPerPage: number
         maxScrollPosts: number
-        fediseerBadges: boolean
         MBFCBadges: boolean
         showInstances: boolean
         showFullURL: boolean
@@ -136,7 +135,7 @@ interface Settings {
 
 // Default settings
 export const defaultSettings: Settings = {
-    version: 0.9,
+    version: 10,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -163,7 +162,6 @@ export const defaultSettings: Settings = {
         feedMargins:                                                    true,
         postsPerPage:                                                   20,
         maxScrollPosts:                                                 100,
-        fediseerBadges: toBool(env.PUBLIC_ENABLE_FEDISEER_BADGES)       ?? false,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,
         showInstances:                                                  true,
         showFullURL:                                                    false,
@@ -453,6 +451,11 @@ export function migrateSettings(old:any) {
     if (old.version == 0.8) {
         delete old.embeddedMedia.enabledSources
         old.version = 0.9
+    }
+
+    if (old.version == 0.9) {
+        delete old.uiState.fediseerBadges;
+        old.version = 10
     }
 
     return { 

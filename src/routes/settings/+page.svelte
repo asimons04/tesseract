@@ -568,14 +568,6 @@
                 description="Filter out those obnoxious 'CC BY-NC-SA 4.0' licenses on posts/comments that people somehow think will prevent LLMs from training on their submissions."
             />
 
-            
-
-            <!---Fediseer Badges--->
-            <SettingToggle title="Fediseer Badges" icon={Eye} bind:value={$userSettings.uiState.fediseerBadges}
-                description="Show Fediseer badges on post cards"
-            />
-                    
-
             <!---MBFC Badges--->
             <SettingToggle title="Media Bias Fact Check Badges" icon={CheckBadge} bind:value={$userSettings.uiState.MBFCBadges}
                 description="Show badges on posts with URLs to check them against the Media Bias Fact Check dataset."

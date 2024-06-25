@@ -41,7 +41,6 @@
     export let post: PostView | CommentReplyView | PersonMentionView             
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
-    export let showFediseer:boolean             = true;
     export let collapseBadges:boolean           = false;
     export let hideBadges:boolean               = false;
     export let avatarSize:number                = 48;
@@ -181,19 +180,6 @@
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
                     </Badge>
                 {/if}
-
-                <!--- Fediseer Endorsement Badge--->
-                {#if post.community && showFediseer && $userSettings.uiState.fediseerBadges}
-                    <button class="flex flex-row gap-2 items-center mr-2" on:click={(e) => fediseerModal = true}>
-                        <img src={imageProxyURL(`https://fediseer.com/api/v1/badges/endorsements/${new URL(post.community.actor_id).hostname}.svg?style=ICON`)} 
-                            class="cursor-pointer"
-                            loading="lazy"
-                            alt="{`Fediseer endorsement badge for ${new URL(post.community.actor_id).hostname}`}"
-                            title="{`Fediseer endorsements for ${new URL(post.community.actor_id).hostname}`}"
-                        />
-                    </button>
-                {/if}
-
                 
             </div>
             {/if}
