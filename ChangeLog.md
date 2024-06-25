@@ -4,7 +4,7 @@ All major/minor changes between releases will be documented here.
 ## 1.4.1
 
 ### Bugfixes
-- Modlog action menus clipping
+- Fixed modlog action menus clipping
 
 ### General Changes
 - Remove Fediseer badge option for posts (rarely used and accessible via Instance menu and from instances page)
