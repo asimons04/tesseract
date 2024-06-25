@@ -1,6 +1,11 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.1
+
+### Bugfixes
+- Modlog action menus clipping
+
 
 ## 1.4.0
 This is the first release which completely drops "legacy" support for 0.18.x and below.  The minimum required API level is now 0.19.3 (though it will work with any 0.19.x series, there will be broken features that require 0.19.3).
