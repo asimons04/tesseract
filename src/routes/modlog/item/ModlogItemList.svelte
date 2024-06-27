@@ -157,26 +157,35 @@
                 <li class="flex flex-nowrap gap-1"><strong>Date:</strong> {new Date(item.timestamp).toLocaleString()}</li>
                 
                 {#if !hideCommunity && item.community}
-                    <li class="flex flex-nowrap gap-1"><strong>Community:</strong> <CommunityLink community={item.community} showInstance boldCommunityName={false} />
+                    <li class="flex flex-nowrap gap-1">
+                        <strong>Community:</strong>
+                        <CommunityLink bind:community={item.community} showInstance boldCommunityName={false} />
+                    </li>
                 {/if}
 
                 {#if item.moderator}
-                    <li class="flex flex-nowrap gap-1"><strong>Mod:</strong> <UserLink showInstance={true} user={item.moderator} />
+                    <li class="flex flex-nowrap gap-1">
+                        <strong>Mod:</strong> 
+                        <UserLink showInstance={true} bind:user={item.moderator} />
+                    </li>
                 {/if}
 
                 {#if item.moderatee}
-                    <li class="flex flex-nowrap gap-1"><strong>User:</strong> <UserLink showInstance={true} user={item.moderatee} />
+                    <li class="flex flex-nowrap gap-1">
+                        <strong>User:</strong>
+                        <UserLink showInstance={true} bind:user={item.moderatee} />
+                    </li>
                 {/if}
 
                 {#if item.link || item.content}
                     <li class="flex flex-nowrap gap-1">
                         <strong>Item:</strong>
                         {#if item.link && item.content}
-                            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}>{item.content}</Link>
+                            <Link bind:href={item.link} highlight newtab={$userSettings.openInNewTab.links}>{item.content}</Link>
                         {:else if item.content}
                             {item.content}
                         {:else if item.link}
-                            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
+                            <Link bind:href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
                         {/if}
                     </li>
                 {/if}

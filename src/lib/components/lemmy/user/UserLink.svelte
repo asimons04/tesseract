@@ -47,9 +47,7 @@
     async function getPersonDetails() {
         loadingPersonDetails = true
         try {
-            personDetails = personDetails 
-                ? personDetails
-                : await getClient().getPersonDetails({
+            personDetails = await getClient().getPersonDetails({
                     username: `${user.name}@${new URL(user.actor_id).hostname}`,
                     limit: 1,
                     sort: 'New'

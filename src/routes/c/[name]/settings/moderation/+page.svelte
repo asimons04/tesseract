@@ -211,7 +211,7 @@
                         ].includes(modlogItem.actionName)
                     }
                         <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
-                            <ModlogItemList item={modlogItem} hideCommunity={true} />
+                            <ModlogItemList bind:item={modlogItem} hideCommunity={true} />
                         </div>
                     {/if}
 
