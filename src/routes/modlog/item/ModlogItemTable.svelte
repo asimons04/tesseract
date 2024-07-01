@@ -145,13 +145,13 @@
 <div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full" >
     
     <!---Date/time column--->
-    <div class="flex flex-row gap-2 text-xs w-full lg:w-[5%]">
+    <div class="flex flex-row gap-2 px-1 text-xs w-full lg:w-[5%]">
         <span class="lg:hidden text-xs font-bold">When:</span>
         <RelativeDate date={item.when} />
     </div>
 
     <!---Community--->
-    <div class="flex flex-row gap-1 text-xs w-full lg:w-[15%] items-center">
+    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[15%] items-center">
         {#if item.community}
             <span class="flex flex-row gap-2 items-center w-full">
                 <span class="lg:hidden text-xs font-bold">Community:</span>
@@ -176,7 +176,7 @@
     
     <!---Moderator--->
     {#if $profile?.user}
-        <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
+        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] items-center">
             {#if item.moderator}
             <span class="flex flex-row gap-2 items-center w-full">    
                 <span class="lg:hidden text-xs font-bold">Mod:</span>
@@ -201,7 +201,7 @@
     {/if}
 
     <!---Moderatee / user --->
-    <div class="flex flex-row gap-1 text-xs w-full lg:w-[20%] items-center">
+    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] items-center">
         {#if item.moderatee}
         <span class="flex flex-row gap-2 items-center w-full">        
             <span class="lg:hidden text-xs font-bold">User:</span>
@@ -228,146 +228,138 @@
 
 
     <!---Details--->
-    <div class="flex flex-row gap-1 text-xs w-full {$profile?.user ? 'lg:w-[40%]' : 'lg:w-[60%]'}">
-            <div class="flex flex-col gap-2 text-xs w-full">
-                <ModlogAction action={item.actionName} expires={item.expires} />
+    <div class="flex flex-row gap-1 px-1 text-xs w-full {$profile?.user ? 'lg:w-[40%]' : 'lg:w-[60%]'}">
+        <div class="flex flex-col gap-2 text-xs w-[90%]">
+            <ModlogAction action={item.actionName} expires={item.expires} />
 
-                <ul class="pl-4 text-xs">
-                    {#if item.expires}
-                        <li class="flex flex-nowrap gap-1">
-                            <strong>Expires</strong>: {new Date(item.expires).toLocaleDateString()}
-                        </li>
-                    {/if}
+            <span class="text-xs">
+                {#if item.expires}
+                    <span class="flex flex-nowrap gap-1">
+                        <strong>Expires</strong>: {new Date(item.expires).toLocaleDateString()}
+                    </span>
+                {/if}
 
-                    {#if item.reason}
-                        <li class="flex flex-nowrap gap-1">
-                            <strong>Reason:</strong> {item.reason}
-                        </li>
-                    {/if}
+                {#if item.reason}
+                    <span class="flex flex-nowrap gap-1">
+                        <strong>Reason:</strong> {item.reason}
+                    </span>
+                {/if}
 
-                    {#if item.link || item.content}
-                        <li class="flex flex-nowrap gap-1">
-                            <strong>Item:</strong>
-                            {#if item.link && item.content}
-                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links} title={item.content}> {item.content.substring(0, 250)} </Link>
-                            {:else if item.content}
-                                <span title="{item.content}">{item.content.substring(0,250)}</span>
-                            {:else if item.link}
-                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
-                            {/if}
-                        </li>
-                    {/if}
-                </ul>
-            </div>
-
-            <!---Action Menu for mods/admins --->
-            {#if item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community))) }
-                <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
-                
-                    <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">
-                        <Icon src={Bars3} mini size="16" slot="icon" />
-                    </Button>
-
-                    <!---Items Available for Entries with a Moderatee--->
-                    {#if item.moderatee}
-
-                        <!---Ban/Unban Community--->
-                        {#if item.community}
-                            <MenuButton title="{item.actionName=='banCommunity' ? 'Unban Community' : 'Ban Community'}" on:click={() => banningCommunity = true}>    
-                                <Icon mini width={14} src={ShieldExclamation} />
-                                {item.actionName=='banCommunity' ? 'Unban Community' : 'Ban Community'}
-                            </MenuButton>
+                {#if item.link || item.content}
+                    <span class="flex flex-nowrap gap-1 overflow-hidden">
+                        <strong>Item:</strong>
+                        {#if item.link && item.content}
+                            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links} title={item.content}> {item.content.substring(0, 250)} </Link>
+                        {:else if item.content}
+                            <span title="{item.content}">{item.content.substring(0,250)}</span>
+                        {:else if item.link}
+                            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
                         {/if}
-                        
-                        <!---Ban/Unban Instance--->
-                        {#if item.moderatee && isAdmin($profile?.user)}
-                            <MenuButton title="{item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}" on:click={() => banningInstance = true}>
-                                <Icon mini width={14} src={ShieldExclamation} />
-                                {item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}
-                            </MenuButton>
-                        {/if}
+                    </span>
+                {/if}
+            </span>
+        </div>
 
-                        <!---Convert Temp Instance Ban to Permanent--->
-                        {#if item.moderatee && isAdmin($profile?.user) && item.moderatee.banned && item.expires}
-                            <MenuButton title="Ban Permanently From Instance" on:click={() => {
-                                if (item.moderatee) {
-                                    // Temporarily set to not banned so the modal will react properly
-                                    item.moderatee.banned = false
-                                    banningInstance = true
-                                }
-                            }}>
-                                <Icon mini width={14} src={ShieldExclamation} />
-                                Ban Permanently
-                            </MenuButton>
-                        {/if}
+        <!---Action Menu for mods/admins --->
+        {#if item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community))) }
+            <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
+            
+                <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">
+                    <Icon src={Bars3} mini size="16" slot="icon" />
+                </Button>
+
+                <!---Items Available for Entries with a Moderatee--->
+                {#if item.moderatee}
+
+                    <!---Ban/Unban Community--->
+                    {#if item.community}
+                        <MenuButton title="{item.actionName=='banCommunity' ? 'Unban Community' : 'Ban Community'}" on:click={() => banningCommunity = true}>    
+                            <Icon mini width={14} src={ShieldExclamation} />
+                            {item.actionName=='banCommunity' ? 'Unban Community' : 'Ban Community'}
+                        </MenuButton>
+                    {/if}
+                    
+                    <!---Ban/Unban Instance--->
+                    {#if item.moderatee && isAdmin($profile?.user)}
+                        <MenuButton title="{item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}" on:click={() => banningInstance = true}>
+                            <Icon mini width={14} src={ShieldExclamation} />
+                            {item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}
+                        </MenuButton>
                     {/if}
 
-                    <!---Actions Available for Post Remove/Restore Actions--->
-                    {#if item.post && item.community}
-
-                        <!---Lock/Unlock Post Button--->
-                        <MenuButton title="{item.post.locked ? 'Unlock' : 'Lock'}" on:click={async () => {
-                            if (!item.post) return
-                            item.post.locked = await lock(item.post, !item.post.locked)
-                            goto(window.location.href, {invalidateAll: true })
+                    <!---Convert Temp Instance Ban to Permanent--->
+                    {#if item.moderatee && isAdmin($profile?.user) && item.moderatee.banned && item.expires}
+                        <MenuButton title="Ban Permanently From Instance" on:click={() => {
+                            if (item.moderatee) {
+                                // Temporarily set to not banned so the modal will react properly
+                                item.moderatee.banned = false
+                                banningInstance = true
+                            }
                         }}>
-                            <Icon mini width={14} src={item.post.locked ? LockOpen : LockClosed} />
-                            {item.post.locked ? 'Unlock Post' : 'Lock Post'}
-                        </MenuButton>
-                        
-                        <!---Remove/Restore Post Button-->
-                        <MenuButton title="{item.post.removed ? 'Restore' : 'Remove'}"  on:click={async () => {removing = true}}>
-                            <Icon mini width={14} src={item.post.removed ? ArrowUpTray : Trash} />
-                            {item.post.removed ? 'Restore Post' : 'Remove Post'}
-                        </MenuButton>
-
-                        <!---Unfeature Post on Instance Button-->
-                        {#if isAdmin($profile?.user) && item.post.featured_local }
-                            <MenuButton title="Unpin Local" on:click={async () => {
-                                if (item.post) {
-                                    await pin(item.post, false, true)
-                                    goto(window.location.href, {invalidateAll: true})
-                                }
-                            }}>
-                                <Icon mini width={14} src={Megaphone} />
-                                Unpin Local
-                            </MenuButton>
-                        {/if}
-
-                        <!---Unfeature Post in Community Button-->
-                        {#if amMod($profile?.user, item.community) && item.post.featured_community}
-                            <MenuButton title="Unpin Community" on:click={async () => {
-                                if (item.post) {
-                                    await pin(item.post, false, false)
-                                    goto(window.location.href, {invalidateAll: true})
-                                }
-                            }}>
-                                <Icon mini width={14} src={Megaphone} />
-                                Unpin Community
-                            </MenuButton>
-                        {/if}
-                    {/if}
-
-                    <!---Actions Available for Comment Remove/Restore Actions--->
-                    {#if item.comment}
-                        <!---Remove/Restore Post Button-->
-                        <MenuButton title="{item.comment.removed ? 'Restore Comment' : 'Remove Comment'}" on:click={async () => {removingComment = true}}>
-                            <Icon mini width={14} src={item.comment.removed ? ArrowUpTray : Trash} />
-                            {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}
+                            <Icon mini width={14} src={ShieldExclamation} />
+                            Ban Permanently
                         </MenuButton>
                     {/if}
-                </Menu>
-                
+                {/if}
 
-            {/if}
-            
-            
-                
-            
-        
-            
+                <!---Actions Available for Post Remove/Restore Actions--->
+                {#if item.post && item.community}
+
+                    <!---Lock/Unlock Post Button--->
+                    <MenuButton title="{item.post.locked ? 'Unlock' : 'Lock'}" on:click={async () => {
+                        if (!item.post) return
+                        item.post.locked = await lock(item.post, !item.post.locked)
+                        goto(window.location.href, {invalidateAll: true })
+                    }}>
+                        <Icon mini width={14} src={item.post.locked ? LockOpen : LockClosed} />
+                        {item.post.locked ? 'Unlock Post' : 'Lock Post'}
+                    </MenuButton>
+                    
+                    <!---Remove/Restore Post Button-->
+                    <MenuButton title="{item.post.removed ? 'Restore' : 'Remove'}"  on:click={async () => {removing = true}}>
+                        <Icon mini width={14} src={item.post.removed ? ArrowUpTray : Trash} />
+                        {item.post.removed ? 'Restore Post' : 'Remove Post'}
+                    </MenuButton>
+
+                    <!---Unfeature Post on Instance Button-->
+                    {#if isAdmin($profile?.user) && item.post.featured_local }
+                        <MenuButton title="Unpin Local" on:click={async () => {
+                            if (item.post) {
+                                await pin(item.post, false, true)
+                                goto(window.location.href, {invalidateAll: true})
+                            }
+                        }}>
+                            <Icon mini width={14} src={Megaphone} />
+                            Unpin Local
+                        </MenuButton>
+                    {/if}
+
+                    <!---Unfeature Post in Community Button-->
+                    {#if amMod($profile?.user, item.community) && item.post.featured_community}
+                        <MenuButton title="Unpin Community" on:click={async () => {
+                            if (item.post) {
+                                await pin(item.post, false, false)
+                                goto(window.location.href, {invalidateAll: true})
+                            }
+                        }}>
+                            <Icon mini width={14} src={Megaphone} />
+                            Unpin Community
+                        </MenuButton>
+                    {/if}
+                {/if}
+
+                <!---Actions Available for Comment Remove/Restore Actions--->
+                {#if item.comment}
+                    <!---Remove/Restore Post Button-->
+                    <MenuButton title="{item.comment.removed ? 'Restore Comment' : 'Remove Comment'}" on:click={async () => {removingComment = true}}>
+                        <Icon mini width={14} src={item.comment.removed ? ArrowUpTray : Trash} />
+                        {item.comment.removed ? 'Restore Comment' : 'Remove Comment'}
+                    </MenuButton>
+                {/if}
+            </Menu>
             
 
+        {/if}
     </div>
     
 
