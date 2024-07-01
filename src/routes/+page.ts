@@ -28,7 +28,7 @@ export async function load({ url, passedSite }: LoadParams) {
                 type_: listingType,
                 page_cursor: page_cursor,
             }),
-            passedSite ?? get(site) ?? getClient().getSite()
+            passedSite ?? getClient().getSite()
         ])
         
         site.set(siteData)
