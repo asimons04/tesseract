@@ -2,7 +2,7 @@
     import type { CommunityModeratorView, LocalUserView, PersonView } from 'lemmy-js-client'
 
     import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
-    import { isBlocked } from '$lib/lemmy/user.js'
+    import { isBlocked, blockUser } from '$lib/lemmy/user.js'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import {imageProxyURL} from '$lib/image-proxy'
@@ -50,48 +50,11 @@
     export let display = true
 
     $: is_admin = (person as PersonView).is_admin ?? (person as LocalUserView).local_user.admin ?? false
+    $: userBlocked = ($profile?.user && person) ? isBlocked($profile.user, person.person.id) : false
     
     let blocking = false
     let messaging = false
     let banning = false
-
-    async function blockUser(block: number) {
-        if (!$profile?.user || !$profile?.jwt) throw new Error('Unauthenticated')
-        blocking = true
-
-        try {
-            const blocked = isBlocked($profile.user, block)
-
-            await getClient().blockPerson({
-                block: !blocked,
-                person_id: block,
-            })
-
-            if (blocked) {
-                const index = $profile.user.person_blocks
-                    .map((p) => p.target.id)
-                    .indexOf(block)
-                $profile.user.person_blocks.splice(index, 1)
-            }
-            
-            toast({
-                content: `Successfully ${blocked ? 'unblocked' : 'blocked'} that user.`,
-                type: 'success',
-                title: 'Blocked'
-            })
-
-            goto($page.url, {
-                invalidateAll: true,
-            })
-        } catch (err) {
-            toast({
-                content: err as any,
-                type: 'error',
-                title: 'Error'
-            })
-        }
-        blocking = false
-    }
 
 </script>
 
@@ -197,13 +160,18 @@
                                             color="dangerSecondary"
                                             loading={blocking}
                                             disabled={blocking}
-                                            on:click={() => blockUser(person.person.id)}
+                                            on:click={async () => {
+                                                blocking = true
+                                                await blockUser(person.person.id, true, !userBlocked)
+                                                blocking = false
+                                                goto($page.url, {
+                                                    invalidateAll: true,
+                                                })
+                                            }}
                                         >
                                             <Icon mini size="16" src={NoSymbol} />
-                                            {isBlocked($profile.user, person.person.id)
-                                                ? 'Unblock'
-                                                : 'Block'
-                                            }
+                                            
+                                            {userBlocked ? 'Unblock' : 'Block'}
                                         </MenuButton>
                                     {/if}
                                 
