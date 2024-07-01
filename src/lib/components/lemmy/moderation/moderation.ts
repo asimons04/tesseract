@@ -30,7 +30,7 @@ interface Modals {
     },
     user: {
         open: boolean
-        personDetails: GetPersonDetailsResponse | undefined
+        user: Person | undefined
         mod: boolean
     }
     votes: {
@@ -74,7 +74,7 @@ export let modals = writable<Modals>({
     },
     user: {
         open: false,
-        personDetails: undefined,
+        user: undefined,
         mod: false,
     },
     votes: {
@@ -124,12 +124,12 @@ export function ban(banned: boolean, item: Person, community?: Community) {
     }))
 }
 
-export function userProfileModal(personDetails:GetPersonDetailsResponse, mod:boolean=false) {
+export function userProfileModal(user:Person, mod:boolean=false) {
     modals.update((m) => ({
         ...m,
         user: {
             open: true,
-            personDetails: personDetails,
+            user: user,
             mod: mod,
         },
 

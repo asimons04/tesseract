@@ -62,7 +62,7 @@
 
 <!--- User Profile Modal (should be after so it's "above" other modals that would pop up a user profile (e.g. vote view)--->
 {#if $modals.user.open}
-    <UserProfileModal  bind:open={$modals.user.open} personDetails={$modals.user.personDetails} mod={$modals.user.mod} />
+    <UserProfileModal  bind:open={$modals.user.open} user={$modals.user.user} mod={$modals.user.mod} />
 {/if}
 
 {#if $modals.zooming.open}

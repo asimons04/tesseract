@@ -39,52 +39,20 @@
         const domain = new URL(user.actor_id).hostname
         return `/u/${user.name}@${domain}`
     }
-    
-    
-    let loadingPersonDetails = false
-    let personDetails: GetPersonDetailsResponse | undefined = undefined
-    
-    async function getPersonDetails() {
-        loadingPersonDetails = true
-        try {
-            personDetails = await getClient().getPersonDetails({
-                    username: `${user.name}@${new URL(user.actor_id).hostname}`,
-                    limit: 1,
-                    sort: 'New'
-
-                })
-            userProfileModal(personDetails)
-        }
-        catch {
-            toast({
-                type: 'error',
-                title: 'Error',
-                content: 'Failed to fetch data for that user'
-            })
-        }
-        finally {
-            loadingPersonDetails = false
-        }
-    }
-
-
+   
 </script>
 
 
 <button class="inline-flex flex-col md:flex-row flex-wrap min-w-fit gap-1 items-start md:items-center hover:underline" 
     on:click={async () => {
         if (href) goto(linkFromCommunity(user))
-        else  await getPersonDetails()
+        else  userProfileModal(user)
     }} 
 >
     <span class="flex flex-row gap-1 items-center">
-        {#if avatar || loadingPersonDetails}
+        {#if avatar}
             <span class="items-center">    
-                {#if loadingPersonDetails}
-                    <Spinner width={avatarSize} />
-                {:else}                    
-                    <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
-                {/if}
+                <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
             </span>
         {/if}
 

@@ -1,24 +1,26 @@
 <script lang="ts">
-    import type { GetPersonDetailsResponse } from "lemmy-js-client";
+    import type { GetPersonDetailsResponse, Person } from "lemmy-js-client"
     
-    import { goto } from "$app/navigation";
-    import { imageProxyURL } from "$lib/image-proxy";
-    import { instance } from "$lib/instance";
+    import { getClient } from "$lib/lemmy"
+    import { goto } from "$app/navigation"
+    import { imageProxyURL } from "$lib/image-proxy"
+    import { instance } from "$lib/instance"
     import { isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { isBlocked, blockUser } from '$lib/lemmy/user'
     import { profile } from '$lib/auth'
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
-    import Avatar from "$lib/components/ui/Avatar.svelte";
-    import BanInstanceModal from "$lib/components/lemmy/moderation/BanInstanceModal.svelte";
-    import Button from "$lib/components/input/Button.svelte";
-    import Card from "$lib/components/ui/Card.svelte";
+    import Avatar from "$lib/components/ui/Avatar.svelte"
+    import BanInstanceModal from "$lib/components/lemmy/moderation/BanInstanceModal.svelte"
+    import Button from "$lib/components/input/Button.svelte"
+    import Card from "$lib/components/ui/Card.svelte"
     import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
-    import Modal from "$lib/components/ui/modal/Modal.svelte";
-    import RelativeDate from "$lib/components/util/RelativeDate.svelte";
-    import UserLink from "../user/UserLink.svelte";
-    import UserSendMessageModal from "./UserSendMessageModal.svelte";
+    import Modal from "$lib/components/ui/modal/Modal.svelte"
+    import RelativeDate from "$lib/components/util/RelativeDate.svelte"
+    import Spinner from "$lib/components/ui/loader/Spinner.svelte"
+    import UserLink from "../user/UserLink.svelte"
+    import UserSendMessageModal from "./UserSendMessageModal.svelte"
 
     import { 
         Icon,
@@ -39,18 +41,53 @@
 
 
     } from "svelte-hero-icons";
+    import { onMount } from "svelte";
     
-    export let personDetails: GetPersonDetailsResponse|undefined
+    
+    export let user:Person | undefined
     export let open: boolean = false
     export let mod: boolean = false
     
+    let loading = false
+    let personDetails: GetPersonDetailsResponse
     let banning = false
     let blocking = false
     let messaging = false
-    let userBlocked = ($profile?.user && personDetails?.person_view.person) ? isBlocked($profile.user, personDetails.person_view.person.id) : false
-
-    $:  mostRecentItem = lastActivity()
+    let mostRecentItem: string|undefined = undefined
+    let userBlocked = false
     
+    onMount(async () => {
+        if (!user) {
+            open = false
+            return
+        }
+
+        loading = true
+        
+        try {
+            personDetails = await getClient().getPersonDetails({
+                username: `${user.name}@${new URL(user.actor_id).hostname}`,
+                limit: 1,
+                sort: 'New'
+
+            })
+            userBlocked = ($profile?.user && personDetails?.person_view.person) ? isBlocked($profile.user, personDetails.person_view.person.id) : false
+            mostRecentItem = lastActivity()
+        }
+        catch {
+            toast({
+                type: 'error',
+                title: 'Error',
+                content: 'Failed to fetch data for that user'
+            })
+            open = false
+        }
+        finally {
+            loading = false
+        }
+    })
+
+
     /** Returns the date of the most recent post or comment or undefined if no submissions */
     function lastActivity() {
         let latestPost: string | undefined = undefined
@@ -75,6 +112,11 @@
 
 
 <Modal bind:open preventCloseOnClickOut={true} icon={User} card={false} title="Profile" width="max-w-xl">
+    {#if loading}
+        <span class="flex mx-auto my-auto">
+            <Spinner width={24}/>
+        </span>
+    {/if}
     
     <!---DM and Ban Modals Inside This Modal--->
     {#if messaging && personDetails}
