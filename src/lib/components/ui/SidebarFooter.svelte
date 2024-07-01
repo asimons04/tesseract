@@ -24,7 +24,6 @@
         <button title="Theme"
             on:click={ (e) => {
                 e.stopPropagation();
-                //@ts-ignore
                 $theme = inDarkTheme() ? 'light' : 'dark'
             }}
         >
