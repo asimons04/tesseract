@@ -217,6 +217,10 @@ server {
   ssl_session_cache     shared:SSL:10m;
   ssl_session_timeout   15m;
 
+  gzip on;
+  gzip_types text/css application/javascript text/javascript image/svg+xml application/json;
+  gzip_vary on;
+
 
   location / {
     proxy_set_header  Host                  $host;
