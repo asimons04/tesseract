@@ -52,8 +52,10 @@ export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
 
 
 export const blockUser = async function (personID: number, confirm:boolean=false, block?:boolean):Promise<boolean> {
-    const userProfile = get(profile)
+    let userProfile = get(profile)
+    
     if (!userProfile?.user || !userProfile?.jwt) throw new Error('Unauthenticated')
+    
     const blocked = isBlocked(userProfile.user, personID)
     
     if (!confirm) {
@@ -67,16 +69,18 @@ export const blockUser = async function (personID: number, confirm:boolean=false
     }
     else {
         try {
-            let blockResponse = await getClient().blockPerson({
+            const blockResponse = await getClient().blockPerson({
                 block: block ?? !blocked,
                 person_id: personID,
             })
-
-            if (blockResponse?.blocked) {
-                const index = userProfile.user.person_blocks
-                    .map((p) => p.target.id)
-                    .indexOf(personID)
-                userProfile.user.person_blocks.splice(index, 1)
+            
+            if (!blockResponse) throw new Error('Failed to block user')
+            
+            // Update local cache of person blocks
+            const getSiteResponse = await getClient().getSite()
+            if (getSiteResponse?.my_user) {
+                userProfile.user.person_blocks = getSiteResponse.my_user.person_blocks
+                profile.set(userProfile)
             }
             
             toast({
