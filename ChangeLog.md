@@ -5,6 +5,8 @@ All major/minor changes between releases will be documented here.
 
 ### Bugfixes
 - Fixed modlog action menus clipping
+- Add a call to getSite after blocking/unblocking to update person blocks list. Fixes reactivity and blocked/unblocked status on profile modals and user pages.
+
 
 ### General Changes
 - Remove Fediseer badge option for posts (rarely used and accessible via Instance menu and from instances page)
