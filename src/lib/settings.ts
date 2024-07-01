@@ -318,6 +318,7 @@ export const YTFrontends = {
         'pipedapi.us.projectsegfau.lt',
         'watchapi.whatever.social',
         'api.piped.privacydev.net',
+        'piped.privacydev.net',
         'pipedapi.palveluntarjoaja.eu',
         'pipedapi.smnz.de',
         'pipedapi.adminforge.de',
