@@ -1,8 +1,14 @@
 <script lang="ts">
+    import { inDarkTheme, theme } from '$lib/ui/colors.js'
+    
     import Link from '$lib/components/input/Link.svelte'
     import Logo from '$lib/components/ui/Logo.svelte'
+    import { Icon, Moon, Sun } from 'svelte-hero-icons';
 
     export let autohide:boolean = true
+    
+    let darkTheme = inDarkTheme()
+    $: $theme, darkTheme=inDarkTheme()
 </script>
 
 <div class="{autohide ? 'hidden xl:flex' : 'flex'} w-full justify-between mt-auto">
@@ -15,6 +21,16 @@
     </span>
 
     <span class="flex flex-row gap-4 items-center">
+        <button title="Theme"
+            on:click={ (e) => {
+                e.stopPropagation();
+                //@ts-ignore
+                $theme = inDarkTheme() ? 'light' : 'dark'
+            }}
+        >
+            <Icon mini width={24} src={darkTheme ? Sun : Moon} />
+        </button>
+        
         <Link href="https://dubvee.org/c/tesseract" newtab={true} title="Lemmy">
             <Logo url="/img/lemmy.svg" rounded={false} width={24}/>
         </Link>
