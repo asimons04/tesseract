@@ -5,17 +5,21 @@
     import { navigating } from '$app/stores'
     import nProgress from 'nprogress'
     import 'nprogress/nprogress.css'
-    import ToastContainer from '$lib/components/ui/toasts/ToastContainer.svelte'
-    import ModalContainer from '$lib/components/ui/modal/ModalContainer.svelte'
-    import Sidebar from '$lib/components/ui/sidebar/Sidebar.svelte'
-    import { onMount } from 'svelte'
     
+    
+    
+    import { onMount } from 'svelte'
     // @ts-ignore
     import { pwaInfo } from 'virtual:pwa-info'
     import PwaReload from '$lib/PwaReload.svelte'
     import { inDarkTheme } from '$lib/ui/colors.js'
     import { userSettings } from '$lib/settings.js'
 
+
+    import ModalContainer from '$lib/components/ui/modal/ModalContainer.svelte'
+    import Sidebar from '$lib/components/ui/sidebar/Sidebar.svelte'
+    import ToastContainer from '$lib/components/ui/toasts/ToastContainer.svelte'
+    
     nProgress.configure({
         minimum: 0.4,
         trickleSpeed: 200,
@@ -40,6 +44,11 @@
 
     $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
   
+    // Clear the loading animation when loaded.
+    onMount(() => {
+        const element = document.getElementById('loader-animation')
+        if (element) element.remove()
+    })
   
 </script>
 
