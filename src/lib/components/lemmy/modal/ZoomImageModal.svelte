@@ -8,43 +8,25 @@
         translateY: number
         startX: number
         startY: number
+        origin: string
         panning: boolean
         doubleClick: boolean
-    }
-
-    interface PinchEvent extends CustomEvent {
-        detail: {
-            scale: number
-            center: {
-                x: number
-                y: number
-            }
-        }
-    }
-
-    interface PressEvent extends CustomEvent {
-        detail: {
-            x: number
-            y: number
-            pointerType?: 'touch' | 'mouse' | 'pen'
-            target: EventTarget
-        }
-    }
-    
-
-    interface SwipeEvent extends CustomEvent {
-        detail: {
-            direction: 'top' | 'right' | 'bottom' | 'left',
-            target: EventTarget
-        }
+        rotateDeg: number
+        rotateStep: number
+        pinchActive: boolean
+        pinchPrevious: number
+        pinchDirection: number
     }
 
     import { imageProxyURL } from "$lib/image-proxy";
     import { fade } from "svelte/transition";
-    import { pinch, swipe } from 'svelte-gestures'
+    import { 
+        type PinchCustomEvent, pinch, 
+        type SwipeCustomEvent, swipe 
+    } from 'svelte-gestures'
     
     import { 
-    ArrowUturnLeft,
+        ArrowUturnLeft,
         ArrowUturnRight,
         Icon, 
         MagnifyingGlassMinus, 
@@ -83,8 +65,9 @@
         //pinchDelta: 0,      // Record the direction of the pinch
         pinchDirection: 1   // 1 for zoom in, -1 for zoom out
 
-    }
-    let defaultZoom = {...zoom}
+    } as ZoomParams
+    
+    let defaultZoom = {...zoom } as ZoomParams
     
 
 
@@ -134,7 +117,7 @@
 
 
     // Fires on swipe events
-    function onSwipe(e:SwipeEvent) {
+    function onSwipe(e:SwipeCustomEvent) {
         if (e.detail.direction == 'top')    bumpZoom(1, true) 
         if (e.detail.direction == 'bottom') bumpZoom(-1, true) 
         if (e.detail.direction == 'left')   close()
@@ -168,7 +151,7 @@
     }
 
     // Fires on pinch event and sets the scale to the value reported from the event. Does not pan while pinch-zooming
-    async function pinchZoom(e:PinchEvent) {
+    async function pinchZoom(e:PinchCustomEvent) {
         e.preventDefault()
         e.stopPropagation()
 
@@ -262,7 +245,7 @@
 		}}
     >
         <!---Toolbar with zoom in/out buttons and button to close the overlay--->
-        <div bind:this={toolbarElement} class="absolute top-0 bg-slate-50/30 dark:bg-zinc-950/80 backdrop-blur-3xl w-full z-50 p-1 cursor-default">
+        <div bind:this={toolbarElement} class="absolute top-0 w-full z-50 p-1 cursor-default">
             <div class="flex flex-row w-full">
                 <span class="flex flex-row gap-4 px-4 w-full items-center">
                     
@@ -303,8 +286,8 @@
             on:pointermove  = { (e) => panMove(e) }
             on:pointerup    = { () => panEnd() }
             on:dblclick     = { () => doubleClickZoom() }
-            use:pinch   on:pinch={(e) => pinchZoom(e) }
-            use:swipe   on:swipe={(e) => onSwipe(e) }
+            use:pinch={{touchAction: 'pinch-zoom'}}       on:pinch={pinchZoom}
+            use:swipe       on:swipe={onSwipe}
         >
             
             <img bind:this={imageElement}
