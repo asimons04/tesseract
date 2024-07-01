@@ -9,7 +9,7 @@
     import { profile, profileData, setUserID } from '$lib/auth.js'
     import { site } from '$lib/lemmy.js'
     import { slide} from 'svelte/transition'
-    import { theme } from '$lib/ui/colors.js'
+    import { theme, inDarkTheme } from '$lib/ui/colors.js'
     import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -302,8 +302,7 @@
             <button class="flex flex-row w-full gap-2"
             on:click={ (e) => {
                 e.stopPropagation();
-                //@ts-ignore
-                $theme = dark() ? 'light' : 'dark'
+                $theme = inDarkTheme() ? 'light' : 'dark'
             }}
             >
                 <Icon mini size="16"
