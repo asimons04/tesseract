@@ -3,6 +3,7 @@ node_modules
 .eslint*
 .prettier*
 .git*
+.svelte-kit
 .vscode
 README.md
 Dockerile*
@@ -16,3 +17,4 @@ shell.nix
 vercel.json
 README.md
 ChangeLog.md
+updateMBFCData.sh
