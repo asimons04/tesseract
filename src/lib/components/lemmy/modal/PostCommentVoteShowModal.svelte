@@ -1,10 +1,5 @@
 <script lang="ts">
-    interface SwipeEvent extends CustomEvent {
-        detail: {
-            direction: 'top' | 'right' | 'bottom' | 'left',
-            target: EventTarget
-        }
-    }
+    import type { SvelteGestureSwipeEvent } from '$lib/util'
     import type { VoteView } from 'lemmy-js-client'
     import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
     
@@ -110,7 +105,7 @@
         }
     }
 
-    function onSwipe(e:SwipeEvent) {
+    function onSwipe(e:SvelteGestureSwipeEvent) {
         if (['left', 'right'].includes(e.detail.direction)) open = false
     }
 </script>
@@ -129,8 +124,7 @@
 
     {#if votes}
         <div bind:this={scrollArea} class="flex flex-col overflow-y-scroll max-h-[500px] divide-y divide-slate-200 dark:divide-zinc-500 px-4"
-            use:swipe={{touchAction: 'pan-y'}} 
-            on:swipe={(e) => onSwipe(e)   }
+            use:swipe={{touchAction: 'pan-y'}} on:swipe={onSwipe}
         >
             {#each votes as vote}
                 <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
