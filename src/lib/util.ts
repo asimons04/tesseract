@@ -73,4 +73,32 @@ export function capitalizeFirstLetter(string:string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// Svelte-Gestures Types
+
+export interface SvelteGesturePinchEvent extends CustomEvent {
+    detail: {
+        scale: number
+        center: {
+            x: number
+            y: number
+        }
+    }
+}
+
+export interface SvelteGesturePressEvent extends CustomEvent {
+    detail: {
+        x: number
+        y: number
+        pointerType?: 'touch' | 'mouse' | 'pen'
+        target: EventTarget
+    }
+}
+
+
+export interface SvelteGestureSwipeEvent extends CustomEvent {
+    detail: {
+        direction: 'top' | 'right' | 'bottom' | 'left',
+        target: EventTarget
+    }
+}
 
