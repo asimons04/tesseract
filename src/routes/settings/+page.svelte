@@ -363,6 +363,13 @@
                 optionNames={['System', 'Light', 'Dark']}
                 bind:selected={$theme}
             />
+
+            <!---Application Font--->
+            <SettingMultiSelect icon={Language} title="Application Font" description="Select your preferred font to use in Tesseract"
+                options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+                optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+                bind:selected={$userSettings.font}
+            />
             
             <!---Open in New Tab--->
             <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links}
@@ -417,11 +424,7 @@
                 description="Enable experimental features. Note that these may be buggy."
             />
 
-            <SettingMultiSelect icon={Language} title="Application Font" description="Select your preferred font to use in Tesseract"
-                options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
-                optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
-                bind:selected={$userSettings.font}
-            />
+            
 
             <!---Reset to Default Settings--->
             <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
