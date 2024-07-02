@@ -17,13 +17,11 @@
         pinchPrevious: number
         pinchDirection: number
     }
+    import type { SvelteGesturePinchEvent, SvelteGestureSwipeEvent } from "$lib/util"
 
     import { imageProxyURL } from "$lib/image-proxy";
     import { fade } from "svelte/transition";
-    import { 
-        type PinchCustomEvent, pinch, 
-        type SwipeCustomEvent, swipe 
-    } from 'svelte-gestures'
+    import {  pinch,  swipe  } from 'svelte-gestures'
     
     import { 
         ArrowUturnLeft,
@@ -117,7 +115,7 @@
 
 
     // Fires on swipe events
-    function onSwipe(e:SwipeCustomEvent) {
+    function onSwipe(e:SvelteGestureSwipeEvent) {
         if (e.detail.direction == 'top')    bumpZoom(1, true) 
         if (e.detail.direction == 'bottom') bumpZoom(-1, true) 
         if (e.detail.direction == 'left')   close()
@@ -151,7 +149,7 @@
     }
 
     // Fires on pinch event and sets the scale to the value reported from the event. Does not pan while pinch-zooming
-    async function pinchZoom(e:PinchCustomEvent) {
+    async function pinchZoom(e:SvelteGesturePinchEvent) {
         e.preventDefault()
         e.stopPropagation()
 
@@ -286,8 +284,10 @@
             on:pointermove  = { (e) => panMove(e) }
             on:pointerup    = { () => panEnd() }
             on:dblclick     = { () => doubleClickZoom() }
-            use:pinch={{touchAction: 'pinch-zoom'}}       on:pinch={pinchZoom}
-            use:swipe       on:swipe={onSwipe}
+            use:pinch={{touchAction: 'pinch-zoom'}} 
+            on:pinch={pinchZoom}
+            use:swipe
+            on:swipe={onSwipe}
         >
             
             <img bind:this={imageElement}
