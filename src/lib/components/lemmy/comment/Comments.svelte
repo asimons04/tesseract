@@ -96,15 +96,17 @@
     class={
         isParent
             ? 'divide-y dark:divide-zinc-800 divide-slate-200'
-            : 'pl-3.5 border-l-2 border-slate-200 dark:border-zinc-800 my-1'
+            : 'pl-2 border-l-2 border-slate-200 dark:border-zinc-800 my-1'
     }
 >
     {#each nodes as node (node.comment_view.comment.id)}
         <!---Optionally hide comments from new accoutsn (and any replies)--->
-        {#if !(
-                $userSettings.hidePosts.newAccounts &&  isNewAccount(node.comment_view.creator.published) &&
-                node.comment_view.creator.id != $profile?.user?.local_user_view?.person?.id && !amMod($profile?.user, node.comment_view.community)
-            )
+        {#if    !(
+                    $userSettings.hidePosts.newAccounts &&  
+                    isNewAccount(node.comment_view.creator.published) &&
+                    node.comment_view.creator.id != $profile?.user?.local_user_view?.person?.id && 
+                    !amMod($profile?.user, node.comment_view.community)
+                )
         }
             <Comment postId={post.id} bind:node >
                 {#if node.children?.length > 0}
