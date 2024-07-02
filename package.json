@@ -45,7 +45,7 @@
     "@dicebear/adventurer": "^8.0.1",
     "@dicebear/core": "^8.0.1",
     "@dicebear/initials": "^8.0.1",
-    "lemmy-js-client": "^0.19.3-alpha.6"
+    "lemmy-js-client": "^0.19.4"
   },
   "type": "module"
 }
