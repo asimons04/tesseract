@@ -129,7 +129,7 @@
     }
 
     let searching = false
-    let searchURL: URL|undefined = new URL(window.location.href)
+    let searchURL: URL|undefined = undefined //new URL(window.location.href)
 
 
     // Needed to re-enable scroll fetching when switching between an exhausted sort option (top hour) to one with more post (top day)
@@ -275,7 +275,7 @@
 <SubNavbar home back scrollButtons  toggleMargins compactSwitch toggleCommunitySidebar >
 
     <!--- Search Filter Menu --->
-    <SubnavbarMenu alignment="bottom-left" icon={Funnel} shiftLeft={2} slot="far-left" let:iconSize>
+    <SubnavbarMenu alignment="bottom-left" icon={Funnel} shiftLeft={2} slot="far-left" let:iconSize >
         <div class="flex flex-col w-full p-2 gap-2 min-w-[40vw] md:min-w-[25vw] cursor-default">
             
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -316,6 +316,7 @@
 
                 <!--Community and User Filters--->
                 <Card class="flex flex-col gap-4 p-2">
+                    
                     <!--- Lookup a Community to Filter--->
                     <div class="flex flex-row gap-4 w-full items-center">
                         <Icon mini src={UserGroup} width={16} />
@@ -423,20 +424,18 @@
             </Button>
 
             <!---Share Permalink to this Search--->
-            <Button color="tertiary" size="sm" title="Copy Share Link" disabled={!searchURL} on:click={() => {
+            <Button color="tertiary" size="sm" title="Copy Share Link" on:click={() => {
                 if (searchURL) {
-                    
-                    // Force the search to page 1
-                    let url = new URL(searchURL)
-                    url.searchParams.set('page', '1')
-                    
-                    navigator.share?.( {url: url.toString()} ) ?? navigator.clipboard.writeText(url.toString())
-                    toast({
-                        type: 'success',
-                        content: `Copied search permalink to clipboard!`,
-                        title: 'Copied!'
-                    })
+                    navigator.share?.( {url: searchURL.toString()} ) ?? navigator.clipboard.writeText(searchURL.toString())
                 }
+                else {
+                    navigator.share?.({url: window.location.href}) ?? navigator.clipboard.writeText(window.location.href)
+                }
+                toast({
+                    type: 'success',
+                    content: `Copied search permalink to clipboard!`,
+                    title: 'Copied!'
+                })
                 
             }}>
                 <Icon src={Share} min width={24}/>
@@ -466,15 +465,18 @@
             </Button>
 
             <!---Share Permalink to this Search--->
-            <Button color="tertiary" size="sm" title="Copy Share Link" disabled={!searchURL} on:click={() => {
+            <Button color="tertiary" size="sm" title="Copy Share Link" on:click={() => {
                 if (searchURL) {
                     navigator.share?.( {url: searchURL.toString()} ) ?? navigator.clipboard.writeText(searchURL.toString())
-                    toast({
-                        type: 'success',
-                        content: `Copied search permalink to clipboard!`,
-                        title: 'Copied!'
-                    })
                 }
+                else {
+                    navigator.share?.({url: window.location.href}) ?? navigator.clipboard.writeText(window.location.href)
+                }
+                toast({
+                    type: 'success',
+                    content: `Copied search permalink to clipboard!`,
+                    title: 'Copied!'
+                })
                 
             }}>
                 <Icon src={Share} min width={24}/>
