@@ -148,7 +148,7 @@ export async function setUser(jwt: string, inst: string): Promise<UserFromJWTRes
     // Check if profile exists for this username+instance combo
     let pIndex = get(profileData).profiles.findIndex((p:Profile) => (p.username == user.user.local_user_view.person.name && p.instance == inst))
     
-    if (pIndex>0) {
+    if (pIndex>=0) {
         // Switch to the profile to be updated in case it isn't already active
         const pid = get(profileData).profiles[pIndex].id
         await setUserID(pid, user) 
