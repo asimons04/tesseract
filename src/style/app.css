@@ -62,7 +62,7 @@
 @font-face {
     font-family: 'OpenDyslexic';
     src:url("/fonts/OpenDyslexicThree-Regular.woff") format('woff'),
-        url("/fonts/OpenDyslexicThree-Regulart.woff2") format('woff2');
+        url("/fonts/OpenDyslexicThree-Regular.woff2") format('woff2');
     font-display: swap;
 }
 
