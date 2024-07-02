@@ -8,6 +8,7 @@
     import { saveProfile } from '$lib/favorites'
     import { site } from '$lib/lemmy.js'
     import { sortOptions, sortOptionNames } from '$lib/lemmy'
+    import { theme } from '$lib/ui/colors'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -74,6 +75,7 @@
         PlusCircle,
         QueueList,
         Server,
+        Sun,
         TableCells,
         Trash,
         Trophy,
@@ -355,6 +357,13 @@
     <!---General Options--->
     <SettingsCollapseSection bind:expanded={open.general} icon={InformationCircle} title="General">
         <SettingGroup>
+            <!---Theme--->
+            <SettingMultiSelect icon={Sun} title="Theme" description="Select the theme for the application. Always light, always dark, or system-preferred."
+                options={['system', 'light', 'dark']}
+                optionNames={['System', 'Light', 'Dark']}
+                bind:selected={$theme}
+            />
+            
             <!---Open in New Tab--->
             <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links}
                 description="Open external links in a new tab."
