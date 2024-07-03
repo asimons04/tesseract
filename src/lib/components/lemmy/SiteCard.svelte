@@ -38,7 +38,7 @@
     export let admins: PersonView[] = []
     export let version: string
 
-    // Update the tagline every 20 seconds
+    // Update the tagline every 30 seconds
     let tagline:string = ' '
     
     if (taglines && taglines.length > 0) {
