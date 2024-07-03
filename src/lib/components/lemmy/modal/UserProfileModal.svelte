@@ -143,7 +143,7 @@
 
                 <div class="flex flex-col gap-1 w-full overflow-hidden">
                     <span class="font-bold text-lg">
-                        <UserLink badges user={personDetails.person_view.person} showInstance={false} href admin={personDetails.person_view.is_admin} mod={mod}/>
+                        <UserLink badges user={personDetails.person_view.person} showInstance={false} useDisplayNames href admin={personDetails.person_view.is_admin} mod={mod}/>
                     </span>
 
                     <span class="text-xs font-normal">@{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}</span>
