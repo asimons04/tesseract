@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { EditSite, Instance, Tagline } from 'lemmy-js-client'
+    import type { Instance, Tagline } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     
     
@@ -20,7 +20,7 @@
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Setting from '$lib/components/ui/Setting.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    import SettingEditArray from '$lib/components/ui/settings/SettingEditArray.svelte'
     import Switch from '$lib/components/input/Switch.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -28,27 +28,24 @@
 
     import {
         Icon,
-        ArchiveBoxXMark,
         ArrowDown,
         ArrowsRightLeft,
         ArrowUpTray,
-        ArrowUturnDown,
         AtSymbol,
         BellAlert,
         BugAnt,
         BuildingOffice,
         Camera,
+        ChatBubbleBottomCenterText,
         ChatBubbleLeft,
         Check,
         ClipboardDocumentCheck,
         ClipboardDocumentList,
-        Cloud,
         Cog6Tooth,
         CommandLine,
         DocumentText,
         Envelope,
         ExclamationTriangle,
-        FingerPrint,
         Funnel,
         Identification,
         InformationCircle,
@@ -60,29 +57,21 @@
         PauseCircle,
         Photo,
         Plus,
-        PlusCircle,
         PuzzlePiece,
         QuestionMarkCircle,
         Rss,
+        ServerStack,
         ShieldCheck,
         ShieldExclamation,
         Trash,
         UserGroup,
         UserPlus,
         Window,
-        XCircle,
-
-        ServerStack,
-
-        ChatBubbleBottomCenterText
-
-
-
     } from 'svelte-hero-icons'
-    import SettingEditArray from '$lib/components/ui/settings/SettingEditArray.svelte';
+    
 
     export let data: PageData;
-    // :  Omit<EditSite, 'auth'>
+
     let formData =  {
         ...data.site.site_view.local_site,
         ...data.site.site_view.site,
@@ -129,11 +118,6 @@
     let federation_mode = (data?.federated_instances?.allowed && data.federated_instances.allowed.length > 0)
         ? 'allow'
         : 'block'
-
-
-    // Domain block/allow helpers
-    let domainInput:string;
-    let filterInput: string;
     
     // Tagline Helpers
     let newTagline = ''
@@ -322,7 +306,6 @@
   
     
     {#if formData}
-    
         <div class="flex flex-col lg:flex-row gap-2">
             <!---Section Selection Menu--->
             <div class="flex flex-shrink-0 flex-row w-full overflow-auto overflow-y-hidden py-2 lg:py-0 lg:flex-col lg:max-w-[15%] lg:justify-start gap-2">
@@ -1449,10 +1432,5 @@
             </div>
 
         </div>
-        <!---End "new" version-->
-
-        
-        
-        
     {/if}
 </form>
