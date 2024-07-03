@@ -3,11 +3,14 @@
     import { Icon, ChevronUp, type IconSource} from 'svelte-hero-icons'
 
     import Button from '$lib/components/input/Button.svelte'
+    import SettingGroup from './SettingGroup.svelte';
 
     export let expanded:boolean = false
+    export let card = true
     export let icon:IconSource | undefined = undefined
     export let title:string = ' '
     export let condition:boolean = true
+    export let collapseButton = true
 </script>
 
 
@@ -33,7 +36,30 @@
     
     {#if expanded}
         <div transition:slide>
-            <slot />
+            {#if card}
+                <SettingGroup>
+                    <slot />
+                    
+                    {#if collapseButton}
+                        <Button color="secondary" class="w-full my-4" on:click={() => expanded = false } >
+                            <Icon src={ChevronUp} mini width={18}/>
+                            Collapse
+                            <Icon src={ChevronUp} mini width={18}/>
+                        </Button>
+                    {/if}
+                </SettingGroup>
+            {:else}
+                <slot />
+                {#if collapseButton}
+                    <Button color="secondary" class="w-full my-4" on:click={() => expanded = false } >
+                        <Icon src={ChevronUp} mini width={18}/>
+                        Collapse
+                        <Icon src={ChevronUp} mini width={18}/>
+                    </Button>
+                {/if}
+            {/if}
+
+            
         </div>
     {/if}
 </div>
