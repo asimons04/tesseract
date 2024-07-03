@@ -1,206 +1,136 @@
 <script>
-    import Link from '$lib/components/input/Link.svelte'
-    import Logo from '$lib/components/ui/Logo.svelte'
-    import Application from '../admin/applications/Application.svelte';
-    
-    import {get} from 'svelte/store'
-    import {site} from '$lib/lemmy'
-    let siteinfo = get(site);
+    import { site } from '$lib/lemmy'
 
-    console.log(siteinfo);
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    import Logo from '$lib/components/ui/Logo.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+
+    const content = `
+# About
+
+---
+
+## Overview    
+
+**Tesseract** is a Lemmy client designed for media-rich content and aims to provide a comparable experience to 
+the alien site.  The reason it exists is because I wanted to fix a lot of things about Lemmy that annoyed me.  Of all the third
+party frontends out there, Photon was the closest but wasn't quite what I wanted.  So, Tesseract was forked and took on a new
+life of its own.
+
+I think Photon has adopted some of these, at least YouTube, but I'm unsure if any of the others are supported.  As far as I know, most of these
+are still unique to Tesseract.
+
+### Full Media Support in Feed and Posts
+- YouTube/Invidious/Piped
+- Soundcloud
+- Bandcamp
+- Spotify Tracks, Albums, and Playlists
+- Vimeo
+- Odysee
+- Streamable, Imgur, and any source that provides an embed video URL in the metadata
+
+### Enhanced Community Discovery
+Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, 
+subscribe hokey-pokey dance.  Let Tesseract take care of all that for you.
+
+Post and comment menus let you browse the communities of the originating instance, and the \`/instances\` page also provides links to browse the communities
+there.
+
+### Image/Media Proxying and Caching
+Privacy conscious users have long requested media be proxied through Lemmy.  The Lemmy devs finally implemented that in 0.19.4, but they did it in a very stupid
+way (shocked Pikachu).  Tesseract has has this capability for much longer, and it's implemented in a way that doesn't impact other instances.
+
+If proxying is enabled, the media is already flowing through Tesseract, so it made sense to optionally cache the 
+proxied media for re-use.
+
+- Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.
+- Can cache any media proxied through it.  Tesseract can act as a caching proxy for your instance as well as cache media originating on other instances as well as outside resources (Giphy, Catbox, Imgur, Yarn, etc).
+- Administrators must explicitly enable this module, and users must enable media proxying in their app settings.
+- Acts like a CDN in a box. You can even set up regional instances of Tesseract to move the heavy data closer to your users.
+- Doesn't federate out the stupid proxied URLs like Lemmy does.
+
+### Fediseer Integration
+See endorsements, hesitations, and censures given to the instances you're interacting with.  Currently read-only, but eventually some limited ability
+to create endorsements, censures, and hesitations will be added.
+
+### Media Bias Fact Check (MBFC) Integration
+Posts with URLs can have a MBFC badge in the corner which will lookup the publisher in the MBFC database and return their bias and credibility information.  
+The MBFC results are also integrated into the reporting and moderation tools.
+
+- Easily see where the news stories in your feed are coming from and what their sources' credibility ratings are.
+- Optionally, automatically hide posts that link to non-credible sources.
+- Seamlessly report posts that are from non-credible sources while including a copy of the MBFC results.
+- Quickly and easily identify and squash posts from disreputable sources.
+- MBFC is integrated into the mod tooling allowing you to populate removal reasons / replies with the results of a MBFC lookup.
+- Perfect for those who are moderating a news or political community.
+
+### Additional Features
+- Multiple account and multiple instance support.
+- Optimized for desktop and mobile. All desktop features are available in mobile.
+- A more "new" Reddit-like look and feel
+- Code syntax highlighting.
+- Full admin tools to manage your Lemmy instance
+- Extensive configuration options
+- Enhanced Modlog and Moderation Tools beyond what Lemmy-UI offerse
+
+--- 
+
+## Credits and Acknowledgements
+- [Xylight](https://github.com/Xyphyn/photon) for creating Photon.  Tesseract began life as a fork of a very early version of that and likely would not exist (or would exist very differently)
+    without that base.
+- [Media Bias Fact Check](https://mediabiasfactcheck.com) is an invaluable tool when, if you're like me,
+    using Lemmy as a news aggregator.  Through their efforts, Tesseract is able to show credibility badges on news posts to help combat disinformation. I cannot
+    thank them enough for their work.
+- All of the users on Github and in the Lemmy Admin chat who suggested and tested features.
+
+## Donations
+I built Tesseract in my spare time as a hobby, learning excercise for SvelteKit, and to address my own personal annoyances with Lemmy and other
+Lemmy UIs.  That said, I do not feel the need to accept donations for its development.
+
+However, if you really want to donate, please consider donating to one of the following:
+
+- [Xylight](https://www.buymeacoffee.com/xylight): They are the author of Photon from which Tesseract was forked who also did a lot of the heavy 
+lifting for much of the core.  While I've replaced a lot of it, none of my work would have been possible without theirs.
+- [Media Bias Fact Check](https://mediabiasfactcheck.com/support-media-bias-fact-check/): 
+Tesseract embeds a subset of a dump of their dataset in itself in order to provide the bias and credibility badges and reports. This dump comes from their browser extension.  Without this,
+it would be impossible to have this feature.  MBFC is 100% independent and relies on memberships and donations to do their work. Please consider donating to them so they can continue
+the amazing work they do.
+
+---
+
+# Get Tesseract
+The project has a [Github page](https://github.com/asimons04/Tesseract) with more details, a detailed change log, and documentation.
+`.trim()
 
 </script>
 
-<title>Tesseract | About</title>
-<div class="max-w-3xl mx-auto">
-    <div class="flex items-center gap-1 mx-auto w-max">
-    <Logo width={48} />
-        <span class="text-2xl font-bold">Tesseract</span>
-    </div>
-    <h1 class="text-3xl font-bold leading-8">About</h1>
+<svelte:head>
+    <title>Tesseract | About</title>
+</svelte:head>
 
-    <p class="my-3">
-        <strong>Tesseract</strong> is a Lemmy client designed for media-rich content and aims to provide a comparable experience to 
-        the alien site.  The reason it exists is because I wanted to fix a lot of things about Lemmy that annoyed me.  Of all the third
-        party frontends out there, Photon was the closest but wasn't quite what I wanted.  So, Tesseract was forked and took on a new
-        life of its own.
-    </p>
+<SubNavbar home back toggleMargins toggleCommunitySidebar scrollButtons/>
 
-   
-       
-    <h2 class="text-2xl font-bold leading-8 ">Features Unique to Tesseract</h2>
-    <p class="my-3">
-        I think Photon has adopted some of these, at least YouTube, but I'm unsure if any of the others are supported.  As far as I know, most of these
-        are still unique to Tesseract.
-    </p>
+<MainContentArea>
+    <FeedContainer>
+        <div class="flex items-center gap-1 mx-auto w-max">
+            <Logo width={48} />
+            <span class="text-2xl font-bold">Tesseract</span>
+        </div>
 
-    <ul class="list-disc pl-4 my-3 text-base">
-        <li class="mt-2">
-            <p class="font-bold">Full media support in feed and posts</p>
-            <ul class="list-disc pl-4">
-                <li>YouTube/Invidious/Piped</li>
-                <li>Soundcloud</li>
-                <li>Bandcamp</li>
-                <li>Spotify Tracks, Albums, and Playlists</li>
-                <li>Vimeo</li>
-                <li>Odysee</li>
-                <li>Streamable, Imgur, and any source that provides an embed video URL in the metadata</li>
-            </ul>
-        </li>
-
-        <li class="mt-2">
-            <p class="font-bold">Enhanced Community Discovery</p>
-            <ul class="list-disc pl-4">
-                <li>Browse the communties of other instances and seamlessly load and subscribe to them.  
-                    No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
-                </li>
-
-                <li>Post and comment menus let you browse the communities of the originating instance</li>
-            </ul>
-        </li>
-
-        <li class="mt-2">
-            <p class="font-bold">Image/Media Proxying and Caching</p>
-            <p>
-                Privacy conscious users have long requested media be proxied through Lemmy.  
-                While I can't add that to the API, I can add it to the UI.  Additionally, since the 
-                media is already flowing through Tesseract, it made sense to optionally cache the 
-                proxied media for re-use.
-            </p>
-            <ul class="list-disc pl-4">
-                <li>Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.</li>
-                <li>Can cache any media proxied through it.  Tesseract can act as a caching proxy for your instance as well as cache media originating on other instances as well as outside resources (Giphy, Catbox, Imgur, Yarn, etc).</li>
-                <li>Administrators must explicitly enable this module, and users must enable media proxying in their app settings.</li>
-                <li>Acts like a CDN in a box. You can even set up regional instances of Tesseract to move the heavy data closer to your users.</li>
-            </ul>
-        </li>
-
-        <li class="mt-2">
-            <p class="font-bold">Fediseer Integration</p>
-            <ul class="list-disc pl-4">
-                <li>See endorsements, hesitations, and censures given to the instances you're interacting with.</li>
-                <li>Optionall show fediseer endorsement badges on posts</li>
-            </ul>
-            
-        </li>
-
-        <li class="mt-2">
-            <p class="font-bold">Media Bias Fact Check (MBFC) Integration</p>
-            <p>
-                Posts with URLs can have a MBFC badge in the corner which will lookup the publisher in the MBFC database and return their bias and credibility information.  
-                The MBFC results are also integrated into the reporting and moderation tools.
-            </p>
-            <p class="font-bold text-sm mt-2">For Users</p>
-            <ul class="list-disc pl-4 text-sm">
-                <li>Easily see where the news stories in your feed are coming from and what their sources' credibility ratings are.</li>
-                <li>Optionally, automatically hide posts that link to non-credible sources.</li>
-                <li>Seamlessly report posts that are from non-credible sources while including a copy of the MBFC results.</li>
-            </ul>
-
-            <p class="font-bold text-sm mt-2">For Admins/Mods</p>
-            <ul class="list-disc pl-4 text-sm">
-                <li>Quickly and easily identify and squash posts from disreputable sources.</li>
-                <li>MBFC is integrated into the mod tooling allowing you to populate removal reasons / replies with the results of a MBFC lookup.</li>
-                <li>Perfect for those who are moderating a news or political community.</li>
-            </ul>
-        </li>
-
-        <li class="mt-2">
-            <p class="font-bold">Distinguished and Sticky Comments</p>
-            <p>
-                This no longer works on 0.19.x versions of Lemmy because the Lemmy developers are awful and short-sighted. They weren't even using the distinguished
-                flag and still decided to make it so that admins/mods could only distinguish their own comments.  Screw the Lemmy devs.  Eventually this feature
-                will be removed once 0.18.x support is dropped.  
-            </p>
-
-            <p>
-                Mods/Admins can distinguish and sticky comments.  Comments that are distinguished will always display at the top of the comment list 
-                regardless of sort order.
-            </p>
-
-            <p>
-                Note that the way distinguished comments are handled only applies to Tesseract.  The comments will be marked as distinguished at the API 
-                level, but it's up to individual clients/UIs to handle how to render comments with the distinguished flag set.
-            </p>
-
-            
-        </li>
-
-
-
-    </ul>
-    
-    <h2 class="text-2xl font-bold leading-8 ">Additional Features</h2>
-    <ul class="list-disc pl-4 my-3">
-        <li>Multiple account and multiple instance support.</li>
-        <li>Optimized for desktop and mobile. All desktop features are available in mobile.</li>
-        <li>A more "new" Reddit-like look and feel</li>
-        <li>Code syntax highlighting.</li>
-        <li>Full admin tools to manage your Lemmy instance</li>
-        <li>Extensive configuration options</li>
-        <li>Modlog and Moderation Tools</li>
-    </ul>
-
-    <h2 class="text-2xl font-bold leading-8">Get Tesseract</h2>
-    
-    
-    <p class="my-3">
-        The project has a <Link href="https://github.com/asimons04/Tesseract" newtab={true} title="ChangeLog.md" highlight>GitHub page.</Link>
-        with more details, a detailed change log, and documentation.
-    </p>
-
-    <h2 class="text-2xl font-bold leading-8">Credits and Acknowledgements</h2>
-    <ul class="list-disc pl-4 my-3 text-base">
-        <li class="mt-2">
-            <Link href="https://github.com/Xyphyn/photon" newtab={true} title="Photon" highlight>Xylight</Link> for creating Photon.  Tesseract began life as a fork of a very early version of that and likely would not exist (or would exist very differently)
-            without that base.  
-        </li>
-
-        <li class="mt-2">
-            <Link href="https://mediabiasfactcheck.com/" newtab={true} title="Media Bias Fact Check" highlight>Media Bias Fact Check</Link> is an invaluable tool when, if you're like me,
-            using Lemmy as a news aggregator.  Through their efforts, Tesseract is able to show credibility badges on news posts to help combat disinformation. I cannot
-            thank them enough for their work.
-        </li>
-
-        <li class="mt-2">
-            <Link href="https://lemmy.max-p.me/u/Max_P" newtab={true} title="Max_P" highlight>Max_P@lemmy.max-p.me</Link> and 
-            <Link href="https://discuss.online/u/jgrim" newtab={true} title="jgrim" highlight>jgrim@discuss.online</Link> for both being early adopters of 0.19
-            and allowing me to use their instances as testbeds for Tesseract development.
-        </li>
-
-        <li class="mt-2">
-            All of the users on Github and in the Lemmy Admin chat who suggested and tested features.
-        </li>
-    </ul>
-
-    <h2 class="text-2xl font-bold leading-8">Donations</h2>
-    <p class="my-2">
-        I built Tesseract in my spare time as a hobby, learning excercise for SvelteKit, and to address my own personal annoyances with Lemmy and other
-        Lemmy UIs.  That said, I do not feel the need to accept donations for its development.
-    </p>
-
-    <p class="my-2">However, if you really want to donate, please consider donating to one of the following:</p>
-
-    <ul class="list-disc pl-4 my-3 text-base">
-        <li class="mt-2">
-            <Link href="https://www.buymeacoffee.com/xylight" newtab={true} title="Donate to Xylight" highlight>Xylight</Link>: 
-            They are the author of Photon from which Tesseract was forked who also did a lot of the heavy lifting for much of the core.  While I've replaced a lot of it, none of my work would
-            have been possible without theirs.
-        </li>
-
-        <li class="mt-2">
-            <Link href="https://mediabiasfactcheck.com/support-media-bias-fact-check/" newtab={true} title="Donate to Media Bias Fact Check" highlight>Media Bias Fact Check</Link>: 
-                Tesseract embeds a subset of a dump of their dataset in itself in order to provide the bias and credibility badges and reports. This dump comes from their browser extension.  Without this,
-                it would be impossible to have this feature.  MBFC is 100% independent and relies on memberships and donations to do their work. Please consider donating to them so they can continue
-                the amazing work they do.
-        </li>
-
+        <span class="my-2" />
+        <Markdown source={content} />
         
-
-    </ul>
+    </FeedContainer>
     
-
-</div>
+    <div class="h-full" slot="right-panel">
+        {#if $site}
+            <SiteCard site={$site.site_view} taglines={$site.taglines} admins={$site.admins} version={$site.version}/>
+        {/if}
+    </div>
+</MainContentArea>
 
 
         
