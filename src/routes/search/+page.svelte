@@ -7,7 +7,6 @@
         query?: string
         page?: number
     }
-    type Result = PostView | CommentView | PersonView | CommunityView
 
     import type {
         CommentView,
@@ -16,15 +15,14 @@
         Person,
         PersonView,
         PostView,
-        SearchResponse,
     } from 'lemmy-js-client'
     
     import type { LoadEvent } from '@sveltejs/kit';
     import type { RouteParams, Snapshot } from './$types';
     import { PageSnapshot } from '$lib/storage'
 
-    import { expoInOut, expoOut } from 'svelte/easing'
-    import { fly, slide } from 'svelte/transition'
+    import { expoOut } from 'svelte/easing'
+    import { slide } from 'svelte/transition'
     import { onMount } from 'svelte';
     
     import {
@@ -37,13 +35,13 @@
     
     import { beforeNavigate, goto } from '$app/navigation'
     import { load } from './+page'
-    import { page } from '$app/stores'
     import { scrollTo } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
     import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte';
@@ -52,13 +50,11 @@
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import UserItem from '$lib/components/lemmy/user/UserItem.svelte'
-    import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte'
+    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
@@ -69,8 +65,8 @@
 
     import { 
         Icon, 
-        ArrowPathRoundedSquare,
         Bars3,
+        BarsArrowDown,
         ChatBubbleOvalLeftEllipsis,
         Funnel,
         MagnifyingGlass,
@@ -80,16 +76,7 @@
         UserGroup,
         Window,
         XCircle,
-
-        BarsArrowDown
-
     } from 'svelte-hero-icons'
-    import Card from '$lib/components/ui/Card.svelte';
-    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
-    
-    
-    
-    
 
     export let data
     
@@ -140,8 +127,6 @@
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {
         capture: () => {
-            //if (!infiniteScroll.enabled) return
-
             pageState.scrollY = window.scrollY
             PageSnapshot.capture(
                 {
@@ -154,13 +139,11 @@
         },
         restore: async () => {
             try { 
-                //if (infiniteScroll.enabled) {
-                    let snapshot = PageSnapshot.restore() 
-                    if (snapshot.data)  data = snapshot.data
-                    if (snapshot.state) pageState = snapshot.state
-                    if (snapshot.filter) filter = snapshot.filter
-                //}
-                //else 
+                let snapshot = PageSnapshot.restore() 
+                if (snapshot.data)  data = snapshot.data
+                if (snapshot.state) pageState = snapshot.state
+                if (snapshot.filter) filter = snapshot.filter
+
                 PageSnapshot.clear()
             }
             catch { 
@@ -255,12 +238,10 @@
         filter.page = 1
         search()
     }
-   
     
-
-    
+    // If the page data provides filters for community or person, set the local filter objects to those details
     onMount(() => {
-        // If the page data provides filters for community or person, set the local filter objects to those details
+        
         if (data.filters?.community?.community_view) filter.community = data.filters.community.community_view.community
         if (data.filters?.person?.person_view) filter.person = data.filters.person.person_view.person
         if (data.query) filter.query = data.query
