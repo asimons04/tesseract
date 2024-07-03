@@ -31,6 +31,10 @@ All major/minor changes between releases will be documented here.
     - Moved "Manage Accounts" out of profile submenu
 - Added user profile settings to `/settings` in addition to the application settings
     - Still accessible from Profile->Settings
+- Slight updates to admin panel
+    - Changed layout of tagline editor
+    - Taglines are now previewed as markdown (as they would be elsewhere)
+    - Federation block/allow list configuration now uses the `SettingEditArray` component rather than being a discrete editor.
 
 
 --- 
