@@ -48,7 +48,7 @@
         if (!$profile?.jwt) return
 
         data.person_blocks.splice(
-            data.person_blocks.findIndex((i) => i.target.id == item.target.id)
+            data.person_blocks.findIndex((i:PersonBlockView) => i.target.id == item.target.id)
             , 1
         )
         data.person_blocks = data.person_blocks
@@ -67,10 +67,9 @@
         
         if (!blocked.blocked) {
             data.instance_blocks?.splice(
-                data.instance_blocks?.findIndex( (i) => i.instance.id == item.instance.id )
+                data.instance_blocks?.findIndex( (i:InstanceBlockView) => i.instance.id == item.instance.id )
                 , 1
             )
-
             data.instance_blocks = data.instance_blocks
         }
     }
@@ -79,9 +78,8 @@
         if (!$profile?.jwt) return
 
         data.community_blocks.splice(
-            data.community_blocks.findIndex(
-                (i) => i.community.id == item.community.id)
-            ,1
+            data.community_blocks.findIndex( (i:CommunityBlockView) => i.community.id == item.community.id) 
+            ,1 
         )
         data.community_blocks = data.community_blocks
 
