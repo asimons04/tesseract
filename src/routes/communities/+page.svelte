@@ -92,7 +92,7 @@
     <title>Communities at {data.site.site_view.site.name}</title>
 </svelte:head>
 
-<SubNavbar home back scrollButtons toggleMargins toggleCommunitySidebar
+<SubNavbar home back scrollButtons toggleCommunitySidebar
     refreshButton refreshPreventDefault on:navRefresh={() => search(true) }
 >
         
@@ -240,72 +240,68 @@
 </SubNavbar>
 
 <MainContentArea>
-    <FeedContainer>
-        <span class="flex flex-row gap-4 items-center font-bold text-xl text-center mx-auto pl-3">
-            {#if data.site.site_view.site.icon}
-                <Avatar circle={false} width={48} url={data.site.site_view.site.icon} />
-            {/if}
-            <h1 class="text-lg lg:text-xl xl:text-2xl font-bold">Communities {searchParams.type == 'All' ? 'Known to' : 'At'} {data.site.site_view.site.name}</h1>
-        </span>
+    <span class="flex flex-row gap-4 items-center font-bold text-xl text-center mx-auto pl-3">
+        {#if data.site.site_view.site.icon}
+            <Avatar circle={false} width={48} url={data.site.site_view.site.icon} />
+        {/if}
+        <h1 class="text-lg lg:text-xl xl:text-2xl font-bold">Communities {searchParams.type == 'All' ? 'Known to' : 'At'} {data.site.site_view.site.name}</h1>
+    </span>
 
-        
-        <p class="text-slate-600 dark:text-zinc-400 mt-2">
-            Browse the communities on {data.site.site_view.site.name}.  By default, only communities local to this instance are shown.  You can switch the type to "All"
-            and browse/search all communities known to {data.site.site_view.site.name}.  
-        </p>
+    
+    <p class="text-slate-600 dark:text-zinc-400 mt-2">
+        Browse the communities on {data.site.site_view.site.name}.  By default, only communities local to this instance are shown.  You can switch the type to "All"
+        and browse/search all communities known to {data.site.site_view.site.name}.  
+    </p>
 
-        <!---Search Input for Mobile View--->
-        <form class="flex xl:hidden flex-row gap-0 items-center w-full justify-between"
-                on:submit={async (e) => {
-                    e.preventDefault();
-                    await search(true)
-                }}
-            >
-                <TextInput type="search" class="w-full" placeholder="Keyword" bind:value={searchParams.query}/>
+    <!---Search Input for Mobile View--->
+    <form class="flex xl:hidden flex-row gap-0 items-center w-full justify-between"
+            on:submit={async (e) => {
+                e.preventDefault();
+                await search(true)
+            }}
+        >
+            <TextInput type="search" class="w-full" placeholder="Keyword" bind:value={searchParams.query}/>
 
-                <Button submit color="tertiary">
-                    <Icon src={MagnifyingGlass} mini width={28} />
-                    Search
-                </Button>
-            </form>
+            <Button submit color="tertiary">
+                <Icon src={MagnifyingGlass} mini width={28} />
+                Search
+            </Button>
+        </form>
 
-        <hr class="border-slate-300/50 my-2"/>
+    <hr class="border-slate-300/50 my-2"/>
 
-        {#if data.communities.length == 0 && searching}
-            <div class="flex gap-2 items-center mx-auto mt-4" >
-                <Spinner width={48} />
-                <span>Searching...</span>
+    {#if data.communities.length == 0 && searching}
+        <div class="flex gap-2 items-center mx-auto mt-4" >
+            <Spinner width={48} />
+            <span>Searching...</span>
+        </div>
+    {/if}
+
+
+    <div class="flex flex-col gap-4">
+        {#if data.communities.length == 0 && !searching}
+            <div class="text-slate-600 dark:text-zinc-400 flex flex-col justify-center items-center py-8">
+                <Icon src={QuestionMarkCircle} size="32" solid />
+                <h1 class="font-bold text-2xl">No communities</h1>
+                <p class="mt-2 text-center">
+                    There are no communities with that name. Try refining your search.
+                </p>
             </div>
         {/if}
 
-
-        <div class="flex flex-col gap-4">
-            {#if data.communities.length == 0 && !searching}
-                <div class="text-slate-600 dark:text-zinc-400 flex flex-col justify-center items-center py-8">
-                    <Icon src={QuestionMarkCircle} size="32" solid />
-                    <h1 class="font-bold text-2xl">No communities</h1>
-                    <p class="mt-2 text-center">
-                        There are no communities with that name. Try refining your search.
-                    </p>
-                </div>
-            {/if}
-
-            {#each data.communities as community}
-                <CommunityObject bind:community />
-            {/each}
-        </div>
-        
-        
-        <div class="mt-2 w-full">
-            <Pageination page={data.page} on:change={(p) => {
-                searchParams.page = p.detail
-                search()
-                window.scrollTo(0,0)
-            }}/>
-        </div>
-        
-    </FeedContainer>
+        {#each data.communities as community}
+            <CommunityObject bind:community />
+        {/each}
+    </div>
     
+    
+    <div class="mt-2 w-full">
+        <Pageination page={data.page} on:change={(p) => {
+            searchParams.page = p.detail
+            search()
+            window.scrollTo(0,0)
+        }}/>
+    </div>
 
     <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} slot="right-panel"/>
 </MainContentArea>
