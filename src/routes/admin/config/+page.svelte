@@ -72,7 +72,10 @@
         Window,
         XCircle,
 
-        ServerStack
+        ServerStack,
+
+        ChatBubbleBottomCenterText
+
 
 
     } from 'svelte-hero-icons'
@@ -1321,11 +1324,12 @@
                         
                         <span slot="description" class="text-xs font-normal">
                             Taglines are rotating text values that appear in your side card or at the top of the site in Lemmy-UI. You can define any number of taglines,
-                            and a random one will be shown on each load.
+                            and a random one will be shown on each load in most UIs.  In Tesseract, they will rotate every 30 seconds.
                         </span>
-                        <div class="flex flex-col lg:flex-row gap-4">                    
+                        
+                        <div class="flex flex-col gap-4">                    
                             
-                            <div class="w-full lg:w-1/2">
+                            <div class="w-full">
                                 <form class="flex flex-col mt-auto gap-2 w-full"
                                     on:submit|preventDefault={() => {
                                         if (newTagline == '' || !data.site) return
@@ -1336,27 +1340,25 @@
                                     <MarkdownEditor
                                         bind:value={newTagline}
                                         placeholder="Add a tagline"
-                                        images={false}
-                                    />
+                                        images={true}
+                                        rows={7}
+                                    >
 
-                                    <Button size="lg" color="primary" submit>
-                                        <Icon src={Plus} size="16" mini slot="icon" />
-                                        Add
-                                    </Button>
+                                        <Button size="lg" color="primary" class="ml-auto" slot="actions" submit>
+                                            <Icon src={Plus} size="16" mini slot="icon" />
+                                            Add
+                                        </Button>
+
+                                    </MarkdownEditor>
                                 </form>
                             </div>
 
-                            <div class="w-full lg:w-1/2">
+                            <div class="w-full mt-4">
                                 
                                 {#if formData.taglines?.length > 0}
-                                    <EditableList
-                                        divider={false}
-                                        let:action
+                                    <EditableList divider={true} let:action
                                         on:action={(e) => {
-                                            formData.taglines.splice(
-                                                formData.taglines.findIndex((i) => i == e.detail),
-                                                1
-                                            )
+                                            formData.taglines.splice( formData.taglines.findIndex((i) => i == e.detail), 1)
                                             formData.taglines = formData.taglines
                                         }}
                                     >
@@ -1364,7 +1366,7 @@
                                         <div class="flex flex-col mt-2 gap-2 items-center max-h-[250px] w-full overflow-y-scroll px-4">
                                             {#each formData.taglines as tagline}
                                                 <div class="flex px-4 py-2 w-full rounded-md bg-slate-200 dark:bg-zinc-700">
-                                                    <Markdown source={tagline} inline />
+                                                    <Markdown source={tagline} />
                                                     
                                                     <div class="flex gap-2 ml-auto">
                                                         <Button on:click={() => action(tagline)} color="ghost" class="border-none">
@@ -1377,12 +1379,7 @@
                                         </div>
                                     </EditableList>
                                 {:else}
-                                
-                                    <Placeholder
-                                        icon={Plus}
-                                        title="No taglines"
-                                        description="A random tagline will appear when users visit your instance."
-                                    />
+                                    <Placeholder icon={ChatBubbleBottomCenterText} title="No taglines" description="A random tagline will appear when users visit your instance." />
                                 {/if}
                             </div>
                         </div>
