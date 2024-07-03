@@ -5,6 +5,7 @@
     import { amModOfAny } from '$lib/components/lemmy/moderation/moderation'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { getClient} from '$lib/lemmy.js'
+    import { onMount } from 'svelte';
     import { profile } from '$lib/auth.js'
     import { saveProfile } from '$lib/favorites'
     import { site } from '$lib/lemmy.js'
@@ -26,7 +27,6 @@
     import ProfileSettings from '$routes/profile/(local_user)/settings/+page.svelte'
     
     import {
-        ArchiveBoxXMark,
         ArrowDownTray,
         ArrowUpTray,
         ArrowPath,
@@ -35,7 +35,6 @@
         ArrowsRightLeft,
         ArrowUturnDown,
         Icon,
-        Bars3,
         BarsArrowDown,
         Beaker,
         BugAnt,
@@ -45,17 +44,12 @@
         ChartBar,
         ChatBubbleBottomCenterText,
         CheckBadge,
-        ChevronUp,
         ChevronDoubleDown,
         CloudArrowDown,
         CloudArrowUp,
         CodeBracketSquare,
-        CodeBracket,
-        Cog6Tooth,
-        CursorArrowRays,
         EnvelopeOpen,
         ExclamationTriangle,
-        Eye,
         EyeSlash,
         FaceFrown,
         Film,
@@ -71,7 +65,6 @@
         NoSymbol,
         Photo,
         Play,
-        PlusCircle,
         QueueList,
         Server,
         Sun,
@@ -81,14 +74,8 @@
         Tv,
         UserCircle,
         Window,
-        XCircle,
-
-        
-
-
-
     } from 'svelte-hero-icons'
-    import { onMount } from 'svelte';
+    
 
     let data = {
         loading: false,
