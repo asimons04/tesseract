@@ -6,7 +6,6 @@
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { getClient} from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
-    import { removalTemplate } from '$lib/components/lemmy/moderation/moderation.js'
     import { saveProfile } from '$lib/favorites'
     import { site } from '$lib/lemmy.js'
     import { sortOptions, sortOptionNames } from '$lib/lemmy'
@@ -14,19 +13,15 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import Logo from '$lib/components/ui/Logo.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import SettingEditArray from '$lib/components/ui/settings/SettingEditArray.svelte'
-    import SettingGroup from '$lib/components/ui/settings/SettingGroup.svelte'
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingsCollapseSection from '$lib/components/ui/settings/SettingsCollapseSection.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import TextInput from '$lib/components/input/TextInput.svelte'
 
     import ProfileSettings from '$routes/profile/(local_user)/settings/+page.svelte'
     
