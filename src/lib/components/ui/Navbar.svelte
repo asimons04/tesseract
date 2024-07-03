@@ -193,12 +193,6 @@
                 </span>
             </button>
         </MenuButton>
-        <!---If no profiles defined, show "Manage Accounts" button instead--->
-        {:else}
-            <MenuButton link href="/accounts">
-                <Icon src={AdjustmentsHorizontal} mini width={16} />
-                Manage Accounts
-            </MenuButton>
         {/if}
         
         <!--- Accounts List --->
@@ -209,13 +203,7 @@
                         <ProfileButton {index} {prof}/>
                     {/each}
                 </div>
-
-                <MenuButton link href="/accounts">
-                    <Icon src={AdjustmentsHorizontal} mini width={16} />
-                    Manage Accounts
-                </MenuButton>
             </div>
-
             <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         {/if}
 
@@ -240,13 +228,25 @@
                 <Icon src={Bookmark} mini width={16} /> Saved
             </MenuButton>
 
+            <!---
             <MenuButton link href="/profile/settings" >
                 <Icon src={Cog6Tooth} mini width={16} /> User Settings
             </MenuButton>
+            --->
         {/if}
+        
+        <!--- Application/Profile Settings --->
+        <MenuButton link href="/settings">
+            <Icon src={Cog6Tooth} mini width={16} />
+            Settings
+        </MenuButton>
+
+        <!---Manage Accounts--->
+        <MenuButton link href="/accounts">
+            <Icon src={AdjustmentsHorizontal} mini width={16} />
+            Manage Accounts
+        </MenuButton>
       
-        
-        
 
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
@@ -284,14 +284,10 @@
             <Icon src={BuildingOffice} mini width={16} />
             Legal
         </MenuButton>
+
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
 
-        <!--- Application Settings/Info --->
-        <li class="text-xs px-4 py-1 my-1 opacity-80">App</li>
-        <MenuButton link href="/settings">
-            <Icon src={Cog6Tooth} mini width={16} />
-            App Settings
-        </MenuButton>
+       
 
         <MenuButton link href="/about">
             <Icon src={InformationCircle} mini width={16} />
