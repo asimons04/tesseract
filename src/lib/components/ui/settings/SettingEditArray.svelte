@@ -11,6 +11,7 @@
         ArchiveBoxXMark,
         Icon,
         PlusCircle,
+        Trash,
         XCircle
     } from 'svelte-hero-icons'
     
@@ -155,7 +156,7 @@
                                         dispatcher('delete', item)
                                     }} 
                                 >
-                                    <Icon src={XCircle} mini width={22}/>
+                                    <Icon src={Trash} mini width={22}/>
                                 </Button>
                             </div>
                         {/each}
