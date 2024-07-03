@@ -42,7 +42,7 @@
         <Icon src={Star} width={size} mini slot="icon" />
     </Button>
     
-    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
+    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left px-4 py-1 min-w-48">
         Favorites
         <span class="ml-auto"/>
         <Icon src={Star} width={16} mini />
