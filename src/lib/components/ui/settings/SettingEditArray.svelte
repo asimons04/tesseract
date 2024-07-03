@@ -132,12 +132,13 @@
 
                             <!---Clear the filter text box--->
                             <Button 
-                                color="primary"
+                                size="square-md"
+                                color="ghost"
                                 class="mr-4"
                                 title="Clear filter"
                                 on:click={() => { filter_input_text = '' }}
                             >
-                                <Icon src={XCircle} mini width={22}/>
+                                <Icon src={XCircle} mini width={16}/>
                             </Button>
                         </div>
                     {/if}
