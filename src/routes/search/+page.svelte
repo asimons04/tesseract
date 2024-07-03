@@ -140,7 +140,7 @@
     // Store and reload the page data between navigations (Override functions to use LocalStorage instead of Session Storage)
     export const snapshot: Snapshot<void> = {
         capture: () => {
-            if (!infiniteScroll.enabled) return
+            //if (!infiniteScroll.enabled) return
 
             pageState.scrollY = window.scrollY
             PageSnapshot.capture(
@@ -154,13 +154,14 @@
         },
         restore: async () => {
             try { 
-                if (infiniteScroll.enabled) {
+                //if (infiniteScroll.enabled) {
                     let snapshot = PageSnapshot.restore() 
                     if (snapshot.data)  data = snapshot.data
                     if (snapshot.state) pageState = snapshot.state
                     if (snapshot.filter) filter = snapshot.filter
-                }
-                else PageSnapshot.clear()
+                //}
+                //else 
+                PageSnapshot.clear()
             }
             catch { 
                 PageSnapshot.clear() 
