@@ -1,9 +1,7 @@
 <script lang="ts">
     
     import type { SiteView, PersonView, Tagline } from 'lemmy-js-client'
-    import { getClient } from '$lib/lemmy.js'
     import {imageProxyURL} from '$lib/image-proxy'
-    import { slide } from 'svelte/transition'
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -20,9 +18,6 @@
         BuildingOffice,
         Calendar,
         ChatBubbleOvalLeftEllipsis,
-        ChevronDoubleRight,
-        ChevronUp,
-        ChevronDown,
         Icon,
         InformationCircle,
         Newspaper,
