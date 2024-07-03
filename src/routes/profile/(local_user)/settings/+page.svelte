@@ -1,7 +1,8 @@
 <script lang="ts">
-    import type { SaveUserSettings } from 'lemmy-js-client'
+    import type { MyUserInfo, SaveUserSettings } from 'lemmy-js-client'
     
     import { getClient } from '$lib/lemmy.js'
+    import { onMount } from 'svelte';
     import { profile, saveProfileToProfileData } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
@@ -12,13 +13,15 @@
     import FileInput from '$lib/components/input/FileInput.svelte'
     import Link from '$lib/components/input/Link.svelte';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
     import TotpSetupModal from './TOTPSetupModal.svelte'
 
     import { 
-    ArrowDownTray,
+        ArrowDownTray,
         DevicePhoneMobile,
         Envelope, 
         EnvelopeOpen, 
@@ -30,21 +33,49 @@
         Trash
 
     } from 'svelte-hero-icons'
-
-    export let data
-
-    let formData: Omit<SaveUserSettings, 'auth'> | undefined = {
-        ...data.local_user_view?.local_user,
-        ...data.local_user_view?.person,
-    }
-
+    
+    export let heading = true
+    export let description = true    
+    export let data: MyUserInfo | undefined = undefined
+    
+    let formData: SaveUserSettings | undefined = undefined
     let profileImage: FileList | undefined
     let bannerImage: FileList | undefined
+    let saving = false
+    let loading = false
+    let loadingError = false
+    let loadingErrorMessage = ""
+    let changingPassword = false
+    let deletingAccount = false
+    let updatingTotp = false
+    
+    onMount(async () => {
+        try {
+            // If accessing from within /profile/(local_user), the layout loader will have this data already; don't need to fetch it unless it's not being passed
+            // Used to allow embedding the profile user settings into the main app settings (where the local_user loader isn't called
+            if (!data?.local_user_view) {
+                loading = true
+                data = (await getClient().getSite()).my_user
+                if (!data) throw new Error('Failed to fetch user profile settings.')
+            }
+
+            formData = {
+            ...data.local_user_view?.local_user,
+            ...data.local_user_view?.person,
+            }
+            loading = false
+        }
+        catch (err) {
+            loading = false
+            loadingError = true
+            loadingErrorMessage = err as string
+        }
+    })
 
     async function save() {
         if (!formData || !$profile?.jwt) return
 
-        loading = true
+        saving = true
         let client = getClient()
 
         try {
@@ -80,111 +111,127 @@
                 type: 'error',
                 title: "Error"
             })
+            saving = false
         }
 
-        loading = false
+        saving = false
     }
-
-    let loading = false
-    let changingPassword = false
-    let deletingAccount = false
-    let updatingTotp = false
 </script>
 
-<DeleteAccountModal bind:open={deletingAccount} />
-<ChangePasswordModal bind:open={changingPassword} />
-
-<TotpSetupModal bind:open={updatingTotp} bind:totp_enabled={data.local_user_view.local_user.totp_2fa_enabled} />
-
-<form class="flex flex-col gap-4 h-full" on:submit|preventDefault={save}>
-    
-    <h1 class="flex flex-row justify-between">
-        <span class="font-bold text-2xl">Profile Settings</span>
-        
-        <Button submit size="lg" color="primary" {loading} disabled={loading}>
-            <Icon src={ArrowDownTray} mini width={18} />
-            Save Settings
-        </Button>
-    </h1>
-    <p class="text-sm">
-        The settings here are only ones that affect the behavior of the API. Please see
-        <Link href="/settings" highlight>app settings</Link> for additional options.
-    </p>
-
-    {#if data.local_user_view?.local_user && formData}
-    <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
-        
-        <div class="flex flex-col w-full lg:w-2/3 gap-4">
-            <TextInput label="Display name" bind:value={formData.display_name} placeholder="Optional"/>
-            <TextInput label="Email" bind:value={formData.email} />
-            <TextInput label="Matrix User" bind:value={formData.matrix_user_id} placeholder="@user:example.com"/>
-            
-            <MarkdownEditor images={false} bind:value={formData.bio} label="Bio" rows={6} previewButton />
-        </div>
-
-
-        <div class="flex flex-col w-full lg:w-1/3 gap-4">
-            <FileInput class="h-full" label="Profile Image" image bind:files={profileImage} preview previewURL={data.local_user_view?.person.avatar}/>
-            <FileInput class="h-full" label="Banner Image" image bind:files={bannerImage} preview previewURL={data.local_user_view?.person.banner}/>
-
-            
-        </div>
+{#if loading}
+    <div class="flex w-full h-[256px]">
+        <span class="mx-auto my-auto">    
+            <Spinner width={28} />
+        </span>
     </div>
-    
-    <hr class="dark:opacity-10 w-full my-2" />
+{/if}
 
-    <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
-        <div class="flex flex-col w-full lg:w-2/3 gap-4">
-            <SettingToggleContainer>
-                <SettingToggle icon={ExclamationTriangle} title="Show NSFW Content" bind:value={formData.show_nsfw}
-                    description="Enable this option to see content flagged NSFW. Posts could be flagged NSFW for any number of reasons (porn, spoiler, gore, violence, language, etc)."
-                />
+{#if loadingError}
+    <div class="w-full my-4">    
+        <Placeholder icon={ExclamationTriangle} title="Error" description={loadingErrorMessage}/>
+    </div>
+{/if}
+
+
+{#if data?.local_user_view}
+    <!---Function Modals--->
+    <DeleteAccountModal bind:open={deletingAccount} />
+    <ChangePasswordModal bind:open={changingPassword} />
+    <TotpSetupModal bind:open={updatingTotp} bind:totp_enabled={data.local_user_view.local_user.totp_2fa_enabled} />
+
+    <form class="flex flex-col gap-4 h-full" on:submit|preventDefault={save}>
+        {#if heading}
+            <h1 class="flex flex-row justify-between">
+                <span class="font-bold text-2xl">Profile Settings</span>
+            </h1>
+        {/if}
+        
+        {#if description}
+            <p class="text-sm">
+                The settings here are only ones that affect the behavior of the API. Please see
+                <Link href="/settings" highlight>app settings</Link> for additional options.
+            </p>
+        {/if}
+
+        {#if data?.local_user_view?.local_user && formData}
+        <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
+            
+            <div class="flex flex-col w-full lg:w-2/3 gap-4">
+                <TextInput label="Display name" bind:value={formData.display_name} placeholder="Optional"/>
+                <TextInput label="Email" bind:value={formData.email} />
+                <TextInput label="Matrix User" bind:value={formData.matrix_user_id} placeholder="@user:example.com"/>
                 
-                <SettingToggle icon={Sparkles} title="Bot Account" bind:value={formData.bot_account}
-                    description="Flags this account as a bot. Many instances require this if the account is submitting content in an automated manner."
-                />
+                <MarkdownEditor images={false} bind:value={formData.bio} label="Bio" rows={6} previewButton />
+            </div>
 
-                <SettingToggle icon={FaceFrown} title="Show Bot Accounts" bind:value={formData.show_bot_accounts}
-                    description="Enabling this will show content from accounts marked as bots. Disable to not see submissions from those accounts."
-                />
 
-                <SettingToggle icon={EnvelopeOpen} title="Show Read Posts" bind:value={formData.show_read_posts}
-                    description="Disable this to automatically hide in the feed posts that have been marked as read."
-                />
+            <div class="flex flex-col w-full lg:w-1/3 gap-4">
+                <FileInput class="h-full" label="Profile Image" image bind:files={profileImage} preview previewURL={data.local_user_view?.person.avatar}/>
+                <FileInput class="h-full" label="Banner Image" image bind:files={bannerImage} preview previewURL={data.local_user_view?.person.banner}/>
 
-                <SettingToggle icon={Envelope} title="Send Notifications to Email" bind:value={formData.send_notifications_to_email}
-                    description="Enable this if you want to get email notifications for replies, DMs, and reports."
-                />
-            </SettingToggleContainer>
+                
+            </div>
         </div>
         
-        <div class="flex flex-col w-full lg:w-1/3 gap-4 px-4">
-            <div class="mt-auto"/>
-            
-            
-            
-            <Button size="lg" color="primary" on:click={()=> {changingPassword = true }}>
-                <Icon src={Key} min width={18} />
-                Change Password
-            </Button>
+        <hr class="dark:opacity-10 w-full my-2" />
 
-            <Button size="lg" color="primary" on:click={()=> {updatingTotp = true }}>
-                <Icon src={DevicePhoneMobile} min width={18} />
-                {data.local_user_view.local_user.totp_2fa_enabled ? 'Disable 2FA' : 'Enable 2FA'}
-            </Button>
+        <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
+            <div class="flex flex-col w-full lg:w-2/3 gap-4">
+                <SettingToggleContainer>
+                    <SettingToggle icon={ExclamationTriangle} title="Show NSFW Content" bind:value={formData.show_nsfw}
+                        description="Enable this option to see content flagged NSFW. Posts could be flagged NSFW for any number of reasons (porn, spoiler, gore, violence, language, etc)."
+                    />
+                    
+                    <SettingToggle icon={Sparkles} title="Bot Account" bind:value={formData.bot_account}
+                        description="Flags this account as a bot. Many instances require this if the account is submitting content in an automated manner."
+                    />
 
-            <Button size="lg" color="danger" on:click={() => { deletingAccount=true }}>
-                <Icon src={Trash} min width={18} />
-                Delete account
-            </Button>
+                    <SettingToggle icon={FaceFrown} title="Show Bot Accounts" bind:value={formData.show_bot_accounts}
+                        description="Enabling this will show content from accounts marked as bots. Disable to not see submissions from those accounts."
+                    />
+
+                    <SettingToggle icon={EnvelopeOpen} title="Show Read Posts" bind:value={formData.show_read_posts}
+                        description="Disable this to automatically hide in the feed posts that have been marked as read."
+                    />
+
+                    <SettingToggle icon={Envelope} title="Send Notifications to Email" bind:value={formData.send_notifications_to_email}
+                        description="Enable this if you want to get email notifications for replies, DMs, and reports."
+                    />
+                </SettingToggleContainer>
+            </div>
+            
+            <div class="flex flex-col w-full lg:w-1/3 gap-4 px-4">
+                <div class="mt-auto"/>
+                
+                
+                <Button submit size="lg" color="primary" loading={saving} disabled={saving}>
+                    <Icon src={ArrowDownTray} mini width={18} />
+                    Save Settings
+                </Button>
+
+                <Button size="lg" color="primary" on:click={()=> {changingPassword = true }}>
+                    <Icon src={Key} min width={18} />
+                    Change Password
+                </Button>
+
+                <Button size="lg" color="primary" on:click={()=> {updatingTotp = true }}>
+                    <Icon src={DevicePhoneMobile} min width={18} />
+                    {data.local_user_view.local_user.totp_2fa_enabled ? 'Disable 2FA' : 'Enable 2FA'}
+                </Button>
+
+                <Button size="lg" color="danger" on:click={() => { deletingAccount=true }}>
+                    <Icon src={Trash} min width={18} />
+                    Delete account
+                </Button>
+            </div>
         </div>
-    </div>
+            
+        {:else}
+            <Card cardColor="warning" class="p-5">
+                The API didn't return your user settings.
+            </Card>
+        {/if}
         
-    {:else}
-        <Card cardColor="warning" class="p-5">
-            The API didn't return your user settings.
-        </Card>
-    {/if}
-    
-    
-</form>
+        
+    </form>
+{/if}
