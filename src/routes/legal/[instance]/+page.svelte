@@ -1,5 +1,6 @@
 <script lang="ts">
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import Markdown from '$lib/components/markdown/Markdown.svelte';
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
@@ -8,7 +9,7 @@
     import { page } from '$app/stores'
     import { goto } from '$app/navigation'
     import { LINKED_INSTANCE_URL } from "$lib/instance.js";
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    
     
     
 
