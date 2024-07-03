@@ -17,6 +17,7 @@
     export let href: string | undefined = undefined
     export let heading:boolean = false
     export let boldCommunityName:boolean = true;
+    export let useDisplayNames:boolean|undefined = undefined 
 
     function linkFromCommunity(community: Community) {
         const domain = new URL(community.actor_id).hostname
@@ -36,7 +37,7 @@
     {#if name}
         <span class="flex flex-wrap gap-0 {boldCommunityName ? 'font-bold' : 'font-normal'}">
             
-            {$userSettings.displayNames 
+            {useDisplayNames ?? $userSettings.displayNames 
                 ? shortenCommunityName(community.title, 30)
                 : `/c/${community.name}`
             }
