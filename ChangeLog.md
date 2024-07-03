@@ -3,15 +3,37 @@ All major/minor changes between releases will be documented here.
 
 ## 1.4.1
 
+### Infrastructure
+- Update SvelteKit from 1 to 2 and update underlying dependencies
+- Update other project dependencies to latest versions
+- Update NodeJS from 20 to 22
+- Update `lemmy-js-client` to 0.19.4 so latest features can be utilized.
+- Removed `svelte/adapter-auto` and only use Node adapter.
+- Remove some discrete, one-off logic and replace with shared/standardized components
+    - Federation block/allow list editor in admin panel
+
 ### Bugfixes
 - Fixed modlog action menus clipping
-- Add a call to getSite after blocking/unblocking to update person blocks list. Fixes reactivity and blocked/unblocked status on profile modals and user pages.
-
+- Fixes reactivity and blocked/unblocked status on profile modals and user pages. Added a call to getSite after blocking/unblocking to update person blocks list. 
+- Fix mobile reflow in modlog
+- Fixed bug with non-default instance not showing
 
 ### General Changes
 - Remove Fediseer badge option for posts (rarely used and accessible via Instance menu and from instances page)
+    - I'm *assuming* rarely used.  I don't (and won't) have any kind of telemetry, but from the instances I have seen running Tesseract in the wild, none have had those badges enabled.
+
+- Remove background on image zoom toolbar
+- `SettingEditArray` component is now filterable and can accept a comma-delimited list of entries
+- De-cluttered main menu (top right).
+    - Removed User Settings Button
+    - Removed App Settings Button
+    - Added "Settings" button to go to /settings, moved to old "User Settings" slot
+    - Moved "Manage Accounts" out of profile submenu
+- Added user profile settings to `/settings` in addition to the application settings
+    - Still accessible from Profile->Settings
 
 
+--- 
 
 ## 1.4.0
 This is the first release which completely drops "legacy" support for 0.18.x and below.  The minimum required API level is now 0.19.3 (though it will work with any 0.19.x series, there will be broken features that require 0.19.3).
