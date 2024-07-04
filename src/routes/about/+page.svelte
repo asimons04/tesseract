@@ -11,6 +11,8 @@
     const content = `
 # About
 
+Tesseract ${__VERSION__}, ${__CODENAME__} Class
+
 ---
 
 ## Overview    
