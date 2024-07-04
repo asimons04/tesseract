@@ -29,6 +29,7 @@
         Envelope,
         Hashtag,
         Home,
+        Link as LinkIcon,
         Newspaper,
         NoSymbol,
         PencilSquare,
@@ -131,7 +132,7 @@
     <!--- User Card and Action Buttons--->
     {#if personDetails?.person_view.person}
         
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, 384, 'webp') : ''} >
+        <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, undefined, 'webp') : ''} >
             <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
                 <div class="flex-shrink-0">
                     <Avatar width={128} fullRes ring url={personDetails.person_view.person.avatar} alt={personDetails.person_view.person.actor_id} 
@@ -240,20 +241,37 @@
                 User's Modlog History
             </Button>
 
-            <!---Copy Lemmyverse Link to User--->
-            <Button color="tertiary-border" class="w-full" icon={Share} alignment="left"
-                on:click={() => {
-                    if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
-                    toast({
-                        type: 'success',
-                        content: `Copied Lemmyverse link to clipboard`,
-                        title: 'Copied'
-                    })
-                    
-                }}
-            >
-                Copy Lemmyverse Link
-            </Button>
+            <div class="flex flex-col md:flex-row gap-2 w-full">
+                <!---Copy Lemmyverse Link to User--->
+                <Button color="tertiary-border" class="w-full" icon={Share} alignment="left"
+                    on:click={() => {
+                        if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                        toast({
+                            type: 'success',
+                            content: `Copied Lemmyverse link to clipboard`,
+                            title: 'Copied'
+                        })
+                        
+                    }}
+                >
+                    Copy Lemmyverse Link
+                </Button>
+
+                <!--- Copy Actor ID--->
+                <Button color="tertiary-border" class="w-full" icon={LinkIcon} alignment="left"
+                    on:click={() => {
+                        if (personDetails?.person_view.person) navigator.clipboard.writeText(personDetails.person_view.person.actor_id)
+                        toast({
+                            type: 'success',
+                            content: `Copied actor ID to clipboard`,
+                            title: 'Copied'
+                        })
+                        
+                    }}
+                >
+                    Copy Actor ID
+                </Button>
+            </div>
 
             <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} alignment="left"
                 on:click={() => {
