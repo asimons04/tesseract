@@ -43,17 +43,9 @@
         postType = 'youtube';
         embedURL = buildYouTubeEmbedLink(token.href)
     }
-
-
-
-    
-
-    
-
-
-    
 </script>
-<Link highlight href={token.href} title={token.title} newtab={$userSettings.openInNewTab.links}>
+
+<Link highlight href={token.href} title={token.title ?? token.href} newtab={$userSettings.openInNewTab.links}>
     <slot/>
 </Link>
 
