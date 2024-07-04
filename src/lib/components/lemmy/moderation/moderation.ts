@@ -32,7 +32,11 @@ interface Modals {
         open: boolean
         user: Person | undefined
         mod: boolean
-    }
+    },
+    community: {
+        open: boolean,
+        community: Community | undefined
+    },
     votes: {
         open: boolean,
         type: 'post' | 'comment',
@@ -76,6 +80,10 @@ export let modals = writable<Modals>({
         open: false,
         user: undefined,
         mod: false,
+    },
+    community: {
+        open: false,
+        community: undefined
     },
     votes: {
         open: false,
@@ -133,6 +141,16 @@ export function userProfileModal(user:Person, mod:boolean=false) {
             mod: mod,
         },
 
+    }))
+}
+
+export function communityProfileModal(community:Community) {
+    modals.update((m) => ({
+        ...m,
+        community: {
+            community: community,
+            open: true
+        },
     }))
 }
 

@@ -6,6 +6,7 @@
     import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/modal/UserProfileModal.svelte'
     import ZoomImageModal from '$lib/components/lemmy/modal/ZoomImageModal.svelte';
+    import CommunityProfileModal from '$lib/components/lemmy/modal/CommunityProfileModal.svelte';
   
 </script>
 
@@ -60,10 +61,17 @@
     <FederationStateModal bind:open={$modals.federationState.open} domain={$modals.federationState.domain} />
 {/if}
 
+<!---Community Profile Modal--->
+{#if $modals.community.open}
+    <CommunityProfileModal bind:open={$modals.community.open} community={$modals.community.community} />
+{/if}
+
 <!--- User Profile Modal (should be after so it's "above" other modals that would pop up a user profile (e.g. vote view)--->
 {#if $modals.user.open}
     <UserProfileModal  bind:open={$modals.user.open} user={$modals.user.user} mod={$modals.user.mod} />
 {/if}
+
+
 
 {#if $modals.zooming.open}
     <ZoomImageModal bind:open={$modals.zooming.open} bind:url={$modals.zooming.url} altText={$modals.zooming.altText} />
