@@ -85,6 +85,6 @@
     </div>
 
 {:else}
-    <Link highlight href={token.href} title={token.title} text={token.text} newtab={$userSettings.openInNewTab.links}/>
+    <Link highlight href={token.href} title={token.title} text={token.href} newtab={$userSettings.openInNewTab.links}/>
 {/if}
   
