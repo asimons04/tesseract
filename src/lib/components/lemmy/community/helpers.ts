@@ -1,6 +1,8 @@
 import type {
-    Community
+    Community,
+    CommunityBlockView
 } from 'lemmy-js-client'
+import type { PersonData } from '$lib/auth'
 
 import { addSubscription } from '$lib/lemmy/user.js'
 import { fixLemmyEncodings } from '../post/helpers'
@@ -37,6 +39,10 @@ export const createPost = function (community:Community) {
     goto(route)
     
 }
+
+// Checks if the community is blocked or not
+export const communityIsBlocked = (me: PersonData, communityID: number) =>
+    me.community_blocks.map((c:CommunityBlockView) => c.community.id).includes(communityID)
 
 
 // Subscribe and un-subscribe to a community; returns the subscribed state
@@ -102,13 +108,20 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
 export const blockUnblockCommunity = async function(communityID:number, block:boolean):Promise<boolean> {
     const userProfile = get(profile)
 
-    if (!userProfile?.jwt) return !block
+    if (!userProfile?.jwt || !userProfile?.user) return !block
     
     try {
         const blockedCommunity = await getClient().blockCommunity({
             community_id: communityID,
             block: block,
         })
+
+        // Update local cache of community blocks
+        const getSiteResponse = await getClient().getSite()
+        if (getSiteResponse?.my_user) {
+            userProfile.user.community_blocks = getSiteResponse.my_user.community_blocks
+            profile.set(userProfile)
+        }
 
         toast({
             title: "Success",
