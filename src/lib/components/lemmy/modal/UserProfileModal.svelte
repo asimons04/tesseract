@@ -19,7 +19,7 @@
     import Card from "$lib/components/ui/Card.svelte"
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
     import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
-    import Markdown from "@magidoc/plugin-svelte-marked"
+    import Markdown from "$lib/components/markdown/Markdown.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import RelativeDate from "$lib/components/util/RelativeDate.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
