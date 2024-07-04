@@ -98,7 +98,7 @@
     }
 
     .markdown :global(a) {
-        @apply text-sky-500 hover:underline;
+        @apply text-sky-700 dark:text-sky-500 hover:underline;
     }
 
     .markdown :global(ul) {

@@ -14,7 +14,7 @@
 {#if href}
 <a {href}
     id={id}
-    class="{highlight ? 'text-blue-500' : ''} hover:underline max-w-full"
+    class="{highlight ? 'text-sky-700 dark:text-sky-500' : ''} hover:underline max-w-full"
     target="{newtab
         ? '_blank'
         : '_self'
