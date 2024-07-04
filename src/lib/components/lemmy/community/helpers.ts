@@ -98,6 +98,33 @@ export const blockCommunity = async function(communityID:number, confirm:boolean
     }
 }
 
+// Block a community without confirmation and return the blocked status
+export const blockUnblockCommunity = async function(communityID:number, block:boolean):Promise<boolean> {
+    const userProfile = get(profile)
+
+    if (!userProfile?.jwt) return !block
+    
+    try {
+        const blockedCommunity = await getClient().blockCommunity({
+            community_id: communityID,
+            block: block,
+        })
+
+        toast({
+            title: "Success",
+            content: `Successfully ${block ? 'blocked' : 'unblocked'} ${blockedCommunity.community_view.community.title ?? blockedCommunity.community_view.community.name}`,
+            type: "success",
+        })
+
+        return block
+
+    } catch (error) {
+        toast({ content: error as any, type: 'error' })
+        return !block
+    }
+
+}
+
 /** If community title is > 40 characters, split it at the hyphen or colon and only return the text to the left of that */
 export function shortenCommunityName(name:string, maxLength=25) {
     if (!name) return
