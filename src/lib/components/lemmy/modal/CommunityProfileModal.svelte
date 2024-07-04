@@ -1,17 +1,22 @@
 <script lang="ts">
-    import type { Community, GetCommunityResponse, GetPersonDetailsResponse  } from "lemmy-js-client"
+    import type { Community, GetCommunityResponse } from "lemmy-js-client"
     
     
     import {addFavorite, isFavorite } from '$lib/favorites'
-    import { blockUnblockCommunity, createPost, subscribe } from '$lib/components/lemmy/community/helpers'
+    import { 
+        blockUnblockCommunity, 
+        communityIsBlocked,
+        createPost, 
+        subscribe 
+    } from '$lib/components/lemmy/community/helpers'
     import { getClient } from "$lib/lemmy"
-    import { slide } from "svelte/transition"
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
     import { instance } from "$lib/instance"
     import { isAdmin, userProfileModal } from '$lib/components/lemmy/moderation/moderation'
     import { onMount } from "svelte";
     import { profile } from '$lib/auth'
+    import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
@@ -57,6 +62,7 @@
     export let open: boolean = false
     
     let loading = false
+    let blocking = false
     let communityDetails: GetCommunityResponse
     let accordions = {
         communityDetails: false,
@@ -66,6 +72,10 @@
     $: anyOpen = (accordions.communityDetails || accordions.moderators)
     $: subscribed = (communityDetails?.community_view?.subscribed && ['Subscribed', 'Pending'].includes(communityDetails.community_view.subscribed)) ?? false
     $: isFavorited = (communityDetails?.community_view?.subscribed && isFavorite(communityDetails.community_view.community)) ?? false
+    $: communityBlocked = ($profile?.user && communityDetails?.community_view?.community) 
+            ? communityIsBlocked($profile.user, communityDetails.community_view.community.id) 
+            : false
+
 
     onMount(async () => {
         if (!community) {
@@ -153,18 +163,20 @@
                 <div class="flex flex-col gap-2 mt-4 px-8 w-full items-center" transition:slide>
                 
                     <!---Go to Community--->
-                    <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
-                        on:click={()=> {
-                            goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
-                            open = false
-                        }}
-                    >
-                        Browse Community
-                    </Button>
+                    {#if !communityBlocked}
+                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                            on:click={()=> {
+                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
+                                open = false
+                            }}
+                        >
+                            Browse Community
+                        </Button>
+                    {/if}
 
 
                     <!---Create Post--->
-                    {#if $profile?.user}
+                    {#if $profile?.user && !communityBlocked}
                         <Button color="tertiary-border" icon={PencilSquare} alignment="left" class="w-full"
                             on:click={()=> {
                                 createPost(communityDetails.community_view.community) 
@@ -187,38 +199,51 @@
 
                     <!---Add To Favorites--->
                     {#if $profile?.user}
-                        <Button color="tertiary-border" icon={Star} alignment="left" class="w-full"
-                            on:click={()=> {
-                                isFavorited = !isFavorited
-                                addFavorite(communityDetails.community_view.community, isFavorited)
-                            }}
-                        >
-                            {isFavorited ? 'Un-Favorite Community' : 'Favorite Community'}
-                        </Button>
-                     
-                        <!---Unsubscribe--->
-                        <Button color="tertiary-border" icon={subscribed ? Minus : Rss} alignment="left" class="w-full"
-                            on:click={async () => {
-                                subscribed = await subscribe(communityDetails.community_view.community, subscribed)
-                                subscribed = subscribed
-                                communityDetails.community_view.subscribed = subscribed
-                                    ? 'Subscribed'
-                                    : 'NotSubscribed'
-                            }}
-                        >
-                            {subscribed ? 'Unsubscribe' : 'Subscribe'}
-                        </Button>
 
-                        <!---Block Community
-                            Need to make a helper function to check $profile.user.community_blocks to determine initial state.
-                            Also, that function should work like person block and refresh from the server after an operation.
-                            --->
-                        <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full"
-                            on:click={()=> {
-                                blockUnblockCommunity(communityDetails.community_view.community.id, true)
+                        {#if !communityBlocked}    
+                            <Button color="tertiary-border" icon={Star} alignment="left" class="w-full"
+                                on:click={()=> {
+                                    isFavorited = !isFavorited
+                                    addFavorite(communityDetails.community_view.community, isFavorited)
+                                }}
+                            >
+                                {isFavorited ? 'Un-Favorite Community' : 'Favorite Community'}
+                            </Button>
+                        
+                            <!---Unsubscribe--->
+                            <Button color="tertiary-border" icon={subscribed ? Minus : Rss} alignment="left" class="w-full"
+                                on:click={async () => {
+                                    subscribed = await subscribe(communityDetails.community_view.community, subscribed)
+                                    subscribed = subscribed
+                                    communityDetails.community_view.subscribed = subscribed
+                                        ? 'Subscribed'
+                                        : 'NotSubscribed'
+                                }}
+                            >
+                                {subscribed ? 'Unsubscribe' : 'Subscribe'}
+                            </Button>
+                        {/if}
+
+                        <!---Block Community--->
+                        <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" loading={blocking}
+                            on:click={async ()=> {
+                                blocking = true
+                                communityBlocked = await blockUnblockCommunity(communityDetails.community_view.community.id, !communityBlocked)
+                                
+                                if (communityBlocked) {
+                                    // If community is blocked, remove it from favorites and mark subscribed as false since the API
+                                    // will unsubscribe you as part of the block procedure.
+                                    subscribed = false
+                                    
+                                    if (isFavorited) {
+                                        addFavorite(communityDetails.community_view.community, false)
+                                        isFavorited = false
+                                    }
+                                }
+                                blocking = false
                             }}
                         >
-                            Block Community
+                            {communityBlocked ? 'Unblock' : 'Block'} Community
                         </Button>
 
                         
