@@ -7,7 +7,9 @@
     import { instance } from "$lib/instance"
     import { isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { isBlocked, blockUser } from '$lib/lemmy/user'
+    import { onMount } from "svelte"
     import { profile } from '$lib/auth'
+    import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
@@ -15,7 +17,9 @@
     import BanInstanceModal from "$lib/components/lemmy/moderation/BanInstanceModal.svelte"
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
+    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
     import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
+    import Markdown from "@magidoc/plugin-svelte-marked"
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import RelativeDate from "$lib/components/util/RelativeDate.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
@@ -26,24 +30,20 @@
         Icon,
         Cake,
         ChatBubbleOvalLeftEllipsis,
+        Clock,
         Envelope,
         Hashtag,
         Home,
+        InformationCircle,
         Link as LinkIcon,
+        MagnifyingGlass,
         Newspaper,
         NoSymbol,
         PencilSquare,
         Share,
         Trash,
         User, 
-        MagnifyingGlass,
-
-        Clock
-
-
     } from "svelte-hero-icons";
-    import { onMount } from "svelte";
-    
     
     export let user:Person | undefined
     export let open: boolean = false
@@ -57,6 +57,12 @@
     let mostRecentItem: string|undefined = undefined
     let userBlocked = false
     
+    let accordions = {
+        aboutMe: false
+    }
+
+    $: anyOpen = (accordions.aboutMe)
+
     onMount(async () => {
         if (!user) {
             open = false
@@ -183,136 +189,145 @@
         </Card>
 
         <!--- Action Buttons for this User--->
-        <div class="flex flex-col gap-2 mt-4 px-8 w-full items-center">
-            
-            <!---View User's Profile--->
-            <Button color="tertiary-border" icon={User} alignment="left" class="w-full"
-                on:click={()=> {
-                    if (personDetails) {
-                        if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
-                            goto ('/profile/user')
-                            open = false
+        {#if !anyOpen}
+            <div class="flex flex-col gap-2 mt-4 px-8 w-full items-center" transition:slide>
+                
+                <!---View User's Profile--->
+                <Button color="tertiary-border" icon={User} alignment="left" class="w-full"
+                    on:click={()=> {
+                        if (personDetails) {
+                            if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
+                                goto ('/profile/user')
+                                open = false
+                            }
+                            else {    
+                                goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                                open = false
+                            }
                         }
-                        else {    
-                            goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
-                            open = false
-                        }
-                    }
-                    
-                }}
-                >
-                Go to Profile
-            </Button>
-
-            <!---View on Home Instance (if not same instance as current)--->
-            {#if $instance != new URL(personDetails.person_view.person.actor_id).hostname}
-            <Button color="tertiary-border" icon={Home} alignment="left" class="w-full" href="{personDetails.person_view.person.actor_id}" newtab={true}>
-                View on User's Home Instance
-            </Button>
-            {/if}
-            
-            <!---Send Direct Message--->
-            {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-            <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
-                on:click={() => {
-                    messaging = true
-                }}
-            >
-                Message in Lemmy
-            </Button>
-            {/if}
-
-            <!---Message in Matrix--->
-            {#if personDetails.person_view.person.matrix_user_id && $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-            <Button color="tertiary-border" icon={Hashtag} class="w-full" alignment="left" link href="https://matrix.to/#/{personDetails.person_view.person.matrix_user_id}" newtab={true}>
-                Message on Matrix
-            </Button>
-            {/if}
-
-            
-
-            <!---See User's Modlog History--->
-            <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
-                on:click={() => {
-                    if (personDetails) goto(`/modlog?other_person_id=${personDetails.person_view.person.id.toString()}`)        
-                    open = false
-                }}
-            >
-                User's Modlog History
-            </Button>
-
-            <div class="flex flex-col md:flex-row gap-2 w-full">
-                <!---Copy Lemmyverse Link to User--->
-                <Button color="tertiary-border" class="w-full" icon={Share} alignment="left"
-                    on:click={() => {
-                        if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
-                        toast({
-                            type: 'success',
-                            content: `Copied Lemmyverse link to clipboard`,
-                            title: 'Copied'
-                        })
                         
                     }}
-                >
-                    Copy Lemmyverse Link
+                    >
+                    Go to Profile
                 </Button>
 
-                <!--- Copy Actor ID--->
-                <Button color="tertiary-border" class="w-full" icon={LinkIcon} alignment="left"
+                <!---View on Home Instance (if not same instance as current)--->
+                {#if $instance != new URL(personDetails.person_view.person.actor_id).hostname}
+                <Button color="tertiary-border" icon={Home} alignment="left" class="w-full" href="{personDetails.person_view.person.actor_id}" newtab={true}>
+                    View on User's Home Instance
+                </Button>
+                {/if}
+                
+                <!---Send Direct Message--->
+                {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
                     on:click={() => {
-                        if (personDetails?.person_view.person) navigator.clipboard.writeText(personDetails.person_view.person.actor_id)
-                        toast({
-                            type: 'success',
-                            content: `Copied actor ID to clipboard`,
-                            title: 'Copied'
-                        })
-                        
+                        messaging = true
                     }}
                 >
-                    Copy Actor ID
+                    Message in Lemmy
                 </Button>
+                {/if}
+
+                <!---Message in Matrix--->
+                {#if personDetails.person_view.person.matrix_user_id && $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                <Button color="tertiary-border" icon={Hashtag} class="w-full" alignment="left" link href="https://matrix.to/#/{personDetails.person_view.person.matrix_user_id}" newtab={true}>
+                    Message on Matrix
+                </Button>
+                {/if}
+
+                
+
+                <!---See User's Modlog History--->
+                <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
+                    on:click={() => {
+                        if (personDetails) goto(`/modlog?other_person_id=${personDetails.person_view.person.id.toString()}`)        
+                        open = false
+                    }}
+                >
+                    User's Modlog History
+                </Button>
+
+                <div class="flex flex-col md:flex-row gap-2 w-full">
+                    <!---Copy Lemmyverse Link to User--->
+                    <Button color="tertiary-border" class="w-full" icon={Share} alignment="left"
+                        on:click={() => {
+                            if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                            toast({
+                                type: 'success',
+                                content: `Copied Lemmyverse link to clipboard`,
+                                title: 'Copied'
+                            })
+                            
+                        }}
+                    >
+                        Copy Lemmyverse Link
+                    </Button>
+
+                    <!--- Copy Actor ID--->
+                    <Button color="tertiary-border" class="w-full" icon={LinkIcon} alignment="left"
+                        on:click={() => {
+                            if (personDetails?.person_view.person) navigator.clipboard.writeText(personDetails.person_view.person.actor_id)
+                            toast({
+                                type: 'success',
+                                content: `Copied actor ID to clipboard`,
+                                title: 'Copied'
+                            })
+                            
+                        }}
+                    >
+                        Copy Actor ID
+                    </Button>
+                </div>
+
+                <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} alignment="left"
+                    on:click={() => {
+                        if (!personDetails) return
+                        goto(`/search?type=Users&q=${personDetails.person_view.person.name}`, {invalidateAll: true})
+                        open=false
+                    }}
+                >
+                    Search for Alts
+                </Button>
+                
+                <!---Block User--->
+                {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                    <Button color="tertiary-border" class="w-full" icon={NoSymbol} alignment="left" loading={blocking} disabled={blocking}
+                        on:click={async () => {
+                            if (personDetails?.person_view.person) {
+                                blocking = true
+                                userBlocked = await blockUser(personDetails.person_view.person.id, true, !userBlocked)
+                                blocking = false
+                            }
+                        }}
+                    >
+                        {userBlocked ? 'Unblock' : 'Block'} User
+                    </Button>
+                {/if}
+                
+                <!---Ban User--->
+                {#if isAdmin($profile?.user) && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                    <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" 
+                        on:click={() => {
+                            //open = false
+                            banning=true
+                        }}
+                    >
+                        {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}
+                    </Button>
+                {/if}
+
+                
+
             </div>
+        {/if}
 
-            <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} alignment="left"
-                on:click={() => {
-                    if (!personDetails) return
-                    goto(`/search?type=Users&q=${personDetails.person_view.person.name}`, {invalidateAll: true})
-                    open=false
-                }}
-            >
-                Search for Alts
-            </Button>
-            
-            <!---Block User--->
-            {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-                <Button color="tertiary-border" class="w-full" icon={NoSymbol} alignment="left" loading={blocking} disabled={blocking}
-                    on:click={async () => {
-                        if (personDetails?.person_view.person) {
-                            blocking = true
-                            userBlocked = await blockUser(personDetails.person_view.person.id, true, !userBlocked)
-                            blocking = false
-                        }
-                    }}
-                >
-                    {userBlocked ? 'Unblock' : 'Block'} User
-                </Button>
-            {/if}
-            
-            <!---Ban User--->
-            {#if isAdmin($profile?.user) && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-                <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" 
-                    on:click={() => {
-                        //open = false
-                        banning=true
-                    }}
-                >
-                    {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}
-                </Button>
-            {/if}
-
-            
-
-        </div>
+        <!---About Me--->
+        <CollapseButton bind:expanded={accordions.aboutMe} icon={InformationCircle} title="About Me" innerClass="max-h-[45vh] overflow-y-scroll">
+            <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
+        </CollapseButton>
     {/if}
+
+
 </Modal>
 
