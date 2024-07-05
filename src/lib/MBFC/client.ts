@@ -28,6 +28,7 @@ function normalizeDomain(domain:string):string {
         .replace(/.*\.cnn\.com/, 'cnn.com')
         .replace(/.*\.ctvnews\.ca/, 'ctvnews.ca')
         .replace(/.*\.elpais\.com/, 'elpais.com')
+        .replace(/.*\.mashable\.com/, 'mashable.com')
         .replace(/.*\.medium\.com/, 'medium.com')
         .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
     
