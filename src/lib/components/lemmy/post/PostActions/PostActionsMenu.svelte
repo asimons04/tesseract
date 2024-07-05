@@ -35,6 +35,7 @@
         PencilSquare,
         Share,
         Trash,
+        User,
         Window,
     } from 'svelte-hero-icons'
     
@@ -118,6 +119,14 @@
     </MenuButton>
     {/if}
 
+    {#if onHomeInstance}
+        <!---Posts In This Community by This Creator--->
+        <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" color="info">
+            <Icon src={User} mini size="16" />
+            More from {post.creator.display_name ? post.creator.display_name : post.creator.name}@{new URL(post.creator.actor_id).hostname}
+        </MenuButton>
+    {/if}
+
     <!--- Mark as Read/Unread --->
     {#if $profile?.jwt }
         
@@ -167,21 +176,6 @@
             <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary">
                 <Icon src={Flag} width={16} mini />
                 Report Post
-            </MenuButton>
-
-            <!---Block User--->
-            <MenuButton title="{isBlocked($profile?.user, post.creator.id) ? 'Unblock User' : 'Block User'}" 
-                color="{isBlocked($profile?.user, post.creator.id) ? 'success' : 'dangerSecondary'}"
-                on:click={async () => {
-                    blockUser(post.creator.id, true)
-                    post.creator_blocked = !post.creator_blocked
-                }}
-                
-            >
-                <Icon src={NoSymbol} width={16} mini />
-                {isBlocked($profile?.user, post.creator.id) 
-                    ? `Unblock ${post.creator.display_name || post.creator.name}@${new URL(post.creator.actor_id).hostname}`
-                    : `Block ${post.creator.display_name || post.creator.name}@${new URL(post.creator.actor_id).hostname}`}
             </MenuButton>
         {/if}
 
