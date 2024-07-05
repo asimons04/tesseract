@@ -1,10 +1,8 @@
 <script lang="ts">
     import type { GetPersonDetailsResponse, Person } from 'lemmy-js-client'
     
-    import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation';
     import { isNewAccount } from '../post/helpers'
-    import { toast } from '$lib/components/ui/toasts/toasts';
     import { userProfileModal } from '../moderation/moderation';
     import { userSettings } from '$lib/settings.js'
 
@@ -12,8 +10,6 @@
     import Badge from '$lib/components/ui/Badge.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte';
     import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
-    
 
     import { 
         Icon, 
