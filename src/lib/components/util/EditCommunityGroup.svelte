@@ -147,7 +147,7 @@
                 }}
             />
             
-            <div class="flex flex-col gap-1 w-full">
+            <div class="flex flex-col gap-1 h-full w-full">
                 {#if formData.communities.length > 0}
                     <span class="text-sm font-bold">Members</span>
                     <span class="text-xs font-normal">The following communities are members of this group:</span>
@@ -189,7 +189,11 @@
 
             <span class="mt-auto"/>
             <span class="flex flex-row gap-4 w-full p-2">
-                <Button size="lg" color="danger"  class="w-full" icon={Trash} on:click={() => deleteGroup()} >Delete</Button>
+                <Button size="lg" color="danger"  class="w-full" icon={Trash} disabled={group.name == 'Favorites'}
+                    on:click={() => deleteGroup()} 
+                >
+                    Delete
+                </Button>
                 <Button size="lg" color="primary" class="w-full" icon={ArrowUturnDown} on:click={reset} disabled={!modified} >Reset</Button>
                 <Button size="lg" color="primary" class="w-full" icon={ArrowUpTray} on:click={submit} disabled={!modified}>Save</Button>
             </span>
