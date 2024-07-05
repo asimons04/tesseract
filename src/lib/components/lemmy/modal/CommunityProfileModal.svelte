@@ -7,19 +7,21 @@
         blockUnblockCommunity, 
         communityIsBlocked,
         createPost, 
+        shortenCommunityName,
         subscribe 
     } from '$lib/components/lemmy/community/helpers'
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
     import { instance } from "$lib/instance"
-    import { isAdmin, userProfileModal } from '$lib/components/lemmy/moderation/moderation'
+    import { isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { onMount } from "svelte";
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
+    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Avatar from "$lib/components/ui/Avatar.svelte"
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
@@ -34,6 +36,7 @@
     
     import { 
         Icon,
+        ArrowTopRightOnSquare,
         Cake,
         ChatBubbleOvalLeftEllipsis,
         Clock,
@@ -49,29 +52,30 @@
         User, 
         MagnifyingGlass,
         InformationCircle,
-        HandRaised,
         UserGroup,
         Star,
         Minus,
         Rss,
     } from "svelte-hero-icons";
     
-    
-    
-    
-    
     export let community: Community | undefined
     export let open: boolean = false
+    
     
     let loading = false
     let blocking = false
     let communityDetails: GetCommunityResponse
-    let accordions = {
-        communityDetails: false,
-        moderators: false
-    }
+    let communityGroupModal = false
+    let communityDetailsOpen = false
+    
+    // Reactive hack (rather than just monitoring community directly) since updating the modal store changes the community (though back to its original value)
+    // and causes the loader to re-run needlessly.
 
-    $: anyOpen = (accordions.communityDetails || accordions.moderators)
+    let originalCommunity = community
+    $:  if (originalCommunity != community) {
+        originalCommunity = community
+        loadDetails()
+    }
     $: subscribed = (communityDetails?.community_view?.subscribed && ['Subscribed', 'Pending'].includes(communityDetails.community_view.subscribed)) ?? false
     $: isFavorited = (communityDetails?.community_view?.subscribed && isFavorite(communityDetails.community_view.community)) ?? false
     $: communityBlocked = ($profile?.user && communityDetails?.community_view?.community) 
@@ -79,12 +83,15 @@
             : false
 
 
-    onMount(async () => {
+    onMount(async () => await loadDetails() )
+        
+    async function loadDetails() {
         if (!community) {
             open = false
             return
         }
-
+        
+        communityDetailsOpen = false
         loading = true
         
         try {
@@ -103,10 +110,17 @@
         finally {
             loading = false
         }
-    })
+    }
 </script>
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} title="Community Details" width="max-w-xl">
+<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width="max-w-xl"
+    title={
+        shortenCommunityName(communityDetails?.community_view?.community?.title) ?? 
+        communityDetails?.community_view?.community?.name ?? 
+        'Community Details'
+    }
+>
+
     {#if loading}
         <span class="flex mx-auto my-auto">
             <Spinner width={24}/>
@@ -114,6 +128,8 @@
     {/if}
 
     {#if communityDetails?.community_view}
+        <AddCommunityGroup bind:open={communityGroupModal} community={communityDetails.community_view.community} />
+
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && communityDetails?.community_view.community.banner) ? imageProxyURL(communityDetails?.community_view.community.banner, undefined, 'webp') : ''} >
             <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
                 <div class="flex-shrink-0">
@@ -159,24 +175,25 @@
         
         <div class="flex flex-col gap-2 w-full">
             
-            
+            <!---Community Description--->
+            <CollapseButton bind:expanded={communityDetailsOpen} icon={InformationCircle} title="Community Details" innerClass="max-h-[45vh] overflow-y-scroll">
+                <!---Community details/sidebar info--->
+                <Markdown source={communityDetails.community_view.community.description ?? '*No community details were provided.*'} />
+
+                <!---Moderators---->
+                {#if communityDetails.moderators.length > 0}
+                    <span class="font-bold text-base my-2">Moderators:</span>
+                    {#each communityDetails.moderators as moderator, idx }
+                        <UserLink user={moderator.moderator} avatar={true} badges={false} showInstance={true} />
+                    {/each}
+                {/if}
+            </CollapseButton>
+
+
             <!--- Action Buttons for this Community (Fade away if any of the accordions are open)--->
-            {#if !anyOpen}
-                <div class="flex flex-col gap-2 mt-4 px-8 w-full items-center" transition:slide>
-                
-                    <!---Go to Community--->
-                    {#if !communityBlocked}
-                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
-                            on:click={()=> {
-                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
-                                open = false
-                            }}
-                        >
-                            Browse Community
-                        </Button>
-                    {/if}
-
-
+            {#if !communityDetailsOpen}
+                <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" transition:slide>
+                    
                     <!---Create Post--->
                     {#if $profile?.user && !communityBlocked}
                         <Button color="tertiary-border" icon={PencilSquare} alignment="left" class="w-full"
@@ -189,20 +206,57 @@
                         </Button>
                     {/if}
 
-                    <!---Modlog--->
-                    <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
-                        on:click={()=> {
-                            goto(`/modlog?community=${communityDetails.community_view.community.id.toString()}`)
-                            open = false
-                        }}
-                    >
-                        Modlog
-                    </Button>
 
-                    <!---Add To Favorites--->
+                    <!---Go to Community--->
+                    {#if !communityBlocked}
+                        <div class="flex flex-row gap-2 items-center w-full">
+                            <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                                on:click={()=> {
+                                    goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
+                                    open = false
+                                }}
+                            >
+                                Browse Community
+                            </Button>
+
+                            <!---Go to Community in New Tab--->
+                            <Button color="tertiary-border" icon={ArrowTopRightOnSquare} size="square-md" title="Browse community in new window"
+                                on:click={()=> {
+                                    if (!communityDetails) return
+                                    window.open(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).host}`)
+                                }}
+                            />
+                        </div>
+                    {/if}
+
+
+                    
+
+                    <!---Modlog--->
+                    <div class="flex flex-row gap-2 items-center w-full">
+                        <!---View Community Modlog--->
+                        <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
+                            on:click={()=> {
+                                goto(`/modlog?community=${communityDetails.community_view.community.id.toString()}`)
+                                open = false
+                            }}
+                        >
+                            Modlog
+                        </Button>
+
+                        <!---View Community Modlog in New Window--->
+                        <Button color="tertiary-border" icon={ArrowTopRightOnSquare} size="square-md" title="View community modlog in new window"
+                            on:click={() => {
+                                window.open(`/modlog?community=${communityDetails.community_view.community.id.toString()}`)
+                            }}
+                        />
+                    </div>
+
+                    
                     {#if $profile?.user}
 
                         {#if !communityBlocked}    
+                            <!---Add To Favorites--->
                             <Button color="tertiary-border" icon={Star} alignment="left" class="w-full"
                                 on:click={()=> {
                                     isFavorited = !isFavorited
@@ -210,6 +264,13 @@
                                 }}
                             >
                                 {isFavorited ? 'Un-Favorite Community' : 'Favorite Community'}
+                            </Button>
+
+                            <!---Add to Group--->
+                            <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                                on:click={(e) => { communityGroupModal = true }}
+                            >
+                                Add/Remove to Group(s)
                             </Button>
                         
                             <!---Unsubscribe--->
@@ -252,25 +313,9 @@
                     {/if}
                 </div>
             {/if}
-
-            <!---Community Description--->
-            <CollapseButton bind:expanded={accordions.communityDetails} icon={InformationCircle} title="Community Details" innerClass="max-h-[45vh] overflow-y-scroll">
-                <Markdown source={communityDetails.community_view.community.description ?? '*No community details were provided.*'} />
-            </CollapseButton>
-
-            <!---Moderators---->
-            {#if communityDetails.moderators.length > 0}
-                <CollapseButton bind:expanded={accordions.moderators} icon={HandRaised} title="Moderators" innerClass="max-h-[45vh] overflow-y-scroll">
-                    {#each communityDetails.moderators as moderator, idx }
-                        <UserLink user={moderator.moderator} avatar={true} badges={false} showInstance={true} />
-                    {/each}
-                </CollapseButton>
-            {/if}
-
-
         </div>
 
-
+        <span class="mt-2" />
 
     {/if}
 
