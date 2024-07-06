@@ -159,8 +159,7 @@
         />
 
         <FeedContainer>
-            <!---Ignore the comment not found; it works, and is needed for now to generate properly unique indexes--->
-            {#each data.items as item, idx (item.post.id + (item.comment?.id ?? 0))}
+            {#each data.items as item, idx (isCommentView(item) ? item.comment.id : item.post.id)}
                 {#if item && isCommentView(item) && (data.type == 'all' || data.type == 'comments')}
                     <CommentItem bind:comment={item} />
                 
