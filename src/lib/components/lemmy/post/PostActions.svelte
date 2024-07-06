@@ -84,9 +84,9 @@
     <!---Explore Menu--->
     <InstanceMenu bind:post />
 
-    <!---Community Action Menu--->
+    <!---Community Action Menu (Moved to community modal)
     <CommunityActionMenu bind:post />
-        
+    --->    
     <!--- Post Actions Menu --->
     <PostActionsMenu bind:post />
     
