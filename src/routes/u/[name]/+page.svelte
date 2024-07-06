@@ -107,23 +107,6 @@
                 data.items.push(item)
             })
             
-            /*
-            // Check if the current new item already exists in the existing array of items
-            for (let i:number=0; i<nextBatch.items.length; i++) {
-                let nextItem = nextBatch.items[i]
-                let exists = false
-
-                
-                data.items.forEach((item) => {
-                    if ('comment' in item && 'comment' in nextItem && item.comment.id == nextItem.comment.id) exists = true
-                    if (!('comment' in item) && !('comment' in nextItem) && item.post.id == nextItem.post.id) exists = true
-                })
-                
-                if (!exists) data.items.push(nextItem)
-
-            }
-            */
-
             data = data
             infiniteScroll.loading  = false
         })
@@ -132,7 +115,7 @@
 </script>
 
 <svelte:head>
-  <title>Profile | {data.person_view.person.name}</title>
+  <title>Profile | {data.person_view.person.display_name ?? data.person_view.person.name}</title>
 </svelte:head>
 
 <!---Only show on /u/{username} routes since the /profile/user route will use the navbar from its layout page--->
