@@ -164,7 +164,7 @@
 {#if url}   
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <img src="{imageProxyURL(url, resolution, 'webp')}"
+    <img src="{imageProxyURL(url, resolution, undefined)}"
         class="{$$props.class} opacity-0 transition-opacity duration-150 
             {zoomable ? 'cursor-zoom-in' : ''}
         "
