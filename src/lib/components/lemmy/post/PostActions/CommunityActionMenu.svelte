@@ -1,4 +1,6 @@
 <script lang="ts">
+    // Note:  This component is deprecated as of 1.4.1 07/26/2024. All of these actions are accessible from the community 
+    // profile modal.  Access it by clicking the community name in the post header.
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { Person, PostView } from 'lemmy-js-client'
     
