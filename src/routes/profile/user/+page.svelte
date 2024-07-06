@@ -41,5 +41,5 @@
 </script>
 
 
-<UserPage {data}/>
+<UserPage bind:data={data}/>
 
