@@ -17,18 +17,43 @@ All major/minor changes between releases will be documented here.
 - Fixes reactivity and blocked/unblocked status on profile modals and user pages. Added a call to getSite after blocking/unblocking to update person blocks list. 
 - Fix mobile reflow in modlog
 - Fixed bug with non-default instance not showing
+- Fixed but with re-authenticating to the first profile (index 0 was getting ignored and creating a new profile vs reauthorizing)
+- Fix heading/icon in "Create" menu not being properly justified
+- Fixed bug when inline images are disabled, the link isn't shown
+- Fixed bug when refreshing profile page, sometimes the wrong comment data would be shown in the edit of another comment (added index to 'each' iterator)
 
-### General Changes
-- Remove Fediseer badge option for posts (rarely used and accessible via Instance menu and from instances page)
+### New Features
+#### Community Profile Modals
+When clicking on a community in the feed, instead of taking you directly to the `/c/` community page, a modal will pop up with relevant options for the community. Works the same way as the user profile modal.
+- Browse Community
+- Create Post
+- Modlog
+- Favorite/Unfavorite Community
+- Add community to group (not yet plumbed in)
+- Subscribe/Unsubscribe
+- Block / Unblock Community
+- View Community Details
+- View Community Moderators (click the mod username entries to bring up their profile modal + options)
+- Zoom in on the community icon 
+
+
+### Misc Changes
+- Removed Fediseer badge option for posts (rarely used and accessible via Instance menu and from instances page)
     - I'm *assuming* rarely used.  I don't (and won't) have any kind of telemetry, but from the instances I have seen running Tesseract in the wild, none have had those badges enabled.
 
-- Remove background on image zoom toolbar
+- Removed the "Community" menu from posts; all of those options are now available in the Community Profile modal (access by clicking the community name in the post heading)
+    - Also allows accessing these options from comments (such as on profile pages) which normally do not have the "Community" menus.
+    - The option "More from {user} in {community} has been moved to the post action menu.
+- Removed "Block {user}" from post action menu; access it from the user profile modal by clickin the user's name in the post/comment header.
+
+- Add dark/light theme switcher to sidebar footer (near logo/version and Lemmy/Matrix/Github buttons)
+- Removed background on image zoom toolbar
 - `SettingEditArray` component is now filterable and can accept a comma-delimited list of entries
 - De-cluttered main menu (top right).
     - Removed User Settings Button
     - Removed App Settings Button
     - Added "Settings" button to go to /settings, moved to old "User Settings" slot
-    - Moved "Manage Accounts" out of profile submenu
+    - Moved "Manage Accounts" out of profile submenu and into main menu
 - Added user profile settings to `/settings` in addition to the application settings
     - Still accessible from Profile->Settings
 - Slight updates to admin panel
