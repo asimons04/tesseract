@@ -11,7 +11,7 @@
     const content = `
 # About
 
-Tesseract ${__VERSION__}, ${__CODENAME__} Class
+Tesseract v${__VERSION__}, ${__CODENAME__} Class
 
 ---
 
@@ -19,11 +19,8 @@ Tesseract ${__VERSION__}, ${__CODENAME__} Class
 
 **Tesseract** is a Lemmy client designed for media-rich content and aims to provide a comparable experience to 
 the alien site.  The reason it exists is because I wanted to fix a lot of things about Lemmy that annoyed me.  Of all the third
-party frontends out there, Photon was the closest but wasn't quite what I wanted.  So, Tesseract was forked and took on a new
+party frontends out there, Photon was the closest but wasn't *quite* what I wanted.  So, Tesseract was forked and took on a new
 life of its own.
-
-I think Photon has adopted some of these, at least YouTube, but I'm unsure if any of the others are supported.  As far as I know, most of these
-are still unique to Tesseract.
 
 ### Full Media Support in Feed and Posts
 - YouTube/Invidious/Piped
@@ -31,15 +28,24 @@ are still unique to Tesseract.
 - Bandcamp
 - Spotify Tracks, Albums, and Playlists
 - Vimeo
+- PeerTube
 - Odysee
 - Streamable, Imgur, and any source that provides an embed video URL in the metadata
 
+**Note**:  Support for Castopod is in the works, but not currently implemented.
+
 ### Enhanced Community Discovery
 Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, 
-subscribe hokey-pokey dance.  Let Tesseract take care of all that for you.
+subscribe hokey-pokey dance.  **Let Tesseract take care of all that for you.**  It will even show your subscribed status when browsing a remote instance.
 
 Post and comment menus let you browse the communities of the originating instance, and the \`/instances\` page also provides links to browse the communities
 there.
+
+### Community Favorites and Grouping
+Communities can be favorited, added to arbitrary user-defined groups, or both.  Currently, groups are only useful on desktop since they're accessed via 
+the sidebar which is not yet accessible on mobile.  
+
+Your favorites or any of your community groups can also be combined into a custom, pseudo feed, though the implementation is still in its early phases.
 
 ### Image/Media Proxying and Caching
 Privacy conscious users have long requested media be proxied through Lemmy.  The Lemmy devs finally implemented that in 0.19.4, but they did it in a very stupid
@@ -69,14 +75,17 @@ The MBFC results are also integrated into the reporting and moderation tools.
 - MBFC is integrated into the mod tooling allowing you to populate removal reasons / replies with the results of a MBFC lookup.
 - Perfect for those who are moderating a news or political community.
 
+
 ### Additional Features
+- Flairs.  Text in [brackets] in post titles will be converted to flair badges which are clickable and search for other posts with the same tag (as well as can be done, anyway, with Lemmy API's limited search filter options).
+- Most images in the UI are zoomable, including images in posts and comments, user avatars, and community/site icons.
 - Multiple account and multiple instance support.
 - Optimized for desktop and mobile. All desktop features are available in mobile.
 - A more "new" Reddit-like look and feel
 - Code syntax highlighting.
 - Full admin tools to manage your Lemmy instance
 - Extensive configuration options
-- Enhanced Modlog and Moderation Tools beyond what Lemmy-UI offerse
+- Enhanced Modlog and Moderation Tools beyond what Lemmy-UI offers
 
 --- 
 
@@ -89,7 +98,7 @@ The MBFC results are also integrated into the reporting and moderation tools.
 - All of the users on Github and in the Lemmy Admin chat who suggested and tested features.
 
 ## Donations
-I built Tesseract in my spare time as a hobby, learning excercise for SvelteKit, and to address my own personal annoyances with Lemmy and other
+I built Tesseract in my spare time as a hobby, learning excercise for Svelte, and to address my own personal annoyances with Lemmy and other
 Lemmy UIs.  That said, I do not feel the need to accept donations for its development.
 
 However, if you really want to donate, please consider donating to one of the following:
