@@ -74,6 +74,7 @@
         Tv,
         UserCircle,
         Window,
+        Tag,
     } from 'svelte-hero-icons'
     
 
@@ -401,6 +402,12 @@
         <!---Linkify Hashtags--->
         <SettingToggle icon={Hashtag} title="Enable Hashtags" bind:value={$userSettings.linkifyHashtags}
             description="Detect hashtags and turn them into search links."
+        />
+
+        <!---Extract Flairs from Post Titles--->
+        <SettingToggle icon={Tag} title="Enable Flairs" bind:value={$userSettings.extractFlairsFromTitle}
+            description="Extract bracketed text in post titles and convert to flair badges. Any text in [brackets] will be converted
+                info a flair called 'brackets'. "
         />
 
         <!---Reverse Action Bar Direction--->

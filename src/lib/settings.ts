@@ -98,6 +98,7 @@ interface Settings {
         post: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
     }
     linkifyHashtags: boolean
+    extractFlairsFromTitle: boolean,
     uiState: {
         expandSidebar: boolean
         expandCommunitySidebar: boolean
@@ -156,6 +157,7 @@ export const defaultSettings: Settings = {
     highlightInlineCode: false,
     inlineImages: true,
     linkifyHashtags: true,
+    extractFlairsFromTitle:                                             true,
     uiState: {
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
