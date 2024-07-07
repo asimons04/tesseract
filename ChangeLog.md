@@ -29,13 +29,19 @@ When clicking on a community in the feed, instead of taking you directly to the 
 - Create Post
 - Modlog
 - Favorite/Unfavorite Community
-- Add community to group (not yet plumbed in)
+- Add/remove community to group
 - Subscribe/Unsubscribe
 - Block / Unblock Community
 - View Community Details
 - View Community Moderators (click the mod username entries to bring up their profile modal + options)
 - Zoom in on the community icon 
 
+#### Post Flairs
+There's a new user option, enabled by default, that will extract any `[tag]` items from post titles and convert them into flair badges.  Anything in `[]` in the post title will be converted into a flair tag, and the `[whatever]` removed from the displayed title.
+
+Clicking a flair badge will perform a prepared search for other posts with the same flair (e.g.  `search?type=Posts&q=[tag]`).  They work more or less the same as hashtags do (if you have those enabled).
+
+This had been half-implemented in a branch for some time now, but I wasn't sure if other front-ends were handling them in a similar way.  Saw an post from the Photon dev saying they're adding them, and it's compatible with my implementation, so figured it was time to dust off that branch and merge it in.
 
 ### Misc Changes
 - Removed Fediseer badge option for posts (rarely used and accessible via Instance menu and from instances page)
