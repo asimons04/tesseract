@@ -407,7 +407,7 @@
         <!---Extract Flairs from Post Titles--->
         <SettingToggle icon={Tag} title="Enable Flairs" bind:value={$userSettings.extractFlairsFromTitle}
             description="Extract bracketed text in post titles and convert to flair badges. Any text in [brackets] will be converted
-                info a flair called 'brackets'. "
+                info a flair tag.  Clicking a flair tag will search for other posts with the same tag present."
         />
 
         <!---Reverse Action Bar Direction--->
