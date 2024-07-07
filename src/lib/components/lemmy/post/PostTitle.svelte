@@ -9,8 +9,10 @@
     import { goto } from '$app/navigation'
     import { userSettings } from '$lib/settings.js'
     
-    import Badge from '$lib/components/ui/Badge.svelte';
+    import Badge from '$lib/components/ui/Badge.svelte'
     
+    import { Tag } from 'svelte-hero-icons'
+
     export let post:PostView | CommentReplyView | PersonMentionView
 
     // Extract any [flairs] from the post title and update the title to remove them.
@@ -36,13 +38,16 @@
     >
         <h1 class="text-base md:text-lg flex flex-row gap-2 {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
             {postName}
-            <span class="flex flex-row gap-2 ml-auto text-xs items-center capitalize">
+            
+            <!---Flairs--->
+            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs items-center">
                 {#if postFlairs}
                     {#each postFlairs as flair}
-                        <Badge color="orange" on:click={(e) => { 
+                        <Badge color="orange" class="capitalize" icon={Tag}
+                            on:click={(e) => { 
                                 e.preventDefault()
                                 e.stopPropagation()
-                                goto(`/search?q=${encodeURIComponent(`[${flair}]`)}`)
+                                goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
                             }}
                         >
                             {flair}
@@ -63,12 +68,15 @@
     >
         <h1 class="text-base md:text-lg flex flex-row gap-2 {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
             {postName}
-            <span class="flex flex-row gap-2 ml-auto text-xs items-center capitalize">
-                {#each postFlairs as flair}
-                    <Badge color="orange" on:click={(e) => { 
+            
+            <!---Flairs--->
+            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs items-center">
+                {#each postFlairs as flair, idx}
+                    <Badge randomColor  class="capitalize" icon={Tag}
+                        on:click={(e) => { 
                             e.preventDefault()
                             e.stopPropagation()
-                            goto(`/search?q=${encodeURIComponent(`[${flair}]`)}`)
+                            goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
                         }}
                     >
                         {flair}
