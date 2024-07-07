@@ -39,6 +39,8 @@ When clicking on a community in the feed, instead of taking you directly to the 
 #### Post Flairs
 There's a new user option, enabled by default, that will extract any `[tag]` items from post titles and convert them into flair badges.  Anything in `[]` in the post title will be converted into a flair tag, and the `[whatever]` removed from the displayed title.
 
+It also supports nested, comma-delimited flars in the same brackets.  e.g. `[Music, Sludge Metal, 2000s Rock]` becomes `[Music] [Sludge Metal] [2000s Rock]`.
+
 Clicking a flair badge will perform a prepared search for other posts with the same flair (e.g.  `search?type=Posts&q=[tag]`).  They work more or less the same as hashtags do (if you have those enabled).
 
 This had been half-implemented in a branch for some time now, but I wasn't sure if other front-ends were handling them in a similar way.  Saw an post from the Photon dev saying they're adding them, and it's compatible with my implementation, so figured it was time to dust off that branch and merge it in.
