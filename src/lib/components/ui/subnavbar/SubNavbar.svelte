@@ -1,22 +1,21 @@
 <script lang="ts">
     import type { PostView, SortType } from 'lemmy-js-client'
 
-    import { amMod, amModOfAny, ban, isAdmin, remove } from '$lib/components/lemmy/moderation/moderation'
     import { arrayRange, searchParam } from '$lib/util.js'
     import { createEventDispatcher } from 'svelte'
     import { setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
-    import { profile } from '$lib/auth'
+    import { userSettings } from '$lib/settings'
     
-    import { fixLemmyEncodings, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { getPostTitleWithoutFlairs, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     
     import { 
         sortOptions as defaultSortOptions, 
         sortOptionNames as defaultSortOptionNames
     } from '$lib/lemmy'
     
-    import { userSettings } from '$lib/settings'
+    
     
     
     import Button from '$lib/components/input/Button.svelte'
@@ -216,7 +215,7 @@
             <!--- Post Title In Center (Cannot be used if using center slot for something)--->
             {#if post && postTitle}
                 <span class="hidden md:block text-lg font-bold text-slate-600 dark:text-zinc-400 whitespace-nowrap text-ellipsis overflow-hidden">
-                    {fixLemmyEncodings(post.post.name)}
+                    {getPostTitleWithoutFlairs(post.post.name)}
                 </span>
             {/if}
 
