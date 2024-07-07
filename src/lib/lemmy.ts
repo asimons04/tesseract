@@ -54,7 +54,7 @@ export async function validateInstance(instance: string, setSite:boolean=false):
     if (!instance) return false
     try {
         let siteData = await getClient(instance).getSite()
-        if (setSite) site.update(() => siteData)
+        if (setSite) site.set(siteData)
         return true
     } catch (err) {
         return false
