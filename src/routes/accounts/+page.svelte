@@ -8,6 +8,7 @@
         moveProfile,
         type Profile,
         profile,
+        setGuestInstance
     } from '$lib/auth.js'
     
     
@@ -21,7 +22,7 @@
     import { userSettings } from '$lib/settings.js'
     import { expoInOut, expoOut } from 'svelte/easing'
     import { flip } from 'svelte/animate'
-    import { site } from '$lib/lemmy.js'
+    import { getClient, site } from '$lib/lemmy.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { validateInstance } from '$lib/lemmy.js'
 
@@ -58,14 +59,10 @@
     let newInstance: string = $profileData.defaultInstance ?? DEFAULT_INSTANCE_URL
     let loading = false
 
-    async function changeGuestInstance() {
+    async function changeGuestInstance(inst:string) {
         loading = true
         try {
-            const valid = await validateInstance(newInstance.trim(), true)
-
-            if (!valid) {
-                throw new Error('Invalid instance')
-            }
+            await setGuestInstance(inst)
 
             toast({
                 content: 'Changed guest instance.',
@@ -78,18 +75,10 @@
                 type: 'error',
                 title: 'Error'
             })
-
+        }
+        finally {
             loading = false
-            return
         }
-        
-        setUserID(-1)
-        
-        $profileData.defaultInstance = newInstance
-        if ($currentProfile && $currentProfile.id == -1) {
-            $instance = newInstance
-        }
-        loading = false
     }
 
     let debugging = false
@@ -202,7 +191,9 @@
                 <!---Guest Instance Selection--->
                 <div class="flex flex-row gap-4 items-center py-4">
 
-                    <form class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined} on:submit|preventDefault={changeGuestInstance}>
+                    <form class="flex flex-row font-normal gap-2" class:hidden={LINKED_INSTANCE_URL != undefined} 
+                        on:submit|preventDefault={async () => await changeGuestInstance(newInstance)}
+                    >
                         <TextInput placeholder="Instance URL" label="Guest instance" bind:value={newInstance}  disabled={LINKED_INSTANCE_URL != undefined} />
                         
                         <Button submit color="tertiary-border" {loading} disabled={loading || LINKED_INSTANCE_URL != undefined} class="h-8 self-end" >
