@@ -119,7 +119,7 @@ The project has a [Github page](https://github.com/asimons04/Tesseract) with mor
     <FeedContainer>
         <div class="flex items-center gap-1 mx-auto w-max">
             <Logo width={48} />
-            <span class="text-2xl font-bold">Tesseract</span>
+            <span class="flex gap-4 items-center font-bold text-2xl lg:text-3xl text-center mx-auto">Tesseract</span>
         </div>
 
         <span class="my-2" />
