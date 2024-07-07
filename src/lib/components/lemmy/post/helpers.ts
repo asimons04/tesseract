@@ -769,9 +769,8 @@ export function isNewAccount(date:string, daysOld?:number):boolean {
 export function extractFlairsFromTitle(title:string ): {name: string, flairs: Array<string>}  {
     let postName = fixLemmyEncodings(title)
     let flairs = [] as string[]
-    let useFlairs = true // Replace with $usersettings.uiState.flairs 
     
-    if (useFlairs) {
+    if (userSettings.extractFlairsFromTitle) {
         const flairRegex = new RegExp(/(\[.[^\]]+\])/g)
         const matches = postName.matchAll(flairRegex)
         
@@ -789,15 +788,21 @@ export function extractFlairsFromTitle(title:string ): {name: string, flairs: Ar
         for (let i:number = 0; i < flairs.length; i++) {
             flairs[i] = flairs[i].replace('[', '').replace(']','')
         }
+   
+        return { 
+            name: postName,
+            flairs: flairs
+        }
     }
-    
-    return { 
-        name: postName,
-        flairs: flairs
+    else {
+        return {
+            name: postName,
+            flairs: [] as string[]
+        }
     }
 }
 
 export function getPostTitleWithoutFlairs(title: string): string {
-    let {name, flairs} = extractFlairsFromTitle(title)
+    let {name} = extractFlairsFromTitle(title)
     return name
 }
