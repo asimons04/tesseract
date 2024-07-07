@@ -88,6 +88,6 @@
 {:else if !post.post.thumbnail_url}
     <span class="flex flex-row flex-wrap w-full gap-2 px-1">
         <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
-        <Link title={post.post.name} highlight nowrap bind:href={post.post.url} />
+        <Link title={post.post.name} highlight nowrap bind:href={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} />
     </span>
 {/if}

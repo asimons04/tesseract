@@ -86,7 +86,7 @@
 
 
 {#if showAsEmbed && embedURL}
-    <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
+    <Link bind:href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
     <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full {height}">
         <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 p-1 rounded-2xl max-w-full">
             <div class="ml-auto mr-auto w-full">
@@ -109,7 +109,8 @@
 
 {:else if post.post.thumbnail_url}
     <Link
-        href={post.post.url}
+        bind:href={post.post.url}
+        domainOnly={!$userSettings.uiState.showFullURL}
         title={post.post.name}
         newtab={$userSettings.openInNewTab.links}
         highlight nowrap
@@ -120,7 +121,7 @@
 
 {:else if !post.post.thumbnail_url}
     <Link
-        href={post.post.url}
+        bind:href={post.post.url}
         title={post.post.name}
         highlight nowrap
     />

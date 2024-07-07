@@ -115,6 +115,7 @@
 
 {:else if !post.post.thumbnail_url}
     <Link
+        domainOnly={!$userSettings.uiState.showFullURL}    
         href={post.post.url}
         title={post.post.name}
         highlight nowrap
