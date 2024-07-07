@@ -732,7 +732,6 @@ export const mergeNewInfiniteScrollBatch = function (old: GetPostsResponse, next
         if (!exists) old.posts.push(next.posts[i])
     }
 
-    //@ts-ignore since still using 0.18.x js client
     if (next.next_page) old.next_page = next.next_page
 
     return old
@@ -764,4 +763,41 @@ export function isNewAccount(date:string, daysOld?:number):boolean {
     return new Date().getTime()/1000/60 - (
             (Date.parse(date)/1000/60) 
     ) < 1440 * (daysOld ?? userSettings?.hidePosts?.newAccountMinAge ?? 5)
+}
+
+
+export function extractFlairsFromTitle(title:string ): {name: string, flairs: Array<string>}  {
+    let postName = fixLemmyEncodings(title)
+    let flairs = [] as string[]
+    let useFlairs = true // Replace with $usersettings.uiState.flairs 
+    
+    if (useFlairs) {
+        const flairRegex = new RegExp(/(\[.[^\]]+\])/g)
+        const matches = postName.matchAll(flairRegex)
+        
+        // Add (with dedup) matched tags to flair 
+        for (let match of matches) {
+            if (!flairs.includes(match[0])) flairs.push(match[0])
+        }
+        
+        // Remove the [tag]s from the post name
+        for (let flair of flairs) {
+            postName = postName.replaceAll(flair, '').trim()
+        }
+        
+        // Strip the [ and ] off of the flair tags
+        for (let i:number = 0; i < flairs.length; i++) {
+            flairs[i] = flairs[i].replace('[', '').replace(']','')
+        }
+    }
+    
+    return { 
+        name: postName,
+        flairs: flairs
+    }
+}
+
+export function getPostTitleWithoutFlairs(title: string): string {
+    let {name, flairs} = extractFlairsFromTitle(title)
+    return name
 }
