@@ -52,6 +52,7 @@
     
     
     <div class="flex flex-col w-full p-2 gap-2 cursor-default">
+        <!---Listing Type and Sort Menus--->
         {#if listingType || sortMenu}
             <Card class="p-2">    
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -100,7 +101,8 @@
             </Card>
         {/if}
 
-        <Card class="p-2">
+        <!---User Settings--->
+        <Card class="p-2 max-h-[20vh] overflow-y-scroll">
             <!---Open in New Tab--->
             <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
 
@@ -122,14 +124,16 @@
             <!---Enable Embeds in Feed--->
             <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed} small={true}/>
         </Card>
-        
-        <MenuButton link href="/settings" class="!p-2">
-            <Icon src={Cog6Tooth} mini width={16} slot="icon" />
-            <span class="flex flex-row w-full items-center font-bold text-xs justify-between">
-                Open Settings
-                <Icon src={ArrowTopRightOnSquare} mini width={16} />
-            </span>
-        </MenuButton>
+      
+        <Card class="p-2">
+            <MenuButton link href="/settings" class="!p-2">
+                <Icon src={Cog6Tooth} mini width={16} slot="icon" />
+                <span class="flex flex-row w-full items-center font-bold text-xs justify-between">
+                    Open Settings
+                    <Icon src={ArrowTopRightOnSquare} mini width={16} />
+                </span>
+            </MenuButton>
+        </Card>
 
     </div>
 
