@@ -36,14 +36,14 @@
         class:dark:text-zinc-400={isPostView(post) && post.read && $userSettings.markReadPosts}
         title="{fixLemmyEncodings(post.post.name)}"
     >
-        <h1 class="text-base md:text-lg flex flex-row gap-2 {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+        <h1 class="text-base md:text-lg flex flex-row flex-wrap gap-2 items-center {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
             {postName}
             
             <!---Flairs--->
-            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs items-center">
+            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
                 {#if postFlairs}
                     {#each postFlairs as flair}
-                        <Badge color="orange" class="capitalize" icon={Tag}
+                        <Badge color="orange" class="capitalize" icon={Tag} rightJustify={false}
                             on:click={(e) => { 
                                 e.preventDefault()
                                 e.stopPropagation()
@@ -66,13 +66,13 @@
         class:dark:text-zinc-400={isPostView(post) &&post.read && $userSettings.markReadPosts}
         title="{fixLemmyEncodings(post.post.name)}"
     >
-        <h1 class="text-base md:text-lg flex flex-row gap-2 {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+        <h1 class="text-base md:text-lg flex flex-row flex-wrap gap-2 items-center {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
             {postName}
             
             <!---Flairs--->
-            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs items-center">
+            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
                 {#each postFlairs as flair, idx}
-                    <Badge randomColor  class="capitalize" icon={Tag}
+                    <Badge randomColor  class="capitalize" icon={Tag} rightJustify={false}
                         on:click={(e) => { 
                             e.preventDefault()
                             e.stopPropagation()
