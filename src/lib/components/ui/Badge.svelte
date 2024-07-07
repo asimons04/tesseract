@@ -6,6 +6,7 @@
     export let icon: IconSource | undefined = undefined
     export let iconSize:number = 16
     export let randomColor = false
+    export let rightJustify = true
 
     const badgeColor = {
         red: 'bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-300',
@@ -24,8 +25,9 @@
         : badgeColor[color]
 </script>
 
-<button class="px-2 py-0.5 rounded-full max-h-[20px] text-xs ml-auto font-bold flex items-center gap-1 
+<button class="px-2 py-0.5 rounded-full max-h-[20px] text-xs font-bold flex items-center gap-1 
     whitespace-nowrap overflow-hidden 
+    {rightJustify ? 'ml-auto' : ''}
     {colorClass} 
     {$$props.class}
     " 
