@@ -54,6 +54,8 @@ const getDefaultProfile = (): Profile => ({
     instance: get(profileData)?.defaultInstance ?? get(instance),
 })
 
+
+
 function getFromStorage<T>(key: string): T | undefined {
     if (typeof localStorage == 'undefined') return undefined
     const lc = localStorage.getItem(key)
@@ -244,6 +246,27 @@ export function resetProfile() {
     getClient().getSite().then((guestSiteInfo) => {
         site.set(guestSiteInfo)
     })
+}
+
+// Set the guest instance for the default profile, grab its site info, and set the site store to that.
+export async function setGuestInstance(instance:string) {
+    const guestSiteInfo = await getClient(instance.trim()).getSite()
+    if (!guestSiteInfo) throw new Error('Unable to contact guest instance.')
+
+    profile.set({
+        id: -1,
+        instance: instance
+    })
+    
+    profileData.update((p) => (
+        {
+             ...p, 
+             profile: -1,
+             defaultInstance: instance
+        }
+    ))
+
+    site.set(guestSiteInfo)
 }
 
 // Update the profile in the profileData object in localStorage
