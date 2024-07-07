@@ -21,6 +21,8 @@ All major/minor changes between releases will be documented here.
 - Fix heading/icon in "Create" menu not being properly justified
 - Fixed bug when inline images are disabled, the link isn't shown
 - Fixed bug when refreshing profile page, sometimes the wrong comment data would be shown in the edit of another comment (added index to 'each' iterator)
+- Fixed bug where setting the guest instance required clicking it twice to update the site info / logos.
+- Non-embed media posts were showing full URL regardless of user setting to only show the domain
 
 ### New Features
 #### Community Profile Modals
