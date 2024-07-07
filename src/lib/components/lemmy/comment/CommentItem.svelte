@@ -9,7 +9,7 @@
     
     
     import { fade } from 'svelte/transition'
-    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
+    import { getPostTitleWithoutFlairs } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
     import { goto } from '$app/navigation'
     import { lastSeenPost } from '$lib/components/lemmy/post/helpers'
@@ -50,11 +50,11 @@
         
         {#if $userSettings.openInNewTab.posts}
             <Link href="/post/{getInstance()}/{comment.post.id}" newtab={true}>
-                <span class="text-sm font-bold text-left">{fixLemmyEncodings(comment.post.name)}</span>
+                <span class="text-sm font-bold text-left">{getPostTitleWithoutFlairs(comment.post.name)}</span>
             </Link>
         {:else}
             <button on:click={() => goto(`/post/${getInstance()}/${comment.post.id}`)} class="text-sm font-bold text-left">
-                {fixLemmyEncodings(comment.post.name)}
+                {getPostTitleWithoutFlairs(comment.post.name)}
             </button>  
         {/if}
         
