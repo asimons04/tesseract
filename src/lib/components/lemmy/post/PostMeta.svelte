@@ -140,43 +140,37 @@
                 {/if}
                 
                 {#if post.post.nsfw}
-                    <Badge label="NSFW" color="red">
-                        <Icon src={ExclamationCircle} mini size="16"/>
+                    <Badge label="NSFW" color="red" icon={ExclamationCircle}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
                     </Badge>
                 {/if}
 
                 {#if post.saved}
-                    <Badge label="Saved" color="yellow">
-                        <Icon src={Bookmark} mini size="16" />
+                    <Badge label="Saved" color="yellow" icon={Bookmark}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.locked}
-                    <Badge label="Locked" color="yellow">
-                        <Icon src={LockClosed} mini size="16" />
+                    <Badge label="Locked" color="yellow" icon={LockClosed}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.removed}
-                    <Badge label="Removed" color="red">
-                        <Icon src={NoSymbol} mini size="16" />
+                    <Badge label="Removed" color="red" icon={NoSymbol}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.deleted}
-                    <Badge label="Deleted" color="red">
-                        <Icon src={Trash} mini size="16" />
+                    <Badge label="Deleted" color="red" icon={Trash}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>
                     </Badge>
                 {/if}
                 
                 {#if (post.post.featured_local || post.post.featured_community)}
-                    <Badge label="Featured" color="green">
-                        <Icon src={Megaphone} mini size="16" />
+                    <Badge label="Featured" color="green" icon={Megaphone}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
                     </Badge>
                 {/if}
