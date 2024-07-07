@@ -769,7 +769,8 @@ export function isNewAccount(date:string, daysOld?:number):boolean {
 export function extractFlairsFromTitle(title:string ): {name: string, flairs: Array<string>}  {
     let postName = fixLemmyEncodings(title)
     let flairs = [] as string[]
-    
+    let finalFlairs = [] as string[]
+
     if (userSettings.extractFlairsFromTitle) {
         const flairRegex = new RegExp(/(\[.[^\]]+\])/g)
         const matches = postName.matchAll(flairRegex)
@@ -783,15 +784,26 @@ export function extractFlairsFromTitle(title:string ): {name: string, flairs: Ar
         for (let flair of flairs) {
             postName = postName.replaceAll(flair, '').trim()
         }
-        
-        // Strip the [ and ] off of the flair tags
+
+        // Look for any nested flairs (comma-separated flairs in the same brackets [music, metal, 2000s rock]
         for (let i:number = 0; i < flairs.length; i++) {
-            flairs[i] = flairs[i].replace('[', '').replace(']','')
+            let flair = flairs[i].replace('[', '').replace(']','')
+            
+            let nestedFlairs = flair.split(',')
+            
+            if (nestedFlairs.length > 1) {
+                nestedFlairs.forEach((f) => {
+                    finalFlairs.push(f)
+                })
+            }
+            else {
+                finalFlairs.push(flair)
+            }
         }
    
         return { 
             name: postName,
-            flairs: flairs
+            flairs: finalFlairs
         }
     }
     else {
