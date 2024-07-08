@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { GetPersonDetailsResponse, Person } from "lemmy-js-client"
     
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
@@ -349,6 +350,10 @@
                             if (personDetails?.person_view.person) {
                                 blocking = true
                                 userBlocked = await blockUser(personDetails.person_view.person.id, true, !userBlocked)
+                                dispatchWindowEvent('blockUser', { 
+                                    person_id: personDetails.person_view.person.id,
+                                    blocked: userBlocked
+                                })
                                 blocking = false
                             }
                         }}
