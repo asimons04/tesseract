@@ -36,54 +36,54 @@
         class:dark:text-zinc-400={isPostView(post) && post.read && $userSettings.markReadPosts}
         title="{fixLemmyEncodings(post.post.name)}"
     >
-        <h1 class="text-base md:text-lg flex flex-row flex-wrap gap-2 items-center {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+        <h1 class="text-base md:text-lg  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
             {postName}
-            
-            <!---Flairs--->
-            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
-                {#if postFlairs}
-                    {#each postFlairs as flair}
-                        <Badge color="orange" class="capitalize" icon={Tag} rightJustify={false}
-                            on:click={(e) => { 
-                                e.preventDefault()
-                                e.stopPropagation()
-                                goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
-                            }}
-                        >
-                            {flair}
-                        </Badge>
-                    {/each}
-                {/if}
-            </span>
-        </h1> 
+        </h1>
+
+        <!---Flairs--->
+        <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
+            {#each postFlairs as flair, idx}
+                <Badge randomColor  class="capitalize" icon={Tag} rightJustify={false}
+                    on:click={(e) => { 
+                        e.preventDefault()
+                        e.stopPropagation()
+                        goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
+                    }}
+                >
+                    {flair}
+                </Badge>
+            {/each}
+        </span>
     </a>
 {:else}
     <button
         on:click={ () => goto(`/post/${getInstance()}/${post.post.id}`) }
-        class="font-medium max-w-full w-full break-words text-left"
+        class="flex flex-row flex-wrap items-center gap-2 font-medium max-w-full w-full break-words text-left"
         style="word-break: break-word;"
         class:text-slate-500={isPostView(post) && post.read && $userSettings.markReadPosts}
         class:dark:text-zinc-400={isPostView(post) &&post.read && $userSettings.markReadPosts}
         title="{fixLemmyEncodings(post.post.name)}"
     >
-        <h1 class="text-base md:text-lg flex flex-row flex-wrap gap-2 items-center {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+
+        <h1 class="text-base md:text-lg  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
             {postName}
-            
-            <!---Flairs--->
-            <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
-                {#each postFlairs as flair, idx}
-                    <Badge randomColor  class="capitalize" icon={Tag} rightJustify={false}
-                        on:click={(e) => { 
-                            e.preventDefault()
-                            e.stopPropagation()
-                            goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
-                        }}
-                    >
-                        {flair}
-                    </Badge>
-                {/each}
-            </span>
-        </h1>    
+        </h1>
+
+         <!---Flairs--->
+         <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
+            {#each postFlairs as flair, idx}
+                <Badge randomColor  class="capitalize" icon={Tag} rightJustify={false}
+                    on:click={(e) => { 
+                        e.preventDefault()
+                        e.stopPropagation()
+                        goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
+                    }}
+                >
+                    {flair}
+                </Badge>
+            {/each}
+        </span>
+
     </button>
 {/if}
 
