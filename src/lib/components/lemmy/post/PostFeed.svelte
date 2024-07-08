@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { BlockUserEvent } from '$lib/ui/events.js'
     import type { PostView } from 'lemmy-js-client'
     
     import { amMod } from '../moderation/moderation';
@@ -16,8 +17,22 @@
     
 
     export let posts: PostView[]
+
+    // Handler for custom window event that's raised when a user is blocked.
+    function handleUserBlock(e:BlockUserEvent) {
+        console.log("Received 'blockUser' event: ", e);
+
+        for (let i:number=0; i < posts.length; i++) {
+            
+            if (posts[i].creator?.id == e.detail.person_id) {
+                posts[i].creator_blocked = e.detail.blocked
+            }
+        }
+        posts = posts
+    }
 </script>
 
+<svelte:window on:blockUser={handleUserBlock} />
 
 <section class="flex flex-col gap-3 sm:gap-4 h-full">
     {#if posts.length == 0}
