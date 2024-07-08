@@ -23,8 +23,6 @@
     // Handlers for custom window event that's raised when a user or community is blocked. Used to show/hide posts in the feed
     
     function handleCommunityBlock(e:BlockCommunityEvent) {
-        console.log("Received 'blockCommunity' event: ", e);
-
         for (let i:number=0; i < posts.length; i++) {
             
             if (posts[i].community.id == e.detail.community_id) {
@@ -36,8 +34,6 @@
     }
 
     function handleUserBlock(e:BlockUserEvent) {
-        console.log("Received 'blockUser' event: ", e);
-
         for (let i:number=0; i < posts.length; i++) {
             
             if (posts[i].creator?.id == e.detail.person_id) {
