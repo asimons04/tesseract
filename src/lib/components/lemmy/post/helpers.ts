@@ -793,11 +793,11 @@ export function extractFlairsFromTitle(title:string ): {name: string, flairs: Ar
             
             if (nestedFlairs.length > 1) {
                 nestedFlairs.forEach((f) => {
-                    finalFlairs.push(f.trim())
+                    finalFlairs.push(f)
                 })
             }
             else {
-                finalFlairs.push(flair.trim())
+                finalFlairs.push(flair)
             }
         }
    
