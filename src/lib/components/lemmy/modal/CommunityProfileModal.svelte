@@ -10,6 +10,7 @@
         shortenCommunityName,
         subscribe 
     } from '$lib/components/lemmy/community/helpers'
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
@@ -302,11 +303,14 @@
                                 blocking = true
                                 communityBlocked = await blockUnblockCommunity(communityDetails.community_view.community.id, !communityBlocked)
                                 
+                                dispatchWindowEvent('blockCommunity', { 
+                                    community_id: communityDetails.community_view.community.id,
+                                    blocked: communityBlocked
+                                })
+
+                                // If community is blocked, remove it from favorites and mark subscribed as false since the API will unsubscribe you as part of the block procedure.
                                 if (communityBlocked) {
-                                    // If community is blocked, remove it from favorites and mark subscribed as false since the API
-                                    // will unsubscribe you as part of the block procedure.
                                     subscribed = false
-                                    
                                     if (isFavorited) {
                                         addFavorite(communityDetails.community_view.community, false)
                                         isFavorited = false

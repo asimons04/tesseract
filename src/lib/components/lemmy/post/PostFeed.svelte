@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BlockUserEvent } from '$lib/ui/events.js'
+    import type { BlockCommunityEvent, BlockUserEvent } from '$lib/ui/events.js'
     import type { PostView } from 'lemmy-js-client'
     
     import { amMod } from '../moderation/moderation';
@@ -18,7 +18,23 @@
 
     export let posts: PostView[]
 
-    // Handler for custom window event that's raised when a user is blocked.
+    
+
+    // Handlers for custom window event that's raised when a user or community is blocked. Used to show/hide posts in the feed
+    
+    function handleCommunityBlock(e:BlockCommunityEvent) {
+        console.log("Received 'blockCommunity' event: ", e);
+
+        for (let i:number=0; i < posts.length; i++) {
+            
+            if (posts[i].community.id == e.detail.community_id) {
+                // Setting the creator_blocked will hide the post; there's no key for `community_blocked`
+                posts[i].creator_blocked = e.detail.blocked
+            }
+        }
+        posts = posts
+    }
+
     function handleUserBlock(e:BlockUserEvent) {
         console.log("Received 'blockUser' event: ", e);
 
@@ -30,9 +46,11 @@
         }
         posts = posts
     }
+
+    
 </script>
 
-<svelte:window on:blockUser={handleUserBlock} />
+<svelte:window on:blockUser={handleUserBlock} on:blockCommunity={handleCommunityBlock}/>
 
 <section class="flex flex-col gap-3 sm:gap-4 h-full">
     {#if posts.length == 0}
