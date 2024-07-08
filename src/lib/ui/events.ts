@@ -2,7 +2,14 @@
     src/app.d.ts under the svelteHTML HTML prop extensions to avoid IDE errors when adding the custom event listeners
 */
 
-export interface BlockUserEvent extends CustomEvent{
+export interface BlockCommunityEvent extends CustomEvent {
+    detail: {
+        community_id: number,
+        blocked: boolean
+    }
+}
+
+export interface BlockUserEvent extends CustomEvent {
     detail: {
         person_id: number,
         blocked: boolean
