@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
-    import { fade } from 'svelte/transition'
 
+    import { fade } from 'svelte/transition'
     import { lastSeenPost } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
@@ -21,7 +21,10 @@
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement
 
+
 </script>
+
+
 
 {#if post?.post?.id}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
