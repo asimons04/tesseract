@@ -155,7 +155,16 @@
                                     <RelativeDate date={communityDetails.community_view.community.published}/>
                                 </span>
                             </span>
-                        
+                            
+                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Subscribers">
+                                <Icon src={UserGroup} width={16} height={16} mini />
+                                
+                                {#if communityDetails.community_view.counts.subscribers_local}
+                                    <FormattedNumber number={communityDetails.community_view.counts.subscribers_local} /> / 
+                                {/if}
+                                <FormattedNumber number={communityDetails.community_view.counts.subscribers} />
+                            </span>
+
                             <span class="flex flex-row items-center gap-1 md:gap-2" title="Posts">
                                 <Icon src={PencilSquare} width={16} height={16} mini />
                                 <FormattedNumber number={communityDetails.community_view.counts.posts} />
