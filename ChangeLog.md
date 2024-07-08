@@ -1,6 +1,19 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.2
+
+### Bugfixes
+
+### New Features / Behavoir
+
+#### User and Community Blocking
+- When blocking a user from the feed, all of their submissions in the current feed should now disappear.
+- When blocking a community from the feed, all posts in that community in the current feed will disappear.
+In both cases, the posts will re-appear if you unblock the user/community while you still have the modal open. Otherwise, you will need to go into Profile->Blocks, unblock the user/community, and the refresh the feed.  Nothing unusual about that, just explaining the behavior.
+
+
+
 ## 1.4.1
 
 ### Infrastructure
