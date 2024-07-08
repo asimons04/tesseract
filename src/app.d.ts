@@ -15,6 +15,7 @@ declare global {
     declare namespace svelteHTML {
         interface HTMLProps<T> {
             "on:reportload"?: (event: CustomEvent<number> & { target: EventTarget & T }) => any;
+            "on:blockUser"?:  (event: CustomEvent<number> & { target: EventTarget & T }) => any;
         }
     }
     declare const __VERSION__: string
