@@ -1,10 +1,10 @@
 <script lang="ts">
     
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
+    import type { ButtonColor } from '$lib/ui/colors.js'
     import type { CommentView, PostView } from 'lemmy-js-client'
     
     import { amMod, isAdmin, remove, voteViewerModal } from './moderation'
-    import type { ButtonColor } from '$lib/ui/colors.js'
     import { getClient } from '$lib/lemmy'
     import { isPostView } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
