@@ -5,6 +5,7 @@ import type {
 import type { PersonData } from '$lib/auth'
 
 import { addSubscription } from '$lib/lemmy/user.js'
+import { dispatchWindowEvent } from '$lib/ui/events'
 import { fixLemmyEncodings } from '../post/helpers'
 import { fullCommunityName } from '$lib/util.js'
 import { get } from 'svelte/store'
@@ -57,6 +58,11 @@ export const subscribe = async function(community:Community, subscribed:boolean)
         })
         subscribed = !subscribed
         
+        dispatchWindowEvent('subscribe', {
+            community_id: community.id,
+            subscribed: subscribed
+        })
+
         toast({
             title: "Success",
             content: `Successfully ${subscribed ? 'subscribed to' : 'unsubscribed from'} ${followResponse.community_view.community.title ?? followResponse.community_view.community.name}`,
