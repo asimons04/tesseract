@@ -2,6 +2,7 @@
     import type { Person } from 'lemmy-js-client'
     
     import { createEventDispatcher } from 'svelte';
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -75,13 +76,23 @@
             })
             
             open = false
+            banned = !banned
+            
+            // Dispatch global event so other components can react
+            dispatchWindowEvent('banUser', {
+                person_id: user.id,
+                banned: banned,
+                remove_content: deleteData
+            })
+
+            
             toast({
                 content: `Successfully ${ banned ? 'unbanned' : 'banned'}  that user.`,
                 type: 'success',
                 title: 'Success'
             })
-            //user.banned = !banned
-            banned = !banned
+            
+            
         } catch (err) {
             toast({
                 content: err as any,
