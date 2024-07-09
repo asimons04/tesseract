@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { BanCommunityEvent, BanUserEvent } from '$lib/ui/events';
     import type { UploadImageResponse } from 'lemmy-js-client';
 
     import { goto } from '$app/navigation'
@@ -25,6 +26,8 @@
         ExclamationTriangle,
         Home
     } from 'svelte-hero-icons'
+    import Post from '$lib/components/lemmy/post/Post.svelte';
+    
     
     
     
@@ -46,6 +49,7 @@
             if (!data.post.post_view.read && $profile?.jwt && $page.params.instance == $profile?.instance) {
                 getClient().markPostAsRead({
                     read: true,
+                    //@ts-ignore 
                     post_id: data.post.post_view.post.id,
                 })
             }
@@ -82,7 +86,27 @@
         }
     }
 
+    function handleBanInstance(e: BanUserEvent) {
+        if (data.post.post_view.creator.id == e.detail.person_id) {
+            data.post.post_view.creator.banned = e.detail.banned
+            data.post.post_view.post.removed = e.detail.remove_content
+        }
+    }
+
+    function handleBanCommunity(e: BanCommunityEvent) {
+        if (data.post.post_view.creator.id == e.detail.person_id && data.post.post_view.community.id == e.detail.community_id) {
+            data.post.post_view.creator_banned_from_community = e.detail.banned
+            data.post.post_view.post.removed = e.detail.remove_content
+        }
+    }
+
 </script>
+
+<svelte:window 
+    on:banUser={handleBanInstance}
+    on:banCommunity={handleBanCommunity}
+/>
+
 
 <svelte:head>
     <title>{data.post.post_view.post.name}</title>
