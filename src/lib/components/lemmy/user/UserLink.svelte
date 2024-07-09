@@ -30,6 +30,7 @@
     export let distinguishAdminsMods:boolean = true
     export let shortenDisplayName:boolean = false
     export let ring:boolean = false
+    export let community_banned:boolean = false
 
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
@@ -75,6 +76,12 @@
                 {#if badges && distinguishAdminsMods && mod}
                     <div class="text-green-500" title="Moderator">
                         <ShieldIcon width={12} filled />
+                    </div>
+                {/if}
+
+                {#if badges && community_banned}
+                    <div class="text-green-500" title="Banned from Community">
+                        <Icon src={NoSymbol} mini size="12" />
                     </div>
                 {/if}
 
