@@ -16,7 +16,8 @@ export interface BanCommunityEvent extends CustomEvent {
 export interface BanUserEvent extends CustomEvent {
     detail: {
         person_id: number,
-        banned: boolean
+        banned: boolean,
+        remove_content: boolean
     }
 }
 
