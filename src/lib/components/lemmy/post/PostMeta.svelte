@@ -114,7 +114,7 @@
                     {#if !inProfile && post.creator}
                         <div class="flex flex-wrap items-center" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'} text-slate-600 dark:text-zinc-400">Posted by&nbsp;</span>
-                            <UserLink avatarSize={20} bind:user={post.creator} mod={post.creator_is_moderator} admin={post.creator_is_admin} avatar={!post.community} />
+                            <UserLink avatarSize={20} bind:user={post.creator} mod={post.creator_is_moderator} admin={post.creator_is_admin} community_banned={post.creator_banned_from_community} avatar={!post.community} />
                         </div>
                     {/if}
                 </span>
