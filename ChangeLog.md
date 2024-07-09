@@ -2,15 +2,45 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.4.2
+Starting with 1.4.1, I'm trying out a new, faster release cadence with just one or two feature updates per point release rather than larger releases every 4-5 weeks.  Hopefully this keeps things feeling fresher and lets me focus on specific features rather than trying to overhaul everything all at once.
+
+This release is all about enhancing the reactivity of Tesseract.
 
 ### Bugfixes
+None, for once.  Doesn't mean there aren't any, just none new discovered or reported.
 
-### New Features / Behavoir
+### Misc Changes
+- Increased scroll height of quick settings and added a few more options for easy access.
+- Changed card/compact switcher to toggle, moved into quick settings area
 
-#### User and Community Blocking
+### Reactivity Enhancements
+Being able to do all the actions is great, but it's annoying to have to refresh the contents to see that they have taken effect.  This release is working on increasing the reactivity througout the application for as many actions as possible.
+
+#### User, Community, and Instance Blocking
+The behavior has changed when blocking users, communities, and instances from the feed:
 - When blocking a user from the feed, all of their submissions in the current feed should now disappear.
-- When blocking a community from the feed, all posts in that community in the current feed will disappear.
-In both cases, the posts will re-appear if you unblock the user/community while you still have the modal open. Otherwise, you will need to go into Profile->Blocks, unblock the user/community, and the refresh the feed.  Nothing unusual about that, just explaining the behavior.
+- When blocking a community from the feed, all posts to that community in the current feed will disappear.
+- When blocking an instance from the feed/instance menu, all posts from users on that instance and to communities from that instance will disappear.
+
+Previously, at most, only the post where you initiated the block would disappear until you refreshed the feed.  Now, all posts fitting the block criteria will be hidden immediately. 
+
+#### Community / Instance Bans
+
+**New**:  When users are community banned, they now they have green "no" symbols on them (I'm hitting the limits of Hero icons).  This was not indicated previously. 
+
+Community and instance bans now dispatch events that update all relevant items:
+
+- **Feed**:   Updates the banned indicator and, if selected, flag them as removed in "remove content" is selected while banning.
+- **Post Page**:  Updates the post heading and any comments to indicate the user is banned and the post/comment removed.
+
+Previously, only the item that initiated the ban action would be updated to reflect the new state.  Now, all relevant items in the current view (feed or post/comment) will be updated to reflect the action(s) taken.
+
+
+#### Subscribe / Unsubscribe
+Subscribing and unsubscribing from the quick button in the community icon or the community modal will update all post cards with the new/current subscription state.
+
+
+
 
 
 
