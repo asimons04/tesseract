@@ -1,7 +1,8 @@
 <script lang="ts">
-    import type { UploadImageResponse } from 'lemmy-js-client';
+    import type { BanCommunityEvent, BanUserEvent } from '$lib/ui/events'
     import type { CommentNodeI } from './comments'
-
+    import type { UploadImageResponse } from 'lemmy-js-client';
+    
     import {
         ArrowUp,
         Bookmark,
@@ -18,18 +19,19 @@
     import CommentActions from '$lib/components/lemmy/comment/CommentActions.svelte'
     import CommentForm from './CommentForm.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
+    import { amModOfAny } from '../moderation/moderation';
     import { getClient } from '$lib/lemmy.js'
     import { isThreadComment, scrollToTop } from '../post/helpers'
     import { onMount } from 'svelte'
     import { profile } from '$lib/auth.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { slide } from 'svelte/transition'
-    import { amModOfAny } from '../moderation/moderation';
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    
     
     
     export let node: CommentNodeI
@@ -60,7 +62,26 @@
                     
     })
 
+    function handleBanUser(e: BanUserEvent) {
+        if (node.comment_view.creator.id == e.detail.person_id) {
+            node.comment_view.creator.banned = e.detail.banned
+            if (e.detail.remove_content) node.comment_view.comment.removed = true
+        }
+        node = node
+    }
+
+    function handleBanCommunity(e: BanCommunityEvent) {
+        if (node.comment_view.creator.id == e.detail.person_id) {
+            node.comment_view.creator_banned_from_community = e.detail.banned
+            if (e.detail.remove_content) node.comment_view.comment.removed = true
+        }
+        node = node
+    }
+
 </script>
+
+<svelte:window on:banUser={handleBanUser} on:banCommunity={handleBanCommunity}/>
+
 
 {#if editing}
     <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} width="max-w-4xl">
@@ -95,7 +116,7 @@
     </Modal>
 {/if}
 
-<div bind:this={commentContainer} class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}">
+<div bind:this={commentContainer} class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}" transition:slide>
     <details bind:open class="flex flex-col gap-1">
         <summary class="
             {jumpToComment ? jumpToCommentClassSummary : ''}
@@ -112,7 +133,7 @@
              hover:rounded-lg
         ">
             <span class:font-bold={op} class="flex flex-row flex-wrap gap-1 items-start w-full">
-                <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} />
+                <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} community_banned={node.comment_view.creator_banned_from_community}/>
                 
                 {#if op}
                     <span class="text-sky-500">OP</span>
