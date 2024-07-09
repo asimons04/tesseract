@@ -1,5 +1,12 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BanUserEvent, BlockCommunityEvent, BlockInstanceEvent, BlockUserEvent } from '$lib/ui/events'
+    import type { 
+        BanCommunityEvent, 
+        BanUserEvent, 
+        BlockCommunityEvent, 
+        BlockInstanceEvent, 
+        BlockUserEvent, 
+        SubscribeEvent 
+    } from '$lib/ui/events'
     import type { PostView } from 'lemmy-js-client'
     
     import { amMod } from '../moderation/moderation';
@@ -74,6 +81,17 @@
         posts = posts
     }
 
+    function handleSubscribeUnsubscribe(e:SubscribeEvent) {
+        for (let i:number=0; i < posts.length; i++) {
+            if(posts[i].community.id == e.detail.community_id) {
+                posts[i].subscribed = e.detail.subscribed
+                    ? 'Subscribed'
+                    : 'NotSubscribed'
+            }
+        }
+        posts = posts
+    }
+
     
 </script>
 
@@ -83,7 +101,7 @@
     on:blockUser={handleUserBlock} 
     on:blockCommunity={handleCommunityBlock} 
     on:blockInstance={handleInstanceBlock}
-
+    on:subscribe={handleSubscribeUnsubscribe}
 />
 
 <section class="flex flex-col gap-3 sm:gap-4 h-full">
