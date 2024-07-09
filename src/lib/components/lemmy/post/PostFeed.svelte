@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BlockCommunityEvent, BlockInstanceEvent, BlockUserEvent } from '$lib/ui/events'
+    import type { BanCommunityEvent, BanUserEvent, BlockCommunityEvent, BlockInstanceEvent, BlockUserEvent } from '$lib/ui/events'
     import type { PostView } from 'lemmy-js-client'
     
     import { amMod } from '../moderation/moderation';
@@ -23,8 +23,17 @@
     // Handlers for custom window event that's raised when a user or community is blocked. Used to show/hide posts in the feed
     function handleBanCommunity(e:BanCommunityEvent) {
         for (let i:number=0; i < posts.length; i++) {
-            if(posts[i].creator.id == e.detail.person_id && posts[i].community.id == e.detail.community_id) {
+            if (posts[i].creator.id == e.detail.person_id && posts[i].community.id == e.detail.community_id) {
                 posts[i].creator_banned_from_community = e.detail.banned
+                posts[i].post.removed = e.detail.remove_content
+            }
+        }
+    }
+
+    function handleBanInstance(e:BanUserEvent) {
+        for (let i:number=0; i < posts.length; i++) {
+            if (posts[i].creator.id == e.detail.person_id) {
+                posts[i].creator.banned = e.detail.banned
                 posts[i].post.removed = e.detail.remove_content
             }
         }
@@ -67,6 +76,7 @@
 </script>
 
 <svelte:window 
+    on:banUser={handleBanInstance}
     on:banCommunity={handleBanCommunity}
     on:blockUser={handleUserBlock} 
     on:blockCommunity={handleCommunityBlock} 
