@@ -33,12 +33,22 @@
         
         <!--- Compact Posts --->
         {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }
-            <PostCompactStyle bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType} {disablePostLinks} {collapseBadges} />
+            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges}
+                bind:post 
+                bind:expandCompact 
+                bind:expandPreviewText  
+                bind:postContainer  />
 
 
         <!--- Card Posts --->
         {:else}
-            <PostCardStyle  bind:post {actions}  bind:expandCompact bind:expandPreviewText  bind:postContainer {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} />
+            <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} 
+                bind:post 
+                bind:expandCompact 
+                bind:expandPreviewText  
+                bind:postContainer 
+                
+            />
         {/if}
     </div>
 {/if}
