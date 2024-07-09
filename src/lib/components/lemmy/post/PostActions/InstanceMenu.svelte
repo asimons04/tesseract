@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { federationStateModal, fediseerModal } from '$lib/components/lemmy/moderation/moderation'
     import { getClient } from '$lib/lemmy'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
@@ -51,8 +52,13 @@
         })
         blockingInstance = false
         
-        // Hack to remove the post from the DOM since there's no instance block / hide option available
+        
+        // Dispatch window event which will hide the posts via PostFeed component
         post.creator_blocked = true
+        dispatchWindowEvent('blockInstance', { 
+            instance_id: instance_id,
+            blocked: true
+        })
 
         removeToast(pleaseWaitToast)
         toast({
