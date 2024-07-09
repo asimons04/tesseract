@@ -28,6 +28,7 @@
                 posts[i].post.removed = e.detail.remove_content
             }
         }
+        posts = posts
     }
 
     function handleBanInstance(e:BanUserEvent) {
@@ -37,6 +38,7 @@
                 posts[i].post.removed = e.detail.remove_content
             }
         }
+        posts = posts
     }
 
 
