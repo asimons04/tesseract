@@ -21,7 +21,19 @@
         Identification, 
         Server, 
         Photo,
-        QueueList
+        QueueList,
+
+        Hashtag,
+
+        Tag,
+
+        Trophy,
+
+        ArrowsRightLeft
+
+
+
+
     } from "svelte-hero-icons"
 
     
@@ -84,25 +96,22 @@
                             if (!sortPreventDefault) searchParam($page.url, 'sort', e.detail, 'page')
                         }}
                     />
-
-                    <!---Post Style--->
-                    <SettingMultiSelect title="Post Style" icon={$userSettings.showCompactPosts ? QueueList : Photo}
-                        options={[false, true]} 
-                        optionNames={['Cards', 'Compact']}
-                        small={true} padding={false} justify={true}
-                        bind:selected={$userSettings.showCompactPosts}
-                        on:select={async (e) => {
-                            $userSettings.uiState.feedMargins = !e.detail
-                            await scrollToLastSeenPost()
-                        }}
-                        
-                    />
                 </div>
             </Card>
         {/if}
 
         <!---User Settings--->
-        <Card class="p-2 max-h-[20vh] overflow-y-scroll">
+        <Card class="p-2 max-h-[30vh] overflow-y-scroll">
+            
+            <!---Post Style--->
+            <SettingToggle title="Show Compact Posts" icon={$userSettings.showCompactPosts ? QueueList : Photo}  small={true}
+                bind:value={$userSettings.showCompactPosts} 
+                on:change={async (e) => {
+                    $userSettings.uiState.feedMargins = !e.detail
+                    await scrollToLastSeenPost()
+                }}
+            />
+            
             <!---Open in New Tab--->
             <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
 
@@ -115,6 +124,12 @@
             <!---Show Instances--->
             <SettingToggle icon={Server} title="Show Instance Names" bind:value={$userSettings.uiState.showInstances} small={true}/>
             
+            <!---Show Scores--->
+            <SettingToggle title="Show Scores" icon={Trophy} bind:value={$userSettings.uiState.showScores} small={true} />
+
+            <!---Reverse Action Bar--->
+            <SettingToggle title="Reverse Action Bar" icon={ArrowsRightLeft} bind:value={$userSettings.uiState.reverseActionBar} small={true}/>
+
             <!---Expand Crosspost List--->
             <SettingToggle title="Expand Crosspost List" icon={BarsArrowDown} bind:value={$userSettings.uiState.expandCrossPosts} small={true}/>
 
@@ -123,6 +138,14 @@
             
             <!---Enable Embeds in Feed--->
             <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed} small={true}/>
+
+            <!---Enable Hashtags--->
+            <SettingToggle title="Enable Hashtags" icon={Hashtag} bind:value={$userSettings.linkifyHashtags} small={true} />
+
+            <!---Enable Flairs--->
+            <SettingToggle title="Enable Flairs" icon={Tag} bind:value={$userSettings.extractFlairsFromTitle} small={true} />
+
+
         </Card>
       
         <Card class="p-2">
