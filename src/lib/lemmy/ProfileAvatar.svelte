@@ -13,7 +13,7 @@
 {#if profile}
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="relative group flex-col items-center" on:click={(e) => e.stopPropagation()}>  
+<div class="relative group flex-col items-center" on:click|stopPropagation>  
     <Icon
         src={UserCircle}
         mini={selected}
