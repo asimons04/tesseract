@@ -45,6 +45,13 @@ export interface BlockUserEvent extends CustomEvent {
     }
 }
 
+export interface SubscribeEvent extends CustomEvent {
+    detail: {
+        community_id: number
+        subscribed: boolean
+    }
+}
+
 /** Dispatches a custom event to the window which any mounted component can listen for
  * @param name The name of the custom event e.g. blockUser
  * @param detail The details of the event to pass to the window event listener

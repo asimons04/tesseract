@@ -19,6 +19,7 @@ declare global {
             "on:blockCommunity"?:   (event: CustomEvent<number> & { target: EventTarget & T }) => any;
             "on:blockInstance"?:    (event: CustomEvent<number> & { target: EventTarget & T }) => any;
             "on:blockUser"?:        (event: CustomEvent<number> & { target: EventTarget & T }) => any;
+            "on:subscribe"?:        (event: CustomEvent<number> & { target: EventTarget & T }) => any;
         }
     }
     declare const __VERSION__: string
