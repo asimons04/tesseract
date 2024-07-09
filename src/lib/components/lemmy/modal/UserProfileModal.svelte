@@ -350,6 +350,7 @@
                             if (personDetails?.person_view.person) {
                                 blocking = true
                                 userBlocked = await blockUser(personDetails.person_view.person.id, true, !userBlocked)
+                                
                                 dispatchWindowEvent('blockUser', { 
                                     person_id: personDetails.person_view.person.id,
                                     blocked: userBlocked
