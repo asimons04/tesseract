@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BlockCommunityEvent, BlockUserEvent } from '$lib/ui/events.js'
+    import type { BanCommunityEvent, BlockCommunityEvent, BlockInstanceEvent, BlockUserEvent } from '$lib/ui/events'
     import type { PostView } from 'lemmy-js-client'
     
     import { amMod } from '../moderation/moderation';
@@ -21,12 +21,32 @@
     
 
     // Handlers for custom window event that's raised when a user or community is blocked. Used to show/hide posts in the feed
-    
+    function handleBanCommunity(e:BanCommunityEvent) {
+        for (let i:number=0; i < posts.length; i++) {
+            if(posts[i].creator.id == e.detail.person_id && posts[i].community.id == e.detail.community_id) {
+                posts[i].creator_banned_from_community = e.detail.banned
+                posts[i].post.removed = e.detail.remove_content
+            }
+        }
+    }
+
+
     function handleCommunityBlock(e:BlockCommunityEvent) {
         for (let i:number=0; i < posts.length; i++) {
             
             if (posts[i].community.id == e.detail.community_id) {
                 // Setting the creator_blocked will hide the post; there's no key for `community_blocked`
+                posts[i].creator_blocked = e.detail.blocked
+            }
+        }
+        posts = posts
+    }
+
+    function handleInstanceBlock(e:BlockInstanceEvent) {
+        for (let i:number=0; i < posts.length; i++) {
+            
+            if (posts[i].creator.instance_id == e.detail.instance_id || posts[i].community.instance_id == e.detail.instance_id) {
+                // Setting the creator_blocked will hide the post; there's no key for `instance_blocked`
                 posts[i].creator_blocked = e.detail.blocked
             }
         }
@@ -46,7 +66,13 @@
     
 </script>
 
-<svelte:window on:blockUser={handleUserBlock} on:blockCommunity={handleCommunityBlock}/>
+<svelte:window 
+    on:banCommunity={handleBanCommunity}
+    on:blockUser={handleUserBlock} 
+    on:blockCommunity={handleCommunityBlock} 
+    on:blockInstance={handleInstanceBlock}
+
+/>
 
 <section class="flex flex-col gap-3 sm:gap-4 h-full">
     {#if posts.length == 0}
