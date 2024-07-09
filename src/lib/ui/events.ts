@@ -2,6 +2,25 @@
     src/app.d.ts under the svelteHTML HTML prop extensions to avoid IDE errors when adding the custom event listeners
 */
 
+// Ban User From Community
+export interface BanCommunityEvent extends CustomEvent {
+    detail: {
+        person_id: number,
+        banned: boolean,
+        community_id: number
+        remove_content: boolean
+    }
+}
+
+// Ban user from instance
+export interface BanUserEvent extends CustomEvent {
+    detail: {
+        person_id: number,
+        banned: boolean
+    }
+}
+
+// Blocking a Community
 export interface BlockCommunityEvent extends CustomEvent {
     detail: {
         community_id: number,
@@ -9,6 +28,15 @@ export interface BlockCommunityEvent extends CustomEvent {
     }
 }
 
+// Blocking an instance
+export interface BlockInstanceEvent extends CustomEvent {
+    detail: {
+        instance_id: number,
+        blocked: boolean
+    }
+}
+
+// Blocking a User
 export interface BlockUserEvent extends CustomEvent {
     detail: {
         person_id: number,
@@ -16,6 +44,10 @@ export interface BlockUserEvent extends CustomEvent {
     }
 }
 
+/** Dispatches a custom event to the window which any mounted component can listen for
+ * @param name The name of the custom event e.g. blockUser
+ * @param detail The details of the event to pass to the window event listener
+*/
 export const dispatchWindowEvent = function<DetailType> (name:string, detail:DetailType) {
     window.dispatchEvent(
         new CustomEvent(name, { 

@@ -14,7 +14,10 @@ declare global {
     // Custom HTML prop extensions for our custom events so VSCode won't bitch and throw type errors
     declare namespace svelteHTML {
         interface HTMLProps<T> {
+            "on:banUser"?:          (event: CustomEvent<number> & { target: EventTarget & T }) => any;
+            "on:banCommunity"?:     (event: CustomEvent<number> & { target: EventTarget & T }) => any;
             "on:blockCommunity"?:   (event: CustomEvent<number> & { target: EventTarget & T }) => any;
+            "on:blockInstance"?:    (event: CustomEvent<number> & { target: EventTarget & T }) => any;
             "on:blockUser"?:        (event: CustomEvent<number> & { target: EventTarget & T }) => any;
         }
     }
