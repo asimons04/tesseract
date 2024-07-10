@@ -5,7 +5,7 @@
 
 **Default:** `lemmy.world`
 
-**Required:** No, but you should really set this.
+**Required:** Technically speaking, no, but you should *really* set this.  If you only set one config param, set this one.
 
 ---
 
@@ -46,8 +46,6 @@ If `true`, sets the default view to compact.  Set to `false` or leave undefined 
 ### PUBLIC_DEFAULT_FEED_SORT
 Sets the default sorting method for users.  Users can change this in their settings, but this will be the default until they do.
 
-Note:  Do not set this to `Scaled`.  Once 0.18.x support is dropped, it will be safe to do so.  For versions prior to 1.4.0 (not yet in development), use the 0.18.5 sort types.
-
 **Valid Values**:  See [Lemmy sort types](https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/SortType.ts)
 
 **Default**: `Active`
@@ -73,7 +71,7 @@ Sets the default comment sort direction for users.  Users can change this in the
 ---
 
 ### PUBLIC_HIDE_DELETED
-Sets the default option to hide deleted posts/comments.  May not be relevant for normal users (the API keeps changing behavior grrrr). 
+Sets the default option to hide deleted posts/comments.  May or may not be relevant for normal users (the API keeps changing behavior grrrr). 
 
 **Valid Values**:  `true`, `false`
 
@@ -82,7 +80,7 @@ Sets the default option to hide deleted posts/comments.  May not be relevant for
 --- 
 
 ### PUBLIC_HIDE_REMOVED
-Sets the default option to hide removed posts/comments.  May not be relevant for normal users (the API keeps changing behavior grrrr). 
+Sets the default option to hide removed posts/comments.  May or may not be relevant for normal users (the API keeps changing behavior grrrr). 
 
 **Valid Values**:  `true`, `false`
 
@@ -122,7 +120,9 @@ Set the default option for whether media embeds shold be enabed in the feed.
 
 **Valid Values**:  `true`, `false`
 
-**Default**: `true`
+**Default**: `false`
+
+**Note**:  Was `true` until 1.4.0 when click to play was implemented.
 
 ---
 ### PUBLIC_ENABLE_EMBEDDED_MEDIA_POST
@@ -137,7 +137,7 @@ Sets the default option for whether media embeds should be enabled when clicking
 ### PUBLIC_YOUTUBE_FRONTEND
 Sets the default YouTube frontend.  Note that enabling media in the feed and selecting Invidious as the default YT frontend _may_ result in rate limiting errors.
 
-**Valid Values**:  `YouTube` , `Invidious`
+**Valid Values**:  `YouTube` , `Invidious`, `Piped`
 
 **Default**:  `YouTube`
 
@@ -161,7 +161,7 @@ PUBLIC_CUSTOM_INVIDIOUS=invid.example.com, iv.foo.com, iv.bar.net
 
 ```
 
----
+--- 
 
 ### PUBLIC_CUSTOM_PIPED
 A comma-delimited list of custom Piped domains to use as possible frontends (selectable in user options) or to detect Piped videos in posts.
@@ -181,24 +181,23 @@ PUBLIC_CUSTOM_PIPED=piped.example.com, piped.foo.com, piped.bar.net
 
 ```
 
+See [Custom YouTube Frontends](/docs/CustomYoutubeFrontends.md) doc for more details.
+
 ---
+
 ### PUBLIC_ENABLE_USER_MEDIA_PROXY
 Sets the default user option to enable redirecting media through Tesseract's media proxy.  Useless unless the [media proxying subsystem](./MediaProxy.md) is enabled and configured.
 
-**Valid Values**:  `true`, `false`
+This allows you to force the default settings for a user to use the media proxy (if enabled). 
 
-**Default**: `false`
-
----
-
-### PUBLIC_ENABLE_FEDISEER_BADGES
-Whether to show Fediseer badges on posts by default.
+Recommended to leave that up to the user (they can turn it off later if they want, anyway) unless you have a good reason to force using the proxy.
 
 **Valid Values**:  `true`, `false`
 
 **Default**: `false`
 
 ---
+
 
 ### PUBLIC_ENABLE_MBFC_BADGES
 Whether to show MBFC credibility badges on posts by default.
@@ -219,7 +218,9 @@ Whether to stretch the background banner images on the site, community, and user
 ---
 
 ### PUBLIC_MATCH_XPOST_TITLE
-Whether to match crossposts in the feed by title as well as by URL.  Note:  Some communities require that posts be titled a specific way.  This can cause undesirable roll-ups.  For that reason, it's recommended to leave the default option disabled and allow the user to set this themselves.
+Whether to match crossposts in the feed by title as well as by URL.  
+
+Note:  Some communities require that posts be titled a specific way.  This can cause undesirable roll-ups.  For that reason, it's recommended to leave the default option disabled and allow the user to set this themselves.
 
 **Valid Values**:  `true`, `false`
 
@@ -231,7 +232,7 @@ A list of instances you approve of that will be made available in the community 
 
 Like `PUBLIC_INSTANCE_URL`, only the base domain of the instances should be provided.
 
-**Example Value**:  Can be a single, comma-delimited string or multi-line YAML.  The two examples below are functionally identical.
+**Example Value**:  Can be a single, comma-delimited string or multi-line YAML.  The two examples below are functionally identical.  Just be sure to comma-delmit each domain regardless of which YAML style you use.
 
 ```
 # Single Line Format
