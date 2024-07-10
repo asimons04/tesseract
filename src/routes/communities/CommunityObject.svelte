@@ -35,7 +35,7 @@
         return false
     }
 
-    community.subscribed = isSubscribed(community) ? 'Subscribed' : 'NotSubscribed'
+    $: community, community.subscribed = isSubscribed(community) ? 'Subscribed' : 'NotSubscribed'
 
 </script>
 
@@ -49,7 +49,7 @@
         <div class="flex flex-col gap-0 w-full" >
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span class="break-words  text-base font-bold text-sky-400 hover:underline" on:click={(e) => e.stopPropagation()}>
+            <span class="break-words  text-base font-bold text-sky-400 hover:underline" on:click|stopPropagation>
                 <CommunityLink href showInstance={false} avatar={false} useDisplayNames community={community.community} />
             </span>
             
