@@ -284,7 +284,6 @@ The following environment variables can be set to override the default settings.
 | PUBLIC_CUSTOM_INVIDIOUS         | Comma-separated string | ''                                  |
 | PUBLIC_CUSTOM_PIPED             | Comma-separated string | ''                                  |
 | PUBLIC_ENABLE_USER_MEDIA_PROXY  | `bool`              | false                                  |
-| PUBLIC_ENABLE_FEDISEER_BADGES   | `bool`              | false                                  |
 | PUBLIC_ENABLE_MBFC_BADGES       | `bool`              | true                                   |
 | PUBLIC_STRETCH_CARD_BANNERS     | `bool`              | false                                  |
 | PUBLIC_MATCH_XPOST_TITLE        | `bool`              | true                                   |
@@ -318,7 +317,7 @@ https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/ListingType.ts
 - All
 - Local
 - Subscribed
-- Moderator View (not implemented in Tesseract)
+- Moderator View (Don't set as default)
 
 #### Sort Type
 https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/SortType.ts
