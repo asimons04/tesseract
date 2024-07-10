@@ -19,9 +19,9 @@ If you want to run Tesseract and are still on an 0.18.x instace, you will need t
 | 1.3.0             | 0.18.x            | Yes           | Last version to support 0.18.x
 | 1.3.0             | 0.19.x            | Yes           | Auth, instance block, admin functions, and cursor pagination supported.  Admin detection bug fixed.
 | 1.3.x             | 0.18.x            | Yes           | 1.3.x is the maintenance series for 1.3.0. It will be limited to bugfixes. No features are likely to be backported from 1.4.0
-| 1.4.0             | 0.18.x            | No            | This release drops 0.18.x support.  Can still browse but cannot login or perform any action which requires authentication
+| 1.4.0             | 0.18.x            | No            | This release drops 0.18.x support.  Can still browse but cannot login or perform any action which requires authentication. Browsing is also limited to just the first page as the old, offset-based pagination is no longer used, and 0.18.x does not support page cursors.
 | 1.4.0             | 0.19.0-2          | Yes           | Some features, such as post/comment vote views, will be present but broken as those API calls are not present until 0.19.3
-| 1.4.0             | 0.19.3            | Yes           | 0.19.3 is the current development target and recommended minimum server version.
+| 1.4.0 - 1.4.x     | 0.19.3+           | Yes           | 0.19.3 is the current development target and recommended minimum server version. I have not tested directly against 0.19.4+, but I do not see any breaking changes in the API which should prevent it from working as expected. That said, none of the 0.19.4+ features have been implemented yet.
 
 #### Sublinks
 Will be added once Sublinks is released.
@@ -38,18 +38,22 @@ The following features are unique to Tesseract:
   - Odysee
   - [Song Link](https://odesli.co/)
   - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
-  - Peertube Embeds (new as of 1.3.0).  PT support is kind of cool because you can already follow PeerTube channels in Lemmy. With the addition of support for their embeds, this makes following your favorite creator even easier. Upvotes/downvotes to a Peertube post will federate out to thumbs-up/thumbs-down on PT's side.
-  - Any embeddable content that provides a video link in the `embed_video` metadata.
+  - Peertube.  PT support is kind of cool because you can already follow PeerTube channels in Lemmy. With the addition of support for their embeds, this makes following your favorite creator even easier. Upvotes/downvotes to a Peertube post will federate out to thumbs-up/thumbs-down on PT's side, and comments will at least federate to PT.
+  - Any embeddable content that provides a video link in the `embed_video` metadata will also embed.
 
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
   - Post and comment menus let you browse the communities of the originating instance
   - Subscribe to communities on remote instances with one click.  As of 1.3.0, your subscribed state will be reflected when browing remote instances.
-  - Note:  This only works for Lemmy instances. Kbin, Mastadon, etc are not currently supported for remote community browsing.  
+  - **Note**:  This only works for Lemmy instances. Kbin, Mastadon, etc are not currently supported for remote community browsing.  
 
 
 ### Image/Media Proxying and Caching
-Privacy conscious users have long requested media be proxied through Lemmy.  While I can't add that to the API, I can add it to the UI.  Additionally, since the media is already flowing through Tesseract, it made sense to optionally cache the proxied media for re-use.
+Privacy conscious users have long requested media be proxied through Lemmy.  While Lemmy did finally add that to the server process, I am not at all happy with the way it was implemented.
+
+Additionally, if proxying is enabled, the media is already flowing through Tesseract, it makes sense to optionally cache the proxied media for re-use.
+
+Media proxying is disabled by default both at the server level and in user settings.  In order to enable it, the admin needs to set the environment variable to enable proxying, caching, or both (caching is ignored if proxying is disabled).  Additionally, users would need to go into Settings -> Media and enable use of the proxy/cache.  See the docs, linked below, for instructions on configuring this module.
 
 - Enhance user privacy, reduce bandwidth to other instances, and speed up serving content to your users.
 - Can cache any media proxied through it.  Tesseract can act as a caching proxy for your instance as well as cache media originating on other instances as well as outside resources (Giphy, Catbox, Imgur, Yarn, etc).
@@ -82,7 +86,7 @@ See any endorsements, hesitations, and censures given to instances you're intera
 Code syntax highlighting in code and inline code blocks.
 
 ### Distinguished and Sticky Comments
-Mods/Admins can distinguish and sticky their own comments.  Comments that are distinguished will always display at the top of the comment list regardless of sort order.  
+Mods/Admins can distinguish and sticky their own comments (used to be any comment, but _thanks_ Lemmy devs, for breaking that).  Comments that are distinguished will always display at the top of the comment list regardless of sort order and have a green highlight effect.  
 
 ### Keyword Filtering
 Sick of hearing about a particular topic?  Add keyword filters to keep posts containg those terms from appearing in your feed.  By default, keywords are compared case-insensitively, checked as whole-words, and only checked for presence within the post title, body, or embed description.  
@@ -90,9 +94,23 @@ Sick of hearing about a particular topic?  Add keyword filters to keep posts con
 You can add modifiers to fine tune this somewhat:
 - `!term`: Prefixing a keyword with an exclamation mark will compare it as case-sensitve.  Useful for filtering acronyms.
 - `^term`: A carat tells the filter to check that the post elements start with the provided term.
-- `*term`: An asterisk disabled whole word checking will filter a post if the keyword is contained within other words.
+- `*term`: An asterisk disables whole word checking and will filter a post if the keyword is contained *within* other words.
 
 At this time, modifiers cannot be combined. Perhaps that is something that will be implemented later.
+
+### Alternate Sources Menu
+As a media-savvy individual, I'm highly against posting archive links as the canonical links for news posts.  You have no idea where the headline comes from, and it's kind of like "trust me, bro".  It also breaks the MBFC integration, so there's also that.  I believe it is important to always have the source of a headline clearly and easily visible when browsing news/politics communities.
+
+That said, I get that some people prefer archived copies for various reasons.
+
+So, I'm flipping the way Lemmy UI does it on its head.
+
+All link posts will have a dropdown menu next to the link which contains alternate links to the post URL from Ghost Archive, 12ft.io, and Archive Today.  
+
+For Youtube, Invidious, and Piped URLs, the dropdown will instead have links for the canonical YouTube video and both Invidious and Piped links.  The Invidious/Piped links will point to your preferred instance of each as defined in the app settings.
+
+*Please* stop commenting 'Paywalled' when someone shares a news post  :)
+
 
 ### Designed for desktop and mobile.
 Install as a PWA on either or just use it through the web.
@@ -102,16 +120,16 @@ You can add multiple accounts and easily switch between them.  Accounts can even
 
 ### Multiple Hosting Options
 If you host your own Tesseract instance, you can use it as a frontend for any Lemmy instance.
-Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with it.  You can even run it on localhost if you want, though image uploads will not work due to CORS.
+Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with it.  You can even run it on localhost if you want.
 
 
 ### Highly Configurable
 - User-configurable image/video sizes in feed and posts
-- Full Lemmy server config options.
+- Full Lemmy server config options (up to 0.19.3, anyway).
 - Most aspects of the UI can be configured by the end user. Server admins can set default preferences via `env` vars.
 
 ### Better Moderation Tools than Lemmy-UI
-- Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI
+- Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI (at least as of 0.19.3)
 - Local instance admins have full moderation control of the instance as with Lemmy-UI
 - Modlog support on both desktop and mobile.
 - Supercharged modlog with enhanced filtering and quick actions.
@@ -124,7 +142,7 @@ Tesseract is maintained by someone who is simultaneously a Lemmy user, administr
 
 
 ## Supported Media
-For Youtube (and Invidious/Piped), Spotify, Bandcamp, and Soundcloud, you don't need to use any special embed links; just the regular URL from your browser.  Tesseract will take care of generating the embed URLs based on your preferences.
+For Youtube (and Invidious/Piped), Spotify, Bandcamp, and Soundcloud, you don't need to use any special embed links; just the regular URL from your browser.  Tesseract will take care of generating the embed URLs based on your preferences.  It will also rewrite a YT video to Invidious, Invidious to Youtube, or any combo based on the original video URL and your preferred YT frontend setting and preferred instance.
 
 - Odysee videos
 
