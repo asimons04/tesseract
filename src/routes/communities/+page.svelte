@@ -213,8 +213,7 @@
 
     <!---Community keyword search input--->
     <form class="hidden xl:flex flex-row gap-2 items-center w-fit mx-auto" slot="center"
-        on:submit={async (e) => {
-            e.preventDefault();
+        on:submit|preventDefault={async () => {
             await search(true)
         }}
     >
@@ -255,8 +254,7 @@
 
     <!---Search Input for Mobile View--->
     <form class="flex xl:hidden flex-row gap-0 items-center w-full justify-between"
-            on:submit={async (e) => {
-                e.preventDefault();
+            on:submit|preventDefault={async () => {
                 await search(true)
             }}
         >
