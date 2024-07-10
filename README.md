@@ -99,7 +99,7 @@ You can add modifiers to fine tune this somewhat:
 At this time, modifiers cannot be combined. Perhaps that is something that will be implemented later.
 
 ### Alternate Sources Menu
-As a media-savvy individual, I'm highly against posting archive links as the canonical links for news posts.  You have no idea where the headline comes from, and it's kind of like "trust me, bro".  It also breaks the MBFC integration, so there's also that.  I believe it is important to always have the source of a headline clearly and easily visible when browsing news/politics communities.
+As a media-savvy individual, I'm highly against posting archive links as the canonical links for news posts.  You have no idea where the headline comes from, and it's kind of like "trust me, bro".  It also breaks the MBFC integration, so there's also that.  I believe it is important to always have the source of a headline clearly and easily visible when browsing news/politics communities to help combat the spread of dis/misinformation (among other valid reasons).
 
 That said, I get that some people prefer archived copies for various reasons.
 
