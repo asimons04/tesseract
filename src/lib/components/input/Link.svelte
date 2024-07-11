@@ -15,6 +15,7 @@
 <a {href}
     id={id}
     class="{highlight ? 'text-sky-700 dark:text-sky-500' : ''} hover:underline max-w-full"
+    rel="nofollow"
     target="{newtab
         ? '_blank'
         : '_self'
