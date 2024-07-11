@@ -215,8 +215,7 @@
                                     {#if $profile?.jwt}
                                         <!--- Subscribe/Unsubscribe--->
                                         <MenuButton disabled={loading.subscribing || community_view.community.removed } loading={loading.subscribing}>
-                                            <button class="flex flex-row gap-2 w-full" on:click={ (e) => {
-                                                e.stopPropagation();
+                                            <button class="flex flex-row gap-2 w-full" on:click|stopPropagation={ () => {
                                                 subscribe();
                                             }}>
                                                 <Icon src={community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending' ? Minus : Rss} mini size="16" />
@@ -230,8 +229,7 @@
 
                                         <!--- Add/Remove Favorite--->
                                         <MenuButton>
-                                            <button class="flex flex-row gap-2 w-full" on:click={ (e) => {
-                                                e.stopPropagation();
+                                            <button class="flex flex-row gap-2 w-full" on:click|stopPropagation={ () => {
                                                 favorite = !favorite
                                                 addFavorite(community_view.community, favorite)
                                             }}>
@@ -248,8 +246,7 @@
                                         
                                         <!--- Block/Unblock Community --->
                                         <MenuButton disabled={loading.blocking || community_view.community.removed} loading={loading.blocking} color="dangerSecondary">
-                                            <button class="flex flex-row gap-2 w-full" on:click={(e) => { 
-                                                e.stopPropagation(); 
+                                            <button class="flex flex-row gap-2 w-full" on:click|stopPropagation={() => { 
                                                 block(); 
                                             }}>
                                                 <Icon src={community_view.blocked  ? ShieldCheck : ShieldExclamation} mini size="16" />
@@ -261,8 +258,7 @@
                                     <!--- Admin-Remove-Community--->
                                     {#if $profile?.user && isAdmin($profile.user)}
                                         <MenuButton disabled={loading.removing} loading={loading.removing} color="dangerSecondary">
-                                            <button class="flex flex-row gap-2 w-full" on:click={(e) => { 
-                                                e.stopPropagation(); 
+                                            <button class="flex flex-row gap-2 w-full" on:click|stopPropagation={() => { 
                                                 remove(); 
                                             }}>
 
@@ -273,8 +269,7 @@
 
                                         <!--- Hide/Unhide Community --->
                                         <MenuButton disabled={loading.hiding} loading={loading.hiding} color="dangerSecondary">
-                                            <button class="flex flex-row gap-2 w-full" on:click={(e) => { 
-                                                e.stopPropagation(); 
+                                            <button class="flex flex-row gap-2 w-full" on:click|stopPropagation={() => { 
                                                 hide();
                                             }}>
                                                 <Icon src={community_view.community.hidden  ? Eye : EyeSlash} mini size="16" />
