@@ -51,7 +51,7 @@
             }
 
             {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
-            <span class="text-slate-500 dark:text-zinc-500 font-normal">
+            <span class="text-slate-500 dark:text-zinc-500 font-normal normal-case">
                 @{new URL(community.actor_id).hostname}
             </span>
             {/if}
