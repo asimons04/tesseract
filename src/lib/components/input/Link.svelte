@@ -1,14 +1,13 @@
 <script lang="ts">
 
-  export let href: string|undefined
-  export let highlight: boolean = false
-  export let nowrap: boolean = false
-  export let newtab: boolean = false
-  export let title: string | undefined | null= undefined
-  export let id: string = ""
-  export let domainOnly:boolean = false;
-  export let text:string | undefined = undefined
-
+    export let href: string|undefined
+    export let highlight: boolean = false
+    export let nowrap: boolean = false
+    export let newtab: boolean = false
+    export let title: string | undefined | null= undefined
+    export let id: string = ""
+    export let domainOnly:boolean = false;
+    export let text:string | undefined = undefined
 
 </script>
 {#if href}
