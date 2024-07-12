@@ -7,6 +7,13 @@ All major/minor changes between releases will be documented here.
 - Fix reactivity on subscribed status on community browser when switching instances.
 
 
+### Changes
+- Add 'Community Settings' button to community profile modal if you are a mod of the community or the community is local and you are an admin
+- Use 'capitalize' class on community display names to make them title cased
+
+
+---
+
 ## 1.4.2
 Starting with 1.4.1, I'm trying out a new, faster release cadence with just one or two feature updates per point release rather than larger releases every 4-5 weeks.  Hopefully this keeps things feeling fresher and lets me focus on specific features rather than trying to overhaul everything all at once.
 
@@ -47,7 +54,7 @@ Previously, only the item that initiated the ban action would be updated to refl
 Subscribing and unsubscribing from the quick button in the community icon or the community modal will update all post cards with the new/current subscription state.
 
 
-
+---
 
 
 
@@ -532,10 +539,4 @@ In FF and other browsers without Clipboard API support, pasting images still wor
     - Instead of taking you to the link directly, open a modal and call getSiteMetadata() for that URL to generate a preview
     - If the link is to some kind of media supported in Tesseract, render it in a modal
     - Provide option to create a post based on the link
-    - Provide button to take you to the link (honoring "open in new tab" setting)
-- [ ] Admin -> [Legal, sidebar, taglines] markdown editor too smushed.
-
-
----
-
-
+    - Provide button to take you to the link (
