@@ -151,5 +151,7 @@ export function shortenCommunityName(name:string, maxLength=25) {
         ? fixLemmyEncodings(name).split(':')[0].split('-')[0].trim()
         : fixLemmyEncodings(name)
     
-    return shortened.substring(0,maxLength)
+    return shortened.length > maxLength
+        ? shortened.substring(0, maxLength) + '...'
+        : shortened.substring(0, maxLength)
 }
