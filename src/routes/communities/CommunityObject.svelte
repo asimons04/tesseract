@@ -17,12 +17,13 @@
         Icon,
         CalendarDays,
         ChatBubbleOvalLeftEllipsis,
-        Check,
         LockClosed,
+        Minus,
         PencilSquare,
+        Rss,
         UserGroup,
     } from 'svelte-hero-icons'
-    
+   
     
     export let community: CommunityView
 
@@ -35,10 +36,9 @@
         return false
     }
 
-    $: community, community.subscribed = isSubscribed(community) ? 'Subscribed' : 'NotSubscribed'
+    $: community, $profile?.user?.follows, community.subscribed = isSubscribed(community) ? 'Subscribed' : 'NotSubscribed'
 
 </script>
-
 
 <CollapseButton>
     <Avatar width={48} alt={community.community.title ?? community.community.name} url={community.community.icon ?? undefined} community={true} slot="icon"/>
@@ -110,15 +110,15 @@
             </div>
         </div>
         
-           
-        <Subscribe {community} let:subscribe let:subscribing class="mr-4">
+        <!--- class="{['Subscribed', 'Pending'].includes(community.subscribed) ? '!bg-sky-500 dark:!bg-sky-700' : ''}" --->
+        <Subscribe bind:community let:subscribe let:subscribing class="mr-4">
             <Button
-                class="{['Subscribed', 'Pending'].includes(community.subscribed) ? '!bg-sky-500' : ''}"
                 disabled={subscribing || !$profile?.jwt}
                 loading={subscribing}
                 color="tertiary-border"
-                size="square-sm"
+                size="md"
                 title={['Subscribed', 'Pending'].includes(community.subscribed) ? 'Unsubscribe' : 'Subscribe'}
+                
                 on:click ={async (e) => {
                     e.stopPropagation()
                     const res = await subscribe()
@@ -128,18 +128,22 @@
                             ? 'Subscribed'
                             : 'NotSubscribed'
 
-                        addSubscription(
+                        await addSubscription(
                             community.community, ['Subscribed', 'Pending'].includes(res.community_view.subscribed)
                         )
                     }
                 }}
                 
             >
-                {#if !subscribing}
-                    <span class="{['Subscribed', 'Pending'].includes(community.subscribed) ? 'text-zinc-950 font-bold' : ''}">
-                        <Icon mini src={Check} width={18}/>
+                
+                <span class="flex flex-row gap-1 items-center">    
+                    {#if !subscribing}
+                        <Icon mini src={['Subscribed', 'Pending'].includes(community.subscribed) ? Minus : Rss} width={18}/>
+                    {/if}
+                    <span class="hidden md:inline">
+                        {['Subscribed', 'Pending'].includes(community.subscribed) ? 'Unsubscribe' : 'Subscribe'}
                     </span>
-                {/if}
+                </span>
             </Button>
         </Subscribe>
     </div>
@@ -153,3 +157,4 @@
         </div>
     </div>
 </CollapseButton>
+
