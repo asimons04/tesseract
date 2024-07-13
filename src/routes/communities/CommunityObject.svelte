@@ -115,7 +115,7 @@
             <Button
                 disabled={subscribing || !$profile?.jwt}
                 loading={subscribing}
-                color="tertiary-border"
+                color="info"
                 size="md"
                 title={['Subscribed', 'Pending'].includes(community.subscribed) ? 'Unsubscribe' : 'Subscribe'}
                 
