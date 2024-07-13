@@ -11,27 +11,26 @@ import { trycatch } from '$lib/util.js'
 
 export const isBlocked = (me: PersonData, user: number) => me.person_blocks.map((b:PersonBlockView) => b.target.id).includes(user)
 
-export const addSubscription = (community: Community, subscribe: boolean = true) => {
+export const addSubscription = async (community: Community, subscribe: boolean = true) => {
     const p = get(profile)
 
     if (!p?.user) return
-
+    
     if (subscribe) {
-        profile.set({
-            ...p,
-            user: {
-                ...p.user,
-                follows: [
-                    ...p.user.follows,
-                    {
-                        community: community,
-                        follower: p.user.local_user_view.person,
-                    },
-                ],
-            },
-        })
-    } else {
-        p.user.follows.splice(p.user.follows.findIndex((i) => i.community.id == community.id), 1)
+        const idx = p.user.follows.findIndex((c) => { c.community.actor_id == community.actor_id })
+        if (idx < 0) {
+            p.user.follows = [
+                ...p.user.follows,
+                {
+                    community: community,
+                    follower: p.user.local_user_view.person
+                }
+            ]
+            profile.set(p)
+        }
+    }
+    else {
+        p.user.follows.splice(p.user.follows.findIndex((i) => i.community.actor_id == community.actor_id), 1)
         profile.set(p)
     }
 }
@@ -77,11 +76,7 @@ export const blockUser = async function (personID: number, confirm:boolean=false
             if (!blockResponse) throw new Error('Failed to block user')
             
             // Update local cache of person blocks
-            const getSiteResponse = await getClient().getSite()
-            if (getSiteResponse?.my_user) {
-                userProfile.user.person_blocks = getSiteResponse.my_user.person_blocks
-                profile.set(userProfile)
-            }
+           await refreshProfile()
             
             toast({
                 title: "Succcess",
@@ -100,4 +95,25 @@ export const blockUser = async function (personID: number, confirm:boolean=false
             return blocked
         }
     }
+}
+
+
+export const refreshProfile = async function() {
+    let userProfile = get(profile)
+    if (!userProfile?.user || !userProfile?.jwt) throw new Error('Unauthenticated')
+
+    // Update local cache of person blocks
+    const getSiteResponse = await getClient().getSite()
+    
+    if (getSiteResponse?.my_user) {
+        userProfile.user.person_blocks = getSiteResponse.my_user.person_blocks
+        userProfile.user.instance_blocks = getSiteResponse.my_user.instance_blocks
+        userProfile.user.community_blocks = getSiteResponse.my_user.community_blocks
+        userProfile.user.follows = getSiteResponse.my_user.follows
+        userProfile.user.moderates = getSiteResponse.my_user.moderates
+
+
+        profile.set(userProfile)
+    }
+
 }
