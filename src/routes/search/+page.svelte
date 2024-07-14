@@ -386,8 +386,7 @@
     <!---Search Input in Subnavbar-->
     <span class="hidden xl:flex flex-row gap-0" let:iconSize slot="center">
         <form class="flex flex-row gap-0 items-center mx-auto"
-            on:submit={(e) => {
-                e.preventDefault();
+            on:submit|preventDefault={() => {
                 filter.page = 1
                 search()
             }}
@@ -431,8 +430,7 @@
     <!---Search Input Outside of Subnavbar for Views Smaller than XL--->
     <div class="flex xl:hidden w-full mx-auto">
         <form class="flex flex-row gap-1 items-center ml-auto mr-auto"
-            on:submit={(e) => {
-                e.preventDefault();
+            on:submit|preventDefault={() => {
                 search()
             }}
         >
