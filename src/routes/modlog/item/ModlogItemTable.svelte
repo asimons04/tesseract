@@ -16,6 +16,7 @@
     import Button from '$lib/components/input/Button.svelte';
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Link from '$lib/components/input/Link.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ModlogAction from '../ModlogAction.svelte'
@@ -239,11 +240,12 @@
                     </span>
                 {/if}
 
-                {#if item.reason}
-                    <span class="flex flex-nowrap gap-1">
-                        <strong>Reason:</strong> {item.reason}
-                    </span>
-                {/if}
+                
+                <span class="flex flex-nowrap gap-1 items-start">
+                    <!--<strong>Reason:</strong> -->
+                    <Markdown source={item.reason ?? '*No reason supplied*'} />
+                </span>
+                
 
                 {#if item.link || item.content}
                     <span class="flex flex-nowrap gap-1 overflow-hidden">
