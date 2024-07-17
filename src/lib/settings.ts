@@ -367,7 +367,9 @@ userSettings.subscribe((settings:Settings) => {
 
 // Settings migrations
 export function migrateSettings(old:any) {
+    /*
     // Update legacy versions of user settings to the first controlled version
+
     if (!old.version) {
         // Change image size from string to object; populate with default vaules
         if (typeof old.imageSize == 'string') {
@@ -375,6 +377,7 @@ export function migrateSettings(old:any) {
             old.imageSize = defaultSettings.imageSize;
         }
 
+        
         // Delete the old showInstances object and replace with single boolean under the uiState object
         old.showInstances && (old.showInstances?.user || old.showInstances?.community || old.showInstances?.comments)
             ? old.uiState.showInstances = true
@@ -462,7 +465,7 @@ export function migrateSettings(old:any) {
         delete old.uiState.fediseerBadges;
         old.version = 10
     }
-
+    */
     return { 
         ...defaultSettings, 
         ...old, 
