@@ -10,6 +10,8 @@ All major/minor changes between releases will be documented here.
 ### Changes
 - Add 'Community Settings' button to community profile modal if you are a mod of the community or the community is local and you are an admin
 - Use 'capitalize' class on community display names to make them title cased
+- "Reasons" in modlog now render as markdown
+- Added additional Invidious instances
 
 
 ---
