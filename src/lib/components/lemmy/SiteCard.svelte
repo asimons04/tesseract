@@ -111,10 +111,9 @@
     <div class="mt-2"/>
     
     {#if taglines && taglines.length > 0}
-        <div class="flex flex-col gap-1">    
+        <Card class="p-2">
             <Markdown source={tagline} />
-            <hr class="border-slate-300 dark:border-zinc-700" />
-        </div>
+        </Card>
     {/if}
 
     <!--- Collapsible buttons for admins and site info --->
