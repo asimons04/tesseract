@@ -3,6 +3,7 @@
     import { createEventDispatcher } from 'svelte'
     
     import Modal from '$lib/components/ui/modal/Modal.svelte'
+    import PostForm from '$lib/components/lemmy/post/PostForm.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     
     import { PencilSquare } from 'svelte-hero-icons'
@@ -20,21 +21,13 @@
 
 
 
-<Modal bind:open={open} fullHeight={false} icon={PencilSquare} bind:maximized allowMaximize={true} card={false} title="Editing Post" width="max-w-4xl">
-    
-    {#await import('$lib/components/lemmy/post/PostForm.svelte')}
-        <div class="mx-auto flex justify-center items-center">
-            <Spinner width={32} />
-        </div>
-    {:then { default: PostForm }}
-        <PostForm editingPost={post} bind:textEditorRows inModal={true}
-            on:submit={(e) => {
-                open = false
-                post = e.detail
-                dispatcher('edit', e.detail)
-            }}
-        />
-        
-    {/await}
+<Modal bind:open={open} preventCloseOnClickOut fullHeight={false} icon={PencilSquare} bind:maximized allowMaximize={true} card={false} title="Editing Post" width="max-w-4xl">
+    <PostForm editingPost={post} bind:textEditorRows inModal={true}
+        on:submit={(e) => {
+            open = false
+            post = e.detail
+            dispatcher('edit', e.detail)
+        }}
+    />
 </Modal>
 
