@@ -1323,7 +1323,7 @@
                                     <MarkdownEditor
                                         bind:value={newTagline}
                                         placeholder="Add a tagline"
-                                        images={true}
+                                        images={true} previewButton
                                         rows={7}
                                     >
 
