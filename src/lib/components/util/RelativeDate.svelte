@@ -1,13 +1,14 @@
 <script lang="ts">
+    import { onMount, onDestroy } from 'svelte'
+
     export let date: string
-    export let relativeTo: Date | undefined = undefined
+    export let relativeTo: Date = new Date()
     export let options: Intl.RelativeTimeFormatOptions = {
         numeric: 'always',
         style: 'narrow',
     }
 
     const stringToDate = (date: string): Date => new Date(date)
-
     const toLocaleDateString = (date: Date): string => {
         try {
             return date.toLocaleString()
@@ -17,10 +18,24 @@
     }
   
     $: dateTime = toLocaleDateString(stringToDate(date))
-  
+    
+    // Set an interval to update the comnparison time every minute
+    let updateInterval:number
+
+    onMount(() => {
+        updateInterval = setInterval(() => {
+          relativeTo = new Date()    
+        }, 60 * 1000)
+    })
+
+    onDestroy(() => {
+        clearInterval(updateInterval)
+    })
+
+
     function formatRelativeDate(date: Date) {
         try {
-            const now = relativeTo?.getTime() ?? Date.now()
+            const now = relativeTo?.getTime() 
             const diffInMillis = now - date.getTime()
   
             const thresholds = [
@@ -56,5 +71,7 @@
 </script>
   
 <time class="whitespace-nowrap" datetime={dateTime} title={dateTime}>
-    {formatRelativeDate(stringToDate(date))}
+    {#key relativeTo}
+        {formatRelativeDate(stringToDate(date))}
+    {/key}
 </time>
