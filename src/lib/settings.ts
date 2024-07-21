@@ -173,7 +173,7 @@ export const defaultSettings: Settings = {
         stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
         reverseActionBar:                                               false,
         showScores:                                                     true,
-        showAltText:                                                    true,
+        showAltText:                                                    false,
         filterAnnoyingCCLicense:                                        false,
         infiniteScroll:                                                 true,
 
