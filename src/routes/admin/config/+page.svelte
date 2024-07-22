@@ -67,6 +67,7 @@
         UserGroup,
         UserPlus,
         Window,
+        PencilSquare,
     } from 'svelte-hero-icons'
     
 
@@ -1351,8 +1352,16 @@
                                                 <div class="flex px-4 py-2 w-full rounded-md bg-slate-200 dark:bg-zinc-700">
                                                     <Markdown source={tagline} />
                                                     
-                                                    <div class="flex gap-2 ml-auto">
-                                                        <Button on:click={() => action(tagline)} color="ghost" class="border-none">
+                                                    <div class="flex flex-row gap-2 ml-auto">
+                                                        <Button color="ghost" class="border-none" title="Edit" on:click={() => {
+                                                                newTagline = tagline
+                                                                action(tagline)} 
+                                                            }
+                                                        >
+                                                            <Icon src={PencilSquare} mini size="16" />
+                                                        </Button>
+                                                        
+                                                        <Button on:click={() => action(tagline)} color="ghost" class="border-none" title="Delete">
                                                             <Icon src={Trash} mini size="16" />
                                                         </Button>
                                                     </div>
