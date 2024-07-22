@@ -12,6 +12,9 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
+    "@dicebear/adventurer": "^8.0.1",
+    "@dicebear/core": "^8.0.1",
+    "@dicebear/initials": "^8.0.1",
     "@emoji-mart/data": "^1.2.1",
     "@magidoc/plugin-svelte-marked": "^6.0.0",
     "@sveltejs/adapter-node": "^2.1.0",
@@ -26,6 +29,7 @@
     "file-type": "^19.0.0",
     "highlight.js": "^11.9.0",
     "jsdom": "^24.1.0",
+    "lemmy-js-client": "^0.19.4",
     "nprogress": "^0.2.0",
     "postcss": "^8.4.39",
     "qrcode": "^1.5.3",
@@ -41,11 +45,6 @@
     "vite-plugin-pwa": "^0.20.0",
     "vitest": "^1.6.0"
   },
-  "dependencies": {
-    "@dicebear/adventurer": "^8.0.1",
-    "@dicebear/core": "^8.0.1",
-    "@dicebear/initials": "^8.0.1",
-    "lemmy-js-client": "^0.19.4"
-  },
+  "dependencies": {},
   "type": "module"
 }
