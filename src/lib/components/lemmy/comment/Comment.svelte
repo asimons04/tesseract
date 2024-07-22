@@ -7,6 +7,7 @@
         ArrowUp,
         Bookmark,
         ChatBubbleLeftEllipsis,
+        HandRaised,
         Icon,
         Minus,
         Pencil,
@@ -158,8 +159,12 @@
                     </span>
                 {/if}
 
-                {#if node.comment_view.comment.deleted || node.comment_view.comment.removed}
+                {#if node.comment_view.comment.deleted} 
                     <Icon src={Trash} solid size="12" title="Deleted" class="text-red-600 dark:text-red-500 mt-1"/>
+                {/if}
+
+                {#if node.comment_view.comment.removed}
+                    <Icon src={HandRaised} solid size="12" title="Removed" class="text-red-600 dark:text-red-500 mt-1"/>
                 {/if}
 
                 {#if node.comment_view.saved}

@@ -4,7 +4,7 @@ import type {
 } from 'lemmy-js-client'
 import type { PersonData } from '$lib/auth'
 
-import { addSubscription } from '$lib/lemmy/user.js'
+import { addSubscription, refreshProfile } from '$lib/lemmy/user.js'
 import { dispatchWindowEvent } from '$lib/ui/events'
 import { fixLemmyEncodings } from '../post/helpers'
 import { fullCommunityName } from '$lib/util.js'
@@ -123,11 +123,7 @@ export const blockUnblockCommunity = async function(communityID:number, block:bo
         })
 
         // Update local cache of community blocks
-        const getSiteResponse = await getClient().getSite()
-        if (getSiteResponse?.my_user) {
-            userProfile.user.community_blocks = getSiteResponse.my_user.community_blocks
-            profile.set(userProfile)
-        }
+        await refreshProfile()
 
         toast({
             title: "Success",
@@ -151,5 +147,7 @@ export function shortenCommunityName(name:string, maxLength=25) {
         ? fixLemmyEncodings(name).split(':')[0].split('-')[0].trim()
         : fixLemmyEncodings(name)
     
-    return shortened.substring(0,maxLength)
+    return shortened.length > maxLength
+        ? shortened.substring(0, maxLength) + '...'
+        : shortened.substring(0, maxLength)
 }

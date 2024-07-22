@@ -1,6 +1,44 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.4
+
+### Infrastructure
+- Reworked dependencies and Dockerfile to reduce image size by 55% (444 MB -> 203 MB)
+
+```
+ghcr.io/asimons04/tesseract   1.4.4     567d91c9e56f   9 hours ago     203MB
+ghcr.io/asimons04/tesseract   1.4.3     451323e66686   5 days ago      444MB
+```
+
+
+### Bugfixes
+- Fixed bug where editing a post and changing the image would cause the image upload modal to disappear 
+- Add try/catch and fallback behavior when migrating settings to fix bug discovered where a very, *very* old version of the settings is still in your local storage
+- Fixed omission of "Preview" button for tagline editor in admin panel
+- Force instance domain names to lowercase when storing into profile and setting guest instance
+
+### Changes
+- Put site taglines in card effect
+- Relative dates now auto update 
+- Added ability to edit an existing tagline in admin panel
+
+---
+
+## 1.4.3
+
+### Bugfixes
+- Fix reactivity on subscribed status on community browser when switching instances.
+
+### Changes
+- Add 'Community Settings' button to community profile modal if you are a mod of the community or the community is local and you are an admin
+- Use 'capitalize' class on community display names to make them title cased
+- "Reasons" in modlog now render as markdown
+- Added additional Invidious instances
+
+
+---
+
 ## 1.4.2
 Starting with 1.4.1, I'm trying out a new, faster release cadence with just one or two feature updates per point release rather than larger releases every 4-5 weeks.  Hopefully this keeps things feeling fresher and lets me focus on specific features rather than trying to overhaul everything all at once.
 
@@ -10,7 +48,8 @@ This release is all about enhancing the reactivity of Tesseract.
 None, for once.  Doesn't mean there aren't any, just none new discovered or reported.
 
 ### Misc Changes
-- Increased scroll height of quick settings and added a few more options for easy access.
+- Increased scroll height of quick settings 
+- Added a few more quick options for easy access.
 - Changed card/compact switcher to toggle, moved into quick settings area
 
 ### Reactivity Enhancements
@@ -30,7 +69,7 @@ Previously, at most, only the post where you initiated the block would disappear
 
 Community and instance bans now dispatch events that update all relevant items:
 
-- **Feed**:   Updates the banned indicator and, if selected, flag them as removed in "remove content" is selected while banning.
+- **Feed**:   Updates the banned indicator and, if selected, flag them as removed if "remove content" is selected while banning.
 - **Post Page**:  Updates the post heading and any comments to indicate the user is banned and the post/comment removed.
 
 Previously, only the item that initiated the ban action would be updated to reflect the new state.  Now, all relevant items in the current view (feed or post/comment) will be updated to reflect the action(s) taken.
@@ -40,7 +79,7 @@ Previously, only the item that initiated the ban action would be updated to refl
 Subscribing and unsubscribing from the quick button in the community icon or the community modal will update all post cards with the new/current subscription state.
 
 
-
+---
 
 
 
@@ -525,10 +564,4 @@ In FF and other browsers without Clipboard API support, pasting images still wor
     - Instead of taking you to the link directly, open a modal and call getSiteMetadata() for that URL to generate a preview
     - If the link is to some kind of media supported in Tesseract, render it in a modal
     - Provide option to create a post based on the link
-    - Provide button to take you to the link (honoring "open in new tab" setting)
-- [ ] Admin -> [Legal, sidebar, taglines] markdown editor too smushed.
-
-
----
-
-
+    - Provide button to take you to the link (

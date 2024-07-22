@@ -35,6 +35,12 @@ export const buttonColor = {
 
     danger:
       'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',
+    
+    success:
+      'border border-green-500 bg-green-500 hover:text-green-500 hover:bg-transparent text-white',
+    
+    info:
+      'border border-sky-700 bg-sky-700 hover:text-sky-700 hover:bg-transparent text-white',
 
     warning:
       'border border-amber-500 bg-amber-500 hover:text-amber-500 hover:bg-transparent text-black',

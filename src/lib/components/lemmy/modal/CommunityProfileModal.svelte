@@ -15,7 +15,7 @@
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
     import { instance } from "$lib/instance"
-    import { isAdmin } from '$lib/components/lemmy/moderation/moderation'
+    import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { onMount } from "svelte";
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
@@ -57,7 +57,9 @@
         Star,
         Minus,
         Rss,
+        Cog6Tooth,
     } from "svelte-hero-icons";
+    import { fullCommunityName } from "$lib/util";
     
     export let community: Community | undefined
     export let open: boolean = false
@@ -116,7 +118,7 @@
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width="max-w-xl"
     title={
-        shortenCommunityName(communityDetails?.community_view?.community?.title) ?? 
+        shortenCommunityName(communityDetails?.community_view?.community?.title, 45) ?? 
         communityDetails?.community_view?.community?.name ?? 
         'Community Details'
     }
@@ -296,6 +298,18 @@
                                 {subscribed ? 'Unsubscribe' : 'Subscribe'}
                             </Button>
                         {/if}
+
+                        <!---Community Settings (if mod or local admin of a local community)--->
+                        {#if $profile?.user && amMod($profile.user, communityDetails.community_view.community)}
+                            <Button color="tertiary-border" icon={Cog6Tooth} alignment="left" class="w-full"
+                                on:click={ () => {
+                                    goto(`/c/${fullCommunityName(communityDetails.community_view.community.name, communityDetails.community_view.community.actor_id)}/settings`)
+                                    open = false
+                                }}
+                            >
+                                Community Settings
+                        </Button>
+                        {/if} 
 
                         <!---Block Community--->
                         <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" loading={blocking}

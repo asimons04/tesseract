@@ -59,7 +59,7 @@
     }
 </script>
 
-<Modal bind:open icon={Photo} title="Upload {purpose}" width="max-w-lg">
+<Modal bind:open icon={Photo} title="Upload {purpose}" width="max-w-lg" preventCloseOnClickOut>
     <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
         
         <FileInput image bind:files={image} accept="image/jpeg,image/png,image/webp"/>

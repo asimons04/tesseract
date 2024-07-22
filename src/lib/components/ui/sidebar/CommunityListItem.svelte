@@ -110,7 +110,7 @@
             <Avatar url={community.icon} alt={community.name} title={community.title} width={20} community={true} background={true} slot="icon" />
         </div>
         
-        <span class="w-full break-words" class:hidden={!expanded}>
+        <span class="w-full break-words capitalize" class:hidden={!expanded}>
             {shortenCommunityName(community.title, 30)}
         </span>
 
@@ -163,8 +163,7 @@
         <!---Unsubscribe--->
         <MenuButton disabled={unsubscribing} loading={unsubscribing}>
             
-            <button class="flex flex-row gap-2 w-full" tabindex="0" on:click={ (e) => {
-                e.stopPropagation();
+            <button class="flex flex-row gap-2 w-full" tabindex="0" on:click|stopPropagation={ () => {
                 unsubscribe();
             }}>
                 <span class:hidden={unsubscribing}>

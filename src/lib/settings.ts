@@ -173,7 +173,7 @@ export const defaultSettings: Settings = {
         stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
         reverseActionBar:                                               false,
         showScores:                                                     true,
-        showAltText:                                                    true,
+        showAltText:                                                    false,
         filterAnnoyingCCLicense:                                        false,
         infiniteScroll:                                                 true,
 
@@ -283,11 +283,13 @@ export const YTFrontends = {
         'invidious.io.lol',
         'inv.makerlab.tech',
         'inv.zzls.xyz',
+        'invidious.incogniweb.net',
         'invidious.perennialte.ch',
         'invidious.privacyredirect.com',
         'anontube.lvkaszus.pl',
         'invidious.fdn.fr',
         'iv.datura.network',
+        'iv.melmac.space',
         'invidious.asir.dev',
         'invidious.private.coffee',
         'iv.nboeck.de',
@@ -365,102 +367,109 @@ userSettings.subscribe((settings:Settings) => {
 
 // Settings migrations
 export function migrateSettings(old:any) {
-    // Update legacy versions of user settings to the first controlled version
-    if (!old.version) {
-        // Change image size from string to object; populate with default vaules
-        if (typeof old.imageSize == 'string') {
-            delete old.imageSize;
-            old.imageSize = defaultSettings.imageSize;
+    try {
+        // Update legacy versions of user settings to the first controlled version
+        if (!old.version) {
+            // Change image size from string to object; populate with default vaules
+            if (typeof old.imageSize == 'string') {
+                delete old.imageSize;
+                old.imageSize = defaultSettings.imageSize;
+            }
+
+            
+            // Delete the old showInstances object and replace with single boolean under the uiState object
+            old.showInstances && (old.showInstances?.user || old.showInstances?.community || old.showInstances?.comments)
+                ? old.uiState.showInstances = true
+                : old.uiState.showInstances = false
+            delete old.showInstances;
+            
+
+            // Make sure the keyword filter list gets initialized
+            if (!old.hidePosts.keywordList) {
+                old.hidePosts.keywordList = []
+            }
+
+            // Set initial version control version
+            old.version = 0;
         }
 
-        // Delete the old showInstances object and replace with single boolean under the uiState object
-        old.showInstances && (old.showInstances?.user || old.showInstances?.community || old.showInstances?.comments)
-            ? old.uiState.showInstances = true
-            : old.uiState.showInstances = false
-        delete old.showInstances;
+        // Version 0 -> 0.1
+        if (old.version == 0) {
+            old.version = 0.1;
+        }
+
+        // 0.1 -> 0.2
+        if (old.version == 0.1) {
+            delete old.uiState.expandModeratingList;
+            delete old.uiState.expandSubscribedList;
+            delete old.uiState.expandFavoritesList;
+            delete old.uiState.expandAccountsList;
+
+
+            // Rename the settings key to open external links in new tab
+            old.openInNewTab.links = old.openInNewTab.postLinks
+            delete old.openInNewTab.postLinks
+            old.version = 0.2
+        }
         
-
-        // Make sure the keyword filter list gets initialized
-        if (!old.hidePosts.keywordList) {
-            old.hidePosts.keywordList = []
+        // 0.2 -> 0.3
+        if (old.version == 0.2) {
+            delete old.modlogCardView
+            old.version = 0.3
         }
 
-        // Set initial version control version
-        old.version = 0;
-    }
-
-    // Version 0 -> 0.1
-    if (old.version == 0) {
-        old.version = 0.1;
-    }
-
-    // 0.1 -> 0.2
-    if (old.version == 0.1) {
-        delete old.uiState.expandModeratingList;
-        delete old.uiState.expandSubscribedList;
-        delete old.uiState.expandFavoritesList;
-        delete old.uiState.expandAccountsList;
-
-
-        // Rename the settings key to open external links in new tab
-        old.openInNewTab.links = old.openInNewTab.postLinks
-        delete old.openInNewTab.postLinks
-        old.version = 0.2
-    }
-    
-    // 0.2 -> 0.3
-    if (old.version == 0.2) {
-        delete old.modlogCardView
-        old.version = 0.3
-    }
-
-    // 0.3 -> 0.4
-    if (old.version == 0.3) {
-        if (!old.uiState.hasOwnProperty('feedMargins')) old.uiState.feedMargins = defaultSettings.uiState.feedMargins;
-        old.version = 0.4
-    }
-
-    // 0.4 - 0.5
-    if (old.version == 0.4) {
-        // Match new posts per fetch setting to new range of 10, 20, or 30
-        if (old.uiState.postsPerPage >=30) old.uiState.postsPerPage = 30
-        else if (old.uiState.postsPerPage == 20) old.uiState.postsPerPage = 30
-        else old.uiState.postsPerPage = 10
-
-        old.version = 0.5
-    }
-
-    //0.5 -> 0.6
-    if (old.version == 0.5) {
-        if (old.uiState.maxScrollPosts > 150) old.uiState.maxScrollPosts = 150
-        old.version = 0.6
-    }
-    
-    // 0.6 -> 0.7
-    if (old.version == 0.6) {
-        if ( !('showScores' in old.uiState)) {
-            old.uiState.showScores = true;   
+        // 0.3 -> 0.4
+        if (old.version == 0.3) {
+            if (!old.uiState.hasOwnProperty('feedMargins')) old.uiState.feedMargins = defaultSettings.uiState.feedMargins;
+            old.version = 0.4
         }
-        old.version = 0.7
-    }
 
-    // 0.7 -> 0.8
-    if (old.version == 0.7) {
-        delete old.systemUI
-        old.version = 0.8
-    }
+        // 0.4 - 0.5
+        if (old.version == 0.4) {
+            // Match new posts per fetch setting to new range of 10, 20, or 30
+            if (old.uiState.postsPerPage >=30) old.uiState.postsPerPage = 30
+            else if (old.uiState.postsPerPage == 20) old.uiState.postsPerPage = 30
+            else old.uiState.postsPerPage = 10
 
-    // 0.8 -> 0.9
-    if (old.version == 0.8) {
-        delete old.embeddedMedia.enabledSources
-        old.version = 0.9
-    }
+            old.version = 0.5
+        }
 
-    if (old.version == 0.9) {
-        delete old.uiState.fediseerBadges;
-        old.version = 10
-    }
+        //0.5 -> 0.6
+        if (old.version == 0.5) {
+            if (old.uiState.maxScrollPosts > 150) old.uiState.maxScrollPosts = 150
+            old.version = 0.6
+        }
+        
+        // 0.6 -> 0.7
+        if (old.version == 0.6) {
+            if ( !('showScores' in old.uiState)) {
+                old.uiState.showScores = true;   
+            }
+            old.version = 0.7
+        }
 
+        // 0.7 -> 0.8
+        if (old.version == 0.7) {
+            delete old.systemUI
+            old.version = 0.8
+        }
+
+        // 0.8 -> 0.9
+        if (old.version == 0.8) {
+            delete old.embeddedMedia.enabledSources
+            old.version = 0.9
+        }
+
+        if (old.version == 0.9) {
+            delete old.uiState.fediseerBadges;
+            old.version = 10
+        }
+    }
+    catch (err) {
+        console.log("Error during settings migration:", err)
+        return defaultSettings
+    }   
+    
     return { 
         ...defaultSettings, 
         ...old, 

@@ -26,6 +26,7 @@
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
+    import { slide } from 'svelte/transition';
     
 
     export let site: SiteView
@@ -41,6 +42,12 @@
         setInterval(() => {
             if (taglines && taglines.length > 0) tagline = taglines[Math.floor(Math.random() * taglines.length)].content
         }, 30*1000)
+    }
+
+    let expanded = {
+        admins: false,
+        site: false,
+        legal: false
     }
 </script>
 
@@ -108,19 +115,20 @@
         </div>
     </Card>
     
-    <div class="mt-2"/>
-    
-    {#if taglines && taglines.length > 0}
-        <div class="flex flex-col gap-1">    
-            <Markdown source={tagline} />
-            <hr class="border-slate-300 dark:border-zinc-700" />
-        </div>
+    {#if !expanded.admins && !expanded.site && !expanded.legal}
+    <div class="flex flex-col w-full my-2" transition:slide>
+        {#if taglines && taglines.length > 0}
+            <Card class="p-2 text-center">
+                <Markdown source={tagline} />
+            </Card>
+        {/if}
+    </div>
     {/if}
 
     <!--- Collapsible buttons for admins and site info --->
     <div class="hidden xl:block w-full overflow-y-auto">
         {#if admins.length > 0}
-           <CollapseButton icon={ShieldCheck} title="Admins">
+           <CollapseButton bind:expanded={expanded.admins} icon={ShieldCheck} title="Admins">
                 {#each admins as admin}
                     <UserLink user={admin.person} avatar={true} badges={false} showInstance={false} />
                 {/each}
@@ -128,13 +136,13 @@
         {/if}
         
         {#if site?.site?.sidebar}
-            <CollapseButton icon={InformationCircle} title="Site Info" expanded={false}>
+            <CollapseButton bind:expanded={expanded.site} icon={InformationCircle} title="Site Info" >
                 <Markdown source={site.site.sidebar} />
             </CollapseButton>
         {/if}
 
         {#if site?.local_site?.legal_information}
-            <CollapseButton icon={BuildingOffice} title="Legal" expanded={false}>
+            <CollapseButton bind:expanded={expanded.legal} icon={BuildingOffice} title="Legal">
                 <Markdown source={site.local_site.legal_information} />
             </CollapseButton>
         {/if}
