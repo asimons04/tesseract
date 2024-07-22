@@ -1,11 +1,34 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.4
+
+### Infrastructure
+- Reworked dependencies and Dockerfile to reduce image size by 55% (444 MB -> 203 MB)
+
+```
+ghcr.io/asimons04/tesseract   1.4.4     567d91c9e56f   9 hours ago     203MB
+ghcr.io/asimons04/tesseract   1.4.3     451323e66686   5 days ago      444MB
+```
+
+
+### Bugfixes
+- Fixed bug where editing a post and changing the image would cause the image upload modal to disappear 
+- Add try/catch and fallback behavior when migrating settings to fix bug discovered where a very, *very* old version of the settings is still in your local storage
+- Fixed omission of "Preview" button for tagline editor in admin panel
+- Force instance domain names to lowercase when storing into profile and setting guest instance
+
+### Changes
+- Put site taglines in card effect
+- Relative dates now auto update 
+- Added ability to edit an existing tagline in admin panel
+
+---
+
 ## 1.4.3
 
 ### Bugfixes
 - Fix reactivity on subscribed status on community browser when switching instances.
-
 
 ### Changes
 - Add 'Community Settings' button to community profile modal if you are a mod of the community or the community is local and you are an admin
