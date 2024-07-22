@@ -105,7 +105,7 @@ profile.subscribe(async (p:Profile|undefined) => {
     if (p.user) return    
 
     // Set the current instance to the instance defined in the profile.
-    instance.set(p.instance)
+    instance.set(p.instance.toLowerCase())
 
     // Fetch the user details from the API because p.user is undefined
     const user = await userFromJwt(p.jwt, p.instance)
@@ -145,7 +145,7 @@ export async function setUser(jwt: string, inst: string): Promise<UserFromJWTRes
     }
 
     // Set the instance store value to the provided instance (it's confirmed to be valid since userFromJwt would have to return successfully)
-    instance.set(inst)
+    instance.set(inst.toLowerCase())
 
     // Check if profile exists for this username+instance combo
     let pIndex = get(profileData).profiles.findIndex((p:Profile) => (p.username == user.user.local_user_view.person.name && p.instance == inst))
@@ -234,7 +234,7 @@ function getProfile() {
     // Set the current instance if the profile is found
     const pd = get(profileData)
     let pFile = pd.profiles.find((p:Profile) => p.id == id)
-    if (pFile) instance.set(pFile.instance)
+    if (pFile) instance.set(pFile.instance.toLowerCase())
     
     return pFile
 }
@@ -250,7 +250,8 @@ export function resetProfile() {
 
 // Set the guest instance for the default profile, grab its site info, and set the site store to that.
 export async function setGuestInstance(instance:string) {
-    const guestSiteInfo = await getClient(instance.trim()).getSite()
+    instance = instance.trim().toLowerCase()
+    const guestSiteInfo = await getClient(instance).getSite()
     if (!guestSiteInfo) throw new Error('Unable to contact guest instance.')
 
     profile.set({
@@ -336,7 +337,7 @@ export async function setUserID(id: number, userDetails?:UserFromJWTResponse) {
     if (prof?.jwt) {
         
         // Set instance so the JS client will send the auth header
-        instance.set(prof.instance)
+        instance.set(prof.instance.toLowerCase())
 
         const user = userDetails ?? await userFromJwt(prof.jwt, prof.instance)
 
