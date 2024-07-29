@@ -59,6 +59,10 @@
             <MenuButton color="info" link href="https://12ft.io/proxy?q={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="12ft IO">
                 12ft.io
             </MenuButton>
+
+            <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="12ft IO">
+                Ground News
+            </MenuButton>
         {/if}
 
         <!---Piped/Invidious Providers for 'youtube' Post Types--->
