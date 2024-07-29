@@ -29,7 +29,7 @@
                 if (params.type === 'spoiler') {
                     return {
                         type: 'spoiler',
-                        raw: params.raw,
+                        raw: params.raw.trim(),
                         title: params.options,
                         tokens: []
                     }
@@ -44,8 +44,8 @@
         temp = findUserCommunityLinks(temp)
         temp = filterAnnoyingCCLicenseOnComments(temp)
         temp = hashtagsToMDLinks(temp)
-        temp = temp.replaceAll("::: spoiler", ":::spoiler")
-        return temp
+        temp = temp.replaceAll("::: spoiler", ":::spoiler").replaceAll(/::: /g, ':::\n')
+        return temp.trim()
     }
 
     $:  mdText = preProcess(source)
