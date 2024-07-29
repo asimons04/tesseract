@@ -60,7 +60,7 @@
                 12ft.io
             </MenuButton>
 
-            <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="12ft IO">
+            <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Ground News">
                 Ground News
             </MenuButton>
         {/if}
