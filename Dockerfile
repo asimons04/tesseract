@@ -1,4 +1,4 @@
-FROM node:22-alpine as builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package.json ./
 RUN npm install
@@ -6,7 +6,7 @@ COPY . .
 RUN ADAPTER=node npm run build
 
 
-FROM node:22-alpine as runner
+FROM node:22-alpine AS runner
 RUN mkdir /app
 RUN chown node:node /app
 WORKDIR /app
