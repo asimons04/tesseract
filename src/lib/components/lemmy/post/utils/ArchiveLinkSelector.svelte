@@ -31,7 +31,7 @@
 </script>
 
 {#if url}
-    <Menu alignment="bottom-left">
+    <Menu alignment="bottom-left" class="z-10">
         <Button slot="button" size="sm" aria-label="Archive Link Selector" let:toggleOpen let:open on:click={toggleOpen} title="Alternate Sources">
             <span class="flex flex-row gap-1 items-center">
                 <Icon src={LinkIcon} width={14} mini />
