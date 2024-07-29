@@ -26,6 +26,8 @@ export function getClient(instanceURL?: string, jwt?:string): LemmyHttp {
     const headers = {} as { [key: string]: string; }
     if (jwt && instanceURL == get(instance)) headers['Authorization'] = `Bearer ${jwt}`
 
+    headers['User-Agent'] = `Tesseract/v${__VERSION__} (${__CODENAME__})`
+
     // Override Lemmy's stupid server-side cache on the only fscking endpoint that will return the local_user profile
     const cachelessFetch = async function (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
         if (init) init.cache = 'no-store'
