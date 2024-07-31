@@ -208,9 +208,9 @@
                 </Button>
             {:else}
                 <div class="my-auto">
-                    <Placeholder icon={XCircle} title="Registrations closed" description="New account creation has been disabled on this instance.">
-                        <Button icon={Plus} href="https://join-lemmy.org">
-                            Find another instance
+                    <Placeholder icon={XCircle} title="Registrations Closed" description="New account creation has been disabled on this instance.">
+                        <Button icon={Plus} href="/signup">
+                            Choose Another Instance
                         </Button>
                     </Placeholder>
                 </div>

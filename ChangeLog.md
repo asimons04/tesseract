@@ -1,6 +1,14 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.5
+
+### Bugfixes
+- Fixed bug where trailing spaces on the end of a spoiler container would break the rendering
+
+### Enhancements
+- Add "Ground News" to the "Alternate Sources" dropdown
+
 ## 1.4.4
 
 ### Infrastructure

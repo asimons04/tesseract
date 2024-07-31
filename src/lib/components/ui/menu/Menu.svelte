@@ -43,10 +43,15 @@
                 return 'bottom-[100%] origin-top-left'
       }
     }
+
   </script>
   
   <!--- Closes the profile menu if clicking outside of it --->
-  <svelte:body on:click={(e) => {
+  <svelte:body on:click={
+    (
+        //@ts-ignore 
+        e
+    ) => {
         if (!element.contains(e.target)) {
             open = false
         }

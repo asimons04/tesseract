@@ -29,7 +29,7 @@
                 if (params.type === 'spoiler') {
                     return {
                         type: 'spoiler',
-                        raw: params.raw,
+                        raw: params.raw.trim(),
                         title: params.options,
                         tokens: []
                     }
@@ -40,11 +40,24 @@
     })
     
     function preProcess(text:string) {
+        // Fix Lemmy's stupid encoding quirks.
         let temp = fixLemmyEncodings(text)
+        
+        // Turn /c, /u, !, and @ community and user links into markdown links
         temp = findUserCommunityLinks(temp)
+        
+        // Regex-remove those obnoxious anti-AI licenses
         temp = filterAnnoyingCCLicenseOnComments(temp)
+        
+        // Convert hashtags to MD links
         temp = hashtagsToMDLinks(temp)
-        temp = temp.replaceAll("::: spoiler", ":::spoiler")
+        
+        // Fix detection of custom containers for spoilers
+        temp = temp
+            .replaceAll("::: spoiler", ":::spoiler")
+            .replaceAll(":::spoiler", "\n:::spoiler")
+            .replaceAll(/::: /g, '\n:::\n')
+        
         return temp
     }
 
