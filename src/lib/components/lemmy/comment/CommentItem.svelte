@@ -6,6 +6,7 @@
     import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import CommentMeta from '$lib/components/lemmy/comment/CommentMeta.svelte'
     import Link from '$lib/components/input/Link.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     
     
     import { fade } from 'svelte/transition'
@@ -50,11 +51,13 @@
         
         {#if $userSettings.openInNewTab.posts}
             <Link href="/post/{getInstance()}/{comment.post.id}" newtab={true}>
-                <span class="text-sm font-bold text-left">{getPostTitleWithoutFlairs(comment.post.name)}</span>
+                <span class="text-sm font-bold text-left">
+                    <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} />
+                </span>
             </Link>
         {:else}
             <button on:click={() => goto(`/post/${getInstance()}/${comment.post.id}`)} class="text-sm font-bold text-left">
-                {getPostTitleWithoutFlairs(comment.post.name)}
+                <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} />
             </button>  
         {/if}
         

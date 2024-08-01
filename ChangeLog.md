@@ -4,6 +4,8 @@ All major/minor changes between releases will be documented here.
 
 ## 1.4.6
 
+### Changes/Enhancements
+- Post titles now render as markdown
 
 
 

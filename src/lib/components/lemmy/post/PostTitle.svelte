@@ -10,6 +10,7 @@
     import { userSettings } from '$lib/settings.js'
     
     import Badge from '$lib/components/ui/Badge.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     
     import { Tag } from 'svelte-hero-icons'
 
@@ -66,7 +67,7 @@
     >
 
         <h1 class="text-base md:text-lg  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
-            {postName}
+            <Markdown source={postName} />
         </h1>
 
          <!---Flairs--->

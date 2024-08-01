@@ -19,6 +19,7 @@
     
     
     import Button from '$lib/components/input/Button.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import QuickSettings from './QuickSettings.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
@@ -215,7 +216,7 @@
             <!--- Post Title In Center (Cannot be used if using center slot for something)--->
             {#if post && postTitle}
                 <span class="hidden md:block text-lg font-bold text-slate-600 dark:text-zinc-400 whitespace-nowrap text-ellipsis overflow-hidden">
-                    {getPostTitleWithoutFlairs(post.post.name)}
+                    <Markdown source={getPostTitleWithoutFlairs(post.post.name)} />
                 </span>
             {/if}
 
