@@ -287,7 +287,18 @@
                 </Card>
                 
                 
-                <Button color="danger" class="w-full" on:click={() => goto('/modlog') }>
+                <Button color="danger" class="w-full" on:click={() => {
+                    filter.community.set = false
+                    delete filter.community.community
+                    
+                    filter.moderator.set = false
+                    delete filter.moderator.person
+                    
+                    filter.moderatee.set = false
+                    delete filter.moderatee.person
+                    
+                    goto('/modlog') 
+                }}>
                     <Icon src={ArrowPathRoundedSquare} slot="icon" mini width={16}/>
                     Reset Modlog Filters
                 </Button>
