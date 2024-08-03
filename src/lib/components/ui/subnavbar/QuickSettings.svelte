@@ -3,6 +3,7 @@
     import { page } from '$app/stores';
     import { scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers';
     import { searchParam } from '$lib/util';
+    import { site } from '$lib/lemmy';
     import { userSettings} from '$lib/settings'
     
     import Card from '../Card.svelte';
@@ -118,8 +119,9 @@
             <SettingToggle title="Show Scores" icon={Trophy} bind:value={$userSettings.uiState.showScores} small={true} />
             
             <!---Disable Downvotes--->
-            <SettingToggle icon={ArrowDown} title="Disable Downvotes"  bind:value={$userSettings.uiState.disableDownvotes} small={true} />
-            
+            {#if $site?.site_view?.local_site?.enable_downvotes}
+                <SettingToggle icon={ArrowDown} title="Disable Downvotes"  bind:value={$userSettings.uiState.disableDownvotes} small={true} />
+            {/if}
             <!---Reverse Action Bar--->
             <SettingToggle title="Reverse Action Bar" icon={ArrowsRightLeft} bind:value={$userSettings.uiState.reverseActionBar} small={true}/>
 

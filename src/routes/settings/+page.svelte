@@ -422,9 +422,11 @@
         />
 
         <!---Disable Downvotes--->
+        {#if $site?.site_view?.local_site?.enable_downvotes}
         <SettingToggle icon={ArrowDown} title="Disable Downvotes"  bind:value={$userSettings.uiState.disableDownvotes}
             description="Disable downvotes and hide downvote counts on posts/comments."
         />
+        {/if}
 
         <!---Enable Debug Buttons--->
         <SettingToggle icon={BugAnt} title="Debug Buttons" bind:value={$userSettings.debugInfo}
