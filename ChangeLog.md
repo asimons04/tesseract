@@ -4,8 +4,27 @@ All major/minor changes between releases will be documented here.
 
 ## 1.4.6
 
+### Bugfixes
+- Fixed some filter selections not clearing from modlog when clicking "Reset Modlog Filters"
+
+
 ### Changes/Enhancements
 - Post titles now render as markdown
+- If downvotes are disabled at the instance level, upvote buttons are now hearts
+
+### New Features
+
+#### Disable Downvotes
+You can now disable downvotes in the UI (regardless of instance settings).
+
+When downvotes are disabled:
+- The "downvote" button is removed
+- Downvote counts are not shown
+- The "upvote" button becomes a "heart" icon (which acts like a "favorite" or "like' button on other platforms)
+
+You can also combine this with the hide scores option.  In that case, the button will just be a "heart" that's highlighted if you have upvoted/liked the post/comment and plain if you've not voted.
+
+
 
 
 
