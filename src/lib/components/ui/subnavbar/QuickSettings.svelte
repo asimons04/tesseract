@@ -13,32 +13,22 @@
 
     import { 
         Icon, 
+        ArrowDown,
+        ArrowsRightLeft,
         ArrowTopRightOnSquare, 
         Bars3,
         BarsArrowDown, 
         Cog6Tooth,
         Film,
+        Hashtag,
         Identification, 
         Server, 
         Photo,
         QueueList,
-
-        Hashtag,
-
         Tag,
-
         Trophy,
-
-        ArrowsRightLeft
-
-
-
-
     } from "svelte-hero-icons"
 
-    
-    
-    
     
     // Bind Listing Type Options from Subnavbar
     export let listingType:boolean
@@ -126,7 +116,10 @@
             
             <!---Show Scores--->
             <SettingToggle title="Show Scores" icon={Trophy} bind:value={$userSettings.uiState.showScores} small={true} />
-
+            
+            <!---Disable Downvotes--->
+            <SettingToggle icon={ArrowDown} title="Disable Downvotes"  bind:value={$userSettings.uiState.disableDownvotes} small={true} />
+            
             <!---Reverse Action Bar--->
             <SettingToggle title="Reverse Action Bar" icon={ArrowsRightLeft} bind:value={$userSettings.uiState.reverseActionBar} small={true}/>
 

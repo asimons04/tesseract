@@ -100,6 +100,7 @@ interface Settings {
     linkifyHashtags: boolean
     extractFlairsFromTitle: boolean,
     uiState: {
+        disableDownvotes: boolean
         expandSidebar: boolean
         expandCommunitySidebar: boolean
         feedMargins:boolean
@@ -159,6 +160,7 @@ export const defaultSettings: Settings = {
     linkifyHashtags: true,
     extractFlairsFromTitle:                                             true,
     uiState: {
+        disableDownvotes:                                               false,
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,

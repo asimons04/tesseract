@@ -27,6 +27,7 @@
     import ProfileSettings from '$routes/profile/(local_user)/settings/+page.svelte'
     
     import {
+        ArrowDown,
         ArrowDownTray,
         ArrowUpTray,
         ArrowPath,
@@ -418,6 +419,11 @@
         <!---Show Scores--->
         <SettingToggle icon={Trophy} title="Show Scores"  bind:value={$userSettings.uiState.showScores}
             description="Disable this option if you do not want to see upvote/downvote counts on posts and comments."
+        />
+
+        <!---Disable Downvotes--->
+        <SettingToggle icon={ArrowDown} title="Disable Downvotes"  bind:value={$userSettings.uiState.disableDownvotes}
+            description="Disable downvotes and hide downvote counts on posts/comments."
         />
 
         <!---Enable Debug Buttons--->
