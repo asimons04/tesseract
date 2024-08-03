@@ -312,7 +312,7 @@
 
 <MainContentArea>
     <div class="flex flex-row w-full h-full gap-4 flex-wrap justify-between">
-  
+
     {#if data.modlog && data.modlog.length > 0}
         <div class="flex flex-col gap-2 divide-y w-full">
             
@@ -333,16 +333,15 @@
             {/each}
         </div>
 
-        
+        <Pageination page={data.page} disableNext={data.modlog.length < 1} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
+
     {:else}
         <div class="mx-auto my-auto">
             <Placeholder title="No Results" description="There are no modlog results for the provided query." icon={ExclamationTriangle} />
         </div>
-    
     {/if}
     
-    <!---Vite does NOT like this being here, but everything works fine :shrug:--->
-    <Pageination page={data.page} disableNext={data.modlog.length < 1} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
+    
     
     
     
