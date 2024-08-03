@@ -3,7 +3,12 @@ All major/minor changes between releases will be documented here.
 
 ## 1.4.7
 
+### Bugfixes
+- Wrapped community names in crosspost list (typically when on mobile) no longer incorrectly center-justify themsleves
+- Fixed z-index for alternate source selector in /profile/user section to prevent it from showing over top of the nav bars when scrolling up
 
+
+---
 
 ## 1.4.6
 
@@ -28,7 +33,7 @@ When downvotes are disabled:
 You can also combine this with the hide scores option.  In that case, the button will just be a "heart" that's highlighted if you have upvoted/liked the post/comment and plain if you've not voted.
 
 
-
+---
 
 
 ## 1.4.5

@@ -35,7 +35,7 @@
 >
     
     <span class="flex flex-col">
-        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} href="/post/{getInstance()}/{crosspost.post.id}"/>
+        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} href/>
     </span>
     
     <span class="ml-auto"/>

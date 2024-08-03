@@ -43,7 +43,7 @@
     {/if}
 
     {#if name}
-        <span class="flex flex-wrap gap-0 {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
+        <span class="flex flex-wrap text-left gap-0 {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
             
             {useDisplayNames ?? $userSettings.displayNames 
                 ? shortenCommunityName(community.title, 30)
