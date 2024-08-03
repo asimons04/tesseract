@@ -4,6 +4,7 @@
         ArrowUp,
         ArrowDown,
         Icon,
+        Heart,
     } from 'svelte-hero-icons'
     
     
@@ -59,7 +60,12 @@
         }}
         
     >
-        <Icon src={ArrowUp} width={19} mini />
+        <Icon width={19} mini src={
+            $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes
+                ? ArrowUp
+                : Heart
+            }  
+        />
         {#if $userSettings.uiState.showScores}
             <FormattedNumber number={comment.counts.upvotes} />
         {/if}
@@ -68,7 +74,7 @@
     <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
     
     <!---Hide downvote buttons if site config has globally disabled downvotes--->
-    {#if $site?.site_view?.local_site?.enable_downvotes}
+    {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
         <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
             class="{comment.my_vote == -1 ? voteColor() : ''} !gap-0.5"
             on:click={async () => {
