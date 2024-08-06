@@ -13,6 +13,7 @@
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import Link from '$lib/components/input/Link.svelte'
+    import MBFC from '$lib/MBFC/MBFC.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
@@ -89,6 +90,8 @@
                 {/if}
                 
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                <span class="ml-auto" />
+                <MBFC post={post}/>
             </span>
             {/if}
             
