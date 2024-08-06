@@ -98,8 +98,13 @@
         loading = true
         
         try {
+            await getClient().resolveObject({
+                q: `!${community.name}@${new URL(community.actor_id).hostname}`
+            })
+
             communityDetails = await getClient().getCommunity({
-                id: community.id
+                //id: community.id
+                name: `${community.name}@${new URL(community.actor_id).hostname}`
             })
         }
         catch {
