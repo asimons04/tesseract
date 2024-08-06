@@ -98,12 +98,15 @@
         loading = true
         
         try {
-            await getClient().resolveObject({
-                q: `!${community.name}@${new URL(community.actor_id).hostname}`
-            })
+            // Only resolve if logged in
+            if ($profile?.user) {
+                let resolve = await getClient().resolveObject({
+                    q: `!${community.name}@${new URL(community.actor_id).hostname}`
+                })
+                console.log(resolve)
+            }
 
             communityDetails = await getClient().getCommunity({
-                //id: community.id
                 name: `${community.name}@${new URL(community.actor_id).hostname}`
             })
         }
