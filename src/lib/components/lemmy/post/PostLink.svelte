@@ -6,25 +6,25 @@
     import { imageSize, unproxyImage } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
-    import Link from '$lib/components/input/Link.svelte'
-    import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
+    import Link from '$lib/components/input/Link.svelte'
+    import MBFC from '$lib/MBFC/MBFC.svelte'
+    import NSFWOverlay from './utils/NSFWOverlay.svelte'
+    
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
 
     export let post:PostView
     export let displayType: PostDisplayType
 
     let size: string    = imageSize(displayType);
-    
-
-    
- 
 </script>
 
 {#if post.post?.url}
     <span class="flex flex-row flex-wrap w-full gap-2 px-1">
         <ArchiveLinkSelector url={post.post?.url} postType='link'/>
         <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+        <span class="ml-auto" />
+        <MBFC post={post}/>
     </span>
 {/if}
 

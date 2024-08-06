@@ -134,10 +134,11 @@
             <!--- Post Badges --->
             {#if !hideBadges}
             <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
-                <!--- Media Bias Fact Check--->
+                <!--- Media Bias Fact Check
                 {#if isPostView(post) && post && $userSettings.uiState.MBFCBadges && post.post.url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
                     <MBFC post={post} {collapseBadges}/>
                 {/if}
+                --->
                 
                 {#if post.post.nsfw}
                     <Badge label="NSFW" color="red" icon={ExclamationCircle}>

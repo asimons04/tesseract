@@ -1,4 +1,18 @@
-import type { CommentView, GetPostsResponse, PersonView, PostView as LemmyPostView, SortType, CommentReplyView, PersonMentionView, LocalUserView } from 'lemmy-js-client'
+import type { 
+    CommentView, 
+    Community,
+    GetPostsResponse, 
+    Person,
+    PersonView, 
+    PostView as LemmyPostView, 
+    Post,
+    PostAggregates,
+    SortType, 
+    CommentReplyView, 
+    PersonMentionView, 
+    LocalUserView 
+} from 'lemmy-js-client'
+
 import type { MBFCReport } from '$lib/MBFC/types'
 
 export interface PostView extends LemmyPostView {
@@ -817,4 +831,86 @@ export function extractFlairsFromTitle(title:string ): {name: string, flairs: Ar
 export function getPostTitleWithoutFlairs(title: string): string {
     let {name} = extractFlairsFromTitle(title)
     return name
+}
+
+export function createFakePost(): Post {
+    return {
+        ap_id: 'https://example.com/fake/ap_id',
+        community_id: -1,
+        creator_id: -1,
+        deleted: false,
+        featured_community: false,
+        featured_local: false,
+        id: -1,
+        language_id: -1,
+        local: false,
+        locked: false,
+        removed: false,
+        name: 'Dummy',
+        nsfw: false,
+        published: new Date().toString()
+    }
+}
+
+export function createFakeCommunity(): Community {
+    return {
+        actor_id: 'https://example.com/c/dummy',
+        deleted: false,
+        hidden: false,
+        id: -1,
+        instance_id: -1,
+        local: false,
+        name: 'Dummy',
+        nsfw: false,
+        posting_restricted_to_mods: false,
+        published: new Date().toString(),
+        removed: false,
+        title: 'Dummy',
+        visibility: 'Public'
+    }
+}
+
+export function createFakePerson(): Person {
+    return {
+        actor_id: 'https://example.com/u/dummy',
+        banned: false,
+        bot_account: false,
+        deleted: false,
+        id: -1,
+        instance_id: -1,
+        local: false,
+        name: 'Dummy',
+        published: new Date().toString(),
+    }
+}
+
+export function createFakePostAggregates(): PostAggregates {
+    return {
+        comments: 0,
+        downvotes: 0,
+        newest_comment_time: new Date().toString(),
+        post_id: -1,
+        published: new Date().toString(),
+        score: 0,
+        upvotes: 0
+    }
+}
+
+export function createFakePostView(): LemmyPostView {
+    return {
+        banned_from_community: false,
+        community: createFakeCommunity(),
+        counts: createFakePostAggregates(),
+        creator: createFakePerson(),
+        creator_banned_from_community: false,
+        creator_blocked: false,
+        creator_is_admin: false,
+        creator_is_moderator: false,
+        hidden: false,
+        post: createFakePost(),
+        read: false,
+        saved: false,
+        subscribed: 'NotSubscribed',
+        unread_comments: 0
+    }
 }
