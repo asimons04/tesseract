@@ -7,6 +7,7 @@
     export let iconSize:number = 16
     export let randomColor = false
     export let rightJustify = true
+    export let inline:boolean = false
 
     const badgeColor = {
         red: 'bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-300',
@@ -16,6 +17,7 @@
         orange: 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200',
         purple: 'bg-fuchsia-200 dark:bg-fuchsia-800 text-fuchsia-800 dark:text-fuchsia-200',
         pink: 'bg-pink-200 dark:bg-pink-800 text-pink-800 dark:text-pink-200',
+        blue: 'bg-sky-200 dark:bg-sky-800 text-sky-800 dark:text-sky-200'
     }
     type BadgeColor = keyof typeof badgeColor
     
@@ -25,7 +27,7 @@
         : badgeColor[color]
 </script>
 
-<button class="px-2 py-0.5 rounded-full max-h-[20px] text-xs font-bold flex items-center gap-1 
+<button class="px-2 py-0.5 rounded-full max-h-[20px] text-xs font-bold {inline ? 'inline-flex' : 'flex'} items-center gap-1 
     whitespace-nowrap overflow-hidden 
     {rightJustify ? 'ml-auto' : ''}
     {colorClass} 
