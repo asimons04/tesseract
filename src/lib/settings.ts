@@ -162,7 +162,7 @@ export const defaultSettings: Settings = {
     extractFlairsFromTitle:                                             true,
     uiState: {
         disableDownvotes:                                               false,
-        linkPreviews:                                                   false,
+        linkPreviews:                                                   true,
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,
@@ -297,6 +297,7 @@ export const YTFrontends = {
         'invidious.asir.dev',
         'invidious.private.coffee',
         'iv.nboeck.de',
+        'video.fosswelt.org',
         'yt.drgnz.club',
         'yt.oelrichsgarcia.de',
         'yt.artemislena.eu',
