@@ -101,7 +101,7 @@
         <div class="flex flex-row flex-wrap lg:flex-nowrap gap-4 w-full mt-4">
                                             
             <div class="flex flex-col w-full gap-2 lg:w-1/2">
-                <form class="flex flex-row gap-2 mt-2 w-full" on:submit|preventDefault={(e) => {
+                <form class="flex flex-row gap-2 mt-2 w-full" on:submit|preventDefault={() => {
                         list = updateArray(input_text, list, true)
                         input_text = ''
                         dispatcher('add', input_text)
