@@ -135,7 +135,7 @@
         </span>
     {/if}
 
-    {#if communityDetails?.community_view}
+    {#if !loading && communityDetails?.community_view}
         <AddCommunityGroup bind:open={communityGroupModal} community={communityDetails.community_view.community} />
 
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && communityDetails?.community_view.community.banner) ? imageProxyURL(communityDetails?.community_view.community.banner, undefined, 'webp') : ''} >
