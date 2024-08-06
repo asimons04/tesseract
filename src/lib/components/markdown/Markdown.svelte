@@ -22,7 +22,10 @@
     
     export let source: string = ''
     export let inline: boolean = false
+    export let noPreview: boolean = false
 
+    let mdText:string
+    
     marked.use({
         extensions: [
             extensions.containerExtension((params: TokenExtractionParameters) => {
@@ -58,10 +61,10 @@
             .replaceAll(":::spoiler", "\n:::spoiler")
             .replaceAll(/::: /g, '\n:::\n')
         
-        return temp
+        mdText = temp
     }
 
-    $:  mdText = preProcess(source)
+    $:  source, preProcess(source)
 
 </script>
 
@@ -71,6 +74,12 @@
         {mdText}
     {:else}
         <Markdown bind:source={mdText} 
+            options={{
+                //@ts-ignore (Adding a custom object to the options that get passed to the renderers)
+                custom: {
+                    noPreview: noPreview
+                }
+            }}
             renderers={{
                 code: MarkdownCode,
                 image: MarkdownImage,
