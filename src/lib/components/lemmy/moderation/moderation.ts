@@ -28,6 +28,10 @@ interface Modals {
         open: boolean
         instance: string
     },
+    linkPreview: {
+        open: boolean
+        url: string
+    },
     user: {
         open: boolean
         user: Person | undefined
@@ -75,6 +79,10 @@ export let modals = writable<Modals>({
     fediseer: {
         open: false,
         instance: '',
+    },
+    linkPreview: {
+        open: false,
+        url: ''
     },
     user: {
         open: false,
@@ -196,6 +204,18 @@ export function voteViewerModal(type:'post'|'comment', submission_id:number) {
             open: true,
             type: type,
             submission_id: submission_id
+        }
+    }))
+}
+
+
+/** Launches the link preview modal */
+export function linkPreviewModal(url: string) {
+    modals.update((m) => ({
+        ...m,
+        linkPreview: {
+            open: true,
+            url: url
         }
     }))
 }
