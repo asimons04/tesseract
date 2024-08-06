@@ -20,6 +20,7 @@
     
     import { 
         type PostDisplayType,
+        type PostType,
         buildYouTubeEmbedLink,
         createFakePostView,
         isImage,
@@ -27,44 +28,30 @@
         isVideo,
         isYoutubeLikeVideo,
         postType as getPostType,
-
-        type PostType
-
     } from "../post/helpers"
 
-    import { dispatchWindowEvent } from '$lib/ui/events'
     import { getClient } from "$lib/lemmy"
-    import { onMount } from "svelte";
     import { fade } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
     import Button from "$lib/components/input/Button.svelte"
-    import Link from "$lib/components/input/Link.svelte"
-    import Markdown from "$lib/components/markdown/Markdown.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import Placeholder from "$lib/components/ui/Placeholder.svelte";
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
     // Post Media Renderers
     import PostBody from "$lib/components/lemmy/post/PostBody.svelte";
-    import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
-    import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
-    import PostPeerTube from '$lib/components/lemmy/post/PostPeerTube.svelte'
-    import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
-    import PostSpotify from '$lib/components/lemmy/post/PostSpotify.svelte'
-    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
-    import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
-    import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
-    import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
+    import PostMediaRenderers from "$lib/components/lemmy/post/PostMediaRenderers.svelte";
+    
 
     import { 
         ArrowLeftCircle,
+        ArrowTopRightOnSquare,
         ExclamationTriangle,
         Icon,
         Link as LinkIcon,
+        Share,
         XCircle,
     } from "svelte-hero-icons";
     
@@ -95,6 +82,7 @@
     }
     
     $: loop = $userSettings.embeddedMedia.loop ?? false
+    $: autoplay = $userSettings.embeddedMedia.autoplay ?? false
     $: url, loadData()
 
     async function loadData() {
@@ -177,60 +165,7 @@
                 {/if}
             </div>
             
-            <!--- Link-style post without thumbnail URL--->
-            {#if postType == "link" || postType == "thumbLink"}
-                <PostLink bind:post {displayType} />
-            {/if}
-
-            <!--- Direct Image Post --->
-            {#if postType == "image"}
-                <PostImage bind:post {displayType}/>
-            {/if}
-                
-            <!--- Direct Video Post --->
-            {#if postType == "video"}
-                <PostVideo bind:post bind:postContainer {displayType} loop={loop}/>
-            {/if}
-
-            <!--- Bandcamp Embed --->
-            {#if postType == "bandcamp"}
-                <PostBandcamp bind:post bind:postContainer {displayType}/>
-            {/if}
-
-            <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
-            {#if postType == "youtube"}
-                <PostYouTube bind:post bind:postContainer {displayType} />
-            {/if}
-
-            <!--- Spotify Embed --->
-            {#if postType == "spotify"}
-                <PostSpotify bind:post bind:postContainer {displayType} />
-            {/if}
-
-            <!--- Soundcloud Embed --->
-            {#if postType == "soundcloud"}
-                <PostSoundCloud bind:post bind:postContainer {displayType} />
-            {/if}
-
-            <!--- Vimeo Embed --->
-            {#if postType == "vimeo"}
-                <PostVimeo bind:post bind:postContainer {displayType} />
-            {/if}
-
-            <!--- Odysee Embed --->
-            {#if postType == "odysee"}
-                <PostOdysee bind:post bind:postContainer {displayType} />
-            {/if}
-
-            <!--- SongLink Embed --->
-            {#if postType == "songlink"}
-                <PostSongLink bind:post bind:postContainer {displayType} />
-            {/if}
-
-            <!---Peertube Embed--->
-            {#if postType == 'peertube'}
-                <PostPeerTube bind:post bind:postContainer {displayType} />
-            {/if}
+            <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
             <PostBody bind:post bind:postContainer {displayType} />
 
@@ -242,17 +177,33 @@
 
     <div class="flex flex-row w-full justify-between">
         <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> open = false}>
-            Close
+            <span class="hidden md:flex">Close</span>
         </Button>
         
-        
-        <Button color="tertiary-border" icon={ArrowLeftCircle} iconSize={20} size="lg" title="Back" on:click={() => goBack() } disabled={previewHistory.length < 2}>
-            Back
-        </Button>
+        <span class="flex flex-row gap-2">
+            <Button color="tertiary-border" icon={ArrowLeftCircle} iconSize={20} size="lg" title="Back" on:click={() => goBack() } disabled={previewHistory.length < 2}>
+                <span class="hidden md:flex">Back</span>
+            </Button>
+
+            <Button color="tertiary-border" icon={Share} iconSize={20} size="lg" title="Copy Link" 
+                on:click={() => {
+                    navigator.clipboard.writeText(url)
+                    toast({
+                        type: 'success',
+                        content: `Copied current URL to clipboard.`,
+                        title: 'Copied'
+                    })
+                }}
+            >
+                <span class="hidden md:flex">Copy Link</span>
+            </Button>
+        </span>
         
 
-        <Button color="primary" size="lg" icon={LinkIcon} iconSize={20} href={url} newtab={$userSettings.openInNewTab.links}>
-            Go to URL
+        <Button color="primary" size="lg" icon={ArrowTopRightOnSquare} iconSize={20} href={url} newtab={$userSettings.openInNewTab.links}
+            on:click={() => open = false }
+        >
+            Go
         </Button>
     </div>
 </Modal>
