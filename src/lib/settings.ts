@@ -101,6 +101,7 @@ interface Settings {
     extractFlairsFromTitle: boolean,
     uiState: {
         disableDownvotes: boolean
+        linkPreviews: boolean,
         expandSidebar: boolean
         expandCommunitySidebar: boolean
         feedMargins:boolean
@@ -161,6 +162,7 @@ export const defaultSettings: Settings = {
     extractFlairsFromTitle:                                             true,
     uiState: {
         disableDownvotes:                                               false,
+        linkPreviews:                                                   false,
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,

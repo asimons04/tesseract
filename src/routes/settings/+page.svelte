@@ -382,6 +382,11 @@
             description="Show user and community display names instead of their actor ID names."
         />
 
+        <!---Use Link Previews--->
+        <SettingToggle icon={LinkIcon} title="Preview Links in Modal" bind:value={$userSettings.uiState.linkPreviews}
+            description="Preview external links in a modal"
+        />
+
         <!---Show Instances--->
         <SettingToggle icon={Server} title="Show Instance Names" bind:value={$userSettings.uiState.showInstances}
             description="Show the instance/domain for users and communities."
