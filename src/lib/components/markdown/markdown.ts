@@ -1,7 +1,15 @@
+import type { MarkdownOptions } from '@magidoc/plugin-svelte-marked'
+
 import { get } from 'svelte/store'
 import { userSettings } from '$lib/settings'
 
 const $userSettings = get(userSettings)
+
+export interface CustomMarkdownOptions extends MarkdownOptions {
+    custom: {
+        noPreview?: boolean
+    }
+}
 
 
 export function filterAnnoyingCCLicenseOnComments(source:string) {
@@ -16,6 +24,7 @@ export function hashtagsToMDLinks(source:string) {
     
     const hashtagRE = /(?<!http.*)#[A-Z]\w+/gi
     let hashtags = source.matchAll(hashtagRE)
+    
     for (let tag of hashtags) {
         let replacementText = `[${tag[0].trim()}](/search?q=${encodeURIComponent(tag[0].trim())})`
         source = source.replace(tag[0], replacementText)
@@ -24,61 +33,43 @@ export function hashtagsToMDLinks(source:string) {
 }
 
 export function findUserCommunityLinks(source: string) {
+    // Pre-process the ! and @ community and person (respective) links to markdown links
+    // The 'photonify' processor in the Links renderer will handle other formats and further process these
 
     // Find @user@instance.xyz and turn into localized links
-    const userRE = /@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
+    const userRE = /(?<!\w)@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
     let users = source.matchAll(userRE)
     for (let user of users) {
         if (user.groups?.username && user.groups?.instance) {
             let replacementText = `[@${user.groups.username}@${user.groups.instance}](/u/${user.groups.username}@${user.groups.instance})`
-            source = source.replace(user[0], replacementText)
+            source = source.replaceAll(user[0], replacementText)
         }
     }
 
-    // Find /u/user@instance.xyz and turn into localized links
-    // find /c/community@instance.xyz and turn into localized links
-    const userRE2 = /(?<!https:\/\/([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?<!\()(?<!\[)\/u\/((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
-    let users2 = source.matchAll(userRE2)
-    for (let user of users2) {
-        if (user.groups?.username && user.groups?.instance) {
-            let replacementText = `[/u/${user.groups.username}@${user.groups.instance}](/u/${user.groups.username}@${user.groups.instance})`
-            source = source.replace(userRE2, replacementText)
-        }
-    }
-
-    // Find !community@instance.xyz and turn into localized links
+    // Find '!community@instance.xyz'and turn into localized links
     const communityRE = /!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
     let communities = source.matchAll(communityRE)
     for (let community of communities) {
         if (community.groups?.community && community.groups?.instance) {
             let replacementText = `[!${community.groups.community}@${community.groups.instance}](/c/${community.groups.community}@${community.groups.instance})`
-            source = source.replace(community[0], replacementText)
+            source = source.replaceAll(community[0], replacementText)
         }
     }
-    
-    // find /c/community@instance.xyz and turn into localized links
-    const communityRE2 = /(?<!https:\/\/([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?<!\()(?<!\[)\/c\/((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
-    let communities2 = source.matchAll(communityRE2)
-    
-    for (let community of communities2) {
-        if (community.groups?.community && community.groups?.instance) {
-            let replacementText = `[/c/${community.groups.community}@${community.groups.instance}](/c/${community.groups.community}@${community.groups.instance})`
-            source = source.replace(communityRE2, replacementText)
-        }
-    }
+
 
     return source
 }
 
 const regexes = {
-    post: /^https:\/\/([a-zA-Z0-9.-]+)\/post\/(\d+)$/,
-    comment: /^https:\/\/([a-zA-Z0-9.-]+)\/comment\/(\d+)$/,
-    user: /^https:\/\/([a-zA-Z0-9.-]+)\/user\/(\w+)$/,
-    community: /^https:\/\/([a-zA-Z0-9.-]+)\/c\/(\w+)$/
+    post: /^https:\/\/([a-zA-Z0-9\.\-]+)\/post\/(\d+)$/,
+    comment: /^https:\/\/([a-zA-Z0-9\.\-]+)\/comment\/(\d+)$/,
+    user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/(.*)$/,
+    community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/(.*)$/
 }
 
 /**
  * Convert links to photon links
+ * Kept name to honor heritage (and I've only patched this up rather than re-write it)
  */
 export const photonify = (link: string) => {
     if (regexes.post.test(link)) {
