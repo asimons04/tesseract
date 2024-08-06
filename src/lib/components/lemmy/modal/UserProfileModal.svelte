@@ -62,19 +62,23 @@
     let mostRecentItem: string|undefined = undefined
     let userBlocked = false
     
-    let accordions = {
-        aboutMe: false
+    let aboutMe = false
+    let originalUser = user
+    
+    $:  if (originalUser != user) {
+        originalUser = user
+        loadDetails()
     }
-
-    $: anyOpen = (accordions.aboutMe)
-
-    onMount(async () => {
+    onMount(async () => loadDetails())
+        
+    async function loadDetails() {
         if (!user) {
             open = false
             return
         }
 
         loading = true
+        aboutMe = false
         
         try {
             personDetails = await getClient().getPersonDetails({
@@ -99,7 +103,7 @@
         finally {
             loading = false
         }
-    })
+    }
 
 
     /** Returns the date of the most recent post or comment or undefined if no submissions */
@@ -145,7 +149,7 @@
     {/if}
     
     <!--- User Card and Action Buttons--->
-    {#if personDetails?.person_view.person}
+    {#if !loading && personDetails?.person_view.person}
         
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, undefined, 'webp') : ''} >
             <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
@@ -194,7 +198,7 @@
         </Card>
 
         <!---About Me--->
-        <CollapseButton bind:expanded={accordions.aboutMe} icon={InformationCircle} title="About Me" innerClass="max-h-[45vh] overflow-y-scroll">
+        <CollapseButton bind:expanded={aboutMe} icon={InformationCircle} title="About Me" innerClass="max-h-[45vh] overflow-y-scroll">
             <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
 
             <!---Communities This User Moderates--->
@@ -209,7 +213,7 @@
 
 
         <!--- Action Buttons for this User--->
-        {#if !anyOpen}
+        {#if !aboutMe}
             <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide>
                 
                 <!---View User's Profile--->
