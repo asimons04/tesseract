@@ -243,7 +243,7 @@
                 
                 <span class="flex flex-nowrap gap-1 items-start">
                     <!--<strong>Reason:</strong> -->
-                    <Markdown source={item.reason ?? '*No reason supplied*'} />
+                    <Markdown noPreview={true} source={item.reason ?? '*No reason supplied*'} />
                 </span>
                 
 
