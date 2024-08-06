@@ -23,6 +23,7 @@
         Film,
         Hashtag,
         Identification, 
+        Link as LinkIcon,
         Server, 
         Photo,
         QueueList,
@@ -106,8 +107,12 @@
             <!---Open in New Tab--->
             <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
 
-                <!---Open Posts in New Tab--->
+            <!---Open Posts in New Tab--->
             <SettingToggle title="Open Posts in New Tab" icon={ArrowTopRightOnSquare} bind:value={$userSettings.openInNewTab.posts} small={true} />
+
+            <!---Use Link Preview Modals--->
+            <SettingToggle icon={LinkIcon} title="Preview Links in Modal" bind:value={$userSettings.uiState.linkPreviews} small={true}/>
+
 
             <!---Use Display Names--->
             <SettingToggle icon={Identification} title="Use Display Names" bind:value={$userSettings.displayNames} small={true}/>
