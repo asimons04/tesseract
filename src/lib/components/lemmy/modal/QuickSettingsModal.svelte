@@ -77,7 +77,7 @@
         {/if}
 
         <!---User Settings--->
-        <Card class="p-2 max-h-[70vh] overflow-y-scroll">
+        <Card class="p-2 max-h-[70vh] divide-y overflow-y-scroll">
             
             <!---Post Style--->
             <SettingToggle title="Show Compact Posts" icon={$userSettings.showCompactPosts ? QueueList : Photo}  small={true}
