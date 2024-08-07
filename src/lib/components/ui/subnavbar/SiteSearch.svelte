@@ -17,8 +17,7 @@
 
 <div class="flex mx-auto">
     <form name="search" class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
-        on:submit={(e) => {
-            e.preventDefault();
+        on:submit|preventDefault={() => {
             let url = new URL(window.location.href);
             url.pathname = '/search';
             url.searchParams.set('type', type)
@@ -40,7 +39,7 @@
         </Button>
     </form>
     
-    <!---Below large breakpoint, just show a button that will take you to the search page, prepopulated with the community/user details--->
+    <!---Below large breakpoint, just show a button that will take you to the search page, prepopulated with the community/user details
     <span class="flex lg:hidden items-center gap-1 ml-auto">
         <Button color="tertiary"
             on:click={() => {
@@ -59,5 +58,6 @@
             <Icon src={MagnifyingGlass} mini width={24} />
         </Button>
     </span>
+    --->
     
 </div>
