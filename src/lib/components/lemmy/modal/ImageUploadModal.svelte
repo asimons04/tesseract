@@ -92,7 +92,7 @@
             Cancel
         </Button>
         
-        <Button {loading} disabled={loading||!image} icon={CloudArrowUp} iconSize={20} on:click={() => upload()} color="primary" size="lg">
+        <Button {loading} disabled={loading||!image} icon={CloudArrowUp} iconSize={20} on:click={async () => await upload()} color="primary" size="lg">
             Upload
         </Button>
     </div>
