@@ -3,10 +3,12 @@
     
     import {
         amMod,
+        federationStateModal, 
+        fediseerModal,
         isAdmin,
         report,
     } from '$lib/components/lemmy/moderation/moderation.js'
-    
+
     import { blockUser, isBlocked } from '$lib/lemmy/user'
     import { createEventDispatcher } from 'svelte'
     import { deleteItem, save } from '$lib/lemmy/contentview.js'
@@ -22,7 +24,6 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import CommentVote from '$lib/components/lemmy/comment/CommentVote.svelte'
-    import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import CommentModerationMenu from '$lib/components/lemmy/moderation/CommentModerationMenu.svelte'
@@ -43,6 +44,7 @@
         MagnifyingGlass,
         NoSymbol,
         PencilSquare,
+        Server,
         Square2Stack,
         Trash,
     } from 'svelte-hero-icons'
@@ -57,20 +59,8 @@
 
     const dispatcher = createEventDispatcher<{ edit: CommentView }>()
 
-    let fediseer = {
-        instance: '',
-        modal: false,
-    }
-    
-    function openFediseerModal(instance:string):void {
-        fediseer.instance = instance;
-        fediseer.modal = true;
-    }
 </script>
 
-{#if fediseer.modal}
-    <Fediseer bind:open={fediseer.modal} instance={fediseer.instance} />
-{/if}
       
 <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2 items-center mt-1 h-8 w-full">
     <!---Comment Vote Buttons--->
@@ -171,6 +161,7 @@
         </MenuButton>
         {/if}
 
+
         {#if onHomeInstance && $profile?.jwt}
             {#if comment.creator.id == $profile.user?.local_user_view.person.id}
             
@@ -233,23 +224,36 @@
             {/if}
         {/if}
         
-        <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
-        <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(comment.creator.actor_id).hostname}</li>
-        <MenuButton
-            link color="success"
-            href="/communities?instance={new URL(comment.creator.actor_id).hostname}&type=Local"
-            title="Browse communities at {new URL(comment.creator.actor_id).hostname}"
-        >
-            <Icon src={GlobeAlt} width={16} mini />
-            <span>Browse Communities</span>
-        </MenuButton>
+        <!---Actions for the commentor's Instance if it is different from the current profile's--->
+        {#if new URL(comment.creator.actor_id).hostname != $profile?.instance}
+            <hr class="w-[90%] mx-auto opacity-100 dark:opacity-10 my-2" />
+            <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(comment.creator.actor_id).hostname}</li>
+            
+            <!---Browse Communities--->
+            <MenuButton
+                link color="success"
+                href="/communities?instance={new URL(comment.creator.actor_id).hostname}&type=Local"
+                title="Browse communities at {new URL(comment.creator.actor_id).hostname}"
+            >
+                <Icon src={GlobeAlt} width={16} mini />
+                <span>Browse Communities</span>
+            </MenuButton>
 
-
-        <MenuButton color="info" title="Get Fediseer info for {new URL(comment.creator.actor_id).hostname}"
-            on:click={async (e) => {openFediseerModal(new URL(comment.creator.actor_id).hostname)}}
-        >
-            <Icon src={Eye} width={16} mini />
-            <span>Fediseer</span>
-        </MenuButton>
+            <!---Fediseer--->
+            <MenuButton color="info" title="Get Fediseer info for {new URL(comment.creator.actor_id).hostname}"
+                on:click={async (e) => {fediseerModal(new URL(comment.creator.actor_id).hostname)}}
+            >
+                <Icon src={Eye} width={16} mini />
+                <span>Fediseer</span>
+            </MenuButton>
+            
+            <!--Federation Stats --->
+            <MenuButton color="info" title="Federation Stats for {new URL(comment.creator.actor_id).hostname}"
+                on:click={async (e) => {federationStateModal(new URL(comment.creator.actor_id).hostname)}}
+            >
+                <Icon src={Server} width={16} mini />
+                <span>Federation Stats</span>
+            </MenuButton>
+        {/if}
     </Menu>
 </div>
