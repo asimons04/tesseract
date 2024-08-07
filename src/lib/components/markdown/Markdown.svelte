@@ -23,6 +23,8 @@
     export let source: string = ''
     export let inline: boolean = false
     export let noPreview: boolean = false
+    export let noUserCommunityLink: boolean = false
+    export let noLink: boolean = false
 
     let mdText:string
     
@@ -39,7 +41,8 @@
                 }
                 return null
             })
-        ]
+        ],
+        gfm: !noLink
     })
     
     function preProcess(text:string) {
@@ -47,7 +50,7 @@
         let temp = fixLemmyEncodings(text)
         
         // Turn /c, /u, !, and @ community and user links into markdown links
-        temp = findUserCommunityLinks(temp)
+        if (!noUserCommunityLink) temp = findUserCommunityLinks(temp)
         
         // Regex-remove those obnoxious anti-AI licenses
         temp = filterAnnoyingCCLicenseOnComments(temp)
@@ -77,7 +80,7 @@
             options={{
                 //@ts-ignore (Adding a custom object to the options that get passed to the renderers)
                 custom: {
-                    noPreview: noPreview
+                    noPreview: noPreview,
                 }
             }}
             renderers={{
