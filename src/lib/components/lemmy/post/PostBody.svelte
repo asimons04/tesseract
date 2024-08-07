@@ -59,10 +59,13 @@
                                 ? post.post.body.slice(0, previewLength)
                                 : post.post.body
                         }
+                        
+                    />
+                    <!---
                         inline={
                             (!expandPreviewText && post.post.body.length > previewLength) || (!expandPreviewText && $userSettings.showCompactPosts && !expandCompact)
                         }
-                    />
+                    --->
                 </div>
 
                 {#if (post.post.body.length > previewLength) || post.post.nsfw}
@@ -99,8 +102,11 @@
                                 ? post.post.embed_description.slice(0, previewLength)
                                 : post.post.embed_description
                         }
-                        inline={!expandPreviewText && post.post.embed_description.length > previewLength}
+                        
                     />
+                    <!---
+                        inline={!expandPreviewText && post.post.embed_description.length > previewLength}
+                    --->
                 </div>
                 
                 {#if post.post.embed_description.length > previewLength}
