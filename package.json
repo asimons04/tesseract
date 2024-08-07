@@ -45,6 +45,8 @@
     "vite-plugin-pwa": "^0.20.0",
     "vitest": "^1.6.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "strtok3": "^7.0.0"
+  },
   "type": "module"
 }
