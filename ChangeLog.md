@@ -3,25 +3,32 @@ All major/minor changes between releases will be documented here.
 
 ## 1.4.7
 
-### Bugfixes
-- Wrapped community names in crosspost list (typically when on mobile) no longer incorrectly center-justify themsleves
+### Bugfixes / Tweaks
+- Text-wrapped community names in crosspost list (typically when on mobile) no longer incorrectly center-justify themsleves
 - Fixed z-index for alternate source selector in /profile/user section to prevent it from showing over top of the nav bars when scrolling up
+- Fixed regex pattern for hashtag detection so it _should_ now fully ignore any inside code blocks or inline code ticks.
+    - Still not perfect, but at least code blocks and inline code won't turn into hashtags (those are more widely used anyway.
+    - Hashtags above or between a code block will not linkify. Hashtags must be below the last code block before they will linkify.
+    - Inline code can go anyhere without affecting them.
+    - Will likely need to wait until I'm using the alternate marked-based renderer Xylight recommended to me so I can, hopefully, differentate code blocks earlier in the rendering chain instead of pre-processing with ugly-ass regex patterns.
 
 ### Changes
 
-#### Brought Back Discrete Listing Type / Sort Dropdowns
+#### Brought Back the Discrete Listing Type / Sort Dropdowns
 Based on feedback from users, I've brought back the discrete dropdowns in the nav bar for choosing the listing and sort options (they had been moved into the quick settings dropdown menu).
 
 #### Quick Settings is now a Modal
-Beyond a certain point, the dropdown menus become unwieldy from a UX standpoint.  As I add more options and customizations, the quick settings dropdown was becoming both cumbersom to use and maintain.  To ease that from both ends, I've changed it to a modal. 
+Beyond a certain point, the dropdown menus become unwieldy from a UX standpoint.  As I added more options and customizations, the quick settings dropdown was becoming both cumbersome to use and maintain.  To ease that from both ends, I've changed it to a modal. 
 
 It's still accessed from the navbar, but it's also been moved to the right side of the bar. It's the gear icon.
 
 #### Removed Context-Aware Search Button on Mobile
-The context aware search (which will search the site, community, or currently-viewed profile) button has been removed on mobile to reduce clutter.  Mobile users will need to use the main "Search" button in the main navbar and select the appropriate filter options.
+The context aware search (which will search the site, community, or currently-viewed profile depending on where you are) button has been removed on mobile to reduce clutter.  Mobile users will need to use the main "Search" button in the main navbar and select the appropriate filter options.
 
 #### Deprecated Support for /c/ and /u/ User and Community Links
-Deprecated support for `/c/name` and `/c/name@instance.xyz` community formats as well as `/u/name` and `/u/name@instance` formats.  Those will no longer be turned into links automatically and are discouraged.  Currently, they turn into email links.  
+Deprecated support for `/c/name` and `/c/name@instance.xyz` community formats as well as `/u/name` and `/u/name@instance` user link formats.  
+
+Those will no longer be turned into links automatically and are discouraged.  Currently, they turn into email links. 
 
 The Photon dev shot me some pointers for a slightly different Svelte markdown library (that also uses `marked`) but is more capable with regard to customizations.  Unfortunately, I haven't had time to go through and replace that.
 
@@ -40,7 +47,7 @@ The preferred way to link a user in markdown areas is `@user@instance.xyz` and, 
 - `https://instance.xyz/c/name@instance.xyz`
 - `https://instance.xyz/c/name@differentInstance.abc` (weird choice, but it's supported)
 
-With these, the text portion of the link will be disregarded:
+With these, the text portion of the link will be disregarded since they turn into badge buttons that launch the community profile modal
 - `[Any Text You Want](https://instance.xyz/c/name)`
 - `[Any Text You Want](https://instance.xyz/c/name@instance.xyz)`
 - `[Any Text](https://instance.xyz/c/name@differentInstance.abc)`
@@ -52,21 +59,34 @@ With these, the text portion of the link will be disregarded:
 - `https://instance.xyz/u/username@instance.xyz`
 - `https://instance.xyz/u/username@differentInstance.abc` (weird choice, but it's supported)
 
-With these, the text portion of the link will be disregarded:
+With these, the text portion of the link will be disregarded since they turn into badge buttons that launch the user profile modal:
 - `[Any Text You Want](https://instance.xyz/u/username)`
 - `[Any Text You Want](https://instance.xyz/u/username@instance.xyz)`
 - `[Any Text](https://instance.xyz/u/username@differentInstance.abc)`
 
 
 ### Enhancements
-- The community modal has been extended to resolve the community prior to fetching it so that unknown communities can be resolevd transparently when clicked.
+- The community modal has been extended to resolve the community prior to fetching it so that unknown communities can be resolevd transparently when clicked.  Unauthenticated/guest users will receive an error if clicking a community link that the instance does not "know" about (resolveObject is an authentiated call).
+
+- Various UI tweaks/polish where things weren't exactly uniform (modal action buttons, etc).
+
+- Added Quick Settings button to toolbar on post pages
+
+- Updated some logic that relied on `window` in various places.  Hoping to at least partially support SSR sometime, eventually.  I don't like SSR and designed things around CSR, but I would like for the post metadata to be fetchable (which requires SSR support to insert the `<meta>` tags into the `%sveltekit.head%`.
+
+- Fixed quirkiness with post titles. Can now middle-click post titles to open in new tab again as well as right-click to copy link (turned them back from buttons into links but keeping the 'button' behavior)
+
+
+
 
 ### New Features
 
 #### Link Previews
-Under Settings -> General is a new option called "Preview Links in Modal".  This is enabled by default but can be disabled.  It is also under the quick options on the feed and profile pages.
+Under Settings -> General is a new option called "Preview Links in Modal".  This is enabled by default but can be disabled.  It is also under the quick options.
 
-Clicking markdown links (in post body, comments, sidebars, etc) will do a server-side metadata fetch and render a preview. The preview includes:
+Clicking markdown links (in post body, comments, sidebars, etc) will do a server-side metadata fetch and render a preview. "Internal" links that load in Tesseract will not preview and simply use the user's "open links in new tab" preference.
+
+The preview includes:
 
 - Link metadata if available (thumbnail image, embed video, description, title)
 - Alternate source selector
