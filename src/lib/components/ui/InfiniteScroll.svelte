@@ -22,21 +22,19 @@
 
     const dispatcher = createEventDispatcher();
 
-    onMount( () => {
-        if (enabled) window.addEventListener("scroll", onScroll)
-    })
-
     function onScroll(e:any) {
-        const offset = document.documentElement.scrollHeight - (window.innerHeight + window.scrollY)
-        if (offset <= threshold && !loading) {
-            dispatcher('loadMore')
+        if (!enabled) return
+        try {
+            const offset = document.documentElement.scrollHeight - (window.innerHeight + window.scrollY)
+            if (offset <= threshold && !loading) {
+                dispatcher('loadMore')
+            }
         }
+        catch {}
     }
-
-    onDestroy( () => {
-        window.removeEventListener("scroll", onScroll)
-    })
 </script>
+
+<svelte:window on:scroll={onScroll} />
 
 
 {#if loading}
