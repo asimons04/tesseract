@@ -37,7 +37,7 @@
 
 <!--- /profile/user--->
 {#if $page.url.pathname.startsWith('/profile/user') || $page.url.pathname.startsWith('/u/')}
-<SubNavbar home back quickSettings qsShiftLeft={2}
+<SubNavbar back quickSettings
     toggleMargins refreshButton toggleCommunitySidebar scrollButtons
     listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
     sortMenu sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
@@ -48,7 +48,7 @@
 
 <!---Inbox --->
 {#if $page.url.pathname.startsWith('/profile/inbox')}
-    <SubNavbar  home back toggleMargins refreshButton toggleCommunitySidebar>
+    <SubNavbar  back toggleMargins refreshButton toggleCommunitySidebar>
         <div class="flex flex-row gap-1 md:gap-2 items-center" let:iconSize slot="far-left">
             <SelectMenu
                 title="Read/Unread"
@@ -110,12 +110,12 @@
 
 <!--- Settings and Blocks--->
 {#if $page.url.pathname.startsWith('/profile/settings') || $page.url.pathname.startsWith('/profile/blocks')}
-    <SubNavbar home back refreshButton toggleCommunitySidebar scrollButtons />
+    <SubNavbar back quickSettings toggleCommunitySidebar scrollButtons />
 {/if}
 
 <!---Saved--->
 {#if $page.url.pathname.startsWith('/profile/saved')}
-    <SubNavbar home back quickSettings qsShiftLeft={2}
+    <SubNavbar back quickSettings
         toggleMargins refreshButton toggleCommunitySidebar scrollButtons
         listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
         sortMenu sortOptions={['New', 'Old']} sortOptionNames={['New', 'Old']} bind:selectedSortOption={data.sort}

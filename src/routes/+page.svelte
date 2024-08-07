@@ -119,7 +119,7 @@
 </svelte:head>
 
 
-<SubNavbar home back quickSettings qsShiftLeft={2}
+<SubNavbar quickSettings
     toggleMargins toggleCommunitySidebar scrollButtons 
     listingType     bind:listingTypeOptions bind:listingTypeOptionNames bind:selectedListingType={data.listingType}
     sortMenu        bind:selectedSortOption={data.sort}
