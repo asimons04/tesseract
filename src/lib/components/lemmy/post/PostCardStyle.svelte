@@ -38,7 +38,7 @@
 
     <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
-    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText bind:expandCompact/>
+    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
 
     <!--- Crossposts --->
     <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'}/>
