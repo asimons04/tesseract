@@ -49,18 +49,26 @@
             </Button>
         </div>
         
-        {#if $userSettings.openInNewTab.posts}
-            <Link href="/post/{getInstance()}/{comment.post.id}" newtab={true}>
-                <span class="text-sm font-bold text-left">
-                    <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noLink />
-                </span>
-            </Link>
-        {:else}
-            <button on:click={() => goto(`/post/${getInstance()}/${comment.post.id}`)} class="text-sm font-bold text-left">
-                <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noLink/>
-            </button>  
-        {/if}
-        
+        <a 
+            href="/post/{getInstance()}/{comment.post.id}"
+            target="_blank"
+            on:click={
+                (
+                    //@ts-ignore
+                    e
+                ) => {
+                    // Use goto instead of href to avoid occasionally reloading the whole app on page transition
+                    if (!$userSettings.openInNewTab.posts) { 
+                        e.preventDefault()
+                        e.stopPropagation()
+                        goto(`/post/${getInstance()}/${comment.post.id}`)
+                    }
+                }} 
+            class="text-sm font-bold text-left"
+        >
+            <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noLink/>
+        </a> 
+       
         <div class="list-none">
             <Comment postId={comment.post.id} replying={false} {actions} {collapseBadges} node={{ children: [], comment_view: comment, depth: 1 }} />
         </div>
