@@ -109,7 +109,7 @@
 {#if item.moderatee && item.community && (isAdmin($profile?.user) || amMod($profile?.user, item.community))}
     <BanCommunityModal bind:open={banningCommunity} banned={item.actionName=='banCommunity'} user={item.moderatee} bind:community={item.community} 
         on:banCommunity={(e) => {
-            goto(window.location.href, {invalidateAll: true})
+            goto($page.url.href, {invalidateAll: true})
         }}
     />
 {/if}
@@ -118,7 +118,6 @@
 {#if item.moderatee && isAdmin($profile?.user)}
     <BanInstanceModal bind:open={banningInstance} bind:banned={item.moderatee.banned} bind:user={item.moderatee} 
         on:ban={(e) => {
-            //goto(window.location.href, {invalidateAll: true})
             if (item.moderatee) item.moderatee.banned = e.detail
         }}
     />
@@ -128,7 +127,7 @@
 {#if item.post && item.community && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
     <ModlogRemovePostModal bind:open={removing} bind:post={item.post} purge={false} reason='' 
         on:remove={(e) => {
-            goto(window.location.href, {invalidateAll: true})
+            goto($page.url.href, {invalidateAll: true})
         }}
     />
 {/if}
@@ -137,7 +136,7 @@
 {#if item.comment && item.community && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
     <ModlogRemoveCommentModal bind:open={removingComment} bind:comment={item.comment} purge={false} reason='' 
         on:remove={(e) => {
-            goto(window.location.href, {invalidateAll: true})
+            goto($page.url.href, {invalidateAll: true})
         }}
     />
 {/if}
@@ -311,7 +310,7 @@
                     <MenuButton title="{item.post.locked ? 'Unlock' : 'Lock'}" on:click={async () => {
                         if (!item.post) return
                         item.post.locked = await lock(item.post, !item.post.locked)
-                        goto(window.location.href, {invalidateAll: true })
+                        goto($page.url.href, {invalidateAll: true })
                     }}>
                         <Icon mini width={14} src={item.post.locked ? LockOpen : LockClosed} />
                         {item.post.locked ? 'Unlock Post' : 'Lock Post'}
@@ -328,7 +327,7 @@
                         <MenuButton title="Unpin Local" on:click={async () => {
                             if (item.post) {
                                 await pin(item.post, false, true)
-                                goto(window.location.href, {invalidateAll: true})
+                                goto($page.url.href, {invalidateAll: true})
                             }
                         }}>
                             <Icon mini width={14} src={Megaphone} />
@@ -341,7 +340,7 @@
                         <MenuButton title="Unpin Community" on:click={async () => {
                             if (item.post) {
                                 await pin(item.post, false, false)
-                                goto(window.location.href, {invalidateAll: true})
+                                goto($page.url.href, {invalidateAll: true})
                             }
                         }}>
                             <Icon mini width={14} src={Megaphone} />
