@@ -6,6 +6,7 @@
     import { setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
+    import { quickSettingsModal } from '$lib/components/lemmy/moderation/moderation'
     import { userSettings } from '$lib/settings'
     
     import { getPostTitleWithoutFlairs, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
@@ -20,7 +21,6 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import QuickSettings from './QuickSettings.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte'
     
     import {
@@ -42,6 +42,7 @@
         Home,
         QueueList,
         Window,
+        Cog6Tooth,
     } from 'svelte-hero-icons'
 
 
@@ -59,7 +60,7 @@
     export let refreshPreventDefault:boolean = false    // Prevent the default reload with invalidate 
     export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
     export let quickSettings:boolean = false
-    export let qsShiftLeft:number = 0           // Number of button slots to shift the quick settings menu to the left of
+    //export let qsShiftLeft:number = 0           // Number of button slots to shift the quick settings menu to the left of
 
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
@@ -130,22 +131,7 @@
             </Button>
         {/if}
 
-        {#if quickSettings}
-            <QuickSettings 
-                bind:listingType
-                bind:selectedListingType
-                bind:listingTypeOptions
-                bind:listingTypeOptionNames
-                bind:listingTypeTitle
-                bind:listingTypeOnSelect
-                bind:sortMenu
-                bind:sortOptions
-                bind:sortOptionNames
-                bind:selectedSortOption
-                bind:sortPreventDefault
-                bind:shiftLeft={qsShiftLeft}
-            />
-        {/if}
+        
         
         <!--- Custom Items to the left of the spacer--->
         <slot {iconSize} name="far-left"/>
@@ -154,7 +140,7 @@
 
         <span class="flex flex-row gap-1 md:gap-2 items-center">
             <!--- Post Listing Type--->
-            {#if listingType && selectedListingType && !quickSettings}
+            {#if listingType && selectedListingType }
                 <!---Listing Type--->
                 <SelectMenu
                     alignment="bottom-left"
@@ -169,7 +155,7 @@
             {/if}
 
             <!---Sort Menu--->
-            {#if sortMenu && sortOptions && sortOptionNames && selectedSortOption && !quickSettings}
+            {#if sortMenu && sortOptions && sortOptionNames && selectedSortOption }
                 <SelectMenu
                     alignment="bottom-left"
                     options={sortOptions}
@@ -225,6 +211,30 @@
         
         <!--- Custom Items to the right of the spacer--->
         <slot {iconSize} name="right"/>
+        
+        
+        <!---Quick Settings--->
+        {#if quickSettings}
+            <Button title="Quick Settings" size="sm" color="tertiary"
+                on:click={() => quickSettingsModal({
+                        listingType: listingType,
+                        listingTypeOptions: listingTypeOptions,
+                        listingTypeOptionNames: listingTypeOptionNames,
+                        selectedListingType: selectedListingType,
+                        listingTypeTitle: listingTypeTitle,
+                        sortMenu: sortMenu,
+                        sortOptions: sortOptions,
+                        sortOptionNames: sortOptionNames,
+                        selectedSortOption: selectedSortOption,
+                        sortPreventDefault: sortPreventDefault,
+                        iconSize: iconSize
+                    })
+                }
+                >
+                <Icon src={Cog6Tooth} width={iconSize}/>
+            </Button>
+        {/if}
+
 
         <!--- Refresh Button--->
         {#if refreshButton}
