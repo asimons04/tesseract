@@ -1,5 +1,6 @@
 import { get } from 'svelte/store'
 import { getInstance } from '$lib/lemmy.js'
+import { page } from '$app/stores'
 import { 
     userSettings, 
     ENABLE_MEDIA_PROXY,
@@ -10,14 +11,17 @@ import {
 
 // Accepts an image URL as input and determines whether to convert it into a proxied image URL or keep the original
 export function imageProxyURL(url?:string, size?:number, format?:string): string|undefined {
-    
+    const $page = get(page)
+    const $userSettings = get(userSettings)
+    const origin = new URL($page.url.href).origin
+
     if (!url) return
     
     // Return original URL if media proxying is globally disabled
     if (!ENABLE_MEDIA_PROXY) return url;                        
     
     // Return original URL if user preference for media proxing is disabled
-    if (!get(userSettings)?.proxyMedia.enabled) return url;     
+    if (!$userSettings?.proxyMedia.enabled) return url;     
 
     // Return original URL if image url matches an entry in the blacklist
     if (MEDIA_PROXY_BLACKLIST.length > 0) {
@@ -39,7 +43,8 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
     if (url.startsWith('data:')) return url;
 
     // Don't proxy images that are already going through the local proxy
-    if (url.includes(`${new URL(window.location.href).origin}/image_proxy/`)) return url;
+    if (url.includes(`${origin}/image_proxy/`)) return url;
+
 
     // Build the image proxy URL to return
     try {
@@ -49,7 +54,7 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
         let params = image.searchParams;
         let path = image.pathname;
 
-        if (get(userSettings)?.proxyMedia.fallback) {
+        if ($userSettings?.proxyMedia.fallback) {
             params.append('fallback', 'true');
         }
 
@@ -63,13 +68,8 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
                 params.set('format', format)
             }
         }
-        
-        let origin = new URL(window.location.href).origin;
-        let imagePath = `${host}${path}`;
-        
-        return `${origin}/image_proxy/${imagePath}?${params}`
 
-        
+        return `${origin}/image_proxy/${host}${path}?${params}`
     }
     
     // If building the URL fails, fallback to returning the original
