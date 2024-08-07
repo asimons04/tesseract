@@ -52,6 +52,13 @@ export interface SubscribeEvent extends CustomEvent {
     }
 }
 
+export interface RemovePostEvent extends CustomEvent {
+    detail: {
+        post_id: number
+        removed: boolean
+    }
+}
+
 /** Dispatches a custom event to the window which any mounted component can listen for
  * @param name The name of the custom event e.g. blockUser
  * @param detail The details of the event to pass to the window event listener
