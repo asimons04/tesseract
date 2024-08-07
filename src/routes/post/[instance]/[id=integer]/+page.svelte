@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BanUserEvent } from '$lib/ui/events';
+    import type { BanCommunityEvent, BanUserEvent, BlockUserEvent } from '$lib/ui/events';
     import type { UploadImageResponse } from 'lemmy-js-client';
 
     import { goto } from '$app/navigation'
@@ -26,11 +26,6 @@
         ExclamationTriangle,
         Home
     } from 'svelte-hero-icons'
-    import Post from '$lib/components/lemmy/post/Post.svelte';
-    
-    
-    
-    
     
     export let data
    
@@ -100,11 +95,18 @@
         }
     }
 
+    function handleUserBlock(e: BlockUserEvent) {
+        if (data.post.post_view.creator.id == e.detail.person_id) {
+            data.post.post_view.creator_blocked = e.detail.blocked
+        }
+    }
+
 </script>
 
 <svelte:window 
     on:banUser={handleBanInstance}
     on:banCommunity={handleBanCommunity}
+    on:blockUser={handleUserBlock} 
 />
 
 
