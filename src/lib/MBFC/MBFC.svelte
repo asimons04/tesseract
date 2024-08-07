@@ -268,6 +268,7 @@
                     
                     <div class="mx-auto"/>
                     
+                    <!---
                     <Button color="danger" size="md" on:click={() => {
                         open = false;
                         remove(post, true, generateModerationPreset(post, results))
@@ -275,7 +276,7 @@
                         <Icon src={Fire} size="16" mini />
                             <span class="hidden md:block">Purge</span>
                     </Button>   
-
+                    --->
 
                     <Button color="danger" size="md" on:click={() => {
                         open = false;
