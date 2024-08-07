@@ -21,7 +21,7 @@
     export let postContainer: HTMLDivElement
     export let displayType:PostDisplayType  = 'post'
     export let expandPreviewText:boolean    = false
-    export let expandCompact:boolean        = false
+    //export let expandCompact:boolean        = false
     export let previewLength:number         = 300
     export let inline:boolean               = false
     
