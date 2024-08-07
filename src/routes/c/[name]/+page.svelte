@@ -134,8 +134,8 @@
         <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
         <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
             on:click={() => {
-                goto(window.location.href, {invalidateAll: true})
                 refresh()
+                goto(window.location.href, {invalidateAll: true})
             }}
         />
         <PostFeed posts={data.posts.posts}/>
