@@ -35,7 +35,7 @@
             maximized = false
         }
         else {
-            width = "min-w-[100%]"
+            width = "lg:max-w-[75%]"
             fullHeight = true
             maximized = true
         }
@@ -57,17 +57,26 @@
         role="button" tabindex="0"
         bind:this={modalBackground}
         transition:fade={{ duration: 200 }}
-        on:keydown={(e) => {
+        on:keydown={(
+            //@ts-ignore
+            e
+        ) => {
             if (e.key == 'Escape' || e.key == 'GoBack' || e.key == 'BrowserBack') {
                 e.preventDefault()
                 e.stopPropagation();
                 open = false
             }
         }}
-        on:click={(e) => {
+        on:click={(
+            //@ts-ignore
+            e
+        ) => {
 			if (!modalElement.contains(e.target) && !preventCloseOnClickOut) open = false
 		}}
-        on:wheel={(e) => {
+        on:wheel={(
+            //@ts-ignore
+            e
+        ) => {
             if (!modalElement.contains(e.target)) {
                 e.preventDefault()
                 e.stopPropagation()
