@@ -1,5 +1,9 @@
 import type { SubmissionView } from '$lib/lemmy/contentview.js'
 import type { Community, MyUserInfo, Person, GetPersonDetailsResponse } from 'lemmy-js-client'
+import { 
+    sortOptions as defaultSortOptions, 
+    sortOptionNames as defaultSortOptionNames
+} from '$lib/lemmy'
 import { writable } from 'svelte/store'
 
 interface Modals {
@@ -31,6 +35,22 @@ interface Modals {
     linkPreview: {
         open: boolean
         url: string
+    },
+    quickSettings: {
+        open: boolean
+        options: {
+            listingType: boolean,
+            listingTypeOptions: string[]
+            listingTypeOptionNames: string[],
+            selectedListingType: string,
+            listingTypeTitle: string,
+            sortMenu: boolean,
+            sortOptions: string[],
+            sortOptionNames: string[],
+            selectedSortOption: string,
+            sortPreventDefault: boolean,
+            iconSize: number
+        }
     },
     user: {
         open: boolean
@@ -83,6 +103,22 @@ export let modals = writable<Modals>({
     linkPreview: {
         open: false,
         url: ''
+    },
+    quickSettings: {
+        open: false,
+        options: {
+            listingType: false,
+            listingTypeOptions: ['Subscribed', 'Local', 'All'],
+            listingTypeOptionNames: ['Subscribed', 'Local', 'All'],
+            selectedListingType: '',
+            listingTypeTitle: 'Listing Type',
+            sortMenu: false,
+            sortOptions: defaultSortOptions,
+            sortOptionNames: defaultSortOptionNames,
+            selectedSortOption: '',
+            sortPreventDefault: false,
+            iconSize: 28
+        }
     },
     user: {
         open: false,
@@ -216,6 +252,16 @@ export function linkPreviewModal(url: string) {
         linkPreview: {
             open: true,
             url: url
+        }
+    }))
+}
+
+export function quickSettingsModal(options:any) {
+    modals.update((m) => ({
+        ...m,
+        quickSettings: {
+            open: true,
+            options: options
         }
     }))
 }

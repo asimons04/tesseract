@@ -1,13 +1,15 @@
 <script lang="ts">
     import { modals } from '$lib/components/lemmy/moderation/moderation.js'
     
+    import CommunityProfileModal from '$lib/components/lemmy/modal/CommunityProfileModal.svelte';
     import FederationStateModal from '$lib/components/lemmy/modal/FederationStateModal.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte';
     import LinkPreviewModal from '$lib/components/lemmy/modal/LinkPreviewModal.svelte';
     import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
+    import QuickSettingsModal from '$lib/components/lemmy/modal/QuickSettingsModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/modal/UserProfileModal.svelte'
     import ZoomImageModal from '$lib/components/lemmy/modal/ZoomImageModal.svelte';
-    import CommunityProfileModal from '$lib/components/lemmy/modal/CommunityProfileModal.svelte';
+    
   
 </script>
 
@@ -57,9 +59,14 @@
     <Fediseer bind:open={$modals.fediseer.open} instance={$modals.fediseer.instance} />
 {/if}
 
-<!---Federation State <Viewer--->
+<!---Federation State Viewer--->
 {#if $modals.federationState.open}
     <FederationStateModal bind:open={$modals.federationState.open} domain={$modals.federationState.domain} />
+{/if}
+
+<!---Quick Settings Modal--->
+{#if $modals.quickSettings.open}
+    <QuickSettingsModal bind:open={$modals.quickSettings.open} bind:options={$modals.quickSettings.options} />
 {/if}
 
 <!---Community Profile Modal--->
