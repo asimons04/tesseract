@@ -49,9 +49,9 @@
     // Make Filter object reactive
     $: {
         filter.title = '';
-        filter.community.set = new URLSearchParams(window.location.search).has('community');
-        filter.moderatee.set = new URLSearchParams(window.location.search).has('other_person_id');
-        filter.moderator.set = new URLSearchParams(window.location.search).has('mod_id');
+        filter.community.set = new URLSearchParams($page.url.search).has('community');
+        filter.moderatee.set = new URLSearchParams($page.url.search).has('other_person_id');
+        filter.moderator.set = new URLSearchParams($page.url.search).has('mod_id');
         
         // Community Filter
         if (filter.community.set) {
@@ -190,7 +190,8 @@
                                     <CommunityLink avatar={true} avatarSize={iconSize} community={filter.community.community} />
                                 {:else}
                                     <span>
-                                        { new URLSearchParams(window.location.search).get('community') }
+                                        <!---{ new URLSearchParams(window.location.search).get('community') }--->
+                                        { new URLSearchParams($page.url.search).get('community') }
                                     </span>
                                 {/if}
                                 
@@ -227,7 +228,7 @@
                                         <UserLink avatar={true} avatarSize={iconSize} user={filter.moderator.person} useDisplayNames={false} shortenDisplayName={true}/>
                                     {:else}
                                         <span>
-                                            { new URLSearchParams(window.location.search).get('mod_id') }
+                                            { new URLSearchParams($page.url.search).get('mod_id') }
                                         </span>
                                     {/if}
                                     
@@ -263,7 +264,7 @@
                                     <UserLink avatar={true} avatarSize={iconSize} user={filter.moderatee.person} badges={false} useDisplayNames={false} shortenDisplayName={true}/>
                                 {:else}
                                     <span>
-                                        { new URLSearchParams(window.location.search).get('other_person_id') }
+                                        { new URLSearchParams($page.url.search).get('other_person_id') }
                                     </span>
                                 {/if}
                             
