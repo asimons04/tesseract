@@ -40,7 +40,7 @@
 </script>
 
 <!-- svelte-ignore missing-declaration -->
-<Modal bind:open icon={Cog6Tooth} card={false} width="max-w-xl" title="Quick Settings" >
+<Modal bind:open icon={Cog6Tooth} card={false} width="max-w-lg" title="Quick Settings" >
     
     
     <div class="flex flex-col w-full p-2 gap-2 cursor-default">
