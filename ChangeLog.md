@@ -7,6 +7,74 @@ All major/minor changes between releases will be documented here.
 - Wrapped community names in crosspost list (typically when on mobile) no longer incorrectly center-justify themsleves
 - Fixed z-index for alternate source selector in /profile/user section to prevent it from showing over top of the nav bars when scrolling up
 
+### Changes
+
+#### Deprecated Support for /c/ and /u/ User and Community Links
+Deprecated support for `/c/name` and `/c/name@instance.xyz` community formats as well as `/u/name` and `/u/name@instance` formats.  Those will no longer be turned into links automatically and are discouraged.  Currently, they turn into email links.  
+
+The Photon dev shot me some pointers for a slightly different Svelte markdown library (that also uses `marked`) but is more capable with regard to customizations.  Unfortunately, I haven't had time to go through and replace that.
+
+I will _likely_ be adding support back once I can stop the autolinking behavior that's turning these into `mailto:` links, but for now (and just in case I don't get back to that), I'm marking those `/c/` and `/u/` formats deprecated and discouraging their use.
+
+The preferred way to link a user in markdown areas is `@user@instance.xyz` and, for communities, it's `!name@instance.xyz`.  
+
+**This should also provide maximum compatibility among clients.**
+
+  The following user/community formats are supported and will be turned into actionable buttons:
+  
+  **Communities**:
+
+- `!name@instance.xyz`  (Preferred for widest compatibility)
+- `https://instance.xyz/c/name`
+- `https://instance.xyz/c/name@instance.xyz`
+- `https://instance.xyz/c/name@differentInstance.abc` (weird choice, but it's supported)
+
+With these, the text portion of the link will be disregarded:
+- `[Any Text You Want](https://instance.xyz/c/name)`
+- `[Any Text You Want](https://instance.xyz/c/name@instance.xyz)`
+- `[Any Text](https://instance.xyz/c/name@differentInstance.abc)`
+
+
+**Users**:
+- `@username@instance.xyz`  (Preferred for widest compatibility)
+- `https://instance.xyz/u/username`
+- `https://instance.xyz/u/username@instance.xyz`
+- `https://instance.xyz/u/username@differentInstance.abc` (weird choice, but it's supported)
+
+With these, the text portion of the link will be disregarded:
+- `[Any Text You Want](https://instance.xyz/u/username)`
+- `[Any Text You Want](https://instance.xyz/u/username@instance.xyz)`
+- `[Any Text](https://instance.xyz/u/username@differentInstance.abc)`
+
+
+### Enhancements
+- The community modal has been extended to resolve the community prior to fetching it so that unknown communities can be resolevd transparently when clicked.
+
+### New Features
+
+#### Link Previews
+Under Settings -> General is a new option called "Preview Links in Modal".  This is enabled by default but can be disabled.  It is also under the quick options on the feed and profile pages.
+
+Clicking markdown links (in post body, comments, sidebars, etc) will do a server-side metadata fetch and render a preview. The preview includes:
+
+- Link metadata if available (thumbnail image, embed video, description, title)
+- Alternate source selector
+- MBFC report (if available)
+- If link is to a supported media type (YT, Invidious, Piped, Soundcloud, Bandcamp, Spotify, Odysee, PeerTube, etc), will show the media as an embed
+- If metadata description contains links, they will preview in the same modal, and a "back" button will be enabled to return you to the previous preview.
+
+e.g.  If someone drops a bare Youtube link, it will render in the modal using your preferred YouTube frontend.  Same for a Spotify, Bandcamp, etc link.  The link is processed through the same rendering chain as posts, so any supported media should render as if it were posted to the feed.
+
+It also has the alternate source selector and the MBFC plugin tied in, so a news article link in the comments can be vetted for credibility, previewed, and followed.
+
+Post links are _not_ tied into this since the post itself acts as the preview / renderer.  This _can_ be implemented, and easily, but it seems pointless to me.  If I get feedback saying it should handle the main posts links through that, then I can enable it or at least make an option to.
+
+#### Badge-ified Community and User Links
+Community and user links in post and comment bodies are now badge-ified and load the community or profile modals upon click (versus the old behavior of being a dumb link to the profile/community pages).
+
+Currently, user links are blue, and community links are orange.
+
+
 
 ---
 
