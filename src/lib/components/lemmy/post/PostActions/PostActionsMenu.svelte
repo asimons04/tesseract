@@ -53,11 +53,11 @@
     let editing = false;
 
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
-
+    $: alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
 </script>
 <PostEditorModal bind:open={editing} bind:post />
 
-<Menu {alignment} containerClass="overflow-auto">
+<Menu bind:alignment containerClass="overflow-auto">
     <Button slot="button" aria-label="Post actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Post actions" color="tertiary-border" >
         <Icon slot="icon" src={icon} width={menuIconSize} mini />
     </Button>

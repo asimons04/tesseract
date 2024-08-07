@@ -45,7 +45,8 @@
     let banningCommunity = false
 
     $: acting = locking || pinning || removing || purging || banningInstance || banningCommunity
-
+    $: alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
+    
     async function lock(lock: boolean) {
         if (!$profile?.jwt || !isPostView(item)) return
         locking = true
@@ -105,7 +106,7 @@
 
 <BanCommunityModal bind:open={banningCommunity} bind:banned={item.creator_banned_from_community} bind:user={item.creator} bind:community={item.community}/>
 
-<Menu alignment={alignment}>
+<Menu bind:alignment>
     <Button
         on:click={toggleOpen}
         slot="button"
