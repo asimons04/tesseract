@@ -87,7 +87,7 @@
     {#if $site && $profile?.jwt}
         <!---Enable TOTP if not enabled--->
         {#if !totp_enabled && QRCodeURL}
-            <form class="flex flex-col gap-4" autocomplete="off" on:submit|preventDefault={async () => updateTotp(true)}>
+            <form class="flex flex-col gap-4" autocomplete="off" >
                 
                 <div class="flex flex-col lg:flex-row w-full gap-4">
                     
@@ -136,17 +136,18 @@
                     </div>
                 </div>
 
-
+                <!---
                 <div class="flex flex-row justify-between mt-4">
                     <Button color="danger" size="lg" on:click={() => close() }>Cancel</Button>
                     <Button color="primary" size="lg" loading={loading} submit>Enroll</Button>
                 </div>
+                --->
             </form>
         {/if}
 
         <!--- Disable TOTP if Already Enabled--->
         {#if totp_enabled}
-            <form class="flex flex-col gap-4" autocomplete="off" on:submit|preventDefault={async () => updateTotp(false)}>
+            <form class="flex flex-col gap-4" autocomplete="off" >
                 
                 <div class="flex flex-col gap-2">
                     <span class="font-normal text-sm">
@@ -178,7 +179,14 @@
     
     <div class="flex flex-row justify-between w-full" slot="buttons">
         <Button color="danger" icon={XCircle} iconSize={20} size="lg" on:click={() => close() }>Cancel</Button>
-        <Button color="primary" icon={DevicePhoneMobile} iconSize={20} size="lg" loading={loading} submit>Submit</Button>
+        <Button color="primary" icon={DevicePhoneMobile} iconSize={20} size="lg" loading={loading} 
+            on:click={async (e) => {
+                e.preventDefault()
+                await updateTotp(!totp_enabled)
+            }}
+        >
+            {totp_enabled ? 'Disable' : 'Enroll'}
+        </Button>
     </div>
     
 </Modal>

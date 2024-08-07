@@ -14,6 +14,17 @@
   $: if (files) {
     previewURL = URL.createObjectURL(files[0])
   }
+
+  function onDrop(event:any) {
+    files = event.dataTransfer?.files
+  }
+
+  function onDragover(event:any) {
+    if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'copy'
+        dragover = true
+    }
+}
 </script>
 
 <div class={$$props.class}>
@@ -30,13 +41,8 @@
                 : ''
             }
         "
-        on:drop|preventDefault={(event) => (files = event.dataTransfer?.files)}
-        on:dragover|preventDefault={(event) => {
-            if (event.dataTransfer) {
-                event.dataTransfer.dropEffect = 'copy'
-                dragover = true
-            }
-        }}
+        on:drop|preventDefault={onDrop}
+        on:dragover|preventDefault={onDragover}
         on:dragleave|preventDefault={() => (dragover = false)}
     >
         {#if (image && files) || preview && previewURL}

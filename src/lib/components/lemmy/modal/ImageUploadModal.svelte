@@ -60,7 +60,7 @@
 </script>
 
 <Modal bind:open icon={Photo} title="Upload {purpose}" width="max-w-lg" preventCloseOnClickOut>
-    <form class="flex flex-col gap-4" on:submit|preventDefault={upload}>
+    <form class="flex flex-col gap-4" >
         
         <FileInput image bind:files={image} accept="image/jpeg,image/png,image/webp"/>
         
@@ -92,7 +92,7 @@
             Cancel
         </Button>
         
-        <Button {loading} disabled={loading||!image} icon={CloudArrowUp} iconSize={20} submit color="primary" size="lg">
+        <Button {loading} disabled={loading||!image} icon={CloudArrowUp} iconSize={20} on:click={() => upload()} color="primary" size="lg">
             Upload
         </Button>
     </div>
