@@ -14,6 +14,7 @@
     import { 
         Icon, 
         Cake,
+        EyeSlash,
         NoSymbol, 
         Trash, 
     } from 'svelte-hero-icons'
@@ -31,7 +32,8 @@
     export let shortenDisplayName:boolean = false
     export let ring:boolean = false
     export let community_banned:boolean = false
-
+    export let blocked: boolean = false
+    
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
         return `/u/${user.name}@${domain}`
@@ -90,6 +92,13 @@
                         <Icon src={NoSymbol} mini size="12" />
                     </div>
                 {/if}
+
+                {#if badges && blocked}
+                    <div class="text-red-500" title="Blocked">
+                        <Icon src={EyeSlash} mini size="12" />
+                    </div>
+                {/if}
+
         
                 {#if badges && user.bot_account}
                     <div class="text-blue-500 font-bold" title="Bot">BOT</div>
