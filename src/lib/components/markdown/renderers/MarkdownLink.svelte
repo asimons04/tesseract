@@ -2,20 +2,20 @@
     import type { Community, Person } from 'lemmy-js-client';
     import type { Tokens } from 'marked'
     
-    
+    import { createFakePerson, createFakeCommunity } from '$lib/components/lemmy/post/helpers'
+    import { goto } from '$app/navigation';
+    import { userProfileModal, communityProfileModal } from '$lib/components/lemmy/moderation/moderation'
+    import { userSettings } from '$lib/settings';
 
     import Badge from '$lib/components/ui/Badge.svelte';
     import Link from '$lib/components/input/Link.svelte';
     
-    import { createFakePerson, createFakeCommunity } from '$lib/components/lemmy/post/helpers'
     import { 
         type CustomMarkdownOptions,
         photonify 
     } from '../markdown';
-    import { userProfileModal, communityProfileModal } from '$lib/components/lemmy/moderation/moderation'
-    import { userSettings } from '$lib/settings';
     
-
+   
     export let token: Tokens.Link
     export let options: CustomMarkdownOptions
 
@@ -64,6 +64,13 @@
         if (community) communityProfileModal(community)
     }}>
         !{community.name}@{new URL(community.actor_id).hostname}
+    </Badge>
+<!---Turn hashtags into tags--->
+{:else if token.href.startsWith('/search?q=%23')}
+    <Badge color="yellow" rightJustify={false} inline={true} on:click={() => {
+        goto(token.href)
+    }}>
+        {token.text}
     </Badge>
 
 <!---Display a regular link--->
