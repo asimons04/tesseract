@@ -140,7 +140,7 @@
     }
 </script>
 
-<Modal bind:open icon={LinkIcon} width="max-w-3xl" title={'Preview'}>
+<Modal bind:open icon={LinkIcon} width="max-w-3xl" title={'Preview'} allowMaximize>
 
     {#if loading}
         <span class="flex mx-auto my-auto" transition:fade>
