@@ -8,7 +8,7 @@
     import { profile, saveProfileToProfileData } from "$lib/auth";
     import { toast } from "$lib/components/ui/toasts/toasts";
 
-    import { Icon, ExclamationTriangle, Key } from "svelte-hero-icons";    
+    import { Icon, ExclamationTriangle, Key, XCircle } from "svelte-hero-icons";    
     
     export let open:boolean = false
 
@@ -110,11 +110,12 @@
         <TextInput label="Old Password" autocomplete="current-password" type="password" bind:value={oldPassword} />
         <TextInput label="New Password" autocomplete="new-password"type="password" bind:value={newPassword} />
         <TextInput label="Confirm New Password" autocomplete="new-password" type="password" bind:value={newPassword2} />
-
-        <div class="flex flex-row justify-between mt-4">
-            <Button color="danger" size="lg" on:click={() => open=false}>Cancel</Button>
-            <Button color="primary" size="lg" loading={changingPassword} on:click={async () => await changePassword()}>Change Password</Button>
-        </div>
     </form>
+
+    <div class="flex flex-row justify-between w-full" slot="buttons">
+        <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={() => open=false}>Cancel</Button>
+        
+        <Button color="primary" size="lg" icon={Key} iconSize={20} loading={changingPassword} on:click={async () => await changePassword()}>Submit</Button>
+    </div>
 </Modal>
 

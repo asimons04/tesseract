@@ -156,7 +156,7 @@
 
     {#if post && !loading && !fetchError}
 
-        <div bind:this={postContainer} class="flex flex-col gap-2 w-full" transition:fade>    
+        <div bind:this={postContainer} class="flex flex-col gap-2 w-full min-h-[250px]" transition:fade>    
 
             <!--- Title --->
             <div class="flex flex-row justify-between w-full">
@@ -173,9 +173,8 @@
 
     {/if}
     
-    <span class="mt-2" />
 
-    <div class="flex flex-row w-full justify-between">
+    <div class="flex flex-row w-full justify-between" slot="buttons">
         <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> open = false}>
             <span class="hidden md:flex">Close</span>
         </Button>

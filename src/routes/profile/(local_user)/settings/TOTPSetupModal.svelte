@@ -11,7 +11,7 @@
     
     import QRCode from 'qrcode'
 
-    import { DevicePhoneMobile } from "svelte-hero-icons";    
+    import { DevicePhoneMobile, XCircle } from "svelte-hero-icons";    
     
     export let open:boolean = false
     export let totp_enabled: boolean
@@ -168,11 +168,6 @@
                         }}
                     />
                 </div>
-
-                <div class="flex flex-row justify-between mt-4">
-                    <Button color="danger" size="lg" on:click={() => close() }>Cancel</Button>
-                    <Button color="primary" size="lg" loading={loading} submit>Submit</Button>
-                </div>
             </form>
         {/if}
     {:else}
@@ -180,5 +175,11 @@
             <Spinner width={48}/>
         </div>
     {/if}
+    
+    <div class="flex flex-row justify-between w-full" slot="buttons">
+        <Button color="danger" icon={XCircle} iconSize={20} size="lg" on:click={() => close() }>Cancel</Button>
+        <Button color="primary" icon={DevicePhoneMobile} iconSize={20} size="lg" loading={loading} submit>Submit</Button>
+    </div>
+    
 </Modal>
 

@@ -12,7 +12,7 @@
     import { goto } from "$app/navigation"
     import { profile, profileData, setUserID } from "$lib/auth"
     import { toast } from "$lib/components/ui/toasts/toasts"
-    import { Icon, ExclamationTriangle, Trash } from "svelte-hero-icons"
+    import { Icon, ExclamationTriangle, Trash, XCircle } from "svelte-hero-icons"
 
     export let open:boolean = false
 
@@ -99,10 +99,10 @@
         </SettingToggleContainer>
         
         <TextInput label="Password" type="password" bind:value={password} />
+    </div>
 
-        <div class="flex flex-row justify-between mt-4">
-            <Button color="primary" size="lg" on:click={() => open=false}>Cancel</Button>
-            <Button color="danger" size="lg" on:click={() => deleteAccount()}>Delete Account</Button>
-        </div>
+    <div class="flex flex-row justify-between w-full" slot="buttons">
+        <Button color="primary" icon={XCircle} iconSize={20} size="lg" on:click={() => open=false}>Cancel</Button>
+        <Button color="danger" icon={Trash} iconSize={20} size="lg" on:click={() => deleteAccount()}>Delete</Button>
     </div>
 </Modal>

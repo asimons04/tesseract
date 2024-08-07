@@ -136,6 +136,10 @@
                         {:else}
                             <slot />
                         {/if}
+
+                        <div class="flex flex-col w-full mt-4">
+                            <slot name="buttons" />
+                        </div>
                     </div>
 
                 </div>

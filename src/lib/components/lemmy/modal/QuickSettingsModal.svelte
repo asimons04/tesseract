@@ -40,7 +40,7 @@
 </script>
 
 <!-- svelte-ignore missing-declaration -->
-<Modal bind:open icon={Cog6Tooth} card={false} width="max-w-lg" title="Quick Settings" >
+<Modal bind:open icon={Cog6Tooth} card  width="max-w-lg" title="Quick Settings" >
     
     
     <div class="flex flex-col w-full p-2 gap-2 cursor-default">
@@ -77,7 +77,7 @@
         {/if}
 
         <!---User Settings--->
-        <Card class="p-2 max-h-[70vh] divide-y overflow-y-scroll">
+        <div class="flex flex-col gap-2 items-center pr-2 max-h-[70vh] divide-y overflow-y-scroll">
             
             <!---Post Style--->
             <SettingToggle title="Show Compact Posts" icon={$userSettings.showCompactPosts ? QueueList : Photo}  small={true}
@@ -128,25 +128,22 @@
 
             <!---Enable Flairs--->
             <SettingToggle title="Enable Flairs" icon={Tag} bind:value={$userSettings.extractFlairsFromTitle} small={true} />
+        </div>
+    </div>
 
+    <div class="flex flex-row w-full justify-between" slot="buttons">
+        <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> open = false}>
+            <span class="hidden md:flex">Close</span>
+        </Button>
 
-        </Card>
-        
-        <span class="flex flex-row justify-between mt-2">
-            <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> open = false}>
-                <span class="hidden md:flex">Close</span>
-            </Button>
-
-            <Button title="Open Settings" size="lg" color="primary" icon={Cog6Tooth} iconSize={20} 
-                on:click={()=> {
-                    goto('/settings')
-                    open = false
-                }}
-            >
-                <span class="hidden md:flex">Open Settings</span>
-            </Button>
-        </span>
-
+        <Button title="Open Settings" size="lg" color="primary" icon={Cog6Tooth} iconSize={20} 
+            on:click={()=> {
+                goto('/settings')
+                open = false
+            }}
+        >
+            <span class="hidden md:flex">Settings</span>
+        </Button>
     </div>
 
 </Modal>

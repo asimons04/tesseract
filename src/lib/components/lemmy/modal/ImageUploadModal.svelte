@@ -80,21 +80,20 @@
                 description="What quality level to use when converting the image to webP. Lower gives a smaller file, higher gives better quality."
             />
         </SettingToggleContainer>
-        
-        
-        <div class="flex flex-row gap-4 items-center">
-            <Button disabled={loading} icon={XCircle} color="danger" size="lg" class="w-full" on:click={() => {
-                altText = ''
-                image = null
-                loading = false
-                open = false
-            }}>
-                Cancel
-            </Button>
-            
-            <Button {loading} disabled={loading||!image} icon={CloudArrowUp} submit color="primary" size="lg" class="w-full">
-                Upload
-            </Button>
-        </div>
     </form>
+
+    <div class="flex flex-row gap-4 mt-4 items-center justify-between" slot="buttons">
+        <Button disabled={loading} icon={XCircle} iconSize={20} color="danger" size="lg" on:click={() => {
+            altText = ''
+            image = null
+            loading = false
+            open = false
+        }}>
+            Cancel
+        </Button>
+        
+        <Button {loading} disabled={loading||!image} icon={CloudArrowUp} iconSize={20} submit color="primary" size="lg">
+            Upload
+        </Button>
+    </div>
 </Modal>
