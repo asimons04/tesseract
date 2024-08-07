@@ -122,7 +122,7 @@
     {/if}
 </svelte:head>
 
-<SubNavbar back scrollButtons refreshButton postTitle toggleCommunitySidebar bind:post={data.post.post_view} 
+<SubNavbar back scrollButtons refreshButton postTitle quickSettings toggleCommunitySidebar bind:post={data.post.post_view} 
     refreshPreventDefault on:navRefresh={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }
 />
 
