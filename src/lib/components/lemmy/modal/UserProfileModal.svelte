@@ -1,7 +1,8 @@
 <script lang="ts">
     import type { GetPersonDetailsResponse, Person } from "lemmy-js-client"
-    
+
     import { dispatchWindowEvent } from '$lib/ui/events'
+
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
@@ -125,9 +126,9 @@
 
         return undefined
     }
+    
+  
 </script>
-
-
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width="max-w-xl"
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
@@ -159,7 +160,7 @@
 
                 <div class="flex flex-col gap-1 w-full overflow-hidden">
                     <span class="font-bold text-lg">
-                        <UserLink badges user={personDetails.person_view.person} showInstance={false} useDisplayNames href admin={personDetails.person_view.is_admin} mod={mod}/>
+                        <UserLink badges user={personDetails.person_view.person} showInstance={false} useDisplayNames href admin={personDetails.person_view.is_admin} mod={mod} blocked={userBlocked}/>
                     </span>
 
                     <span class="text-xs font-normal">@{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}</span>
