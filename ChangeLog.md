@@ -9,6 +9,17 @@ All major/minor changes between releases will be documented here.
 
 ### Changes
 
+#### Brought Back Discrete Listing Type / Sort Dropdowns
+Based on feedback from users, I've brought back the discrete dropdowns in the nav bar for choosing the listing and sort options (they had been moved into the quick settings dropdown menu).
+
+#### Quick Settings is now a Modal
+Beyond a certain point, the dropdown menus become unwieldy from a UX standpoint.  As I add more options and customizations, the quick settings dropdown was becoming both cumbersom to use and maintain.  To ease that from both ends, I've changed it to a modal. 
+
+It's still accessed from the navbar, but it's also been moved to the right side of the bar. It's the gear icon.
+
+#### Removed Context-Aware Search Button on Mobile
+The context aware search (which will search the site, community, or currently-viewed profile) button has been removed on mobile to reduce clutter.  Mobile users will need to use the main "Search" button in the main navbar and select the appropriate filter options.
+
 #### Deprecated Support for /c/ and /u/ User and Community Links
 Deprecated support for `/c/name` and `/c/name@instance.xyz` community formats as well as `/u/name` and `/u/name@instance` formats.  Those will no longer be turned into links automatically and are discouraged.  Currently, they turn into email links.  
 
