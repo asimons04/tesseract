@@ -52,12 +52,12 @@
         {#if $userSettings.openInNewTab.posts}
             <Link href="/post/{getInstance()}/{comment.post.id}" newtab={true}>
                 <span class="text-sm font-bold text-left">
-                    <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} />
+                    <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noLink />
                 </span>
             </Link>
         {:else}
             <button on:click={() => goto(`/post/${getInstance()}/${comment.post.id}`)} class="text-sm font-bold text-left">
-                <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} />
+                <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noLink/>
             </button>  
         {/if}
         
