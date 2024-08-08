@@ -112,7 +112,7 @@
     }
 
     .markdown :global(details > summary) {
-        @apply cursor-pointer my-4;
+        @apply cursor-pointer my-4 !mt-0 !mb-2 ;
     }
 
     .markdown :global(hr) {
