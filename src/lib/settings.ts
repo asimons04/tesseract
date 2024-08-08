@@ -64,6 +64,7 @@ interface Settings {
         newAccounts: boolean
         newAccountMinAge: number
         MBFCLowCredibility: boolean
+        minimizeBotComments: boolean
     }
     notifications: {
         enabled: boolean
@@ -199,7 +200,8 @@ export const defaultSettings: Settings = {
         keywordList:                                                    [],
         MBFCLowCredibility:                                             false,
         newAccounts:                                                    false,
-        newAccountMinAge:                                               5
+        newAccountMinAge:                                               5,
+        minimizeBotComments:                                            false,
 
     },
    

@@ -723,6 +723,12 @@
                 this will not be applied to communities you are moderating or to any local community if you are an instance admin."
         />
 
+        <!---Collapse Comments from Bot Accounts by Default--->
+        <SettingToggle title="Collapse Bot Comments" icon={FaceFrown} bind:value={$userSettings.hidePosts.minimizeBotComments}
+            description="When enabled, comments from accounts marked as bots will start off collapsed in the comment tree."
+        />
+
+        
         <SettingMultiSelect title="New Account Age" icon={CalendarDays} 
             description="Set the number of days an account is considered 'new'. This also controls the behavior of the new account badge."
             options={[1, 2, 3, 5, 7, 10, 14, 30]}

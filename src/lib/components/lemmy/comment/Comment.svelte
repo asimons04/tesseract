@@ -32,7 +32,7 @@
     import { profile } from '$lib/auth.js'
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    
+    import { userSettings } from '$lib/settings';
     
     
     export let node: CommentNodeI
@@ -54,6 +54,7 @@
     let commentContainer: HTMLDivElement
 
     let op = node.comment_view.post.creator_id == node.comment_view.creator.id
+
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
         if (isThreadComment(node.comment_view.comment.id)) {
@@ -78,6 +79,12 @@
         }
         node = node
     }
+
+    open = (
+            node.comment_view.creator.bot_account && 
+            $userSettings.hidePosts.minimizeBotComments &&
+            $profile?.user?.local_user_view.person.id != node.comment_view.creator.id
+    ) ? false : open
 
 </script>
 
