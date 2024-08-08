@@ -1,6 +1,30 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+
+## 1.4.8
+
+### Bugfixes
+- [9add317e] Fixed bounding issue on mobile with markdown images with long alt text displayed 
+- [9719b0c6] Fixed the body portion of detail/summary blocks (i.e. spoilers) incorrectly using a `cursor-pointer`. Only the summary portion does now.
+
+
+### Changes/Enhancements
+- [9add317e] Markdown images in post bodies / comments are now centered
+
+
+### New Features
+
+#### Collapse Bot Comments by Default [fe3a9192]
+
+Under Settings -> Filtering is a new option called "Collapse Bot Comments"
+
+When enabled, comments made by bot accounts will be collapsed by default in the comment tree on posts.  If your logged-in account is marked as a bot, they will not be collapsed.
+
+
+
+---
+
 ## 1.4.7
 
 ### Bugfixes / Tweaks
