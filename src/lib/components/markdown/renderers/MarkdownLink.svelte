@@ -21,6 +21,7 @@
 
     let person: Person | undefined = undefined
     let community: Community | undefined = undefined
+    let hashtagRE = /^#[A-Z0-9]\w/i
     
     $: token, token.href = photonify(token.href) ?? token.href
     $: token, person = generatePerson(token.href)
@@ -65,10 +66,21 @@
     }}>
         !{community.name}@{new URL(community.actor_id).hostname}
     </Badge>
-<!---Turn hashtags into tags--->
+
+<!---Turn hashtags into local search tags--->
 {:else if token.href.startsWith('/search?q=%23')}
     <Badge color="yellow" rightJustify={false} inline={true} on:click={() => {
         goto(token.href)
+    }}>
+        {token.text}
+    </Badge>
+
+<!--Turn pre-linked hashtags into badges but keep the original link--->
+{:else if hashtagRE.test(token.text)}
+    <Badge color="yellow" rightJustify={false} inline={true} on:click={() => {
+        $userSettings.openInNewTab.links
+            ? window.open(token.href)
+            : window.location.href=token.href
     }}>
         {token.text}
     </Badge>
