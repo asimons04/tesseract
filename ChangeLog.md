@@ -7,17 +7,18 @@ All major/minor changes between releases will be documented here.
 ### Bugfixes
 - [9add317e] Fixed bounding issue on mobile with markdown images with long alt text displayed 
 - [9719b0c6] Fixed the body portion of detail/summary blocks (i.e. spoilers) incorrectly using a `cursor-pointer`. Only the summary portion does now.
+- [4a5884f3] Fixed community names in community modals showing as usernames (@community@instance) instad of communities (!community@instance)
 
 
 ### Changes/Enhancements
-- [9add317e] Markdown images in post bodies / comments are now centered
+- [db41ed73] Markdown images in post bodies / comments are now fixed width based on viewport width to look more uniform and less hodgepodge when there are multiple of different sizes.
+- [937e6bb4, ] Removed `Top6Months` and `Top9Months` sort options to reduce clutter.
 
 
 ### New Features
 
 #### Collapse Bot Comments by Default [fe3a9192]
-
-Under Settings -> Filtering is a new option called "Collapse Bot Comments"
+Under `Settings -> Filtering` is a new option called "Collapse Bot Comments" (Disabled by default)
 
 When enabled, comments made by bot accounts will be collapsed by default in the comment tree on posts.  If your logged-in account is marked as a bot, they will not be collapsed.
 
