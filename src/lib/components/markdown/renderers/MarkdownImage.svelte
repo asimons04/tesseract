@@ -25,7 +25,7 @@
 
 {#if $userSettings.inlineImages}
 
-    <div bind:this={container} class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl w-fit lg:max-w-[60%] p-2">
+    <div bind:this={container} class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 mx-auto rounded-2xl w-full lg:max-w-[60%] p-2">
         <div class="ml-auto mr-auto max-w-full">
             
             <!---Show Text as a Title--->
