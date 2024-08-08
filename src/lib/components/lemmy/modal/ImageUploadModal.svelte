@@ -57,9 +57,16 @@
         }
         loading = false
     }
+
+    function cancel() {
+        altText = ''
+        image = null
+        loading = false
+        open = false
+    }
 </script>
 
-<Modal bind:open icon={Photo} title="Upload {purpose}" width="max-w-lg" preventCloseOnClickOut>
+<Modal bind:open icon={Photo} title="Upload {purpose}" width="max-w-lg" preventCloseOnClickOut on:close={() => cancel()}>
     <form class="flex flex-col gap-4" >
         
         <FileInput image bind:files={image} accept="image/jpeg,image/png,image/webp"/>
@@ -83,12 +90,7 @@
     </form>
 
     <div class="flex flex-row gap-4 mt-4 items-center justify-between" slot="buttons">
-        <Button disabled={loading} icon={XCircle} iconSize={20} color="danger" size="lg" on:click={() => {
-            altText = ''
-            image = null
-            loading = false
-            open = false
-        }}>
+        <Button disabled={loading} icon={XCircle} iconSize={20} color="danger" size="lg" on:click={() => cancel() }>
             Cancel
         </Button>
         

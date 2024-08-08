@@ -64,6 +64,7 @@
             if (e.key == 'Escape' || e.key == 'GoBack' || e.key == 'BrowserBack') {
                 e.preventDefault()
                 e.stopPropagation();
+                dispatcher('close')
                 open = false
             }
         }}
@@ -71,7 +72,10 @@
             //@ts-ignore
             e
         ) => {
-			if (!modalElement.contains(e.target) && !preventCloseOnClickOut) open = false
+			if (!modalElement.contains(e.target) && !preventCloseOnClickOut) {
+                dispatcher('close')
+                open = false
+            }
 		}}
         on:wheel={(
             //@ts-ignore
