@@ -2,6 +2,22 @@
 All major/minor changes between releases will be documented here.  
 
 
+## 1.4.9
+
+### Bugfixes
+- [179a4f6b] Disabled hashtag badge-ification on post titles
+- [6635fba2] Ignore pre-linked hashtags during regex pre-processing
+- [b14e11b1] Bugfix/enhancement:  Support 'foreign' hashtags that are already linked to outside sources
+- [93355eb0] Fixed weird post css inheritance putting 2rem margins (1 top, 1 bottom) on details > summary elements.
+- [048c1963] Add `noreferrer` to links
+- [76e64610] Fix bug when closing image upload modal via "X" button, current image and alt text not reset.
+- [904d21fe] Only collapse bot comments (if enabled) on `/post` pages rather than everywhere.
+
+
+
+
+---
+
 ## 1.4.8
 
 ### Bugfixes
@@ -12,7 +28,7 @@ All major/minor changes between releases will be documented here.
 
 ### Changes/Enhancements
 - [db41ed73] Markdown images in post bodies / comments are now fixed width based on viewport width to look more uniform and less hodgepodge when there are multiple of different sizes.
-- [937e6bb4, ] Removed `Top6Months` and `Top9Months` sort options to reduce clutter.
+- [937e6bb4, 3fa2c249] Removed `Top6Months` and `Top9Months` sort options to streamline 
 
 
 ### New Features
