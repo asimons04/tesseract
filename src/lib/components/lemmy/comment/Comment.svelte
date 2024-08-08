@@ -25,14 +25,15 @@
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
-    import { amModOfAny } from '../moderation/moderation';
+    import { amModOfAny } from '../moderation/moderation'
     import { getClient } from '$lib/lemmy.js'
     import { isThreadComment, scrollToTop } from '../post/helpers'
     import { onMount } from 'svelte'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { userSettings } from '$lib/settings';
+    import { userSettings } from '$lib/settings'
     
     
     export let node: CommentNodeI
@@ -81,6 +82,7 @@
     }
 
     open = (
+            $page.url.pathname.startsWith('/post') &&
             node.comment_view.creator.bot_account && 
             $userSettings.hidePosts.minimizeBotComments &&
             $profile?.user?.local_user_view.person.id != node.comment_view.creator.id
