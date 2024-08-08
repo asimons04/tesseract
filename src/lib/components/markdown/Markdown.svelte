@@ -25,6 +25,7 @@
     export let noPreview: boolean = false
     export let noUserCommunityLink: boolean = false
     export let noLink: boolean = false
+    export let noHashtags: boolean = false
 
     let mdText:string
     
@@ -56,7 +57,7 @@
         temp = filterAnnoyingCCLicenseOnComments(temp)
         
         // Convert hashtags to MD links
-        temp = hashtagsToMDLinks(temp)
+        if (!noHashtags) temp = hashtagsToMDLinks(temp)
         
         // Fix detection of custom containers for spoilers
         temp = temp

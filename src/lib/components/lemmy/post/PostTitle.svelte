@@ -53,7 +53,7 @@
 >
 
     <h1 class="text-base md:text-lg  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
-        <Markdown source={postName} noUserCommunityLink noLink/>
+        <Markdown source={postName} noUserCommunityLink noLink noHashtags/>
     </h1>
 
         <!---Flairs--->

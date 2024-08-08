@@ -66,7 +66,7 @@
                 }} 
             class="text-sm font-bold text-left"
         >
-            <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noLink/>
+            <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noLink noHashtags/>
         </a> 
        
         <div class="list-none">
