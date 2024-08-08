@@ -153,7 +153,7 @@
                     </span>
 
                     <span class="text-xs font-normal">
-                        @{communityDetails.community_view.community.name}@{new URL(communityDetails.community_view.community.actor_id).hostname}
+                        !{communityDetails.community_view.community.name}@{new URL(communityDetails.community_view.community.actor_id).hostname}
                     </span>
                     
 
