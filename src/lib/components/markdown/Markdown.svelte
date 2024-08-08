@@ -110,7 +110,7 @@
         @apply text-lg font-bold;
     }
 
-    .markdown :global(details) {
+    .markdown :global(details > summary) {
         @apply cursor-pointer my-4;
     }
 
