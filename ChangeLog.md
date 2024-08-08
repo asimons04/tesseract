@@ -12,6 +12,8 @@ All major/minor changes between releases will be documented here.
 - [048c1963] Add `noreferrer` to links
 - [76e64610] Fix bug when closing image upload modal via "X" button, current image and alt text not reset.
 - [904d21fe] Only collapse bot comments (if enabled) on `/post` pages rather than everywhere.
+- [91598f6c] Add step to Dockerfile to clear npm cache after installing runtime deps (image size ballooned up by 200 MB after `file-type` updated and required `strtok3` as a runtime dependency).
+
 
 
 
