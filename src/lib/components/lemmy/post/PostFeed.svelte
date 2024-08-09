@@ -14,6 +14,7 @@
     import { isNewAccount } from './helpers'
     import { profile } from '$lib/auth';
     import { userSettings } from '$lib/settings.js'
+    import { userIsInstanceBlocked } from '$lib/lemmy/user'
 
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
@@ -112,12 +113,18 @@
             {#each posts as post, index (post.post.id)}
                 {#if 
                     !(post.creator_blocked) && 
-                    
-                    // Optionally hide posts from new users if you are not a mod of that community or if the community is local and you are an admin
-                    // Don't hide if it is your own post and your account is new
                     !(
-                        $userSettings.hidePosts.newAccounts &&  isNewAccount(post.creator.published) &&
-                        post.creator.id != $profile?.user?.local_user_view?.person?.id && !amMod($profile?.user, post.community)
+                        // "or" conditions that should qualify the post to be hidden in the feed unless you're a mod of the community it's posted to
+                        // or a local admin and the community is local
+                        (
+                            // Hide posts from new accounts (if they are not your own posts)
+                            ($userSettings.hidePosts.newAccounts &&  isNewAccount(post.creator.published) && post.creator.id != $profile?.user?.local_user_view?.person?.id) ||
+                            
+                            // Hide posts from users whose instances you have blocked
+                            ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, post.creator.instance_id))
+                        ) 
+                        // Safety check to ensure moderators and local admins will see the posts for moderation purposes
+                        && (!amMod($profile?.user, post.community))
                     ) &&
                     
                     !($userSettings.hidePosts.deleted && post.post.deleted) && 

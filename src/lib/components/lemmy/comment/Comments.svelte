@@ -19,8 +19,10 @@
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
+    import { userIsInstanceBlocked } from '$lib/lemmy/user';
 
     import { ChevronDown, Icon } from 'svelte-hero-icons'
+    
 
     export let nodes: CommentNodeI[]
     export let isParent: boolean
@@ -100,12 +102,16 @@
     }
 >
     {#each nodes as node (node.comment_view.comment.id)}
-        <!---Optionally hide comments from new accoutsn (and any replies)--->
+        <!--- Comment filtering  --->
         {#if    !(
-                    $userSettings.hidePosts.newAccounts &&  
-                    isNewAccount(node.comment_view.creator.published) &&
-                    node.comment_view.creator.id != $profile?.user?.local_user_view?.person?.id && 
-                    !amMod($profile?.user, node.comment_view.community)
+                    // Optionally hide comments from new accounts (and any replies)
+                    ($userSettings.hidePosts.newAccounts &&  isNewAccount(node.comment_view.creator.published) && node.comment_view.creator.id != $profile?.user?.local_user_view?.person?.id) ||
+                    
+                    // Hide posts from users whose instances you have blocked
+                    ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, node.comment_view.creator.instance_id))
+                    
+                    // Safety check so moderators will still see the comments as well as admins if the community is local to the instance
+                    && !amMod($profile?.user, node.comment_view.community)
                 )
         }
             <Comment postId={post.id} bind:node >
