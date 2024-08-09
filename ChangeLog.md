@@ -15,7 +15,17 @@ All major/minor changes between releases will be documented here.
 - [8c78432a] Added missing modlog actions:
     - Transfer Community
     - Remove / restore community
-- [8c78432a] Remove 'reason' placeholder and make reason a conditional display element
+- [8c78432a] Remove 'reason' placeholder in modlog details and make reason a conditional display element
+- [f13796e8] Tweak `@user@instance` regex pre-processor to ignore patterns that are part of a URL (e.g. Mbin's stupid /u/@username actor id format)
+- [5a99e6d0] Add support for accented characters in hashtags
+- [42e4f09d] Mini modlog in community settings area no longer filters events; shows all relevant events for the community (previously, only showed a subset)
+- [cbb5fae1] Update community mod team management:
+    - Indicate community owner / top mod with green badge
+    - Add transfer community buttons for admins to assign a new owner/top mod
+    - Add conditional verbiage describing mod team
+    - Add keybinding to 'submit' when pressing enter when adding new mod
+- [e1ea16a3] Reimplement event handlers/forwarders in TextInput component so typescript doesn't bitch and moan
+
 
 
 ---
