@@ -3,31 +3,45 @@ All major/minor changes between releases will be documented here.
 
 ## 1.4.10
 
-### Planned Features
-- Transfer community
-    - Perform from team page, perhaps?
-    - Transfer community modal?
-    - Both?
-- Purge user
-
 ### Bugfixes/Enhancements
 - [c8e541bd] Make `capitalize` class toggleable on modal titles; capitalize community names when rendering community profile modal
+
 - [8c78432a] Added missing modlog actions:
     - Transfer Community
     - Remove / restore community
+
 - [8c78432a] Remove 'reason' placeholder in modlog details and make reason a conditional display element
+
 - [f13796e8] Tweak `@user@instance` regex pre-processor to ignore patterns that are part of a URL (e.g. Mbin's stupid /u/@username actor id format)
+
 - [5a99e6d0] Add support for accented characters in hashtags
-- [42e4f09d] Mini modlog in community settings area no longer filters events; shows all relevant events for the community (previously, only showed a subset)
+
+- [e1ea16a3] Reimplement event handlers/forwarders in TextInput component so typescript doesn't bitch and moan
+
+- [d8b67208] Removed redundant hashtag badge-ifier step in markdown link renderer
+
+- [94b7080b] Tweak hashtag regex yet again
+
+- [b2bace2b] Remove unsed imports, including old Fediseer components, from PostMeta compoennt
+
+### Notable Changes
+#### Community Management
 - [cbb5fae1] Update community mod team management:
     - Indicate community owner / top mod with green badge
     - Add transfer community buttons for admins to assign a new owner/top mod
     - Add conditional verbiage describing mod team
     - Add keybinding to 'submit' when pressing enter when adding new mod
-- [e1ea16a3] Reimplement event handlers/forwarders in TextInput component so typescript doesn't bitch and moan
-- [d8b67208] Removed redundant hashtag badge-ifier step in markdown link renderer
-- [94b7080b] Tweak hashtag regex yet again
 
+- [4446918c] Community cards now indicate if the community is deleted
+- [42e4f09d] Mini modlog in community settings area no longer filters events; shows all relevant events for the community (previously, only showed a subset)
+
+- [94fa370f] Communities can now be deleted/restored by top mods
+    - API will not let admins do this, but they can now transfer the communities to themselves and perform the deletes/restores
+    - Admins can now "take over" communities if needed (button adds them as a community mod and transfers it to them)
+    - Because I can't go one release without complaining about _some_ stupid thing the Lemmy devs did, here's a fun fact:
+        - If a top mod deletes the community and then disappears (or deletes their account), there is no way to undelete the community from the API level; you have to set `deleted=false` for the record via the database.  Only top mods can delete/undelete a community, and even admins cannot modify the moderators if the community is deleted (which is a pre-requisite for transferring the community which is a pre-requisite for undeleting the community).  :sigh!:  No idea if that is addressed in 0.19.4 or 5.  
+
+- [1d663b8f] Admins can remove/restore and hide/unhide local communities from the Community Settings page.
 
 
 ---
