@@ -21,7 +21,8 @@
 
     let person: Person | undefined = undefined
     let community: Community | undefined = undefined
-    let hashtagRE = /^#[A-Z0-9]\w/i
+    //let hashtagRE = /^#[A-Z0-9]\w/i
+    let hashtagRE = /^#[A-Za-z0-9À-ÿ]+/i
     
     $: token, token.href = photonify(token.href) ?? token.href
     $: token, person = generatePerson(token.href)
