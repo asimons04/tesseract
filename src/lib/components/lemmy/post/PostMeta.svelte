@@ -6,18 +6,13 @@
         PostView 
     } from 'lemmy-js-client'
     
-    import { imageProxyURL } from '$lib/image-proxy'
-    import { isPostView, postType } from './helpers'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { subscribe } from '../community/helpers.js'
-    import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import Fediseer from '$lib/fediseer/Fediseer.svelte'
-    import MBFC from '$lib/MBFC/MBFC.svelte'
     import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
@@ -50,7 +45,6 @@
     let inProfile:boolean       = false
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
-    let fediseerModal:boolean   = false;
     
     $: post
     $: inCommunity      = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
@@ -58,12 +52,6 @@
     $: userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
 </script>
-
-{#if fediseerModal}
-    <Fediseer bind:open={fediseerModal} instance={new URL(post.community.actor_id).hostname} />
-{/if}
-
-
 
 
 <div class="flex flex-col gap-1.5 grow">
