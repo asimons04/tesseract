@@ -1,6 +1,24 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.10
+
+### Planned Features
+- Transfer community
+    - Perform from team page, perhaps?
+    - Transfer community modal?
+    - Both?
+- Purge user
+
+### Bugfixes/Enhancements
+- [c8e541bd] Make `capitalize` class toggleable on modal titles; capitalize community names when rendering community profile modal
+- [8c78432a] Added missing modlog actions:
+    - Transfer Community
+    - Remove / restore community
+- [8c78432a] Remove 'reason' placeholder and make reason a conditional display element
+
+
+---
 
 ## 1.4.9
 
