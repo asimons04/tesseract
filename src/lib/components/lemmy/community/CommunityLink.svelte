@@ -44,16 +44,16 @@
 
     {#if name}
         <span class="flex flex-wrap text-left gap-0 {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
-            
+
             {useDisplayNames ?? $userSettings.displayNames 
                 ? shortenCommunityName(community.title, 30)
                 : `/c/${community.name}`
             }
 
             {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
-            <span class="text-slate-500 dark:text-zinc-500 font-normal normal-case">
-                @{new URL(community.actor_id).hostname}
-            </span>
+                <span class="text-slate-500 dark:text-zinc-500 font-normal normal-case">
+                    @{new URL(community.actor_id).hostname}
+                </span>
             {/if}
         </span>
     {/if}
