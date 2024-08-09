@@ -25,6 +25,8 @@ All major/minor changes between releases will be documented here.
     - Add conditional verbiage describing mod team
     - Add keybinding to 'submit' when pressing enter when adding new mod
 - [e1ea16a3] Reimplement event handlers/forwarders in TextInput component so typescript doesn't bitch and moan
+- [d8b67208] Removed redundant hashtag badge-ifier step in markdown link renderer
+- [94b7080b] Tweak hashtag regex yet again
 
 
 
