@@ -1,10 +1,10 @@
 <script lang="ts">
-    import type { CommunityBlockView, PersonBlockView, Site, Person } from 'lemmy-js-client'
-    import type { PageData } from './$types.js'
+    import type { CommunityBlockView, PersonBlockView, Site, Person, InstanceBlockView } from 'lemmy-js-client'
 
     import { flip } from 'svelte/animate'
     import { getClient, site } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
+    import { refreshProfile } from '$lib/lemmy/user.js'
     import { slide } from 'svelte/transition'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -18,75 +18,48 @@
 
     import { 
         Check, 
-        Icon, 
         Server,
         Trash, 
         User,
         UserGroup,
     } from 'svelte-hero-icons'
-    
-    interface InstanceBlockView {
-        instance: {
-            domain: string,
-            id: number,
-            published: string,
-            software: string,
-            updated: string,
-            version: string
-        }
-        person?: Person,
-        site?: Site
-    }
-  
-    export let data: PageData & {
-        person_blocks: PersonBlockView[]
-        community_blocks: CommunityBlockView[]
-        instance_blocks?: InstanceBlockView[]
-    }
+
+    let blocking = false
 
     async function unblockUser(item: PersonBlockView) {
         if (!$profile?.jwt) return
-
-        data.person_blocks.splice(
-            data.person_blocks.findIndex((i:PersonBlockView) => i.target.id == item.target.id)
-            , 1
-        )
-        data.person_blocks = data.person_blocks
-
+        
+        blocking = true
         await getClient().blockPerson({
             block: false,
             person_id: item.target.id,
         })
+        await refreshProfile()
+        blocking = false
     }
     
     async function unblockInstance(item: InstanceBlockView) {
-        const blocked = await getClient().blockInstance({
+        if (!$profile?.jwt) return
+        
+        blocking = true
+        await getClient().blockInstance({
             instance_id: item.instance.id,
             block: false
         })
-        
-        if (!blocked.blocked) {
-            data.instance_blocks?.splice(
-                data.instance_blocks?.findIndex( (i:InstanceBlockView) => i.instance.id == item.instance.id )
-                , 1
-            )
-            data.instance_blocks = data.instance_blocks
-        }
+        await refreshProfile()
+        blocking = false
     }
 
     async function unblockCommunity(item: CommunityBlockView) {
         if (!$profile?.jwt) return
-
-        data.community_blocks.splice(
-            data.community_blocks.findIndex( (i:CommunityBlockView) => i.community.id == item.community.id) 
-            ,1 
-        )
-        data.community_blocks = data.community_blocks
-
+        
+        blocking = true
         await getClient().blockCommunity({
             block: false,
             community_id: item.community.id,
         })
+        await refreshProfile()
+        blocking = true
     }
 </script>
 
@@ -100,17 +73,17 @@
 
 
 <MainContentArea>
-
+{#if $profile?.user}
+    
     <!---User Blocks--->
     <CollapseButton title="Users" icon={User} heading={true} innerClass="max-h-[50vh] overflow-y-auto">
-        {#if data.person_blocks.length > 0}
+        {#if $profile.user.person_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockUser(i.detail)}>
-                {#each data.person_blocks as block (block.target.id)}
+                {#each $profile.user.person_blocks as block (block.target.id)}
+
                     <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         <UserLink user={block.target} avatar badges />
-                        <Button size="square-md" on:click={() => action(block)}>
-                            <Icon src={Trash} mini size="16" slot="icon" />
-                        </Button>
+                        <Button size="square-md" loading={blocking} icon={Trash} iconSize={16} on:click={() => action(block)} />
                     </div>
                 {/each}
             </EditableList>
@@ -122,16 +95,13 @@
     
 
     <!---Community Blocks--->
-    
     <CollapseButton title="Communities" icon={UserGroup}  heading={true} innerClass="max-h-[50vh] overflow-y-auto">
-        {#if data.community_blocks.length > 0}
+        {#if $profile.user.community_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
-                {#each data.community_blocks as block (block.community.id)}
+                {#each $profile.user.community_blocks as block (block.community.id)}
                     <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         <CommunityLink community={block.community} avatar />
-                        <Button size="square-md" on:click={() => action(block)}>
-                            <Icon src={Trash} mini size="16" slot="icon" />
-                        </Button>
+                        <Button size="square-md" loading={blocking} icon={Trash} iconSize={16} on:click={() => action(block)} />
                     </div>
                 {/each}
             </EditableList>
@@ -144,11 +114,10 @@
 
 
     <!---Instance Blocks (Only show for 0.19+ instances)--->
-    {#if $site?.version.startsWith('0.19')}
     <CollapseButton title="Instances" icon={Server}  heading={true} innerClass="max-h-[50vh] overflow-y-auto">
-        {#if data.instance_blocks && data.instance_blocks?.length > 0}
+        {#if $profile.user.instance_blocks.length > 0}
             <EditableList let:action on:action={(i) => unblockInstance(i.detail)}>
-                {#each data.instance_blocks as block (block.instance.id)}
+                {#each $profile.user.instance_blocks as block (block.instance.id)}
                     
                     <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                         {#if block.site}
@@ -156,9 +125,7 @@
                         {:else}
                             {block.instance.domain}
                         {/if}
-                        <Button size="square-md" on:click={() => action(block)}>
-                            <Icon src={Trash} mini size="16" slot="icon" />
-                        </Button>
+                        <Button size="square-md" loading={blocking} icon={Trash} iconSize={16} on:click={() => action(block)} />
                     </div>
 
                 {/each}
@@ -167,7 +134,8 @@
             <Placeholder description="You have not blocked any instances yet." title="No instance blocks" icon={Check} />
         {/if}
     </CollapseButton>
-    {/if}
+    
+{/if}
 </MainContentArea>
 
 
