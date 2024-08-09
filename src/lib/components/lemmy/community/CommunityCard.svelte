@@ -52,6 +52,7 @@
         ShieldCheck,
         ShieldExclamation,
         Star,
+        Trash,
         UserGroup,
     } from 'svelte-hero-icons'
     
@@ -170,10 +171,16 @@
                     
                     <div class="flex flex-col gap-0 w-full">
                         <div class="flex flex-row">
-                            <h1 class="font-bold text-xl capitalize">
+                            <h1 class="flex flex-row gap-1 items-center font-bold text-xl capitalize">
                                 <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
                                     {community_view.community.title.replace('&amp;', '&')}
                                 </a>
+                                
+                                {#if community_view.community.deleted}
+                                    <span class="text-red-500">    
+                                        <Icon src={Trash} width={16} mini />
+                                    </span>
+                                {/if}
                             </h1>
 
                             <!---Community Action Menu --->
