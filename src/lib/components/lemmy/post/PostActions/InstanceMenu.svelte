@@ -8,6 +8,7 @@
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
+    import { refreshProfile } from '$lib/lemmy/user'
     import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -50,6 +51,7 @@
             instance_id: instance_id,
             block: true
         })
+        await refreshProfile()
         blockingInstance = false
         
         
