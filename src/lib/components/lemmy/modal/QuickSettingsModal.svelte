@@ -31,6 +31,7 @@
         Tag,
         Trophy,
         XCircle,
+        EyeSlash,
     } from "svelte-hero-icons"
 
     export let options: any
@@ -128,6 +129,9 @@
 
             <!---Enable Flairs--->
             <SettingToggle title="Enable Flairs" icon={Tag} bind:value={$userSettings.extractFlairsFromTitle} small={true} />
+
+            <!---Hide Posts from Users of Blocked Instances--->
+            <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} small={true}/>
         </div>
     </div>
 
