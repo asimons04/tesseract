@@ -65,6 +65,7 @@ interface Settings {
         newAccountMinAge: number
         MBFCLowCredibility: boolean
         minimizeBotComments: boolean
+        hideUsersFromBlockedInstances: boolean
     }
     notifications: {
         enabled: boolean
@@ -202,6 +203,7 @@ export const defaultSettings: Settings = {
         newAccounts:                                                    false,
         newAccountMinAge:                                               5,
         minimizeBotComments:                                            false,
+        hideUsersFromBlockedInstances:                                  false,
 
     },
    

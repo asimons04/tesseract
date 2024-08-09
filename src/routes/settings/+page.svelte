@@ -728,6 +728,14 @@
             description="When enabled, comments from accounts marked as bots will start off collapsed in the comment tree."
         />
 
+        <!---Hide Posts from Users of Blocked Instances--->
+        <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances}
+            description="When enabled, posts and comments from users of an instance you have blocked will be hidden. Server-side, when you block an
+                instance, only communities there are blocked. Users from there can still post to other communities, and you will
+                still see them in the comments.  This will hide them from view, though they will still count toward
+                comment counts."
+        />
+
         
         <SettingMultiSelect title="New Account Age" icon={CalendarDays} 
             description="Set the number of days an account is considered 'new'. This also controls the behavior of the new account badge."
