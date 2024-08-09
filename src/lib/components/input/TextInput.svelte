@@ -34,6 +34,13 @@
     `
     
     let element: HTMLInputElement;
+
+    const onKeyDown = (e:CustomEvent) => dispatcher('keydown', e)
+    const onKeyUp   = (e:CustomEvent) => dispatcher('keyup', e)
+    const onInput   = (e:CustomEvent) => dispatcher('input', e)
+    const onChange  = (e:CustomEvent) => dispatcher('change', e)
+    const onPaste   = (e:CustomEvent) => dispatcher('paste', e)
+
 </script>
 
 <label class="flex flex-col items-center {$$props.class}">
@@ -51,11 +58,11 @@
             use:typeAction
             bind:value
             bind:this={element}
-            on:keydown={(e) => dispatcher('keydown', e)}
-            on:keyup={(e) => dispatcher('keyup', e)}
-            on:input={(e) => dispatcher('input', e)}
-            on:change={(e) => dispatcher('change', e)}
-            on:paste={(e) => dispatcher('paste', e)}
+            on:keydown={onKeyDown}
+            on:keyup={onKeyUp}
+            on:input={onInput}
+            on:change={onChange}
+            on:paste={onPaste}
             on:focus
             {...$$restProps}
             class={className}
