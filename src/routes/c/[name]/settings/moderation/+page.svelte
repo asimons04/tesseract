@@ -204,17 +204,9 @@
             
             {#if data.modlog?.modlog?.length > 0}
                 {#each data.modlog.modlog as modlogItem}
-                    {#if 
-                        [
-                            'postRemoval', 'postRestore', 'postLock', 'postUnlock', 'commentRemoval', 'commentRestore', 
-                            'ban', 'unban' ,'banCommunity', 'unbanCommunity'
-                        ].includes(modlogItem.actionName)
-                    }
-                        <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
-                            <ModlogItemList bind:item={modlogItem} hideCommunity={true} />
-                        </div>
-                    {/if}
-
+                    <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
+                        <ModlogItemList bind:item={modlogItem} hideCommunity={true} />
+                    </div>
                 {/each}
                 
                 <!---Spacer for bottommost action menu--->
