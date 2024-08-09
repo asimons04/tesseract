@@ -125,6 +125,7 @@
 </script>
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width="max-w-xl"
+    capitalizeTitle={true}
     title={
         shortenCommunityName(communityDetails?.community_view?.community?.title, 45) ?? 
         communityDetails?.community_view?.community?.name ?? 
