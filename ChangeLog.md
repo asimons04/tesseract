@@ -13,6 +13,27 @@ All major/minor changes between releases will be documented here.
 - [76e64610] Fix bug when closing image upload modal via "X" button, current image and alt text not reset.
 - [904d21fe] Only collapse bot comments (if enabled) on `/post` pages rather than everywhere.
 - [91598f6c] Add step to Dockerfile to clear npm cache after installing runtime deps (image size ballooned up by 200 MB after `file-type` updated and required `strtok3` as a runtime dependency).
+- [f3451a14] Enhancement/Change:  Removed `capitalize` class from modal title element. 
+
+### Changes
+- [c2cc4b70] Re-wrote User->Blocks page to better keep blocks in sync with UI state for reactivity purposes
+- [774192b8] [ad197935] Hide users from blocked instances.  
+
+### New Features
+#### Instance Blocking is More Powerful
+a.k.a  Instance blocking works like it should at the API level.
+
+When you block an instance in Lemmy, what you're really doing is basically blocking all communities on that instance.  You will still see posts to communities on other instances from users of the blocked one, and you will also still see them in the comments.
+
+There's a new option (disabled by default) under `Settings -> Filtering -> Hide Users From Blocked Instances` that will let you hide any content by users from a blocked instance. 
+
+Like the "Hide Posts/Comments From New Accounts" filtering option, there are some different behaviors / safety mechanisms for mods/admins:
+
+Even with the option enabled, content will still be shown under the following conditions:
+
+- You are a moderator of a community and the post/comment is to that community
+- You are a local administator, and the post/comment is to a community local to your instance
+
 
 
 
