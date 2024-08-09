@@ -37,7 +37,7 @@ export function findUserCommunityLinks(source: string) {
     // The 'photonify' processor in the Links renderer will handle other formats and further process these
 
     // Find @user@instance.xyz and turn into localized links
-    const userRE = /(?<!\w)@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
+    const userRE = /(?<!\w|\/)@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/gi
     let users = source.matchAll(userRE)
     for (let user of users) {
         if (user.groups?.username && user.groups?.instance) {
@@ -63,7 +63,7 @@ export function findUserCommunityLinks(source: string) {
 const regexes = {
     post: /^https:\/\/([a-zA-Z0-9\.\-]+)\/post\/(\d+)$/,
     comment: /^https:\/\/([a-zA-Z0-9\.\-]+)\/comment\/(\d+)$/,
-    user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/(.*)$/,
+    user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/(?!@)(.*)$/,
     community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/(.*)$/
 }
 
