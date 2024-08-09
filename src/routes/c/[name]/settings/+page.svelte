@@ -13,13 +13,18 @@
     import SettingButton from '$lib/components/ui/settings/SettingButton.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
 
-    import { Trash } from 'svelte-hero-icons'
+    import { CursorArrowRays, Eye, EyeSlash, Trash } from 'svelte-hero-icons'
 
     export let data
+
+    let removing = false
+    let transferring = false
+    let hiding = false
 
     async function takeOverCommunity() {
         if (!$profile?.user || !isAdmin($profile.user)) return
 
+        transferring = true
         // Add yourself as a mod to the community (ignore error and let fall through to next try block
         try {
             await getClient().addModToCommunity({
@@ -45,6 +50,58 @@
                 content: err as any
             })
         }
+        finally {
+            transferring=false
+        }
+    }
+
+    async function removeCommunity() {
+        if (!$profile?.jwt) return
+        
+        removing = true
+        
+        const removed = data.community.community_view.community.removed
+        
+        try {
+            await getClient().removeCommunity({
+                community_id: data.community.community_view.community.id,
+                removed: !removed,
+            })
+            data.community.community_view.community.removed = !removed
+        } 
+        catch (error) {
+            toast({ 
+                title: 'Error',
+                content: error as any, 
+                type: 'error' 
+            })
+        }
+        removing = false
+    }
+
+
+    async function hideCommunity() {
+        if (!$profile?.jwt) return
+        hiding = true
+        
+        const hidden = data.community.community_view.community.hidden;
+        try {
+            await getClient().hideCommunity({
+                community_id: data.community.community_view.community.id, 
+                hidden: !hidden
+            }) 
+            
+            data.community.community_view.community.hidden = !hidden
+
+        } catch (error) {
+            toast({
+                content: `Error hiding community: ${error as any}`, 
+                type: 'error',
+                title: 'Error'
+
+            })
+        }
+        hiding = false;
     }
 </script>
 
@@ -86,18 +143,51 @@
                 />
             {/if}
 
+            <!---Community Actions for Admins--->
             {#if isAdmin($profile?.user)}
-                <SettingButton icon={Trash} 
+                
+                <!---Takeover Community--->
+                <SettingButton 
+                    icon={CursorArrowRays} 
                     color="primary"
                     title="Takeover Community" 
                     description="Set your account as the top mod for this community. This will allow you to delete/restore it. To set a new top mod, use the 
                         'Team' panel."
+                    loading={transferring}
                     disabled={isTopMod($profile?.user, data.community)}
                     on:click={ async() => {
                         await takeOverCommunity()                        
                         goto($page.url, {invalidateAll: true})
                     }}
                 />
+
+                <!---Hide Community--->
+                <SettingButton 
+                    icon={data.community.community_view.community.hidden ? Eye : EyeSlash} 
+                    color="primary"
+                    title="{data.community.community_view.community.hidden ? 'Unhide' : 'Hide'} Community" 
+                    description="{data.community.community_view.community.hidden ? 'Unhide' : 'Hide'} this community from showing up to non-admin users."
+                    loading={hiding}
+                    on:click={ async() => {
+                        await hideCommunity()                        
+                        goto($page.url, {invalidateAll: true})
+                    }}
+                />
+
+                <!---Remove Community--->
+                <SettingButton 
+                    icon={Trash} 
+                    color="{data.community.community_view.community.removed ? 'success' : 'danger'}"
+                    title="{data.community.community_view.community.removed ? 'Restore' : 'Remove'} Community" 
+                    description="{data.community.community_view.community.removed ? 'Restore' : 'Remove'} this community."
+                    loading={removing}
+                    on:click={ async() => {
+                        await removeCommunity()                        
+                        goto($page.url, {invalidateAll: true})
+                    }}
+                />
+
+
             {/if}
         </SettingToggleContainer>
     
