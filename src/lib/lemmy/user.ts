@@ -1,4 +1,4 @@
-import type { Community, MyUserInfo, PersonBlockView, PersonView } from 'lemmy-js-client'
+import type { Community, InstanceBlockView, MyUserInfo, PersonBlockView, PersonView } from 'lemmy-js-client'
 import type { PersonData } from '$lib/auth'
 
 import { get } from 'svelte/store'
@@ -9,7 +9,16 @@ import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { trycatch } from '$lib/util.js'
 
 
-export const isBlocked = (me: PersonData, user: number) => me.person_blocks.map((b:PersonBlockView) => b.target.id).includes(user)
+export const isBlocked = function (me: PersonData|undefined, user: number) {
+    if (!me) return false
+    return me.person_blocks.map((b:PersonBlockView) => b.target.id).includes(user)
+}
+
+export const userIsInstanceBlocked = function (me: PersonData|undefined, instanceID: number) {
+    if (!me) return false
+    return me.instance_blocks.map((b:InstanceBlockView) => b.instance.id).includes(instanceID)
+}
+
 
 export const addSubscription = async (community: Community, subscribe: boolean = true) => {
     const p = get(profile)
@@ -100,7 +109,8 @@ export const blockUser = async function (personID: number, confirm:boolean=false
 
 export const refreshProfile = async function() {
     let userProfile = get(profile)
-    if (!userProfile?.user || !userProfile?.jwt) throw new Error('Unauthenticated')
+    if (!userProfile?.user || !userProfile?.jwt) return 
+    //throw new Error('Unauthenticated')
 
     // Update local cache of person blocks
     const getSiteResponse = await getClient().getSite()

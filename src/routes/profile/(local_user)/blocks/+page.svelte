@@ -25,6 +25,8 @@
     } from 'svelte-hero-icons'
 
     let blocking = false
+    
+    refreshProfile()
 
     async function unblockUser(item: PersonBlockView) {
         if (!$profile?.jwt) return
