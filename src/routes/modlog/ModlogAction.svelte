@@ -145,6 +145,30 @@
                     text: 'Purge',
                 }
             }
+
+            case 'removeCommunity': {
+                return {
+                    icon: Trash,
+                    class: 'text-red-600 dark:text-red-400',
+                    text: 'Remove Community'
+                }
+            }
+
+            case 'restoreCommunity': {
+                return {
+                    icon: Trash,
+                    class: 'text-green-600 dark:text-green-400',
+                    text: 'Restore Community'
+                }
+            }
+
+            case 'transferCommunity': {
+                return {
+                    icon: UserPlus,
+                    class: 'text-green-600 dark:text-green-400',
+                    text: 'Transfer Community'
+                }
+            }
         }
 
         return {

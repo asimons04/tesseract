@@ -240,10 +240,11 @@
                 {/if}
 
                 
+                {#if item.reason}
                 <span class="flex flex-nowrap gap-1 items-start">
-                    <!--<strong>Reason:</strong> -->
-                    <Markdown noPreview={true} source={item.reason ?? '*No reason supplied*'} />
+                    <Markdown noPreview={true} source={item.reason} />
                 </span>
+                {/if}
                 
 
                 {#if item.link || item.content}
