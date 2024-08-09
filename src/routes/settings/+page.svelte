@@ -636,7 +636,7 @@
         />
         
         <!---Custom Invidious Instance Editor--->
-        <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedInvidious}  icon={Server} showPlaceholder={false}
+        <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedInvidious}  icon={Server} showPlaceholder={false} reverseLayout
             textInputPlaceholder="inv.example.com"
             title="Define Custom Invidious Instances"
             description="Specify here any custom Invidious intances you wish to use.  These will be used for both detection of Invidious links in posts
@@ -654,7 +654,7 @@
         />
         
         <!---Custom Piped Instance Editor--->
-        <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedPiped} icon={Server} showPlaceholder={false}
+        <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedPiped} icon={Server} showPlaceholder={false} reverseLayout
             textInputPlaceholder="piped.example.com"
             title="Define Custom Piped Instances"
             description="Specify here any custom Piped intances you wish to use.  These will be used for both detection of Piped links in posts
