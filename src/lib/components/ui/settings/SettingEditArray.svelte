@@ -27,7 +27,8 @@
     export let placeholderText:string = ''                  // Text to show in the empty placeholder
     export let placeholderIcon:IconSource = ArchiveBoxXMark // Icon to use for the empty placeholder
     export let placeholderTitle:string = 'No Items'         // Title for the empty placeholder
-    
+    export let reverseLayout: boolean = false               // Put the list on the left and the input on the right
+
     let input_text:string
     let filter_input_text:string
 
@@ -98,7 +99,7 @@
 
         <slot />
 
-        <div class="flex flex-row flex-wrap lg:flex-nowrap gap-4 w-full mt-4">
+        <div class="flex {reverseLayout ? 'flex-row-reverse' : 'flex-row'} flex-row flex-wrap lg:flex-nowrap gap-4 w-full mt-4">
                                             
             <div class="flex flex-col w-full gap-2 lg:w-1/2">
                 <form class="flex flex-row gap-2 mt-2 w-full" on:submit|preventDefault={() => {
