@@ -68,15 +68,8 @@
         !{community.name}@{new URL(community.actor_id).hostname}
     </Badge>
 
-<!---Turn hashtags into local search tags--->
-{:else if token.href.startsWith('/search?q=%23')}
-    <Badge color="yellow" rightJustify={false} inline={true} on:click={() => {
-        goto(token.href)
-    }}>
-        {token.text}
-    </Badge>
 
-<!--Turn pre-linked hashtags into badges but keep the original link--->
+<!--Turn hashtags into badges but keep the original link--->
 {:else if hashtagRE.test(token.text)}
     <Badge color="yellow" rightJustify={false} inline={true} on:click={() => {
         $userSettings.openInNewTab.links
