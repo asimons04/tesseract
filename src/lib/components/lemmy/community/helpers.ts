@@ -151,3 +151,32 @@ export function shortenCommunityName(name:string, maxLength=25) {
         ? shortened.substring(0, maxLength) + '...'
         : shortened.substring(0, maxLength)
 }
+
+export async function deleteCommunity(community_id: number, deleted: boolean) {
+    const userProfile = get(profile)
+    if (!userProfile?.jwt) return !deleted
+
+    try {
+        await getClient().deleteCommunity({
+            community_id: community_id,
+            deleted: deleted
+        })
+
+        toast({
+            type: 'success',
+            title: deleted ? 'Deleted' : 'Restored',
+            content: `Successfully ${deleted ? 'deleted' : 'restored'} the community`
+        })
+
+        return deleted
+
+    }
+    catch (err) {
+        toast({
+            type: 'error',
+            title: 'Error',
+            content: `Unable to ${deleted ? 'delete' : 'restore'} the community: ${err}`
+        })
+        return !deleted
+    }
+}

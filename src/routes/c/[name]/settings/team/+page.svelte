@@ -5,6 +5,7 @@
     import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
+    import { refreshProfile } from '$lib/lemmy/user.js';
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -15,6 +16,7 @@
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     
     import { Icon, Plus, ShieldCheck, Trash } from 'svelte-hero-icons'
+    
     
     
     export let data: PageData
@@ -50,6 +52,10 @@
                     community_id: data.community.community_view.community.id,
                 })
 
+                // If you add yourself (e.g. if you're an admin), refresh you profile to reflect that
+                if ($profile.user?.local_user_view.person.id == res.person.person.id) {
+                    await refreshProfile()
+                }
                 data.community.moderators = addModRes.moderators
 
                 toast({
@@ -91,6 +97,10 @@
 
             data.community.moderators = res.moderators
 
+            // If you add yourself (e.g. if you're an admin), refresh you profile to reflect that
+            if ($profile.user?.local_user_view.person.id == id) {
+                await refreshProfile()
+            }
             toast({
                 content: 'Successfully updated community moderators.',
                 type: 'success',
@@ -117,10 +127,13 @@
 
             data.community.moderators = res.moderators
         }
-        catch {
-
+        catch (err) {
+            toast({
+                type: 'error',
+                title: 'Error',
+                content: err as any
+            })
         }
-
     }
 </script>
 

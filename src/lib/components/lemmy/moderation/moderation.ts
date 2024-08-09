@@ -1,5 +1,5 @@
 import type { SubmissionView } from '$lib/lemmy/contentview.js'
-import type { Community, MyUserInfo, Person, GetPersonDetailsResponse } from 'lemmy-js-client'
+import type { Community, MyUserInfo, Person, GetCommunityResponse } from 'lemmy-js-client'
 import { 
     sortOptions as defaultSortOptions, 
     sortOptionNames as defaultSortOptionNames
@@ -280,6 +280,12 @@ export function isAdmin (me?: MyUserInfo):boolean {
     if (!me) return false
     return me.local_user_view.local_user.admin
 }
+
+export function isTopMod(me: MyUserInfo|undefined, community: GetCommunityResponse): boolean {
+    if (!me) return false
+    return me.local_user_view.person.id == community.moderators[0].moderator.id
+}
+
 
 export const removalTemplate = (
     input: string,
