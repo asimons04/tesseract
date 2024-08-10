@@ -9,28 +9,19 @@ Test case:  !leopardsatemyface@moist.catsweat.com
 
 ### Bugfixes/Enhancements
 - [c8e541bd] Make `capitalize` class toggleable on modal titles; capitalize community names when rendering community profile modal
-
 - [8c78432a] Added missing modlog actions:
     - Transfer Community
     - Remove / restore community
-
 - [8c78432a] Remove 'reason' placeholder in modlog details and make reason a conditional display element
-
 - [f13796e8] Tweak `@user@instance` regex pre-processor to ignore patterns that are part of a URL (e.g. Mbin's stupid /u/@username actor id format)
-
 - [5a99e6d0] Add support for accented characters in hashtags
-
 - [e1ea16a3] Reimplement event handlers/forwarders in TextInput component so typescript doesn't bitch and moan
-
 - [d8b67208] Removed redundant hashtag badge-ifier step in markdown link renderer
-
 - [94b7080b] Tweak hashtag regex yet again
-
 - [b2bace2b] Remove unsed imports, including old Fediseer components, from PostMeta compoennt
-
 - [3a6b348b] Reimplemented access control logic to community settings and admin panel
+- [31d204e6] Fix reversed conditional on ban/unban result toast message.
 
-### Notable Changes
 #### Community Management
 - [cbb5fae1] Update community mod team management:
     - Indicate community owner / top mod with green badge
