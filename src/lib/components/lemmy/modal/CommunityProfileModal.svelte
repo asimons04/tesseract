@@ -145,7 +145,7 @@
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && communityDetails?.community_view.community.banner) ? imageProxyURL(communityDetails?.community_view.community.banner, undefined, 'webp') : ''} >
             <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
                 <div class="flex-shrink-0">
-                    <Avatar width={128} fullRes ring url={communityDetails.community_view.community.icon} alt={communityDetails.community_view.community.actor_id}  />
+                    <Avatar width={128} fullRes ring url={communityDetails.community_view.community.icon} alt={communityDetails.community_view.community.name} community />
                 </div>
 
                 <div class="flex flex-col gap-1 w-full overflow-hidden">
