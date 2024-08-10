@@ -3,6 +3,10 @@ All major/minor changes between releases will be documented here.
 
 ## 1.4.10
 
+## To do
+- Community profile modal showing avatar instead of initials
+Test case:  !leopardsatemyface@moist.catsweat.com
+
 ### Bugfixes/Enhancements
 - [c8e541bd] Make `capitalize` class toggleable on modal titles; capitalize community names when rendering community profile modal
 
@@ -23,6 +27,8 @@ All major/minor changes between releases will be documented here.
 - [94b7080b] Tweak hashtag regex yet again
 
 - [b2bace2b] Remove unsed imports, including old Fediseer components, from PostMeta compoennt
+
+- [3a6b348b] Reimplemented access control logic to community settings and admin panel
 
 ### Notable Changes
 #### Community Management
