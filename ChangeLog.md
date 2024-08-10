@@ -21,6 +21,7 @@ Test case:  !leopardsatemyface@moist.catsweat.com
 - [b2bace2b] Remove unsed imports, including old Fediseer components, from PostMeta compoennt
 - [3a6b348b] Reimplemented access control logic to community settings and admin panel
 - [31d204e6] Fix reversed conditional on ban/unban result toast message.
+- [b5bbede3] Fix community profile avatar to use initials rather than adventurer icons as placeholders
 
 #### Community Management
 - [cbb5fae1] Update community mod team management:
