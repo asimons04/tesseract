@@ -87,7 +87,7 @@
 
             
             toast({
-                content: `Successfully ${ banned ? 'unbanned' : 'banned'}  that user.`,
+                content: `Successfully ${ banned ? 'banned' : 'unbanned'}  that user.`,
                 type: 'success',
                 title: 'Success'
             })
