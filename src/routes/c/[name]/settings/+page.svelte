@@ -135,7 +135,10 @@
                     icon={Trash} 
                     color={data.community.community_view.community.deleted ? 'success' : 'danger'}
                     title="{data.community.community_view.community.deleted ? 'Restore' : 'Delete'} Community" 
-                    description="{data.community.community_view.community.deleted ? 'Restore' : 'Delete'} Community"
+                    description="{data.community.community_view.community.deleted ? 'Restore' : 'Delete'} Community. 
+                        {!isTopMod($profile?.user, data.community) ? `Note: Only the top mod can delete/undelete the community. Admins will need to takeover the community
+                            before they can use this option.` : ''}
+                    "
                     disabled={!isTopMod($profile?.user, data.community)}
                     on:click={ async() => {
                         data.community.community_view.community.deleted = await deleteCommunity(data.community.community_view.community.id, !data.community.community_view.community.deleted)
