@@ -717,6 +717,12 @@
             condition={$userSettings.uiState.MBFCBadges}
         />
 
+        <SettingMultiSelect title="New Account Age" icon={CalendarDays} 
+            description="Set the number of days an account is considered 'new'. This also controls the behavior of the new account badge."
+            options={[1, 2, 3, 5, 7, 10, 14, 30]}
+            bind:selected={$userSettings.hidePosts.newAccountMinAge}
+        />
+
         <!---Hide Posts From New Accounts--->
         <SettingToggle title="Hide Posts/Comments From New Accounts" icon={Cake} bind:value={$userSettings.hidePosts.newAccounts}
             description="Hide posts and comments from accounts that are considered new. You can set the minimum age for new accounts below.  Note that
@@ -737,11 +743,7 @@
         />
 
         
-        <SettingMultiSelect title="New Account Age" icon={CalendarDays} 
-            description="Set the number of days an account is considered 'new'. This also controls the behavior of the new account badge."
-            options={[1, 2, 3, 5, 7, 10, 14, 30]}
-            bind:selected={$userSettings.hidePosts.newAccountMinAge}
-        />
+        
         
         <SettingToggle title="Hide Deleted Posts" icon={Trash} bind:value={$userSettings.hidePosts.deleted}
             description="Hide posts that have been deleted"
