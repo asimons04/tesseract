@@ -202,7 +202,7 @@
             <!--- Post Title In Center (Cannot be used if using center slot for something)--->
             {#if post && postTitle}
                 <span class="hidden md:block text-lg font-bold text-slate-600 dark:text-zinc-400 whitespace-nowrap text-ellipsis overflow-hidden">
-                    <Markdown source={getPostTitleWithoutFlairs(post.post.name)} noUserCommunityLink noLink />
+                    <Markdown source={getPostTitleWithoutFlairs(post.post.name)} noUserCommunityLink noLink noHashtags/>
                 </span>
             {/if}
 
