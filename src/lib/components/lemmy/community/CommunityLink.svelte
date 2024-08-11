@@ -47,7 +47,7 @@
 
             {useDisplayNames ?? $userSettings.displayNames 
                 ? shortenCommunityName(community.title, 30)
-                : `/c/${community.name}`
+                : `c/${community.name}`
             }
 
             {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
