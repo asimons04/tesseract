@@ -168,12 +168,16 @@
         class="{$$props.class} opacity-0 transition-opacity duration-150 
             {zoomable ? 'cursor-zoom-in' : ''}
         "
+        referrerpolicy="no-referrer"
         class:opacity-100={loaded}
         class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
         alt={altText}
         title={title}
         on:load={() => (loaded = true)}
-        on:click={(e) => {
+        on:click={(
+            //@ts-ignore
+            e
+        ) => {
             if (zoomable) {
                 e.preventDefault()
                 e.stopPropagation()
