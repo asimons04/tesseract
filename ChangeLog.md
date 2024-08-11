@@ -7,7 +7,13 @@ All major/minor changes between releases will be documented here.
 - [e407e126] Don't close comment edit modal if clicking outside of it
 - [42042b86] Fix `code` and `codespan` renderers so they don't make the inner text transparent when truncated with the fade effect
 - [feb8a195] Add `referrerPolicy=no-referrer` to zoomable image element; should help with some sites blocking cross-origin images fetches.
+- [721b5c2d] Don't badge-ify hashtags in subnavbar post title
 
+### Enhancements
+- [3f905240] Quick settings are now in a column layout on desktop (reflows to rows on mobile).
+
+
+---
 
 ## 1.4.10
 
