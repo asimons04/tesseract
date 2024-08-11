@@ -94,7 +94,7 @@
 
 
 {#if editing}
-    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} width="max-w-4xl">
+    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} width="max-w-4xl" preventCloseOnClickOut>
         <MarkdownEditor rows={7} bind:value={newComment} bind:imageUploads previewButton={true}>
             
             <Button color="primary" slot="actions" on:click={async () => {
