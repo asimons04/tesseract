@@ -1,6 +1,13 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.11
+### Bugfixes
+- [1751d2e6] Don't fire swipe event if insde a text area or if selecting
+- [e407e126] Don't close comment edit modal if clicking outside of it
+- [42042b86] Fix `code` and `codespan` renderers so they don't make the inner text transparent when truncated with the fade effect
+
+
 ## 1.4.10
 
 ### Bugfixes/Enhancements
