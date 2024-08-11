@@ -1,6 +1,12 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.12
+
+
+---
+
+
 ## 1.4.11
 ### Bugfixes
 - [1751d2e6] Don't fire swipe event if insde a text area or if selecting
