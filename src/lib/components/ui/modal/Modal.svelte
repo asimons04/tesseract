@@ -157,6 +157,8 @@
                             <slot />
                         {/if}
 
+                        <div class="mt-4" />
+                        
                         <div class="flex flex-col w-full mt-auto">
                             <slot name="buttons" />
                         </div>
