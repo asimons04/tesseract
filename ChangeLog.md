@@ -6,6 +6,7 @@ All major/minor changes between releases will be documented here.
 - [1751d2e6] Don't fire swipe event if insde a text area or if selecting
 - [e407e126] Don't close comment edit modal if clicking outside of it
 - [42042b86] Fix `code` and `codespan` renderers so they don't make the inner text transparent when truncated with the fade effect
+- [feb8a195] Add `referrerPolicy=no-referrer` to zoomable image element; should help with some sites blocking cross-origin images fetches.
 
 
 ## 1.4.10
