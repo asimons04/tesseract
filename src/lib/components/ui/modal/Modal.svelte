@@ -42,10 +42,22 @@
         }
     }
 
+    function isSelecting() {
+        return window.getSelection && window.getSelection()?.type === 'Range'
+    }
+
     const dispatcher = createEventDispatcher()
 
     function onSwipe(e:SvelteGestureSwipeEvent) {
-        if (e.detail.direction && ['left', 'right'].includes(e.detail.direction)) open = false
+        if  (
+                e.detail.direction && ['left', 'right'].includes(e.detail.direction) &&
+                //@ts-ignore
+                e.detail.target.type! != 'textarea' && 
+                !isSelecting()
+            ) {
+            dispatcher('close')
+            open = false
+        }
     }
 </script>
 
@@ -132,7 +144,10 @@
                     </div>
                     
                     <div class="flex flex-col overflow-y-auto w-full h-full"
-                        use:swipe={{touchAction: 'pan-y'}}  on:swipe={onSwipe}
+                        use:swipe={{
+                            touchAction: 'pan-y',
+                            minSwipeDistance: 120
+                        }}  on:swipe={onSwipe}
                     >
                         {#if card}
                             <Card class="flex flex-col p-4">
@@ -142,7 +157,7 @@
                             <slot />
                         {/if}
 
-                        <div class="flex flex-col w-full mt-4">
+                        <div class="flex flex-col w-full mt-auto">
                             <slot name="buttons" />
                         </div>
                     </div>
