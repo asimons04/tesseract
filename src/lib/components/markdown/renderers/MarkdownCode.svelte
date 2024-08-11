@@ -21,4 +21,4 @@
     }
 </script>
   
-<pre><code class="language-{token.lang}">{@html rendered}</code></pre>
+<pre><code class="text-black dark:text-white language-{token.lang}">{@html rendered}</code></pre>

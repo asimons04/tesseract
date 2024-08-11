@@ -16,6 +16,7 @@
     import { marked } from 'marked';
     
     import MarkdownCode from './renderers/MarkdownCode.svelte'
+    import MarkdownCodeSpan from './renderers/MarkdownCodeSpan.svelte';
     import MarkdownImage from './renderers/MarkdownImage.svelte'
     import MarkdownLink from './renderers/MarkdownLink.svelte';
     import MarkdownSpoiler from './renderers/MarkdownSpoiler.svelte';
@@ -86,6 +87,7 @@
             }}
             renderers={{
                 code: MarkdownCode,
+                codespan: MarkdownCodeSpan,
                 image: MarkdownImage,
                 link: MarkdownLink,
                 spoiler: MarkdownSpoiler,
