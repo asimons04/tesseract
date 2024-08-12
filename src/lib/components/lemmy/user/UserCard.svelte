@@ -1,9 +1,9 @@
 <script lang="ts">
     import type { CommunityModeratorView, LocalUserView, PersonView } from 'lemmy-js-client'
+    import type { BanUserEvent } from '$lib/ui/events';
 
-    import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { isBlocked, blockUser } from '$lib/lemmy/user.js'
-    import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import {imageProxyURL} from '$lib/image-proxy'
     import { page } from '$app/stores'
@@ -12,7 +12,6 @@
     import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import BanInstanceModal from '../moderation/BanInstanceModal.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
@@ -45,6 +44,7 @@
     
     
     
+    
     export let person: PersonView | LocalUserView
     export let moderates: CommunityModeratorView[]
     export let display = true
@@ -54,9 +54,17 @@
     
     let blocking = false
     let messaging = false
-    let banning = false
+
+    function handleBanUser(e:BanUserEvent) {
+        if (e.detail.person_id == person.person.id) {
+            person.person.banned = e.detail.banned
+            person  = person
+        }
+    }
 
 </script>
+
+<svelte:window on:banUser={handleBanUser} />
 
 {#if display}
     
@@ -64,11 +72,6 @@
     {#if $profile?.user}
         <UserSendMessageModal bind:open={messaging} bind:person={person} />
     {/if}
-
-    {#if banning}
-        <BanInstanceModal bind:open={banning} bind:user={person.person} bind:banned={person.person.banned}/>
-    {/if}
-
 
     <StickyCard class="{$$props.class}">
         <Card backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, undefined, 'webp') : ''}>
@@ -185,7 +188,7 @@
                                         {#if person.person.id != $profile.user.local_user_view.person.id}
                                             <MenuButton
                                                 color="dangerSecondary"
-                                                on:click={() => banning = true }
+                                                on:click={() => ban(person.person.banned, person.person) }
                                             >
                                                 <Icon slot="icon" mini size="16" src={ShieldExclamation} />
                                                 {person.person.banned ? 'Unban' : 'Ban'}
