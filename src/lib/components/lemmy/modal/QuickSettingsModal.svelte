@@ -87,7 +87,7 @@
                 <SettingToggle title="Show Compact Posts" icon={$userSettings.showCompactPosts ? QueueList : Photo}  small={true}
                     bind:value={$userSettings.showCompactPosts} 
                     on:change={async (e) => {
-                        $userSettings.uiState.feedMargins = !e.detail
+                        //$userSettings.uiState.feedMargins = !e.detail
                         await scrollToLastSeenPost()
                     }}
                 />
