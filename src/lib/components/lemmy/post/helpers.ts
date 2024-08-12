@@ -1,3 +1,4 @@
+import type { Alignment } from '$lib/components/ui/menu/menu.js'
 import type { 
     CommentView, 
     Community,
@@ -720,7 +721,7 @@ export const sortPosts = function(posts:PostView[], direction:SortType): PostVie
 
     if (direction == 'New')          posts.sort((a, b) => Date.parse(b.post.published) - Date.parse(a.post.published))
     if (direction == 'Old')          posts.sort((a, b) => Date.parse(a.post.published) - Date.parse(b.post.published))
-    //if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
+    if (direction == 'NewComments')  posts.sort((a, b) => Date.parse(b.counts.newest_comment_time) - Date.parse(a.counts.newest_comment_time))
     //if (direction == 'Active')       posts.sort((a, b) => b.counts.hot_rank_active - a.counts.hot_rank_active)
     //if (direction == 'Hot')          posts.sort((a, b) => b.counts.hot_rank - a.counts.hot_rank)
     if (direction == 'MostComments') posts.sort((a, b) => b.counts.comments - a.counts.comments)
@@ -914,3 +915,4 @@ export function createFakePostView(): LemmyPostView {
         unread_comments: 0
     }
 }
+
