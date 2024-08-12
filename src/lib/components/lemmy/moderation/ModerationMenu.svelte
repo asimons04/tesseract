@@ -1,10 +1,11 @@
 <script lang="ts">
     
-    import type { Alignment } from '$lib/components/ui/menu/menu.js'
+    
     import type { ButtonColor } from '$lib/ui/colors.js'
     import type { CommentView, PostView } from 'lemmy-js-client'
     
-    import { amMod, isAdmin, remove, voteViewerModal } from './moderation'
+    import { type Alignment, getMenuAlignment } from '$lib/components/ui/menu/menu.js'
+    import { amMod, ban, isAdmin, remove, voteViewerModal } from './moderation'
     import { getClient } from '$lib/lemmy'
     import { isPostView } from '$lib/lemmy/item.js'
     import { profile } from '$lib/auth.js'
@@ -12,11 +13,8 @@
     import { userSettings } from '$lib/settings'
     
     import Menu from '$lib/components/ui/menu/Menu.svelte'
-    import BanCommunityModal from '$lib/components/lemmy/moderation/BanCommunityModal.svelte'
-    import BanInstanceModal from '$lib/components/lemmy/moderation/BanInstanceModal.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import RemoveModal from '$lib/components/lemmy/moderation/RemoveModal.svelte'
 
     import {
         Fire,
@@ -34,18 +32,17 @@
 
     export let item: PostView | CommentView
     export let color:ButtonColor = "tertiary-border"
-    export let alignment:Alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
     export let menuIconSize:number = 16
+    export let expandCompact: boolean
+
+    let alignment: Alignment = getMenuAlignment(expandCompact)
 
     let locking = false
     let pinning = false
-    let removing = false
-    let purging = false
-    let banningInstance = false
-    let banningCommunity = false
-
-    $: acting = locking || pinning || removing || purging || banningInstance || banningCommunity
-    $: alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
+    
+    $: acting = locking || pinning 
+    $: $userSettings.showCompactPosts, alignment = getMenuAlignment(expandCompact)
+    $: $userSettings.uiState.reverseActionBar, alignment = getMenuAlignment(expandCompact)
     
     async function lock(lock: boolean) {
         if (!$profile?.jwt || !isPostView(item)) return
@@ -100,11 +97,6 @@
     }
 </script>
 
-<RemoveModal bind:open={removing} bind:item bind:purge={purging} reason='' />
-
-<BanInstanceModal bind:open={banningInstance} bind:banned={item.creator.banned} bind:user={item.creator} />
-
-<BanCommunityModal bind:open={banningCommunity} bind:banned={item.creator_banned_from_community} bind:user={item.creator} bind:community={item.community}/>
 
 <Menu bind:alignment>
     <Button
@@ -207,14 +199,14 @@
         </MenuButton>
 
         <!--- Mod/Admin Restore/Remove Post --->
-        <MenuButton color="dangerSecondary" on:click={() => { removing = true }}>
+        <MenuButton color="dangerSecondary" on:click={() => remove(item, false) }>
             <Icon src={Trash} size="16" mini />
             {item.post.removed ? 'Restore Post' : 'Remove Post'}
         </MenuButton>
     
         <!---Hide ban from community option for own posts--->
         {#if $profile?.user && $profile.user.local_user_view.person.id != item.creator.id}
-            <MenuButton color="{item.creator_banned_from_community ? 'success' : 'dangerSecondary'}" on:click={() => banningCommunity = true} >
+            <MenuButton color="{item.creator_banned_from_community ? 'success' : 'dangerSecondary'}" on:click={() => ban(item.creator_banned_from_community, item.creator, item.community)} >
                 <Icon src={ShieldExclamation} size="16" mini />
                 {
                     item.creator_banned_from_community
@@ -234,7 +226,7 @@
 
             <!--Hide ban button if viewing own profile--->
             {#if item.creator.id != $profile.user.local_user_view.person.id}
-                <MenuButton color="{item.creator_banned_from_community ? 'success' : 'dangerSecondary'}" on:click={() => banningInstance = true } >
+                <MenuButton color="{item.creator_banned_from_community ? 'success' : 'dangerSecondary'}" on:click={() => ban(item.creator.banned, item.creator) } >
                     <Icon slot="icon" mini size="16" src={ShieldExclamation} />
                     {item.creator.banned ? 'Unban from Instance' : 'Ban from Instance'}
                 </MenuButton>
