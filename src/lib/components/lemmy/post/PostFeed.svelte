@@ -5,7 +5,7 @@
         BlockCommunityEvent, 
         BlockInstanceEvent, 
         BlockUserEvent, 
-        SubscribeEvent 
+        RemovePostEvent, 
     } from '$lib/ui/events'
     import type { PostView } from 'lemmy-js-client'
     
@@ -54,8 +54,8 @@
         for (let i:number=0; i < posts.length; i++) {
             
             if (posts[i].community.id == e.detail.community_id) {
-                // Setting the creator_blocked will hide the post; there's no key for `community_blocked`
-                posts[i].creator_blocked = e.detail.blocked
+                // Setting the community to hidden will hide the post; there's no key for `community_blocked`
+                posts[i].community.hidden = e.detail.blocked
             }
         }
         posts = posts
@@ -82,17 +82,14 @@
         posts = posts
     }
 
-    function handleSubscribeUnsubscribe(e:SubscribeEvent) {
+    function handleRemovePost(e:RemovePostEvent) {
         for (let i:number=0; i < posts.length; i++) {
-            if(posts[i].community.id == e.detail.community_id) {
-                posts[i].subscribed = e.detail.subscribed
-                    ? 'Subscribed'
-                    : 'NotSubscribed'
+            if(posts[i].post.id == e.detail.post_id) {
+                posts[i].post.removed = e.detail.removed
             }
         }
         posts = posts
     }
-
     
 </script>
 
@@ -102,8 +99,10 @@
     on:blockUser={handleUserBlock} 
     on:blockCommunity={handleCommunityBlock} 
     on:blockInstance={handleInstanceBlock}
-    on:subscribe={handleSubscribeUnsubscribe}
+    on:removePost={handleRemovePost}
+
 />
+
 
 <section class="flex flex-col gap-3 sm:gap-4 h-full">
     {#if posts.length == 0}
@@ -113,6 +112,7 @@
             {#each posts as post, index (post.post.id)}
                 {#if 
                     !(post.creator_blocked) && 
+                    !(post.community.hidden) && 
                     !(
                         // "or" conditions that should qualify the post to be hidden in the feed unless you're a mod of the community it's posted to
                         // or a local admin and the community is local
