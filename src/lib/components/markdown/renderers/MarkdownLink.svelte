@@ -25,6 +25,7 @@
     let hashtagRE = /^#[A-Za-z0-9À-ÿ]+/i
     
     $: token, token.href = photonify(token.href) ?? token.href
+    $: token, token.text = token.text.startsWith('\\#') ? token.text.replace('\\#', '#') : token.text
     $: token, person = generatePerson(token.href)
     $: token, community = generateCommunity(token.href)
 
