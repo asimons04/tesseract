@@ -34,6 +34,7 @@
 
         let username = text.replaceAll('/u/', '').trim()
         const [user, domain] = username.split('?')[0].split('@')
+        if (!user || !domain) return
         const actor_id =  `https://${domain.trim()}/u/${user}`
         const person = createFakePerson()
         person.actor_id = actor_id
@@ -45,6 +46,7 @@
         if (!text.startsWith('/c/') ) return
         let username = text.replaceAll('/c/', '').trim()
         const [name, domain] = username.split('?')[0].split('@')
+        if (!name || !domain) return
         const actor_id =  `https://${domain.trim()}/c/${name}`
         const community = createFakeCommunity()
         community.actor_id = actor_id
