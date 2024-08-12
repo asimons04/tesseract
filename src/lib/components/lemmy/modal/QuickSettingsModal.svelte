@@ -101,7 +101,6 @@
                 <!---Use Link Preview Modals--->
                 <SettingToggle icon={LinkIcon} title="Preview Links in Modal" bind:value={$userSettings.uiState.linkPreviews} small={true}/>
 
-
                 <!---Use Display Names--->
                 <SettingToggle icon={Identification} title="Use Display Names" bind:value={$userSettings.displayNames} small={true}/>
 
@@ -119,7 +118,9 @@
             </div>
 
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
-
+                <!---Show full URLs--->
+                <SettingToggle icon={LinkIcon} title="Show Full URLs" bind:value={$userSettings.uiState.showFullURL} small={true} />
+                
                 <!---Reverse Action Bar--->
                 <SettingToggle title="Reverse Action Bar" icon={ArrowsRightLeft} bind:value={$userSettings.uiState.reverseActionBar} small={true}/>
 
