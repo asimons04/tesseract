@@ -33,7 +33,7 @@
         if (!text.startsWith('/u/')) return
 
         let username = text.replaceAll('/u/', '').trim()
-        const [user, domain] = username.split('@')
+        const [user, domain] = username.split('?')[0].split('@')
         const actor_id =  `https://${domain.trim()}/u/${user}`
         const person = createFakePerson()
         person.actor_id = actor_id
@@ -42,9 +42,9 @@
     }
 
     function generateCommunity(text:string) {
-        if (!text.startsWith('/c/')) return
+        if (!text.startsWith('/c/') ) return
         let username = text.replaceAll('/c/', '').trim()
-        const [name, domain] = username.split('@')
+        const [name, domain] = username.split('?')[0].split('@')
         const actor_id =  `https://${domain.trim()}/c/${name}`
         const community = createFakeCommunity()
         community.actor_id = actor_id
@@ -55,7 +55,9 @@
 
 <!--- Turn user links into badges that load a user profile modal--->
 {#if person}
-    <Badge color="blue" rightJustify={false} inline={true} on:click={() => {
+    <Badge color="blue" rightJustify={false} inline={true} on:click={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
         if (person) userProfileModal(person)
     }}>
         @{person.name}@{new URL(person.actor_id).hostname}
@@ -63,7 +65,9 @@
 
 <!--- Turn community links into badges that load a community profile modal--->
 {:else if community}
-    <Badge color="orange" rightJustify={false} inline={true} on:click={() => {
+    <Badge color="orange" rightJustify={false} inline={true} on:click={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
         if (community) communityProfileModal(community)
     }}>
         !{community.name}@{new URL(community.actor_id).hostname}
@@ -72,7 +76,9 @@
 
 <!--Turn hashtags into badges but keep the original link--->
 {:else if hashtagRE.test(token.text)}
-    <Badge color="yellow" rightJustify={false} inline={true} on:click={() => {
+    <Badge color="yellow" rightJustify={false} inline={true} on:click={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
         $userSettings.openInNewTab.links
             ? window.open(token.href)
             : window.location.href=token.href
