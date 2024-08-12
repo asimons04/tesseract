@@ -54,6 +54,7 @@
                 ">
                     <Markdown 
                         class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
+                        {inline}
                         source={
                             !expandPreviewText && post.post.body.length > previewLength
                                 ? post.post.body.slice(0, previewLength)
@@ -61,11 +62,7 @@
                         }
                         
                     />
-                    <!---
-                        inline={
-                            (!expandPreviewText && post.post.body.length > previewLength) || (!expandPreviewText && $userSettings.showCompactPosts && !expandCompact)
-                        }
-                    --->
+                    
                 </div>
 
                 {#if (post.post.body.length > previewLength) || post.post.nsfw}
@@ -102,11 +99,8 @@
                                 ? post.post.embed_description.slice(0, previewLength)
                                 : post.post.embed_description
                         }
-                        
+                        {inline}
                     />
-                    <!---
-                        inline={!expandPreviewText && post.post.embed_description.length > previewLength}
-                    --->
                 </div>
                 
                 {#if post.post.embed_description.length > previewLength}
