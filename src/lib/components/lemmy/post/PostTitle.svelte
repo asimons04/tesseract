@@ -16,7 +16,6 @@
 
     export let post:PostView | CommentReplyView | PersonMentionView
     export let flairs: boolean = true
-
     // Extract any [flairs] from the post title and update the title to remove them.
     let postName: string = post.post.name
     let postFlairs:string[] = []
@@ -33,40 +32,46 @@
 <a
     href="/post/{getInstance()}/{post.post.id}"
     target="_blank"
-    on:click|preventDefault|stopPropagation={ () => {
+    on:click={ 
+        (
+            //@ts-ignore
+            e
+        ) => {
             // Use goto instead of href to avoid occasionally reloading the whole app on page transition
             if (!$userSettings.openInNewTab.posts) { 
+                e.preventDefault()
+                e.stopPropagation()
                 goto(`/post/${getInstance()}/${post.post.id}`) 
             }
         }
     }
-    class="flex flex-row flex-wrap items-center gap-2 font-medium max-w-full w-full break-words text-left"
+    class="flex flex-row flex-wrap items-center gap-2 mt-4 font-medium max-w-full w-full break-words text-left"
     style="word-break: break-word;"
     class:text-slate-500={isPostView(post) && post.read && $userSettings.markReadPosts}
     class:dark:text-zinc-400={isPostView(post) &&post.read && $userSettings.markReadPosts}
     title="{fixLemmyEncodings(post.post.name)}"
 >
 
-    <h1 class="flex flex-row items-start w-full text-sm md:text-lg  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+    <h1 class="text-base md:text-lg  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
         <Markdown source={postName} noUserCommunityLink noLink noHashtags/>
-
-        <!---Flairs--->
-        {#if flairs}
-            <span class="hidden md:flex flex-row flex-wrap gap-2 ml-auto text-xs">
-                {#each postFlairs as flair, idx}
-                    <Badge randomColor  class="capitalize" icon={Tag} rightJustify={false}
-                        on:click={(e) => { 
-                            e.preventDefault()
-                            e.stopPropagation()
-                            goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
-                        }}
-                    >
-                        {flair}
-                    </Badge>
-                {/each}
-            </span>
-        {/if}
     </h1>
+
+    <!---Flairs--->
+    {#if flairs}
+        <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
+            {#each postFlairs as flair, idx}
+                <Badge randomColor  class="capitalize" icon={Tag} rightJustify={false}
+                    on:click={(e) => { 
+                        e.preventDefault()
+                        e.stopPropagation()
+                        goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
+                    }}
+                >
+                    {flair}
+                </Badge>
+            {/each}
+        </span>
+    {/if}
 
 </a>
 
