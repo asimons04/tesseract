@@ -2,6 +2,7 @@
     import type { PostView } from 'lemmy-js-client'
     import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
     
+    import { createEventDispatcher } from 'svelte'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
@@ -12,7 +13,8 @@
 
     export let post:PostView
     export let displayType:PostDisplayType
-    export let showCommentForm:boolean
+
+    let dispatcher = createEventDispatcher()
 
     let onHomeInstance: boolean = true
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
@@ -24,15 +26,7 @@
     color="tertiary-border"
     disabled={post.post.locked || !$profile?.user || !onHomeInstance}
     hidden={post.post.locked || !$profile?.user}
-    on:click={() => {
-        showCommentForm = !showCommentForm;
-        // Interval to deal with animiation delay
-        setTimeout(() => {
-            let commentForm = document.getElementById(`commentForm-${post.post.id}`);
-            commentForm?.focus()
-        }, 250);
-
-    }}
+    on:click={() => { dispatcher('reply') }}
 >
     <Icon src={ArrowUturnLeft} width={14} height={14} mini />
     <span class="text-sm">Reply</span>
