@@ -1,13 +1,13 @@
 <script lang="ts">
     import type { Snapshot } from '@sveltejs/kit';    
-    
+
     import { beforeNavigate } from '$app/navigation';
     import { isCommentView } from '$lib/lemmy/item.js'
     import { goto } from '$app/navigation'
     import { load } from './+page'
     import { page } from '$app/stores'
     import { PageSnapshot } from '$lib/storage.js';
-    import { scrollTo, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers.js';
+    import { scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers.js';
     import { searchParam } from '$lib/util.js'
     import { userSettings } from '$lib/settings.js'
 
@@ -16,7 +16,6 @@
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import Post from '$lib/components/lemmy/post/Post.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
@@ -118,6 +117,8 @@
   <title>Profile | {data.person_view.person.display_name ?? data.person_view.person.name}</title>
 </svelte:head>
 
+
+
 <!---Only show on /u/{username} routes since the /profile/user route will use the navbar from its layout page--->
 {#if $page.url.pathname.startsWith('/u/')}
 <SubNavbar  back quickSettings toggleMargins toggleCommunitySidebar scrollButtons
@@ -126,7 +127,8 @@
     listingType     listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
 >
     <SiteSearch placeholder="Search {$userSettings.displayNames ? (data.person_view.person.display_name ?? data.person_view.person.name) : data.person_view.person.name }" 
-        person_id={data.person_view.person.id} slot="center"/>
+        person_id={data.person_view.person.id} slot="center"
+    />
 </SubNavbar>
 {/if}
 
@@ -174,6 +176,6 @@
     {/if}
 
     <!---User Info Panel: Only show on /u/ pages.  Profile (/profile/user) will use its own layout--->
-    <UserCard person={data.person_view} moderates={data.moderates} display={$page.url.pathname.startsWith('/u/')} slot="right-panel"/>
+    <UserCard bind:person={data.person_view} moderates={data.moderates} display={$page.url.pathname.startsWith('/u/')} slot="right-panel"/>
 
 </MainContentArea>
