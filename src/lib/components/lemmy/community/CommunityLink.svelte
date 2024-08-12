@@ -9,6 +9,7 @@
     import { userSettings } from '$lib/settings.js'
     
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import { EyeSlash, Icon } from 'svelte-hero-icons';
   
 
     export let community: Community
@@ -43,7 +44,7 @@
     {/if}
 
     {#if name}
-        <span class="flex flex-wrap text-left gap-0 {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
+        <span class="flex flex-wrap text-left items-center gap-0 {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
 
             {useDisplayNames ?? $userSettings.displayNames 
                 ? shortenCommunityName(community.title, 30)
@@ -53,6 +54,12 @@
             {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
                 <span class="text-slate-500 dark:text-zinc-500 font-normal normal-case">
                     @{new URL(community.actor_id).hostname}
+                </span>
+            {/if}
+
+            {#if community.hidden}
+                <span class="ml-2 text-red-500">
+                    <Icon mini src={EyeSlash} size="12"/>
                 </span>
             {/if}
         </span>
