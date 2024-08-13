@@ -33,7 +33,7 @@
 </script>
 
 
-<Card class="bg-white flex flex-col w-full p-2 gap-0 " >
+<Card class="flex flex-col w-full p-2 gap-0 " >
 
     
 
@@ -51,7 +51,7 @@
             <PostTitle bind:post />
 
             {#if post.post.url && !isImage(post.post.url)}
-            <span class="flex flex-row flex-wrap my-auto w-full gap-2">
+            <span class="flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
                 
                 <!---Show archive link if not a media post--->
                 {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
@@ -68,7 +68,7 @@
 
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
-            <div class="flex-none w-[20%] md:w-[15%] xl:w-[10%] h-auto mx-auto mt-2">
+            <div class="flex-none w-fit h-fit mx-auto mt-2">
                 <!--- Expand the post in place when clicking thumbnail--->
                 <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                     on:click={() => {  
@@ -92,11 +92,13 @@
     </div>
     
     
-    <PostBody bind:post bind:postContainer {displayType} previewLength={240} bind:expandPreviewText inline={
+    <PostBody bind:post bind:postContainer {displayType} previewLength={240} bind:expandPreviewText 
+        inline={
             ( (post?.post?.body?.length ?? 0) > 240 ||
                 (!post.post.body && (post?.post?.embed_description?.length ?? 0) > 240)
             ) && !expandPreviewText &&  displayType=='feed'
-        }/>
+        }
+    />
 
     <div class="mt-1" />
     <!--- Crossposts --->
