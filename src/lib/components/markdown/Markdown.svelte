@@ -50,6 +50,9 @@
     function preProcess(text:string) {
         // Fix Lemmy's stupid encoding quirks.
         let temp = fixLemmyEncodings(text)
+
+        // Add a newline to help with some regexes
+        temp = temp + '\n'
         
         // Turn /c, /u, !, and @ community and user links into markdown links
         if (!noUserCommunityLink) temp = findUserCommunityLinks(temp)
