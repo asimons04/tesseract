@@ -41,8 +41,6 @@
     export let item: ModLog
     export let filter: Filters
 
-    let banningCommunity = false
-    let banningInstance = false
     let locking         = false
     let removing        = false
     let removingComment = false
