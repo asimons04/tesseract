@@ -38,6 +38,20 @@
     export let open: boolean = false
     
     let listingTypeOnSelect = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
+
+    let toggleCardCompactView = async () => {
+        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
+        
+        if ($userSettings.showCompactPosts) {
+            $userSettings.uiState.feedMargins = false
+            $userSettings.uiState.postBodyPreviewLength = 0
+        }
+        else {
+            $userSettings.uiState.feedMargins = true
+            $userSettings.uiState.postBodyPreviewLength = 240
+        }
+        await scrollToLastSeenPost()
+    }
 </script>
 
 <!-- svelte-ignore missing-declaration -->
@@ -86,10 +100,7 @@
                 <!---Post Style--->
                 <SettingToggle title="Show Compact Posts" icon={$userSettings.showCompactPosts ? QueueList : Photo}  small={true}
                     bind:value={$userSettings.showCompactPosts} 
-                    on:change={async (e) => {
-                        //$userSettings.uiState.feedMargins = !e.detail
-                        await scrollToLastSeenPost()
-                    }}
+                    on:change={async (e) => await toggleCardCompactView() }
                 />
                 
                 <!---Open in New Tab--->
