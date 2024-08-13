@@ -157,7 +157,7 @@
             link href="/search?type=Comments&community_id={comment.community.id}&person_id={comment.creator.id}&q=%20"
         >
             <Icon src={MagnifyingGlass} width={16} mini />
-            More From {comment.creator.display_name || comment.creator.name}@{new URL(comment.creator.actor_id).hostname}
+            More From {comment.creator.display_name || comment.creator.name}
         </MenuButton>
         {/if}
 
