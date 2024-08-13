@@ -22,7 +22,7 @@ export function filterAnnoyingCCLicenseOnComments(source:string) {
 export function hashtagsToMDLinks(source:string) {
     if (!$userSettings.linkifyHashtags) return source
     
-    const hashtagRE = /(?<!\[.*|http.*|```[\s\S]|`)#[A-Z]\w+[,\n ](?![\S]+`|[\s\S]+```)/gi
+    const hashtagRE = /(?<!\[.*|http.*|```[\s\S]|`)#[A-Za-z0-9À-ÿ!\?\$]+[,\n\s](?![\S]+`|[\s\S]+```)/gi
     let hashtags = source.matchAll(hashtagRE)
     
     for (let tag of hashtags) {
