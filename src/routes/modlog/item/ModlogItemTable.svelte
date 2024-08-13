@@ -2,7 +2,7 @@
     import type {Filters, ModLog} from '../+page.js'
     import type { Person, Post } from 'lemmy-js-client'
 
-    import { amMod, amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { amMod, amModOfAny, ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation';
     import { page } from '$app/stores'
@@ -10,9 +10,7 @@
     import { searchParam } from '$lib/util.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js';
     import { userSettings } from '$lib/settings.js'
-    
-    import BanCommunityModal from '$lib/components/lemmy/moderation/BanCommunityModal.svelte'
-    import BanInstanceModal from '$lib/components/lemmy/moderation/BanInstanceModal.svelte';
+
     import Button from '$lib/components/input/Button.svelte';
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Link from '$lib/components/input/Link.svelte'
@@ -105,23 +103,6 @@
 
 </script>
 
-<!---Ban/Unban Community--->
-{#if item.moderatee && item.community && (isAdmin($profile?.user) || amMod($profile?.user, item.community))}
-    <BanCommunityModal bind:open={banningCommunity} banned={item.actionName=='banCommunity'} user={item.moderatee} bind:community={item.community} 
-        on:banCommunity={(e) => {
-            goto($page.url.href, {invalidateAll: true})
-        }}
-    />
-{/if}
-
-<!---Ban/Unban Instance--->
-{#if item.moderatee && isAdmin($profile?.user)}
-    <BanInstanceModal bind:open={banningInstance} bind:banned={item.moderatee.banned} bind:user={item.moderatee} 
-        on:ban={(e) => {
-            if (item.moderatee) item.moderatee.banned = e.detail
-        }}
-    />
-{/if}
 
 <!---Remove/Restore Post--->
 {#if item.post && item.community && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
@@ -263,7 +244,9 @@
         </div>
 
         <!---Action Menu for mods/admins --->
-        {#if item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community))) }
+        {#if    !(['purge', 'transferCommunity', 'modAdd', 'modRemove', 'removeCommunity', 'restoreCommunity', 'Unknown'].includes(item.actionName)) 
+                && ( (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community)))) 
+        }
             <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
             
                 <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">
@@ -275,7 +258,10 @@
 
                     <!---Ban/Unban Community--->
                     {#if item.community}
-                        <MenuButton title="{item.actionName=='banCommunity' ? 'Unban Community' : 'Ban Community'}" on:click={() => banningCommunity = true}>    
+                        <MenuButton title="{item.actionName=='banCommunity' ? 'Unban Community' : 'Ban Community'}" on:click={() => {
+                            if (!item.community || !item.moderatee) return
+                            ban(item.actionName=='banCommunity', item.moderatee, item.community)
+                        }}>    
                             <Icon mini width={14} src={ShieldExclamation} />
                             {item.actionName=='banCommunity' ? 'Unban Community' : 'Ban Community'}
                         </MenuButton>
@@ -283,7 +269,10 @@
                     
                     <!---Ban/Unban Instance--->
                     {#if item.moderatee && isAdmin($profile?.user)}
-                        <MenuButton title="{item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}" on:click={() => banningInstance = true}>
+                        <MenuButton title="{item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}" on:click={() => {
+                                if (!item.moderatee) return
+                                ban(item.moderatee.banned, item.moderatee)
+                        }}>
                             <Icon mini width={14} src={ShieldExclamation} />
                             {item.moderatee.banned ? 'Unban Instance' : 'Ban Instance'}
                         </MenuButton>
@@ -295,7 +284,7 @@
                             if (item.moderatee) {
                                 // Temporarily set to not banned so the modal will react properly
                                 item.moderatee.banned = false
-                                banningInstance = true
+                                ban(item.moderatee.banned, item.moderatee)
                             }
                         }}>
                             <Icon mini width={14} src={ShieldExclamation} />
