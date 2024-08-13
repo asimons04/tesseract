@@ -115,7 +115,7 @@
         <!---Posts In This Community by This Creator--->
         <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" color="info">
             <Icon src={User} mini size="16" />
-            More from {post.creator.display_name ? post.creator.display_name : post.creator.name}@{new URL(post.creator.actor_id).hostname}
+            More from {post.creator.display_name ? post.creator.display_name : post.creator.name}
         </MenuButton>
     {/if}
 
