@@ -21,17 +21,11 @@
             ? '_blank'
             : '_self'
         }"
-        on:click={
-            (
-                //@ts-ignore
-                e
-            ) => {
-                if (preview) {
-                    e.stopPropagation()
-                    e.preventDefault()
-                    linkPreviewModal(href)
-                }
-            }}
+        on:click|preventDefault|stopPropagation={ () => {
+            if (preview) {
+                linkPreviewModal(href)
+            }
+        }}
         title = "{title ?? href}"
     >
         <slot name="icon" />
