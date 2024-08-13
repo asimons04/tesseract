@@ -38,7 +38,7 @@
 <!--- /profile/user--->
 {#if $page.url.pathname.startsWith('/profile/user') || $page.url.pathname.startsWith('/u/')}
 <SubNavbar back quickSettings
-    toggleMargins refreshButton toggleCommunitySidebar scrollButtons
+    toggleMargins refreshButton toggleCommunitySidebar scrollButtons compactSwitch
     listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
     sortMenu sortOptions={['New', 'TopAll', 'Old']} sortOptionNames={['New', 'Top', 'Old']} bind:selectedSortOption={data.sort}
 >
@@ -115,7 +115,7 @@
 
 <!---Saved--->
 {#if $page.url.pathname.startsWith('/profile/saved')}
-    <SubNavbar back quickSettings
+    <SubNavbar back quickSettings compactSwitch
         toggleMargins refreshButton toggleCommunitySidebar scrollButtons
         listingType={true} listingTypeOptions={['all', 'posts', 'comments']} listingTypeOptionNames={['All', 'Posts', 'Comments']} bind:selectedListingType={data.type}
         sortMenu sortOptions={['New', 'Old']} sortOptionNames={['New', 'Old']} bind:selectedSortOption={data.sort}
