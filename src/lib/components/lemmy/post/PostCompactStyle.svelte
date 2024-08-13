@@ -104,7 +104,7 @@
     {/if}
 
     <!--- Crossposts --->
-    <Crossposts bind:post size="xs" class="my-1 !pl-0"/>
+    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
     
     
     <!--- Post Action Bar--->

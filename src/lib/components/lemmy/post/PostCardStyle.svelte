@@ -45,7 +45,7 @@
     {/if}
 
     <!--- Crossposts --->
-    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="my-1"/>
+    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="mb-1"/>
 
     {#if actions}
         <PostActions  bind:post bind:expandCompact bind:postContainer {displayType}
