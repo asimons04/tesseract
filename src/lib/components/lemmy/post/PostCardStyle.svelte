@@ -2,7 +2,7 @@
     
     import type { PostType, PostDisplayType } from './helpers.js'
     import type { CommunityModeratorView, PostView } from 'lemmy-js-client'
-    
+
     import { postType as identifyPostType } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
@@ -20,7 +20,6 @@
     export let expandCompact: boolean = false;
     export let post: PostView
     export let moderators: Array<CommunityModeratorView> = [];
-    export let showCommentForm:boolean = false;
     export let expandPreviewText:boolean = false
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
@@ -44,7 +43,8 @@
     <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'}/>
 
     {#if actions}
-        <PostActions  bind:post bind:expandCompact bind:postContainer {displayType} bind:showCommentForm
+        <PostActions  bind:post bind:expandCompact bind:postContainer {displayType}
+            on:reply
             on:edit={(e) => {
                 post = post
                 toast({
