@@ -173,6 +173,7 @@
         class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
         alt={altText}
         title={title}
+        loading="lazy"
         on:load={() => (loaded = true)}
         on:click={(
             //@ts-ignore
