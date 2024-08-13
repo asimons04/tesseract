@@ -52,13 +52,10 @@
     title="{fixLemmyEncodings(post.post.name)}"
 >
 
-    <h1 class="text-base md:text-lg  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+    <h1 class="flex flex-row flex-wrap gap-2 items-start text-base md:text-lg mb-1  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
         <Markdown source={postName} noUserCommunityLink noLink noHashtags/>
-    </h1>
-
-    <!---Flairs--->
-    {#if flairs}
-        <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
+        
+        {#if flairs}
             {#each postFlairs as flair, idx}
                 <Badge randomColor  class="capitalize" icon={Tag} rightJustify={false}
                     on:click={(e) => { 
@@ -70,8 +67,16 @@
                     {flair}
                 </Badge>
             {/each}
+        {/if}
+    </h1>
+
+    <!---Flairs
+    {#if flairs}
+        <span class="flex flex-row flex-wrap gap-2 ml-auto text-xs">
+            
         </span>
     {/if}
+    --->
 
 </a>
 
