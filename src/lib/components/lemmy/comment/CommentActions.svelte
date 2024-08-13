@@ -218,8 +218,9 @@
                 <MenuButton on:click={() => blockUser(comment.creator.id)} color="dangerSecondary" title="{isBlocked($profile?.user, comment.creator.id) ? 'Unblock' : 'Block'} {comment.creator.display_name || comment.creator.name}">
                     <Icon src={NoSymbol} width={16} mini />
                     {isBlocked($profile?.user, comment.creator.id) 
-                        ? `Unblock ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`
-                        : `Block ${comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}`}
+                        ? `Unblock ${comment.creator.display_name || comment.creator.name}`
+                        : `Block ${comment.creator.display_name || comment.creator.name}`
+                    }
                 </MenuButton>
             {/if}
         {/if}
