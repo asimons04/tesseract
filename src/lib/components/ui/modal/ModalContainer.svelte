@@ -2,10 +2,7 @@
     import { modals } from '$lib/components/lemmy/moderation/moderation.js'
     
     import CommunityProfileModal from '$lib/components/lemmy/modal/CommunityProfileModal.svelte';
-    //import FederationStateModal from '$lib/components/lemmy/modal/FederationStateModal.svelte'
-    //import Fediseer from '$lib/fediseer/Fediseer.svelte';
     import LinkPreviewModal from '$lib/components/lemmy/modal/LinkPreviewModal.svelte';
-    //import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
     import QuickSettingsModal from '$lib/components/lemmy/modal/QuickSettingsModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/modal/UserProfileModal.svelte'
     import ZoomImageModal from '$lib/components/lemmy/modal/ZoomImageModal.svelte';
