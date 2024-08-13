@@ -3,6 +3,7 @@
 
     import { amMod, isAdmin } from './moderation'
     import { createEventDispatcher } from 'svelte'
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { fullCommunityName } from '$lib/util.js'
     import { getClient } from '$lib/lemmy.js'
     import { isCommentView, isPostView } from '$lib/lemmy/item.js'
@@ -67,19 +68,34 @@
         if (!$profile?.jwt) throw new Error('Unauthenticated')
 
         loading = true
+
         try {
             if (purge) {
+                // Purge Comment
                 if (isCommentView(item)) {
                     await getClient(undefined).purgeComment({
                         comment_id: item.comment.id,
                         reason: reason,
                     })
-                } else {
+
+                    dispatchWindowEvent('purgeComment', {
+                        comment_id: item.comment.id,
+                        purged: true
+                    })
+                } 
+                // Purge Post
+                else {
                     await getClient(undefined).purgePost({
                         post_id: item.post.id,
                         reason: reason,
                     })
+
+                    dispatchWindowEvent('purgePost', {
+                        post_id: item.post.id,
+                        purged: true
+                    })
                 }
+                
                 toast({
                     content: 'Successfully purged that submission.',
                     type: 'success',
@@ -92,6 +108,38 @@
                 return
             }
 
+           
+            // Remove Comment
+            if (isCommentView(item)) {
+                await getClient().removeComment({
+                    comment_id: item.comment.id,
+                    removed: !removed,
+                    reason: reason || undefined,
+                })
+                item.comment.removed = !removed
+                
+                dispatchWindowEvent('removeComment', {
+                    comment_id: item.comment.id,
+                    removed: item.comment.removed
+                })
+            } 
+
+            // Remove Post
+            else if (isPostView(item)) {
+                await getClient().removePost({
+                    post_id: item.post.id,
+                    removed: !removed,
+                    reason: reason || undefined,
+                })
+                item.post.removed = !removed
+                
+                dispatchWindowEvent('removePost', {
+                    post_id: item.post.id,
+                    removed: item.post.removed
+                })
+            }
+
+            // Send reply with removal reason if selected
             if (replyWithReason) {
                 if (replyReason == '') {
                     toast({
@@ -130,23 +178,6 @@
                     })
                 }
             }
-
-            if (isCommentView(item)) {
-                await getClient().removeComment({
-                    comment_id: item.comment.id,
-                    removed: !removed,
-                    reason: reason || undefined,
-                })
-                item.comment.removed = !removed
-            } 
-            else if (isPostView(item)) {
-                await getClient().removePost({
-                    post_id: item.post.id,
-                    removed: !removed,
-                    reason: reason || undefined,
-                })
-                item.post.removed = !removed
-            }
             open = false
 
             toast({
@@ -173,14 +204,13 @@
     }
     
     // Reset text on load
-    $: if (item) resetText()
+    $: item, resetText()
 </script>
 
 <Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}  width="max-w-2xl">
   
     {#if item}
         <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove}>
-            
 
             <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={reason}>
                 <Button color={purge ? 'danger' : 'primary'} size="lg" {loading} disabled={loading} submit slot="actions">
