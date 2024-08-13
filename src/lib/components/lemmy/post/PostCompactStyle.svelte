@@ -93,24 +93,22 @@
         
     </div>
     
-    
-    <PostBody bind:post bind:postContainer {displayType} previewLength={previewLength} bind:expandPreviewText 
-        inline={
-            ( (post?.post?.body?.length ?? 0) > previewLength ||
-                (!post.post.body && (post?.post?.embed_description?.length ?? 0) > previewLength)
-            ) && !expandPreviewText &&  displayType=='feed'
-        }
-    />
+    {#if (displayType == 'feed' && previewLength >= 0) || displayType=='post'}
+        <PostBody bind:post bind:postContainer {displayType} previewLength={previewLength} bind:expandPreviewText 
+            inline={
+                ( (post?.post?.body?.length ?? 0) > previewLength ||
+                    (!post.post.body && (post?.post?.embed_description?.length ?? 0) > previewLength)
+                ) && !expandPreviewText &&  displayType=='feed'
+            }
+        />
+    {/if}
 
-    <div class="mt-1" />
     <!--- Crossposts --->
-    <Crossposts bind:post size="xs" class="!pl-0"/>
+    <Crossposts bind:post size="xs" class="my-1 !pl-0"/>
     
-    
-    <div class="mt-1"/>
     
     <!--- Post Action Bar--->
-    <div class="flex flex-row w-full mt-1">
+    <div class="flex flex-row w-full">
         {#if actions}
             <div class="w-full h-full grid items-end">
                 <PostActions  bind:post  bind:expandCompact bind:postContainer {displayType}

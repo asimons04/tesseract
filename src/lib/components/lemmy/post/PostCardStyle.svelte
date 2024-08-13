@@ -40,10 +40,12 @@
 
     <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
-    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText previewLength={previewLength}/>
+    {#if (displayType == 'feed' && previewLength >= 0) || displayType=='post'}
+        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText previewLength={previewLength}/>
+    {/if}
 
     <!--- Crossposts --->
-    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'}/>
+    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="my-1"/>
 
     {#if actions}
         <PostActions  bind:post bind:expandCompact bind:postContainer {displayType}
