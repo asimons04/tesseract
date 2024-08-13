@@ -36,7 +36,7 @@
 </script>
 
 <div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-1 sm:gap-2 items-center h-8 
-    {displayType == 'post' ? 'pt-2 mt-auto' : 'mt-0'} 
+    {displayType == 'post' ? 'pt-2 mt-auto' : 'mt-1'} 
     "
 >
 
