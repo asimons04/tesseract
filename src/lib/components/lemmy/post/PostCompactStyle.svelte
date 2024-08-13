@@ -29,6 +29,8 @@
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
 
+    export let previewLength:number = $userSettings.uiState.postBodyPreviewLength ?? 240
+
     $: postType = identifyPostType(post)
 </script>
 
@@ -92,10 +94,10 @@
     </div>
     
     
-    <PostBody bind:post bind:postContainer {displayType} previewLength={240} bind:expandPreviewText 
+    <PostBody bind:post bind:postContainer {displayType} previewLength={previewLength} bind:expandPreviewText 
         inline={
-            ( (post?.post?.body?.length ?? 0) > 240 ||
-                (!post.post.body && (post?.post?.embed_description?.length ?? 0) > 240)
+            ( (post?.post?.body?.length ?? 0) > previewLength ||
+                (!post.post.body && (post?.post?.embed_description?.length ?? 0) > previewLength)
             ) && !expandPreviewText &&  displayType=='feed'
         }
     />

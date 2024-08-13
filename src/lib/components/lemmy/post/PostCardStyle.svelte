@@ -5,6 +5,7 @@
 
     import { postType as identifyPostType } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
     
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
@@ -23,7 +24,9 @@
     export let expandPreviewText:boolean = false
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
-
+    
+    export let previewLength:number = $userSettings.uiState.postBodyPreviewLength ?? 240
+    
     // Determine post type based on its attributes
     let postType: PostType
     $: post, postType = identifyPostType(post)
@@ -37,7 +40,7 @@
 
     <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
-    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
+    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText previewLength={previewLength}/>
 
     <!--- Crossposts --->
     <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'}/>
