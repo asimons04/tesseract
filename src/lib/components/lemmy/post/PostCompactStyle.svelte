@@ -94,7 +94,7 @@
     </div>
     
     {#if (displayType == 'feed' && previewLength >= 0) || displayType=='post'}
-        <PostBody bind:post bind:postContainer {displayType} previewLength={previewLength} bind:expandPreviewText 
+        <PostBody bind:post bind:postContainer {displayType} bind:previewLength={previewLength} bind:expandPreviewText 
             inline={
                 ( (post?.post?.body?.length ?? 0) > previewLength ||
                     (!post.post.body && (post?.post?.embed_description?.length ?? 0) > previewLength)

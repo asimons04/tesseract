@@ -41,7 +41,7 @@
     <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
     {#if (displayType == 'feed' && previewLength >= 0) || displayType=='post'}
-        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText previewLength={previewLength}/>
+        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText bind:previewLength={previewLength}/>
     {/if}
 
     <!--- Crossposts --->
