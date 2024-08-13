@@ -14,9 +14,8 @@
     
     // Post Action Bar Components
     import CommentCountButton   from './PostActions/CommentCountButton.svelte'
-    import CommunityActionMenu  from './PostActions/CommunityActionMenu.svelte'
     import DebugButton          from './PostActions/DebugButton.svelte'
-    import InstanceMenu          from './PostActions/InstanceMenu.svelte'
+    import InstanceMenu         from './PostActions/InstanceMenu.svelte'
     import PostActionsMenu      from './PostActions/PostActionsMenu.svelte'
     import PostReplyButton      from './PostActions/PostReplyButton.svelte'
     import PostVote             from './PostActions/PostVote.svelte'
@@ -28,10 +27,8 @@
     } from 'svelte-hero-icons'
    
     export let post: PostView
-    //export let postType: PostType = 'text'
     export let displayType: PostDisplayType
     export let expandCompact: boolean
-    export let showCommentForm:boolean = false;
     export let postContainer: HTMLDivElement
 
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
@@ -40,8 +37,6 @@
 
 <div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-1 sm:gap-2 items-center h-8 
     {displayType == 'post' ? 'mt-auto' : 'mt-2'} 
-    {displayType == 'feed' && $userSettings.showCompactPosts && !expandCompact ? '' : 'ml-[-0.5rem]'}
-    {displayType == 'post' ? 'ml-[-0.5rem]' : ''}
     "
 >
 
@@ -55,7 +50,7 @@
     
 
     <!---Reply Button that enables the comment form--->
-    <PostReplyButton displayType={displayType} bind:showCommentForm bind:post/>
+    <PostReplyButton displayType={displayType} on:reply bind:post/>
   
     <!--- Spacer --->
     <div class="ml-auto" />
@@ -65,7 +60,7 @@
   
     
     <!--- Expand Compact Post to Card--->
-    {#if displayType == 'feed' && $userSettings.showCompactPosts}
+    {#if $userSettings.showCompactPosts}
         <Button  color="tertiary-border" title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
                 expandCompact = !expandCompact; 
@@ -78,16 +73,13 @@
 
     <!--- Moderation Menu--->
     {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <ModerationMenu bind:item={post} />
+        <ModerationMenu bind:item={post} bind:expandCompact />
     {/if}
 
     <!---Explore Menu--->
-    <InstanceMenu bind:post />
-
-    <!---Community Action Menu (Moved to community modal)
-    <CommunityActionMenu bind:post />
-    --->    
+    <InstanceMenu bind:post bind:expandCompact />
+        
     <!--- Post Actions Menu --->
-    <PostActionsMenu bind:post />
+    <PostActionsMenu bind:post bind:expandCompact />
     
 </div>
