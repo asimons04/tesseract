@@ -30,7 +30,7 @@
 
 {#if (post.post.body || post.post.embed_description)}
 
-    <div class="flex flex-col text-sm rounded-md">    
+    <div class="flex flex-col text-sm rounded-md {$$props.class}">    
         {#if displayType == 'post' }
             {#if post.post.body}                
                 <Markdown source={post.post.body} {inline}/>
