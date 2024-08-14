@@ -340,8 +340,8 @@
             <Button title="Switch to {compactPosts ? 'card view' : 'compact view'}" disabled={!previewing} color="tertiary-border"
                 on:click={async () => {
                     compactPosts = !compactPosts
-                    if (compactPosts) displayType='feed'
-                    else displayType='post'
+                    //if (compactPosts) displayType='feed'
+                    //else displayType='post'
                 }}
             >
                 <Icon src={compactPosts ? Window : QueueList} width={16} />
@@ -450,7 +450,9 @@
                 <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
                 
                 {#if ENABLE_MEDIA_PROXY && $userSettings.proxyMedia.enabled}
-                    <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
+                    <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" 
+                        description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." 
+                    />
                 {/if}
             </SettingToggleContainer>
 
@@ -467,13 +469,13 @@
 {#if previewPost && previewing}
     {#if inModal}
         <div class="mt-8 pb-3">
-            <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
+            <PostPreview  post={previewPost}  actions={false}  displayType="post" bind:forceCompact={compactPosts} bind:expandCompact={compactPosts} autoplay={false}  />
         </div>
     {:else}
     
         <FeedContainer>
             <div class="mt-8 pb-3">
-                <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
+                <PostPreview  post={previewPost}  actions={false}  displayType="post" bind:forceCompact={compactPosts} bind:expandCompact={compactPosts} autoplay={false}  />
             </div>
         </FeedContainer>
     {/if}
