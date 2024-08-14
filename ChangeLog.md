@@ -2,6 +2,65 @@
 All major/minor changes between releases will be documented here.  
 
 ## 1.4.12
+### Bugfixes
+- Fixed reactivity on modlog filter lookups (sometimes they got into a fetch loop)
+
+- To Do:  Edit post modal, previewing, card/compact switcher not working
+
+
+Probably a slew of new ones introduced with all the changes to the underlying plumbing in this release. If any do crop up, they'll likely be related to reactivity (or, more specifically, not reacting when they should).  This is due to the switch from relying on bound variables between components to event dispatchers/listeners.  So far, I've noticed all the bases covered, but there may be a few edge cases that I missed.
+
+
+### Enhancements
+
+#### Adjustable Preview Length in Feed
+Added a setting (`Settings -> Feed -> Post Body Preview Length`) to allow setting the number of characters that show in the post body in the feed before requiring a click of 'expand'.  Can even disable the body previews if you want really compact posts.  
+
+**What's the difference between 'Disabled' and '0'?**
+
+Setting the body preview length to `disabled` will hide the post body component completely in the feed (including the expand button); you will have to click into the post to see the body at all.
+
+Setting it to `0` will not show the body preview contents but will keep the "expand" button to enable you to view the post body in the feed if you wish.
+
+
+#### Compact View Refreshed and No Longer Second-Class Citizen
+The 'compact' view has been refreshed. Now _slightly_ more compact and powerful.
+
+Posts can now be rendered in compact mode on the post pages (e.g. /post/12345).  All media and image posts, though, will still view in "card" mode (but can be minimized to compact).  This was chosen as a compromise between not making article headline images huge and having to click twice to show an image post (e.g. meme) in full when clicking into it.
+
+#### Link Preview Modal Can (try to) Load the Link in an iFrame
+Added a button to the bottom of the link preview modal that will let you try to view the link in an iframe.  Not all websites allow this (they set the `X-Frame-Options` header to disallow it), but enough do that this feature can still be useful.
+
+
+
+
+#### Switched from Bindings to Event Dispatchers/Listeners
+In several places, variables were bound between 3 and 4 levels of components for the purposes of triggering state changes.  This worked but was cumbersome.
+
+I already used Svelte-native dispatchers in many places, but there were some that didn't have a direct link to receive the dispatched events.
+
+Once I setup a global dispatcher, I started reconfiguring the reactivity to work with those events rather than binding everything down a huge chain of components.
+
+This is expanding upon the reactivity enhancements first introduced in 1.4.2.
+
+
+#### Streamlined Modals to Reduce Memory/Network Consumption
+Have reduced memory consumption by about 25%
+
+Removed the embedded action modals (ban, remove submissions, etc) from moderation buttons and am calling the shared ones. 
+
+Ironically, this is basically putting those back to the way they were when I first forked from Photon.  The problem, then, was that they weren't reactive and you had to refresh the page to see the results.  Not ideal.
+
+I setup a new event dispatch system which addresses this, and now the relevant components just listen for those and react.
+
+Additionally, some of the code for the lesser-used modals is now loaded asynchronously (again, Photon did this but I wasn't for many of the newer modal types).
+
+The following modals are now loaded async:
+- Report post/comment modal
+- All moderator/admin-only modals 
+- Federation stats
+- Fediseer
+
 
 
 ---
