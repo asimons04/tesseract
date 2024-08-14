@@ -1,7 +1,10 @@
+
 import { 
     parse as parseCookie,
     serialize as serializeCookie
-} from 'cookie'
+}
+// @ts-ignore
+from 'cookie'
 
 interface CookieOptions {
     domain?:string,
