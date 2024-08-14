@@ -137,7 +137,6 @@
         
         <!--- Compact Posts --->
         <!---{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }--->
-        <!--- && ['link', 'thumbLink'].includes(postType)  --->
         {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }
             <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges}
                 bind:post 
