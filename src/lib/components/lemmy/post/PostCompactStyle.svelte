@@ -40,7 +40,7 @@
     
 
     <!--- Post Link, Body, and Thumbnail  --->
-    <div class="flex flex-row w-full gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}">
+    <div class="flex flex-row w-full gap-2 overflow-hidden {disablePostLinks ? 'pointer-events-none list-none' : ''}">
         
         
         
