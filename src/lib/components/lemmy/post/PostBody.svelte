@@ -21,106 +21,63 @@
     export let postContainer: HTMLDivElement
     export let displayType:PostDisplayType  = 'post'
     export let expandPreviewText:boolean    = false
-    //export let expandCompact:boolean        = false
     export let previewLength:number         = 300
     export let inline:boolean               = false
     
+    // Use the embed description from the metadata, if available, if no post body is provided.
+    $: post, post.post.body = post.post.body 
+        ??  ( 
+            post.post.embed_description 
+                ? `**Embed Description**: ${post.post.embed_description}`
+                : ''
+        )
 
 </script>
 
-{#if (post.post.body || post.post.embed_description)}
+{#if post.post.body}
 
     <div class="flex flex-col text-sm rounded-md {$$props.class}">    
         {#if displayType == 'post' }
-            {#if post.post.body}                
                 <Markdown source={post.post.body} {inline}/>
-            {:else if post.post.embed_description}
-                <Markdown source={post.post.embed_description} {inline} />
-            {/if}
-            
             <slot />
         {/if}
 
-
         <!--- Show expandable preview in feed--->
         {#if displayType=='feed'}
-            {#if post.post.body}    
-                
-                <div class="
-                    {!expandPreviewText && !post.post.nsfw && post.post.body.length > previewLength
-                        ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
-                        : ''
+            <div class="
+                {!expandPreviewText && !post.post.nsfw && post.post.body.length > previewLength
+                    ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
+                    : ''
+                }
+            ">
+                <Markdown 
+                    class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
+                    {inline}
+                    source={
+                        !expandPreviewText && post.post.body.length > previewLength
+                            ? post.post.body.slice(0, previewLength)
+                            : post.post.body
                     }
-                ">
-                    <Markdown 
-                        class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
-                        {inline}
-                        source={
-                            !expandPreviewText && post.post.body.length > previewLength
-                                ? post.post.body.slice(0, previewLength)
-                                : post.post.body
-                        }
-                        
-                    />
                     
-                </div>
+                />
+            </div>
 
-                {#if (post.post.body.length > previewLength) || post.post.nsfw}
-                    <Button color="tertiary" class="mx-auto w-fit text-xs font-bold !py-0"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
-                        on:click={() => {
-                            expandPreviewText = !expandPreviewText
-                            post.post.nsfw = false
+            <!---Expand/Collapse Button--->
+            {#if (post.post.body.length > previewLength) || post.post.nsfw}
+                <Button color="tertiary" class="mx-auto w-fit text-xs font-bold !py-0"
+                    title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
+                    on:click={() => {
+                        expandPreviewText = !expandPreviewText
+                        post.post.nsfw = false
 
-                            // Scroll top of post to top on close
-                            if (!expandPreviewText) scrollToTop(postContainer)
-                        }}
-                    >
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
-                    </Button>
-                {/if}
-        
-
-
-
-            <!--- If no post body but there's an embed description avaialble, display that--->
-            {:else if post.post.embed_description }
-                <div class="
-                    {!expandPreviewText && !post.post.nsfw && post.post.embed_description.length > previewLength
-                        ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
-                        : ''
-                }">
-                    <Markdown 
-                        class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
-                        source={
-                            !expandPreviewText && post.post.embed_description.length > previewLength
-                                ? post.post.embed_description.slice(0, previewLength)
-                                : post.post.embed_description
-                        }
-                        {inline}
-                    />
-                </div>
-                
-                {#if post.post.embed_description.length > previewLength}
-                    <Button
-                        color="secondary"
-                        class="mx-auto w-fit text-xs font-bold !py-0"
-                        title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
-                        on:click={() => {
-                            expandPreviewText = !expandPreviewText
-                            post.post.nsfw = false
-                            
-                            // Scroll top of post to top on close
-                            if (!expandPreviewText) scrollToTop(postContainer)
-                        }}
-                    >
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                        {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
-                    </Button>
-                {/if}
+                        // Scroll top of post to top on close
+                        if (!expandPreviewText) scrollToTop(postContainer)
+                    }}
+                >
+                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
+                    {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
+                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
+                </Button>
             {/if}
         {/if}
     </div>
