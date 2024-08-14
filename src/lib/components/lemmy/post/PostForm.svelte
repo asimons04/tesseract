@@ -345,6 +345,9 @@
                 }}
             >
                 <Icon src={compactPosts ? Window : QueueList} width={16} />
+                <span class="hidden md:block">
+                    {compactPosts ? 'Card' : 'Compact'}
+                </span>
             </Button>
 
             <!--- Reset Form --->
@@ -361,7 +364,10 @@
                     resetting = false
                 }}
             >
-                <Icon src={ArrowUturnDown} mini size="16"/>                
+                <Icon src={ArrowUturnDown} mini size="16"/>
+                <span class="hidden md:block">
+                    {editingPost ? 'Undo' : 'Reset'}
+                </span>             
             </Button>
             
             <!--- Submit/Save--->
