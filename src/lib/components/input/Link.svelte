@@ -30,7 +30,7 @@
     >
         <slot name="icon" />
         <slot>
-            <span class="flex gap-0  {nowrap ? 'w-full whitespace-wrap overflow-hidden text-ellipsis text-xs' : ''}  {$$props.class}" >
+            <span class="flex gap-0  {nowrap ? 'w-full whitespace-nowrap overflow-hidden text-ellipsis text-xs' : ''}  {$$props.class}" >
                 {text ?? (domainOnly ? new URL(href).hostname : href)}
             </span>
         </slot>
