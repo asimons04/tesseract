@@ -25,8 +25,7 @@
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
     
-    export let previewLength:number = $userSettings.uiState.postBodyPreviewLength ?? 240
-    
+   
     // Determine post type based on its attributes
     let postType: PostType
     $: post, postType = identifyPostType(post)
@@ -40,8 +39,8 @@
 
     <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
-    {#if (displayType == 'feed' && previewLength >= 0) || displayType=='post'}
-        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText bind:previewLength={previewLength}/>
+    {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength  >= 0) || displayType=='post'}
+        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
     {/if}
 
     <!--- Crossposts --->
