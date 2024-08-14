@@ -22,7 +22,7 @@
     <span class="flex flex-row flex-wrap w-full gap-2 px-1">
         <ArchiveLinkSelector url={post.post?.url} postType='link'/>
         <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-        <MBFC post={post} rightJustify={true} collapseBadges/>
+        <MBFC post={post} rightJustify={true}/>
     </span>
 {/if}
 

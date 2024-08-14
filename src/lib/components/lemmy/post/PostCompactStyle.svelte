@@ -60,7 +60,7 @@
                 {/if}
                 
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-                <MBFC post={post} collapseBadges rightJustify={$userSettings.uiState.feedMargins}/>
+                <MBFC post={post} rightJustify={$userSettings.uiState.feedMargins}/>
             </span>
             {/if}
             
@@ -98,7 +98,7 @@
         {/if}
         
         <Link class="text-xs max-w-[250px]" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-        <MBFC post={post} collapseBadges rightJustify={true}/>
+        <MBFC post={post} rightJustify={true}/>
     </span>
     {/if}
 
