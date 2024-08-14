@@ -21,8 +21,13 @@
             ? '_blank'
             : '_self'
         }"
-        on:click|preventDefault|stopPropagation={ () => {
+        on:click={ (
+            //@ts-ignore
+            e
+        ) => {
             if (preview) {
+                e.preventDefault()
+                e.stopPropagation()
                 linkPreviewModal(href)
             }
         }}
