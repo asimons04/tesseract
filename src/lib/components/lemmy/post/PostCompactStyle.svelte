@@ -52,8 +52,9 @@
             <!---Post title--->
             <PostTitle bind:post />
 
+            <!---Alt source selector, link, MBFC for desktop compact view--->
             {#if post.post.url && !isImage(post.post.url)}
-            <span class="flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
+            <span class="hidden md:flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
                 
                 <!---Show archive link if not a media post--->
                 {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
@@ -93,8 +94,24 @@
         
     </div>
     
+    <!---Alt source selector, link, MBFC for mobile view--->
+    {#if post.post.url && !isImage(post.post.url)}
+    <span class="flex md:hidden flex-row flex-wrap my-auto w-full gap-2 mb-1">
+        
+        <!---Show archive link if not a media post--->
+        {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
+            <ArchiveLinkSelector url={post.post?.url} {postType}/>
+        {/if}
+        
+        <Link class="text-xs max-w-[250px]" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+        <MBFC post={post} collapseBadges rightJustify={true}/>
+    </span>
+    {/if}
+
+
     {#if (displayType == 'feed' && previewLength >= 0) || displayType=='post'}
         <PostBody bind:post bind:postContainer {displayType} bind:previewLength={previewLength} bind:expandPreviewText 
+            class="my-1"
             inline={
                 ( (post?.post?.body?.length ?? 0) > previewLength ||
                     (!post.post.body && (post?.post?.embed_description?.length ?? 0) > previewLength)
