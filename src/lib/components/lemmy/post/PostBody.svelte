@@ -27,7 +27,7 @@
     // Use the embed description from the metadata, if available, if no post body is provided.
     $:  post, post.post.body = post.post.body ??  ( 
             post.post.embed_description 
-                ? `**Embed Description**: ${post.post.embed_description}`
+                ? `**Summary**: ${post.post.embed_description}`
                 : ''
         )
 
