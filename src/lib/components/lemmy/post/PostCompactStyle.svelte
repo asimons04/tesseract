@@ -38,7 +38,7 @@
     
 
     <!--- Post Link, Body, and Thumbnail  --->
-    <div class="flex flex-row w-full gap-2 overflow-hidden {disablePostLinks ? 'pointer-events-none list-none' : ''}">
+    <div class="flex flex-row w-full gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}">
         
         
         
@@ -68,7 +68,7 @@
 
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
-            <div class="flex-none w-fit h-fit mx-auto mt-2">
+            <div class="flex-none w-fit h-fit mx-auto mt-2 overflow-hidden">
                 <!--- Expand the post in place when clicking thumbnail--->
                 <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                     on:click={() => {  
