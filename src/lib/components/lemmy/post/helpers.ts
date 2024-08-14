@@ -103,11 +103,15 @@ export const unproxyImage = (inputURL:string) => {
     // Fix any relative image URLs
     if (inputURL.startsWith('/'))
         inputURL = window.origin + inputURL
-    
-    const testURL = new URL(inputURL)
-    return (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
-        ? decodeURI(testURL.searchParams.get('url') as string)
-        : inputURL
+    try {
+        const testURL = new URL(inputURL)
+        return (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
+            ? decodeURI(testURL.searchParams.get('url') as string)
+            : inputURL
+    }
+    catch {
+        return inputURL
+    }
 }
 
 // Checks if the post's URL is for a video Tesseract is capable of embedding
