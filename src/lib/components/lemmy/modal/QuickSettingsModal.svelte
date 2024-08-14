@@ -32,6 +32,7 @@
         Trophy,
         XCircle,
         EyeSlash,
+        Language,
     } from "svelte-hero-icons"
 
     export let options: any
@@ -91,6 +92,34 @@
                 />
             </Card>
         {/if}
+        
+        <!---Multiselects--->
+        <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2 max-h-[70vh] items-start w-full overflow-y-scroll">
+        
+        
+            <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
+                <!---Post Body Preview Length--->
+                <SettingMultiSelect icon={Photo} 
+                    title="Post Body Preview Length"
+                    padding={false} small={true}
+                    optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000']}
+                    options={[-1, 0, 50, 120, 240, 500, 750, 1000]}
+                    bind:selected={$userSettings.uiState.postBodyPreviewLength}
+                />
+            </div>
+
+
+            <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
+                <SettingMultiSelect icon={Language} 
+                    title="Application Font" 
+                    padding={false} small={true}
+                    options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+                    optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+                    bind:selected={$userSettings.font}
+                />
+            </div>
+        </div>
+        
 
         <!---User Settings--->
         <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2 max-h-[70vh] items-start w-full overflow-y-scroll">
