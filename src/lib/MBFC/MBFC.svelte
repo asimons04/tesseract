@@ -71,7 +71,7 @@
             
             <!--{results.credibility.replace('Credibility', '')} <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">Credibility</span>-->
             {results.credibility.replace('Credibility', '')} 
-                <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">
+                <span class="{collapseBadges ? 'hidden' : 'hidden lg:block'}">
                      ({results?.biases?.name.replace('Biased', '').replace('Bias','').trim()})
                 </span>
         </span>
