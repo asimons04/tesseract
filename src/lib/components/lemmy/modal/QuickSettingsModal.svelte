@@ -35,7 +35,7 @@
         Language,
     } from "svelte-hero-icons"
 
-    export let options: any
+
     export let open: boolean = false
     
     let listingTypeOnSelect = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
@@ -61,72 +61,21 @@
     
     
     <div class="flex flex-col w-full p-2 gap-2 cursor-default">
-        <!---Listing Type and Sort Menus--->
-        {#if false && (options.listingType || options.sortMenu)}
-            <Card class="p-2">    
-                                   
-                <!---Listing Type--->
-                <SettingMultiSelect
-                    condition={options.listingType}
-                    options={options.listingTypeOptions}
-                    optionNames={options.listingTypeOptionNames}
-                    selected={options.selectedListingType}
-                    title={options.listingTypeTitle}
-                    icon={Bars3}
-                    padding={false} small={true}
-                    on:select={listingTypeOnSelect}
-                />
-
-                <!---Sort Method--->
-                <SettingMultiSelect
-                    condition={options.sortMenu}
-                    options={options.sortOptions}
-                    optionNames={options.sortOptionNames}
-                    selected={options.selectedSortOption}
-                    title="Sort Direction"
-                    icon={BarsArrowDown}
-                    padding={false} small={true}
-                    on:select={(e) => {
-                        if (!options.sortPreventDefault) searchParam($page.url, 'sort', e.detail, 'page')
-                    }}
-                />
-            </Card>
-        {/if}
-        
-        <!---Multiselects--->
-        <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2 max-h-[70vh] items-start w-full overflow-y-scroll">
-        
-        
-            <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
-                <!---Post Body Preview Length--->
-                <SettingMultiSelect icon={Photo} 
-                    title="Post Body Preview Length"
-                    padding={false} small={true}
-                    optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000']}
-                    options={[-1, 0, 50, 120, 240, 500, 750, 1000]}
-                    bind:selected={$userSettings.uiState.postBodyPreviewLength}
-                />
-            </div>
-
-
-            <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
-                <SettingMultiSelect icon={Language} 
-                    title="Application Font" 
-                    padding={false} small={true}
-                    options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
-                    optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
-                    bind:selected={$userSettings.font}
-                />
-            </div>
-        </div>
-        
 
         <!---User Settings--->
         <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2 max-h-[70vh] items-start w-full overflow-y-scroll">
         
         
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
-                
+                <SettingMultiSelect icon={Photo} 
+                    title="Post Body Preview Length"
+                    padding={true} small={true}
+                    optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000']}
+                    options={[-1, 0, 50, 120, 240, 500, 750, 1000]}
+                    bind:selected={$userSettings.uiState.postBodyPreviewLength}
+                />
+
+
                 <!---Post Style--->
                 <SettingToggle title="Show Compact Posts" icon={$userSettings.showCompactPosts ? QueueList : Photo}  small={true}
                     bind:value={$userSettings.showCompactPosts} 
@@ -159,6 +108,14 @@
             </div>
 
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
+                <SettingMultiSelect icon={Language} 
+                    title="Application Font" 
+                    padding={true} small={true}
+                    options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+                    optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+                    bind:selected={$userSettings.font}
+                />
+
                 <!---Show full URLs--->
                 <SettingToggle icon={LinkIcon} title="Show Full URLs" bind:value={$userSettings.uiState.showFullURL} small={true} />
                 
