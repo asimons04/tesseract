@@ -62,12 +62,11 @@
                 {/if}
                 
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-                <MBFC post={post} collapseBadges rightJustify={false}/>
+                <MBFC post={post} collapseBadges rightJustify={$userSettings.uiState.feedMargins}/>
             </span>
             {/if}
             
         </div>
-
 
         <!--- Thumbnail --->
         {#if post.post.thumbnail_url || isImage(post.post.url)}
@@ -89,9 +88,6 @@
                 </button>
             </div>
         {/if}
-        
-        
-        
     </div>
     
     <!---Alt source selector, link, MBFC for mobile view--->
