@@ -46,16 +46,10 @@
         action:     {set: false}
     }
     
-    // Make Filter object reactive
-    $: {
-        filter.title = '';
-        filter.community.set = new URLSearchParams($page.url.search).has('community');
-        filter.moderatee.set = new URLSearchParams($page.url.search).has('other_person_id');
-        filter.moderator.set = new URLSearchParams($page.url.search).has('mod_id');
-        
+    async function setCommunityFilter() {
         // Community Filter
         if (filter.community.set) {
-        
+                
             if (data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
                 filter.community.community = data.modlog[0].community
             }
@@ -71,7 +65,9 @@
         } else {
             delete filter.community.community
         }
-        //Moderatee Filter
+    }
+
+    async function setModerateeFilter() {
         if (filter.moderatee.set) {
             if (data.modlog && data.modlog.length > 0 && data.modlog[0].moderatee) {
                 filter.moderatee.person = data.modlog[0].moderatee;
@@ -92,8 +88,9 @@
         } else {
             delete filter.moderatee.person
         }
+    }
 
-        //Moderator Filter
+    async function setModeratorFilter() {
         if (filter.moderator.set) {
             if (data.modlog && data.modlog.length > 0 && data.modlog[0].moderator) {
                 filter.moderator.person = data.modlog[0].moderator;
@@ -114,6 +111,20 @@
             delete filter.moderator.person
         }
     }
+
+    // Watch the URL params for changes to filters
+    $: {
+        filter.community.set = new URLSearchParams($page.url.search).has('community');
+        filter.moderatee.set = new URLSearchParams($page.url.search).has('other_person_id');
+        filter.moderator.set = new URLSearchParams($page.url.search).has('mod_id');
+    }
+    
+    // Set the filter details if/when they're set
+    $:  filter.community.set, setCommunityFilter()
+    $:  filter.moderatee.set, setModerateeFilter()
+    $:  filter.moderator.set, setModeratorFilter()
+        
+    
 
 </script>
 

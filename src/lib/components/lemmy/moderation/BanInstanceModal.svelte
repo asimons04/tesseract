@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Person } from 'lemmy-js-client'
+    import type { Community, Person } from 'lemmy-js-client'
     
     import { createEventDispatcher } from 'svelte';
     import { dispatchWindowEvent } from '$lib/ui/events'
@@ -25,6 +25,7 @@
 
     export let open = false
     export let user: Person | undefined
+    export let community: Community | undefined
     export let banned: boolean
     
     const dispatcher = createEventDispatcher<{ban:boolean}>()
@@ -67,27 +68,50 @@
                 }
             }
 
-            await getClient().banPerson({
-                ban: !banned,
-                person_id: user.id,
-                reason: reason || undefined,
-                remove_data: deleteData,
-                expires: date ? Math.floor(date / 1000) : undefined,
-            })
+            // Ban from community if `community` is provided in the call
+            if (community) {
+                await getClient().banFromCommunity({
+                    ban: !banned,
+                    community_id: community.id,
+                    person_id: user.id,
+                    reason: reason || undefined,
+                    remove_data: deleteData,
+                    expires: date ? Math.floor(date / 1000) : undefined,
+                })
+                
+                // Dispatch global event so other components can react
+                dispatchWindowEvent('banCommunity', {
+                    person_id: user.id,
+                    community_id: community.id,
+                    banned: banned,
+                    remove_content: deleteData
+                })
+
+            }
+            
+            // Ban from instance if no community provided
+            else {
+                await getClient().banPerson({
+                    ban: !banned,
+                    person_id: user.id,
+                    reason: reason || undefined,
+                    remove_data: deleteData,
+                    expires: date ? Math.floor(date / 1000) : undefined,
+                })
+
+                // Dispatch global event so other components can react
+                dispatchWindowEvent('banUser', {
+                    person_id: user.id,
+                    banned: banned,
+                    remove_content: deleteData
+                })
+            }
             
             open = false
             banned = !banned
             
-            // Dispatch global event so other components can react
-            dispatchWindowEvent('banUser', {
-                person_id: user.id,
-                banned: banned,
-                remove_content: deleteData
-            })
-
-            
             toast({
-                content: `Successfully ${ banned ? 'banned' : 'unbanned'}  that user.`,
+                content: `Successfully ${ banned ? 'banned' : 'unbanned'}  ${user.name}@${new URL(user.actor_id).hostname} ${community ? 'from the community' : 'from the instance'}.`,
                 type: 'success',
                 title: 'Success'
             })
@@ -97,21 +121,31 @@
             toast({
                 content: err as any,
                 type: 'error',
+                title: 'Error'
             })
         }
         loading = false
-        dispatcher('ban', banned)
+        //dispatcher('ban', banned)
     }
 </script>
 
-<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User From Instance" icon={banned ? Check : NoSymbol}  width="max-w-2xl">
+<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User From {community ? 'Community' : 'Instance'}" icon={banned ? Check : NoSymbol}  width="max-w-2xl">
     
     {#if user}
         <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>
+            
             <div class="flex items-center gap-1">
                 <Avatar url={user.avatar} alt={user.name} width={24} />
                 <span class="font-bold">{user.name}@{new URL(user.actor_id).hostname}</span>
+            
+            
+                {#if community}
+                    {banned ? 'Unbanning' : 'Banning'} from
+                    <span class="font-bold">{community.name}@{new URL(community.actor_id).hostname}</span>
+                {/if}
+
             </div>
+
 
             <MarkdownEditor required previewButton images={false} rows={6} 
                 bind:value={reason} label="Reason"

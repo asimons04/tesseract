@@ -121,7 +121,7 @@
 </svelte:head>
 
 
-<SubNavbar back quickSettings qsShiftLeft={2} toggleMargins toggleCommunitySidebar scrollButtons
+<SubNavbar back quickSettings qsShiftLeft={2} toggleMargins toggleCommunitySidebar scrollButtons compactSwitch
     sortMenu={true}         bind:selectedSortOption={data.sort}
     refreshButton           on:navRefresh={()=> refresh()}
 >

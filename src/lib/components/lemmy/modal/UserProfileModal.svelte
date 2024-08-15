@@ -1,13 +1,13 @@
 <script lang="ts">
     import type { GetPersonDetailsResponse, Person } from "lemmy-js-client"
 
-    import { dispatchWindowEvent } from '$lib/ui/events'
+    import { dispatchWindowEvent, type BanUserEvent } from '$lib/ui/events'
 
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
     import { instance } from "$lib/instance"
-    import { isAdmin } from '$lib/components/lemmy/moderation/moderation'
+    import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { isBlocked, blockUser } from '$lib/lemmy/user'
     import { onMount } from "svelte"
     import { profile } from '$lib/auth'
@@ -16,7 +16,6 @@
     import { userSettings } from '$lib/settings'
     
     import Avatar from "$lib/components/ui/Avatar.svelte"
-    import BanInstanceModal from "$lib/components/lemmy/moderation/BanInstanceModal.svelte"
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
@@ -127,8 +126,15 @@
         return undefined
     }
     
+    function handleBanUser(e:BanUserEvent) {
+        if (e.detail.person_id == personDetails?.person_view.person.id) {
+            personDetails.person_view.person.banned = e.detail.banned
+        }
+    }
   
 </script>
+
+<svelte:window on:banUser={handleBanUser} />
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width="max-w-xl"
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
@@ -144,11 +150,7 @@
     <UserSendMessageModal bind:open={messaging} bind:person={personDetails.person_view} />
     {/if}
 
-    <!---Ban Modal--->
-    {#if banning && personDetails?.person_view.person}
-        <BanInstanceModal bind:open={banning} bind:user={personDetails.person_view.person} bind:banned={personDetails.person_view.person.banned} />
-    {/if}
-    
+   
     <!--- User Card and Action Buttons--->
     {#if !loading && personDetails?.person_view.person}
         
@@ -373,7 +375,7 @@
                     <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" 
                         on:click={() => {
                             //open = false
-                            banning=true
+                            ban(personDetails.person_view.person.banned, personDetails.person_view.person)
                         }}
                     >
                         {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}

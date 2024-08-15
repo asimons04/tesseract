@@ -29,6 +29,7 @@
     
     export let post:PostView
     export let collapseBadges:boolean = false;
+    export let rightJustify: boolean = true
 
     let open:boolean = false;
     // @ts-ignore
@@ -47,7 +48,9 @@
             : results.credibility == 'Low Credibility'
                 ? 'red'
                 : 'gray'
-        }>
+        }
+        {rightJustify}
+    >
         
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <span class="flex flex-row items-center gap-1 cursor-pointer font-bold"
@@ -68,8 +71,8 @@
             
             <!--{results.credibility.replace('Credibility', '')} <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">Credibility</span>-->
             {results.credibility.replace('Credibility', '')} 
-                <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">
-                     ({results?.biases?.name})
+                <span class="{collapseBadges ? 'hidden' : 'hidden lg:block'}">
+                     ({results?.biases?.name.replace('Biased', '').replace('Bias','').trim()})
                 </span>
         </span>
         

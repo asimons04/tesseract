@@ -37,7 +37,7 @@
     import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import PostPreview from './Post.svelte'
+    import PostPreview from './PostCardStyle.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -67,6 +67,8 @@
     export let hideCommunityInput = false
     export let textEditorRows:number = 10
     export let inModal = false
+
+    let postContainer: HTMLDivElement
 
     let default_data: PostData = crosspostData ?? {
         community: editingPost?.community ?? community,
@@ -336,16 +338,20 @@
                 {previewing ? 'Edit' : 'Preview'}
             </Button>
 
-            <!---Card/Compact Switch--->
+            <!---Card/Compact Switch
             <Button title="Switch to {compactPosts ? 'card view' : 'compact view'}" disabled={!previewing} color="tertiary-border"
                 on:click={async () => {
                     compactPosts = !compactPosts
-                    if (compactPosts) displayType='feed'
-                    else displayType='post'
+                    //if (compactPosts) displayType='feed'
+                    //else displayType='post'
                 }}
             >
                 <Icon src={compactPosts ? Window : QueueList} width={16} />
+                <span class="hidden md:block">
+                    {compactPosts ? 'Card' : 'Compact'}
+                </span>
             </Button>
+            --->
 
             <!--- Reset Form --->
             <Button  loading={resetting} disabled={previewing||resetting} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
@@ -361,7 +367,10 @@
                     resetting = false
                 }}
             >
-                <Icon src={ArrowUturnDown} mini size="16"/>                
+                <Icon src={ArrowUturnDown} mini size="16"/>
+                <span class="hidden md:block">
+                    {editingPost ? 'Undo' : 'Reset'}
+                </span>             
             </Button>
             
             <!--- Submit/Save--->
@@ -444,7 +453,9 @@
                 <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
                 
                 {#if ENABLE_MEDIA_PROXY && $userSettings.proxyMedia.enabled}
-                    <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." />
+                    <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" 
+                        description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." 
+                    />
                 {/if}
             </SettingToggleContainer>
 
@@ -459,16 +470,18 @@
 
 <!---Previewing Post--->
 {#if previewPost && previewing}
+    
     {#if inModal}
-        <div class="mt-8 pb-3">
-            <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
+        <div bind:this={postContainer} class="mt-4 pb-3">
+            <PostPreview  bind:postContainer post={previewPost}  actions={false}  displayType="post"  bind:expandCompact={compactPosts} autoplay={false}  />
         </div>
     {:else}
     
         <FeedContainer>
-            <div class="mt-8 pb-3">
-                <PostPreview  post={previewPost}  actions={false}  bind:displayType={displayType} bind:forceCompact={compactPosts} autoplay={false}  />
+            <div bind:this={postContainer} class="mt-4 pb-3">
+                <PostPreview  bind:postContainer post={previewPost}  actions={false}  displayType="post"  bind:expandCompact={compactPosts} autoplay={false}  />
             </div>
         </FeedContainer>
     {/if}
+    
 {/if}

@@ -33,56 +33,26 @@
 </script>
 
 
-<Card class="bg-white flex flex-col w-full p-2 gap-0 " >
+<Card class="flex flex-col w-full p-2 gap-0 " >
 
-    <PostMeta bind:post={post} showTitle={false} {collapseBadges}/>
+    
 
     <!--- Post Link, Body, and Thumbnail  --->
     <div class="flex flex-row w-full gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}">
-        <!--- Thumbnail --->
-        {#if post.post.thumbnail_url || isImage(post.post.url)}
-            <div class="flex-none w-[20%] md:w-[15%] xl:w-[10%] h-auto mx-auto mt-2">
-                <!--- Expand the post in place when clicking thumbnail--->
-                <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                    on:click={() => {  
-                        expandCompact = !expandCompact; 
-                        scrollToTop(postContainer)
-                    }}
-                >
-                    <!--- Thumbnail for Link Post--->
-                    {#if post.post.thumbnail_url}
-                        <img
-                            src="{imageProxyURL(post.post.thumbnail_url, 256, 'webp')}"
-                            loading="lazy"
-                            alt={post.post.name}
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    <!---Thumbnail for Image Post--->
-                    {:else if post.post.url}
-                        <img
-                            src="{imageProxyURL(post.post.url, 256, 'webp')}"
-                            loading="lazy"
-                            alt={post.post.name}
-                            class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
-                            class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                        />
-                    {/if}
-            
-                
-                </button>
-            </div>
-        {/if}
+        
         
         
         <!---Post body and link--->
         <div class="flex flex-col gap-0 {post.post.thumbnail_url || isImage(post.post.url) ? 'w-[80%] md:w-[85%] xl:w-[90%]' : 'w-full'}">
             
+            <PostMeta bind:post={post} showTitle={false} {collapseBadges}/>        
+            
             <!---Post title--->
             <PostTitle bind:post />
 
+            <!---Alt source selector, link, MBFC for desktop compact view--->
             {#if post.post.url && !isImage(post.post.url)}
-            <span class="flex flex-row flex-wrap w-full gap-2">
+            <span class="hidden md:flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
                 
                 <!---Show archive link if not a media post--->
                 {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
@@ -90,29 +60,70 @@
                 {/if}
                 
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-                <span class="ml-auto" />
-                <MBFC post={post}/>
+                <MBFC post={post} rightJustify={true}/>
             </span>
             {/if}
             
-            <div class="mt-1"/>
-            <PostBody bind:post bind:postContainer {displayType} previewLength={240} bind:expandCompact bind:expandPreviewText inline={!expandPreviewText}/>
-
-            <!--- Crossposts --->
-            <Crossposts bind:post size="xs" class="!pl-0"/>
-
         </div>
-        
-        
+
+        <!--- Thumbnail --->
+        {#if post.post.thumbnail_url || isImage(post.post.url)}
+            <div class="flex-none w-fit h-fit mx-auto mt-2 overflow-hidden">
+                <!--- Expand the post in place when clicking thumbnail--->
+                <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                    on:click={() => {  
+                        expandCompact = !expandCompact; 
+                        scrollToTop(postContainer)
+                    }}
+                >
+                    <img
+                        src="{imageProxyURL(post.post.thumbnail_url ?? post.post.url, 256, 'webp')}"
+                        loading="lazy"
+                        alt={post.post.name}
+                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
+                        class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                    />
+                </button>
+            </div>
+        {/if}
     </div>
     
-    <div class="mt-1"/>
+    <!---Alt source selector, link, MBFC for mobile view--->
+    {#if post.post.url && !isImage(post.post.url)}
+    <span class="flex md:hidden flex-row flex-wrap my-auto w-full gap-2 mb-1">
+        
+        <!---Show archive link if not a media post--->
+        {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
+            <ArchiveLinkSelector url={post.post?.url} {postType}/>
+        {/if}
+        
+        <Link class="text-xs max-w-[250px]" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+        <MBFC post={post} rightJustify={true}/>
+    </span>
+    {/if}
+
+
+    {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
+        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
+            class="my-1"
+            inline={
+                ( (post?.post?.body?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength ||
+                    (!post.post.body && (post?.post?.embed_description?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength)
+                ) && !expandPreviewText &&  displayType=='feed'
+            }
+        />
+    {/if}
+
+    <!--- Crossposts --->
+    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+    
     
     <!--- Post Action Bar--->
-    <div class="flex flex-row w-full mt-1">
+    <div class="flex flex-row w-full">
         {#if actions}
             <div class="w-full h-full grid items-end">
                 <PostActions  bind:post  bind:expandCompact bind:postContainer {displayType}
+                    on:reply
                     on:edit={(e) => {
                         toast({
                             title: 'Confirmation',

@@ -104,6 +104,7 @@ interface Settings {
     uiState: {
         disableDownvotes: boolean
         linkPreviews: boolean,
+        postBodyPreviewLength: number,
         expandSidebar: boolean
         expandCommunitySidebar: boolean
         feedMargins:boolean
@@ -165,6 +166,7 @@ export const defaultSettings: Settings = {
     uiState: {
         disableDownvotes:                                               false,
         linkPreviews:                                                   true,
+        postBodyPreviewLength:                                          240,
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,

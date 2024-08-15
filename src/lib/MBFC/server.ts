@@ -15,7 +15,7 @@ export async function lookup(domain:string): Promise<MBFCReport|undefined> {
         let buffer = await file.readFile();
         await file.close();
 
-        data = JSON.parse(buffer) as MBFCDataSet;
+        data = JSON.parse(buffer.toString()) as MBFCDataSet;
     }
     catch (err) {
         console.log(err);

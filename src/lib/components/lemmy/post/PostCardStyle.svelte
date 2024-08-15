@@ -2,9 +2,10 @@
     
     import type { PostType, PostDisplayType } from './helpers.js'
     import type { CommunityModeratorView, PostView } from 'lemmy-js-client'
-    
+
     import { postType as identifyPostType } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
     
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
@@ -20,11 +21,11 @@
     export let expandCompact: boolean = false;
     export let post: PostView
     export let moderators: Array<CommunityModeratorView> = [];
-    export let showCommentForm:boolean = false;
     export let expandPreviewText:boolean = false
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
-
+    
+   
     // Determine post type based on its attributes
     let postType: PostType
     $: post, postType = identifyPostType(post)
@@ -38,13 +39,16 @@
 
     <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
-    <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
+    {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength  >= 0) || displayType=='post'}
+        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
+    {/if}
 
     <!--- Crossposts --->
-    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'}/>
+    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="mb-1"/>
 
     {#if actions}
-        <PostActions  bind:post bind:expandCompact bind:postContainer {displayType} bind:showCommentForm
+        <PostActions  bind:post bind:expandCompact bind:postContainer {displayType}
+            on:reply
             on:edit={(e) => {
                 post = post
                 toast({

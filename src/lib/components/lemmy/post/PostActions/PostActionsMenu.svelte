@@ -1,10 +1,8 @@
 <script lang="ts">
-    import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import type { PostView } from 'lemmy-js-client'
+    import { type Alignment, getMenuAlignment } from '$lib/components/ui/menu/menu.js'
     
     import { report} from '$lib/components/lemmy/moderation/moderation.js'
-    import { blockUser, isBlocked } from '$lib/lemmy/user'
-    import { createEventDispatcher } from 'svelte'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
     import { goto } from '$app/navigation';
@@ -31,7 +29,6 @@
         EyeSlash,
         Flag,
         Home,
-        NoSymbol,
         PencilSquare,
         Share,
         Trash,
@@ -39,23 +36,23 @@
         Window,
     } from 'svelte-hero-icons'
     
-    
-    
     export let post:PostView
     export let menuIconSize:number  = 16
-    export let alignment:Alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
     export let icon:IconSource = EllipsisHorizontal;
+    export let expandCompact: boolean
     
-    // Allow importing this component just for the edit post modal
-    export let suppressModal:boolean = false;
-
-    const dispatcher = createEventDispatcher<{ edit: PostView }>()
+    let alignment:Alignment = getMenuAlignment(expandCompact)
     let editing = false;
 
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
-    $: alignment = $userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'
+    
+    $: $userSettings.showCompactPosts, alignment = getMenuAlignment(expandCompact)
+    $: $userSettings.uiState.reverseActionBar, alignment = getMenuAlignment(expandCompact)
 </script>
-<PostEditorModal bind:open={editing} bind:post />
+
+{#if $profile?.user?.local_user_view.person.id == post.creator.id && editing}
+    <PostEditorModal bind:open={editing} bind:post />
+{/if}
 
 <Menu bind:alignment containerClass="overflow-auto">
     <Button slot="button" aria-label="Post actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Post actions" color="tertiary-border" >
@@ -72,14 +69,9 @@
     
 
     <!---Edit if owned by self--->
-    {#if $profile?.user && $profile?.jwt && $profile.user.local_user_view.person.id == post.creator.id}
+    {#if $profile?.user?.local_user_view.person.id == post.creator.id}
         <MenuButton  title="Edit Post" color="info"
-            on:click={() => {
-                if (!suppressModal) editing = true
-                else {
-                    dispatcher('edit', post);
-                }
-            }}
+            on:click={() => { editing = true }}
         >
             <Icon src={PencilSquare} width={16} mini />
             Edit
@@ -123,7 +115,7 @@
         <!---Posts In This Community by This Creator--->
         <MenuButton link href="/search?type=All&q=%20&community_id={post.community.id}&person_id={post.creator.id}" title="Submissions in this community by this creator" color="info">
             <Icon src={User} mini size="16" />
-            More from {post.creator.display_name ? post.creator.display_name : post.creator.name}@{new URL(post.creator.actor_id).hostname}
+            More from {post.creator.display_name ? post.creator.display_name : post.creator.name}
         </MenuButton>
     {/if}
 

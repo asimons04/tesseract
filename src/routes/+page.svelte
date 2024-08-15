@@ -124,6 +124,7 @@
     listingType     bind:listingTypeOptions bind:listingTypeOptionNames bind:selectedListingType={data.listingType}
     sortMenu        bind:selectedSortOption={data.sort}
     refreshButton   on:navRefresh={()=> refresh()}
+    compactSwitch
 >
     <!---Inline Search in Middle--->
     <SiteSearch placeholder="Search {data?.site?.site_view?.site?.name ?? "everything"}" slot="center"/>

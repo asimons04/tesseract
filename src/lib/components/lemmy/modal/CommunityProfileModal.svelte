@@ -103,7 +103,6 @@
                 let resolve = await getClient().resolveObject({
                     q: `!${community.name}@${new URL(community.actor_id).hostname}`
                 })
-                console.log(resolve)
             }
 
             communityDetails = await getClient().getCommunity({

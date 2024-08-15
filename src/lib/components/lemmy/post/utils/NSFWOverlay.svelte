@@ -11,11 +11,9 @@
 {#if nsfw && $userSettings.nsfwBlur && displayType =='feed'}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="absolute z-[5] left-0 top-0 w-full h-full bg-white/75 dark:bg-black/75" 
-        on:click={(e)=> {
+    <div class="absolute z-[10] left-0 top-0 w-full h-full bg-white/75 dark:bg-black/75" 
+        on:click|preventDefault|stopPropagation={()=> {
             if (nsfw) {
-                e.preventDefault();
-                e.stopPropagation();
                 nsfw = nsfw = false;
             }
         }}

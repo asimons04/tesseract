@@ -5,7 +5,6 @@
     import Card from '$lib/components/ui/Card.svelte'
     import Comment from '$lib/components/lemmy/comment/Comment.svelte'
     import CommentMeta from '$lib/components/lemmy/comment/CommentMeta.svelte'
-    import Link from '$lib/components/input/Link.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     
     

@@ -1,9 +1,11 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     
+    import { type Alignment, getMenuAlignment } from '$lib/components/ui/menu/menu.js'
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { federationStateModal, fediseerModal } from '$lib/components/lemmy/moderation/moderation'
     import { getClient } from '$lib/lemmy'
+    
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
@@ -22,12 +24,18 @@
         NoSymbol,
         Eye
     } from 'svelte-hero-icons'
+    
 
 
     export let post:PostView
+    export let expandCompact: boolean
+
+    let alignment: Alignment = getMenuAlignment(expandCompact)
     
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
-   
+    $: $userSettings.showCompactPosts, alignment = getMenuAlignment(expandCompact)
+    $: $userSettings.uiState.reverseActionBar, alignment = getMenuAlignment(expandCompact)
+
     let blockingInstance = false;
     async function doBlockInstance(instance_id:number, hostname:string, confirm:boolean=false):Promise<void> {
         if (!confirm) {
@@ -74,7 +82,7 @@
 
 
 <!---Explore Menu--->
-<Menu alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}" containerClass="overflow-auto">
+<Menu alignment={alignment} containerClass="overflow-auto">
     <Button slot="button" aria-label="Explore" let:toggleOpen on:click={toggleOpen} size="square-md" title="Instances" color="tertiary-border">
         <Icon slot="icon" src={Server} width={16} mini />
     </Button>

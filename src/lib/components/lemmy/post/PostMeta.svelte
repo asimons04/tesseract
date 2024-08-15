@@ -54,7 +54,7 @@
 </script>
 
 
-<div class="flex flex-col gap-1.5 grow">
+<div class="flex flex-col gap-1.5 w-full">
 
     <div class="flex flex-col gap-1">
 
@@ -129,37 +129,37 @@
                 --->
                 
                 {#if post.post.nsfw}
-                    <Badge label="NSFW" color="red" icon={ExclamationCircle}>
+                    <Badge label="NSFW" color="red" icon={ExclamationCircle} click={false}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
                     </Badge>
                 {/if}
 
                 {#if post.saved}
-                    <Badge label="Saved" color="yellow" icon={Bookmark}>
+                    <Badge label="Saved" color="yellow" icon={Bookmark} click={false}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.locked}
-                    <Badge label="Locked" color="yellow" icon={LockClosed}>
+                    <Badge label="Locked" color="yellow" icon={LockClosed} click={false}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.removed}
-                    <Badge label="Removed" color="red" icon={NoSymbol}>
+                    <Badge label="Removed" color="red" icon={NoSymbol} click={false}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>
                     </Badge>
                 {/if}
                 
                 {#if post.post.deleted}
-                    <Badge label="Deleted" color="red" icon={Trash}>
+                    <Badge label="Deleted" color="red" icon={Trash} click={false}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>
                     </Badge>
                 {/if}
                 
                 {#if (post.post.featured_local || post.post.featured_community)}
-                    <Badge label="Featured" color="green" icon={Megaphone}>
+                    <Badge label="Featured" color="green" icon={Megaphone} click={false}>
                         <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
                     </Badge>
                 {/if}

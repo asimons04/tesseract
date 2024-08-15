@@ -8,6 +8,7 @@
     export let randomColor = false
     export let rightJustify = true
     export let inline:boolean = false
+    export let click:boolean = true
 
     const badgeColor = {
         red: 'bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-300',
@@ -31,6 +32,7 @@
     whitespace-nowrap overflow-hidden 
     {rightJustify ? 'ml-auto' : ''}
     {colorClass} 
+    {click ? '' : 'pointer-events-none'}
     {$$props.class}
     " 
     title={label} on:click

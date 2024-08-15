@@ -97,8 +97,17 @@
 
     let toggleCardCompactView = async () => {
         $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-        if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
-        else $userSettings.uiState.feedMargins = true
+        
+        /*
+        if ($userSettings.showCompactPosts) {
+            $userSettings.uiState.feedMargins = false
+            $userSettings.uiState.postBodyPreviewLength = 0
+        }
+        else {
+            $userSettings.uiState.feedMargins = true
+            $userSettings.uiState.postBodyPreviewLength = 240
+        }
+        */
         await scrollToLastSeenPost()
     }
 </script>

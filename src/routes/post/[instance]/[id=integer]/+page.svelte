@@ -1,11 +1,10 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BanUserEvent, BlockUserEvent } from '$lib/ui/events';
     import type { UploadImageResponse } from 'lemmy-js-client';
 
     import { goto } from '$app/navigation'
     import { getClient } from '$lib/lemmy.js'
     import { instance } from '$lib/instance.js'
-    import { isImage, removeURLParams } from '$lib/components/lemmy/post/helpers.js'
+    import { isImage, postType as getPostType, removeURLParams } from '$lib/components/lemmy/post/helpers.js'
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
@@ -18,7 +17,7 @@
     import CommentSection from '$lib/components/lemmy/post/CommentSection.svelte'
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
+    import Post from '$lib/components/lemmy/post/Post.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     import {
@@ -26,13 +25,15 @@
         ExclamationTriangle,
         Home
     } from 'svelte-hero-icons'
+
     
     export let data
    
     let showCommentForm:boolean = false;
-    let postContainer: HTMLDivElement
     let imageUploads = [] as UploadImageResponse[]
     
+    let expandCompact: boolean = !(['link', 'thumbLink'].includes(getPostType(data.post.post_view))) ?? false
+
     //@ts-ignore (Add cross posts to post_view object for sanity)
     $: data.post.post_view.cross_posts = data.post.cross_posts
 
@@ -81,33 +82,9 @@
         }
     }
 
-    function handleBanInstance(e: BanUserEvent) {
-        if (data.post.post_view.creator.id == e.detail.person_id) {
-            data.post.post_view.creator.banned = e.detail.banned
-            data.post.post_view.post.removed = e.detail.remove_content
-        }
-    }
-
-    function handleBanCommunity(e: BanCommunityEvent) {
-        if (data.post.post_view.creator.id == e.detail.person_id && data.post.post_view.community.id == e.detail.community_id) {
-            data.post.post_view.creator_banned_from_community = e.detail.banned
-            data.post.post_view.post.removed = e.detail.remove_content
-        }
-    }
-
-    function handleUserBlock(e: BlockUserEvent) {
-        if (data.post.post_view.creator.id == e.detail.person_id) {
-            data.post.post_view.creator_blocked = e.detail.blocked
-        }
-    }
+    
 
 </script>
-
-<svelte:window 
-    on:banUser={handleBanInstance}
-    on:banCommunity={handleBanCommunity}
-    on:blockUser={handleUserBlock} 
-/>
 
 
 <svelte:head>
@@ -155,17 +132,29 @@
     {/if}
     
 
-    <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]" bind:this={postContainer}>
+    <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
+        <!---
 
-        <PostCardStyle 
+            moderators={data.post.moderators}
+            loop={$userSettings.embeddedMedia.loop}
+        --->
+        <Post 
             bind:post={data.post.post_view} 
-            bind:showCommentForm={showCommentForm}
-            bind:postContainer
             displayType="post" 
             actions={true} 
-            moderators={data.post.moderators} 
+            expandCompact={expandCompact}
+            on:reply={() => {
+                showCommentForm = !showCommentForm
+                
+                if (!showCommentForm) return
+                // Focus the comment form
+                setTimeout(() => {
+                    let commentForm = document.getElementById(`commentForm-${data.post.post_view.post.id}`);
+                    commentForm?.focus()
+                }, 250);
+            }}
             autoplay={$userSettings.embeddedMedia.autoplay}
-            loop={$userSettings.embeddedMedia.loop}
+            
         
         />      
 
