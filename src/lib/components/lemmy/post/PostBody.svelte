@@ -8,14 +8,11 @@
     import Button from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
 
-
     import { 
         Icon, 
         ChevronDown,
         ChevronUp
     } from 'svelte-hero-icons'
-    
-
 
     export let post:PostView
     export let postContainer: HTMLDivElement
@@ -23,68 +20,74 @@
     export let expandPreviewText:boolean    = false
     export let inline:boolean               = false
     
-    let source: string
-    
+    let source: string = ''
+    let hideExpandButton = false
+    let fadeText = false
+
     function generateSource() {
-        let text = post.post.body ??  ( 
+        let body = post.post.body ??  ( 
             post.post.embed_description 
                 ? `**Summary**: ${post.post.embed_description}`
                 : ''
         )
-
-        text = !expandPreviewText && text.length > $userSettings.uiState.postBodyPreviewLength
-            ? text.slice(0, $userSettings.uiState.postBodyPreviewLength)
-            : text
         
-        return text
+        const bodyLength = body.length
 
+        hideExpandButton = (
+            $userSettings.uiState.postBodyPreviewLength == -1 || 
+            bodyLength < 1 ||
+            bodyLength < $userSettings.uiState.postBodyPreviewLength ||
+            displayType == 'post'
+        )
+        
+        fadeText = !expandPreviewText && !post.post.nsfw && bodyLength > $userSettings.uiState.postBodyPreviewLength
+        
+        if (displayType == 'feed' && !expandPreviewText && bodyLength > 0 && bodyLength > $userSettings.uiState.postBodyPreviewLength) {
+            body = body.slice(0, $userSettings.uiState.postBodyPreviewLength)
+        }
+
+        return body
     }
-    // Use the embed description from the metadata, if available, if no post body is provided.
-    $:  (post, $userSettings.uiState.postBodyPreviewLength), source = generateSource()
+    
+    // Regenerate source text if post content, preview length setting, or expanding preview text
+    $:  (post, $userSettings.uiState.postBodyPreviewLength, expandPreviewText), source = generateSource()
+</script> 
 
-</script>
-
-{#if post.post.body}
-
+{#if source}
     <div class="flex flex-col text-sm rounded-md {$$props.class}">    
         {#if displayType == 'post' }
-                <Markdown source={post.post.body} {inline}/>
+                <Markdown bind:source {inline}/>
             <slot />
         {/if}
 
         <!--- Show expandable preview in feed--->
         {#if displayType=='feed'}
             <div class="
-                {!expandPreviewText && !post.post.nsfw && post.post.body.length > $userSettings.uiState.postBodyPreviewLength
+                {fadeText
                     ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
                     : ''
                 }
             ">
-                <Markdown 
-                    class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}"
-                    {inline}
-                    bind:source
-                    
-                />
+                <Markdown bind:source {inline} class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}" />
             </div>
-
-            <!---Expand/Collapse Button--->
-            {#if (post.post.body.length > $userSettings.uiState.postBodyPreviewLength) || post.post.nsfw}
-                <Button color="tertiary" class="mx-auto w-fit text-xs font-bold !py-0"
-                    title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
-                    on:click={() => {
-                        expandPreviewText = !expandPreviewText
-                        post.post.nsfw = false
-
-                        // Scroll top of post to top on close
-                        if (!expandPreviewText) scrollToTop(postContainer)
-                    }}
-                >
-                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-                    {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
-                    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
-                </Button>
-            {/if}
         {/if}
     </div>
+{/if}
+
+<!---Expand/Collapse Button--->
+{#if !hideExpandButton}
+<Button color="tertiary" class="mx-auto w-fit text-xs font-bold !py-0"
+    title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
+    on:click={() => {
+        expandPreviewText = !expandPreviewText
+        post.post.nsfw = false
+
+        // Scroll top of post to top on close
+        if (!expandPreviewText) scrollToTop(postContainer)
+    }}
+>
+    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
+    {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
+    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
+</Button>
 {/if}
