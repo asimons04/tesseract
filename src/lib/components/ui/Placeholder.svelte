@@ -14,7 +14,7 @@
     </div>
     {/if}
 
-    <div class="flex flex-col gap-1 text-center">
+    <div class="flex flex-col gap-1 text-center max-w-full">
         <h1 class="text-slate-900 dark:text-zinc-100 text-lg font-medium">
             {title}
         </h1>
