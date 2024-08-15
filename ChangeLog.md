@@ -4,17 +4,29 @@ All major/minor changes between releases will be documented here.
 ## 1.4.12
 ### Bugfixes
 - Fixed reactivity on modlog filter lookups (sometimes they got into a fetch loop)
+- Fixed unhandled exception when a bad match occurs when detecting community/user links to be badge-ified (backported to 1.4.11)
 
-- To Do:  Edit post modal, previewing, card/compact switcher not working
 
-
-Probably a slew of new ones introduced with all the changes to the underlying plumbing in this release. If any do crop up, they'll likely be related to reactivity (or, more specifically, not reacting when they should).  This is due to the switch from relying on bound variables between components to event dispatchers/listeners.  So far, I've noticed all the bases covered, but there may be a few edge cases that I missed.
 
 
 ### Enhancements
 
+#### Compact View Refreshed and is No Longer Second-Class Citizen
+The 'compact' view has been refreshed. Now _slightly_ more compact and powerful. Thumbnail images have been moved to the right side so they can be moved higher up in the post card while also keeping the left side consistent if there is no thumbnail image.
+
+Compact mode now no longer automatically disables the feed margins.  You'll need to use the "toggle margins" buttons in the navbar to make them full width (the setting will persist, so you only need to do it once).
+
+It also works quite a bit better in mobile, though not perfect (there's not much difference in overall post height when it's scrunched down that far).
+
+That said, "compact" view is _mostly_ designed for desktop though I've done my best to make sure it looks presentable on mobile as well.
+
+
+Posts can now also be rendered in compact mode on the post pages (e.g. /post/12345).  All media and image posts, though, will still default to "card" mode (but can be minimized to compact).  This was chosen as a compromise between not making article headline images huge and having to click twice to show an image post (e.g. meme) in full when clicking into it.
+
 #### Adjustable Preview Length in Feed
-Added a setting (`Settings -> Feed -> Post Body Preview Length`) to allow setting the number of characters that show in the post body in the feed before requiring a click of 'expand'.  Can even disable the body previews if you want really compact posts.  
+Added a new setting (`Settings -> Feed -> Post Body Preview Length`) to allow setting the number of characters that show in the post body in the feed before requiring a click of 'expand'.  Can even disable the body previews if you want really compact posts.  This setting is also available in the "Quick Options".
+
+The default is 240 characters (same as the old hardcoded value in prior releases).
 
 **What's the difference between 'Disabled' and '0'?**
 
@@ -23,43 +35,52 @@ Setting the body preview length to `disabled` will hide the post body component 
 Setting it to `0` will not show the body preview contents but will keep the "expand" button to enable you to view the post body in the feed if you wish.
 
 
-#### Compact View Refreshed and No Longer Second-Class Citizen
-The 'compact' view has been refreshed. Now _slightly_ more compact and powerful.
+#### Possibilities for Synthetic View Modes
+I really don't want to (and have no plans to) create and maintain more than two basic types of view.  
 
-Posts can now be rendered in compact mode on the post pages (e.g. /post/12345).  All media and image posts, though, will still view in "card" mode (but can be minimized to compact).  This was chosen as a compromise between not making article headline images huge and having to click twice to show an image post (e.g. meme) in full when clicking into it.
+That said, the compact view is flexible since it's affected by several different config options.  In the future, I may add some "synthetic" view modes that change the margins, body preview length, and other config options to certain presets.
+
+Ideas:
+- **Reader View**:  Compact posts, full width (no margins), and shows most (or all) of the post body.
+
+- **High Desnsity Mode**:  Compact posts, full width (no margins), post body preview disabled, flairs disabled, and thumbnails disabled (disabling thumbnails isn't a feature currently but can be)
+
+- ??? (Suggestions welcome)
+
+
+
 
 #### Link Preview Modal Can (try to) Load the Link in an iFrame
 Added a button to the bottom of the link preview modal that will let you try to view the link in an iframe.  Not all websites allow this (they set the `X-Frame-Options` header to disallow it), but enough do that this feature can still be useful.
 
+I tried doing a pre-flight check to determine if the link allowed loading in a frame and conditionally hide the button, but hit several snags:
+1) Browser-side:  CORS policy would only allow opaque fetches (which, by nature, don't return the header I need to check). 
+1) Browser-side:  Checking the onLoad event from the iframe doesn't differentiate between success and failure
+1) Server-side:  Tried adding an API endpoint and doing a server-side fetch to get the target page headers, but Cloudflare said 'fuck off, these are _my_ M&Ms'
+1) Server-side:  I started adding shims to get past Cloudflare, but quickly realized that is not a cat/mouse game I want to play.
+
+So, the "IFrame" button will always be present/enabled on desktop view and may or may not work for any given link.  
 
 
 
-#### Switched from Bindings to Event Dispatchers/Listeners
-In several places, variables were bound between 3 and 4 levels of components for the purposes of triggering state changes.  This worked but was cumbersome.
 
-I already used Svelte-native dispatchers in many places, but there were some that didn't have a direct link to receive the dispatched events.
+#### Streamlined Modals to Reduce Memory Consumption
+Have reduced memory consumption by about 15-25% overall
+
+Removed the embedded action modals (ban, remove submissions, etc) from moderation buttons and am calling the "shared" ones. 
+
+Ironically, this is basically putting those back to the way they were when I first forked from Photon.  The problem, then, was that they weren't reactive and you had to refresh the page to see the results.  Not ideal.
+
+That was addressed with the new event dispatcher I added...
+
+#### Switched from Bindings to Event Dispatchers/Listeners for Reactivity
+In several places, variables were bound between 3 and 4 levels of components for the purposes of triggering state changes.  This worked but was cumbersome and often left some things in the old state because there was no direct link between the component initiating the action and the one that needed to react to it.
+
+I already used Svelte-native dispatchers in many places, but there were some components that didn't have a direct link to receive the dispatched events (similar to the bound variable conundrum)
 
 Once I setup a global dispatcher, I started reconfiguring the reactivity to work with those events rather than binding everything down a huge chain of components.
 
 This is expanding upon the reactivity enhancements first introduced in 1.4.2.
-
-
-#### Streamlined Modals to Reduce Memory/Network Consumption
-Have reduced memory consumption by about 25%
-
-Removed the embedded action modals (ban, remove submissions, etc) from moderation buttons and am calling the shared ones. 
-
-Ironically, this is basically putting those back to the way they were when I first forked from Photon.  The problem, then, was that they weren't reactive and you had to refresh the page to see the results.  Not ideal.
-
-I setup a new event dispatch system which addresses this, and now the relevant components just listen for those and react.
-
-Additionally, some of the code for the lesser-used modals is now loaded asynchronously (again, Photon did this but I wasn't for many of the newer modal types).
-
-The following modals are now loaded async:
-- Report post/comment modal
-- All moderator/admin-only modals 
-- Federation stats
-- Fediseer
 
 
 
