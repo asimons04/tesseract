@@ -56,7 +56,7 @@
         {/if}
 
         <span class="flex flex-row flex-wrap gap-0" class:ml-0.5={avatar} >
-            <span class="font-bold whitespace-nowrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
+            <span class="font-bold text-left whitespace-wrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
                 {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             
