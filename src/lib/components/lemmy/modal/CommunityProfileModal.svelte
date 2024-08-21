@@ -149,7 +149,9 @@
 
                 <div class="flex flex-col gap-1 w-full overflow-hidden">
                     <span class="font-bold text-lg">
-                        <CommunityLink name href useDisplayNames showInstance={false} community={communityDetails.community_view.community} />
+                        <CommunityLink name href useDisplayNames showInstance={false} community={communityDetails.community_view.community} 
+                            on:click={ () => open=false }
+                        />
                     </span>
 
                     <span class="text-xs font-normal">
