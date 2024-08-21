@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { GetPersonDetailsResponse, Person } from 'lemmy-js-client'
+    import type { Person } from 'lemmy-js-client'
     
-    import { goto } from '$app/navigation';
+    import { createEventDispatcher } from 'svelte';
     import { isNewAccount } from '../post/helpers'
     import { userProfileModal } from '../moderation/moderation';
     import { userSettings } from '$lib/settings.js'
@@ -19,6 +19,7 @@
         Trash, 
     } from 'svelte-hero-icons'
     
+    
     export let user: Person
     export let avatar: boolean = false
     export let avatarSize: number = 24
@@ -34,19 +35,29 @@
     export let community_banned:boolean = false
     export let blocked: boolean = false
     
+
+    const dispatcher = createEventDispatcher()
+    
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
         return `/u/${user.name}@${domain}`
+    }
+
+    // Loads the user profile modal for this user if the component is set to href=false
+    function loadProfileModal(e:CustomEvent) {
+        dispatcher('click')
+        if (!href) {
+            e.preventDefault()
+            e.stopPropagation()
+            userProfileModal(user)
+        }
     }
    
 </script>
 
 
-<button class="inline-flex flex-col md:flex-row flex-wrap min-w-fit gap-1 items-start md:items-center hover:underline" 
-    on:click={async () => {
-        if (href) goto(linkFromCommunity(user))
-        else  userProfileModal(user)
-    }} 
+<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row flex-wrap min-w-fit gap-1 items-start md:items-center hover:underline" 
+    on:click={loadProfileModal} 
 >
     <span class="flex flex-row gap-1 items-center">
         {#if avatar}
@@ -124,4 +135,4 @@
         </span>
     {/if}
     
-</button>
+</a>
