@@ -22,8 +22,9 @@
 
     import {
         Icon, 
+        ArrowTopRightOnSquare,
         ExclamationTriangle,
-        Home
+        Home,
     } from 'svelte-hero-icons'
 
     
@@ -111,21 +112,31 @@
     {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
         
 
-        <Card  class="py-2 px-4 text-sm flex flex-row items-center flex-wrap gap-4">
-            <div class="flex flex-row gap-2 items-center">
+        <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2">
+            
+            <div class="flex flex-row gap-2 items-center w-full">
                 <span class="items-center">
-                    <Icon src={ExclamationTriangle} mini width={28}/>
+                    <Icon src={ExclamationTriangle} mini width={22}/>
                 </span>
-                <p>
+                <p class="text-xs">
                     You are viewing this post on a remote instance, and you will not be able to interact with it.  In order to reply or vote,
                     you will need to fetch this post on your home instance.
                 </p>
+            </div>
+
+            <div class="flex flex-row flex-wrap gap-2 items-center mx-auto">
                 
-                <Button on:click={() => { fetchOnHome() }} color="tertiary-border" class="ml-auto h-16 whitespace-nowrap">
-                    <span class="flex flex-col items-center">
-                        <Icon src={Home} mini size="18" title="Posts" />
-                        <span class="text-xs">Fetch on Home</span>
-                    </span>
+                <Button color="info" size="sm" icon={Home} iconSize={16} on:click={() => { fetchOnHome() }}>
+                    <span class="text-xs">Fetch on {$instance}</span>
+                </Button>
+
+                <Button color="info" size="sm" icon={ArrowTopRightOnSquare} iconSize={16} on:click={() => { 
+                        $userSettings.openInNewTab.links
+                            ? window.open(data.post.post_view.post.ap_id)
+                            : window.location.href = data.post.post_view.post.ap_id
+                    }}
+                >
+                    <span class="text-xs">View on {new URL(data.post.post_view.post.ap_id).hostname}</span>
                 </Button>
             </div>
         </Card>
@@ -133,11 +144,6 @@
     
 
     <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
-        <!---
-
-            moderators={data.post.moderators}
-            loop={$userSettings.embeddedMedia.loop}
-        --->
         <Post 
             bind:post={data.post.post_view} 
             displayType="post" 
