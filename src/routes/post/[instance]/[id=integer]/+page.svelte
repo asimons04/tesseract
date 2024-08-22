@@ -118,8 +118,8 @@
                 <span class="items-center">
                     <Icon src={ExclamationTriangle} mini width={22}/>
                 </span>
-                <p class="text-xs">
-                    You are viewing this post on a remote instance, and you will not be able to interact with it.  In order to reply or vote,
+                <p class="text-sm">
+                    You are viewing this post on a remote instance.  In order to reply or vote,
                     you will need to fetch this post on your home instance.
                 </p>
             </div>
