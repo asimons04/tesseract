@@ -7,7 +7,7 @@
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { quickSettingsModal } from '$lib/components/lemmy/moderation/moderation'
-    import { userSettings } from '$lib/settings'
+    import { type PostViewType, userSettings } from '$lib/settings'
     
     import { getPostTitleWithoutFlairs, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     
@@ -95,21 +95,55 @@
             navPageSelect?: number
         }>()
 
-    let toggleCardCompactView = async () => {
+    const toggleCardCompactView = async () => {
         $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-        
-        /*
-        if ($userSettings.showCompactPosts) {
-            $userSettings.uiState.feedMargins = false
-            $userSettings.uiState.postBodyPreviewLength = 0
-        }
-        else {
-            $userSettings.uiState.feedMargins = true
-            $userSettings.uiState.postBodyPreviewLength = 240
-        }
-        */
         await scrollToLastSeenPost()
     }
+
+    const selectViewType= async (e: CustomEvent) => {
+        const viewType = e.detail as PostViewType
+        $userSettings.uiState.view = viewType
+        
+        switch(viewType) {
+            case 'card':
+                $userSettings.showCompactPosts = false
+                $userSettings.uiState.postBodyPreviewLength = 240
+                $userSettings.uiState.feedMargins = true
+                break
+            
+            case 'compact':
+                $userSettings.showCompactPosts = true
+                $userSettings.uiState.postBodyPreviewLength = 240
+                $userSettings.uiState.feedMargins = true
+                $userSettings.uiState.hideCompactThumbnails = false
+                break
+
+            case 'wide-compact':
+                $userSettings.showCompactPosts = true
+                $userSettings.uiState.postBodyPreviewLength = 240
+                $userSettings.uiState.feedMargins = false
+                $userSettings.uiState.hideCompactThumbnails = false
+                break
+            
+            case 'ultra-compact':
+                $userSettings.showCompactPosts = true
+                $userSettings.uiState.postBodyPreviewLength = -1
+                $userSettings.uiState.feedMargins = false
+                $userSettings.uiState.hideCompactThumbnails = true
+                break
+
+            case 'reader':
+                $userSettings.showCompactPosts = true
+                $userSettings.uiState.postBodyPreviewLength = 10000
+                $userSettings.uiState.feedMargins = false
+                $userSettings.uiState.hideCompactThumbnails = false
+                break
+        }
+
+        await scrollToLastSeenPost()
+    }
+
+
 </script>
 
 
@@ -180,6 +214,23 @@
                     }}
                 />
             {/if}
+
+            <!---Post View Mode (eventually need to change the legacy `compactSwitch` variable)--->
+            {#if compactSwitch}
+                <SelectMenu
+                    alignment="bottom-left"
+                    options={['card', 'compact', 'wide-compact', 'ultra-compact', 'reader']}
+                    optionNames={['Card', 'Compact', 'Wide Compact', 'Ultra Compact', 'Reader']}
+                    selected={$userSettings.uiState.view}
+                    title="Post View Type"
+                    icon={Window}
+                    iconSize={18}
+                    showSelectedLabel={false}
+                    on:select={selectViewType}
+                />
+            {/if}
+
+            
             
             <!---Page Selector (Deprecated)--->
             {#if pageSelection && currentPage}
@@ -222,6 +273,7 @@
         <slot {iconSize} name="right"/>
         
         
+        
         <!---Quick Settings--->
         {#if quickSettings}
             <Button title="Quick Settings" size="sm" color="tertiary"
@@ -261,7 +313,6 @@
         {/if}
 
         <!---Page Up/Down Buttons--->
-
         {#if pageUpDownButtons}
             <!--Page Down-->
             <button class="mr-2 cursor-pointer" title="Page Down"
@@ -322,21 +373,7 @@
             </span>
         {/if}
 
-        <!---Card/Compact Selection--->
-        {#if compactSwitch}
-            <Button title="Switch to {$userSettings.showCompactPosts ? 'card view' : 'compact view'}."
-                size="sm" color="tertiary"
-                on:click={async () => {
-                    await toggleCardCompactView()
-                    //$userSettings.showCompactPosts = !$userSettings.showCompactPosts
-                    //if ($userSettings.showCompactPosts) $userSettings.uiState.feedMargins = false
-                    //else $userSettings.uiState.feedMargins = true
-                    //await scrollToLastSeenPost()
-                }}
-                >
-                <Icon src={$userSettings.showCompactPosts ? Window : QueueList} width={iconSize} />
-            </Button>
-        {/if}
+        
 
         <!---Community Sidebar Toggle (hide when screen width less than 'xl' breakpoint when the sidebar hides anyway)--->
         {#if toggleCommunitySidebar}
