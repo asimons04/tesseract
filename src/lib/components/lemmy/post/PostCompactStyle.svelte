@@ -43,7 +43,7 @@
         
         
         <!---Post body and link--->
-        <div class="flex flex-col gap-0 {post.post.thumbnail_url || isImage(post.post.url) ? 'w-[80%] md:w-[85%] xl:w-[90%]' : 'w-full'}">
+        <div class="flex flex-col gap-0 {!$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url)) ? 'w-[80%] md:w-[85%] xl:w-[90%]' : 'w-full'}">
             
             <PostMeta bind:post={post} showTitle={false} {collapseBadges}/>        
             
@@ -67,7 +67,7 @@
         </div>
 
         <!--- Thumbnail --->
-        {#if post.post.thumbnail_url || isImage(post.post.url)}
+        {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url))}
             <div class="flex-none w-fit h-fit mx-auto mt-2 overflow-hidden">
                 <!--- Expand the post in place when clicking thumbnail--->
                 <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
