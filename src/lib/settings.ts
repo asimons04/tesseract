@@ -45,6 +45,8 @@ export type FeedType = 'All' | 'Subscribed' | 'Local'
 
 export type YouTubeFrontend = "YouTube" | "Invidious" | "Piped" 
 
+export type PostViewType = 'card' | 'compact' | 'wide-compact' | 'ultra-compact' | 'reader'
+
 interface Settings {
     version: number
     markReadPosts: boolean
@@ -122,6 +124,8 @@ interface Settings {
         showAltText:boolean
         filterAnnoyingCCLicense: boolean
         infiniteScroll: boolean
+        view: PostViewType
+        hideCompactThumbnails: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -184,7 +188,8 @@ export const defaultSettings: Settings = {
         showAltText:                                                    false,
         filterAnnoyingCCLicense:                                        false,
         infiniteScroll:                                                 true,
-
+        view:                                                           'card',
+        hideCompactThumbnails:                                          false
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
