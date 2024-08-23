@@ -124,6 +124,13 @@
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = false
                 break
+
+            case 'more-compact':
+                $userSettings.showCompactPosts = true
+                $userSettings.uiState.postBodyPreviewLength = 0
+                $userSettings.uiState.feedMargins = false
+                $userSettings.uiState.hideCompactThumbnails = false
+                break
             
             case 'ultra-compact':
                 $userSettings.showCompactPosts = true
@@ -219,8 +226,8 @@
             {#if compactSwitch}
                 <SelectMenu
                     alignment="bottom-left"
-                    options={['card', 'compact', 'wide-compact', 'ultra-compact', 'reader']}
-                    optionNames={['Card', 'Compact', 'Wide Compact', 'Ultra Compact', 'Reader']}
+                    options={['card', 'compact', 'wide-compact', 'more-compact', 'ultra-compact', 'reader']}
+                    optionNames={['Card', 'Compact', 'Wide Compact', 'More Compact', 'Ultra Compact', 'Reader']}
                     selected={$userSettings.uiState.view}
                     title="Post View Type"
                     icon={Window}
