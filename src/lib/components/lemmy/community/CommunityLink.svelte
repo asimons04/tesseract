@@ -29,15 +29,20 @@
         const domain = new URL(community.actor_id).hostname
         return `/c/${community.name}@${domain}`
     }
+
+    function loadCommunityProfileModal(e:CustomEvent) {
+        dispatcher('click')
+        if (!href) {
+            e.preventDefault()
+            e.stopPropagation()
+            communityProfileModal(community)
+        }
+    }
 </script>
 
-<button  class="items-center flex flex-row gap-2 {noClick ? 'pointer-events-none' : ''} hover:underline {heading ? 'font-bold text-2xl' : ''}" 
+<a href="{linkFromCommunity(community)}" class="items-center flex flex-row gap-2 {noClick ? 'pointer-events-none' : ''} hover:underline {heading ? 'font-bold text-2xl' : ''}" 
     title={fixLemmyEncodings(community.title)}
-    on:click={() => {
-        dispatcher('click')
-        if (href) goto(linkFromCommunity(community))
-        else  communityProfileModal(community)
-    }}
+    on:click={loadCommunityProfileModal}
 >
     {#if avatar}
         <Avatar url={community.icon} alt={community.name} width={avatarSize} community={true}/>
@@ -64,4 +69,4 @@
             {/if}
         </span>
     {/if}
-</button>
+</a>

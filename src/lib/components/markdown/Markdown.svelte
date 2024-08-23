@@ -14,6 +14,7 @@
     } from './markdown'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { marked } from 'marked';
+    import { userSettings } from '$lib/settings'
     
     import MarkdownCode from './renderers/MarkdownCode.svelte'
     import MarkdownCodeSpan from './renderers/MarkdownCodeSpan.svelte';
@@ -72,7 +73,7 @@
         mdText = temp
     }
 
-    $:  source, preProcess(source)
+    $:  source, $userSettings.linkifyHashtags,  preProcess(source)
 
 </script>
 

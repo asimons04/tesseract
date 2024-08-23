@@ -1,8 +1,7 @@
 <script lang="ts">
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import { createEventDispatcher } from 'svelte'
-
-    import Button from '$lib/components/input/Button.svelte'
+    
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     
@@ -25,7 +24,9 @@
     export let icon:any = undefined;
     export let iconSize:number = 16
     export let fullWidth:boolean = false
-    let open = false
+    export let showSelectedLabel: boolean = true
+    
+    
 
     if (!selected && selectedFunc) {
         selected = selectedFunc();
@@ -53,10 +54,12 @@
             {/if}
             
             <slot>
-                <!--Hide selected text in mobile view or until width is at least 'large'--->
-                <span class="{fullWidth ? 'flex' : 'hidden'} lg:flex">
-                    {optionNames[options.findIndex((o) => selected == o)] || selected}
-                </span>
+                {#if showSelectedLabel}
+                    <!--Hide selected text in mobile view or until width is at least 'large'--->
+                    <span class="{fullWidth ? 'flex' : 'hidden'} lg:flex">
+                        {optionNames[options.findIndex((o) => selected == o)] || selected}
+                    </span>
+                {/if}
             </slot>
             
             <span class="ml-auto"/>

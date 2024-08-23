@@ -70,8 +70,8 @@
                 <SettingMultiSelect icon={Photo} 
                     title="Post Body Preview Length"
                     padding={true} small={true}
-                    optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000']}
-                    options={[-1, 0, 50, 120, 240, 500, 750, 1000]}
+                    optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000', '2000', '10000']}
+                    options={[-1, 0, 50, 120, 240, 500, 750, 1000, 2000, 10000]}
                     bind:selected={$userSettings.uiState.postBodyPreviewLength}
                 />
 

@@ -1,6 +1,57 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+## 1.4.14
+Plans:
+1) Re-write search and community browser to keep state in URL params instead of locally
+    - They currently both reset when you navigate away and back
+    - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
+
+1) On post form, add button/step to search for the URL you're posting on the community's home instance to check for duplicates
+    - Will help you to know if you're posting a duplicate you may not be able to see (posted by someone you've blocked, posted by someone from an instance yours doesn't federate with, etc)
+
+1) Add language selector in profile settings
+    - Add language 
+
+---
+
+
+## 1.4.13
+### Bugfixes
+- [0ed97991] Don't badge-ify hashtags if the hashtag linkify option is disabled
+- [ce5a310a] Make markdown text reactive (and re-run pre-processing step) to changes to the enable/disable hashtag setting.
+- [704e2d78] When clicking the user/community links in the modal, close the modal when navigating to the target (previously modal stayed open)
+
+
+### Enhancements
+- [3b8ef653] Update banner when viewing a post on a remote instance to use more concise verbiage and add an extra button to link to the post's canonical instance.
+- [ec8c4bfe] User and Community links are now `a` elements rather than `button`.  Allows middle-clicking or right-click-> open in new tab to immediately open the profile/community in a new tab without having to click through the modal. Regular clicks still open the modal.
+
+### New Feature:  Synthetic View Modes
+Under the hood, there are still only two main types of view:  Card and Compact
+
+However, Compact view is affected by several options which can be combined to create different view styles.  
+
+The "compact/card" switcher button has been replaced with a selector menu to select from one of 6 views:
+
+1) **Card**:  The flagship Tesseract post view.  Posts are shown as cards with all the media embed bells and whistles.  Post body preview is set to 240 characters.
+
+1) **Compact**:  The classic "compact" view as of 1.4.12.  Feed margins are present, post images are thumbnails, the post body preview is 240 characters, and no media is embedded unless the post is expanded into card view.
+
+1) **Wide Compact**:  Same as "compact" but without the feed margins.  Posts span the full width of the display.  Clicking the thumbnail image or the "expand" button in the post action bar will expand the post into card view.
+
+1) **More Compact**:  Same as "wide compact" except the body preview length is set to zero and can be expanded.
+
+1) **Ultra Compact**:  Same as "wide compact" except the thumbnails and the post body are hidden.  Post body cannot be expanded, and you will need to click into the post to see it.  Post can be expanded to card view only with the "expand" button in the post action bar. Expanding into card view does not reveal the post body, only the thumbnail image (if present).  If the post is a media post, the embed will be available (either in full or click-to-play depending on settings)
+
+1) **Reader**:  Same as "wide compact" except the entire post body is shown (up to 10,000 characters).  
+
+
+More views may be added along the way, but for now, those should cover more use cases without having to manually fiddle with the various options.
+
+---
+
+
 ## 1.4.12
 ### Bugfixes
 - Fixed reactivity on modlog filter lookups (sometimes they got into a fetch loop)

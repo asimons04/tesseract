@@ -134,9 +134,9 @@
             <span>Copy Link</span>
         </MenuButton>
 
-        <!--- View Comment on Home Instance--->
+        <!--- Fetch Comment on Home Instance--->
         {#if $instance != new URL(comment.comment.ap_id).hostname}
-        <MenuButton title="View Comment on Home Instance" color="info"
+        <MenuButton title="Fetch Comment on Home Instance" color="info"
             on:click={() => {
                 const commentURL = new URL(comment.comment.ap_id)
                 const homeInstance = commentURL.hostname
@@ -146,7 +146,7 @@
             }}
         >
             <Icon src={Home} width={16} mini />
-                View Comment on Home Instance
+                Fetch Comment on Home Instance
         </MenuButton>
         {/if}
 

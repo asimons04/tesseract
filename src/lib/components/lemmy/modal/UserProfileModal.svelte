@@ -56,7 +56,6 @@
     
     let loading = false
     let personDetails: GetPersonDetailsResponse
-    let banning = false
     let blocking = false
     let messaging = false
     let mostRecentItem: string|undefined = undefined
@@ -162,7 +161,9 @@
 
                 <div class="flex flex-col gap-1 w-full overflow-hidden">
                     <span class="font-bold text-lg">
-                        <UserLink badges user={personDetails.person_view.person} showInstance={false} useDisplayNames href admin={personDetails.person_view.is_admin} mod={mod} blocked={userBlocked}/>
+                        <UserLink badges user={personDetails.person_view.person} showInstance={false} useDisplayNames href admin={personDetails.person_view.is_admin} mod={mod} blocked={userBlocked}
+                            on:click={() => open=false }
+                        />
                     </span>
 
                     <span class="text-xs font-normal">@{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}</span>

@@ -3,7 +3,6 @@
     import type { Tokens } from 'marked'
     
     import { createFakePerson, createFakeCommunity } from '$lib/components/lemmy/post/helpers'
-    import { goto } from '$app/navigation';
     import { userProfileModal, communityProfileModal } from '$lib/components/lemmy/moderation/moderation'
     import { userSettings } from '$lib/settings';
 
@@ -21,7 +20,6 @@
 
     let person: Person | undefined = undefined
     let community: Community | undefined = undefined
-    //let hashtagRE = /^#[A-Z0-9]\w/i
     let hashtagRE = /^#[A-Za-z0-9À-ÿ]+/i
     
     $: token, token.href = photonify(token.href) ?? token.href
@@ -77,7 +75,7 @@
 
 
 <!--Turn hashtags into badges but keep the original link--->
-{:else if hashtagRE.test(token.text)}
+{:else if $userSettings.linkifyHashtags && hashtagRE.test(token.text)}
     <Badge color="yellow" rightJustify={false} inline={true} on:click={(e) => {
         e.preventDefault()
         e.stopPropagation()
