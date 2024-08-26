@@ -1,9 +1,13 @@
 <script lang="ts">
     type T = $$Generic
-    
-    import TextInput from '$lib/components/input/TextInput.svelte'
+    import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
+
+    import InfiniteScrollDiv from '../ui/infinitescroll/InfiniteScrollDiv.svelte';
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
+    import Spinner from '../ui/loader/Spinner.svelte';
+    import TextInput from '$lib/components/input/TextInput.svelte'
+
     import { createEventDispatcher } from 'svelte'
 
     export let query: string
@@ -12,11 +16,16 @@
     export let options: T[]
     export let extractSelected: (item: T | null) => any
     export let extractName: (item: T) => string
-    export let showWhenEmpty: boolean = false
     export let containerClass:string = ''
-    
+    export let infiniteScrollState:InfiniteScrollStateVars = {
+        exhausted: false,
+        loading: false
+    }
+
     let canSearch: boolean = false
-        
+    
+    const dispatcher = createEventDispatcher<{ search: string, loadMore: any, reset: any }>()
+
     export { canSearch as searchOnMount }
 
     const debounce = (fn: Function, ms = 300) => {
@@ -26,14 +35,14 @@
             timeoutId = setTimeout(() => fn.apply(this, args), ms)
         }
     }
+   
 
-    const dispatcher = createEventDispatcher<{ search: string }>()
-
-    const debounceFunc = debounce(() => {
+    const doSearch = debounce(() => {
         canSearch = true
         dispatcher('search', query)
     }, debounceTime)
     
+    $: open = query != ''
 </script>
 
 <div class="relative">
@@ -42,29 +51,52 @@
         bind:value={query}
         on:keyup={() => {
             extractSelected(null)
-            debounceFunc()
+            doSearch()
         }}
         {...$$restProps}
     />
+    
+    
+    {#if open}
+        <Menu bind:open
+            alignment="bottom-left"
+            containerClass="!max-h-[50vh] {containerClass}"
+            let:menu
+        >
+            
+            {#if options.length > 0}
+            
+                {#each options as option}
+                    <slot {extractName} {extractSelected} {query} {option}>
+                        <MenuButton on:click={() => {
+                            extractSelected(option)
+                            query=''
+                        }}>
+                            {extractName(option)}
+                        </MenuButton>
+                    </slot>
+                {/each}
 
-    <Menu open={((options.length > 0 && query != '') || showWhenEmpty) }
-        alignment="bottom-left"
-        containerClass="!max-h-[50vh] {containerClass}"
-    >
-        {#if query == '' && showWhenEmpty}
-            <slot {extractName} {extractSelected} {query} />
-        
-        {:else if query!=''}
-            {#each options as option}
-                <slot {extractName} {extractSelected} {query} {option}>
-                    <MenuButton on:click={() => {
-                        extractSelected(option)
-                        query=''
-                    }}>
-                        {extractName(option)}
-                    </MenuButton>
-                </slot>
-            {/each}
-        {/if}
-    </Menu>
+                <div class="flex flex-col items-center pt-2 w-full">
+                    <InfiniteScrollDiv bind:state={infiniteScrollState} element={menu} threshold={500} exhaustedMessage="{options.length} Results Found"
+                        on:loadMore={ () => dispatcher('loadMore') }
+                    />
+                </div>
+            {:else if infiniteScrollState.loading}
+                <div class="flex flex-col items-center mx-auto">    
+                    <Spinner width={24} />
+                </div>
+            
+            {:else}
+                <MenuButton on:click={() => {
+                    query = ''
+                    open = false
+                }}>
+                    No Results
+                </MenuButton>
+                
+            {/if}
+            
+        </Menu>
+    {/if}
 </div>
