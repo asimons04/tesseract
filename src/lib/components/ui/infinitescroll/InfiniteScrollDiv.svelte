@@ -12,8 +12,8 @@
     } from 'svelte-hero-icons'
     
     export let threshold: number = 500              // Number of pixels from the bottom before dispatching the load more event
-    export let element: HTMLDivElement
-
+    export let element: HTMLDivElement | HTMLMenuElement
+    export let exhaustedMessage: string = 'No More Results to Load'
     export let state:InfiniteScrollStateVars = {
         loading: false,
         exhausted: false,
@@ -44,7 +44,7 @@
         <Spinner width={24} />
     
     {:else}
-        <Button color="secondary" class="w-fit mx-auto" title="Load More"
+        <Button color="secondary" class="w-fit mx-auto" title="Load More" bind:disabled={state.exhausted}
             on:click={() => {
                 state.exhausted = false
                 dispatcher('loadMore')
@@ -52,7 +52,7 @@
         >
             <div class="flex flex-row gap-2 items-center">
                 <Icon src={state.exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
-                {state.exhausted ? 'No More Results to Load' : 'Load More'}
+                {state.exhausted ? exhaustedMessage : 'Load More'}
                 <Icon src={state.exhausted ? ArchiveBoxXMark : ChevronDown} mini size="16" />
             </div>
         </Button>
