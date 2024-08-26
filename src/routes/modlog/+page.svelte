@@ -12,12 +12,10 @@
     import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ModlogItemTable from './item/ModlogItemTable.svelte'
     import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import SubnvarbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
@@ -40,92 +38,89 @@
     // Setup Filter object    
     let filter: Filters = {
         title:      '',
-        moderator:  {set: false},
-        moderatee:  {set: false},
-        community:  {set: false},
+        moderator:  {set: false, person: undefined, loading: false},
+        moderatee:  {set: false, person: undefined, loading: false},
+        community:  {set: false, community: undefined, loading: false},
         action:     {set: false}
     }
     
     async function setCommunityFilter() {
         // Community Filter
-        if (filter.community.set) {
+        if (!filter.community.set) delete filter.community.community
+
+        if (filter.community.set && !filter.community.community) {
                 
-            if (data.modlog && data.modlog.length > 0 && data.modlog[0].community) {
+            if (data.modlog && data.modlog.length > 0 && data.modlog[0].community ) {
                 filter.community.community = data.modlog[0].community
             }
-            else {
-                getClient().getCommunity({
+            else if (!filter.community.loading) {
+                filter.community.loading = true
+                const results = await getClient().getCommunity({
                     id: Number($page.url.searchParams.get('community'))
                 })
-                .then((results) => {
-                    if (results?.community_view?.community)
-                    filter.community.community = results.community_view.community
-                })
+                
+                filter.community.loading = false
+                if (results?.community_view?.community) {
+                    filter.community.community = {...results.community_view.community}
+                }
             }
-        } else {
-            delete filter.community.community
         }
     }
 
     async function setModerateeFilter() {
-        if (filter.moderatee.set) {
+        if (!filter.moderatee.set) delete filter.moderatee.person
+
+        if (filter.moderatee.set && !filter.moderatee.person) {
             if (data.modlog && data.modlog.length > 0 && data.modlog[0].moderatee) {
                 filter.moderatee.person = data.modlog[0].moderatee;
             }
-            else {
-                getClient().getPersonDetails({
+            else if (!filter.moderatee.loading){
+                filter.moderatee.loading = true
+                const results = await getClient().getPersonDetails({
                     person_id: Number($page.url.searchParams.get('other_person_id'))
                 })
-                .then((results) => {
-                    if (results?.person_view?.person) {
-                        filter.moderatee.person = results.person_view.person
-                    }
 
-                })
+                filter.moderatee.loading = false
 
+                if (results?.person_view?.person) {
+                    filter.moderatee.person = results.person_view.person
+                }
             }
             
-        } else {
-            delete filter.moderatee.person
         }
     }
 
     async function setModeratorFilter() {
-        if (filter.moderator.set) {
+        if (!filter.moderator.set) delete filter.moderator.person
+
+        if (filter.moderator.set && !filter.moderator.person) {
             if (data.modlog && data.modlog.length > 0 && data.modlog[0].moderator) {
                 filter.moderator.person = data.modlog[0].moderator;
             }
-            else {
-                getClient().getPersonDetails({
+            else if (!filter.moderator.loading){
+                filter.moderator.loading = true
+                const results = await getClient().getPersonDetails({
                     person_id: Number($page.url.searchParams.get('mod_id'))
                 })
-                .then((results) => {
-                    if (results?.person_view?.person) {
-                        filter.moderator.person = results.person_view.person
-                    }
+                filter.moderator.loading = false
+                
+                if (results?.person_view?.person) {
+                    filter.moderator.person = results.person_view.person
+                }
 
-                })
             }
-        }
-        else {
-            delete filter.moderator.person
         }
     }
 
     // Watch the URL params for changes to filters
-    $: {
-        filter.community.set = new URLSearchParams($page.url.search).has('community');
-        filter.moderatee.set = new URLSearchParams($page.url.search).has('other_person_id');
-        filter.moderator.set = new URLSearchParams($page.url.search).has('mod_id');
-    }
-    
+    $:  $page.url.search, filter.community.set = new URLSearchParams($page.url.search).has('community');
+    $:  $page.url.search, filter.moderatee.set = new URLSearchParams($page.url.search).has('other_person_id');
+    $:  $page.url.search, filter.moderator.set = new URLSearchParams($page.url.search).has('mod_id');
+
     // Set the filter details if/when they're set
     $:  filter.community.set, setCommunityFilter()
     $:  filter.moderatee.set, setModerateeFilter()
     $:  filter.moderator.set, setModeratorFilter()
-        
-    
-
 </script>
 
 <svelte:head>
@@ -201,7 +196,6 @@
                                     <CommunityLink avatar={true} avatarSize={iconSize} community={filter.community.community} />
                                 {:else}
                                     <span>
-                                        <!---{ new URLSearchParams(window.location.search).get('community') }--->
                                         { new URLSearchParams($page.url.search).get('community') }
                                     </span>
                                 {/if}

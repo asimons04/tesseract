@@ -1,7 +1,7 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
-## 1.4.14
+## 1.4.15
 Plans:
 1) Re-write search and community browser to keep state in URL params instead of locally
     - They currently both reset when you navigate away and back
@@ -12,6 +12,41 @@ Plans:
 
 1) Add language selector in profile settings
     - Add language 
+
+---
+
+## 1.4.14
+### Bugfixes 
+- [322a00f5] Reduce subnavbar button gap on smallest viewport to 0 to accommodate smaller displays.  Additionally, load the "post view mode" menu from top-center instead of top-left.
+
+- [c9254038] Fixed another case of infinite loop race condition when resolving community/user when no modlog actions matching the query exist.  This _should_ be the last time I have to fix this. Added a `loading` flag so it can't run concurrently.
+
+### Bugfix + Enhancement
+#### Community and Person Autocomplete Search Inputs
+These are based on the API's search endpoint, and Lemmy's search kind-of sucks in a lot of ways.  The relevant suckage is that when you've got the search type set to User or Community, it only searches against the name and title/display name and doesn't factor in the instance at all.
+
+So, if you enter `news@lemmy.world`, you won't get any results because that's not the `name` or `title` of the community.  If you just type `news`, you get anything (remote or local) that has the word `news` in its name or title (which is a lot).  There is also no way to scope the search for `local`. 
+
+Ok, so you have to scroll through 214 results to get to the right "news" community?  Well, yes, but actually no.  This part is my fault, though.
+
+The autocomplete components did not incorporate any pagination logic and could only show a maximum of 50 results (max API allows per page).  The _hope_ was that Lemmy's search would suck less over time and the query could be tuned to make sure your desired object was within the first 50 results.
+
+Still waiting on that.
+
+So now, the auto complete components have been adjusted to compensate and extended with infinite scroll pagination:
+
+1) It will first look for an exact match to the provided community.  If the community is local, it can resolve with or without the `@instance.xyz` suffix.  If the community is remote, the instance suffix is required for an exact match.
+
+1) If an exact match is found, it will be the first item in the results
+
+1) The query is passed to the search endpoint as before, ignoring anything after `@`.  e.g.  `news@instance.xyz` just queries `news` since the instance name isn't factored into the search (and works against it)
+
+1)  Any results from the search step are appended to the results *after* the exact match (if any)
+
+1) The autocomplete dropdown now does infinite scroll pagination for the search results.
+
+This should make both the person and community auto complete components more useful and fix the issue with the 50 item limit.
+
 
 ---
 

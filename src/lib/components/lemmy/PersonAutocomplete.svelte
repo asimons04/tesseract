@@ -1,15 +1,13 @@
 <script lang="ts">
-    import type { Community, ListingType, Person } from 'lemmy-js-client'
-
+    import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
+    import type { Person } from 'lemmy-js-client'
+    
     import { createEventDispatcher } from 'svelte'
     import { getClient } from '$lib/lemmy.js'
-    import { profile } from '$lib/auth'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import SearchInput from '$lib/components/input/SearchInput.svelte'
-
-    import { Icon, XCircle } from 'svelte-hero-icons'
 
     
     export let q: string = ''
@@ -17,9 +15,68 @@
     export let label:string = ''
     export let containerClass:string = ''
 
-    let showNone: boolean = false
-
+    let page: number = 0
+    let limit: number = 50
+    
+    let infiniteScrollState: InfiniteScrollStateVars = {
+        exhausted: false,
+        loading: false
+    }
+    
     const dispatcher = createEventDispatcher<{ select: Person }>()
+
+    const search = async function(e:CustomEvent) {
+        infiniteScrollState.loading = true
+        
+        // Try to resolve the community directly and use that as the first result
+        if (page == 0) {
+            try {
+                let person = await getClient().getPersonDetails({
+                    username: q,
+                })
+                if (person) items = [ person.person_view.person ]
+            }
+            catch {}
+        }
+
+        // Search for the community 
+        page++
+        
+        const results = await getClient().search({
+            q: q ? q.split('@')[0] : ' ' ,
+            type_: 'Users',
+            limit: limit,
+            page: page
+        })
+            
+        infiniteScrollState.loading = false
+        
+        if (results.users.length < limit) infiniteScrollState.exhausted = true 
+        
+        if (items.length > 0) {
+            results.users.map((u) => u.person).forEach((item) => {
+                // Don't add a duplicate person (e.g. if there is already an exact match from the first step)
+                const idx = items.findIndex((p) => p.id == item.id)
+                if (idx < 0) items.push(item)
+            })
+        }
+        else {
+            items = results.users.map((p) => p.person)
+        }
+        items = items
+
+    }
+
+    const resetSearch = function () {
+        items = []
+        page = 0
+        infiniteScrollState.loading = false
+        infiniteScrollState.exhausted = false
+    }
+    
+    // Reset the search state if the query changes
+    $: q, resetSearch()
+
 </script>
 
 <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -31,22 +88,14 @@
     {/if}
 
     <SearchInput
-        {containerClass}
-        options={items || []}
-        on:search={async () => {
-            if (q == '') showNone = true
-            else showNone = false
-
-            const results = await getClient().search({
-                q: q || ' ',
-                type_: 'Users',
-                limit: 50,
-            })
-            items = results.users.map((u) => u.person)
-        }}
+        containerClass="{containerClass}"
+        bind:options={items}
+        bind:infiniteScrollState
+        bind:query={q}
+        on:search={search}
+        on:loadMore={search}
         debounceTime={600}
         extractName={(u) => u.name}
-        bind:query={q}
         extractSelected={(u) => {
             if (u) dispatcher('select', u)
         }}

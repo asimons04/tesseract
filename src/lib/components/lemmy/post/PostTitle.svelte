@@ -53,7 +53,7 @@
 >
 
     <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
-        <Markdown source={postName} noUserCommunityLink noLink noHashtags/>
+        <Markdown source={postName} noUserCommunityLink  noHashtags/>
         
         {#if flairs}
             <span class="mr-2" />

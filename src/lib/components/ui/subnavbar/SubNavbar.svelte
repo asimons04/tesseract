@@ -158,7 +158,7 @@
     
     <slot name="above" />
     
-    <span class="flex flex-row gap-1 md:gap-2 items-center text-sm text-center mx-auto md:mr-2">
+    <span class="flex flex-row gap-0 sm:gap-1 md:gap-2 items-center text-sm text-center mx-auto md:mr-2">
         
         <!--Home Button-->
         {#if home }
@@ -225,7 +225,7 @@
             <!---Post View Mode (eventually need to change the legacy `compactSwitch` variable)--->
             {#if compactSwitch}
                 <SelectMenu
-                    alignment="bottom-left"
+                    alignment="bottom-center"
                     options={['card', 'compact', 'wide-compact', 'more-compact', 'ultra-compact', 'reader']}
                     optionNames={['Card', 'Compact', 'Wide Compact', 'More Compact', 'Ultra Compact', 'Reader']}
                     selected={$userSettings.uiState.view}
@@ -269,7 +269,7 @@
             <!--- Post Title In Center (Cannot be used if using center slot for something)--->
             {#if post && postTitle}
                 <span class="hidden md:block text-lg font-bold text-slate-600 dark:text-zinc-400 whitespace-nowrap text-ellipsis overflow-hidden">
-                    <Markdown source={getPostTitleWithoutFlairs(post.post.name)} noUserCommunityLink noLink noHashtags/>
+                    <Markdown source={getPostTitleWithoutFlairs(post.post.name)} noUserCommunityLink noHashtags/>
                 </span>
             {/if}
 

@@ -82,14 +82,17 @@ export interface Filters {
     moderator: {
         set: boolean,
         person?: Person 
+        loading: boolean
     },
     moderatee: {
         set: boolean,
         person?: Person 
+        loading: boolean
     },
     community: {
         set: boolean,
         community?: Community
+        loading: boolean
     },
     action: {
         set: boolean,
