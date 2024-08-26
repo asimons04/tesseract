@@ -11,8 +11,10 @@
     export let absolute = false
     export let alignment: Alignment = 'bottom-left'
 
+
     let element: any
-  
+    let menu: HTMLMenuElement
+
     export const toggleOpen = () => ( open = !open)
   
     function getOriginClass(origin: Alignment) {
@@ -69,7 +71,9 @@
     <slot name="button" {open} {toggleOpen} />
     
     {#if open}
-        <menu transition:scale|local={{
+        <menu 
+            bind:this={menu}
+            transition:scale|local={{
                 duration: 200,
                 start: 0.95,
                 easing: expoOut,
@@ -86,11 +90,11 @@
             "
         >
 
-            {#if open}
-                <div on:click={toggleOpen} class="flex flex-col gap-0 w-full" role="button" tabindex=0>
-                    <slot {toggleOpen} />
-                </div>
-            {/if}
+            
+            <div on:click={toggleOpen} class="flex flex-col gap-0 w-full" role="button" tabindex=0>
+                <slot {toggleOpen} {menu}/>
+            </div>
+            
         </menu>
     {/if}
 </div>
