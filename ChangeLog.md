@@ -13,6 +13,15 @@ Plans:
 1) Add language selector in profile settings
     - Add language 
 
+## 1.4.15
+### Bugfixes
+- [26d26798] Add error handling in case bad URL sent to `isImage`, `isAudio`, `isVideo` helper functions.
+
+### Other
+- [7c8c96fb] Update MBFC dataset
+- [c6ce2213] Update MBFC removal template
+
+
 ---
 
 ## 1.4.14
