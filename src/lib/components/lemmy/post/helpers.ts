@@ -76,24 +76,39 @@ export const imageSize = (displayType:PostDisplayType, ) => {
 
 // Check if the provided URL is an image
 export const isImage = (url: string | undefined) => {
-    if (!url) return false
-    const testURL = new URL(unproxyImage(url))
-    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
+    try {
+        if (!url) return false
+        const testURL = new URL(unproxyImage(url))
+        return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
+    }
+    catch {
+        return false
+    }
 }
 
 // Check if the provided URL is an embeddable audio file
 export const isAudio = (url: string | undefined) => {
-    if (!url) return false
-    const testURL = new URL(unproxyImage(url))
-    return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
+    try {
+        if (!url) return false
+        const testURL = new URL(unproxyImage(url))
+        return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
+    }
+    catch {
+        return false
+    }
 }
 
 
 /** Check if provided URL is a video */
 export const isVideo = (inputUrl: string | undefined) => {
-  if (!inputUrl) return false
-  const url = new URL(unproxyImage(inputUrl)).pathname.toLowerCase()
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
+    try {
+        if (!inputUrl) return false
+        const url = new URL(unproxyImage(inputUrl)).pathname.toLowerCase()
+        return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
+    }
+    catch {
+        return false
+    }
 }
 
 /** Unproxies Lemmy's godawfully stupid method of image proxying */
