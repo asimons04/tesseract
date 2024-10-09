@@ -126,6 +126,7 @@ interface Settings {
         infiniteScroll: boolean
         view: PostViewType
         hideCompactThumbnails: boolean
+        autoUpdateDates: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -189,7 +190,9 @@ export const defaultSettings: Settings = {
         filterAnnoyingCCLicense:                                        false,
         infiniteScroll:                                                 true,
         view:                                                           'card',
-        hideCompactThumbnails:                                          false
+        hideCompactThumbnails:                                          false,
+        autoUpdateDates:                                                true,
+
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,

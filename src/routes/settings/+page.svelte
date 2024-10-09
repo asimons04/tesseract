@@ -76,6 +76,7 @@
         UserCircle,
         Window,
         Tag,
+        Clock,
     } from 'svelte-hero-icons'
     
 
@@ -432,6 +433,11 @@
             description="Disable downvotes and hide downvote counts on posts/comments."
         />
         {/if}
+
+        <!---Auto Update Dates--->
+        <SettingToggle icon={Clock} title="Auto Update Dates"  bind:value={$userSettings.uiState.autoUpdateDates}
+            description="Live-update the published/edited times on posts and comments"
+        />
 
         <!---Enable Debug Buttons--->
         <SettingToggle icon={BugAnt} title="Debug Buttons" bind:value={$userSettings.debugInfo}
