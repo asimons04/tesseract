@@ -124,7 +124,8 @@
 {#if post?.post?.id}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-    <div id={post.post.id.toString()} on:mouseover={() => { 
+    <div class="relative" 
+        id={post.post.id.toString()} on:mouseover={() => { 
             if (post) lastSeenPost.set(post.post.id)
         }} 
         
@@ -134,7 +135,7 @@
         bind:this={postContainer}
         transition:fade
     >
-        
+
         <!--- Compact Posts --->
         <!---{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }--->
         {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }
