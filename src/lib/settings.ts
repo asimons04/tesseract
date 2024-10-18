@@ -58,6 +58,7 @@ interface Settings {
         feed: FeedType
         comments: CommentSortType
     }
+    markReadOnScroll: boolean
     hidePosts: {
         deleted: boolean
         removed: boolean
@@ -204,6 +205,7 @@ export const defaultSettings: Settings = {
         feed:       env.PUBLIC_DEFAULT_FEED as FeedType                 ??  'Local',
         comments:   env.PUBLIC_DEFAULT_COMMENT_SORT as CommentSortType  ??  'Hot'
     },
+    markReadOnScroll:                                                   false,
     hidePosts: {
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,

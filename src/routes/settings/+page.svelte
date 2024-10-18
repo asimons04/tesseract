@@ -538,6 +538,11 @@
         />
         
         <!---Fade Title of Read Posts--->
+        <SettingToggle title="Mark Posts Read on Scroll" icon={EnvelopeOpen} bind:value={$userSettings.markReadOnScroll}
+            description="Automatically mark posts 'read' as you scroll through them in the feed."
+        />
+
+        <!---Fade Title of Read Posts--->
         <SettingToggle title="Fade Read Posts" icon={EnvelopeOpen} bind:value={$userSettings.markReadPosts}
             description="Fade the titles of read posts in the feed."
         />
