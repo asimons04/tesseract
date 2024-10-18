@@ -1,8 +1,19 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
-## 1.4.15
+
 Plans:
+1)  Remove full support for Invidious and Piped :(
+    - Combine Invidious and Piped public instances list in settings; use only for detection of older post media
+    - Combine Invidious and Piped custom fields in user settings; the URL format is interchangeable, so no real need to have separate lists
+    - Remove Piped/Invidious from alternate source selector unless user has set their own custom Inv/Piped instance in their settings
+    - Update YouTube component to default to re-writing all videos using canonical YT link; only rewrite if user has set their own custom instance
+
+1) Add option to mark posts as read when you scroll past them
+    - Add post IDs to a buffer as they enter and leave the viewport; set 'read' flag on posts locally as they're scrolled.
+    - Submit buffer every so often
+
+
 1) Re-write search and community browser to keep state in URL params instead of locally
     - They currently both reset when you navigate away and back
     - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
@@ -13,14 +24,49 @@ Plans:
 1) Add language selector in profile settings
     - Add language 
 
-## 1.4.15
+
+1) Power Mod Tools #1: Ban/Unban from all communities I moderate
+- Input user to be banned as well as a reason and optional expiry
+- Get list of communities current user moderates
+- Loop over community list, call banCommunity, and provide the given user, reason, and optional expiry
+- UI:  Show communtiy list and add a "check" icon to each as the API calls are processed
+
+
+
+1) Power Mod Tools #2:  Command palette
+```
+{username} and {community} can be in any of the following formats:
+- /u/username[@instance] or /c/community[@instance]
+- @username[@instance] or !community[@instance]
+- https://lemmyverse.link/u/username@instance
+- https://lemmyverse.link/c/community@instance
+
+
+ban {username} -> Load ban modal populated with username and `ban` set to false (so modal will treat it as ban)
+unban {username} -> Load ban modal populated with username and `ban` set to true (so modal will treat it as unban)
+banCommunity {username} {community} -> Load ban modal populated with community and username
+addMod {username} {community}
+removeMod {username} {community}
+addAdmin {username}
+removeAdmin {username}
+{username} -> /u/{username}
+{community} -> /u/{community}
+
+
+```
+## 1.4.16
 ### Bugfixes
 - [26d26798] Add error handling in case bad URL sent to `isImage`, `isAudio`, `isVideo` helper functions.
+- [cbe44611] Only render `[tag syntax]` flairs in post titles if they are on the beginning and end
+- [cbe44611] If entire post title is in brackets, do not treat it as a flair
 
 ### Other
 - [7c8c96fb] Update MBFC dataset
 - [c6ce2213] Update MBFC removal template
-
+- [191f6f18] Add independent preview button to markdown editor in post creation form to allow previewing markdown independent of previewing the entire post.
+- [5b439516] Added a "Fact Check" section to the alternate source dropdown; added SpinScore.io 
+- [df9b5327] If available, use thumbnail for post videos.
+- [c908b886] Add option to disable automatically refreshing dates in the RelativeDate component (post/comment published/edit times, etc)
 
 ---
 
