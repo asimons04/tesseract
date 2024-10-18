@@ -14,6 +14,9 @@ Plans:
     - Submit buffer every so often
 
 
+1) Add originating community to the cross post blurb:  "Crossposted from {ap_id} in {community_link}"
+
+
 1) Re-write search and community browser to keep state in URL params instead of locally
     - They currently both reset when you navigate away and back
     - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
@@ -67,8 +70,14 @@ removeAdmin {username}
 - [5b439516] Added a "Fact Check" section to the alternate source dropdown; added SpinScore.io 
 - [df9b5327] If available, use thumbnail for post videos.
 - [c908b886] Add option to disable automatically refreshing dates in the RelativeDate component (post/comment published/edit times, etc)
+- [135ed9cd] Changed animation on menus to `slide` instead of `scale`
+- [6b99e0cd] Allow automatically marking posts as read when scrolling past them in the feed
+- [43967b4a] Cross-posts now reference the original post's title, creator, and community (with links and community/user modal buttons)
 
 ---
+
+## 1.4.15
+Internal / unreleased version.  See 1.4.16
 
 ## 1.4.14
 ### Bugfixes 
