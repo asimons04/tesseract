@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
-    import { backOut, bounceOut, circOut, expoOut, sineOut } from 'svelte/easing'
-    import { scale, slide } from 'svelte/transition'
+    import { expoOut } from 'svelte/easing'
+    import { slide} from 'svelte/transition'
   
     export let open = false
   
@@ -10,7 +10,6 @@
     export let itemsClass = ''
     export let absolute = false
     export let alignment: Alignment = 'bottom-left'
-
 
     let element: any
     let menu: HTMLMenuElement
@@ -48,7 +47,7 @@
 
   </script>
   
-  <!--- Closes the profile menu if clicking outside of it --->
+  <!--- Closes the menu if clicking outside of it --->
   <svelte:body on:click={
     (
         //@ts-ignore 
@@ -58,6 +57,8 @@
             open = false
         }
     }}
+
+    
   />
   
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -69,18 +70,11 @@
     tabindex="-1"
 >
     <slot name="button" {open} {toggleOpen} />
-    
-    <!---
-    transition:scale|local={{
-        duration: 200,
-        start: 0.95,
-        easing: expoOut,
-    }}
-    --->
+
     {#if open}
         <menu 
             bind:this={menu}
-            transition:slide
+            transition:slide={{easing: expoOut}}
             class="list-none absolute h-auto z-[90] overflow-auto 
                 {getOriginClass(alignment)}
                 rounded-lg py-1 w-max my-2 flex flex-col 
