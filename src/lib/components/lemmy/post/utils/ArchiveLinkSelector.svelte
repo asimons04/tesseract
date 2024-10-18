@@ -1,14 +1,14 @@
 <script lang="ts">
+    import { lookup } from '$lib/MBFC/client'
     import { removeURLParams } from "../helpers"
-    import { userSettings, YTFrontends } from '$lib/settings'
+    import { userSettings } from '$lib/settings'
 
     import Button from "$lib/components/input/Button.svelte";
     import Menu from "$lib/components/ui/menu/Menu.svelte"
     import MenuButton from "$lib/components/ui/menu/MenuButton.svelte"
-    import MultiSelect from "$lib/components/input/MultiSelect.svelte"
-    
 
     import { 
+        CheckBadge,
         ChevronDown, 
         ChevronUp, 
         Icon, 
@@ -28,6 +28,8 @@
             return original_url
         }
     }
+
+    let MBFCResults = url ? lookup(url) : undefined
 </script>
 
 {#if url}
@@ -39,11 +41,11 @@
             </span>
         </Button>
 
-        <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-[175px]">
+        <div class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-[175px]">
             Alternate Sources
             <span class="ml-auto"/>
             <Icon slot="icon" src={LinkIcon} width={16} mini />
-        </li>
+        </div>
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         
         <!---Archive Link Providers for 'link' Post Types--->
@@ -63,6 +65,27 @@
             <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Ground News">
                 Ground News
             </MenuButton>
+            
+            <div class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 mt-4 mb-1 py-1 min-w-[175px]">
+                Fact Check
+                <span class="ml-auto"/>
+                <Icon slot="icon" src={CheckBadge} width={16} mini />
+            </div>
+            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />           
+            
+            {#if MBFCResults?.url}
+                <MenuButton color="info" link href={MBFCResults.url} newtab={$userSettings.openInNewTab.links} title="Media Bias Fact Check">
+                    Media Bias Fact Check
+                </MenuButton>
+            {/if}
+            
+            <MenuButton color="info" link href="https://spinscore.io/?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="SpinScore.io">
+                SpinScore.io
+            </MenuButton>
+
+
+
+            
         {/if}
 
         <!---Piped/Invidious Providers for 'youtube' Post Types--->
