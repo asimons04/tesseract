@@ -6,7 +6,6 @@
     import { unproxyImage } from './helpers'
     
     import ImageContainer from './utils/ImageContainer.svelte'
-    import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte'
     import ClickToPlayOverlay from './utils/ClickToPlayOverlay.svelte';
 
@@ -44,8 +43,6 @@
 
 <ImageContainer>
     {#if displayType == 'feed'}
-        <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
-        
         <ClickToPlayOverlay bind:show={clickToPlay} displayType={displayType} on:click={(e)=> dispatcher('click', e)}/>
         
         <ZoomableImage url={thumbnail_url} bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={zoomable}
