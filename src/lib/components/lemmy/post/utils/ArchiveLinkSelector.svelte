@@ -33,7 +33,7 @@
 </script>
 
 {#if url}
-    <Menu alignment="bottom-left" class="z-10">
+    <Menu alignment="bottom-left" > <!--class="z-10"-->
         <Button slot="button" size="sm" aria-label="Archive Link Selector" let:toggleOpen let:open on:click={toggleOpen} title="Alternate Sources">
             <span class="flex flex-row gap-1 items-center">
                 <Icon src={LinkIcon} width={14} mini />
@@ -47,6 +47,7 @@
             <Icon slot="icon" src={LinkIcon} width={16} mini />
         </div>
         <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+        
         
         <!---Archive Link Providers for 'link' Post Types--->
         {#if ['link', 'thumbLink'].includes(postType)}
@@ -87,6 +88,7 @@
 
             
         {/if}
+        
 
         <!---Piped/Invidious Providers for 'youtube' Post Types--->
         {#if postType == 'youtube'}
