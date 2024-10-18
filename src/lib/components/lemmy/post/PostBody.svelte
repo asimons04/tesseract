@@ -40,7 +40,7 @@
             displayType == 'post'
         )
         
-        fadeText = !expandPreviewText && !post.post.nsfw && bodyLength > $userSettings.uiState.postBodyPreviewLength
+        fadeText = !expandPreviewText && bodyLength > $userSettings.uiState.postBodyPreviewLength
         
         if (displayType == 'feed' && !expandPreviewText && bodyLength > 0 && bodyLength > $userSettings.uiState.postBodyPreviewLength) {
             body = body.slice(0, $userSettings.uiState.postBodyPreviewLength)
@@ -68,26 +68,25 @@
                     : ''
                 }
             ">
-                <Markdown bind:source {inline} class="{post.post.nsfw && $userSettings.nsfwBlur ? 'blur-sm' : ''}" />
+                <Markdown bind:source {inline} />
             </div>
         {/if}
     </div>
 {/if}
 
 <!---Expand/Collapse Button--->
-{#if !hideExpandButton}
+{#if !hideExpandButton }
 <Button color="tertiary" class="mx-auto w-fit text-xs font-bold !py-0"
-    title="{expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}"
+    title="{expandPreviewText ? 'Collapse' : 'Expand'}"
     on:click={() => {
         expandPreviewText = !expandPreviewText
-        post.post.nsfw = false
 
         // Scroll top of post to top on close
         if (!expandPreviewText) scrollToTop(postContainer)
     }}
 >
     <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-    {expandPreviewText ? 'Collapse' : 'Expand'} {post.post.nsfw && $userSettings.nsfwBlur? 'NSFW Text' : ''}
+    {expandPreviewText ? 'Collapse' : 'Expand'}
     <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
 </Button>
 {/if}
