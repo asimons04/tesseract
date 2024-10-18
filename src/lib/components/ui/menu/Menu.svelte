@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Alignment } from '$lib/components/ui/menu/menu.js'
     import { backOut, bounceOut, circOut, expoOut, sineOut } from 'svelte/easing'
-    import { scale } from 'svelte/transition'
+    import { scale, slide } from 'svelte/transition'
   
     export let open = false
   
@@ -70,14 +70,17 @@
 >
     <slot name="button" {open} {toggleOpen} />
     
+    <!---
+    transition:scale|local={{
+        duration: 200,
+        start: 0.95,
+        easing: expoOut,
+    }}
+    --->
     {#if open}
         <menu 
             bind:this={menu}
-            transition:scale|local={{
-                duration: 200,
-                start: 0.95,
-                easing: expoOut,
-            }}
+            transition:slide
             class="list-none absolute h-auto z-[90] overflow-auto 
                 {getOriginClass(alignment)}
                 rounded-lg py-1 w-max my-2 flex flex-col 
