@@ -20,29 +20,30 @@
     let clickToPlayClicked = false
     let muted = autoplay
     let inViewport = false
+    let video: HTMLVideoElement | undefined = undefined
 
-
-    $: source = post.post.url && isVideo(post.post.url) 
+    $:  source = post.post.url && isVideo(post.post.url) 
                 ? imageProxyURL(post.post.url)
                 : post.post.embed_video_url && isVideo(post.post.embed_video_url)
                     ? imageProxyURL(post.post.embed_video_url)
                     : undefined
     
-    $:  showAsEmbed = (
-        (clickToPlayClicked && inViewport) ||
-        (   displayType == 'feed' && 
-            inViewport && 
-            $userSettings.embeddedMedia.feed && 
-            (!post.post.nsfw || !$userSettings.nsfwBlur)
-        ) ||
-        (displayType == 'post' && $userSettings.embeddedMedia.post)
-    )
 
-    // If there is no thumbnail URL, use a transparent PNG that will have the play button overlaid onto it.
-    $:  post.post.thumbnail_url = post.post.thumbnail_url ?? '/img/transparent.png'
-    
-    // Unset click to play when out of viewport (revert to thumbnail)
-    $:  if (!inViewport) clickToPlayClicked = false
+    $:  showAsEmbed = (
+            (clickToPlayClicked && inViewport) ||
+            (   displayType == 'feed' && 
+                inViewport && 
+                $userSettings.embeddedMedia.feed && 
+                (!post.post.nsfw || !$userSettings.nsfwBlur)
+            ) ||
+            (displayType == 'post' && $userSettings.embeddedMedia.post)
+        )
+        
+    // Unset click to play when out of viewport (revert to thumbnail or pause)
+    $:  if (!inViewport) {
+            clickToPlayClicked = false
+            if (video) video.pause() 
+        }
     
     function clickToPlay() {
         if (source) { 
@@ -58,13 +59,13 @@
 
 <Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
 
-{#if source && showAsEmbed}
+{#if source && (showAsEmbed || !post.post.thumbnail_url)}
     <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl max-w-full p-1">
         <div class="ml-auto mr-auto mt-1 mb-1 max-w-full">
             
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
             
-            <video class="rounded-2xl max-w-full max-h-[75vh] max-w-[88vw] mx-auto" 
+            <video bind:this={video} class="rounded-2xl max-w-full max-h-[75vh] max-w-[88vw] mx-auto" 
                 class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed')}    
                 controls playsinline {muted} {autoplay}  {loop}
             >
@@ -81,7 +82,8 @@
         </div>
     </div>
 
-{:else}
+{:else if post.post.thumbnail_url}
     <PostImage bind:post displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> {clickToPlay() }}/>
+
 {/if}
 
