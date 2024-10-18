@@ -723,7 +723,12 @@ export const addMBFCResults = function (posts:PostView[]):PostView[] {
 // Crosspost a post
 export const crossPost = function(post:PostView):void {
     setSessionStorage('postDraft', {
-        body: `cross-posted from: ${post.post.ap_id}\n\n${post.post.body || ''}`,
+        body: `Cross-posted from [${post.post.name}](${post.post.ap_id}) by ` +
+            `@${post.creator.name}@${new URL(post.creator.actor_id).hostname} in `+
+            `!${post.community.name}@${new URL(post.community.actor_id).hostname}\n\n` +
+            `--- \n\n` +
+            `${post.post.body || ''}`
+        ,
         url: post.post.url || '',
         name: post.post.name,
         loading: false,
