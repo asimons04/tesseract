@@ -16,6 +16,7 @@
     export let avatar: boolean = false
     export let name: boolean = true
     export let avatarSize: number = 24
+    export let avatarBackground: boolean = false
     export let showInstance: boolean | undefined = undefined
     export let href: boolean = false
     export let heading:boolean = false
@@ -46,7 +47,7 @@
     on:click={loadCommunityProfileModal}
 >
     {#if avatar}
-        <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true}/>
+        <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true} background={avatarBackground}/>
     {/if}
 
     {#if name}
