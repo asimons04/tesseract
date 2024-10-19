@@ -5,7 +5,7 @@
     import * as adventurer from '@dicebear/adventurer'
     import ZoomableImage from './ZoomableImage.svelte';
 
-    const sizes = [48, 64, 128, 256, 512, 1024]
+    const sizes = [128, 256, 512, 1024]
 
     export let url: string | undefined
     export let alt: string = ''
