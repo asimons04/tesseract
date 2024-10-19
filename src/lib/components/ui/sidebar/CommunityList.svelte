@@ -23,10 +23,10 @@
         // Allow filtering by instance if filter starts with '@'
         if (filter?.startsWith('@')) {
             filteredItems = [] as Community[]
-            let f = filter.replace('@', '')
+            let f = filter.replace('@', '').trim().toLowerCase()
             
             items.forEach((i) => {
-                if (new URL(i.actor_id).hostname.trim().startsWith(f.trim())) {
+                if (new URL(i.actor_id).hostname.toLowerCase().trim().startsWith(f)) {
                     filteredItems.push(i)
                 }
             })
@@ -37,9 +37,11 @@
         // Allow filtering by exact name if filter starts with '!'
         if (filter?.startsWith('!')) {
             filteredItems = [] as Community[]
+
             let f = filter.replace('!', '')
-            
             let [name, instance] = f.split('@')
+            name = name.toLowerCase().trim()
+            if (instance) instance = instance.toLowerCase().trim()
             
             items.forEach((i) => {
                 
@@ -57,9 +59,17 @@
         
         // Generic filter if no more specific flags are set
         filteredItems = [] as Community[]
+        let f = filter.trim().toLowerCase()
+        let [title, instance] = f.split('@')
+        
+        title = title.toLowerCase().trim()
+        instance = instance ? instance.toLowerCase().trim() : ''
+        
         items.forEach((i) => {
-            let f = filter.trim()
-            if (i.title.toLowerCase().trim().includes(f.toLowerCase().trim())) {
+            if (
+                i.title.toLowerCase().trim().includes(title) &&
+                (!instance || new URL(i.actor_id).hostname.toLowerCase().trim().startsWith(instance))
+            ) {
                 filteredItems.push(i)
             }
         })
