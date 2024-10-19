@@ -146,7 +146,7 @@
 
 />
 
-<PostIsInViewport bind:postContainer bind:inViewport threshold={.8}/>
+<PostIsInViewport bind:postContainer bind:inViewport threshold={.6}/>
 
 {#if post?.post?.id}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
