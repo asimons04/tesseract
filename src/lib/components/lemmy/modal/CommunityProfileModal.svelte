@@ -104,7 +104,12 @@
                     q: `!${community.name}@${new URL(community.actor_id).hostname}`
                 })
             }
-
+        }
+        catch { 
+            console.log("Failed to call resolve object")
+        }
+        
+        try {
             communityDetails = await getClient().getCommunity({
                 name: `${community.name}@${new URL(community.actor_id).hostname}`
             })
