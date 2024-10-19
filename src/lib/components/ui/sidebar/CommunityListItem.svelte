@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Community } from 'lemmy-js-client'
-  
+    import { userSettings } from '$lib/settings'
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
 
@@ -21,8 +21,10 @@
         boldCommunityName={true} 
         avatarSize={expanded ? 28 : 20} 
         avatar 
+        avatarBackground
         maxNameLength={30} 
         inline={false} 
+        showInstance={$userSettings.uiState.showInstancesSidebarCommunityList}
         bind:name={expanded}
         href={!expanded}
     />
