@@ -166,24 +166,25 @@
 
                 <!--- Search field to filter the subscribed communities--->
                 {#if $userSettings.uiState.expandSidebar}
-                    <form class="p-2 flex flex-row gap-1" on:submit|preventDefault>
+                    <form class="p-2 flex flex-row items-center gap-2" on:submit|preventDefault>
                         <TextInput 
+                            type="text" autocomplete="new-password"    
+                            placeholder="Filter Communities"
+                            class="h-8 w-full"
                             bind:value={communityFiltervalue}
-                            type="text" autocomplete="new-password"
-                            placeholder="Jump to a Community"
                             on:keyup={(e) => { 
                                 debounce(e.detail.srcElement.value);
                                 panel = 'subscribed'
                             }}
-                            class="h-8 w-full"
                         />
-                        <button class="my-auto cursor-pointer" title="Reset Search Filter" on:click={async () => {
+
+                        <Button size="square-md" color="tertiary" title="Reset Search Filter" class="ml-auto" icon={XCircle} iconSize={22}
+                            on:click={async () => {
                                 debounce('');
                                 communityFiltervalue = '';
                             }}
                         >
-                            <Icon src={XCircle} mini size="22"/>
-                        </button>
+                        </Button>
                     </form>
                 {/if}
 
