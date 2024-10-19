@@ -19,7 +19,7 @@
 >
     <CommunityLink bind:community 
         boldCommunityName={true} 
-        avatarSize={28} 
+        avatarSize={expanded ? 28 : 20} 
         avatar 
         maxNameLength={30} 
         inline={false} 
