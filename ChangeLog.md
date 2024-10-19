@@ -73,7 +73,13 @@ removeAdmin {username}
 - [135ed9cd] Changed animation on menus to `slide` instead of `scale`
 - [6b99e0cd] Allow automatically marking posts as read when scrolling past them in the feed
 - [43967b4a] Cross-posts now reference the original post's title, creator, and community (with links and community/user modal buttons)
-
+- [ff6f16dd] Redesign sidebar community links
+    - Clicking the text will open the community modal
+    - Clicking anywhere else will go to the community 
+    - Removed menu (use modal actions)
+    - Added instance name
+    - Increased icon size
+    
 ---
 
 ## 1.4.15
