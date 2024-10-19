@@ -390,7 +390,12 @@
 
         <!---Show Instances--->
         <SettingToggle icon={Server} title="Show Instance Names" bind:value={$userSettings.uiState.showInstances}
-            description="Show the instance/domain for users and communities."
+            description="Show the instance/domain for users and communities in posts and comments."
+        />
+
+        <!---Show Instances in Sidebar--->
+        <SettingToggle icon={Server} title="Show Instance Names in Sidebar" bind:value={$userSettings.uiState.showInstancesSidebarCommunityList}
+            description="Show the instance for communities in the sidebar community list."
         />
 
         <!---Show Banners--->

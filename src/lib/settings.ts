@@ -115,6 +115,7 @@ interface Settings {
         maxScrollPosts: number
         MBFCBadges: boolean
         showInstances: boolean
+        showInstancesSidebarCommunityList: boolean
         showFullURL: boolean
         expandCrossPosts: boolean
         matchCrossPostOnTitle: boolean
@@ -180,6 +181,7 @@ export const defaultSettings: Settings = {
         maxScrollPosts:                                                 100,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,
         showInstances:                                                  true,
+        showInstancesSidebarCommunityList:                              true,
         showFullURL:                                                    false,
         expandCrossPosts:                                               true,
         matchCrossPostOnTitle: toBool(env.PUBLIC_MATCH_XPOST_TITLE)     ?? true,
