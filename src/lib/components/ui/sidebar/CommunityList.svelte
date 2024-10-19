@@ -66,8 +66,11 @@
         instance = instance ? instance.toLowerCase().trim() : ''
         
         items.forEach((i) => {
-            if (
-                i.title.toLowerCase().trim().includes(title) &&
+            let compareValue = i.title
+                ? i.title.toLowerCase().trim()
+                : i.name.toLowerCase().trim()
+            
+            if ( compareValue.includes(title) &&
                 (!instance || new URL(i.actor_id).hostname.toLowerCase().trim().startsWith(instance))
             ) {
                 filteredItems.push(i)
