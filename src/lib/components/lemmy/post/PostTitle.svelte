@@ -47,12 +47,10 @@
     }
     class="flex flex-row flex-wrap items-start gap-2 {$userSettings.showCompactPosts ? 'md:mt-4' : ''} font-medium max-w-full w-full break-words text-left"
     style="word-break: break-word;"
-    class:text-slate-500={isPostView(post) && post.read && $userSettings.markReadPosts}
-    class:dark:text-zinc-400={isPostView(post) &&post.read && $userSettings.markReadPosts}
     title="{fixLemmyEncodings(post.post.name)}"
 >
 
-    <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1  {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+    <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1 {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
         <Markdown source={postName} noUserCommunityLink  noHashtags/>
         
         {#if flairs}

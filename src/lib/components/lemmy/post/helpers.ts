@@ -76,24 +76,39 @@ export const imageSize = (displayType:PostDisplayType, ) => {
 
 // Check if the provided URL is an image
 export const isImage = (url: string | undefined) => {
-    if (!url) return false
-    const testURL = new URL(unproxyImage(url))
-    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
+    try {
+        if (!url) return false
+        const testURL = new URL(unproxyImage(url))
+        return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
+    }
+    catch {
+        return false
+    }
 }
 
 // Check if the provided URL is an embeddable audio file
 export const isAudio = (url: string | undefined) => {
-    if (!url) return false
-    const testURL = new URL(unproxyImage(url))
-    return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
+    try {
+        if (!url) return false
+        const testURL = new URL(unproxyImage(url))
+        return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
+    }
+    catch {
+        return false
+    }
 }
 
 
 /** Check if provided URL is a video */
 export const isVideo = (inputUrl: string | undefined) => {
-  if (!inputUrl) return false
-  const url = new URL(unproxyImage(inputUrl)).pathname.toLowerCase()
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
+    try {
+        if (!inputUrl) return false
+        const url = new URL(unproxyImage(inputUrl)).pathname.toLowerCase()
+        return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
+    }
+    catch {
+        return false
+    }
 }
 
 /** Unproxies Lemmy's godawfully stupid method of image proxying */
@@ -708,7 +723,12 @@ export const addMBFCResults = function (posts:PostView[]):PostView[] {
 // Crosspost a post
 export const crossPost = function(post:PostView):void {
     setSessionStorage('postDraft', {
-        body: `cross-posted from: ${post.post.ap_id}\n\n${post.post.body || ''}`,
+        body: `Cross-posted from ["${post.post.name}"](${post.post.ap_id}) by ` +
+            `@${post.creator.name}@${new URL(post.creator.actor_id).hostname} in `+
+            `!${post.community.name}@${new URL(post.community.actor_id).hostname}\n\n` +
+            `--- \n\n` +
+            `${post.post.body || ''}`
+        ,
         url: post.post.url || '',
         name: post.post.name,
         loading: false,
@@ -785,52 +805,83 @@ export function isNewAccount(date:string, daysOld?:number):boolean {
 }
 
 
-export function extractFlairsFromTitle(title:string ): {name: string, flairs: Array<string>}  {
+export function extractFlairsFromTitle(title:string): {name: string, flairs: Array<string>}  {
     let postName = fixLemmyEncodings(title)
     let flairs = [] as string[]
-    let finalFlairs = [] as string[]
 
-    if (userSettings.extractFlairsFromTitle) {
-        const flairRegex = new RegExp(/(\[.[^\]]+\])/g)
-        const matches = postName.matchAll(flairRegex)
-        
-        // Add (with dedup) matched tags to flair 
-        for (let match of matches) {
-            if (!flairs.includes(match[0])) flairs.push(match[0])
-        }
-        
-        // Remove the [tag]s from the post name
-        for (let flair of flairs) {
-            postName = postName.replaceAll(flair, '').trim()
-        }
-
-        // Look for any nested flairs (comma-separated flairs in the same brackets [music, metal, 2000s rock]
-        for (let i:number = 0; i < flairs.length; i++) {
-            let flair = flairs[i].replace('[', '').replace(']','')
-            
-            let nestedFlairs = flair.split(',')
-            
-            if (nestedFlairs.length > 1) {
-                nestedFlairs.forEach((f) => {
-                    finalFlairs.push(f)
-                })
-            }
-            else {
-                finalFlairs.push(flair)
-            }
-        }
-   
-        return { 
-            name: postName,
-            flairs: finalFlairs
-        }
-    }
-    else {
+    // If flairs are disabled, return post name as-is and empty array of flairs.
+    if (!userSettings.extractFlairsFromTitle) {
         return {
             name: postName,
             flairs: [] as string[]
         }
     }
+     
+    // Function to call recursively to extract flairs from the beginning and end of the title
+    const extractFlairs = function (title:string): number {
+        const flairRegex = new RegExp(/^(\[.[^\]]+\])|(\[.[^\]]+\])$/g)
+        
+        let foundFlairs = [] as string[]
+        let foundFlairs2 = [] as string[]
+        let numMatches = 0
+
+        const matches = postName.matchAll(flairRegex)
+        
+
+        // Add (with dedup) matched tags to flair 
+        for (let match of matches) {
+            numMatches++
+            if (!foundFlairs.includes(match[0])) foundFlairs.push(match[0])
+        }
+        
+        // Remove the [tag]s from the post name
+        for (let flair of foundFlairs) {
+            title = title.replaceAll(flair, '').trim()
+        }
+
+        // Look for any nested flairs (comma-separated flairs in the same brackets [music, metal, 2000s rock]
+        for (let i:number = 0; i < foundFlairs.length; i++) {
+            let flair = foundFlairs[i].replace('[', '').replace(']','')
+            
+            let nestedFlairs = flair.split(',')
+            
+            if (nestedFlairs.length > 1) {
+                nestedFlairs.forEach((f) => {
+                    foundFlairs2.push(f.trim())
+                })
+            }
+            else {
+                foundFlairs2.push(flair.trim())
+            }
+        }
+
+        // Re-assign values
+        foundFlairs = foundFlairs2
+        postName = title
+        for (let flair of foundFlairs) {
+            if (!flairs.includes(flair)) flairs.push(flair)
+        }
+
+        return numMatches
+    }
+
+    // Recurse until no flairs are detected
+    while (extractFlairs(postName) > 0) {}
+
+    // If the title is blank after extracting flairs, return it as-is and return no flairs (e.g. [The whole title is like this]
+    if (postName.trim() == '') {
+        return {
+            name: fixLemmyEncodings(title),
+            flairs: [] as string[]
+        }
+    }
+    else {
+        return { 
+            name: postName,
+            flairs: flairs
+        }
+    }
+    
 }
 
 export function getPostTitleWithoutFlairs(title: string): string {

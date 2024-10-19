@@ -1,6 +1,6 @@
 {
   "name": "tesseract-lemmy",
-  "version": "1.4.14",
+  "version": "1.4.16",
   "private": true,
   "scripts": {
     "dev": "vite dev",

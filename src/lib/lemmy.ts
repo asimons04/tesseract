@@ -1,7 +1,7 @@
 import { type GetSiteResponse, LemmyHttp } from 'lemmy-js-client'
+import { error } from '@sveltejs/kit'
 import { get, writable } from 'svelte/store'
 import { profile, profileData } from '$lib/auth.js'
-import { error } from '@sveltejs/kit'
 import { LINKED_INSTANCE_URL, instance } from '$lib/instance.js'
 
 export interface BlockInstanceResponse {
@@ -107,39 +107,6 @@ export async function hideCommunity(communityID:number, hidden:boolean, reason:s
 
 }
 
-// Deprecated: 5/16/2024
-/*
-export async function uploadImage(image: File | null | undefined): Promise<string | undefined> {
-    if (!image || !get(profile)?.jwt) return
-    
-    const formData = new FormData()
-    formData.append('images[]', image)
-
-    const response = await fetch(
-        `${window.location.origin}/cors/${getInstance()}/pictrs/image?`,
-        {
-            method: 'POST',
-            body: formData,
-            headers: { 'Authorization': `Bearer ${get(profile)?.jwt}`}
-        }
-    )
-
-    const json = await response.json()
-
-    if (json.msg == 'ok') {
-        return `https://${get(profile)?.instance}/pictrs/image/${
-            json.files?.[0]?.file
-        }`
-    }
-
-    throw new Error(
-        `${
-            (await response.text().catch((_) => undefined)) ??
-            'Failed to upload image'
-        }: ${response.status}: ${response.statusText}`
-    )
-}
-*/
 
 
 export let sortOptions:string[] = [

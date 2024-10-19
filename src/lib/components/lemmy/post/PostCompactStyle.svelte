@@ -14,6 +14,7 @@
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import MBFC from '$lib/MBFC/MBFC.svelte'
+    import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
@@ -49,25 +50,25 @@
             
             <!---Post title--->
             <PostTitle bind:post />
-
+            
+            
             <!---Alt source selector, link, MBFC for desktop compact view--->
             {#if post.post.url && !isImage(post.post.url)}
-            <span class="hidden md:flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
-                
-                <!---Show archive link if not a media post--->
-                {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
-                    <ArchiveLinkSelector url={post.post?.url} {postType}/>
-                {/if}
-                
-                <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-                <MBFC post={post} rightJustify={true}/>
-            </span>
+                <span class="hidden md:flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
+                    
+                    <!---Show archive link if not a media post--->
+                    {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
+                        <ArchiveLinkSelector url={post.post?.url} {postType}/>
+                    {/if}
+                    
+                    <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                    <MBFC post={post} rightJustify={true}/>
+                </span>
             {/if}
-            
         </div>
 
         <!--- Thumbnail --->
-        {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url))}
+        {#if !post.post.nsfw && !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url))}
             <div class="flex-none w-fit h-fit mx-auto mt-2 overflow-hidden">
                 <!--- Expand the post in place when clicking thumbnail--->
                 <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
@@ -88,30 +89,36 @@
         {/if}
     </div>
     
-    <!---Alt source selector, link, MBFC for mobile view--->
-    {#if post.post.url && !isImage(post.post.url)}
-    <span class="flex md:hidden flex-row flex-wrap my-auto w-full gap-2 mb-1">
-        
-        <!---Show archive link if not a media post--->
-        {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
-            <ArchiveLinkSelector url={post.post?.url} {postType}/>
+    {#if post.post.nsfw}
+        <div class="flex flex-col relative w-full gap-1 min-h-[75px]">
+            <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />    
+        </div>
+    {:else}
+        <!---Alt source selector, link, MBFC for mobile view--->
+        {#if post.post.url && !isImage(post.post.url)}
+        <span class="flex md:hidden flex-row flex-wrap my-auto w-full gap-2 mb-1">
+            
+            <!---Show archive link if not a media post--->
+            {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
+                <ArchiveLinkSelector url={post.post?.url} {postType}/>
+            {/if}
+            
+            <Link class="text-xs max-w-[250px]" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+            <MBFC post={post} rightJustify={true}/>
+        </span>
         {/if}
-        
-        <Link class="text-xs max-w-[250px]" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-        <MBFC post={post} rightJustify={true}/>
-    </span>
-    {/if}
 
 
-    {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
-            class="my-1"
-            inline={
-                ( (post?.post?.body?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength ||
-                    (!post.post.body && (post?.post?.embed_description?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength)
-                ) && !expandPreviewText &&  displayType=='feed'
-            }
-        />
+        {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
+            <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
+                class="my-1"
+                inline={
+                    ( (post?.post?.body?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength ||
+                        (!post.post.body && (post?.post?.embed_description?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength)
+                    ) && !expandPreviewText &&  displayType=='feed'
+                }
+            />
+        {/if}
     {/if}
 
     <!--- Crossposts --->

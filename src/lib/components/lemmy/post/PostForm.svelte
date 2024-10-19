@@ -446,7 +446,8 @@
             </div>
 
             <!--- Post Body --->
-            <MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>
+            <!---<MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>--->
+            <MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} previewButton bind:imageUploads={bodyImages}/>
             
             <!---Options--->
             <SettingToggleContainer>

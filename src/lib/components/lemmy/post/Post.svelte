@@ -14,11 +14,14 @@
     import { type PostType, type PostDisplayType, postType as getPostType } from './helpers.js'
 
     import { fade } from 'svelte/transition'
+    import { getClient, site } from '$lib/lemmy'
     import { lastSeenPost } from './helpers.js'
+    import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
 
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
+    import PostIsInViewport from './utils/PostIsInViewport.svelte'
 
     export let post: PostView | undefined
     export let actions: boolean = true
@@ -32,9 +35,32 @@
 
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement
-    
+    let inViewport = false
+
+
     let postType = getPostType(post)
+    
     $: post, postType = getPostType(post)
+
+    $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
+
+    function markPostAsRead() {
+        if (
+            (
+                (displayType == 'feed' && $userSettings.markReadOnScroll) || displayType == 'post'
+            )
+            && post && !post.read && $profile?.jwt && inViewport
+        ) {
+            post.read = true
+            post = post
+            getClient().markPostAsRead({
+                read: true,
+                post_ids: [ post.post.id ]
+            })
+        }
+
+        
+    }
 
     function handleBanInstance(e:BanUserEvent) {
         if (post?.creator.id == e.detail.person_id) {
@@ -104,10 +130,10 @@
         }
     }
 
-
-
-
+    
 </script>
+
+
 <svelte:window 
     on:banUser={handleBanInstance}
     on:banCommunity={handleBanCommunity}
@@ -120,11 +146,13 @@
 
 />
 
+<PostIsInViewport bind:postContainer bind:inViewport threshold={.6}/>
 
 {#if post?.post?.id}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-    <div id={post.post.id.toString()} on:mouseover={() => { 
+    <div class="relative" 
+        id={post.post.id.toString()} on:mouseover={() => { 
             if (post) lastSeenPost.set(post.post.id)
         }} 
         
@@ -134,7 +162,7 @@
         bind:this={postContainer}
         transition:fade
     >
-        
+
         <!--- Compact Posts --->
         <!---{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }--->
         {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }

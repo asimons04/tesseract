@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte'
-
+    import { userSettings } from '$lib/settings'
+    
     export let date: string
     export let relativeTo: Date = new Date()
     export let options: Intl.RelativeTimeFormatOptions = {
@@ -16,17 +17,27 @@
             return 'Invalid Date'
         }
     }
-  
-    $: dateTime = toLocaleDateString(stringToDate(date))
     
+    $: dateTime = toLocaleDateString(stringToDate(date))
+
     // Set an interval to update the comnparison time every minute
     let updateInterval:number
+    const startInterval = function() {
+        if ($userSettings.uiState.autoUpdateDates) {
+            updateInterval = window.setInterval(() => {
+            relativeTo = new Date()    
+            }, 60 * 1000)
+        }
+    }
 
-    onMount(() => {
-        updateInterval = setInterval(() => {
-          relativeTo = new Date()    
-        }, 60 * 1000)
-    })
+    const stopInterval = function() {
+        if (!updateInterval) return
+        window.clearInterval(updateInterval)
+    }
+
+    onMount(() => startInterval() )
+    onDestroy(() => stopInterval() )
+
 
     onDestroy(() => {
         clearInterval(updateInterval)

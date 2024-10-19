@@ -76,6 +76,7 @@
         UserCircle,
         Window,
         Tag,
+        Clock,
     } from 'svelte-hero-icons'
     
 
@@ -389,7 +390,12 @@
 
         <!---Show Instances--->
         <SettingToggle icon={Server} title="Show Instance Names" bind:value={$userSettings.uiState.showInstances}
-            description="Show the instance/domain for users and communities."
+            description="Show the instance/domain for users and communities in posts and comments."
+        />
+
+        <!---Show Instances in Sidebar--->
+        <SettingToggle icon={Server} title="Show Instance Names in Sidebar" bind:value={$userSettings.uiState.showInstancesSidebarCommunityList}
+            description="Show the instance for communities in the sidebar community list."
         />
 
         <!---Show Banners--->
@@ -432,6 +438,11 @@
             description="Disable downvotes and hide downvote counts on posts/comments."
         />
         {/if}
+
+        <!---Auto Update Dates--->
+        <SettingToggle icon={Clock} title="Auto Update Dates"  bind:value={$userSettings.uiState.autoUpdateDates}
+            description="Live-update the published/edited times on posts and comments"
+        />
 
         <!---Enable Debug Buttons--->
         <SettingToggle icon={BugAnt} title="Debug Buttons" bind:value={$userSettings.debugInfo}
@@ -531,6 +542,11 @@
             condition={$userSettings.uiState.infiniteScroll}
         />
         
+        <!---Fade Title of Read Posts--->
+        <SettingToggle title="Mark Posts Read on Scroll" icon={EnvelopeOpen} bind:value={$userSettings.markReadOnScroll}
+            description="Automatically mark posts 'read' as you scroll through them in the feed."
+        />
+
         <!---Fade Title of Read Posts--->
         <SettingToggle title="Fade Read Posts" icon={EnvelopeOpen} bind:value={$userSettings.markReadPosts}
             description="Fade the titles of read posts in the feed."

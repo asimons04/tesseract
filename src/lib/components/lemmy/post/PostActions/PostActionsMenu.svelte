@@ -126,10 +126,11 @@
         <MenuButton title="Mark as {post.read ? 'Unread' : 'Read'}" color="info"
             on:click={async () => {
                 if ($profile?.jwt)
-                post.read = await markAsRead(post.post, !post.read, $profile.jwt)
+                post.read = (await markAsRead(post.post, !post.read, $profile.jwt) ) ? !post.read : post.read
+                post = post
                 toast({
                     type: 'success',
-                    content: `Post marked as ${post.read ? 'read' : 'unread'}`,
+                    content: `Post marked as ${post.read ? 'unread' : 'read'}`,
                 })
             }}
         >

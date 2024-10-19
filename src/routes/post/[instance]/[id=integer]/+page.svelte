@@ -40,19 +40,6 @@
 
     onMount(async () => {
         setLastSeenCommunity(data.post.community_view.community)
-        
-        // Mark post as read when viewed on home instance
-        try {
-            if (!data.post.post_view.read && $profile?.jwt && $page.params.instance == $profile?.instance) {
-                getClient().markPostAsRead({
-                    read: true,
-                    //@ts-ignore 
-                    post_id: data.post.post_view.post.id,
-                })
-            }
-        }
-        // Do nothing.  Just don't throw an error if fail to mark as read
-        catch {}
 
         // Scroll to top unless jumping to a comment
         if (!$page.url.searchParams.get('thread')) window.scrollTo(0,0);

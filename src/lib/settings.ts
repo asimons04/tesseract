@@ -58,6 +58,7 @@ interface Settings {
         feed: FeedType
         comments: CommentSortType
     }
+    markReadOnScroll: boolean
     hidePosts: {
         deleted: boolean
         removed: boolean
@@ -114,6 +115,7 @@ interface Settings {
         maxScrollPosts: number
         MBFCBadges: boolean
         showInstances: boolean
+        showInstancesSidebarCommunityList: boolean
         showFullURL: boolean
         expandCrossPosts: boolean
         matchCrossPostOnTitle: boolean
@@ -126,6 +128,7 @@ interface Settings {
         infiniteScroll: boolean
         view: PostViewType
         hideCompactThumbnails: boolean
+        autoUpdateDates: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -178,6 +181,7 @@ export const defaultSettings: Settings = {
         maxScrollPosts:                                                 100,
         MBFCBadges:     toBool(env.PUBLIC_ENABLE_MBFC_BADGES)           ?? true,
         showInstances:                                                  true,
+        showInstancesSidebarCommunityList:                              true,
         showFullURL:                                                    false,
         expandCrossPosts:                                               true,
         matchCrossPostOnTitle: toBool(env.PUBLIC_MATCH_XPOST_TITLE)     ?? true,
@@ -189,7 +193,9 @@ export const defaultSettings: Settings = {
         filterAnnoyingCCLicense:                                        false,
         infiniteScroll:                                                 true,
         view:                                                           'card',
-        hideCompactThumbnails:                                          false
+        hideCompactThumbnails:                                          false,
+        autoUpdateDates:                                                true,
+
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
@@ -201,6 +207,7 @@ export const defaultSettings: Settings = {
         feed:       env.PUBLIC_DEFAULT_FEED as FeedType                 ??  'Local',
         comments:   env.PUBLIC_DEFAULT_COMMENT_SORT as CommentSortType  ??  'Hot'
     },
+    markReadOnScroll:                                                   false,
     hidePosts: {
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,

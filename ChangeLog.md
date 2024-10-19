@@ -1,8 +1,22 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
-## 1.4.15
+
 Plans:
+1)  Remove full support for Invidious and Piped :(
+    - Combine Invidious and Piped public instances list in settings; use only for detection of older post media
+    - Combine Invidious and Piped custom fields in user settings; the URL format is interchangeable, so no real need to have separate lists
+    - Remove Piped/Invidious from alternate source selector unless user has set their own custom Inv/Piped instance in their settings
+    - Update YouTube component to default to re-writing all videos using canonical YT link; only rewrite if user has set their own custom instance
+
+1) Add option to mark posts as read when you scroll past them
+    - Add post IDs to a buffer as they enter and leave the viewport; set 'read' flag on posts locally as they're scrolled.
+    - Submit buffer every so often
+
+
+1) Add originating community to the cross post blurb:  "Crossposted from {ap_id} in {community_link}"
+
+
 1) Re-write search and community browser to keep state in URL params instead of locally
     - They currently both reset when you navigate away and back
     - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
@@ -13,7 +27,126 @@ Plans:
 1) Add language selector in profile settings
     - Add language 
 
+
+1) Power Mod Tools #1: Ban/Unban from all communities I moderate
+- Input user to be banned as well as a reason and optional expiry
+- Get list of communities current user moderates
+- Loop over community list, call banCommunity, and provide the given user, reason, and optional expiry
+- UI:  Show communtiy list and add a "check" icon to each as the API calls are processed
+
+
+
+1) Power Mod Tools #2:  Command palette
+```
+{username} and {community} can be in any of the following formats:
+- /u/username[@instance] or /c/community[@instance]
+- @username[@instance] or !community[@instance]
+- https://lemmyverse.link/u/username@instance
+- https://lemmyverse.link/c/community@instance
+
+
+ban {username} -> Load ban modal populated with username and `ban` set to false (so modal will treat it as ban)
+unban {username} -> Load ban modal populated with username and `ban` set to true (so modal will treat it as unban)
+banCommunity {username} {community} -> Load ban modal populated with community and username
+addMod {username} {community}
+removeMod {username} {community}
+addAdmin {username}
+removeAdmin {username}
+{username} -> /u/{username}
+{community} -> /u/{community}
+
+
+```
+## 1.4.16
+### Bugfixes
+- [26d26798] Add error handling in case bad URL sent to `isImage`, `isAudio`, `isVideo` helper functions.
+- [cbe44611] Only render `[tag syntax]` flairs in post titles if they are on the beginning and end
+- [cbe44611] If entire post title is in brackets, do not treat it as a flair
+- [6b99e0cd] Fixes issue where post was not being marked as read correclty on newer API versions since it was sending a single post ID instead of an array.
+
+
+## New Features in 1.4.16
+
+### Can Automatically Mark Posts as Read While Scrolling
+Per user request, a new option and feature has been added that will automatically mark posts as read as you scroll past them in the feed.  This is disabled by default, but can be enabled in `Settings -> Feed -> Mark Posts Read on Scroll`
+
+Currently, a post will mark as read when 60% of it is in the viewport for more than 1.5 seconds.
+
+
+### Better Crosspost Attributions
+Crossposts are great from a user standpoint as they reduce clutter, but they often bury other communities since it's not easily apparent where it was cross-posted from and by whom.
+
+Now, when crossposting, the default cross-post header has been updated to give better visibility to the original:
+
+`Cross posted from "ORIGINAL_TITLE" by @ORIGINAL_USER@instance.xyz in @ORIGINAL_COMMUNITY@instance.xyz`
+
+The title is linked to the canonical AP URL of the original post (same as before but with text applied instead of a bare link).  The original user and original community links are in the standard user/community link format.  In Tesseract, both of those are clickable to view the user and community profiles.
+
+Since Tesseract will automatically resolve unknown communities if you're logged in, this should give a visibility boost to communities that may go overlooked.
+
+
+### Sidebar Community List
+#### General
+The sidebar with the subscription list has been completely overhauled.  I'm now using standard `CommunityLink` components which have the benefit of opening the community modals.  The community buttons are still buttons and will take you to the community page.  Clicking the community text will open the modal while clicking the button around that will take you to the community page.
+
+The inline menu buttons have been removed since all of those functions are also available from the community modals. This saves a good chunk of memory since a discrete menu is not required for each element now.
+
+The instances for each community are now also shown by default.  You can disable this by turning off `Settings -> General -> Show Instance Names in Sidebar`.
+
+#### Community List Filtering
+I've also re-implemented the filtering of the subscription list.  It is now more granular and can accept modifiers as well as take the instance into account.
+
+**Default**
+
+By default, the filter query will be a case-insensitive `contains` comparison against the community's display name (or system name if display name is undefined).
+
+It will now also accept an instance if you include it after an `@`.  The instance is compared with a case-insensitive `startsWith` against the actor id of the community.
+
+- Example 1: `new` will return any community containing `new` in its display name (or name if display name is not set)
+- Example 2: `new@lemmy.` will return `News@lemmy.word`, `LegalNews@lemmy.zip`, etc.
+
+**Filter by Name (rather than display name)**
+
+If you want to filter the list by the community's system name rather than the display name, prefix the filter with an `!`.  
+
+The instance is also accepted here if it is provided after an `@`.
+- Example 1:  `!new` will return any community whose system name begins with `new` such as `news@dubvee.org`, `news@lemmy.world`, `newcommunities@instance.xyx`, etc
+- Example 2:  Using the same example from above, `!new@lemmy.` will return `news@lemmy.world` but not `LegalNews@lemmy.zip`
+- Example 3:  Can be used if you want an exact match based on the community link syntax (!community@instance.xyz)
+
+**Filter by Instance**
+
+To filter by instance, prefix the filter with an `@`.  This will only show communities belonging to the specified instance.  This filter method uses a `startsWith`, case-insensitive comparison against the hostname of the community's actor id. 
+
+This is particularly helpful if you want to see what communities you're subscribed to on a particular instance.  AFAIK, there is no way to get that info from the API.
+
+### UI Tweaks
+#### Independent Preview Button in Post Create/Edit Form
+Rather than previewing the entire post, including thumbnail and embed metadata, you can now also preview just the markdown of the post body.  
+
+The old behavior was more of an intentional choice that didn't work out well in practice / real-world use.  You can still preview the entire post (that hasn't gone away); you just have more granularity in what you preview.
+
+#### Added "Fact Check" Section to Alternate Source Link Menu
+There are one or two "Fact Check" options available in the alternate source link menu now.
+- MBFC, if avaialble
+- SpinScore.io (shows on all links)
+
+I'm not a fan of AI-generated ~~summaries and analysises~~ anything, so I probably won't be using that, but it's an option if you want to use it.
+
+#### Direct Video Embeds Now Support Custom Thumbnails
+If a custom thumbnail is provided for a post where the URL is to a video, the thumbnail will now be used for the click-to-play overlay.  
+
+## Other Stuff
+- [7c8c96fb] Update MBFC dataset
+- [c6ce2213] Update MBFC removal template
+- [c908b886] Add option to disable automatically refreshing dates in the RelativeDate component (post/comment published/edit times, etc)
+- [135ed9cd] Changed animation on menus to `slide` instead of `scale`
+
+
 ---
+
+## 1.4.15
+Internal / unreleased version.  See 1.4.16
 
 ## 1.4.14
 ### Bugfixes 

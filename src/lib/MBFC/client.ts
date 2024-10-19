@@ -115,14 +115,24 @@ export const lookup = function (url:string):MBFCReport|undefined {
 }
 
 export const generateModerationPreset = function (post:PostView, results:MBFCReport):string {
-    let template:string = "Post has been removed because it is not from a reputable or credible source:";
+    
+    let template:string = "Post has been removed because it is not from a reputable or credible source and/or has too extreme a bias:";
+    
+    template += '\n```'
+    
     if (post.post.url) {
         template += `\nSource: ${new URL(post.post.url).host}`
     }
     
     if (results) {
+        
+
         if (results.credibility) {
             template += `\nCredibility: ${results.credibility}`
+        }
+
+        if (results.biases?.pretty) {
+            template += `\nBias: ${results.biases.pretty}`
         }
 
         if (results.reporting) {
@@ -139,6 +149,8 @@ export const generateModerationPreset = function (post:PostView, results:MBFCRep
         if (results.url) {
             template += `\nFull Report: ${results.url}`
         }
+
+        template += '\n```\n'
     }
     
     return template;

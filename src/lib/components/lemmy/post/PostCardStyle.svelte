@@ -9,6 +9,7 @@
     
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
+    import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
@@ -32,16 +33,19 @@
 
 </script>
 
-<Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''}">
-    <div class="flex flex-row w-full gap-2.5">
-        <PostMeta bind:post moderators={moderators} {collapseBadges}/>
-    </div>
 
-    <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
 
-    {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength  >= 0) || displayType=='post'}
-        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
-    {/if}
+<Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
+    <PostMeta bind:post moderators={moderators} {collapseBadges}/>
+
+    <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType}>    
+        <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
+
+        {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength  >= 0) || displayType=='post'}
+            <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
+        {/if}
+    </NSFWOverlay>
+    
 
     <!--- Crossposts --->
     <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="mb-1"/>

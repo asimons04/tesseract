@@ -27,14 +27,14 @@
 </script>
 
 <svelte:head>
-    <title>Create Post</title>
+    <title>{data.crosspost ? 'Cross Post' : 'Create Post'}</title>
 </svelte:head>
 
 <SubNavbar home back toggleMargins toggleCommunitySidebar />
 
 <MainContentArea>
     
-    <h1 class="text-2xl font-bold">Create Post</h1>
+    <h1 class="text-2xl font-bold">{data.crosspost ? 'Cross Post' : 'Create Post'}</h1>
     <PostForm crosspostData={data.crosspost ? draft : undefined}
         on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
     />
