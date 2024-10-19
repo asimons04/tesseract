@@ -11,7 +11,7 @@
     
     let filteredItems = objectCopy(items) as Community[]
 
-    $: filter, updateFilter()
+    $: filter, items, updateFilter()
 
     function updateFilter() {
        // Reset to "all" if filter blank
