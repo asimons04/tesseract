@@ -22,7 +22,8 @@
     export let boldCommunityName:boolean = true;
     export let useDisplayNames:boolean|undefined = undefined 
     export let noClick:boolean = false
-
+    export let maxNameLength: number = 30
+    export let inline: boolean = true
     const dispatcher = createEventDispatcher()
 
     function linkFromCommunity(community: Community) {
@@ -45,24 +46,24 @@
     on:click={loadCommunityProfileModal}
 >
     {#if avatar}
-        <Avatar url={community.icon} alt={community.name} width={avatarSize} community={true}/>
+        <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true}/>
     {/if}
 
     {#if name}
-        <span class="flex flex-wrap text-left items-center gap-0 {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
+        <span class="flex flex-wrap text-left {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
 
             {useDisplayNames ?? $userSettings.displayNames 
-                ? shortenCommunityName(community.title, 30)
+                ? shortenCommunityName(community.title, maxNameLength)
                 : `c/${community.name}`
             }
 
             {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
                 <span class="text-slate-500 dark:text-zinc-500 font-normal normal-case">
-                    @{new URL(community.actor_id).hostname}
+                    {inline ? '@' : ''}{new URL(community.actor_id).hostname}
                 </span>
             {/if}
 
-            {#if community.hidden}
+            {#if !inline && community.hidden}
                 <span class="ml-2 text-red-500">
                     <Icon mini src={EyeSlash} size="12"/>
                 </span>
