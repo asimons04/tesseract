@@ -9,8 +9,8 @@
     export let expanded:boolean = true;
 </script>
 
-{#if !hidden}
-<Button
+
+<Button {hidden}
     class="!text-xs hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
     color="tertiary"
     alignment="left"
@@ -27,4 +27,3 @@
         href={!expanded}
     />
 </Button>
-{/if}
