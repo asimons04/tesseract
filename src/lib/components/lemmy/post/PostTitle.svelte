@@ -49,10 +49,6 @@
     style="word-break: break-word;"
     title="{fixLemmyEncodings(post.post.name)}"
 >
-    <!--
-        class:text-slate-700={isPostView(post) && post.read && $userSettings.markReadPosts}
-        class:dark:text-zinc-200={isPostView(post) && post.read && $userSettings.markReadPosts}
-    -->
 
     <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1 {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
         <Markdown source={postName} noUserCommunityLink  noHashtags/>
