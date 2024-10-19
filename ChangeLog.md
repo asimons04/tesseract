@@ -110,7 +110,7 @@ It will now also accept an instance if you include it after an `@`.  The instanc
 If you want to filter the list by the community's system name rather than the display name, prefix the filter with an `!`.  
 
 The instance is also accepted here if it is provided after an `@`.
-- Example 1:  `new` will return any community whose system name begins with `new` such as `news@dubvee.org`, `news@lemmy.world`, `newcommunities@instance.xyx`, etc
+- Example 1:  `!new` will return any community whose system name begins with `new` such as `news@dubvee.org`, `news@lemmy.world`, `newcommunities@instance.xyx`, etc
 - Example 2:  Using the same example from above, `!new@lemmy.` will return `news@lemmy.world` but not `LegalNews@lemmy.zip`
 - Example 3:  Can be used if you want an exact match based on the community link syntax (!community@instance.xyz)
 
