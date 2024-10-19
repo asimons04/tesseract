@@ -35,7 +35,7 @@
 >
     
     <span class="flex flex-col">
-        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} href/>
+        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize}/>
     </span>
     
     <span class="ml-auto"/>
