@@ -89,7 +89,7 @@ Since Tesseract will automatically resolve unknown communities if you're logged 
 #### General
 The sidebar with the subscription list has been completely overhauled.  I'm now using standard `CommunityLink` components which have the benefit of opening the community modals.  The community buttons are still buttons and will take you to the community page.  Clicking the community text will open the modal while clicking the button around that will take you to the community page.
 
-The inline menu buttons have been removed since all of those functions are also available from the community modals. This saves a good chuck of memory since a discrete menu is not required for each element now.
+The inline menu buttons have been removed since all of those functions are also available from the community modals. This saves a good chunk of memory since a discrete menu is not required for each element now.
 
 The instances for each community are now also shown by default.  You can disable this by turning off `Settings -> General -> Show Instance Names in Sidebar`.
 
