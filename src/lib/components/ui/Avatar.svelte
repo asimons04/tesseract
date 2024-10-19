@@ -1,7 +1,6 @@
 <script lang="ts">
     import { createAvatar } from '@dicebear/core'
     import { findClosestNumber } from '$lib/util.js'
-    import { imageProxyURL } from '$lib/image-proxy'
     import * as initials from '@dicebear/initials'
     import * as adventurer from '@dicebear/adventurer'
     import ZoomableImage from './ZoomableImage.svelte';
@@ -15,7 +14,6 @@
     export let ring: boolean = false
 
     export let width: number
-    export let res: number | undefined = undefined
     export let fullRes:boolean = false
     export let community:boolean = false
     export let zoomable:boolean = true
@@ -25,7 +23,7 @@
 <div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''}" style="width: {width}px; height: {width}px;">
     {#if url}
         <ZoomableImage url={url} title={title} altText={alt} 
-            resolution={fullRes ? undefined : findClosestNumber(sizes,res||width)} 
+            resolution={fullRes ? undefined : findClosestNumber(sizes, width) } 
             zoomable={zoomable && fullRes}
             class="aspect-square object-cover overflow-hidden !w-full
                 {ring ? 'ring-2 ring-sky-700' : ''} 
