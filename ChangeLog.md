@@ -118,6 +118,8 @@ The instance is also accepted here if it is provided after an `@`.
 
 To filter by instance, prefix the filter with an `@`.  This will only show communities belonging to the specified instance.  This filter method uses a `startsWith`, case-insensitive comparison against the hostname of the community's actor id. 
 
+This is particularly helpful if you want to see what communities you're subscribed to on a particular instance.  AFAIK, there is no way to get that info from the API.
+
 ### UI Tweaks
 #### Independent Preview Button in Post Create/Edit Form
 Rather than previewing the entire post, including thumbnail and embed metadata, you can now also preview just the markdown of the post body.  
