@@ -215,20 +215,6 @@
             <!--- Action Buttons for this Community (Fade away if any of the accordions are open)--->
             {#if !communityDetailsOpen}
                 <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" transition:slide>
-                    
-                    <!---Create Post--->
-                    {#if $profile?.user && !communityBlocked}
-                        <Button color="tertiary-border" icon={PencilSquare} alignment="left" class="w-full"
-                            on:click={()=> {
-                                createPost(communityDetails.community_view.community) 
-                                open = false
-                            }}
-                        >
-                            Create Post
-                        </Button>
-                    {/if}
-
-
                     <!---Go to Community--->
                     {#if !communityBlocked}
                         <div class="flex flex-row gap-2 items-center w-full">
@@ -251,8 +237,18 @@
                         </div>
                     {/if}
 
+                    <!---Create Post--->
+                    {#if $profile?.user && !communityBlocked}
+                        <Button color="tertiary-border" icon={PencilSquare} alignment="left" class="w-full"
+                            on:click={()=> {
+                                createPost(communityDetails.community_view.community) 
+                                open = false
+                            }}
+                        >
+                            Create Post
+                        </Button>
+                    {/if}
 
-                    
 
                     <!---Modlog--->
                     <div class="flex flex-row gap-2 items-center w-full">
