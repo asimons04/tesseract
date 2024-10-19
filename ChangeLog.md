@@ -62,24 +62,85 @@ removeAdmin {username}
 - [26d26798] Add error handling in case bad URL sent to `isImage`, `isAudio`, `isVideo` helper functions.
 - [cbe44611] Only render `[tag syntax]` flairs in post titles if they are on the beginning and end
 - [cbe44611] If entire post title is in brackets, do not treat it as a flair
+- [6b99e0cd] Fixes issue where post was not being marked as read correclty on newer API versions since it was sending a single post ID instead of an array.
 
-### Other
+
+## New Features in 1.4.16
+
+### Can Automatically Mark Posts as Read While Scrolling
+Per user request, a new option and feature has been added that will automatically mark posts as read as you scroll past them in the feed.  This is disabled by default, but can be enabled in `Settings -> Feed -> Mark Posts Read on Scroll`
+
+Currently, a post will mark as read when 60% of it is in the viewport for more than 1.5 seconds.
+
+
+### Better Crosspost Attributions
+Crossposts are great from a user standpoint as they reduce clutter, but they often bury other communities since it's not easily apparent where it was cross-posted from and by whom.
+
+Now, when crossposting, the default cross-post header has been updated to give better visibility to the original:
+
+`Cross posted from "ORIGINAL_TITLE" by @ORIGINAL_USER@instance.xyz in @ORIGINAL_COMMUNITY@instance.xyz`
+
+The title is linked to the canonical AP URL of the original post (same as before but with text applied instead of a bare link).  The original user and original community links are in the standard user/community link format.  In Tesseract, both of those are clickable to view the user and community profiles.
+
+Since Tesseract will automatically resolve unknown communities if you're logged in, this should give a visibility boost to communities that may go overlooked.
+
+
+### Sidebar Community List
+#### General
+The sidebar with the subscription list has been completely overhauled.  I'm now using standard `CommunityLink` components which have the benefit of opening the community modals.  The community buttons are still buttons and will take you to the community page.  Clicking the community text will open the modal while clicking the button around that will take you to the community page.
+
+The inline menu buttons have been removed since all of those functions are also available from the community modals. This saves a good chuck of memory since a discrete menu is not required for each element now.
+
+The instances for each community are now also shown by default.  You can disable this by turning off `Settings -> General -> Show Instance Names in Sidebar`.
+
+#### Community List Filtering
+I've also re-implemented the filtering of the subscription list.  It is now more granular and can accept modifiers as well as take the instance into account.
+
+**Default**
+
+By default, the filter query will be a case-insensitive `contains` comparison against the community's display name (or system name if display name is undefined).
+
+It will now also accept an instance if you include it after an `@`.  The instance is compared with a case-insensitive `startsWith` against the actor id of the community.
+
+- Example 1: `new` will return any community containing `new` in its display name (or name if display name is not set)
+- Example 2: `new@lemmy.` will return `News@lemmy.word`, `LegalNews@lemmy.zip`, etc.
+
+**Filter by Name (rather than display name)**
+
+If you want to filter the list by the community's system name rather than the display name, prefix the filter with an `!`.  
+
+The instance is also accepted here if it is provided after an `@`.
+- Example 1:  `new` will return any community whose system name begins with `new` such as `news@dubvee.org`, `news@lemmy.world`, `newcommunities@instance.xyx`, etc
+- Example 2:  Using the same example from above, `!new@lemmy.` will return `news@lemmy.world` but not `LegalNews@lemmy.zip`
+- Example 3:  Can be used if you want an exact match based on the community link syntax (!community@instance.xyz)
+
+**Filter by Instance**
+
+To filter by instance, prefix the filter with an `@`.  This will only show communities belonging to the specified instance.  This filter method uses a `startsWith`, case-insensitive comparison against the hostname of the community's actor id. 
+
+### UI Tweaks
+#### Independent Preview Button in Post Create/Edit Form
+Rather than previewing the entire post, including thumbnail and embed metadata, you can now also preview just the markdown of the post body.  
+
+The old behavior was more of an intentional choice that didn't work out well in practice / real-world use.  You can still preview the entire post (that hasn't gone away); you just have more granularity in what you preview.
+
+#### Added "Fact Check" Section to Alternate Source Link Menu
+There are one or two "Fact Check" options available in the alternate source link menu now.
+- MBFC, if avaialble
+- SpinScore.io (shows on all links)
+
+I'm not a fan of AI-generated ~~summaries and analysises~~ anything, so I probably won't be using that, but it's an option if you want to use it.
+
+#### Direct Video Embeds Now Support Custom Thumbnails
+If a custom thumbnail is provided for a post where the URL is to a video, the thumbnail will now be used for the click-to-play overlay.  
+
+## Other Stuff
 - [7c8c96fb] Update MBFC dataset
 - [c6ce2213] Update MBFC removal template
-- [191f6f18] Add independent preview button to markdown editor in post creation form to allow previewing markdown independent of previewing the entire post.
-- [5b439516] Added a "Fact Check" section to the alternate source dropdown; added SpinScore.io 
-- [df9b5327] If available, use thumbnail for post videos.
 - [c908b886] Add option to disable automatically refreshing dates in the RelativeDate component (post/comment published/edit times, etc)
 - [135ed9cd] Changed animation on menus to `slide` instead of `scale`
-- [6b99e0cd] Allow automatically marking posts as read when scrolling past them in the feed
-- [43967b4a] Cross-posts now reference the original post's title, creator, and community (with links and community/user modal buttons)
-- [ff6f16dd] Redesign sidebar community links
-    - Clicking the text will open the community modal
-    - Clicking anywhere else will go to the community 
-    - Removed menu (use modal actions)
-    - Added instance name
-    - Increased icon size
-    
+
+
 ---
 
 ## 1.4.15
