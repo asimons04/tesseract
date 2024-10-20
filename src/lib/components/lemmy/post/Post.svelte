@@ -45,12 +45,9 @@
     $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
 
     function markPostAsRead() {
-        if (
-            (
-                (displayType == 'feed' && $userSettings.markReadOnScroll) || displayType == 'post'
-            )
-            && post && !post.read && $profile?.jwt && inViewport
-        ) {
+        if (!post || !inViewport || !$profile?.jwt || post.read) return
+        
+        if ( (displayType == 'feed' && $userSettings.markReadOnScroll) || displayType == 'post' ) {
             post.read = true
             post = post
             getClient().markPostAsRead({
