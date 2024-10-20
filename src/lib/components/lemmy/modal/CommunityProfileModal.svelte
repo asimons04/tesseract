@@ -96,31 +96,42 @@
         
         communityDetailsOpen = false
         loading = true
-        
-        try {
-            // Only resolve if logged in
-            if ($profile?.user) {
-                let resolve = await getClient().resolveObject({
-                    q: `!${community.name}@${new URL(community.actor_id).hostname}`
-                })
-            }
-        }
-        catch { 
-            console.log("Failed to call resolve object")
-        }
-        
+
         try {
             communityDetails = await getClient().getCommunity({
                 name: `${community.name}@${new URL(community.actor_id).hostname}`
             })
         }
         catch {
-            toast({
-                type: 'error',
-                title: 'Error',
-                content: 'Failed to fetch data for that community.'
-            })
-            open = false
+            try {
+                // Only resolve if logged in
+                if ($profile?.user) {
+                    let resolve = await getClient().resolveObject({
+                        q: `!${community.name}@${new URL(community.actor_id).hostname}`
+                    })
+                
+                    // Re-fetch after resolve
+                    communityDetails = await getClient().getCommunity({
+                        name: `${community.name}@${new URL(community.actor_id).hostname}`
+                    })
+                }
+                else {
+                    toast({
+                        type: 'warning',
+                        title: 'Unauthenticated',
+                        content: 'Must be logged in to resolve an unknown community.'
+                    })
+                    open = false
+                }
+            }
+            catch { 
+                toast({
+                    type: 'error',
+                    title: 'Error',
+                    content: 'Failed to fetch data for that community.'
+                })
+                open = false
+            }
         }
         finally {
             loading = false
