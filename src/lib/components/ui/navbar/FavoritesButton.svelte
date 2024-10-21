@@ -49,7 +49,7 @@
 
 
 {#if $profile && $profile.user}
-<Menu alignment="bottom-center" containerClass="!max-w-fit !max-h-[85vh] overflow-y-hidden">
+<Menu alignment="bottom-center" containerClass="!max-w-fit !max-h-[85vh] !left-[-300%] overflow-y-hidden">
     <Button
         color="tertiary"
         slot="button"
