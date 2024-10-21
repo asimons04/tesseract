@@ -57,6 +57,23 @@ removeAdmin {username}
 
 
 ```
+
+## 1.4.17
+### Bugfixes
+- Addressed some community icons that wouldn't display properly due to pict-rs refusing to generate thumbnails less than 128px
+    - [e4cc7fe6] Re-add webp as preferred format when generating image URLs
+    - [8ba58e6a] Remove 48 and 64 px from the list of avatar sizes since pict-rs often fails to generate ones less than 128px
+
+- Fix bug where community modal cannot load if call to `resolveObject` fails and the community is already known
+    - [774a41e0]  Separate resolveObject and getCommunity steps into separate try/caches in Community Profile modals
+
+- Fix bug where thumbnail size and preferred format for image URLs were being ignored when media proxy disabled
+    - [352ff2c0] Apply format and size to default URLs if not going through image proxy
+
+
+
+---
+
 ## 1.4.16
 ### Bugfixes
 - [26d26798] Add error handling in case bad URL sent to `isImage`, `isAudio`, `isVideo` helper functions.
