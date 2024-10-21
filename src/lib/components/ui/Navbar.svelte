@@ -172,7 +172,10 @@
         {#if $profileData?.profiles?.length > 0}
         <MenuButton>
             <button class="flex flex-row gap-2 font-bold items-center w-full py-1 text-sm transition-colors"
-                on:click={(e) => {
+                on:click={(
+                    //@ts-ignore
+                    e
+                ) => {
                     e.stopPropagation();
                     expandAccountsMenu = !expandAccountsMenu;
                 }}
@@ -296,7 +299,10 @@
 
         <MenuButton>
             <button class="flex flex-row w-full gap-2"
-            on:click={ (e) => {
+            on:click={ (
+                //@ts-ignore
+                e
+            ) => {
                 e.stopPropagation();
                 $theme = inDarkTheme() ? 'light' : 'dark'
             }}
