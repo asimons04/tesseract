@@ -52,6 +52,25 @@ removeAdmin {username}
 
 ```
 
+
+## 1.4.18
+
+### New Features
+#### Favorites Dropdown in Navbar Now Has Subscribed List
+The "Favorites" menu (star button) in the top navbar has been expanded to show both favorited communities as well as your subscribed list (with filter ability).
+
+This is particularly useful on mobile to give quick access to your subscriptions without having to go through the Browse communities page which is clunky for this type of usage since it is limited by the API (as it's intended more for browsing communities than navigating them).
+
+The "Subscribed" list is also filterable in the same way the sidebar filter is (they're literally the same components, just repackaged).
+
+Until I get the sidebar and main layout re-written such that the sidebar can be used on mobile, this should work as a nice stopgap to provide feature parity with desktop usage.
+
+#### UI Tweaks
+Nav bar menus now have an indicator effect/color when open
+
+
+
+
 ## 1.4.17
 ### Bugfixes
 - Addressed some community icons that wouldn't display properly due to pict-rs refusing to generate thumbnails less than 128px
