@@ -84,7 +84,7 @@
 </script>
 
 
-<div class="flex flex-col { expanded ? 'pl-1' : '' }" class:hidden={hidden}>
+<div class="flex flex-col { expanded ? 'pl-1' : '' } {$$props.class}" class:hidden={hidden}>
     {#each filteredItems.sort( (a, b) => a.title.localeCompare(b.title) ) as community (community.id)}
         <CommunityListItem {community} {expanded} />
     {/each}
