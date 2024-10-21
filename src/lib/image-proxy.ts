@@ -16,17 +16,35 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
     const origin = new URL($page.url.href).origin
 
     if (!url) return
-    
+
+    const applySizeFormat = function (image_url:string, size?:number, format?: string): string {
+        
+        // Only add the thumbnail and format parameters to pictrs URLs (to avoid caching multiple version of a GIF from Giphy, etc where those aren't respected)
+        try {
+            if (image_url.includes('/pictrs/image')) {
+                const u = new URL(image_url)
+                if (size)   u.searchParams.set('thumbnail', size.toString())
+                if (format) u.searchParams.set('format', format)
+                return u.href
+            }
+            else return image_url
+        }
+        catch {
+            return image_url
+        }
+    }
+
+
     // Return original URL if media proxying is globally disabled
-    if (!ENABLE_MEDIA_PROXY) return url;                        
+    if (!ENABLE_MEDIA_PROXY) return applySizeFormat(url, size, format)
     
     // Return original URL if user preference for media proxing is disabled
-    if (!$userSettings?.proxyMedia.enabled) return url;     
+    if (!$userSettings?.proxyMedia.enabled) return applySizeFormat(url, size, format);     
 
     // Return original URL if image url matches an entry in the blacklist
     if (MEDIA_PROXY_BLACKLIST.length > 0) {
         for (let i:number=0; i< MEDIA_PROXY_BLACKLIST.length; i++) {
-            if ( url.includes(MEDIA_PROXY_BLACKLIST[i]) ) return url;
+            if ( url.includes(MEDIA_PROXY_BLACKLIST[i]) ) return applySizeFormat(url, size, format);
         }
     }
 
@@ -34,7 +52,7 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
     if (MEDIA_PROXY_LEMMY_ONLY && !url.includes('/pictrs/image')) return url;             
     
     // Return original URL if local media/home instance image proxying is disabled
-    if ( !ENABLE_MEDIA_PROXY_LOCAL && url.includes(getInstance())) return url;
+    if ( !ENABLE_MEDIA_PROXY_LOCAL && url.includes(getInstance())) return applySizeFormat(url, size, format);
 
     // Don't proxy local blobs
     if (url.startsWith('blob:')) return url;
