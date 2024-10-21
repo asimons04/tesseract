@@ -48,7 +48,7 @@
 
 
 {#if $profile && $profile.user}
-<Menu alignment="bottom-center" containerClass="!max-w-fit overflow-y-hidden">
+<Menu alignment="bottom-center" containerClass="!max-w-fit !max-h-[85vh] overflow-y-hidden">
     <Button
         color="tertiary"
         slot="button"
