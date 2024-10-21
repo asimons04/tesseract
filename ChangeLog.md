@@ -52,6 +52,24 @@ removeAdmin {username}
 
 ```
 
+## 1.4.19
+
+### UI Changes
+"Favorites" (star button) menu in the top navbar is now called "My Communities". Icon is now the icon for community.
+    - This was changed since the favorites menu was enhanced to also show your subscribed communities. The change better reflects the capabilities of the menu since it's the current way on mobile to access the community subscriptions that are in the sidebar on desktop.
+    - "Subscribed" is now the default selection
+    
+
+"Browse Communities" button changed to say "Explore Communities" 
+
+Communtiy items in sidebar and "My Communities" menu have favorites toggle and indicator icon.
+    - Allows to quick favorite/unfavorite communities
+
+
+
+
+---
+
 
 ## 1.4.18
 
