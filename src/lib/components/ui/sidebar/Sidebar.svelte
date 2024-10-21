@@ -105,7 +105,7 @@
     <!---Communities--->
     <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Browse Communities</span>
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>Explore Communities</span>
     </SidebarButton>
 
     <!---Favorites Feed--->
