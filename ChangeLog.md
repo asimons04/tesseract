@@ -9,12 +9,6 @@ Plans:
     - Remove Piped/Invidious from alternate source selector unless user has set their own custom Inv/Piped instance in their settings
     - Update YouTube component to default to re-writing all videos using canonical YT link; only rewrite if user has set their own custom instance
 
-1) Add option to mark posts as read when you scroll past them
-    - Add post IDs to a buffer as they enter and leave the viewport; set 'read' flag on posts locally as they're scrolled.
-    - Submit buffer every so often
-
-
-1) Add originating community to the cross post blurb:  "Crossposted from {ap_id} in {community_link}"
 
 
 1) Re-write search and community browser to keep state in URL params instead of locally
