@@ -1,12 +1,23 @@
 <script lang="ts">
     import type { Community } from 'lemmy-js-client'
+    
+    import { isFavorite, addFavorite } from '$lib/favorites'
     import { userSettings } from '$lib/settings'
+    
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
+
+    import {
+        Icon,
+        Star
+    } from 'svelte-hero-icons'
 
     export let community:Community
     export let hidden:boolean = false
     export let expanded:boolean = true;
+
+    let favorite = false
+    $: community, favorite = isFavorite(community)
 </script>
 
 
@@ -28,4 +39,20 @@
         bind:name={expanded}
         href={!expanded}
     />
+    
+    <!---Favorites Button--->
+    {#if expanded}
+        <span class="ml-auto" />
+        <Button color="tertiary" title="{favorite ? 'Un-Favorite' : 'Add Favorite'}" on:click={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            addFavorite(community, !favorite)
+        }}>
+            <Icon src={Star} width={24} mini class="hover:scale-125 {favorite ? 'text-amber-500' : ''}"/>
+        </Button>
+    {/if}
+
+
+
+
 </Button>
