@@ -85,7 +85,9 @@
             //@ts-ignore
             e
         ) => {
-			if (!modalElement.contains(e.target) && !preventCloseOnClickOut) {
+            e.preventDefault()
+            e.stopPropagation();
+            if (!modalElement.contains(e.target) && !preventCloseOnClickOut) {
                 dispatcher('close')
                 open = false
             }
@@ -133,7 +135,9 @@
                             </span>
                             {/if}
                             
-                            <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={() => {
+                            <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation();
                                 open = false
                                 dispatcher('close')
                             }}
