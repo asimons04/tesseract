@@ -15,6 +15,8 @@
     } from 'svelte-hero-icons'
 
     export let size:number = 28
+
+    let selectedClass = '!text-sky-700 dark:!text-sky-500 font-bold'
 </script>
 
 {#if $profile?.jwt}
@@ -25,10 +27,11 @@
         aria-label="Create"
         title="Create"
         let:toggleOpen
+        let:open
         on:click={toggleOpen}
         class="max-md:w-9 max-md:h-8 max-md:!p-0"
     >
-        <Icon src={Plus} width={size} mini slot="icon" />
+        <Icon src={Plus} width={size} mini slot="icon" class="{open ? selectedClass : ''}" />
     </Button>
 
     <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left px-4 py-1 min-w-48">

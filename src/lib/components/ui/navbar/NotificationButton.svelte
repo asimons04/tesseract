@@ -17,6 +17,7 @@
 
     export let size:number = 28
 
+    let selectedClass = '!text-sky-700 dark:!text-sky-500 font-bold'
 </script>
 
 {#if $profile && $profile.user}
@@ -27,10 +28,11 @@
         aria-label="Notificatoins"
         title="Notifications"
         let:toggleOpen
+        let:open
         on:click={toggleOpen}
         class="max-md:w-9 max-md:h-8 max-md:!p-0"
     >
-        <Icon src={Bell} width={size} mini slot="icon" />
+        <Icon src={Bell} width={size} mini slot="icon" class="{open ? selectedClass : ''}"/>
         
         <!---Notification Dots for Reports and Inbox--->
         {#if $profile?.user?.registration_applications ?? 0 > 0}
