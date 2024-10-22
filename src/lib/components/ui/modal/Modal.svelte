@@ -85,8 +85,8 @@
             //@ts-ignore
             e
         ) => {
-            e.preventDefault()
-            e.stopPropagation();
+            //e.preventDefault()
+            //e.stopPropagation();
             if (!modalElement.contains(e.target) && !preventCloseOnClickOut) {
                 dispatcher('close')
                 open = false
