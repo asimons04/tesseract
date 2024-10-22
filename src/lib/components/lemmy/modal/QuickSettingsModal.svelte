@@ -96,6 +96,9 @@
 
                 <!---Show Instances--->
                 <SettingToggle icon={Server} title="Show Instance Names" bind:value={$userSettings.uiState.showInstances} small={true}/>
+
+                <!---Show Instances in Sidebar--->
+                <SettingToggle icon={Server} title="Show Instance Names in Sidebar" bind:value={$userSettings.uiState.showInstancesSidebarCommunityList}/>
                 
                 <!---Show Scores--->
                 <SettingToggle title="Show Scores" icon={Trophy} bind:value={$userSettings.uiState.showScores} small={true} />
