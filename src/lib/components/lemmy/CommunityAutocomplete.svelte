@@ -36,7 +36,7 @@
                 let community = await getClient().getCommunity({
                     name: q,
                 })
-                if (community) items = [ community.community_view.community ]
+                if (community && !community.community_view.community.hidden && !community.community_view.community.removed) items = [ community.community_view.community ]
             }
             catch {}
         }
@@ -60,12 +60,18 @@
             results.communities.map((c) => c.community).forEach((item) => {
                 // Don't add a duplicate community (e.g. if there is already an exact match from the first step)
                 const idx = items.findIndex((c) => c.id == item.id)
-                if (idx < 0) items.push(item)
+                if (idx < 0 && !(item.hidden || item.removed) ) items.push(item)
             })
         }
         else {
-            items = results.communities.map((c) => c.community)
+            results.communities.map((c) => {
+                if ( !(c.community.hidden || c.community.removed || c.blocked) ) {
+                    items.push(c.community)
+                }
+                
+            })
         }
+
         items = items
 
     }
