@@ -16,7 +16,8 @@
     export let items: Community[] = []
     export let label:string = ''
     export let containerClass:string = ''
-    
+    export let showHiddenRemoved:boolean = false
+
     let page: number = 0
     let limit: number = 50
     
@@ -60,12 +61,12 @@
             results.communities.map((c) => c.community).forEach((item) => {
                 // Don't add a duplicate community (e.g. if there is already an exact match from the first step)
                 const idx = items.findIndex((c) => c.id == item.id)
-                if (idx < 0 && !(item.hidden || item.removed) ) items.push(item)
+                if (idx < 0 && (showHiddenRemoved || !(item.hidden || item.removed)) ) items.push(item)
             })
         }
         else {
             results.communities.map((c) => {
-                if ( !(c.community.hidden || c.community.removed || c.blocked) ) {
+                if ( showHiddenRemoved || !(c.community.hidden || c.community.removed || c.blocked) ) {
                     items.push(c.community)
                 }
                 
