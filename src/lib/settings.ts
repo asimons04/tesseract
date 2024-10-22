@@ -129,6 +129,7 @@ interface Settings {
         view: PostViewType
         hideCompactThumbnails: boolean
         autoUpdateDates: boolean
+        defaultCommunityDropdownPanel: 'subscribed' | 'favorites'
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -195,6 +196,7 @@ export const defaultSettings: Settings = {
         view:                                                           'card',
         hideCompactThumbnails:                                          false,
         autoUpdateDates:                                                true,
+        defaultCommunityDropdownPanel:                                  'favorites'
 
     },
 

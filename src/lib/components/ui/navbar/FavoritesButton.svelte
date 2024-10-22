@@ -2,7 +2,7 @@
     import { getGroupIndex, sortGroups } from '$lib/favorites'
     import { profile, type CommunityGroup } from '$lib/auth'
     import { slide } from 'svelte/transition'
-
+    import { userSettings } from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte'
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
@@ -19,7 +19,7 @@
     
     export let size:number = 28
     
-    let selected: 'subscribed' | 'favorites' = 'subscribed'
+    let selected: 'subscribed' | 'favorites' = $userSettings.uiState.defaultCommunityDropdownPanel
     let selectedClass = '!text-sky-700 dark:!text-sky-500 font-bold'
     let onlyShowModerating = false
     let communityFilterTerm = ''
@@ -70,7 +70,18 @@
     </li>
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
 
-    <li class="flex flex-row items-center justify-between text-xs opacity-100 text-left px-4 py-1 w-full">
+    <li class="flex {$userSettings.uiState.defaultCommunityDropdownPanel == 'favorites' ? 'flex-row' : 'flex-row-reverse'} items-center justify-between text-xs opacity-100 text-left px-4 py-1 w-full">
+        <Button color="tertiary" alignment="left" title='Favorites' icon={Star}
+            class="!text-xs hover:bg-slate-200 {selected == 'favorites' ? selectedClass : ''}" 
+            on:click={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                selected = selected = 'favorites'
+            }}
+        >
+            Favorites
+        </Button>
+        
         <Button color="tertiary" alignment="left" title='Subscribed' icon={InboxArrowDown}
             class="!text-xs hover:bg-slate-200 {selected == 'subscribed' ? selectedClass: ''}" 
             on:click={(e) => {
@@ -81,18 +92,6 @@
             
         >
             Subscribed
-        </Button>
-
-        <Button color="tertiary" alignment="left" title='Favorites' icon={Star}
-            class="!text-xs hover:bg-slate-200 {selected == 'favorites' ? selectedClass : ''}" 
-            on:click={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                selected = selected = 'favorites'
-            }}
-            
-        >
-            Favorites
         </Button>
     </li>
 

@@ -77,6 +77,7 @@
         Window,
         Tag,
         Clock,
+        UserGroup,
     } from 'svelte-hero-icons'
     
 
@@ -371,6 +372,14 @@
             options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
             optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
             bind:selected={$userSettings.font}
+        />
+
+        <!---Community Dropdown Menu Default --->
+        <SettingMultiSelect icon={UserGroup} title="Default Community List" 
+            description="Set the default list of communities to display in the community dropdown menu. Currently can be your favorites list or your full subscription list."
+            options={['subscribed', 'favorites']}
+            optionNames={['Subscribed', 'Favorites']}
+            bind:selected={$userSettings.uiState.defaultCommunityDropdownPanel}
         />
         
         <!---Open in New Tab--->
