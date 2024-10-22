@@ -8,7 +8,8 @@
     export let expanded: boolean = true
     export let hidden: boolean = false
     export let filter: string | undefined = undefined
-    
+    export let showFavoriteButton: boolean= true
+
     let filteredItems = objectCopy(items) as Community[]
 
     $: filter, items, updateFilter()
@@ -86,6 +87,6 @@
 
 <div class="flex flex-col { expanded ? 'pl-1' : '' } {$$props.class}" class:hidden={hidden}>
     {#each filteredItems.sort( (a, b) => a.title.localeCompare(b.title) ) as community (community.id)}
-        <CommunityListItem {community} {expanded} />
+        <CommunityListItem {community} {expanded} {showFavoriteButton}/>
     {/each}
 </div>

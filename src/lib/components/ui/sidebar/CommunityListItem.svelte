@@ -15,6 +15,7 @@
     export let community:Community
     export let hidden:boolean = false
     export let expanded:boolean = true;
+    export let showFavoriteButton: boolean = true
 
     let favorite = false
     $: community, favorite = isFavorite(community)
@@ -41,7 +42,7 @@
     />
     
     <!---Favorites Button--->
-    {#if expanded}
+    {#if expanded && showFavoriteButton}
         <span class="ml-auto" />
         <Button color="tertiary" title="{favorite ? 'Un-Favorite' : 'Add Favorite'}" on:click={(e) => {
             e.preventDefault()
