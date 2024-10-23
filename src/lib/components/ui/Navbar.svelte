@@ -14,13 +14,13 @@
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
-    import CreateButton from './navbar/CreateButton.svelte'
+    import CreateMenu from './navbar/CreateMenu.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import Logo from '$lib/components/ui/Logo.svelte'
-    import FavoritesButton from '$lib/components/ui/navbar/FavoritesButton.svelte'
+    import CommunitiesMenu from '$lib/components/ui/navbar/CommunitiesMenu.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import NotificationButton from '$lib/components/ui/navbar/NotificationButton.svelte'
+    import NotificationMenu from '$lib/components/ui/navbar/NotificationMenu.svelte'
     import ProfileButton from '$lib/components/ui/navbar/ProfileButton.svelte'
     
     import {
@@ -128,13 +128,13 @@
         
         
         <!--- Favorites Menu--->
-        <FavoritesButton size={24}/>
+        <CommunitiesMenu size={24}/>
       
         <!--- 'Create' Menu--->
-        <CreateButton size={24} />
+        <CreateMenu size={24} />
 
         <!---Notification Menu--->
-        <NotificationButton size={24}/>
+        <NotificationMenu size={24}/>
     </div>
 
     <!--- Profile Menu --->
