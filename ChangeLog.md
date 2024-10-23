@@ -52,6 +52,20 @@ removeAdmin {username}
 
 ```
 
+## 1.4.20
+### Bugfixes
+- May only have been an issue for admins, but administratively hidden and removed communities no longer show up in community autocomplete results.
+
+Reworked the community drop down again.  Now defaults to "Favorites" but you can set your preference in Settings - > General.  
+
+### Misc: Better Integration with Pifed/Mbin/etc
+When clicking a link to a post or comment, Tesseract will massage the URL to attempt to render it locally.  This works well for Lemmy, but non-Lemmy services which use the same `/post/{id}` URL format don't work with Lemmy API calls.  Before, this would throw a generic  500 "Failed to fetch post" error.  The UX has been improved in this release by showing a clearer error message as well as a button to visit the post on its home instance.
+
+- [764efe30] When a post fails to fetch via API, show a more detailed error and provide a button to try to go to the post on its home instance
+    - This is mostly an issue when clicking the canonical AP URL for other platforms like Pifed which use similar `/post/{id}` syntax.
+- [768d5bdb] Hide "goto on home instance" button if a local post fails to load; add conditional verbiage to indicate a local post may have been removed by its creator or removed by a moderator.
+
+
 ## 1.4.19
 
 ### UI Changes

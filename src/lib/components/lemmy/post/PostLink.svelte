@@ -8,8 +8,10 @@
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Link from '$lib/components/input/Link.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MBFC from '$lib/MBFC/MBFC.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
 
     export let post:PostView
@@ -19,11 +21,24 @@
 </script>
 
 {#if post.post?.url}
-    <span class="flex flex-row flex-wrap w-full gap-2 px-1">
-        <ArchiveLinkSelector url={post.post?.url} postType='link'/>
-        <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-        <MBFC post={post} rightJustify={true}/>
-    </span>
+    <div class="flex flex-col p-2 gap-0 w-full 
+            {
+                post.post.embed_description && post.post.embed_description.length > 15
+                    ? 'border border-slate-300 dark:border-zinc-700 bg-slate-200/50 dark:bg-zinc-800/50 rounded-lg shadow-sm' 
+                    : ''
+            }
+        "
+    >
+        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='link'/>
+            <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+            <MBFC post={post} rightJustify={true}/>
+        </span>
+        
+        <!---Add embed title and description, if available, below the link details--->        
+        <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card={false}/>
+    
+    </div>
 {/if}
 
 

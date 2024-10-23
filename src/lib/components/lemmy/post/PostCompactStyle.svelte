@@ -110,6 +110,7 @@
 
 
         {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
+            
             <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
                 class="my-1"
                 inline={
