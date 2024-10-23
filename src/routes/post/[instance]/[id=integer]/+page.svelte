@@ -170,14 +170,23 @@
 
 {:else}
     <MainContentArea>
-        <Placeholder title="Unable to Fetch Post." icon={ExclamationCircle}  description="There was an error fetching this post from its home instance via the API.">
-            <Button color="info" size="lg" icon={Home} iconSize={22} class="mt-4"
-                on:click={() => {
-                    window.location.href = `https://${$page.params.instance}/post/${$page.params.id}`;
-                }}
-            >
-                Go to Post at {$page.params.instance}
-            </Button>
+        <Placeholder title="Unable to Fetch Post." icon={ExclamationCircle}  
+            description={
+                $page.params.instance.toLowerCase() != $instance.toLowerCase()
+                    ? 'There was an error fetching this post from its home instance via the API.'
+                    : 'Unable to load this post.  It may have been deleted by its creator or removed by a moderator.'
+            }
+        >
+            
+            {#if $page.params.instance.toLowerCase() != $instance.toLowerCase()}
+                <Button color="info" size="lg" icon={Home} iconSize={22} class="mt-4"
+                    on:click={() => {
+                        window.location.href = `https://${$page.params.instance}/post/${$page.params.id}`;
+                    }}
+                >
+                    Go to Post at {$page.params.instance}
+                </Button>
+            {/if}
         </Placeholder>
     </MainContentArea>
 {/if}
