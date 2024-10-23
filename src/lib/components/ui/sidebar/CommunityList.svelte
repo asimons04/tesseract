@@ -3,6 +3,7 @@
 
     import CommunityListItem from './CommunityListItem.svelte'
     import { objectCopy } from '$lib/util';
+    import Placeholder from '../Placeholder.svelte';
 
     export let items: Community[]
     export let expanded: boolean = true
@@ -84,9 +85,12 @@
 
 </script>
 
-
-<div class="flex flex-col { expanded ? 'pl-1' : '' } {$$props.class}" class:hidden={hidden}>
-    {#each filteredItems.sort( (a, b) => a.title.localeCompare(b.title) ) as community (community.id)}
-        <CommunityListItem {community} {expanded} {showFavoriteButton}/>
-    {/each}
-</div>
+{#if filteredItems.length > 0 }
+    <div class="flex flex-col { expanded ? 'pl-1' : '' } {$$props.class}" class:hidden={hidden}>
+        {#each filteredItems.sort( (a, b) => a.title.localeCompare(b.title) ) as community (community.id)}
+            <CommunityListItem {community} {expanded} {showFavoriteButton}/>
+        {/each}
+    </div>
+{:else}
+    <Placeholder title="No Subscriptions" description="You have no subscriptions"/>
+{/if}
