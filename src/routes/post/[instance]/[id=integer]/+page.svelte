@@ -170,7 +170,7 @@
 
 {:else}
     <MainContentArea>
-        <Placeholder title="Unable to Fetch Post." icon={ExclamationCircle}  
+        <Placeholder title="Unable to Fetch Post" icon={ExclamationCircle}  
             description={
                 $page.params.instance.toLowerCase() != $instance.toLowerCase()
                     ? 'There was an error fetching this post from its home instance via the API.'
