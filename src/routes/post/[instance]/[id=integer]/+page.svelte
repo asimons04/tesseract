@@ -25,20 +25,24 @@
         ArrowTopRightOnSquare,
         ExclamationTriangle,
         Home,
+        ExclamationCircle,
     } from 'svelte-hero-icons'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
 
     
     export let data
-   
+    
     let showCommentForm:boolean = false;
     let imageUploads = [] as UploadImageResponse[]
     
-    let expandCompact: boolean = !(['link', 'thumbLink'].includes(getPostType(data.post.post_view))) ?? false
+    let expandCompact: boolean = false
 
     //@ts-ignore (Add cross posts to post_view object for sanity)
-    $: data.post.post_view.cross_posts = data.post.cross_posts
+    $: if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
 
     onMount(async () => {
+        if (!data?.post) return
+        expandCompact = !(['link', 'thumbLink'].includes(getPostType(data.post.post_view))) ?? false
         setLastSeenCommunity(data.post.community_view.community)
 
         // Scroll to top unless jumping to a comment
@@ -48,7 +52,7 @@
 
     
     const fetchOnHome = async () => {
-        if (!$profile?.jwt) return
+        if (!$profile?.jwt || !data.post) return
         const id = toast({
             content: 'Attempting to fetch this post on your home instance...',
             loading: true,
@@ -76,84 +80,104 @@
 
 
 <svelte:head>
-    <title>{data.post.post_view.post.name}</title>
-    <meta property="og:title" content={data.post.post_view.post.name} />
-    <meta property="og:url" content={$page.url.toString()} />
-    
-    {#if isImage(data.post.post_view.post.url)}
-        <meta property="og:image" content={data.post.post_view.post.url} />
-    {/if}
+    {#if data?.post}
+        <title>{data.post.post_view.post.name}</title>
+        <meta property="og:title" content={data.post.post_view.post.name} />
+        <meta property="og:url" content={$page.url.toString()} />
+        
+        {#if isImage(data.post.post_view.post.url)}
+            <meta property="og:image" content={data.post.post_view.post.url} />
+        {/if}
 
-    {#if data.post.post_view.post.body}
-        <meta property="og:description" content={data.post.post_view.post.body} />
+        {#if data.post.post_view.post.body}
+            <meta property="og:description" content={data.post.post_view.post.body} />
+        {/if}
+    {:else}
+        <title>Unable to Fetch Post</title>
     {/if}
 </svelte:head>
 
-<SubNavbar back scrollButtons refreshButton postTitle quickSettings toggleCommunitySidebar bind:post={data.post.post_view} 
-    refreshPreventDefault on:navRefresh={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }
-/>
 
-<MainContentArea>                   
-        
-    <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
-    {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
-        
+{#if data?.post}
+    <SubNavbar back scrollButtons refreshButton postTitle quickSettings toggleCommunitySidebar bind:post={data.post.post_view} 
+        refreshPreventDefault on:navRefresh={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }
+    />
 
-        <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2">
+    <MainContentArea>                   
             
-            <div class="flex flex-row gap-2 items-center w-full">
-                <span class="items-center">
-                    <Icon src={ExclamationTriangle} mini width={22}/>
-                </span>
-                <p class="text-sm">
-                    You are viewing this post on a remote instance.  In order to reply or vote,
-                    you will need to fetch this post on your home instance.
-                </p>
-            </div>
-
-            <div class="flex flex-row flex-wrap gap-2 items-center mx-auto">
-                
-                <Button color="info" size="sm" icon={Home} iconSize={16} on:click={() => { fetchOnHome() }}>
-                    <span class="text-xs">Fetch on {$instance}</span>
-                </Button>
-
-                <Button color="info" size="sm" icon={ArrowTopRightOnSquare} iconSize={16} on:click={() => { 
-                        $userSettings.openInNewTab.links
-                            ? window.open(data.post.post_view.post.ap_id)
-                            : window.location.href = data.post.post_view.post.ap_id
-                    }}
-                >
-                    <span class="text-xs">View on {new URL(data.post.post_view.post.ap_id).hostname}</span>
-                </Button>
-            </div>
-        </Card>
-    {/if}
-    
-
-    <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
-        <Post 
-            bind:post={data.post.post_view} 
-            displayType="post" 
-            actions={true} 
-            expandCompact={expandCompact}
-            on:reply={() => {
-                showCommentForm = !showCommentForm
-                
-                if (!showCommentForm) return
-                // Focus the comment form
-                setTimeout(() => {
-                    let commentForm = document.getElementById(`commentForm-${data.post.post_view.post.id}`);
-                    commentForm?.focus()
-                }, 250);
-            }}
-            autoplay={$userSettings.embeddedMedia.autoplay}
+        <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
+        {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
             
+
+            <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2">
+                
+                <div class="flex flex-row gap-2 items-center w-full">
+                    <span class="items-center">
+                        <Icon src={ExclamationTriangle} mini width={22}/>
+                    </span>
+                    <p class="text-sm">
+                        You are viewing this post on a remote instance.  In order to reply or vote,
+                        you will need to fetch this post on your home instance.
+                    </p>
+                </div>
+
+                <div class="flex flex-row flex-wrap gap-2 items-center mx-auto">
+                    
+                    <Button color="info" size="sm" icon={Home} iconSize={16} on:click={() => { fetchOnHome() }}>
+                        <span class="text-xs">Fetch on {$instance}</span>
+                    </Button>
+
+                    <Button color="info" size="sm" icon={ArrowTopRightOnSquare} iconSize={16} on:click={() => { 
+                            $userSettings.openInNewTab.links
+                                ? window.open(data.post.post_view.post.ap_id)
+                                : window.location.href = data.post.post_view.post.ap_id
+                        }}
+                    >
+                        <span class="text-xs">View on {new URL(data.post.post_view.post.ap_id).hostname}</span>
+                    </Button>
+                </div>
+            </Card>
+        {/if}
         
-        />      
 
-        <CommentSection data={data} bind:showCommentForm={showCommentForm} bind:imageUploads/>
-    </div>
+        <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
+            <Post 
+                bind:post={data.post.post_view} 
+                displayType="post" 
+                actions={true} 
+                expandCompact={expandCompact}
+                on:reply={() => {
+                    showCommentForm = !showCommentForm
+                    
+                    if (!showCommentForm) return
+                    // Focus the comment form
+                    setTimeout(() => {
+                        let commentForm = document.getElementById(`commentForm-${data.post.post_view.post.id}`);
+                        commentForm?.focus()
+                    }, 250);
+                }}
+                autoplay={$userSettings.embeddedMedia.autoplay}
+                
+            
+            />      
 
-    <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden xl:flex"/>
+            <CommentSection data={data} bind:showCommentForm={showCommentForm} bind:imageUploads/>
+        </div>
 
-</MainContentArea>
+        <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden xl:flex"/>
+
+    </MainContentArea>
+
+{:else}
+    <MainContentArea>
+        <Placeholder title="Unable to Fetch Post." icon={ExclamationCircle}  description="There was an error fetching this post from its home instance via the API.">
+            <Button color="info" size="lg" icon={Home} iconSize={22} class="mt-4"
+                on:click={() => {
+                    window.location.href = `https://${$page.params.instance}/post/${$page.params.id}`;
+                }}
+            >
+                Go to Post at {$page.params.instance}
+            </Button>
+        </Placeholder>
+    </MainContentArea>
+{/if}
