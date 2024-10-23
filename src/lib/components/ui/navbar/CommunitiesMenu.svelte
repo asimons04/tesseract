@@ -7,6 +7,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
+    import Placeholder from '../Placeholder.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
 
     import {
@@ -16,6 +17,7 @@
         UserGroup,
         XCircle,
     } from 'svelte-hero-icons'
+    
     
     export let size:number = 28
     
@@ -142,7 +144,7 @@
                     class="max-h-[79vh] overflow-y-auto"
                 />
             {:else}
-                <li class="text-xs opacity-80 text-left mx-4 my-1 py-1 w-48">Favorites group is empty.</li>
+                <Placeholder title="No Favorites" description="Your favorites list is empty."/>
             {/if}
                 
         {/if}
