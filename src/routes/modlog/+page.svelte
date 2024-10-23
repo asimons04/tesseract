@@ -211,6 +211,7 @@
                             <span class="flex flex-row gap-2 w-full">
                                 
                                 <CommunityAutocomplete containerClass="!w-full" placeholder="Community" listing_type="All"
+                                    showHiddenRemoved={true}
                                     on:select={(e) => {
                                         filter.community.community = e.detail
                                         searchParam($page.url, 'community', e.detail?.id.toString(), 'page')
