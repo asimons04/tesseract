@@ -45,7 +45,7 @@
             }
         }
     }
-    class="flex flex-row flex-wrap items-start gap-2 {$userSettings.showCompactPosts ? 'md:mt-4' : ''} font-medium max-w-full w-full break-words text-left"
+    class="flex flex-row flex-wrap items-start gap-2 font-medium max-w-full w-full break-words text-left"
     style="word-break: break-word;"
     title="{fixLemmyEncodings(post.post.name)}"
 >
