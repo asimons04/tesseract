@@ -33,17 +33,14 @@
 
 
 
-<div class="flex flex-col w-full gap-1 p-2 { card ?  cardClass : ''} {$$props.class}">    
+<div class="flex flex-col w-full items-start gap-1 p-2 { card ?  cardClass : ''} {$$props.class}">    
     <!---Slot for the Archive link selector, post url, and MBFC badge--->
-            <slot/>
+    <slot/>
             
     <div class="flex flex-row w-full items-start gap-0">
         
         <div class="flex flex-col gap-1 {showThumbnail && thumbnail_url ? 'w-[calc(100%-128px)]' : 'w-full'}">
-            
-            <!---Slot for the Archive link selector, post url, and MBFC badge
-            <slot/>
-            --->
+
             {#if description && description.length > minLength}
                 {#if title}
                     <Link class="text-sm font-bold md:px-4" href={url} newtab={$userSettings.openInNewTab.links} {title}>
