@@ -7,7 +7,6 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import PostEmbedDescription from './PostEmbedDescription.svelte';
 
     import { 
         Icon, 
@@ -27,11 +26,7 @@
     let fadeText = false
 
     function generateSource() {
-        let body = post.post.body ??  ( 
-            post.post.embed_description 
-                ? '' //`**Summary**: ${post.post.embed_description}`
-                : ''
-        )
+        let body = post.post.body ?? ''
         
         const bodyLength = body.length
 
@@ -57,11 +52,6 @@
 
 
 <div class="flex flex-col text-sm gap-1 rounded-md {$$props.class}">    
-    
-    <!---Only show embed description in compact mode since card mode will have the embed description included in the line with the link/selector/MBFC badge--->
-    {#if post.post.embed_description && $userSettings.showCompactPosts}
-        <PostEmbedDescription bind:description={post.post.embed_description} bind:title={post.post.embed_title}/>
-    {/if}
 
     {#if source}        
         {#if displayType == 'post' }
@@ -85,17 +75,17 @@
 
 <!---Expand/Collapse Button--->
 {#if !hideExpandButton }
-<Button color="tertiary" class="mx-auto w-fit text-xs font-bold !py-0"
+<Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
     title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+    icon={expandPreviewText ? ChevronUp : ChevronDown}
+    iconSize={24}
     on:click={() => {
         expandPreviewText = !expandPreviewText
 
         // Scroll top of post to top on close
         if (!expandPreviewText) scrollToTop(postContainer)
     }}
->
-    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16" slot="icon" />
-    {expandPreviewText ? 'Collapse' : 'Expand'}
-    <Icon src={expandPreviewText ? ChevronUp : ChevronDown} mini size="16"  />
-</Button>
+/>
+    
+
 {/if}
