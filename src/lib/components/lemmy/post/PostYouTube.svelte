@@ -10,6 +10,7 @@
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
 
     export let post: PostView
     export let displayType: PostDisplayType
@@ -59,35 +60,72 @@
 <PostIsInViewport bind:postContainer bind:inViewport />
 
 {#if showAsEmbed && embedURL}
-    <span class="flex flex-row flex-wrap w-full gap-2 px-1">
-        <ArchiveLinkSelector url={post.post?.url} postType='youtube' />    
+    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    >    
+        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='youtube' />    
 
-        <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
-            bind:href={post.post.url}
-        />
-        
-    </span>
+            <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
+                bind:href={post.post.url}
+            />
+            
+        </span>
+    </PostEmbedDescription>
     
     <IFrame bind:embedURL bind:size bind:title={post.post.name} />
     
 
 <!---IF embeds disabled, show as an image with link + alternate source selector menu--->
 {:else if post.post.thumbnail_url}
-    <span class="flex flex-row flex-wrap w-full gap-2 px-1">
-        <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
-        
-        <Link highlight nowrap 
-            domainOnly={!$userSettings.uiState.showFullURL} 
-            newtab={$userSettings.openInNewTab.links} 
-            bind:href={post.post.url}
-        />
-    </span>
+    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    >     
+        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
+            
+            <Link highlight nowrap 
+                domainOnly={!$userSettings.uiState.showFullURL} 
+                newtab={$userSettings.openInNewTab.links} 
+                bind:href={post.post.url}
+            />
+        </span>
+    </PostEmbedDescription>
+
     <PostImage bind:post displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> {clickToPlay() }}/>
 
 <!---If embeds disabled and no thumbnail image is available, show as a bare link--->
 {:else if !post.post.thumbnail_url}
-    <span class="flex flex-row flex-wrap w-full gap-2 px-1">
-        <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
-        <Link title={post.post.name} highlight nowrap bind:href={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} />
-    </span>
+    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    > 
+        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
+            <Link title={post.post.name} highlight nowrap bind:href={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} />
+        </span>
+    </PostEmbedDescription>
 {/if}

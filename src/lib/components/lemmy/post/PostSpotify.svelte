@@ -5,9 +5,10 @@
     import type { PostView } from 'lemmy-js-client'
 
     import Link from '$lib/components/input/Link.svelte'
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
-    import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
+    
 
     export let post: PostView
     export let displayType: PostDisplayType
@@ -86,7 +87,20 @@
 
 
 {#if showAsEmbed && embedURL}
-    <Link bind:href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
+    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    >     
+        <Link bind:href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
+    </PostEmbedDescription>
+    
     <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full {height}">
         <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 p-1 rounded-2xl max-w-full">
             <div class="ml-auto mr-auto w-full">
@@ -108,21 +122,45 @@
     </div>
 
 {:else if post.post.thumbnail_url}
-    <Link
-        bind:href={post.post.url}
-        domainOnly={!$userSettings.uiState.showFullURL}
-        title={post.post.name}
-        newtab={$userSettings.openInNewTab.links}
-        highlight nowrap
-    />
+    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    > 
+        <Link
+            bind:href={post.post.url}
+            domainOnly={!$userSettings.uiState.showFullURL}
+            title={post.post.name}
+            newtab={$userSettings.openInNewTab.links}
+            highlight nowrap
+        />
+    </PostEmbedDescription>
     <PostImage bind:post={post} displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
     
 
 
 {:else if !post.post.thumbnail_url}
-    <Link
-        bind:href={post.post.url}
-        title={post.post.name}
-        highlight nowrap
-    />
+    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    > 
+        <Link
+            bind:href={post.post.url}
+            title={post.post.name}
+            highlight nowrap
+        />
+    </PostEmbedDescription>
 {/if}
