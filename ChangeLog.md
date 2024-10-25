@@ -55,8 +55,29 @@ removeAdmin {username}
 ## 1.4.20
 ### Bugfixes
 - May only have been an issue for admins, but administratively hidden and removed communities no longer show up in community autocomplete results.
+- [7fdd2e55] Fixed full URLs not truncating properly when that option is enabled
 
+### Misc
 Reworked the community drop down again.  Now defaults to "Favorites" but you can set your preference in Settings - > General.  
+
+### To do:
+- Remove all references to imageSize() function and replace with a static `max-w-full` to use the built-in 40vh limit for feed images
+- Remove user settings for post and feed image sizes
+- Show link selector, link, and MBFC even if metadata fails to load in preview modal
+- Disable "reply" button if post is removed or deleted
+- Indicate removed/deleted in the comment item component when viewing profile
+
+
+
+### Post Renderer Revamps
+- Better display of metadata from posted links
+- Cleaner compact view (also incorporates metadata display better)
+- Feed images are limited to a maximum of 40% viewport height.  This still gives the nice "card" effect while also not making posts massive. They were formerly limited to 80vh, but even this is no longer needed since the ZoomableImage component was integrated.
+
+- Direct video (mp4, webm, etc) posts now use the video metadata for the thumbnail if OP didn't post a custom one. Also works in compact view now.
+- Bandcamp embeds are now smaller
+
+
 
 ### Misc: Better Integration with Pifed/Mbin/etc
 When clicking a link to a post or comment, Tesseract will massage the URL to attempt to render it locally.  This works well for Lemmy, but non-Lemmy services which use the same `/post/{id}` URL format don't work with Lemmy API calls.  Before, this would throw a generic  500 "Failed to fetch post" error.  The UX has been improved in this release by showing a clearer error message as well as a button to visit the post on its home instance.
