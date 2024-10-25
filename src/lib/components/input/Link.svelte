@@ -15,7 +15,10 @@
 {#if href}
     <a {href}
         id={id}
-        class="{highlight ? 'text-sky-700 dark:text-sky-500' : ''} text-left hover:underline max-w-full"
+        class="{highlight ? 'text-sky-700 dark:text-sky-500' : ''} text-left hover:underline max-w-full 
+            {nowrap ? 'whitespace-nowrap overflow-hidden truncate text-xs' : ''}
+            {$$props.class}
+        "
         rel="nofollow noreferrer"
         target="{newtab
             ? '_blank'
@@ -35,9 +38,9 @@
     >
         <slot name="icon" />
         <slot>
-            <span class="flex gap-0  {nowrap ? 'w-full whitespace-nowrap overflow-hidden text-ellipsis text-xs' : ''}  {$$props.class}" >
+            
                 {text ?? (domainOnly ? new URL(href).hostname : href)}
-            </span>
+            
         </slot>
     
     </a>
