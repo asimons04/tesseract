@@ -44,7 +44,7 @@
     }
 </script>
 
-<div id="comments" class="mt-4 flex flex-col gap-2 w-full">
+<div id="comments" class="mt-4 flex flex-col gap-2 w-full h-full">
     
 
     <div class="flex flex-row justify-between items-center">

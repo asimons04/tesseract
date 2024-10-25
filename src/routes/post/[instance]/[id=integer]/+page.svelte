@@ -140,7 +140,7 @@
         {/if}
         
 
-        <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full sm:w-full md:w-[90%]">
+        <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full h-full sm:w-full md:w-[90%]">
             <Post 
                 bind:post={data.post.post_view} 
                 displayType="post" 

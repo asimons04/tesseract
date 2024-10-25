@@ -7,7 +7,7 @@
     export let description: string | undefined = undefined
 </script>
 
-<div class="text-slate-700 dark:text-zinc-300 flex flex-col my-auto justify-center items-center gap-2 {$$props.class}">
+<div class="text-slate-700 dark:text-zinc-300 flex flex-col h-full my-auto justify-center items-center gap-2 {$$props.class}">
     {#if icon}
     <div class="border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 p-3 rounded-full">
         <Icon src={icon} size="{size}" />
