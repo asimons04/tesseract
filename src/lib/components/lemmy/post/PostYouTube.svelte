@@ -71,7 +71,7 @@
             ) ? true : false
         } 
     >    
-        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+        <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='youtube' />    
 
             <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
@@ -97,7 +97,7 @@
             ) ? true : false
         } 
     >     
-        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+        <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
             
             <Link highlight nowrap 
@@ -123,7 +123,7 @@
             ) ? true : false
         } 
     > 
-        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
+        <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
             <Link title={post.post.name} highlight nowrap bind:href={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} />
         </span>
