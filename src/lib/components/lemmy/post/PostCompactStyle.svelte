@@ -4,7 +4,7 @@
     
     
     import { imageProxyURL } from '$lib/image-proxy'
-    import {isImage, postType as identifyPostType} from './helpers.js'
+    import {isImage, isVideo, postType as identifyPostType} from './helpers.js'
     import { scrollToTop } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
@@ -17,8 +17,8 @@
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
-    import PostTitle from '$lib/components/lemmy/post/PostTitle.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
+    import PostLink from './PostLink.svelte';
     
 
     export let post: PostView
@@ -34,93 +34,118 @@
 </script>
 
 
-<Card class="flex flex-col w-full p-2 gap-0 " >
-
+<Card class="flex flex-col w-full p-2 gap-0 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >
     
-
-    <!--- Post Link, Body, and Thumbnail  --->
-    <div class="flex flex-row w-full gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}">
-        
-        
-        
-        <!---Post body and link--->
-        <div class="flex flex-col gap-0 {!$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url)) ? 'w-[80%] md:w-[85%] xl:w-[90%]' : 'w-full'}">
-            
-            <PostMeta bind:post={post} showTitle={false} {collapseBadges}/>        
-            
-            <!---Post title--->
-            <PostTitle bind:post />
-            
-            
-            <!---Alt source selector, link, MBFC for desktop compact view--->
-            {#if post.post.url && !isImage(post.post.url)}
-                <span class="hidden md:flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
-                    
-                    <!---Show archive link if not a media post--->
-                    {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
-                        <ArchiveLinkSelector url={post.post?.url} {postType}/>
-                    {/if}
-                    
-                    <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-                    <MBFC post={post} rightJustify={true}/>
-                </span>
-            {/if}
-        </div>
-
-        <!--- Thumbnail --->
-        {#if !post.post.nsfw && !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url))}
-            <div class="flex-none w-fit h-fit mx-auto mt-2 overflow-hidden">
-                <!--- Expand the post in place when clicking thumbnail--->
-                <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                    on:click={() => {  
-                        expandCompact = !expandCompact; 
-                        scrollToTop(postContainer)
-                    }}
-                >
-                    <img
-                        src="{imageProxyURL(post.post.thumbnail_url ?? post.post.url, 256, 'webp')}"
-                        loading="lazy"
-                        alt={post.post.name}
-                        class="object-cover bg-slate-100 rounded-md h-32 w-32 border border-slate-200 dark:border-zinc-700 mx-auto"
-                        class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                    />
-                </button>
-            </div>
-        {/if}
-    </div>
-    
+    <!--- If post is NSFW, only show the metadata + title and overlay the rest--->
     {#if post.post.nsfw}
-        <div class="flex flex-col relative w-full gap-1 min-h-[75px]">
-            <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />    
+        <div class="flex flex-col gap-1 w-full">
+            <PostMeta bind:post={post} showTitle={true} {collapseBadges}/>                
+            <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} text="[Reveal NSFW Post]"/>
         </div>
     {:else}
-        <!---Alt source selector, link, MBFC for mobile view--->
-        {#if post.post.url && !isImage(post.post.url)}
-        <span class="flex md:hidden flex-row flex-wrap my-auto w-full gap-2 mb-1">
+        
+        <!---Image and Video Posts--->
+        <!---These will have the thumbnail in the upper-right corner rather than in the metadata--->
+        {#if  (['image', 'video'].includes(postType)) }
             
-            <!---Show archive link if not a media post--->
-            {#if postType == "link" || postType == "thumbLink" || postType == 'youtube'}
-                <ArchiveLinkSelector url={post.post?.url} {postType}/>
+            <div class="flex flex-row w-full gap-2">
+                
+                <div class="flex flex-col gap-1 {!$userSettings.uiState.hideCompactThumbnails && post.post.thumbnail_url ? 'w-[calc(100%-128px)]' : 'w-full'}">
+                    <PostMeta bind:post={post} showTitle={true} {collapseBadges}/>            
+                    
+                    {#if post.post.url && !(['image'].includes(postType))}
+                        <span class="flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
+                            
+                            <!---Show archive link if not a media post--->
+                            {#if ['youtube', 'link', 'thumbLink'].includes(postType)}
+                                <ArchiveLinkSelector url={post.post?.url} {postType}/>
+                            {/if}
+                            
+                            <Link class="text-xs min-w-[0%] max-w-[100%] text-ellipsis" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                            <MBFC post={post} rightJustify={true}/>
+                        </span>
+                    {/if}
+
+                    {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
+                        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText class="my-1" />
+                    {/if}
+                </div>
+                
+                {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isVideo(post.post.url))}
+                    
+                    <div class="flex-none w-[128px] h-[128px] mx-auto mt-2 overflow-hidden">
+                    
+                        <!--- Expand the post in place when clicking thumbnail--->
+                        <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                            on:click={() => {  
+                                expandCompact = !expandCompact; 
+                                scrollToTop(postContainer)
+                            }}
+                        >
+                            {#if post.post.thumbnail_url || isImage(post.post.url)}
+                                <img
+                                    src="{
+                                        post.post.url?.endsWith('.gif')
+                                            ? imageProxyURL(post.post.url)
+                                            : post.post.embed_video_url?.endsWith('.gif')
+                                                ? imageProxyURL(post.post.embed_video_url)
+                                                : imageProxyURL(post.post.thumbnail_url ?? post.post.url, 256, 'webp')
+                                    }"
+                                    loading="lazy"
+                                    alt={post.post.name}
+                                    class="object-cover bg-slate-100 rounded-md w-[128px] h-[128px]  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg"
+                                    class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
+                                />
+                            {:else if post.post.url && isVideo(post.post.url)}
+                                <video class="object-cover bg-slate-100 rounded-md w-[128px] h-[128px]  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg" 
+                                    class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed')}    
+                                    playsinline muted={true} autoplay={false}
+                                    preload="metadata"
+                                >
+                                    <source src="{post.post.url}" type="{
+                                        new URL(post.post.url).pathname.endsWith('mp4') || new URL(post.post.url).pathname.endsWith('m4v')
+                                            ? 'video/mp4' 
+                                            : new URL(post.post.url).pathname.endsWith('webm') 
+                                                ? "video/webm" 
+                                                : new URL(post.post.url).pathname.endsWith('mov') 
+                                                    ? "video/mp4"
+                                                    : ''
+                                    }" />
+                                </video>
+                            {/if}
+                        </button>
+                    </div>
+                    
+                {/if}
+            </div>
+        
+        <!---Link posts with embed description, etc--->
+        {:else}
+
+            <PostMeta bind:post showTitle={true} {collapseBadges}/>                
+                    
+            <PostLink bind:post bind:displayType compact={true}
+                on:clickThumbnail={() => {
+                    expandCompact = !expandCompact
+                }}
+            />
+
+            {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
+                <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
+                    class="mt-2 mb-1 {!expandPreviewText ? 'pointer-events-none' : ''}"
+                    inline={false}
+                />
             {/if}
             
-            <Link class="text-xs max-w-[250px]" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-            <MBFC post={post} rightJustify={true}/>
-        </span>
-        {/if}
 
-
-        {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-            
-            <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
-                class="my-1"
-                inline={
-                    ( (post?.post?.body?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength ||
-                        (!post.post.body && (post?.post?.embed_description?.length ?? 0) > $userSettings.uiState.postBodyPreviewLength)
-                    ) && !expandPreviewText &&  displayType=='feed'
-                }
-            />
         {/if}
     {/if}
+
+
+
+
+        
+        
 
     <!--- Crossposts --->
     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
