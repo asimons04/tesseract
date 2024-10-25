@@ -149,7 +149,9 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div class="relative" 
-        id={post.post.id.toString()} on:mouseover={() => { 
+        id={post.post.id.toString()} 
+        
+        on:mouseover={() => { 
             if (post) lastSeenPost.set(post.post.id)
         }} 
         
