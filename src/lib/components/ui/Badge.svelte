@@ -28,7 +28,7 @@
         : badgeColor[color]
 </script>
 
-<button class="px-2 py-0.5 rounded-full max-h-[20px] text-xs font-bold {inline ? 'inline-flex' : 'flex'} items-center gap-1 
+<button class="px-2 py-0.5 rounded-full min-w-fit max-h-[20px] text-xs font-bold {inline ? 'inline-flex' : 'flex'} items-center gap-1 
     whitespace-nowrap overflow-hidden 
     {rightJustify ? 'ml-auto' : ''}
     {colorClass} 
