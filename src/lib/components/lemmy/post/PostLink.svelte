@@ -3,7 +3,7 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { getInstance } from '$lib/lemmy.js'
-    import { imageSize, unproxyImage } from './helpers.js'
+    import { imageSize, unproxyImage, postType as identifyPostType } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
@@ -16,57 +16,85 @@
 
     export let post:PostView
     export let displayType: PostDisplayType
+    export let compact: boolean = false
 
     let size: string    = imageSize(displayType);
+    let postType = 'text'
+    $: post, postType = identifyPostType(post)
+
+
 </script>
 
-{#if post.post?.url}
-    <div class="flex flex-col p-2 gap-0 w-full 
-            {
-                post.post.embed_description && post.post.embed_description.length > 15
-                    ? 'border border-slate-300 dark:border-zinc-700 bg-slate-200/50 dark:bg-zinc-800/50 rounded-lg shadow-sm' 
-                    : ''
-            }
-        "
-    >
-        <span class="flex flex-row flex-wrap w-full gap-2 px-1">
-            <ArchiveLinkSelector url={post.post?.url} postType='link'/>
-            <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-            <MBFC post={post} rightJustify={true}/>
-        </span>
-        
-        <!---Add embed title and description, if available, below the link details--->        
-        <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card={false}/>
+
+{#if compact}
+    {#if post.post.url}
+        <!---Alt source selector, link, MBFC for desktop compact view--->
+        <div class="flex flex-col gap-2 w-full">
+            <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+                description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+                url={post.post.url}
+                card={
+                    (
+                        (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                        (post.post.embed_description && displayType=='post') ||
+                        (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+                    ) ? true : false
+                } 
+                thumbnail_url={post.post.thumbnail_url}
+                showThumbnail={!$userSettings.uiState.hideCompactThumbnails || displayType=='post'}
+            >
+                <span class="flex flex-row  my-auto w-full gap-2 mb-1">
+                    {#if ['youtube', 'link', 'thumbLink'].includes(postType)}
+                        <ArchiveLinkSelector url={post.post?.url} postType='link'/>
+                    {/if}
+                    <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                    <MBFC post={post} rightJustify={true}/>
+                </span>
+            </PostEmbedDescription>
+        </div>
+    {/if}
+            
+{:else}
+    {#if post.post?.url}
     
-    </div>
-{/if}
+        <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card={post.post.embed_description ? (post.post.embed_description.length > 15) : false} url={post.post.url}>
+            <span class="flex flex-row w-full gap-2 px-1">
+                <ArchiveLinkSelector url={post.post?.url} postType='link'/>
+                <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                <MBFC post={post} rightJustify={true}/>
+            </span>
+        </PostEmbedDescription>
+    {/if}
 
 
-{#if post.post?.thumbnail_url}
-    {#if displayType == 'feed'}
-        <a href="/post/{getInstance()}/{post.post.id}" target={ (displayType== 'feed' && $userSettings.openInNewTab.posts) ? '_blank' : undefined } >
+    {#if post.post?.thumbnail_url}
+        {#if displayType == 'feed'}
+            <!--<a href="/post/{getInstance()}/{post.post.id}" target={ (displayType== 'feed' && $userSettings.openInNewTab.posts) ? '_blank' : undefined } >-->
+                <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+                    <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
+                        <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
+
+                        <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
+                            bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={true}
+                            class="ml-auto mr-auto object-cover rounded-md max-h-[min(40vh,800px)] z-20"
+                            
+                        />
+                        <!--class="max-w-full ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)]"-->
+                    </div>
+                    
+                </div>
+            <!--</a>-->
+        {:else if displayType == 'post'}
             <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
                 <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-                    <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
-                        bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={false}
-                        class="max-w-full ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)]"
+                    <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 
+                        class="max-w-full ml-auto mr-auto object-cover rounded-md"
                     />
                 </div>
-                
             </div>
-        </a>
-    {:else if displayType == 'post'}
-        <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
-            <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
-                <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
-
-                <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 
-                    class="max-w-full ml-auto mr-auto object-cover rounded-md"
-                />
-            </div>
-        </div>
+        {/if}
     {/if}
-{/if}
 
+{/if}
