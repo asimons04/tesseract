@@ -132,7 +132,7 @@
 
             {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
                 <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
-                    class="mt-2 mb-1 {!expandPreviewText ? 'pointer-events-none' : ''}"
+                    class="mt-2 mb-1 {!expandPreviewText && displayType=='feed' ? 'pointer-events-none' : ''}"
                     inline={false}
                 />
             {/if}
