@@ -57,7 +57,7 @@
 {:else}
     {#if post.post?.url}
     
-        <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card={post.post.embed_description ? (post.post.embed_description.length > 15) : false} url={post.post.url}>
+        <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card={post.post.embed_description ? true : false} url={post.post.url}>
             <span class="flex flex-row w-full gap-2 px-1">
                 <ArchiveLinkSelector url={post.post?.url} postType='link'/>
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
