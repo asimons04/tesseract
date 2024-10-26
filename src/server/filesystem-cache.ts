@@ -64,8 +64,7 @@ export class FSCache {
             return true;
         }
         catch (err) {
-            console.log(`filesystem-cache.ts:evict:${key}`);
-            console.log(err);
+            console.error(`filesystem-cache.ts:evict:${key}`, err);
             return false;
         }
         
@@ -92,7 +91,7 @@ export class FSCache {
                     evictedItems++;
                 }
                 catch (err) {
-                    console.log(err);
+                    console.error("filesystem-cache.ts:evictExpiredItems", err);
                 }   
             }
         }
@@ -119,7 +118,7 @@ export class FSCache {
                     evictedItems++;
                 }
                 catch (err) {
-                    console.log(err);
+                    console.error("filesystem-cache.ts:evictOldestItems", err);
                 }  
         }
 
@@ -143,8 +142,7 @@ export class FSCache {
                 await rm(entry.path)
             }
             catch (err) {
-                console.log(`Failed to delete ${entry.path} from cache during flush`);
-                console.log(err);
+                console.error(`Failed to delete ${entry.path} from cache during flush`, err);
                 errors++;
             }
         }
@@ -196,8 +194,7 @@ export class FSCache {
         }
         // Typical error is when bad/partially written cache item can't have its mime detected. Silently delete the cache item.
         catch (err) {
-            console.log("filesystem-cache.ts:cache:get");
-            console.log(err)
+            console.error("filesystem-cache.ts:cache:get", err);
             return false;
         }
 
@@ -214,8 +211,7 @@ export class FSCache {
             }
         }
         catch (err) {
-            console.log("filesystem-cache.ts:getDirectorySize");
-            console.log(err);
+            console.error("filesystem-cache.ts:getDirectorySize", err);
         }
 
         return totalSize;
@@ -236,8 +232,7 @@ export class FSCache {
             return contents;
         }
         catch (err) {
-            console.log(`filesystem-cache.ts:getDirContents: ${this.config.cacheDir}`);
-            console.log(err);
+            console.error(`filesystem-cache.ts:getDirContents: ${this.config.cacheDir}`, err);
             return [] as Array<DirectoryList>;
         }
     }
@@ -259,8 +254,7 @@ export class FSCache {
             
         }
         catch (err) {
-            console.log("filesystem-cache.ts:cache:housekeep:evict-expired");
-            console.log(err);
+            console.error("filesystem-cache.ts:cache:housekeep:evict-expired", err);
         }
 
         // Evict oldest items when cache is above 95% full
@@ -270,8 +264,7 @@ export class FSCache {
                 console.log(`Purged ${purgedCount.toString()} items from the proxy cache.`);
             }
             catch (err) {
-                console.log("filesystem-cache.ts:cache:housekeep:evict-oldest");
-                console.log(err);
+                console.error("filesystem-cache.ts:cache:housekeep:evict-oldest", err);
             }
         }
         
@@ -290,8 +283,8 @@ export class FSCache {
             return true;
         }
         catch {
-            console.log("filesystem-cache.ts:cache:init");
-            console.log(`Unable to open cache directory (${this.config.cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
+            console.error("filesystem-cache.ts:cache:init");
+            console.error(`Unable to open cache directory (${this.config.cacheDir}) for write access. Make sure it is present and writable by UID/GID 1000`);
             return false;
         }
     }
@@ -308,8 +301,7 @@ export class FSCache {
                 return true;
             }
             catch (err) {
-                console.log("filesystem-cache.ts:cache:put");
-                console.log(err);
+                console.error("filesystem-cache.ts:cache:put", err);
                 return false
             }
         }
@@ -369,8 +361,7 @@ export class FSCache {
             }
         }
         catch (err) {
-            console.log("filesystem-cache.ts:cache:updateStats");
-            console.log(err)
+            console.error("filesystem-cache.ts:cache:updateStats", err);
         }
     }
     
