@@ -15,6 +15,12 @@ export type Alignment =
 export function getMenuAlignment(expandCompact:boolean = false): Alignment {
     const $userSettings = get(userSettings)
 
+    return $userSettings.uiState.reverseActionBar
+        ? 'top-left'
+        : 'top-right'
+
+
+    /*
     return $userSettings.uiState.reverseActionBar 
         ? $userSettings.showCompactPosts && !expandCompact
             ? 'bottom-left'
@@ -22,4 +28,5 @@ export function getMenuAlignment(expandCompact:boolean = false): Alignment {
         :  $userSettings.showCompactPosts && !expandCompact
             ? 'bottom-right'
             : 'top-right'
+    */
 }
