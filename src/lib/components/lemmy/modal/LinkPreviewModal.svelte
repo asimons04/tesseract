@@ -57,6 +57,7 @@
         Window,
         XCircle,
     } from "svelte-hero-icons";
+    import PostLink from "../post/PostLink.svelte";
     
     
     export let url: string
@@ -161,16 +162,27 @@
 
 <Modal bind:open icon={LinkIcon} width="max-w-3xl" title={'Preview'} allowMaximize>
 
-    {#if loading && !iframeView}
-        <span class="flex mx-auto my-auto" transition:fade>
-            <Spinner width={24}/>
-        </span>
-    {/if}
+    <!---Show link/mbfc while loading.  If Metadata fails to fetch, sill show the URL and MBFC (if available)--->
+    {#if !iframeView && (loading || fetchError)}
+        <div class="flex flex-col {post ? 'min-h-[45vh]' : 'h-auto'}">
 
-    {#if fetchError && !iframeView}
-        <Placeholder title="Error Fetching Metadata" icon={ExclamationTriangle} 
-            description="Unable to load the metadata for {url}" 
-        />
+            
+            {#if post}
+                <PostLink bind:post {displayType} />
+            {/if}
+
+            {#if loading && !iframeView}
+                <span class="flex mx-auto my-auto" transition:fade>
+                    <Spinner width={24}/>
+                </span>
+            {/if}
+
+            {#if fetchError}
+                <Placeholder title="Error Fetching Metadata" icon={ExclamationTriangle} 
+                    description="Unable to load the metadata for {url}" 
+                />
+            {/if}
+        </div>
     {/if}
 
     {#if post && !loading && !fetchError && !iframeView}
