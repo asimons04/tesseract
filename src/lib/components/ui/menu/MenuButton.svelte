@@ -40,7 +40,11 @@
             {href}
             target="{newtab ? '_blank' : undefined}"
             title="{title}"
-            on:click={(e) => click('click', e)}
+            on:click={
+                (
+                    //@ts-ignore
+                    e
+                ) => click('click', e)}
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm transition-colors 
                 {buttonColors[color]} 
                 {disabled ? 'opacity-50 pointer-events-none' : ''}
@@ -53,7 +57,11 @@
         </a>
     {:else}
         <button
-            on:click={(e) => click('click', e)}
+            on:click={
+                (
+                    //@ts-ignore
+                    e
+                ) => click('click', e)}
             title="{title}"
             type="button"
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm text-start
