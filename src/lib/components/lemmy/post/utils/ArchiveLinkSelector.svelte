@@ -46,7 +46,7 @@
        
         
         
-        {#if ['link', 'thumbLink', 'youtube'].includes(postType)}
+        {#if ['link', 'thumbLink'].includes(postType) || (postType == 'youtube' && $userSettings.embeddedMedia.customInvidious)}
             <div class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-[175px]">
                 Alternate Sources
                 <span class="ml-auto"/>
@@ -95,19 +95,19 @@
 
         <!---Piped/Invidious Providers for 'youtube' Post Types--->
         {#if postType == 'youtube'}
-            <MenuButton color="info" title="Invidious" link href={updateYTHostname(url, $userSettings.embeddedMedia.customInvidious)} newtab={$userSettings.openInNewTab.links}>
-                Invidious/Piped
-            </MenuButton>
-            
-            {#if !isYouTube(url)}
+            {#if $userSettings.embeddedMedia.customInvidious}
+                <MenuButton color="info" title="Invidious" link href={updateYTHostname(url, $userSettings.embeddedMedia.customInvidious)} newtab={$userSettings.openInNewTab.links}>
+                    Invidious/Piped
+                </MenuButton>
+            {/if}
+
             <MenuButton color="info" title="Invidious" link href={updateYTHostname(url, 'youtube.com')} newtab={$userSettings.openInNewTab.links}>
                 YouTube
             </MenuButton>
-            {/if}
         {/if}
 
 
-        {#if ['link', 'thumbLink', 'youtube'].includes(postType)}
+        {#if ['link', 'thumbLink'].includes(postType) || (postType == 'youtube' && $userSettings.embeddedMedia.customInvidious) }
             <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         {/if}
         

@@ -134,8 +134,7 @@ export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
     if (!url) return false
     return (
         isInvidious(url) ||
-        isYouTube(url) ||
-        isPiped(url)
+        isYouTube(url)
     )
 }
 
@@ -179,17 +178,6 @@ export const isYouTube = (url:string):boolean => {
     )
 }
 
-//  Piped
-export const isPiped = (url: string):boolean => {
-    const frontends = [...YTFrontends.piped, ...userSettings.embeddedMedia.userDefinedPiped]
-    for (let i=0; i<frontends.length; i++) {
-        if (url.startsWith(`https://${frontends[i]}`)) {
-            return true;
-        }
-    }
-    return false;
-
-}
 
 // Vimeo
 export const isVimeo = (url: string | undefined):boolean => {
@@ -248,11 +236,8 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
     let videoID: string|null
     
     // Base the embed URL from the user's chosen YouTube frontend
-    if (userSettings.embeddedMedia.YTFrontend == "Invidious" && userSettings.embeddedMedia.customInvidious !='') {
+    if (userSettings.embeddedMedia.YTFrontend == "Custom" && userSettings.embeddedMedia.customInvidious !='') {
         embedURL = new URL('https://' + userSettings.embeddedMedia.customInvidious);
-    }
-    else if (userSettings.embeddedMedia.YTFrontend == "Piped" && userSettings.embeddedMedia.customPiped !='') {
-        embedURL = new URL('https://' + userSettings.embeddedMedia.customPiped);
     }
     else {
         embedURL = new URL('https://www.youtube-nocookie.com')

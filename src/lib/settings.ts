@@ -43,7 +43,7 @@ const isBrowser = () => {
 
 export type FeedType = 'All' | 'Subscribed' | 'Local'
 
-export type YouTubeFrontend = "YouTube" | "Invidious" | "Piped" 
+export type YouTubeFrontend = "YouTube" | "Custom"
 
 export type PostViewType = 'card' | 'compact' | 'wide-compact' | 'more-compact' | 'ultra-compact' | 'reader'
 
@@ -90,11 +90,9 @@ interface Settings {
     embeddedMedia: {
         feed: boolean
         post: boolean
-        YTFrontend: "YouTube" | "Invidious" | "Piped"
+        YTFrontend: YouTubeFrontend
         customInvidious: string
-        customPiped: string
         userDefinedInvidious: string[],
-        userDefinedPiped: string[],
         autoplay: boolean
         loop:boolean
     }
@@ -149,7 +147,7 @@ interface Settings {
 
 // Default settings
 export const defaultSettings: Settings = {
-    version: 10,
+    version: 11,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -239,9 +237,7 @@ export const defaultSettings: Settings = {
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
         YTFrontend: env.PUBLIC_YOUTUBE_FRONTEND as YouTubeFrontend      ??  "YouTube" ,
         customInvidious:    env.PUBLIC_DEFAULT_CUSTOM_INVIDIOUS ??      'yewtu.be',
-        customPiped:        env.PUBLIC_DEFAULT_CUSTOM_PIPED     ??      'piped.video',
         userDefinedInvidious:                                           [],
-        userDefinedPiped:                                               [],
         autoplay:                                                       false,
         loop:                                                           true,
     },
@@ -322,10 +318,8 @@ export const YTFrontends = {
         'yt.oelrichsgarcia.de',
         'yt.artemislena.eu',
         'yt.whateveritworks.org',
-        ...strToArray(env.PUBLIC_CUSTOM_INVIDIOUS)
-    ].sort(),
-
-    piped: [
+        
+        // Piped
         'cf.piped.video',
         'piped.video',
         'piped.adminforge.de',
@@ -365,7 +359,7 @@ export const YTFrontends = {
         'watchapi.pluto.lat',
         'piped.syncpundit.io',
         'piped.yt',
-        ...strToArray(env.PUBLIC_CUSTOM_PIPED)
+        ...strToArray(env.PUBLIC_CUSTOM_INVIDIOUS)
     ].sort()
 }
 
@@ -488,6 +482,12 @@ export function migrateSettings(old:any) {
         if (old.version == 0.9) {
             delete old.uiState.fediseerBadges;
             old.version = 10
+        }
+
+        if (old.version == 10) {
+            if (old?.embeddedMedia?.customPiped) delete old.embeddedMedia.customPiped
+            if (old?.embeddedMedia?.userDefinedPiped) delete old.embeddedMedia.userDefinedPiped
+            old.version = 11
         }
     }
     catch (err) {

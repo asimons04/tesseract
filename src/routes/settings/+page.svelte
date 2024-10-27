@@ -313,13 +313,11 @@
     
     // If the custom invidious selection gets cleared, set it to the first in the list
     $:  if (!$userSettings.embeddedMedia.customInvidious) {
-            $userSettings.embeddedMedia.customInvidious = YTFrontends.invidious[0]
+            $userSettings.embeddedMedia.customInvidious = $userSettings.embeddedMedia.userDefinedInvidious[0] ?? ''
         }
     
-        // If the custom piped selection gets cleared, set it to the first in the list
-    $:  if (!$userSettings.embeddedMedia.customPiped) {
-            $userSettings.embeddedMedia.customPiped = YTFrontends.piped[0]
-    }
+    $:  $userSettings.embeddedMedia.userDefinedInvidious, $userSettings.embeddedMedia.customInvidious = $userSettings.embeddedMedia.userDefinedInvidious[0] ?? ''
+    
 
     let open = {
         profile: false,
@@ -658,42 +656,23 @@
         <SettingMultiSelect title="YouTube Frontend" icon={Tv} 
             description="Choose whether to use YouTube, Invidious, or Piped for YouTube links. Feed embeds will be disabled for Invidious/Piped since
             those are often rate-limited. They will be forced to click-to-play."
-            options={['YouTube', 'Invidious', 'Piped']}
+            options={['YouTube', 'Custom']}
             bind:selected={$userSettings.embeddedMedia.YTFrontend}
         />
 
-        <!--- Invidious Instance--->
-        <SettingMultiSelect title="Preferred Invidious Instance" icon={Film} description="Select the Invidious instance you wish to use as your YouTube frontend."
-            options={ [...YTFrontends.invidious, ...$userSettings.embeddedMedia.userDefinedInvidious].sort() }
+        <!--- Custom YT Frontend Instance--->
+        <SettingMultiSelect title="Preferred Custom YouTube Instance" icon={Film} description="Select your prefererred custom YouTube frontend."
+            options={ [...$userSettings.embeddedMedia.userDefinedInvidious].sort() }
             bind:selected={$userSettings.embeddedMedia.customInvidious}
         />
         
         <!---Custom Invidious Instance Editor--->
         <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedInvidious}  icon={Server} showPlaceholder={false} reverseLayout
             textInputPlaceholder="inv.example.com"
-            title="Define Custom Invidious Instances"
-            description="Specify here any custom Invidious intances you wish to use.  These will be used for both detection of Invidious links in posts
-            as well as selectable preferred instances for YT-like posts."
+            title="Define Custom YouTube Frontends"
+            description="Specify here any custom Piped/Invidious intances you wish to use.  These will be used for both detection of Invidious links in posts
+            as well as selectable preferred instances for YT-like posts. Enter only the domain."
         />
-
-
-        <!--- Piped Instance--->
-        <SettingMultiSelect title="Preferred Piped Instance" icon={Film} description="Select the Piped instance you wish to use as your YouTube frontend."
-            options={ [...YTFrontends.piped, ...$userSettings.embeddedMedia.userDefinedPiped].sort() }    
-            bind:selected={$userSettings.embeddedMedia.customPiped}
-            on:select={(e) => {
-                if (!e.detail) $userSettings.embeddedMedia.customPiped = YTFrontends.piped[0]
-            }}
-        />
-        
-        <!---Custom Piped Instance Editor--->
-        <SettingEditArray bind:list={$userSettings.embeddedMedia.userDefinedPiped} icon={Server} showPlaceholder={false} reverseLayout
-            textInputPlaceholder="piped.example.com"
-            title="Define Custom Piped Instances"
-            description="Specify here any custom Piped intances you wish to use.  These will be used for both detection of Piped links in posts
-            as well as selectable preferred instances for YT-like posts."
-        />
-        
 
         <!--- Image Proxying --->
         <SettingToggle title="Proxy Images" icon={GlobeAlt} bind:value={$userSettings.proxyMedia.enabled}
