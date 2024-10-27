@@ -8,6 +8,7 @@
     import PostEmbedDescription from './PostEmbedDescription.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     
 
     export let post: PostView
@@ -98,7 +99,10 @@
             ) ? true : false
         } 
     >     
-        <Link bind:href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
+        <span class="flex flex-row w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='spotify' /> 
+            <Link bind:href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
+        </span>
     </PostEmbedDescription>
     
     <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full {height}">
@@ -133,13 +137,17 @@
             ) ? true : false
         } 
     > 
-        <Link
-            bind:href={post.post.url}
-            domainOnly={!$userSettings.uiState.showFullURL}
-            title={post.post.name}
-            newtab={$userSettings.openInNewTab.links}
-            highlight nowrap
-        />
+        <span class="flex flex-row w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='spotify' />    
+            
+            <Link
+                bind:href={post.post.url}
+                domainOnly={!$userSettings.uiState.showFullURL}
+                title={post.post.name}
+                newtab={$userSettings.openInNewTab.links}
+                highlight nowrap
+            />
+        </span>
     </PostEmbedDescription>
     <PostImage bind:post={post} displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
     
@@ -157,10 +165,13 @@
             ) ? true : false
         } 
     > 
-        <Link
-            bind:href={post.post.url}
-            title={post.post.name}
-            highlight nowrap
-        />
+        <span class="flex flex-row w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='spotify' /> 
+            <Link
+                bind:href={post.post.url}
+                title={post.post.name}
+                highlight nowrap
+            />
+        </span>
     </PostEmbedDescription>
 {/if}

@@ -6,10 +6,12 @@
     import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings'
 
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from './PostImage.svelte';
+    
     
     export let post: PostView 
     export let autoplay:boolean = false;
@@ -56,8 +58,11 @@
 </script>
 
 <PostIsInViewport bind:postContainer bind:inViewport />
+<span class="flex flex-row w-full gap-2 px-1">
+    <ArchiveLinkSelector url={post.post?.url} postType='video' />    
+    <Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
+</span>
 
-<Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
 
 {#if source && (showAsEmbed || !post.post.thumbnail_url)}
     <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl max-w-full p-1">

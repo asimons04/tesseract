@@ -37,7 +37,7 @@
     <!---Slot for the Archive link selector, post url, and MBFC badge--->
     <slot/>
             
-    <div class="flex flex-row w-full items-start gap-0">
+    <div class="flex flex-row w-full items-start gap-1">
         
         <div class="flex flex-col gap-1 {showThumbnail && thumbnail_url ? 'w-[calc(100%-128px)]' : 'w-full'}">
 
@@ -53,7 +53,7 @@
         </div>
 
         {#if showThumbnail && thumbnail_url}
-            <button class="flex flex-none w-[128px] h-[128px] rounded-lg my-auto shadow-lg" 
+            <button class="flex flex-none w-[128px] h-[128px] rounded-lg shadow-lg" 
                 style="background-image: url('{imageProxyURL(thumbnail_url, 256, 'webp')}'); 
                     background-size: cover; 
                     background-position: center center;

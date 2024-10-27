@@ -55,12 +55,7 @@
                     
                     {#if post.post.url && !(['image'].includes(postType))}
                         <span class="flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
-                            
-                            <!---Show archive link if not a media post--->
-                            {#if ['youtube', 'link', 'thumbLink'].includes(postType)}
-                                <ArchiveLinkSelector url={post.post?.url} {postType}/>
-                            {/if}
-                            
+                            <ArchiveLinkSelector url={post.post?.url} {postType}/>
                             <Link class="text-xs min-w-[0%] max-w-[100%] text-ellipsis" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
                             <MBFC post={post} rightJustify={true}/>
                         </span>

@@ -44,9 +44,7 @@
                 showThumbnail={!$userSettings.uiState.hideCompactThumbnails || displayType=='post'}
             >
                 <span class="flex flex-row  my-auto w-full gap-2 mb-1">
-                    {#if ['youtube', 'link', 'thumbLink'].includes(postType)}
-                        <ArchiveLinkSelector url={post.post?.url} postType='link'/>
-                    {/if}
+                    <ArchiveLinkSelector url={post.post?.url} {postType}/>
                     <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
                     <MBFC post={post} rightJustify={true}/>
                 </span>
@@ -59,7 +57,7 @@
     
         <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card={post.post.embed_description ? true : false} url={post.post.url}>
             <span class="flex flex-row w-full gap-2 px-1">
-                <ArchiveLinkSelector url={post.post?.url} postType='link'/>
+                <ArchiveLinkSelector url={post.post?.url} {postType} />
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
                 <MBFC post={post} rightJustify={true}/>
             </span>

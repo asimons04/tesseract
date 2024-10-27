@@ -5,12 +5,13 @@
     import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings  } from '$lib/settings.js'
 
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Link from '$lib/components/input/Link.svelte'
     import PostEmbedDescription from './PostEmbedDescription.svelte';
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
-    import ClickToPlayOverlay from './utils/ClickToPlayOverlay.svelte';
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
+    
 
     export let post: PostView
     export let displayType: PostDisplayType
@@ -70,8 +71,11 @@
                 (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
             ) ? true : false
         } 
-    >     
-        <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+    >
+        <span class="flex flex-row w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='bandcamp'/>   
+            <Link href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+        </span>
     </PostEmbedDescription>
 
     <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
@@ -128,6 +132,24 @@
             ) ? true : false
         } 
     >
+        <span class="flex flex-row w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='bandcamp'/>   
+            <Link
+                href={post.post.url}
+                title={post.post.name}
+                newtab={$userSettings.openInNewTab.links}
+                highlight nowrap
+                domainOnly={!$userSettings.uiState.showFullURL}
+            />
+        </span>
+        
+    </PostEmbedDescription>
+
+    <PostImage bind:post={post}  displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
+
+{:else if !post.post.thumbnail_url}
+    <span class="flex flex-row w-full gap-2 px-1">
+        <ArchiveLinkSelector url={post.post?.url} postType='bandcamp'/>   
         <Link
             href={post.post.url}
             title={post.post.name}
@@ -135,15 +157,5 @@
             highlight nowrap
             domainOnly={!$userSettings.uiState.showFullURL}
         />
-    </PostEmbedDescription>
-
-    <PostImage bind:post={post}  displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
-
-{:else if !post.post.thumbnail_url}
-    <Link
-        domainOnly={!$userSettings.uiState.showFullURL}    
-        href={post.post.url}
-        title={post.post.name}
-        highlight nowrap
-    />
+    </span>
 {/if}
