@@ -68,7 +68,7 @@
     
     <!---Comment Reply Button--->
     <Button size="sm" color="tertiary-border"
-        disabled={comment.post.locked || !$profile?.user || !onHomeInstance} hidden={comment.post.locked || !$profile?.user}
+        disabled={comment.post.locked || comment.post.removed || comment.post.deleted || !$profile?.user || !onHomeInstance} hidden={comment.post.locked || !$profile?.user}
         on:click={() => (replying = !replying)}
     >
         <Icon src={ArrowUturnLeft} width={14} height={14} mini />

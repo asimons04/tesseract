@@ -24,7 +24,7 @@
 <Button
     size="sm"
     color="tertiary-border"
-    disabled={post.post.locked || !$profile?.user || !onHomeInstance}
+    disabled={post.post.locked || post.post.removed || post.post.deleted || !$profile?.user || !onHomeInstance}
     hidden={post.post.locked || !$profile?.user}
     on:click={() => { dispatcher('reply') }}
 >
