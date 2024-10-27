@@ -359,7 +359,8 @@ export const YTFrontends = {
         'watchapi.pluto.lat',
         'piped.syncpundit.io',
         'piped.yt',
-        ...strToArray(env.PUBLIC_CUSTOM_INVIDIOUS)
+        ...strToArray(env.PUBLIC_CUSTOM_INVIDIOUS),
+        ...strToArray(env.PUBLIC_CUSTOM_PIPED)
     ].sort()
 }
 
