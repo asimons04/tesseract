@@ -1,7 +1,8 @@
 <script lang="ts">
     import type { PostType, PostDisplayType } from './helpers.js'
     import type { CommunityModeratorView, PostView } from 'lemmy-js-client'
-
+    
+    import PostAudio from '$lib/components/lemmy/post/PostAudio.svelte'
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
@@ -32,6 +33,11 @@
 <!--- Direct Image Post --->
 {#if postType == "image"}
     <PostImage bind:post {displayType}/>
+{/if}
+
+<!--- Direct Audio FIle Post --->
+{#if postType == "audio"}
+    <PostAudio bind:post bind:postContainer {displayType}/>
 {/if}
 
 <!--- Direct Video Post --->

@@ -127,6 +127,7 @@
         // Don't try to pull metadata for direct media links
         if (isImage(url) || isAudio(url) || isVideo(url)) {
             postType = getPostType(post)
+            post = post
             loading = false
             return
         }
