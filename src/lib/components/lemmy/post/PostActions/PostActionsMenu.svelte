@@ -166,7 +166,7 @@
         {#if onHomeInstance && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
             
             <!---Report Post--->
-            <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary">
+            <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary" disabled={post.post.removed}>
                 <Icon src={Flag} width={16} mini />
                 Report Post
             </MenuButton>
