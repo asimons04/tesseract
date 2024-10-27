@@ -71,7 +71,7 @@
                     {/if}
                 </div>
                 
-                {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isVideo(post.post.url))}
+                {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url))}
                     
                     <div class="flex-none w-[128px] h-[128px] mx-auto mt-2 overflow-hidden">
                     
