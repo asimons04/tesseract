@@ -50,12 +50,15 @@
         ExclamationCircle,
         Eye,
         Icon, 
+        MagnifyingGlass, 
         PencilSquare,
         Photo,
         QueueList,
         Window,
         XCircle
     } from 'svelte-hero-icons'
+    import CrosspostItem from './CrosspostItem.svelte';
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
     
     
     // The post to edit, as passed from the PostActions component
@@ -102,10 +105,14 @@
     let previewing       = false
     let fetchingMetadata = false
     let previewPost: PostView | undefined
-    let resetting       = false
-    let compactPosts = false
-
-    let displayType = 'post' as 'post' | 'feed'
+    let resetting        = false
+    let compactPosts     = false
+    
+    
+    let searching        = false
+    let showSearch       = false
+    let URLSearchResults = [] as PostView[]
+    
 
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
@@ -116,6 +123,9 @@
     $: if ($userSettings.proxyMedia.useForImageUploads && uploadResponse?.url)     data.url = imageProxyURL(uploadResponse.url)
     $: if (!$userSettings.proxyMedia.useForImageUploads && uploadResponse?.url)    data.url = uploadResponse.url
 
+    // Reset URL search results when the community changes
+    //$:  data.community, resetSearch()
+    $:  data.community, rerunSearch()
     async function submit() {
         if (!data.name || !$profile?.jwt) return
         
@@ -312,6 +322,56 @@
         } 
     }
 
+    function resetSearch() {
+        URLSearchResults = []
+        showSearch = false
+    }
+
+    function rerunSearch() {
+        URLSearchResults = []
+        if (data.url) {
+            searchForPostByURL(true)
+        }
+        else {
+            showSearch = false
+        }
+    }
+
+    async function searchForPostByURL(background:boolean=false) {
+        if (!data.url) return
+        URLSearchResults = [] as PostView[]
+        
+        try {
+            searching = true
+            showSearch = !background && true
+
+            const instance = data.community
+                ? new URL(data.community.actor_id).hostname
+                : undefined
+
+            const community_name = data.community
+                ? data.community.name + '@' + new URL(data.community.actor_id).hostname
+                : undefined
+            
+                let results = await getClient(instance).search({
+                q: data.url,
+                type_: 'Url',
+                community_name: community_name
+            })
+
+            searching = false
+            URLSearchResults = URLSearchResults = results?.posts ?? []
+
+            if (background && URLSearchResults.length > 0) showSearch = true
+
+
+        }
+        catch (err) {
+            searching = false
+        }
+
+    }
+
 
    
 </script>
@@ -411,8 +471,11 @@
             <TextInput required label="Title" bind:value={data.name} />
             
             <!--- Post URL and URl-related buttons--->
-            <div class="flex gap-2 w-full items-end">
+            <div class="flex flex-row gap-2 w-full items-end">
                 <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse) ? true : false} 
+                    on:change={() => {
+                        if (!inModal) searchForPostByURL(true)
+                    }}
                     on:paste={async (e) => { 
                         pastingImage = true
                         const imageBlob = await readImageFromClipboard(e.detail) 
@@ -430,6 +493,14 @@
                     loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || uploadResponse} title="Fetch title and description"
                     on:click={() => (getWebsiteMetadata())}
                 />
+
+                <!---Search for any crossposts to that URL--->
+                <Button color="tertiary-border" size="square-form" 
+                    icon={MagnifyingGlass} iconSize={18}
+                    loading={searching} disabled={!data.url || searching || fetchingMetadata || uploadResponse} title="Search for Existing Posts"
+                    on:click={() => (searchForPostByURL())}
+                    hidden={inModal}
+                />
                 
 
                 <!---Upload an Image--->
@@ -444,6 +515,39 @@
                     }}
                 />
             </div>
+
+            <!---Results for Existing Posts by that URL--->
+            
+            {#if showSearch}
+            <div class="flex flex-col gap-2 items-start w-full p-2 border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50">
+                
+                <div class="flex flex-row items-start w-full justify-between">
+                    <span class="font-bold text-sm text-left mb-1 w-max self-start">
+                        { data.community ? `Existing posts in ${data.community.name}@${new URL(data.community.actor_id).hostname}:` : 'Crossposts:'}
+                    </span>
+                    
+                    <Button color="primary" size="md" class="h-8"
+                        icon={XCircle} iconSize={18} 
+                        on:click={() => resetSearch() }
+                    >
+                    Clear
+                </Button>
+
+                </div>
+
+                {#if searching}
+                    <Spinner />
+                {:else if URLSearchResults.length > 0}
+                    <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex w-full flex-col">
+                        {#each URLSearchResults as crosspost}
+                            <CrosspostItem crosspost={crosspost} showTitle showUser/>
+                        {/each}
+                    </div>
+                {:else}
+                    <span class="mx-auto">No Results</span>
+                {/if}
+            </div>
+            {/if}
 
             <!--- Post Body --->
             <!---<MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>--->
