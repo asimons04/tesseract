@@ -67,7 +67,7 @@
                     : ''
                 }
             ">
-                <Markdown bind:source {inline} />
+                <Markdown bind:source {inline} noImages/>
             </div>
         {/if}
     {/if}
