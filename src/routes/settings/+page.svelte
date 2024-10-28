@@ -619,12 +619,12 @@
     <SettingsCollapseSection bind:expanded={open.media} icon={Gif} title="Media">
         <!--- Enable Embedded Content In Feed--->
         <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed}
-            description="Enable embedded content in the feed. When disabled, a thumbnail will be shown instead."
+            description="Enable embedded content in the feed. When disabled, a click-to-play thumbnail will be shown instead."
         />
 
         <!--- Enable Embedded Content In Posts--->
         <SettingToggle title="Enable Embeds in Posts" icon={Film} bind:value={$userSettings.embeddedMedia.post}
-            description="Enable embedded content in the posts. When disabled, a thumbnail will be shown instead."
+            description="Enable embedded content in the posts. When disabled, a click-to-play thumbnail will be shown instead."
         />
 
         <!--- Enable Autoplay--->
@@ -649,6 +649,7 @@
         <SettingMultiSelect title="Preferred Custom YouTube Instance" icon={Film} description="Select your prefererred custom YouTube frontend."
             options={ [...$userSettings.embeddedMedia.userDefinedInvidious].sort() }
             bind:selected={$userSettings.embeddedMedia.customInvidious}
+            condition={$userSettings.embeddedMedia.userDefinedInvidious.length > 0}
         />
         
         <!---Custom Invidious Instance Editor--->
