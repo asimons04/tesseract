@@ -45,7 +45,7 @@ export type FeedType = 'All' | 'Subscribed' | 'Local'
 
 export type YouTubeFrontend = "YouTube" | "Custom"
 
-export type PostViewType = 'card' | 'compact' | 'wide-compact' | 'more-compact' | 'ultra-compact' | 'reader'
+export type PostViewType = 'card' | 'compact' | 'compacter' | 'wide-compact' | 'more-compact' | 'ultra-compact' | 'reader'
 
 interface Settings {
     version: number
