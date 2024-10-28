@@ -8,6 +8,7 @@ const $userSettings = get(userSettings)
 export interface CustomMarkdownOptions extends MarkdownOptions {
     custom: {
         noPreview?: boolean
+        noImages?: boolean
     }
 }
 

@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Tokens } from 'marked'
-    
+    import type { CustomMarkdownOptions } from '../markdown';
+
     import { imageProxyURL } from '$lib/image-proxy';
     import {
         fixLemmyEncodings,
@@ -10,11 +11,13 @@
     } from '$lib/components/lemmy/post/helpers'
     import { userSettings } from '$lib/settings';
 
+
     import Link from '$lib/components/input/Link.svelte';
     import PostIsInViewport from '$lib/components/lemmy/post/utils/PostIsInViewport.svelte'
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
 
     export let token: Tokens.Image
+    export let options: CustomMarkdownOptions
 
     let inViewport = false
     let container:HTMLDivElement
@@ -23,7 +26,7 @@
 
 <PostIsInViewport bind:postContainer={container} bind:inViewport />
 
-{#if $userSettings.inlineImages}
+{#if !options.custom.noImages && $userSettings.inlineImages}
 
     <div bind:this={container} class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 m-1 rounded-2xl w-full lg:w-[60%] p-2">
         <div class="ml-auto mr-auto max-w-full">
@@ -85,6 +88,11 @@
     </div>
 
 {:else}
-    <Link highlight href={token.href} title={token.title} text={token.href} newtab={$userSettings.openInNewTab.links}/>
+    <Link highlight preview
+        href={token.href} 
+        title={token.text && token.text.trim() != '' ? token.text : token.href} 
+        text={token.text && token.text.trim() != '' ? token.text : token.href}  
+        newtab={$userSettings.openInNewTab.links} 
+    />
 {/if}
   

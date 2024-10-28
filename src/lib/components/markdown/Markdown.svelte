@@ -28,6 +28,7 @@
     export let noUserCommunityLink: boolean = false
     export let noLink: boolean = false
     export let noHashtags: boolean = false
+    export let noImages: boolean = false
 
     let mdText:string
     
@@ -87,6 +88,7 @@
                 //@ts-ignore (Adding a custom object to the options that get passed to the renderers)
                 custom: {
                     noPreview: noPreview,
+                    noImages: noImages
                 }
             }}
             renderers={{
