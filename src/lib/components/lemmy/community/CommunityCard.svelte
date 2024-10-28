@@ -169,9 +169,9 @@
                     </div>
                     
                     
-                    <div class="flex flex-col gap-0 w-full">
+                    <div class="flex flex-col gap-0 w-full" style="width: calc(100% - 75px);">
                         <div class="flex flex-row">
-                            <h1 class="flex flex-row gap-1 items-center font-bold text-xl capitalize">
+                            <h1 class="font-bold truncate text-ellipsis text-xl capitalize">
                                 <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
                                     {community_view.community.title.replace('&amp;', '&')}
                                 </a>
@@ -300,7 +300,7 @@
                             <!--- End Community Action Menu --->
                         </div>
                             
-                        <span class="dark:text-zinc-400 text-slate-600 text-xs">
+                        <span class="dark:text-zinc-400 text-slate-600 truncate text-ellipsis text-xs">
                             !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
                         </span>
                     </div>
