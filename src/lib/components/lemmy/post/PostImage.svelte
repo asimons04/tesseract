@@ -4,7 +4,8 @@
     
     import { createEventDispatcher } from 'svelte'
     import { unproxyImage } from './helpers'
-    
+    import { userSettings } from '$lib/settings'
+
     import ImageContainer from './utils/ImageContainer.svelte'
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte'
     import ClickToPlayOverlay from './utils/ClickToPlayOverlay.svelte';
@@ -42,7 +43,7 @@
 </script>
 
 <ImageContainer>
-    {#if displayType == 'feed'}
+    {#if displayType == 'feed' || (displayType == 'post' && !$userSettings.embeddedMedia.post)}
         <ClickToPlayOverlay bind:show={clickToPlay} displayType={displayType} on:click={(e)=> dispatcher('click', e)}/>
         
         <ZoomableImage url={thumbnail_url} bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={zoomable}

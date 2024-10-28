@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PostDisplayType } from '../helpers';
     import { createEventDispatcher } from 'svelte'
+    import { userSettings } from '$lib/settings'
     
     import { Icon, Play } from 'svelte-hero-icons'
 
@@ -12,7 +13,7 @@
 
 
 <!---Click to Remove Blur--->    
-{#if show && displayType =='feed'}
+{#if show && (displayType =='feed' || (displayType == 'post' && !$userSettings.embeddedMedia.post))}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="absolute z-[5] left-0 top-0 w-full h-full bg-black/35" 
