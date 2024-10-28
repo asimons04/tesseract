@@ -209,7 +209,7 @@
             
             {#if $profile.jwt && $profile?.user && $profile.user?.local_user_view.person.id != comment.creator.id}
                 <!---Report Comment--->    
-                <MenuButton on:click={() => report(comment)} color="dangerSecondary">
+                <MenuButton on:click={() => report(comment)} color="dangerSecondary" disabled={comment.comment.removed}>
                     <Icon src={Flag} mini size="16" />
                     <span>Report</span>
                 </MenuButton>
