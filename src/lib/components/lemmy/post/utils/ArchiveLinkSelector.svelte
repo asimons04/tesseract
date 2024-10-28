@@ -46,7 +46,7 @@
        
         
         
-        {#if ['link', 'thumbLink'].includes(postType) || (postType == 'youtube' && $userSettings.embeddedMedia.customInvidious)}
+        {#if ['link', 'thumbLink', 'youtube'].includes(postType)}
             <div class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-[175px]">
                 Alternate Sources
                 <span class="ml-auto"/>
@@ -107,7 +107,7 @@
         {/if}
 
 
-        {#if ['link', 'thumbLink'].includes(postType) || (postType == 'youtube' && $userSettings.embeddedMedia.customInvidious) }
+        {#if ['link', 'thumbLink', 'youtube'].includes(postType) }
             <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
         {/if}
         
