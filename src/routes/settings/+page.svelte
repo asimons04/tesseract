@@ -519,15 +519,7 @@
             options={[false, true]} optionNames={['Cards', 'Compact']}
             bind:selected={$userSettings.showCompactPosts}
         />
-
-
-        <!---Feed Image Size--->
-        <SettingMultiSelect title="Image Size" icon={Photo} description="Set the size for post images in the feed"
-            optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
-            options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
-            bind:selected={$userSettings.imageSize.feed}
-        />
-
+       
         <!---Post Body Preview Length--->
         <SettingMultiSelect title="Post Body Preview Length" icon={Photo} description="Number of characters to show in the post body preview before
             hiding behind the expand slider. You can also optionally disable the post body preview in the feed."
@@ -589,14 +581,7 @@
             options={['Hot', 'Top', 'New']}
             bind:selected={$userSettings.defaultSort.comments}
         />
-                
-        <!---Post Image Size--->
-        <SettingMultiSelect title="Image Size" icon={Photo} description="Set the size of the images when viewing posts."
-            optionNames={['Small', 'Medium', 'Large', 'Extra Large', 'Full Width']}
-            options={['max-w-sm', 'max-w-md', 'max-w-3xl', 'max-w-4xl', 'w-full']}
-            bind:selected={$userSettings.imageSize.post}
-        />
-                
+               
         <!---Inline Images--->
         <SettingToggle title="Inline Images" icon={Photo} description="Enable inline images in posts and comments. If disabled, inline images will be shown as a link."
             bind:value={$userSettings.inlineImages}

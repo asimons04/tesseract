@@ -64,16 +64,6 @@ export function isPostView(item: PostView | CommentReplyView | PersonMentionView
     return !('comment' in item)
 }
 
-// Return the image size based on the display type (feed/post) and the user's preference
-export const imageSize = (displayType:PostDisplayType, ) => {
-    if (displayType == 'feed') {
-        return userSettings.imageSize.feed;
-    }
-    else if (displayType == 'post') {
-        return  userSettings.imageSize.post;
-    }
-}
-
 // Check if the provided URL is an image
 export const isImage = (url: string | undefined) => {
     try {

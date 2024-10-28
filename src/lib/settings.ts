@@ -96,10 +96,6 @@ interface Settings {
         autoplay: boolean
         loop:boolean
     }
-    imageSize: {
-        feed: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
-        post: 'max-w-sm' | 'max-w-md'| 'max-w-3xl' | 'max-w-4xl' | 'w-full'
-    }
     linkifyHashtags: boolean
     extractFlairsFromTitle: boolean,
     uiState: {
@@ -147,7 +143,7 @@ interface Settings {
 
 // Default settings
 export const defaultSettings: Settings = {
-    version: 11,
+    version: 13,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -160,10 +156,6 @@ export const defaultSettings: Settings = {
     },
     font: 'font-roboto',
     debugInfo: false,
-    imageSize: {
-        feed: 'w-full',
-        post: 'w-full'
-    },
     highlightCode: true,
     highlightInlineCode: false,
     inlineImages: true,
@@ -302,6 +294,7 @@ export const YTFrontends = {
         'inv.tux.pizza',
         'invidious.io.lol',
         'inv.makerlab.tech',
+        'inv.nadeko.net',
         'inv.zzls.xyz',
         'invidious.incogniweb.net',
         'invidious.perennialte.ch',
@@ -393,7 +386,6 @@ export function migrateSettings(old:any) {
             // Change image size from string to object; populate with default vaules
             if (typeof old.imageSize == 'string') {
                 delete old.imageSize;
-                old.imageSize = defaultSettings.imageSize;
             }
 
             
@@ -470,18 +462,21 @@ export function migrateSettings(old:any) {
 
         // 0.7 -> 0.8
         if (old.version == 0.7) {
-            delete old.systemUI
+            try { delete old.systemUI }
+            catch {}
             old.version = 0.8
         }
 
         // 0.8 -> 0.9
         if (old.version == 0.8) {
-            delete old.embeddedMedia.enabledSources
+            try { delete old.embeddedMedia.enabledSources}
+            catch {}
             old.version = 0.9
         }
 
         if (old.version == 0.9) {
-            delete old.uiState.fediseerBadges;
+            try { delete old.uiState.fediseerBadges }
+            catch {}
             old.version = 10
         }
 
@@ -489,6 +484,28 @@ export function migrateSettings(old:any) {
             if (old?.embeddedMedia?.customPiped) delete old.embeddedMedia.customPiped
             if (old?.embeddedMedia?.userDefinedPiped) delete old.embeddedMedia.userDefinedPiped
             old.version = 11
+        }
+
+        if (old.version == 11) {
+            try { delete old.imageSize }
+            catch {}
+            old.version = 12
+        }
+
+        if (old.version == 12) {
+            // Cleanup some old settings keys that are no longer used and may still be present
+            try { delete old.newComments }
+            catch {}
+            try { delete old.newVote }
+            catch {}
+            try { delete old.revertColors}
+            catch {}
+            try { delete old.showEmbeds }
+            catch {}
+            try { delete old.youtubeFrontend }
+            catch {}
+
+            old.version = 13
         }
     }
     catch (err) {
@@ -508,7 +525,6 @@ export function migrateSettings(old:any) {
             ...defaultSettings.embeddedMedia,
             ...old.embeddedMedia,
         },
-        imageSize:      {...defaultSettings.imageSize, ...old.imageSize},
         uiState:        {...defaultSettings.uiState, ...old.uiState},
         proxyMedia:     {...defaultSettings.proxyMedia, ...old.proxyMedia}
     }

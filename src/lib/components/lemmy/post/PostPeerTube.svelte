@@ -3,20 +3,17 @@
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import IFrame from './utils/IFrame.svelte'
     import Link from '$lib/components/input/Link.svelte'
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-
-    import { imageSize } from './helpers.js'
-    import PostEmbedDescription from './PostEmbedDescription.svelte';
-    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
 
     export let post: PostView
     export let displayType: PostDisplayType
     export let postContainer: HTMLDivElement
     
-    let size: string = imageSize(displayType);
     let inViewport = false
     let embedURL: URL
     let clickToPlayClicked = false
@@ -67,7 +64,7 @@
         </span>
     </PostEmbedDescription>    
 
-    <IFrame bind:embedURL bind:size bind:title={post.post.name} />
+    <IFrame bind:embedURL bind:title={post.post.name} />
 
 {:else if post.post.thumbnail_url}
     <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail

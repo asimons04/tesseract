@@ -3,7 +3,6 @@
     import type { PostView } from 'lemmy-js-client'
     
     import { userSettings,  } from '$lib/settings.js'
-    import { imageSize} from './helpers.js'
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import IFrame from './utils/IFrame.svelte'
@@ -21,7 +20,6 @@
     let inViewport = false
     let embedURL:   URL
     let clickToPlayClicked = false
-    let size: string = imageSize(displayType);
     
     // Check for a defined embed URL and use that if available
     $:  if (post.post && post.post.embed_video_url) {
@@ -63,7 +61,7 @@
         </span>
     </PostEmbedDescription>
     
-    <IFrame bind:embedURL bind:size bind:title={post.post.name} />
+    <IFrame bind:embedURL bind:title={post.post.name} />
 
 {:else if post.post.thumbnail_url}
     <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail

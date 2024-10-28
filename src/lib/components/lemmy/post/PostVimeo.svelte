@@ -1,7 +1,7 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings.js'
 
-    import { buildVimeoEmbedLink, imageSize} from './helpers.js'
+    import { buildVimeoEmbedLink} from './helpers.js'
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
@@ -20,7 +20,6 @@
 
     let inViewport = false
     let embedURL:   URL | null | undefined
-    let size: string = imageSize(displayType);
     let clickToPlayClicked = false
 
     $: if (post?.post?.url) embedURL = buildVimeoEmbedLink(post.post.url, displayType, autoplay)
@@ -56,7 +55,7 @@
         </span>
     </PostEmbedDescription>
     
-    <IFrame bind:embedURL bind:size bind:title={post.post.name} />
+    <IFrame bind:embedURL bind:title={post.post.name} />
 
 {:else if post.post.thumbnail_url}
     <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail

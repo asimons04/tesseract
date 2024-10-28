@@ -2,8 +2,7 @@
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
-    import { getInstance } from '$lib/lemmy.js'
-    import { imageSize, unproxyImage, postType as identifyPostType } from './helpers.js'
+    import { unproxyImage, postType as identifyPostType } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
@@ -18,7 +17,6 @@
     export let displayType: PostDisplayType
     export let compact: boolean = false
 
-    let size: string    = imageSize(displayType);
     let postType = 'text'
     $: post, postType = identifyPostType(post)
 
@@ -69,7 +67,7 @@
         {#if displayType == 'feed'}
             <!--<a href="/post/{getInstance()}/{post.post.id}" target={ (displayType== 'feed' && $userSettings.openInNewTab.posts) ? '_blank' : undefined } >-->
                 <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
-                    <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
+                    <div class="ml-auto mr-auto max-w-full">
                         <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
                         <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
@@ -84,7 +82,7 @@
             <!--</a>-->
         {:else if displayType == 'post'}
             <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
-                <div class="ml-auto mr-auto {size ?? 'max-w-3xl'}">
+                <div class="ml-auto mr-auto max-w-full">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
                     <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 

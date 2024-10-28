@@ -2,7 +2,7 @@
     import type {PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
 
-    import { buildYouTubeEmbedLink, imageSize } from './helpers'
+    import { buildYouTubeEmbedLink } from './helpers'
     import { userSettings } from '$lib/settings.js'
     
     import Link from '$lib/components/input/Link.svelte'
@@ -20,7 +20,6 @@
     
     let embedURL:   URL | null | undefined
     let inViewport = false
-    let size: string = imageSize(displayType);
     let clickToPlayClicked = false
 
     
@@ -81,7 +80,7 @@
         </span>
     </PostEmbedDescription>
     
-    <IFrame bind:embedURL bind:size bind:title={post.post.name} />
+    <IFrame bind:embedURL bind:title={post.post.name} />
     
 
 <!---IF embeds disabled, show as an image with link + alternate source selector menu--->

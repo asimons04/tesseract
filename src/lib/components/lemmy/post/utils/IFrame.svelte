@@ -1,5 +1,4 @@
 <script lang="ts">
-    export let size: string = "max-w-3xl"
     export let embedURL:URL
     export let title:string = ''
 </script>
@@ -22,7 +21,7 @@
 </style>
 
 <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full p-1">
-    <div class="ml-auto mr-auto {size}">
+    <div class="ml-auto mr-auto max-w-full">
         <div class="flexiframe-container rounded-2xl max-w-screen max-h-[480px] mx-auto">
             <iframe 
                 class="flexiframe"
