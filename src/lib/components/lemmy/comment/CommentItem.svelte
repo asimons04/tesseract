@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { CommentView } from 'lemmy-js-client'
 
+    import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import Comment from '$lib/components/lemmy/comment/Comment.svelte'
@@ -17,8 +18,12 @@
     
     import {
         Icon,
-        ArrowTopRightOnSquare
+        ArrowTopRightOnSquare,
+        LockClosed,
+        NoSymbol,
+        Trash
     } from 'svelte-hero-icons'
+    
 
     export let comment: CommentView
     export let actions:boolean = true
@@ -48,25 +53,48 @@
             </Button>
         </div>
         
-        <a 
-            href="/post/{getInstance()}/{comment.post.id}"
-            target="_blank"
-            on:click={
-                (
-                    //@ts-ignore
-                    e
-                ) => {
-                    // Use goto instead of href to avoid occasionally reloading the whole app on page transition
-                    if (!$userSettings.openInNewTab.posts) { 
-                        e.preventDefault()
-                        e.stopPropagation()
-                        goto(`/post/${getInstance()}/${comment.post.id}`)
-                    }
-                }} 
-            class="text-sm font-bold text-left"
-        >
-            <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noHashtags/>
-        </a> 
+        <div class="flex flex-row justify-between gap-1 items-center">
+            <a 
+                href="/post/{getInstance()}/{comment.post.id}"
+                target="_blank"
+                on:click={
+                    (
+                        //@ts-ignore
+                        e
+                    ) => {
+                        // Use goto instead of href to avoid occasionally reloading the whole app on page transition
+                        if (!$userSettings.openInNewTab.posts) { 
+                            e.preventDefault()
+                            e.stopPropagation()
+                            goto(`/post/${getInstance()}/${comment.post.id}`)
+                        }
+                    }} 
+                class="text-sm font-bold text-left"
+            >
+                <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noHashtags/>
+            </a> 
+            
+            <!---Indicator Badges--->
+            {#if comment.post.removed}
+                <Badge label="Removed" color="red">
+                    <Icon src={NoSymbol} mini size="14" />
+                </Badge>
+            {/if}
+
+            {#if comment.post.locked}
+                <Badge label="Locked" color="yellow">
+                    <Icon src={LockClosed} mini size="14" />
+                </Badge>
+            {/if}
+
+            {#if comment.post.deleted}
+                <Badge label="Deleted" color="red">
+                    <Icon src={Trash} mini size="14" />
+                </Badge>
+            {/if}
+
+            
+        </div>
        
         <div class="list-none">
             <Comment postId={comment.post.id} replying={false} {actions} {collapseBadges} node={{ children: [], comment_view: comment, depth: 1 }} />
