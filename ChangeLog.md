@@ -2,15 +2,7 @@
 All major/minor changes between releases will be documented here.  
 
 
-Plans:
-1)  Remove full support for Invidious and Piped :(
-    - Combine Invidious and Piped public instances list in settings; use only for detection of older post media
-    - Combine Invidious and Piped custom fields in user settings; the URL format is interchangeable, so no real need to have separate lists
-    - Remove Piped/Invidious from alternate source selector unless user has set their own custom Inv/Piped instance in their settings
-    - Update YouTube component to default to re-writing all videos using canonical YT link; only rewrite if user has set their own custom instance
-
-
-
+## Plans/Ideas to Implement Eventually:
 1) Re-write search and community browser to keep state in URL params instead of locally
     - They currently both reset when you navigate away and back
     - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
@@ -53,59 +45,97 @@ removeAdmin {username}
 ```
 
 ## 1.4.20
-### Bugfixes
-- May only have been an issue for admins, but administratively hidden and removed communities no longer show up in community autocomplete results.
-    - They will no longer show up in general community auto complete boxes except in the modlog.
-- [7fdd2e55] Fixed full URLs not truncating properly when that option is enabled
+### Bugfixes: Minor
+- May only have been an issue for admins, but administratively hidden and removed communities will now no longer show up in community autocomplete results.
+    - They will still show up when filtering for a community in the modlog though (though only admins should be able to see those results)
+- Fixed full URLs not truncating properly when "Show Full URLs" option is enabled
+- Fixed issue with click-to-play not working on post pages if media is disabled on post pages.
+- Disable "reply" button if post is removed or deleted
+- Disable 'report' post action if post alredy removed (I *think* deleted posts can still be reported, though. Need to double-check the API behavior.)
+- Disable 'report' comment action if comment already removed.
+- Fixed Gifs not previewing if just 'url' is present (i.e. no thumbanil_url or embed_video_url)
+- Indicate post's removed/deleted/lock state in the comment item component when viewing profiles
 
-### Misc
-Reworked the community drop down again.  Now defaults to "Favorites" but you can set your preference in Settings - > General.  
+### Bugfixes: Major
+#### Image Cache Housekeeping
+Fixed image cache housekeeping not working correctly.  
 
-### To do:
-- Remove all references to imageSize() function and replace with a static `max-w-full` to use the built-in 40vh limit for feed images
-- Remove user settings for post and feed image sizes
-- [x] Show link selector, link, and MBFC even if metadata fails to load in preview modal
+There were changes to `fs/promises` that I missed, and some functionality changed along with a few of the member variables being deprecated.  This was causing the directory content calculations to silently fail safe (returned 0 rather than crashing).  
 
-- Indicate removed/deleted in the comment item component when viewing profile
-- [x] Gifs not previewing just 'url' is present (i.e. no thumbanil_url or embed_video_url)
-- [x] Disable "reply" button if post is removed or deleted
-- [x] Disable 'report post action if post removed
+As a result, nothing was ever getting evicted from the cache.
+
+If you are using the cache functionality of the image proxy, you will likely notice that startup takes a bit longer this time if you have housekeeping set to run at startup (recommended).  This is because it will be housekeeping all of the cached objects it should have been housekeeping all along.  Once the initial cleanup of the backlog has completed, further startups should complete in the normal/expected amount of time.
+
+If startup takes too long, you can always delete all of the `.cache` objects manually from the mounted cache folder.  See the [Media Proxy docs](docs/MediaProxy.md) for configuration options.
+
+## New Features / Changes
+
+### Create Post Form Now Automatically Searches for Crossposts/Duplicates
+When you are creating a post, the URL will be searched to see if you're posting something that's already been posted.  It should do this automatically when the URL field changes or the URL is set and the community changes.  The behavior is slightly different depending on if a community is defined:
+
+1) If the community is **not** set, then it will search for any posts on your instance matching that URL.  The label will be "Crossposts".
+
+1) If the community **is** set, then it will do a remote API call to search the *home instance of that community* for any posts to that community with that URL.  The label will be "Existing posts in {community}@{instance}.
+
+The latter behavior is particularly useful if you want to avoid accidentally posting a duplicate that may have been posted by someone you've blocked or by someone your instance doesn't federate with.  Those posts may not be visible to you locally, so the remote search should help identify them so you don't clutter up the feed and/or add extra work for the moderator who usually removes duplicate posts.
+
 
 
 ### Piped/Invidious Support Changes
-Since YouTube has gone to war against alternate frontends (and is sadly winning), most public instances no longer work.  However, I believe that private/small instances can still work. Since the public instances are pretty much all broken, Invidious/Piped support has been modified to only be enabled if the user supplies their own instance.
+Since YouTube has gone to war against alternate frontends (and is sadly winning), most public instances no longer work.  However, I believe that private/small instances may still function as expected. 
 
-The distinction between Invidious and Piped has also been removed since the link formats are interchangeable.  Now, in Settings, the YT frontend has been changed to just "YouTube" and "Custom".  The custom instance list can contain Invidious or Piped instances.
+Since the public instances are pretty much all broken or only partially working, **Invidious/Piped support has been modified to only be enabled if the user supplies their own instance.**
+
+
+The distinction between Invidious and Piped has also been removed since the link formats are interchangeable.  Now, in Settings, the YT frontend has been changed to just "YouTube" and "Custom".  The custom instance list can contain Invidious and/or Piped instances.
 
 The alternate link selector for YouTube videos will now also only show "Invidious/Piped" option if you have defined at least one. 
 
-As before, multiple can be defined but one will need to be selected as the default.
+As before, multiple custom instances can be defined but one will need to be selected as the default.  That one will be used for the alternate source selector and, optionally/separately, as the embed player.
 
-The internal lists of public Invidious and Piped instances has been combined and is only used for detection; formerly, these could be selected as frontends.
+**Note**:  You can keep YouTube as the default embed player while also adding a custom Invidious/Piped instance to act as alternate links in the alternate source link menu.
+
+The internal lists of public Invidious and Piped instances has been combined and **are only used for detection**; formerly, these could be selected as frontends.
+
+On the admin side of things, the env var `PUBLIC_CUSTOM_PIPED` has been deprecated.  For now, it will simply be combined with the `PUBLIC_CUSTOM_INVIDIOUS` list.  Eventually the Piped list will be removed, but that is TBD.  Those lists are also only used for detection and are no longer presented as possible frontends for the user to select.  If a user wants to use Invidious/Piped, they *must* supply their own instance in their settings.
+
+
+## Post Rendering Refreshes
+- Better display of metadata from posted links
+
+- Cleaner compact view (also incorporates metadata display better)
+
+- Feed images are limited to a maximum of 40% viewport height.  This still gives the nice "card" effect while also not making posts massive. They were formerly limited to 80vh, but even this is no longer needed since the ZoomableImage component was integrated.  
+
+- Removed user settings for post and feed image sizes since they're no longer needed with the new compact and card view tweaks described above.
+
+- Post body images are now hidden in the feed and a link shown in their place.  Clicking the link will open them in a preview modal.  Unless the option to disable inline images is turned on, then they will still show as embeds when opening the post.  This should help compact mode stay compact rather than some of them being massive with one or more post body images slipping through.
+
+- Direct video (mp4, webm, etc) posts now use the video metadata for the thumbnail if OP didn't post a custom one. Also works in compact view now.
+
+- Bandcamp embeds are now smaller.
+
+- All media renderers now show the embed metadata alongside the post details.
+
+- Direct audio links (MP3, etc) now have renderers; they only rendered in the markdown post body and comments previously. Now if the post URL is an audio link, a player will embed.
+
+
+
+- Show link selector, link, and MBFC even if metadata fails to load in preview modal.  Also show that info while fetching metadata.
 
 
 ### New View Option
 **Compacter**:  Same as compact but post body is fully collapsed.  Same as "More Compact" but not full width.
 
 
-### Post Renderer Revamps
-- Better display of metadata from posted links
-- Cleaner compact view (also incorporates metadata display better)
-- Feed images are limited to a maximum of 40% viewport height.  This still gives the nice "card" effect while also not making posts massive. They were formerly limited to 80vh, but even this is no longer needed since the ZoomableImage component was integrated.
+## Better Integration with Pifed/Mbin/etc
+When clicking a link that goes to a post or comment, Tesseract will massage the URL to attempt to render it locally.  This works well for Lemmy, but non-Lemmy services which use the same `/post/{id}` and `/comment/{id}` URL format don't work with Lemmy API calls.  
 
-- Direct video (mp4, webm, etc) posts now use the video metadata for the thumbnail if OP didn't post a custom one. Also works in compact view now.
-- Bandcamp embeds are now smaller
-- Direct audio links (MP3, etc) now have renderers; they only rendered in the markdown post body and comments previously. Now if the post URL is an audio link, a player will embed.
+Before, this would throw a generic 500 "Failed to fetch post" error.  The UX has been improved in this release by showing a clearer error message as well as a button to visit the post on its home instance.
 
+Additionally, if a local post fails to load, added conditional verbiage to indicate a local post may have been removed by its creator or removed by a moderator. 
 
-
-### Misc: Better Integration with Pifed/Mbin/etc
-When clicking a link to a post or comment, Tesseract will massage the URL to attempt to render it locally.  This works well for Lemmy, but non-Lemmy services which use the same `/post/{id}` URL format don't work with Lemmy API calls.  Before, this would throw a generic  500 "Failed to fetch post" error.  The UX has been improved in this release by showing a clearer error message as well as a button to visit the post on its home instance.
-
-- [764efe30] When a post fails to fetch via API, show a more detailed error and provide a button to try to go to the post on its home instance
-    - This is mostly an issue when clicking the canonical AP URL for other platforms like Pifed which use similar `/post/{id}` syntax.
-- [768d5bdb] Hide "goto on home instance" button if a local post fails to load; add conditional verbiage to indicate a local post may have been removed by its creator or removed by a moderator.
-
+---
 
 ## 1.4.19
 
