@@ -55,6 +55,7 @@ removeAdmin {username}
 ## 1.4.20
 ### Bugfixes
 - May only have been an issue for admins, but administratively hidden and removed communities no longer show up in community autocomplete results.
+    - They will no longer show up in general community auto complete boxes except in the modlog.
 - [7fdd2e55] Fixed full URLs not truncating properly when that option is enabled
 
 ### Misc
@@ -63,10 +64,28 @@ Reworked the community drop down again.  Now defaults to "Favorites" but you can
 ### To do:
 - Remove all references to imageSize() function and replace with a static `max-w-full` to use the built-in 40vh limit for feed images
 - Remove user settings for post and feed image sizes
-- Show link selector, link, and MBFC even if metadata fails to load in preview modal
-- Disable "reply" button if post is removed or deleted
-- Indicate removed/deleted in the comment item component when viewing profile
+- [x] Show link selector, link, and MBFC even if metadata fails to load in preview modal
 
+- Indicate removed/deleted in the comment item component when viewing profile
+- [x] Gifs not previewing just 'url' is present (i.e. no thumbanil_url or embed_video_url)
+- [x] Disable "reply" button if post is removed or deleted
+- [x] Disable 'report post action if post removed
+
+
+### Piped/Invidious Support Changes
+Since YouTube has gone to war against alternate frontends (and is sadly winning), most public instances no longer work.  However, I believe that private/small instances can still work. Since the public instances are pretty much all broken, Invidious/Piped support has been modified to only be enabled if the user supplies their own instance.
+
+The distinction between Invidious and Piped has also been removed since the link formats are interchangeable.  Now, in Settings, the YT frontend has been changed to just "YouTube" and "Custom".  The custom instance list can contain Invidious or Piped instances.
+
+The alternate link selector for YouTube videos will now also only show "Invidious/Piped" option if you have defined at least one. 
+
+As before, multiple can be defined but one will need to be selected as the default.
+
+The internal lists of public Invidious and Piped instances has been combined and is only used for detection; formerly, these could be selected as frontends.
+
+
+### New View Option
+**Compacter**:  Same as compact but post body is fully collapsed.  Same as "More Compact" but not full width.
 
 
 ### Post Renderer Revamps
@@ -76,6 +95,7 @@ Reworked the community drop down again.  Now defaults to "Favorites" but you can
 
 - Direct video (mp4, webm, etc) posts now use the video metadata for the thumbnail if OP didn't post a custom one. Also works in compact view now.
 - Bandcamp embeds are now smaller
+- Direct audio links (MP3, etc) now have renderers; they only rendered in the markdown post body and comments previously. Now if the post URL is an audio link, a player will embed.
 
 
 
