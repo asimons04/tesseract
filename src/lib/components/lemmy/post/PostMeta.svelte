@@ -39,7 +39,7 @@
     export let collapseBadges:boolean           = false;
     export let hideBadges:boolean               = false;
     export let avatarSize:number                = 48;
-    
+    export let noClick:boolean                  = false;
     
     let inCommunity:boolean     = false
     let inProfile:boolean       = false
@@ -54,7 +54,7 @@
 </script>
 
 
-<div class="flex flex-col gap-1 w-full">
+<div class="flex flex-col gap-1 w-full {noClick ? 'pointer-events-none' : ''}">
 
     <div class="flex flex-col gap-1">
 

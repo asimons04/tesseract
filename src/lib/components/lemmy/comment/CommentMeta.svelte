@@ -27,7 +27,8 @@
     export let comment: CommentView                 
     export let avatarSize = 48;
     export let hideBadges = false
-    
+    export let noClick = false
+
     let inCommunity:boolean = false
     let inProfile:boolean = false
     let subscribing:boolean = false
@@ -39,7 +40,7 @@
 </script>
 
 
-<div class="flex flex-col gap-1.5 grow">
+<div class="flex flex-col gap-1.5 grow {noClick ? 'pointer-events-none' : ''}">
 
     <div class="flex flex-col gap-1">
 
