@@ -133,20 +133,7 @@
 
 
 <MainContentArea>
-    <div class="hidden xl:flex flex-col gap-2">
-        <span class="flex gap-4 items-center font-bold text-3xl  text-center mx-auto">
-            {#if data.site.site_view.site.icon}
-                <Avatar circle={false} width={64} url={data.site.site_view.site.icon} />
-            {/if}
-            {data.site.site_view.site.name}
-        </span>
 
-        <span class="text-sm italic  text-center mx-auto">
-            {data.site.site_view.site.description}
-        </span>
-    </div>
-
-    
     <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
     <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
         on:click={() => {
