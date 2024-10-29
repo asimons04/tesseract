@@ -112,7 +112,7 @@
     let searching        = false
     let showSearch       = false
     let URLSearchResults = [] as PostView[]
-    
+    let oldCommunity:Community
 
     const dispatcher = createEventDispatcher<{ submit: PostView }>()
 
@@ -126,6 +126,7 @@
     // Reset URL search results when the community changes
     //$:  data.community, resetSearch()
     $:  data.community, rerunSearch()
+
     async function submit() {
         if (!data.name || !$profile?.jwt) return
         
@@ -328,6 +329,10 @@
     }
 
     function rerunSearch() {
+        // Hack to not search on every change to the `data` object since Svelte triggers on the whole thing and not just the `community` key.
+        if (oldCommunity == data.community) return
+        oldCommunity = data.community
+
         URLSearchResults = []
         if (data.url) {
             searchForPostByURL(true)
@@ -397,22 +402,7 @@
                 <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
                 {previewing ? 'Edit' : 'Preview'}
             </Button>
-
-            <!---Card/Compact Switch
-            <Button title="Switch to {compactPosts ? 'card view' : 'compact view'}" disabled={!previewing} color="tertiary-border"
-                on:click={async () => {
-                    compactPosts = !compactPosts
-                    //if (compactPosts) displayType='feed'
-                    //else displayType='post'
-                }}
-            >
-                <Icon src={compactPosts ? Window : QueueList} width={16} />
-                <span class="hidden md:block">
-                    {compactPosts ? 'Card' : 'Compact'}
-                </span>
-            </Button>
-            --->
-
+            
             <!--- Reset Form --->
             <Button  loading={resetting} disabled={previewing||resetting} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
                 on:click={async () => {
@@ -517,13 +507,16 @@
             </div>
 
             <!---Results for Existing Posts by that URL--->
-            
             {#if showSearch}
             <div class="flex flex-col gap-2 items-start w-full p-2 border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50">
                 
                 <div class="flex flex-row items-start w-full justify-between">
                     <span class="font-bold text-sm text-left mb-1 w-max self-start">
-                        { data.community ? `Existing posts in ${data.community.name}@${new URL(data.community.actor_id).hostname}:` : 'Crossposts:'}
+                        { data.community 
+                            ? `Existing posts in ${data.community.name}@${new URL(data.community.actor_id).hostname}` 
+                            : `Crossposts`
+                        }
+                        ({URLSearchResults.length})
                     </span>
                     
                     <Button color="primary" size="md" class="h-8"
@@ -538,9 +531,9 @@
                 {#if searching}
                     <Spinner />
                 {:else if URLSearchResults.length > 0}
-                    <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex w-full flex-col">
+                    <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex w-full flex-col max-h-[20vh] overflow-y-scroll">
                         {#each URLSearchResults as crosspost}
-                            <CrosspostItem crosspost={crosspost} showTitle showUser/>
+                            <CrosspostItem {crosspost} showTitle showUser noClick />
                         {/each}
                     </div>
                 {:else}
