@@ -130,21 +130,6 @@
 
 {#if data?.posts && data?.community}
     <MainContentArea>
-        <div class="hidden xl:flex flex-col gap-2">
-            <span class="flex flex-row gap-4 items-center font-bold text-3xl text-center mx-auto">
-                <Avatar width={64} community={true} alt={data.community.community_view.community.name} url={data.community.community_view.community.icon} />
-                
-                <span class="flex flex-col items-start gap-0">
-                    <span class="capitalize truncate">
-                        {shortenCommunityName(data.community.community_view.community.title) ?? data.community.community_view.community.name}
-                    </span>
-                    
-                    <span class="text-slate-500 dark:text-zinc-500 text-xl font-normal">
-                        {new URL(data.community.community_view.community.actor_id).hostname}
-                    </span>
-                </span>
-            </span>
-        </div>
 
         <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
         <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
