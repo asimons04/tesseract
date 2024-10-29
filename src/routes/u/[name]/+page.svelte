@@ -11,6 +11,7 @@
     import { searchParam } from '$lib/util.js'
     import { userSettings } from '$lib/settings.js'
 
+    import Avatar from '$lib/components/ui/Avatar.svelte';
     import CommentItem from '$lib/components/lemmy/comment/CommentItem.svelte'
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
@@ -25,6 +26,7 @@
     import {
         PencilSquare,
     } from 'svelte-hero-icons'
+    
     
     export let data
 
@@ -133,6 +135,23 @@
 {/if}
 
 <MainContentArea>
+    <div class="hidden xl:flex flex-col gap-2">
+        <span class="flex flex-row gap-4 items-center font-bold text-3xl text-center mx-auto">
+            <Avatar width={64} alt={data.person_view.person.actor_id} url={data.person_view.person.avatar} />
+            
+            <span class="flex flex-col items-start gap-0">
+                <span class="capitalize">
+                    {data.person_view.person.display_name ?? data.person_view.person.name}
+                </span>
+                
+                <span class="text-slate-500 dark:text-zinc-500 text-xl font-normal">
+                    {new URL(data.person_view.person.actor_id).hostname}
+                </span>
+            </span>
+        </span>
+    </div>
+
+    
     {#if data.items.length > 0}
         
         <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->

@@ -5,10 +5,14 @@
     import { load } from './+layout'
     import { mergeNewInfiniteScrollBatch, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { onMount } from 'svelte'
+    import { page } from '$app/stores';
     import { PageSnapshot } from '$lib/storage'
-    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers';
+    import { searchParam } from '$lib/util';
+    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers'
+    import { shortenCommunityName } from  '$lib/components/lemmy/community/helpers'
     import { userSettings } from '$lib/settings'
     
+    import Avatar from '$lib/components/ui/Avatar.svelte';
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import InfiniteScroll from '$lib/components/ui/InfiniteScroll.svelte'
     import InfiniteScrollRefreshOldestPosts from '$lib/components/ui/InfiniteScrollRefreshOldestPosts.svelte';
@@ -16,11 +20,7 @@
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import { searchParam } from '$lib/util';
-    import { page } from '$app/stores';
     
-    
-
     export let data
     
     onMount(() => { 
@@ -130,7 +130,22 @@
 
 {#if data?.posts && data?.community}
     <MainContentArea>
-        
+        <div class="hidden xl:flex flex-col gap-2">
+            <span class="flex flex-row gap-4 items-center font-bold text-3xl text-center mx-auto">
+                <Avatar width={64} community={true} alt={data.community.community_view.community.name} url={data.community.community_view.community.icon} />
+                
+                <span class="flex flex-col items-start gap-0">
+                    <span class="capitalize truncate">
+                        {shortenCommunityName(data.community.community_view.community.title) ?? data.community.community_view.community.name}
+                    </span>
+                    
+                    <span class="text-slate-500 dark:text-zinc-500 text-xl font-normal">
+                        {new URL(data.community.community_view.community.actor_id).hostname}
+                    </span>
+                </span>
+            </span>
+        </div>
+
         <!---Shows a button to refresh for oldest ost once infinite scroll FIFO overflows--->
         <InfiniteScrollRefreshOldestPosts bind:show={infiniteScroll.truncated} 
             on:click={() => {
