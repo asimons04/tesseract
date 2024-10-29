@@ -1,5 +1,6 @@
 import type { SubmissionView } from '$lib/lemmy/contentview.js'
 import type { 
+    CommentView,
     Community, 
     GetCommunityResponse,
     MyUserInfo, 
@@ -45,7 +46,7 @@ interface Modals {
     },
     postModeration: {
         open: boolean
-        item: PostView | undefined
+        item: PostView | CommentView | undefined
     }
     quickSettings: {
         open: boolean
@@ -271,7 +272,7 @@ export function linkPreviewModal(url: string) {
     }))
 }
 
-export function postModerationModal(item: PostView) {
+export function postModerationModal(item: PostView|CommentView) {
     modals.update((m) => ({
         ...m,
         postModeration: {
