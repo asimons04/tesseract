@@ -7,7 +7,8 @@
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-
+    import UserLink from '../user/UserLink.svelte';
+    
     import {
         Icon,
         ArrowUp,
@@ -15,14 +16,16 @@
         ChatBubbleOvalLeftEllipsis,
         Pencil
     } from 'svelte-hero-icons'
-    import UserLink from '../user/UserLink.svelte';
+    
 
-    export let crosspost:PostView;
-    export let textSize:string = "text-xs"
-    export let iconSize:number = 18
-    export let showUser:boolean = false
-    export let showTitle:boolean = false
-
+    export let crosspost:PostView;                      // PostView object to render
+    export let textSize:string = "text-xs"              // Taildwind text size class to apply
+    export let iconSize:number = 18                     // Size of the icons to use for avatars
+    export let showUser:boolean = false                 // Show the creator of the crosspost
+    export let showTitle:boolean = false                // Show the title of the crosspost
+    export let newTab:boolean = false                   // Open the crosspost in a new tab
+    export let instance:string = getInstance()          // Allows passing an instance if the post ID is remote (defaults to current)
+    export let noClick:boolean = false                  // Disables pointer events if list is for display only
 
     const getTextSize = () => `text-xs md:${textSize}`
 
@@ -33,9 +36,11 @@
         hover:dark:bg-zinc-800 hover:bg-slate-200
         py-2.5 px-4 
         {getTextSize()}
+        {noClick ? 'pointer-events-none' : ''}
     " 
     id="{crosspost.post.id.toString()}"
-    href="/post/{getInstance()}/{crosspost.post.id}" title="{crosspost.post.name}"
+    href="/post/{instance}/{crosspost.post.id}" title="{crosspost.post.name}"
+    target={newTab ? '_blank' : '_self'}
 >
     
     <div class="flex flex-col w-full gap-1">
