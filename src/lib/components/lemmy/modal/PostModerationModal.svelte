@@ -1,5 +1,46 @@
 <script lang="ts">
-    import type { CommentView, Community, PostView } from 'lemmy-js-client'
+    interface BanContainer {
+        reason: string
+        loading: boolean
+        removeContent: boolean
+        community?: Community
+        expiry: string
+
+        banUser: any
+        reset: any
+    }
+
+    interface RemoveItemContainer {
+        purge: boolean
+        reason: string
+        loading: boolean
+        replyWithReason: boolean
+        replyReason: string
+        privateMessage: boolean
+
+        reset: any
+        remove: any
+        setReplyReason: any
+    }
+
+    interface ShowVoteContainer {
+        loading: boolean
+        fetchError: boolean
+        scrollArea: HTMLDivElement | undefined
+        votes: VoteView[] 
+        
+        page: number
+        limit: number
+        infiniteScrollState: InfiniteScrollStateVars
+        
+        init: any 
+        listCommentLikes: any
+        listPostLikes: any
+        loadMore: any
+    }
+
+    import type { CommentView, Community, PostView, VoteView } from 'lemmy-js-client'
+    import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
 
     import { amMod, isAdmin, removalTemplate, voteViewerModal } from '../moderation/moderation';
     import { dispatchWindowEvent } from '$lib/ui/events';
@@ -18,6 +59,7 @@
     import Button from "$lib/components/input/Button.svelte"
     import Card from '$lib/components/ui/Card.svelte'
     import CommentMeta from '../comment/CommentMeta.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import PostMeta from '../post/PostMeta.svelte'
@@ -27,12 +69,17 @@
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
     
     import { 
+        ArrowDown,
         ArrowLeft,
+        ArrowUp,
         CalendarDays,
         ChatBubbleLeft,
         ChatBubbleLeftRight,
+        ExclamationTriangle,
         Fire,
         HandThumbUp,
+        Icon,
+        InformationCircle,
         LockClosed,
         LockOpen,
         Megaphone,
@@ -42,13 +89,17 @@
         Trash
 
     } from "svelte-hero-icons"
+
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
+    import UserLink from '../user/UserLink.svelte';
+    import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte';
+    import { shortenCommunityName } from '../community/helpers';
     
-
-
     export let open: boolean = false
     export let item: PostView | CommentView
 
-    let action: 'none' | 'banning' | 'banningInstance' | 'removing' = 'none'
+    let action: 'none' | 'banning' | 'communityInfo' | 'showVotes' | 'removing' = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
     let cardClass = 'p-2 list-none border border-slate-300 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 rounded-lg'
@@ -58,64 +109,11 @@
     let pinningInstance = false
     let purged  = false
     
-    //$: acting = locking || pinning 
-    
-    // Object to hold the options for removing a submission
-    interface RemovalOptions {
-        purge: boolean
-        reason: string
-        loading: boolean
-        replyWithReason: boolean
-        replyReason: string
-        privateMessage: boolean
-    }
-    let removeOpts = {
-        purge: false,
-        reason: '',
-        loading: false,
-        replyWithReason: false,
-        replyReason: '',
-        privateMessage: false
-    } as RemovalOptions
-    
-    let defaultRemoveOpts = {...removeOpts}
-
-    // Object to hhold the options for banning a user
-    interface BanOptions {
-        reason: string
-        loading: boolean
-        removeContent: boolean
-        community?: Community
-        expiry: string
-    }
-    
-    let banOpts = {
-        community: undefined,
-        reason: '',
-        expiry: '',
-        loading: false,
-        removeContent: false
-
-
-    } as BanOptions
-    
-    let defaultBanOpts = {...banOpts}
-    
+    // Make the Post/Comment item reactive
     $: item
     
     // Watch the reply reason options and automatically update the mod reply based on the removal / restore reason.
-    $: removeOpts.replyReason = removeOpts.replyWithReason ? setReplyReason(removeOpts.reason) : ''
-    const setReplyReason = (reason: string) => {
-        if (!item) return `no template`
-
-        return removalTemplate($userSettings.moderation.removalReasonPreset, {
-            communityLink: `!${fullCommunityName(item!.community.name, item!.community.actor_id)}`,
-            postTitle: item.post.name,
-            reason: reason,
-            username: item.creator.name,
-        })
-    }
-
+    $: remove.replyReason = remove.replyWithReason ? remove.setReplyReason(remove.reason) : ''
 
     // Reactive helper variable to determine if the item is removed.
     $:  removed = item
@@ -124,243 +122,360 @@
                 : item.post.removed
             : false
 
-    // Processes the submission removal form
-    async function removeSubmission() {
-        if (!item) return
-        if (!$profile?.jwt) throw new Error('Unauthenticated')
+    // Object to hold the components for removing a submission
+    let remove = {
+        purge: false,
+        reason: '',
+        loading: false,
+        replyWithReason: false,
+        replyReason: '',
+        privateMessage: false,
+        
+        reset: function() {
+            remove.purge = false
+            remove.reason = ''
+            remove.loading = false
+            remove.replyWithReason = false
+            remove.replyReason = ''
+            remove.privateMessage = false
+        },
 
-        removeOpts.loading = true
+        remove: async function () {
+            if (!item) return
+            if (!$profile?.jwt) throw new Error('Unauthenticated')
 
-        try {
-            if (removeOpts.purge) {
-                
-                // Purge Comment
-                if (isCommentView(item)) {
-                    await getClient(undefined).purgeComment({
-                        comment_id: item.comment.id,
-                        reason: removeOpts.reason,
-                    })
+            remove.loading = true
 
-                    dispatchWindowEvent('purgeComment', {
-                        comment_id: item.comment.id,
-                        purged: true
-                    })
-                } 
-                // Purge Post
-                else {
-                    await getClient(undefined).purgePost({
-                        post_id: item.post.id,
-                        reason: removeOpts.reason,
-                    })
+            try {
+                if (remove.purge) {
+                    
+                    // Purge Comment
+                    if (isCommentView(item)) {
+                        await getClient(undefined).purgeComment({
+                            comment_id: item.comment.id,
+                            reason: remove.reason,
+                        })
 
-                    dispatchWindowEvent('purgePost', {
-                        post_id: item.post.id,
-                        purged: true
-                    })
-                }
-                
-                toast({
-                    content: 'Successfully purged that submission.',
-                    type: 'success',
-                    title: 'Success'
-                })
-                
-                // Return to mod menu and set purged flag to true
-                purged = true
-                resetRemoveForm()
-                returnMainMenu()
-                return
-            }
+                        dispatchWindowEvent('purgeComment', {
+                            comment_id: item.comment.id,
+                            purged: true
+                        })
+                    } 
+                    // Purge Post
+                    else {
+                        await getClient(undefined).purgePost({
+                            post_id: item.post.id,
+                            reason: remove.reason,
+                        })
 
-           
-            // Remove Comment
-            if (isCommentView(item)) {
-                await getClient().removeComment({
-                    comment_id: item.comment.id,
-                    removed: !removed,
-                    reason: removeOpts.reason || undefined,
-                })
-                item.comment.removed = !removed
-                
-                dispatchWindowEvent('removeComment', {
-                    comment_id: item.comment.id,
-                    removed: item.comment.removed
-                })
-            } 
-
-            // Remove Post
-            else if (isPostView(item)) {
-                await getClient().removePost({
-                    post_id: item.post.id,
-                    removed: !removed,
-                    reason: removeOpts.reason || undefined,
-                })
-                item.post.removed = !removed
-                
-                dispatchWindowEvent('removePost', {
-                    post_id: item.post.id,
-                    removed: item.post.removed
-                })
-            }
-
-            // Send reply with removal reason if selected
-            if (removeOpts.replyWithReason) {
-                if (removeOpts.replyReason == '') {
+                        dispatchWindowEvent('purgePost', {
+                            post_id: item.post.id,
+                            purged: true
+                        })
+                    }
+                    
                     toast({
-                        content: 'Your reply cannot be empty if "Reply reason" is enabled.',
-                        type: 'warning',
-                        title: 'Reply Text is Required'
+                        content: 'Successfully purged that submission.',
+                        type: 'success',
+                        title: 'Success'
                     })
+                    
+                    // Return to mod menu and set purged flag to true
+                    purged = true
+                    remove.reset()
+                    returnMainMenu()
                     return
                 }
-                
-                // Send a DM or comment depending on selected option
-                if (removeOpts.privateMessage) {
-                    await getClient()
-                        .createPrivateMessage({
-                            content: removeOpts.replyReason,
-                            recipient_id: isCommentView(item)
-                                ? item.comment.creator_id
-                                : item.post.creator_id,
+
+            
+                // Remove Comment
+                if (isCommentView(item)) {
+                    await getClient().removeComment({
+                        comment_id: item.comment.id,
+                        removed: !removed,
+                        reason: remove.reason || undefined,
+                    })
+                    item.comment.removed = !removed
+                    
+                    dispatchWindowEvent('removeComment', {
+                        comment_id: item.comment.id,
+                        removed: item.comment.removed
+                    })
+                } 
+
+                // Remove Post
+                else if (isPostView(item)) {
+                    await getClient().removePost({
+                        post_id: item.post.id,
+                        removed: !removed,
+                        reason: remove.reason || undefined,
+                    })
+                    item.post.removed = !removed
+                    
+                    dispatchWindowEvent('removePost', {
+                        post_id: item.post.id,
+                        removed: item.post.removed
+                    })
+                }
+
+                // Send reply with removal reason if selected
+                if (remove.replyWithReason) {
+                    if (remove.replyReason == '') {
+                        toast({
+                            content: 'Your reply cannot be empty if "Reply reason" is enabled.',
+                            type: 'warning',
+                            title: 'Reply Text is Required'
+                        })
+                        return
+                    }
+                    
+                    // Send a DM or comment depending on selected option
+                    if (remove.privateMessage) {
+                        await getClient()
+                            .createPrivateMessage({
+                                content: remove.replyReason,
+                                recipient_id: isCommentView(item)
+                                    ? item.comment.creator_id
+                                    : item.post.creator_id,
+                            })
+                            .catch(() => {
+                                toast({
+                                    content: 'Failed to message user. Removing anyway...',
+                                    type: 'warning',
+                                })
+                            })
+                    } else {
+                        await getClient().createComment({
+                            content: remove.replyReason,
+                            post_id: item.post.id,
+                            parent_id: isCommentView(item) ? item.comment.id : undefined,
                         })
                         .catch(() => {
                             toast({
-                                content: 'Failed to message user. Removing anyway...',
+                                content: 'Failed to post reply. Removing anyway...',
                                 type: 'warning',
                             })
                         })
-                } else {
-                    await getClient().createComment({
-                        content: removeOpts.replyReason,
-                        post_id: item.post.id,
-                        parent_id: isCommentView(item) ? item.comment.id : undefined,
-                    })
-                    .catch(() => {
-                        toast({
-                            content: 'Failed to post reply. Removing anyway...',
-                            type: 'warning',
-                        })
-                    })
+                    }
                 }
-            }
-            
-
-            // Return to the mod menu and reset the reason value
-            resetRemoveForm()
-            returnMainMenu()
-
-            toast({
-                content: `Successfully ${removed ? 'restored' : 'removed'} that submission.`,
-                type: 'success',
-                title: 'Success'
-            })
-        } catch (err) {
-            toast({
-                content: (err as any) ?? 'The API returned an error when processing this request, but no details were provided.',
-                type: 'error',
-                title: 'Error'
-            })
-        }
-    }
-
-    // Resets the removal form to defaults
-    function resetRemoveForm() {
-        removeOpts = { ...defaultRemoveOpts }
-    }
-
-    
-    
-    // Processes the ban user form
-    async function banUser() {
-        if (!$profile?.user || !$profile?.jwt) return
-        
-        
-        banOpts.loading = true
-        let bannedInstance = item.creator.banned
-        let bannedCommunity = item.creator_banned_from_community
-        
-        try {
-            let date: number | undefined
-            // Validate ban expiry date
-            if (banOpts.expiry != '') {
-                date = Date.parse(banOpts.expiry)
-                if (Number.isNaN(date) || date < Date.now()) {
-                    //invalidDateErrorToast()
-                    banOpts.loading = false
-                    return
-                }
-            }
-
-            // Ban from community if `community` is provided in the call
-            if (banOpts.community) {
-                const response = await getClient().banFromCommunity({
-                    ban: item.creator_banned_from_community ? false : true ,
-                    community_id: item.community.id,
-                    person_id: item.creator.id,
-                    reason: banOpts.reason || undefined,
-                    remove_data: banOpts.removeContent,
-                    expires: date ? Math.floor(date / 1000) : undefined,
-                })
-
-                bannedCommunity = response?.banned
                 
-                // Dispatch global event so other components can react
-                dispatchWindowEvent('banCommunity', {
-                    person_id: item.creator.id,
-                    community_id: item.community.id,
-                    banned: bannedCommunity,
-                    remove_content: banOpts.removeContent
-                })
 
+                // Return to the mod menu and reset the reason value
+                remove.reset()
+                returnMainMenu()
+
+                toast({
+                    content: `Successfully ${removed ? 'restored' : 'removed'} that submission.`,
+                    type: 'success',
+                    title: 'Success'
+                })
+            } catch (err) {
+                toast({
+                    content: (err as any) ?? 'The API returned an error when processing this request, but no details were provided.',
+                    type: 'error',
+                    title: 'Error'
+                })
             }
-            
-            // Ban from instance if no community provided
-            else {
-                const response = await getClient().banPerson({
-                    ban: !item.creator.banned,
-                    person_id: item.creator.id,
-                    reason: banOpts.reason || undefined,
-                    remove_data: banOpts.removeContent,
-                    expires: date ? Math.floor(date / 1000) : undefined,
-                })
+        },
 
-                bannedInstance = response?.person_view.person.banned
+        setReplyReason: function (reason: string) {
+            if (!item) return `no template`
 
-                // Dispatch global event so other components can react
-                dispatchWindowEvent('banUser', {
-                    person_id: item.creator.id,
-                    banned: bannedInstance,
-                    remove_content: banOpts.removeContent
-                })
-
-            }
-            
-            toast({
-                content: `Successfully ${ (banOpts.community ? bannedCommunity : bannedInstance ) ? 'banned' : 'unbanned'}  ${item.creator.name}@${new URL(item.creator.actor_id).hostname} ${banOpts.community ? 'from the community' : 'from the instance'}.`,
-                type: 'success',
-                title: 'Success'
-            })
-
-            resetBanForm()
-            returnMainMenu()
-            
-            
-        } catch (err) {
-            banOpts.loading = false
-            toast({
-                content: err as any,
-                type: 'error',
-                title: 'Error'
+            return removalTemplate($userSettings.moderation.removalReasonPreset, {
+                communityLink: `!${fullCommunityName(item!.community.name, item!.community.actor_id)}`,
+                postTitle: item.post.name,
+                reason: reason,
+                username: item.creator.name,
             })
         }
-        
-        
-    }
 
-    //Reset the ban user form
-    function resetBanForm() {
-        banOpts = {...defaultBanOpts}
-    }
+    } as RemoveItemContainer
+    
+
+    // Object to hold the components for banning a user
+    let ban = {
+        community: undefined,
+        reason: '',
+        expiry: '',
+        loading: false,
+        removeContent: false,
+
+        banUser: async function() {
+            if (!$profile?.user || !$profile?.jwt) return
+        
+        
+            ban.loading = true
+            let bannedInstance = item.creator.banned
+            let bannedCommunity = item.creator_banned_from_community
+        
+            try {
+                let date: number | undefined
+                // Validate ban expiry date
+                if (ban.expiry != '') {
+                    date = Date.parse(ban.expiry)
+                    if (Number.isNaN(date) || date < Date.now()) {
+                        //invalidDateErrorToast()
+                        ban.loading = false
+                        return
+                    }
+                }
+
+                // Ban from community if `community` is provided in the call
+                if (ban.community) {
+                    const response = await getClient().banFromCommunity({
+                        ban: item.creator_banned_from_community ? false : true ,
+                        community_id: item.community.id,
+                        person_id: item.creator.id,
+                        reason: ban.reason || undefined,
+                        remove_data: ban.removeContent,
+                        expires: date ? Math.floor(date / 1000) : undefined,
+                    })
+
+                    bannedCommunity = response?.banned
+                    
+                    // Dispatch global event so other components can react
+                    dispatchWindowEvent('banCommunity', {
+                        person_id: item.creator.id,
+                        community_id: item.community.id,
+                        banned: bannedCommunity,
+                        remove_content: ban.removeContent
+                    })
+
+                }
+                
+                // Ban from instance if no community provided
+                else {
+                    const response = await getClient().banPerson({
+                        ban: !item.creator.banned,
+                        person_id: item.creator.id,
+                        reason: ban.reason || undefined,
+                        remove_data: ban.removeContent,
+                        expires: date ? Math.floor(date / 1000) : undefined,
+                    })
+
+                    bannedInstance = response?.person_view.person.banned
+
+                    // Dispatch global event so other components can react
+                    dispatchWindowEvent('banUser', {
+                        person_id: item.creator.id,
+                        banned: bannedInstance,
+                        remove_content: ban.removeContent
+                    })
+
+                }
+                
+                toast({
+                    content: `Successfully ${ (ban.community ? bannedCommunity : bannedInstance ) ? 'banned' : 'unbanned'}  ${item.creator.name}@${new URL(item.creator.actor_id).hostname} ${ban.community ? 'from the community' : 'from the instance'}.`,
+                    type: 'success',
+                    title: 'Success'
+                })
+
+                returnMainMenu()
+                ban.reset()
+
+            } catch (err) {
+                ban.loading = false
+                toast({
+                    content: err as any,
+                    type: 'error',
+                    title: 'Error'
+                })
+            }
+        
+        
+        },
+
+        reset: function() {
+            ban.community = undefined
+            ban.reason = ''
+            ban.expiry = ''
+            ban.loading = false
+            ban.removeContent = false
+        }
+    } as BanContainer
+
+    
+    // Object to hold the vote viewer components
+    let showVotes = {
+        loading: false,
+        fetchError: false,
+        scrollArea: undefined,
+        votes: [] as VoteView[],
+        page: 1,
+        limit: 50,
+        
+        init:  async function() {
+            showVotes.loading = true
+            showVotes.page  = 1
+            showVotes.votes = []
+            showVotes.votes = (isCommentView(item))
+                ? await showVotes.listCommentLikes(item.comment.id)
+                : await showVotes.listPostLikes(item.post.id)
+        
+            if (showVotes.page == 1 && showVotes.votes.length < showVotes.limit) {
+                showVotes.infiniteScrollState.exhausted = true
+            }
+        
+            showVotes.loading = false
+        },
+
+        listCommentLikes: async function(commentID:number):Promise<VoteView[]> {
+            try {
+                let result = await getClient().listCommentLikes({
+                    comment_id: commentID,
+                    limit: showVotes.limit,
+                    page: showVotes.page
+                })
+                if (result.comment_likes) return result.comment_likes
+                return [] as VoteView[]
+            }
+            catch {
+                showVotes.fetchError = true
+                return [] as VoteView[]
+            }
+        },
+
+        listPostLikes: async function (postID:number):Promise<VoteView[]> {
+            try {
+                let result = await getClient().listPostLikes({
+                    post_id: postID,
+                    limit: showVotes.limit,
+                    page: showVotes.page
+                })
+                if (result.post_likes) return result.post_likes
+                return [] as VoteView[]
+            }
+            catch {
+                showVotes.fetchError = true
+                return [] as VoteView[]
+            }
+        },
+
+        loadMore: async function() {
+            showVotes.page++
+            let nextBatch = (isCommentView(item))
+                ? await showVotes.listCommentLikes(item.comment.id)
+                : await showVotes.listPostLikes(item.post.id)
+            
+            if (nextBatch.length < 1) { 
+                showVotes.page--
+                showVotes.infiniteScrollState.exhausted = true
+                showVotes.infiniteScrollState.loading = false
+                return
+            }
+            
+            nextBatch.forEach((vote:VoteView) => {
+                const index = showVotes.votes?.findIndex((v) => v.creator.id == vote.creator.id)
+                if (index< 0) showVotes.votes.push(vote)
+            })
+            showVotes.votes = showVotes.votes
+            showVotes.infiniteScrollState.loading = false
+        }
+    } as ShowVoteContainer
+
+    
+    
+
 
     // Returns the modal to the main menu
     function returnMainMenu() {
@@ -368,7 +483,7 @@
         action = 'none'
     }
 
-
+    // Lock and Unlock the Post
     async function lock(lock: boolean) {
         if (!$profile?.jwt || isCommentView(item)) return
         locking = true
@@ -401,6 +516,7 @@
         locking = false
     }
 
+    // Pin and Unpin the Post
     async function pin(pinned: boolean, toInstance: boolean = false) {
         if (!$profile?.jwt || isCommentView(item)) return
         
@@ -454,7 +570,7 @@
                     on:click={()=> returnMainMenu()}  
                 />
                 <span class="text-lg">
-                    { removeOpts.purge  ? 'Purging'  : removed ? 'Restoring' : 'Removing' } 
+                    { remove.purge  ? 'Purging'  : removed ? 'Restoring' : 'Removing' } 
                     {isCommentView(item) ? 'Comment' : 'Post'}
                 </span>
             </div>
@@ -462,46 +578,46 @@
 
             <!---Remove/Purge/Restore Form--->
             <Card class="flex flex-col p-4">
-                <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={removeSubmission}>
+                <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove.remove}>
                     
                     {#if !isCommentView(item)}
                         <PostMeta post={item} noClick/>
                     {:else}
-                        <CommentMeta comment={item} noClick/>
+                        <CommentMeta comment={item} content noClick/>
                     {/if}
 
 
-                    <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={removeOpts.reason}>
+                    <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={remove.reason}>
                         <Button 
-                            color={removeOpts.purge ? 'danger' : 'primary'} 
-                            icon={removeOpts.purge ? Fire : Trash}
+                            color={remove.purge ? 'danger' : 'primary'} 
+                            icon={remove.purge ? Fire : Trash}
                             iconSize={16}
                             size="lg" 
-                            loading={removeOpts.loading} 
-                            disabled={removeOpts.loading} 
+                            loading={remove.loading} 
+                            disabled={remove.loading} 
                             submit 
                             slot="actions"
                         >
-                            { removeOpts.purge ? 'Purge' : removed ? 'Restore' : 'Remove' }
+                            { remove.purge ? 'Purge' : removed ? 'Restore' : 'Remove' }
                         </Button>
                     </MarkdownEditor>
                     
                     <!--- Only show "Reply with reason" if you're a mod of the community or an admin and the content is local--->
-                    {#if !removed &&  !removeOpts.purge && ( amMod($profile?.user, item.community) || (isAdmin($profile?.user) && item.community.local))}
+                    {#if !removed &&  !remove.purge && ( amMod($profile?.user, item.community) || (isAdmin($profile?.user) && item.community.local))}
                         <SettingToggleContainer>
-                            <SettingToggle bind:value={removeOpts.replyWithReason} icon={ChatBubbleLeft} title="Reply with Reason" 
+                            <SettingToggle bind:value={remove.replyWithReason} icon={ChatBubbleLeft} title="Reply with Reason" 
                                 description="Send the user a comment or DM with the reason for the the mod action" 
                             />
                             
                             <SettingMultiSelect icon={ChatBubbleLeftRight} title="Message Type" 
                                 description="Choose whether to reply as a comment to the removed item or as a direct message"
-                                options={[false, true]} optionNames={['Comment', 'Message']} bind:selected={removeOpts.privateMessage}
-                                condition={removeOpts.replyWithReason}
+                                options={[false, true]} optionNames={['Comment', 'Message']} bind:selected={remove.privateMessage}
+                                condition={remove.replyWithReason}
                             />
                         </SettingToggleContainer>
 
-                        {#if removeOpts.replyWithReason}
-                            <MarkdownEditor previewButton images={false} bind:value={removeOpts.replyReason} placeholder={removeOpts.replyReason} rows={6} label="Reply"/>
+                        {#if remove.replyWithReason}
+                            <MarkdownEditor previewButton images={false} bind:value={remove.replyReason} placeholder={remove.replyReason} rows={6} label="Reply"/>
                         {/if}
                     {/if}
                 </form>
@@ -525,22 +641,22 @@
                     }}
                 />
                 <span class="text-lg">
-                    {(banOpts.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'} User From {banOpts.community ? 'Community' : 'Instance'}
+                    {(ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'} User From {ban.community ? 'Community' : 'Instance'}
                 </span>
             </div>
 
             <!---Ban/Unban Instance/Community Form--->
             <Card class="flex flex-col p-4">
-                <form class="flex flex-col gap-4" on:submit|preventDefault={banUser}>
+                <form class="flex flex-col gap-4" on:submit|preventDefault={ban.banUser}>
                     
                     <div class="flex flex-col gap-1">
                         
                         
                         <span class="text-sm">
-                            {(banOpts.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unbanning' : 'Banning'} from
+                            {(ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unbanning' : 'Banning'} from
                             <span class="font-bold">
                                 {
-                                    banOpts.community 
+                                    ban.community 
                                     ? `${item.community.name}@${new URL(item.community.actor_id).hostname}`
                                     : 'Instance'
                                 }
@@ -560,18 +676,18 @@
 
 
                     <MarkdownEditor required previewButton images={false} rows={6} 
-                        bind:value={banOpts.reason} label="Reason"
-                        placeholder="Why are you { (banOpts.community ? item.creator_banned_from_community : item.creator.banned) ? 'unbanning' : 'banning'} {item.creator.name}@{new URL(item.creator.actor_id).hostname}?"
+                        bind:value={ban.reason} label="Reason"
+                        placeholder="Why are you { (ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'unbanning' : 'banning'} {item.creator.name}@{new URL(item.creator.actor_id).hostname}?"
                     >
-                        <Button submit color="primary" loading={banOpts.loading} disabled={banOpts.loading} size="lg" slot="actions">
-                            {(banOpts.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'}
+                        <Button submit color="primary" loading={ban.loading} disabled={ban.loading} size="lg" slot="actions">
+                            {(ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'}
                         </Button>
                     </MarkdownEditor>
 
-                    {#if !(banOpts.community ? item.creator_banned_from_community : item.creator.banned)}
+                    {#if !(ban.community ? item.creator_banned_from_community : item.creator.banned)}
                         <SettingToggleContainer>
-                            <SettingToggle bind:value={banOpts.removeContent} icon={Trash} title="Remove Content" description="Remove all of this user's content when banning." />
-                            <SettingDateInput bind:value={banOpts.expiry} icon={CalendarDays} title="Ban Expires" description="To effect a temporary ban, enter a date for the ban to expire. Leave blank for a permanent ban." />
+                            <SettingToggle bind:value={ban.removeContent} icon={Trash} title="Remove Content" description="Remove all of this user's content when banning." />
+                            <SettingDateInput bind:value={ban.expiry} icon={CalendarDays} title="Ban Expires" description="To effect a temporary ban, enter a date for the ban to expire. Leave blank for a permanent ban." />
                         </SettingToggleContainer>
                     {/if}
                 
@@ -580,18 +696,119 @@
             </Card>
         </div>
     {/if}
+    
+    {#if action == 'showVotes'}
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+                
+            <!---Section Header--->
+            <div class="flex flex-row gap-4 items-center">
+                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                    on:click={(e)=> {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        returnMainMenu() 
+                    }}
+                />
+                <span class="text-lg">
+                    {isCommentView(item) ? 'Comment' : 'Post'} Votes
+                </span>
+            </div>
 
-
-    <!---Next
-    {#if action == 'banningInstance'}
-        banningInstance
+            <!---Ban/Unban Instance/Community Form--->
+            <Card class="flex flex-col p-4">
+                {#if showVotes.loading}
+                    <div class="flex flex-col gap-4 mx-auto my-auto">
+                        <span class="text-sm font-bold">Loading...</span>
+                        <Spinner width={64} />
+                    </div>
+                {/if}
+            
+                {#if !showVotes.loading && showVotes.fetchError}
+                    <Placeholder icon={ExclamationTriangle} title="Fetch Error" description="There was an error during the fetch for this request. Please try again later." />    
+                {/if}
+            
+                {#if showVotes.votes}
+                    <div bind:this={showVotes.scrollArea} class="flex flex-col overflow-y-scroll max-h-[500px] divide-y divide-slate-200 dark:divide-zinc-500 px-4">
+                        {#each showVotes.votes as vote}
+                            <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
+                                <span class="flex">
+                                    <UserLink bind:user={vote.creator} avatar avatarSize={24} ring />
+                                </span>
+                                
+                                <span class="flex ml-auto {vote.score > 0 ? 'text-sky-500' : 'text-red-500'} font-bold">
+                                    <Icon mini width={24} src={vote.score > 0 ? ArrowUp : ArrowDown}/>
+                                </span>
+                            </div>
+                        {/each}
+                        
+                        
+                        <div class="flex flex-col items-center pt-2 w-full">
+                            <InfiniteScrollDiv bind:state={showVotes.infiniteScrollState} bind:element={showVotes.scrollArea} threshold={500}
+                                on:loadMore={ () => showVotes.loadMore() }
+                            />
+                        </div>
+                    
+                    </div>
+                {/if}
+            </Card>
+        </div>
     {/if}
-    --->
 
+    {#if action == 'communityInfo'}
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+                
+            <!---Section Header--->
+            <div class="flex flex-row gap-4 items-center">
+                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                    on:click={(e)=> {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        returnMainMenu() 
+                    }}
+                />
+                <span class="text-lg">
+                    Community Info
+                </span>
+            </div>
+
+            <!--- Community Icon, Name, and Instance Header--->
+            <div class="flex flex-col gap-2">
+                <span class="flex flex-row gap-4 items-center font-bold text-center">
+                    <Avatar width={64} community={true} alt={item.community.name} url={item.community.icon} />
+                    
+                    <span class="flex flex-col items-start gap-0">
+                        <span class="text-2xl capitalize truncate">
+                            {shortenCommunityName(item.community.title, 40) ?? item.community.name}
+                        </span>
+                        
+                        <span class="text-slate-500 dark:text-zinc-500 text-xl font-normal">
+                            {new URL(item.community.actor_id).hostname}
+                        </span>
+                    </span>
+                </span>
+            </div>
+
+            <!---Ban/Unban Instance/Community Form--->
+            <Card class="flex flex-col p-4 gap-4 max-h-[50vh] overflow-y-auto">
+                <!---Community Details Markdown--->
+                <Markdown source={item.community.description ?? 'No community description was provided.'} />
+            </Card>
+        </div>
+    {/if}
 
     <!---Default/Moderation Action List--->
     {#if action == 'none'}
         <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide>
+
+            <!---Community Info--->
+            <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full" 
+                on:click={() => {
+                    modalWidth='max-w-3xl'
+                    action = 'communityInfo' 
+                }}
+            >
+                Community Details...
+            </Button>
 
             <!---Creator's Modlog History--->
             <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
@@ -606,7 +823,10 @@
             <!---Vote Viewer--->
             {#if !purged && isAdmin($profile?.user)}
                 <Button color="tertiary-border" icon={HandThumbUp} alignment="left" class="w-full" 
-                    on:click={() => voteViewerModal('post', item.post.id)}
+                    on:click={() => {
+                        showVotes.init()
+                        action = 'showVotes' 
+                    }}
                 >
                     View Votes...
                 </Button>
@@ -615,20 +835,22 @@
 
             <!---Feature Post (Community)--->
             {#if !isCommentView(item)}
-                <Button color="tertiary-border" icon={Megaphone} loading={pinning} alignment="left" class="w-full" 
-                    on:click={() => pin(!item.post.featured_community, false)}
-                >
-                    {item.post.featured_community ? 'Unfeature' : 'Feature'} Post in Community
-                </Button>
-            {/if}
+                <div class="flex flex-row w-full items-center gap-2">
+                    <Button color="tertiary-border" icon={Megaphone} loading={pinning} alignment="left" class="w-full" 
+                        on:click={() => pin(!item.post.featured_community, false)}
+                    >
+                        {item.post.featured_community ? 'Unfeature' : 'Feature'} Community
+                    </Button>
 
-            <!---Feature Post (Instance)--->
-            {#if isAdmin($profile?.user) && !isCommentView(item)}
-                <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
-                    on:click={() => pin(!item.post.featured_local, true)}
-                >
-                    {item.post.featured_local ? 'Unfeature' : 'Feature'} Post on Instance
-                </Button>
+                    <!---Feature Post (Instance)--->
+                    {#if isAdmin($profile?.user)}
+                        <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
+                            on:click={() => pin(!item.post.featured_local, true)}
+                        >
+                            {item.post.featured_local ? 'Unfeature' : 'Feature'} Instance
+                        </Button>
+                    {/if}
+                </div>
             {/if}
 
             <!---Lock/Unlock Post--->
@@ -643,10 +865,10 @@
             
             <!---Remove/Restore Item--->
             {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
-                <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" 
+                <Button color="{removed ? 'tertiary-border' : 'tertiary-border'}" icon={Trash} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
-                        removeOpts.purge = false
+                        remove.purge = false
                         action = 'removing'
                     }}
                 >
@@ -659,7 +881,7 @@
                 <Button color="tertiary-border" icon={Fire} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
-                        removeOpts.purge = true
+                        remove.purge = true
                         action = 'removing'
                     }}
                 >
@@ -668,12 +890,12 @@
             {/if}
 
             <!---Ban User (Community) --->
-            {#if amMod($profile?.user, item.community) || isAdmin($profile?.user)}
-                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
+            {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
+                <Button color="{item.creator_banned_from_community ? 'success' : 'tertiary-border'}" icon={NoSymbol} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
-                        resetBanForm()
-                        banOpts.community = item.community
+                        ban.reset()
+                        ban.community = item.community
                         action = 'banning'
                     }}
                 >
@@ -682,11 +904,11 @@
             {/if}
             
             <!---Ban User (Instance) --->
-            {#if isAdmin($profile?.user) }
-                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
+            {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
+                <Button color="{item.creator.banned ? 'success' : 'tertiary-border'}" icon={NoSymbol} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
-                        resetBanForm()
+                        ban.reset()
                         action = 'banning'
                     }}
                 >
