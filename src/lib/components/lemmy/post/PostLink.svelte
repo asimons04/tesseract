@@ -72,7 +72,7 @@
 
                         <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
                             bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={true}
-                            class="ml-auto mr-auto object-cover rounded-md max-h-[min(40vh,800px)] z-20"
+                            class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(40vh,800px)] z-20"
                             
                         />
                         <!--class="max-w-full ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)]"-->
@@ -86,7 +86,7 @@
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
                     <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 
-                        class="max-w-full ml-auto mr-auto object-cover rounded-md"
+                        class="max-w-full ml-auto mr-auto object-cover rounded-md [min(40vh,800px)]"
                     />
                 </div>
             </div>
