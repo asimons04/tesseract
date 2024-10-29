@@ -6,6 +6,7 @@
         federationStateModal, 
         fediseerModal,
         isAdmin,
+        postModerationModal,
         report,
     } from '$lib/components/lemmy/moderation/moderation.js'
 
@@ -26,7 +27,6 @@
     import CommentVote from '$lib/components/lemmy/comment/CommentVote.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import CommentModerationMenu from '$lib/components/lemmy/moderation/CommentModerationMenu.svelte'
 
     import {
         ArrowLeftCircle,
@@ -45,6 +45,7 @@
         NoSymbol,
         PencilSquare,
         Server,
+        ShieldCheck,
         Square2Stack,
         Trash,
     } from 'svelte-hero-icons'
@@ -93,7 +94,7 @@
 
     <!--- Comment Moderation Menu--->
     {#if onHomeInstance && $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
-        <CommentModerationMenu bind:item={comment} />
+        <Button color="tertiary-border" size="square-sm" title="Moderation" icon={ShieldCheck} iconSize={14} on:click={() => postModerationModal(comment) } />    
     {/if}
   
     <!---Comment Action Menu --->
