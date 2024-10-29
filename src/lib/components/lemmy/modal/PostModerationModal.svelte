@@ -839,7 +839,7 @@
                     <Button color="tertiary-border" icon={Megaphone} loading={pinning} alignment="left" class="w-full" 
                         on:click={() => pin(!item.post.featured_community, false)}
                     >
-                        {item.post.featured_community ? 'Unfeature' : 'Feature'} Community
+                        {item.post.featured_community ? 'Unpin' : 'Pin'}
                     </Button>
 
                     <!---Feature Post (Instance)--->
@@ -847,22 +847,21 @@
                         <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
                             on:click={() => pin(!item.post.featured_local, true)}
                         >
-                            {item.post.featured_local ? 'Unfeature' : 'Feature'} Instance
+                            {item.post.featured_local ? 'Unfeature' : 'Feature'}
                         </Button>
                     {/if}
+                    
+                    <!---Lock/Unlock Post--->
+                    <Button color="tertiary-border" icon={item.post.locked ? LockOpen : LockClosed} alignment="left" class="w-full" 
+                        loading={locking}
+                        on:click={() => lock(!item.post.locked)}
+                    >
+                        {item.post.locked ? 'Unlock' : 'Lock'}
+                    </Button>
+
                 </div>
             {/if}
 
-            <!---Lock/Unlock Post--->
-            {#if !isCommentView(item)}
-                <Button color="tertiary-border" icon={item.post.locked ? LockOpen : LockClosed} alignment="left" class="w-full" 
-                    loading={locking}
-                    on:click={() => lock(!item.post.locked)}
-                >
-                    {item.post.locked ? 'Unlock' : 'Lock'} Post
-                </Button>
-            {/if}
-            
             <!---Remove/Restore Item--->
             {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
                 <Button color="{removed ? 'tertiary-border' : 'tertiary-border'}" icon={Trash} alignment="left" class="w-full" 
@@ -899,7 +898,7 @@
                         action = 'banning'
                     }}
                 >
-                    {item.creator_banned_from_community ? 'Unban' : 'Ban'} User From Community...
+                    {item.creator_banned_from_community ? 'Unban' : 'Ban'} From Community...
                 </Button>
             {/if}
             
@@ -912,7 +911,7 @@
                         action = 'banning'
                     }}
                 >
-                    {item.creator.banned ? 'Unban' : 'Ban'} User From Instance...
+                    {item.creator.banned ? 'Unban' : 'Ban'} From Instance...
                 </Button>
             {/if}
             
