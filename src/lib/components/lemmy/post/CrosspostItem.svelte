@@ -8,7 +8,7 @@
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import UserLink from '../user/UserLink.svelte';
-    
+
     import {
         Icon,
         ArrowUp,
@@ -40,7 +40,7 @@
     " 
     id="{crosspost.post.id.toString()}"
     href="/post/{instance}/{crosspost.post.id}" title="{crosspost.post.name}"
-    target={newTab ? '_blank' : '_self'}
+    target={newTab ? '_blank' : undefined}
 >
     
     <div class="flex flex-col w-full gap-1">
