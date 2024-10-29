@@ -6,7 +6,7 @@
     import { fullCommunityName, objectCopy } from '$lib/util';
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation';
-    import { isCommentView } from '$lib/lemmy/item';
+    import { isComment, isCommentView } from '$lib/lemmy/item';
     import { isPostView } from '$lib/components/lemmy/post/helpers';
     import { profile } from '$lib/auth'
     import { slide } from 'svelte/transition'
@@ -33,7 +33,11 @@
         ChatBubbleLeftRight,
         Fire,
         HandThumbUp,
+        LockClosed,
+        LockOpen,
+        Megaphone,
         Newspaper,
+        NoSymbol,
         ShieldExclamation, 
         Trash
 
@@ -51,6 +55,7 @@
 
     let locking = false
     let pinning = false
+    let pinningInstance = false
     let purged  = false
     
     //$: acting = locking || pinning 
@@ -374,6 +379,11 @@
                 post_id: item.post.id,
             })
 
+            dispatchWindowEvent('lockPost', {
+                post_id: item.post.id,
+                locked: lock
+            })
+
             item.post.locked = lock
 
             toast({
@@ -393,7 +403,10 @@
 
     async function pin(pinned: boolean, toInstance: boolean = false) {
         if (!$profile?.jwt || isCommentView(item)) return
-        pinning = true
+        
+        toInstance 
+            ? pinningInstance = true
+            : pinning = true
 
         try {
             await getClient().featurePost({
@@ -401,7 +414,15 @@
                 featured: pinned,
                 post_id: item.post.id,
             })
-            item.post.featured_community = pinned
+            
+            dispatchWindowEvent('featurePost', {
+                featured: pinned,
+                post_id: item.post.id,
+                community_id: toInstance ? undefined : item.community.id
+            })
+            
+            if (toInstance) item.post.featured_local = pinned
+            else item.post.featured_community = pinned
 
             toast({
                 content: `Successfully ${pinned ? 'pinned' : 'unpinned'} that post.`,
@@ -413,7 +434,9 @@
                 type: 'error',
             })
         }
-        pinning = false
+        toInstance 
+            ? pinningInstance = false
+            : pinning = false
     }
 </script>
 
@@ -577,7 +600,7 @@
                     open = false
                 }}
             >
-                Creator's Modlog History
+                Creator's Modlog History...
             </Button>
 
             <!---Vote Viewer--->
@@ -585,7 +608,36 @@
                 <Button color="tertiary-border" icon={HandThumbUp} alignment="left" class="w-full" 
                     on:click={() => voteViewerModal('post', item.post.id)}
                 >
-                    View Votes
+                    View Votes...
+                </Button>
+            {/if}
+
+
+            <!---Feature Post (Community)--->
+            {#if !isCommentView(item)}
+                <Button color="tertiary-border" icon={Megaphone} loading={pinning} alignment="left" class="w-full" 
+                    on:click={() => pin(!item.post.featured_community, false)}
+                >
+                    {item.post.featured_community ? 'Unfeature' : 'Feature'} Post in Community
+                </Button>
+            {/if}
+
+            <!---Feature Post (Instance)--->
+            {#if isAdmin($profile?.user) && !isCommentView(item)}
+                <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
+                    on:click={() => pin(!item.post.featured_local, true)}
+                >
+                    {item.post.featured_local ? 'Unfeature' : 'Feature'} Post on Instance
+                </Button>
+            {/if}
+
+            <!---Lock/Unlock Post--->
+            {#if !isCommentView(item)}
+                <Button color="tertiary-border" icon={item.post.locked ? LockOpen : LockClosed} alignment="left" class="w-full" 
+                    loading={locking}
+                    on:click={() => lock(!item.post.locked)}
+                >
+                    {item.post.locked ? 'Unlock' : 'Lock'} Post
                 </Button>
             {/if}
             
@@ -598,7 +650,7 @@
                         action = 'removing'
                     }}
                 >
-                    {removed ? 'Restore' : 'Remove'} {isCommentView(item) ? 'Comment' : 'Post'}
+                    {removed ? 'Restore' : 'Remove'} {isCommentView(item) ? 'Comment' : 'Post'}...
                 </Button>
             {/if}
 
@@ -611,13 +663,13 @@
                         action = 'removing'
                     }}
                 >
-                    Purge {isCommentView(item) ? 'Comment' : 'Post'}
+                    Purge {isCommentView(item) ? 'Comment' : 'Post'}...
                 </Button>
             {/if}
 
             <!---Ban User (Community) --->
             {#if amMod($profile?.user, item.community) || isAdmin($profile?.user)}
-                <Button color="tertiary-border" icon={Fire} alignment="left" class="w-full" 
+                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
                         resetBanForm()
@@ -625,20 +677,20 @@
                         action = 'banning'
                     }}
                 >
-                    {item.creator_banned_from_community ? 'Unban' : 'Ban'} User From Community
+                    {item.creator_banned_from_community ? 'Unban' : 'Ban'} User From Community...
                 </Button>
             {/if}
             
             <!---Ban User (Instance) --->
             {#if isAdmin($profile?.user) }
-                <Button color="tertiary-border" icon={Fire} alignment="left" class="w-full" 
+                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
                         resetBanForm()
                         action = 'banning'
                     }}
                 >
-                    {item.creator.banned ? 'Unban' : 'Ban'} User From Instance
+                    {item.creator.banned ? 'Unban' : 'Ban'} User From Instance...
                 </Button>
             {/if}
             
