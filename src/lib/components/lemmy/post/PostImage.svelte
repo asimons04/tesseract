@@ -47,7 +47,7 @@
         <ClickToPlayOverlay bind:show={clickToPlay} displayType={displayType} on:click={(e)=> dispatcher('click', e)}/>
         
         <ZoomableImage url={thumbnail_url} bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={zoomable}
-            class="ml-auto mr-auto object-cover rounded-md max-h-[min(40vh,800px)] z-20 {$$props.class}"
+            class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(40vh,800px)] z-20 {$$props.class}"
             on:click={(e)=> dispatcher('click', e)}
         />
     
