@@ -7,6 +7,7 @@
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import LinkPreviewModal from '$lib/components/lemmy/modal/LinkPreviewModal.svelte'
     import PostCommentVoteShowModal from '$lib/components/lemmy/modal/PostCommentVoteShowModal.svelte'
+    import PostModerationModal from '$lib/components/lemmy/modal/PostModerationModal.svelte'
     import QuickSettingsModal from '$lib/components/lemmy/modal/QuickSettingsModal.svelte'
     import RemoveModal from '$lib/components/lemmy/moderation/RemoveModal.svelte'
     import ReportModal from '$lib/components/lemmy/moderation/ReportModal.svelte'
@@ -56,8 +57,14 @@
 
 <!---Quick Settings Modal--->
 {#if $modals.quickSettings.open}
-    <QuickSettingsModal bind:open={$modals.quickSettings.open} bind:options={$modals.quickSettings.options} />
+    <QuickSettingsModal bind:open={$modals.quickSettings.open} />
 {/if}
+
+<!---Post Moderation Modal--->
+{#if $modals.postModeration.open && $modals.postModeration.item}
+    <PostModerationModal bind:open={$modals.postModeration.open} bind:item={$modals.postModeration.item} />
+{/if}
+
 
 <!---Community Profile Modal--->
 {#if $modals.community.open}

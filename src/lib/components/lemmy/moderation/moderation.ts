@@ -1,5 +1,12 @@
 import type { SubmissionView } from '$lib/lemmy/contentview.js'
-import type { Community, MyUserInfo, Person, GetCommunityResponse } from 'lemmy-js-client'
+import type { 
+    Community, 
+    GetCommunityResponse,
+    MyUserInfo, 
+    Person, 
+    PostView,
+} from 'lemmy-js-client'
+
 import { 
     sortOptions as defaultSortOptions, 
     sortOptionNames as defaultSortOptionNames
@@ -36,6 +43,10 @@ interface Modals {
         open: boolean
         url: string
     },
+    postModeration: {
+        open: boolean
+        item: PostView | undefined
+    }
     quickSettings: {
         open: boolean
         options: {
@@ -103,6 +114,10 @@ export let modals = writable<Modals>({
     linkPreview: {
         open: false,
         url: ''
+    },
+    postModeration: {
+        open: false,
+        item: undefined
     },
     quickSettings: {
         open: false,
@@ -254,6 +269,17 @@ export function linkPreviewModal(url: string) {
             url: url
         }
     }))
+}
+
+export function postModerationModal(item: PostView) {
+    modals.update((m) => ({
+        ...m,
+        postModeration: {
+            open: true,
+            item: item
+        }
+    }))
+
 }
 
 export function quickSettingsModal(options:any) {
