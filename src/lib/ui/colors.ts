@@ -35,15 +35,26 @@ export const buttonColor = {
 
     danger:
       'border border-red-500 bg-red-500 hover:text-red-500 hover:bg-transparent text-white',
+
+    'danger-hollow':
+      'border border-red-500 bg-transparent hover:bg-red-500 text-red-500  hover:text-white',
     
     success:
       'border border-green-500 bg-green-500 hover:text-green-500 hover:bg-transparent text-white',
+
+    'success-hollow':
+      'border border-green-500 bg-transparent  hover:bg-green-500 text-green-500 hover:text-white',
     
     info:
       'border border-sky-700 bg-sky-700 hover:text-sky-700 hover:bg-transparent text-white',
 
+    'info-hollow':
+      'border border-sky-700 bg-transparent hover:bg-sky-700 text-sky-700  hover:text-white',
+
     warning:
       'border border-amber-500 bg-amber-500 hover:text-amber-500 hover:bg-transparent text-black',
+    'warning-hollow':
+      'border border-amber-500 bg-transparent hover:bg-amber-500 text-amber-500 hover:text-black',
 
     ghost: `border border-slate-200 dark:border-zinc-800 bg-transparent
         hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700 dark:text-zinc-400 hover:text-inherit
