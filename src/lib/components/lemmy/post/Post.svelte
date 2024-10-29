@@ -5,6 +5,8 @@
         BlockCommunityEvent, 
         BlockInstanceEvent, 
         BlockUserEvent, 
+        FeaturePostEvent,
+        LockPostEvent,
         PurgePostEvent, 
         RemovePostEvent, 
         SubscribeEvent 
@@ -83,6 +85,20 @@
         }
     }
 
+    function handleLockPost(e:LockPostEvent) {
+        if (post?.post.id == e.detail.post_id) {
+            post.post.locked = e.detail.locked
+            post = post
+        }
+    }
+
+    function handleFeaturePost(e:FeaturePostEvent) {
+        if (post?.post.id == e.detail.post_id) {
+            if (e.detail.community_id) post.post.featured_community = e.detail.featured
+            else post.post.featured_local = e.detail.featured
+            post = post
+        }
+    }
     function handleCommunityBlock(e:BlockCommunityEvent) {
         if (post?.community.id == e.detail.community_id) {
             post.community.hidden = e.detail.blocked
@@ -137,6 +153,8 @@
     on:blockUser={handleUserBlock} 
     on:blockCommunity={handleCommunityBlock} 
     on:blockInstance={handleInstanceBlock}
+    on:featurePost={handleFeaturePost}
+    on:lockPost={handleLockPost}
     on:subscribe={handleSubscribeUnsubscribe}
     on:removePost={handleRemovePost}
     on:purgePost={handlePurgePost}

@@ -2,6 +2,23 @@
     src/app.d.ts under the svelteHTML HTML prop extensions to avoid IDE errors when adding the custom event listeners
 */
 
+// Lock Post
+export interface LockPostEvent extends CustomEvent {
+    detail: {
+        post_id: number,
+        locked: boolean,
+    }
+}
+
+export interface FeaturePostEvent extends CustomEvent {
+
+    detail: {
+        post_id: number,
+        featured: boolean
+        community_id?: number
+    }
+}
+
 // Ban User From Community
 export interface BanCommunityEvent extends CustomEvent {
     detail: {
