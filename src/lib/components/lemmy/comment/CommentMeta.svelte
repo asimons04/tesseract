@@ -8,6 +8,7 @@
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -28,6 +29,7 @@
     export let avatarSize = 48;
     export let hideBadges = false
     export let noClick = false
+    export let content: boolean = false     // Show the comment content (only used for moderation UI purposes)
 
     let inCommunity:boolean = false
     let inProfile:boolean = false
@@ -40,11 +42,11 @@
 </script>
 
 
-<div class="flex flex-col gap-1.5 grow {noClick ? 'pointer-events-none' : ''}">
+<div class="flex flex-col gap-1.5 grow ">
 
     <div class="flex flex-col gap-1">
 
-        <span class="flex flex-row gap-2 text-sm items-center">
+        <span class="flex flex-row gap-2 text-sm items-center {noClick ? 'pointer-events-none' : ''}">
             <!---Show user's avatar if viewing posts in a community--->
             {#if comment.community && !inCommunity}
                 <span class="flex flex-col items-end gap-1">    
@@ -144,5 +146,11 @@
             </div>
             {/if}
         </span>
+
+        {#if content}
+            <span class="flex max-h-[15vh] overflow-y-scroll text-xs font-normal">
+                <Markdown source={comment.comment.content} />
+            </span> 
+        {/if}
     </div>
 </div>
