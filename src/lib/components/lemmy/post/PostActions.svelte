@@ -2,7 +2,7 @@
     import type { CommunityView, PostView } from 'lemmy-js-client'
     import type { PostType, PostDisplayType } from './helpers.js'
     
-    import { amMod, isAdmin, report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { amMod, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
@@ -10,7 +10,6 @@
     import { userSettings } from '$lib/settings.js'
     
     import Button               from '$lib/components/input/Button.svelte'
-    import ModerationMenu       from '$lib/components/lemmy/moderation/ModerationMenu.svelte'
     
     // Post Action Bar Components
     import CommentCountButton   from './PostActions/CommentCountButton.svelte'
@@ -24,6 +23,7 @@
         ArrowsPointingIn,
         ArrowsPointingOut,
         Icon,
+        ShieldCheck,
     } from 'svelte-hero-icons'
    
     export let post: PostView
@@ -73,7 +73,7 @@
 
     <!--- Moderation Menu--->
     {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <ModerationMenu bind:item={post} bind:expandCompact />
+        <Button color="tertiary-border" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
     {/if}
 
     <!---Explore Menu--->
