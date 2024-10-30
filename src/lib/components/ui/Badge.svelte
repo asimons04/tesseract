@@ -14,7 +14,7 @@
         red: 'bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-300',
         green: 'bg-green-200 dark:bg-green-900 text-green-800 dark:text-green-300',
         yellow: 'bg-yellow-200 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300',
-        gray: 'bg-slate-200 dark:bg-zinc-800 text-gray-800 dark:text-gray-200',
+        gray: 'bg-slate-300 dark:bg-zinc-700 text-gray-800 dark:text-gray-200',
         orange: 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200',
         purple: 'bg-fuchsia-200 dark:bg-fuchsia-800 text-fuchsia-800 dark:text-fuchsia-200',
         pink: 'bg-pink-200 dark:bg-pink-800 text-pink-800 dark:text-pink-200',
