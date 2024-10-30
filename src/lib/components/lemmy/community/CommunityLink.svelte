@@ -25,6 +25,7 @@
     export let noClick:boolean = false
     export let maxNameLength: number = 30
     export let inline: boolean = true
+    
     const dispatcher = createEventDispatcher()
 
     function linkFromCommunity(community: Community) {
