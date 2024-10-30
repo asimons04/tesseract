@@ -76,7 +76,7 @@
             <span class="flex flex-row gap-1">
                 {#if showInstance ?? $userSettings.uiState.showInstances}
                     <span class="text-slate-500 dark:text-zinc-500 font-normal">
-                        @{new URL(user.actor_id).hostname}
+                        {inline ? '@' : ''}{new URL(user.actor_id).hostname}
                     </span>
                 {/if}
                 
@@ -135,8 +135,10 @@
         <span class="flex flex-row min-w-fit flex-wrap gap-1 ml-1">
             {#if user.published && isNewAccount(user.published)}
                 <Badge label="New Account"  color="gray">
-                    <Icon src={Cake} mini size="16"/>
-                    <RelativeDate date={user.published}/>
+                    <Icon src={Cake} mini size="{inline ? '16' : '12'}"/>
+                    {#if inline}
+                        <RelativeDate date={user.published}/>
+                    {/if}
                 </Badge>
             {/if}
         </span>
