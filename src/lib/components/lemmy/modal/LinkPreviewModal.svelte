@@ -68,7 +68,7 @@
     let postContainer:HTMLDivElement
     let post: PostView | undefined  = undefined
     let postType: PostType
-    let displayType='post' as PostDisplayType    
+    let displayType='feed' as PostDisplayType    
     let fetchError = false
     let previewHistory = [] as string[]
     
@@ -202,7 +202,7 @@
 
     {#if iframeView}
         <div class="flex flex-col gap-2 w-full min-h-[250px]" transition:slide>
-            <IFrame embedURL={new URL(url)} size="max-w-full"/>
+            <IFrame embedURL={new URL(url)} />
         </div>
     {/if}
     
