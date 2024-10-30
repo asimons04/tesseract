@@ -34,7 +34,7 @@
     export let ring:boolean = false
     export let community_banned:boolean = false
     export let blocked: boolean = false
-    
+    export let inline: boolean = true
 
     const dispatcher = createEventDispatcher()
     
@@ -66,8 +66,8 @@
             </span>
         {/if}
 
-        <span class="flex flex-row flex-wrap gap-0" class:ml-0.5={avatar} >
-            <span class="font-bold text-left whitespace-wrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
+        <span class="flex flex-row flex-wrap {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} gap-0" class:ml-0.5={avatar} >
+            <span class="font-bold text-left  whitespace-wrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
                 {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             
