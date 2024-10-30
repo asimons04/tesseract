@@ -19,6 +19,13 @@ export interface FeaturePostEvent extends CustomEvent {
     }
 }
 
+export interface DistinguishCommentEvent extends CustomEvent {
+    detail: {
+        comment_id: number
+        distinguished: boolean
+    }
+}
+
 // Ban User From Community
 export interface BanCommunityEvent extends CustomEvent {
     detail: {
