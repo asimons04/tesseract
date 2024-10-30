@@ -806,7 +806,7 @@
                 <div class="flex flex-row gap-2 justify-between w-full items-center text-xs overflow-hidden">
                     <CommunityLink community={item.community} avatar inline={false} avatarSize={36} />
 
-                    <UserLink user={item.creator} avatar inline={false} avatarSize={36} />
+                    <UserLink user={item.creator} avatar inline={false} avatarSize={36} community_banned={item.creator_banned_from_community}/>
                 </div>
             </Card>
 
@@ -906,7 +906,7 @@
 
             <!---Ban User (Community) --->
             {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
-                <Button color="{item.creator_banned_from_community ? 'success' : 'tertiary-border'}" icon={NoSymbol} alignment="left" class="w-full" 
+                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
                         ban.reset()
