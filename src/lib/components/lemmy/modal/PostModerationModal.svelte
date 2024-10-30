@@ -42,14 +42,15 @@
     import type { CommentView, Community, PostView, VoteView } from 'lemmy-js-client'
     import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
 
-    import { amMod, isAdmin, removalTemplate, voteViewerModal } from '../moderation/moderation';
+    import { amMod, isAdmin, removalTemplate } from '../moderation/moderation';
     import { dispatchWindowEvent } from '$lib/ui/events';
-    import { fullCommunityName, objectCopy } from '$lib/util';
+    import { fullCommunityName } from '$lib/util';
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation';
     import { isComment, isCommentView } from '$lib/lemmy/item';
     import { isPostView } from '$lib/components/lemmy/post/helpers';
     import { profile } from '$lib/auth'
+    import { shortenCommunityName } from '../community/helpers';
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings'
@@ -59,15 +60,20 @@
     import Button from "$lib/components/input/Button.svelte"
     import Card from '$lib/components/ui/Card.svelte'
     import CommentMeta from '../comment/CommentMeta.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import PostMeta from '../post/PostMeta.svelte'
     import SettingDateInput from '$lib/components/ui/settings/SettingDateInput.svelte'
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
-    
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
+    import UserLink from '../user/UserLink.svelte';
+
     import { 
         ArrowDown,
         ArrowLeft,
@@ -90,19 +96,13 @@
 
     } from "svelte-hero-icons"
 
-    import Placeholder from '$lib/components/ui/Placeholder.svelte';
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
-    import UserLink from '../user/UserLink.svelte';
-    import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte';
-    import { shortenCommunityName } from '../community/helpers';
     
     export let open: boolean = false
     export let item: PostView | CommentView
 
-    let action: 'none' | 'banning' | 'communityInfo' | 'showVotes' | 'removing' = 'none'
+    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'showVotes' | 'removing' = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
-    let cardClass = 'p-2 list-none border border-slate-300 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 rounded-lg'
 
     let locking = false
     let pinning = false
@@ -697,6 +697,7 @@
         </div>
     {/if}
     
+    <!---Vote Viewer--->
     {#if action == 'showVotes'}
         <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
                 
@@ -754,6 +755,7 @@
         </div>
     {/if}
 
+    <!---Community Details--->
     {#if action == 'communityInfo'}
         <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
                 
@@ -799,43 +801,20 @@
     <!---Default/Moderation Action List--->
     {#if action == 'none'}
         <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide>
+            
+            <Card class="p-2 w-full">
+                <div class="flex flex-row gap-2 justify-between w-full items-center text-xs overflow-hidden">
+                    <CommunityLink community={item.community} avatar inline={false} avatarSize={36} />
 
-            <!---Community Info--->
-            <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full" 
-                on:click={() => {
-                    modalWidth='max-w-3xl'
-                    action = 'communityInfo' 
-                }}
-            >
-                Community Details...
-            </Button>
+                    <UserLink user={item.creator} avatar inline={false} avatarSize={36} />
+                </div>
+            </Card>
 
-            <!---Creator's Modlog History--->
-            <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
-                on:click={() => {
-                    goto(`/modlog?other_person_id=${item.creator.id.toString()}`)        
-                    open = false
-                }}
-            >
-                Creator's Modlog History...
-            </Button>
-
-            <!---Vote Viewer--->
-            {#if !purged && isAdmin($profile?.user)}
-                <Button color="tertiary-border" icon={HandThumbUp} alignment="left" class="w-full" 
-                    on:click={() => {
-                        showVotes.init()
-                        action = 'showVotes' 
-                    }}
-                >
-                    View Votes...
-                </Button>
-            {/if}
-
-
-            <!---Feature Post (Community)--->
+            <!---Pin Community, Pin Local, Lock/Unlock--->
             {#if !isCommentView(item)}
                 <div class="flex flex-row w-full items-center gap-2">
+                    
+                    <!---Feature Post (Community)--->
                     <Button color="tertiary-border" icon={Megaphone} loading={pinning} alignment="left" class="w-full" 
                         on:click={() => pin(!item.post.featured_community, false)}
                     >
@@ -861,6 +840,43 @@
 
                 </div>
             {/if}
+
+            <!---Community Info--->
+            <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full" 
+                on:click={() => {
+                    modalWidth='max-w-3xl'
+                    action = 'communityInfo' 
+                }}
+            >
+                Community Details...
+            </Button>
+
+
+            <!---Creator's Modlog History--->
+            <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
+                on:click={() => {
+                    goto(`/modlog?other_person_id=${item.creator.id.toString()}`)        
+                    open = false
+                }}
+            >
+                Creator's Modlog History...
+            </Button>
+
+            <!---Vote Viewer--->
+            {#if !purged && isAdmin($profile?.user)}
+                <Button color="tertiary-border" icon={HandThumbUp} alignment="left" class="w-full" 
+                    on:click={() => {
+                        showVotes.init()
+                        action = 'showVotes' 
+                    }}
+                >
+                    View Votes...
+                </Button>
+            {/if}
+
+
+            
+            
 
             <!---Remove/Restore Item--->
             {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
@@ -898,7 +914,7 @@
                         action = 'banning'
                     }}
                 >
-                    {item.creator_banned_from_community ? 'Unban' : 'Ban'} From Community...
+                    {item.creator_banned_from_community ? 'Unban' : 'Ban'} Community...
                 </Button>
             {/if}
             
@@ -911,7 +927,7 @@
                         action = 'banning'
                     }}
                 >
-                    {item.creator.banned ? 'Unban' : 'Ban'} From Instance...
+                    {item.creator.banned ? 'Unban' : 'Ban'} Instance...
                 </Button>
             {/if}
             
