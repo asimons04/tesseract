@@ -66,61 +66,68 @@
             </span>
         {/if}
 
-        <span class="flex flex-row flex-wrap {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} gap-0" class:ml-0.5={avatar} >
+        <span class="flex flex-wrap {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {$userSettings.uiState.showInstances ? '' : '!flex-row'} gap-0" class:ml-0.5={avatar} >
+            
             <span class="font-bold text-left  whitespace-wrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
                 {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             
-            {#if showInstance ?? $userSettings.uiState.showInstances}
-                <span class="text-slate-500 dark:text-zinc-500 font-normal">
-                    @{new URL(user.actor_id).hostname}
-                </span>
-            {/if}
             
-            <!---User Badges--->
-            <span class="flex flex-row ml-1 gap-1 items-center">
-                
-                {#if badges && distinguishAdminsMods && admin}
-                    <div class="text-red-500" title="Admin">
-                        <ShieldIcon width={12} filled />
-                    </div>
+            <span class="flex flex-row gap-1">
+                {#if showInstance ?? $userSettings.uiState.showInstances}
+                    <span class="text-slate-500 dark:text-zinc-500 font-normal">
+                        @{new URL(user.actor_id).hostname}
+                    </span>
                 {/if}
                 
-                {#if badges && distinguishAdminsMods && mod}
-                    <div class="text-green-500" title="Moderator">
-                        <ShieldIcon width={12} filled />
-                    </div>
-                {/if}
+                <!---User Badges--->
+                <span class="flex flex-row ml-1 gap-1 items-center">
+                    
+                    {#if badges && distinguishAdminsMods && admin}
+                        <div class="text-red-500" title="Admin">
+                            <ShieldIcon width={12} filled />
+                        </div>
+                    {/if}
+                    
+                    {#if badges && distinguishAdminsMods && mod}
+                        <div class="text-green-500" title="Moderator">
+                            <ShieldIcon width={12} filled />
+                        </div>
+                    {/if}
 
-                {#if badges && community_banned}
-                    <div class="text-green-500" title="Banned from Community">
-                        <Icon src={NoSymbol} mini size="12" />
-                    </div>
-                {/if}
+                    {#if badges && community_banned}
+                        <div class="text-green-500" title="Banned from Community">
+                            <Icon src={NoSymbol} mini size="12" />
+                        </div>
+                    {/if}
 
-                {#if badges && user.banned}
-                    <div class="text-red-500" title="Banned">
-                        <Icon src={NoSymbol} mini size="12" />
-                    </div>
-                {/if}
+                    {#if badges && user.banned}
+                        <div class="text-red-500" title="Banned">
+                            <Icon src={NoSymbol} mini size="12" />
+                        </div>
+                    {/if}
 
-                {#if badges && blocked}
-                    <div class="text-red-500" title="Blocked">
-                        <Icon src={EyeSlash} mini size="12" />
-                    </div>
-                {/if}
+                    {#if badges && blocked}
+                        <div class="text-red-500" title="Blocked">
+                            <Icon src={EyeSlash} mini size="12" />
+                        </div>
+                    {/if}
 
-        
-                {#if badges && user.bot_account}
-                    <div class="text-blue-500 font-bold" title="Bot">BOT</div>
-                {/if}
+            
+                    {#if badges && user.bot_account}
+                        <div class="text-blue-500 font-bold" title="Bot">BOT</div>
+                    {/if}
 
-                {#if badges && user.deleted}
-                    <div class="text-red-500" title="Deleted">
-                        <Icon src={Trash} mini size="12" />
-                    </div>
-                {/if}
+                    {#if badges && user.deleted}
+                        <div class="text-red-500" title="Deleted">
+                            <Icon src={Trash} mini size="12" />
+                        </div>
+                    {/if}
+                </span>
             </span>
+            
+            
+           
         </span>
     </span> 
   
