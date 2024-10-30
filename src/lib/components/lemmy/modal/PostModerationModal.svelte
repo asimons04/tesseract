@@ -920,7 +920,7 @@
             
             <!---Ban User (Instance) --->
             {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
-                <Button color="{item.creator.banned ? 'success' : 'tertiary-border'}" icon={NoSymbol} alignment="left" class="w-full" 
+                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
                         ban.reset()
