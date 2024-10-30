@@ -65,7 +65,7 @@
 
 <!--- Turn community links into badges that load a community profile modal--->
 {:else if community}
-    <Badge color="orange" rightJustify={false} inline={true} on:click={(e) => {
+    <Badge color="gray" rightJustify={false} inline={true} on:click={(e) => {
         e.preventDefault()
         e.stopPropagation()
         if (community) communityProfileModal(community)
