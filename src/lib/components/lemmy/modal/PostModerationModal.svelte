@@ -806,13 +806,13 @@
                 <div class="flex flex-row gap-2 justify-between w-full items-center text-xs overflow-hidden">
                     <CommunityLink community={item.community} avatar inline={false} avatarSize={36} />
 
-                    <UserLink user={item.creator} avatar inline={false} avatarSize={36} community_banned={item.creator_banned_from_community}/>
+                    <UserLink user={item.creator} avatar inline={false} avatarSize={36} community_banned={item.creator_banned_from_community} mod={item.creator_is_moderator} admin={item.creator_is_admin} />
                 </div>
             </Card>
 
             <!---Pin Community, Pin Local, Lock/Unlock--->
             {#if !isCommentView(item)}
-                <div class="flex flex-row w-full items-center gap-2">
+                <div class="flex flex-row w-full my-4 items-center gap-2">
                     
                     <!---Feature Post (Community)--->
                     <Button color="tertiary-border" icon={Megaphone} loading={pinning} alignment="left" class="w-full" 
