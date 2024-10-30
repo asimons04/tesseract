@@ -556,6 +556,7 @@
             : pinning = false
     }
 
+    // Distinguish and Un-distinguish a mod comment
     async function distinguish() {
         if (!isCommentView(item) || !$profile?.jwt) return
 
