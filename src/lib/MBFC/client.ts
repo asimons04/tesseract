@@ -20,6 +20,7 @@ function normalizeDomain(domain:string):string {
         .replace('reutersagency.com', 'reuters.com')
         .replace('tcrn.ch', 'techcrunch.com')
         .replace('text.npr.org', 'npr.org')
+        .replace('text.hrw.org', 'hrw.org')
         .replace('tvpworld.com', 'tvp.info')
         .replace('wapo.st', 'washingtonpost.com')
         .replace('yahoo.com', 'news.yahoo.com')
