@@ -92,6 +92,7 @@
         Newspaper,
         NoSymbol,
         ShieldExclamation, 
+        Sparkles, 
         Trash
 
     } from "svelte-hero-icons"
@@ -554,6 +555,38 @@
             ? pinningInstance = false
             : pinning = false
     }
+
+    async function distinguish() {
+        if (!isCommentView(item) || !$profile?.jwt) return
+
+        let distinguished: boolean = item.comment.distinguished;
+        
+
+        try {
+            await getClient(undefined).distinguishComment({
+                comment_id: item.comment.id,
+                distinguished: !distinguished
+            });
+            
+            item.comment.distinguished = !distinguished;
+            
+            dispatchWindowEvent('distinguishComment', {
+                comment_id: item.comment.id,
+                distinguished: item.comment.distinguished
+            })
+
+            toast({
+                    type: 'success',
+                    content: `${item.comment.distinguished ? 'Distinguished' : 'Un-distinguished'} this comment.`,
+                })
+        }
+        catch (err:any){
+            toast({
+                    type: 'error',
+                    content: `Unable to distinguish comment: ${JSON.stringify(err)}`,
+                })
+        }
+    }
 </script>
 
 
@@ -861,6 +894,16 @@
             >
                 Creator's Modlog History...
             </Button>
+
+            <!---Distinguish Comment--->
+            <!---Lemmy devs are ridiculous and changed the behavior so you could only distinguish your own comments.  Fuckin' bullshit--->
+            {#if isCommentView(item) && $profile?.user && item.creator_is_moderator && $profile.user.local_user_view.person.id == item.creator.id}
+                <Button color="tertiary-border" icon={Sparkles} alignment="left" class="w-full"
+                    on:click={() => distinguish() }
+                >
+                    {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
+                </Button>
+            {/if}
 
             <!---Vote Viewer--->
             {#if !purged && isAdmin($profile?.user)}
