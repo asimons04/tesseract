@@ -55,6 +55,11 @@ removeAdmin {username}
 - Disable 'report' comment action if comment already removed.
 - Fixed Gifs not previewing if just 'url' is present (i.e. no thumbanil_url or embed_video_url)
 - Indicate post's removed/deleted/lock state in the comment item component when viewing profiles
+- When "Match Crossposts on Title" is enabled, posts with the same title but different URLs will no longer be erroneously rolled up
+- "Distinguish" now only shows on your own comments if you are a moderator.  This matches the stupid API behavior because the Lemmy devs suck. (Wow I really *can't* go one release without throwing deserved shade at them, can I?)
+
+
+
 
 ### Bugfixes: Major
 #### Image Cache Housekeeping
@@ -70,7 +75,7 @@ If startup takes too long, you can always delete all of the `.cache` objects man
 
 ## New Features / Changes
 
-### Create Post Form Now Automatically Searches for Crossposts/Duplicates
+### Post Form Now Automatically Searches for Crossposts/Duplicates
 When you are creating a post, the URL will be searched to see if you're posting something that's already been posted.  It should do this automatically when the URL field changes or the URL is set and the community changes.  The behavior is slightly different depending on if a community is defined:
 
 1) If the community is **not** set, then it will search for any posts on your instance matching that URL.  The label will be "Crossposts".
@@ -78,6 +83,37 @@ When you are creating a post, the URL will be searched to see if you're posting 
 1) If the community **is** set, then it will do a remote API call to search the *home instance of that community* for any posts to that community with that URL.  The label will be "Existing posts in {community}@{instance}.
 
 The latter behavior is particularly useful if you want to avoid accidentally posting a duplicate that may have been posted by someone you've blocked or by someone your instance doesn't federate with.  Those posts may not be visible to you locally, so the remote search should help identify them so you don't clutter up the feed and/or add extra work for the moderator who usually removes duplicate posts.
+
+If for whatever reason it doesn't trigger automatically, the "Magnifying Glass" icon to the right of the URL field can trigger the search manually.
+
+
+### Moderation Menu Has Been Replaced With New Moderation Modal
+The moderation menu on posts and comments has been removed.  The reason is that the menus were getting cluttered when new things are added, especially for admins who have more options available than regular mods.  Rather than creating sub-menus (yuck!) or introducing separate UI elements for admin controls, I've just scrapped the whole thing and started over.
+
+The "mod" button will now open a modal containing all the mod tools that are appropriate for the item.
+
+The cool thing about the new mod modal is that all of the tools are packaged into it.  It doesn't open separate modals for banning/unbanning, removing/restoring, etc.  It even has the community details available so that mods can reference the rules when issuing actions without leaving the item they're working with.
+
+#### Current Capabilities
+- A mini-banner heading showing the current community with its icon and the creator of the item and their avatar/info.
+    - Both communtiy and user are clickable to bring up their respective profile modals to get more info (these pop up in separate modals and aren't integrated into the mod modal)
+- Pin/Unpin the post to the community
+- Feature/Unfeature the post on the instance (admins only)
+- Lock/Unlock the post
+- View the community details/sidebar info relevant to the current item (post or comment)
+- View the votes for the item (admins only until whatever version of Lemmy lets mods do this for their communities)
+- Remove/Restore the post or comment (shows the post meta header or the comment meta header and comment previews)
+- Purge the post or comment (admin only)
+- Ban/Unban the user from the community
+- Ban/Unban the user from the instance (admins only)
+- View the user's modlog history (currently a link, but integrating a modlog view is in progress)
+
+- To do:  Distinguish Comment
+
+
+With the exception of the (current implementation) of the user modlog, everything stays within the same modal, and it shrinks/expands to accommodate the various integrated tools.
+
+
 
 
 
