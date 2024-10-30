@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BanUserEvent, PurgeCommentEvent, RemoveCommentEvent } from '$lib/ui/events'
+    import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, PurgeCommentEvent, RemoveCommentEvent } from '$lib/ui/events'
     import type { CommentNodeI } from './comments'
     import type { UploadImageResponse } from 'lemmy-js-client';
     
@@ -95,6 +95,13 @@
         }
     }
 
+    function handleDistinguishComment(e: DistinguishCommentEvent) {
+        if (node.comment_view.comment.id == e.detail.comment_id) {
+            node.comment_view.comment.distinguished = e.detail.distinguished
+            node = node
+        }
+    }
+
     // Render comment collapsed if bot account, on /post page, and user has enabled the collapse bot comment option
     open = (
             $page.url.pathname.startsWith('/post') &&
@@ -108,6 +115,7 @@
 <svelte:window 
     on:banUser={handleBanUser} 
     on:banCommunity={handleBanCommunity} 
+    on:distinguishComment={handleDistinguishComment}
     on:removeComment={handleRemoveComment}
     on:purgeComment={handlePurgeComment}
 />
