@@ -49,6 +49,7 @@
         <span class="flex flex-row gap-2 text-sm items-center {noClick ? 'pointer-events-none' : ''}">
             <!---Show user's avatar if viewing posts in a community--->
             {#if comment.community && !inCommunity}
+                
                 <span class="flex flex-col items-end gap-1">    
                     <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} community={true}/>
                 
@@ -78,14 +79,14 @@
                 <Avatar url={comment.creator.avatar} width={avatarSize} alt={comment.creator.actor_id} />
             {/if}
 
-            <div class="flex flex-col text-xs">
+            <div class="flex flex-col w-full text-xs">
                 {#if !inCommunity && comment.community}
                     <CommunityLink community={comment.community} {avatarSize} />
                 {/if}
                 
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
                     {#if !inProfile && comment.creator}
-                        <div class="flex flex-wrap items-center" class:text-slate-900={!comment.community} class:dark:text-zinc-100={!comment.community}>
+                        <div class="flex flex-wrap items-center w-full" class:text-slate-900={!comment.community} class:dark:text-zinc-100={!comment.community}>
                             <span class="hidden md:block'">Commented by&nbsp;</span>
                             <UserLink avatarSize={20} user={comment.creator} 
                                 mod={comment.creator_is_moderator} admin={comment.creator_is_admin}
