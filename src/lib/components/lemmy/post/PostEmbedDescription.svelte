@@ -6,7 +6,7 @@
     import { imageProxyURL } from "$lib/image-proxy"
     import { userSettings } from "$lib/settings"
     import Button from "$lib/components/input/Button.svelte";
-    import { ChevronDown, ChevronUp } from "svelte-hero-icons";
+    import { ArrowsPointingOut, ChevronDown, ChevronUp, Icon } from "svelte-hero-icons";
     
     
     export let url: string = ''
@@ -62,7 +62,11 @@
                 on:click={() => {
                     dispatcher('clickThumbnail')
                 }}
+                
             >
+                <span class="flex flex-col h-fit mt-auto mb-1 p-1 rounded-lg relative left-[5px] bg-slate-100/50 dark:bg-zinc-900/60">
+                    <Icon src={ArrowsPointingOut} width={16} mini />
+                </span>
             </button>
         {/if}
     </div>

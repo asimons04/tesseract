@@ -16,9 +16,11 @@
     import MBFC from '$lib/MBFC/MBFC.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
-    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
+    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostLink from './PostLink.svelte';
+    
+    import { ArrowsPointingOut, Icon } from 'svelte-hero-icons';
     
 
     export let post: PostView
@@ -77,6 +79,7 @@
                                 scrollToTop(postContainer)
                             }}
                         >
+                            
                             {#if post.post.thumbnail_url || isImage(post.post.url)}
                                 <img
                                     src="{
@@ -108,6 +111,9 @@
                                     }" />
                                 </video>
                             {/if}
+                            <span class="flex w-fit p-1 rounded-lg relative left-[5px] bottom-[30px] bg-slate-100/50 dark:bg-zinc-900/60">
+                                <Icon src={ArrowsPointingOut} width={16} mini />
+                            </span>
                         </button>
                     </div>
                     
