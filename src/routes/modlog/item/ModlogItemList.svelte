@@ -35,6 +35,8 @@
 
     export let item: ModLog
     export let hideCommunity:boolean = false
+    export let actions: boolean = true
+
 
     let banningCommunity = false
     let banningInstance = false
@@ -110,7 +112,7 @@
 
 <!---Ban/Unban Instance--->
 {#if item.moderatee && isAdmin($profile?.user)}
-    <BanInstanceModal bind:open={banningInstance} bind:banned={item.moderatee.banned} bind:user={item.moderatee} 
+    <BanInstanceModal bind:open={banningInstance} bind:banned={item.moderatee.banned} bind:user={item.moderatee} community={undefined}
         on:ban={(e) => {
             //goto(window.location.href, {invalidateAll: true})
             if (item.moderatee) item.moderatee.banned = e.detail
@@ -199,7 +201,7 @@
         </div>
     
         <!---Action Button--->
-        {#if item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community))) }
+        {#if actions && (item.actionName != 'purge' && (isAdmin($profile?.user) || (item.community && amMod($profile?.user, item.community)))) }
             <Menu alignment="bottom-right" itemsClass="flex my-auto h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
             
                 <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Action Menu">
