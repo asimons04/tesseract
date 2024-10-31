@@ -91,6 +91,7 @@
     async function setIframeURL() {
         try {
             iframeURL = new URL(url)
+            if (url.endsWith('.pdf')) iframeView = true
         }
         catch {
             iframeURL = undefined
