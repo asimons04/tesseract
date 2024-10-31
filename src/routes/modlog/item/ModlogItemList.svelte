@@ -142,7 +142,7 @@
 
     <div class="flex flex-row w-full items-center justify-between">
         <!---Modlog Entry Details--->
-        <div class="flex flex-col gap-1 text-xs font-normal"  transition:fly={{duration:300, x: '33%'}}>
+        <div class="flex flex-col gap-1 text-xs font-normal w-full"  transition:fly={{duration:300, x: '33%'}}>
             
             {#if item.actionName}
                 <span class="text-sm font-bold">
