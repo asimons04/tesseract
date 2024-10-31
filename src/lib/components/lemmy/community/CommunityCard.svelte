@@ -171,7 +171,7 @@
                     
                     <div class="flex flex-col gap-0 w-full" style="width: calc(100% - 75px);">
                         <div class="flex flex-row">
-                            <h1 class="font-bold truncate text-ellipsis text-xl capitalize">
+                            <h1 class="font-bold text-xl capitalize">
                                 <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}" title="{community_view.community.name}">
                                     {community_view.community.title.replace('&amp;', '&')}
                                 </a>
