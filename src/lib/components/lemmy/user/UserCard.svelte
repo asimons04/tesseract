@@ -81,7 +81,7 @@
                 <Avatar ring width={64} url={person.person.avatar} alt={person.person.actor_id} zoomable={true} fullRes={true}/>
                 
 
-                <div class="flex flex-col gap-0 w-full">
+                <div class="flex flex-col gap-0" style="width: calc(100% - 68px);">
                     <div>
                         <h1 class="flex flex-row">
                             <span class="font-bold text-lg">
