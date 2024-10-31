@@ -83,7 +83,6 @@
     import CommentMeta from '../comment/CommentMeta.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte'
-    import Link from '$lib/components/input/Link.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
@@ -833,7 +832,7 @@
             <!---Ban/Unban Instance/Community Form--->
             <Card class="flex flex-col p-4">
                 {#if showVotes.loading}
-                    <div class="flex w-full min-h-[30vh]">
+                    <div class="flex w-full">
                         <span class="flex flex-col gap-4 mx-auto my-auto">
                             <Spinner width={64} />
                         </span>
@@ -959,54 +958,57 @@
                         : 'Showing all modlog events for this user.'
                 }
                 You may also 
-                <Link href={`/modlog?other_person_id=${item.creator.id}`} highlight>
+                <button on:click={ () => {
+                    goto(`/modlog?other_person_id=${item.creator.id}`)
+                    open = false
+                }} 
+                    class="text-sky-700 dark:text-sky-500 text-left hover:underline"
+                    title="Full modlog" highlight>
                     view the full modlog
-                </Link>
+                </button>
                 for the user.
             </span>
 
             <!---Modlog View--->
-            <!--<Card class="flex flex-col p-4">-->
-                {#if modlog.loading}
-                    <div class="flex w-full"> <!---min-h-[30vh]--->
-                        <span class="flex flex-col gap-4 mx-auto my-auto">
-                            <Spinner width={64} />
-                        </span>
-                    </div>
-                
-                {:else}
+            {#if modlog.loading}
+                <div class="flex w-full"> <!---min-h-[30vh]--->
+                    <span class="flex flex-col gap-4 mx-auto my-auto">
+                        <Spinner width={64} />
+                    </span>
+                </div>
+            
+            {:else}
 
-                    <div class="flex flex-col w-full gap-4">
-                        
-                        <div bind:this={modlog.containerDiv} class="flex flex-col gap-4 mt-2 max-h-[50vh] overflow-y-scroll p-2">
-                            {#if modlog.results.length > 0}
-                                {#each modlog.results as modlogItem}
-                                    <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
-                                        <ModlogItemList bind:item={modlogItem} actions={false} hideCommunity={modlog.showThisCommunityOnly}/>
-                                    </div>
-                                {/each}
+                <div class="flex flex-col w-full gap-4">
+                    
+                    <div bind:this={modlog.containerDiv} class="flex flex-col gap-4 mt-2 max-h-[50vh] overflow-y-scroll p-2">
+                        {#if modlog.results.length > 0}
+                            {#each modlog.results as modlogItem}
+                                <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
+                                    <ModlogItemList bind:item={modlogItem} actions={false} hideCommunity={modlog.showThisCommunityOnly}/>
+                                </div>
+                            {/each}
+                        {:else}
+                            {#if !modlog.fetchError}
+                                <span class="mx-auto my-auto">
+                                    <Placeholder icon={Newspaper} title="No Results" description="No modlog results returned" />
+                                </span>
                             {:else}
-                                {#if !modlog.fetchError}
-                                    <span class="mx-auto my-auto">
-                                        <Placeholder icon={Newspaper} title="No Results" description="No modlog results returned" />
-                                    </span>
-                                {:else}
-                                    <span class="mx-auto my-auto">
-                                        <Placeholder icon={ExclamationTriangle} title="Fetch Error" description="Unable to load the modlog from the API." />
-                                    </span>
-                                {/if}
+                                <span class="mx-auto my-auto">
+                                    <Placeholder icon={ExclamationTriangle} title="Fetch Error" description="Unable to load the modlog from the API." />
+                                </span>
                             {/if}
-                        </div>
-                        
-                        <Pageination bind:page={modlog.page} on:change={(e) => {
-                            modlog.setPage(e.detail)
-                            modlog.load()
-                            modlog.containerDiv?.scrollTo(0,0)
-                        }}/>
+                        {/if}
                     </div>
-                {/if}
+                    
+                    <Pageination bind:page={modlog.page} on:change={(e) => {
+                        modlog.setPage(e.detail)
+                        modlog.load()
+                        modlog.containerDiv?.scrollTo(0,0)
+                    }}/>
+                </div>
+            {/if}
 
-            <!--/Card>-->
         </div>
 
     {/if}
