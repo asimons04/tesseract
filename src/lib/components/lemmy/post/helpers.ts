@@ -69,7 +69,7 @@ export const isImage = (url: string | undefined) => {
     try {
         if (!url) return false
         const testURL = new URL(unproxyImage(url))
-        return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
+        return /\.(avif|jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
     }
     catch {
         return false
@@ -580,7 +580,7 @@ export const filterKeywords = function (posts:PostView[]):PostView[] {
 
             }
         }
-        console.log(filteredPosts);
+        //console.log(filteredPosts);
         
         return posts
     }
