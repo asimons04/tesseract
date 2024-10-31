@@ -56,7 +56,8 @@
 </script>
 
 
-<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row flex-wrap min-w-fit gap-1 items-start md:items-center hover:underline" 
+<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row flex-wrap gap-1 items-start md:items-center hover:underline w-fit" 
+    style="max-width: calc(100% - 52px);"
     on:click={loadProfileModal} 
 >
     <span class="flex flex-row gap-1 items-center">
@@ -68,14 +69,14 @@
 
         <span class="flex flex-wrap {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {$userSettings.uiState.showInstances ? '' : '!flex-row'} gap-0" class:ml-0.5={avatar} >
             
-            <span class="font-bold text-left  whitespace-wrap {shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}">
+            <span class="font-bold text-left  truncate "> <!---{shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}--->
                 {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             
             
             <span class="flex flex-row gap-1">
                 {#if showInstance ?? $userSettings.uiState.showInstances}
-                    <span class="text-slate-500 dark:text-zinc-500 font-normal">
+                    <span class="text-slate-500 dark:text-zinc-500 font-normal truncate">
                         {inline ? '@' : ''}{new URL(user.actor_id).hostname}
                     </span>
                 {/if}
