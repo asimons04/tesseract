@@ -30,7 +30,7 @@
     export let admin:boolean = false
     export let href:boolean = false
     export let distinguishAdminsMods:boolean = true
-    export let shortenDisplayName:boolean = false
+    //export let shortenDisplayName:boolean = false
     export let ring:boolean = false
     export let community_banned:boolean = false
     export let blocked: boolean = false
