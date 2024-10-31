@@ -23,7 +23,7 @@
     export let boldCommunityName:boolean = true;
     export let useDisplayNames:boolean|undefined = undefined 
     export let noClick:boolean = false
-    export let maxNameLength: number = 30
+    export let maxNameLength: number = 45
     export let inline: boolean = true
     
     const dispatcher = createEventDispatcher()
