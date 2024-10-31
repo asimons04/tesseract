@@ -60,14 +60,14 @@
     style="max-width: calc(100% - 52px);"
     on:click={loadProfileModal} 
 >
-    <span class="flex flex-row gap-1 items-center">
+    <span class="flex flex-row w-full gap-1 items-center">
         {#if avatar}
             <span class="items-center">    
                 <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
             </span>
         {/if}
 
-        <span class="flex flex-wrap {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {$userSettings.uiState.showInstances ? '' : '!flex-row'} gap-0" class:ml-0.5={avatar} >
+        <span class="flex flex-wrap w-full {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {$userSettings.uiState.showInstances ? '' : '!flex-row'} gap-0" class:ml-0.5={avatar} >
             
             <span class="font-bold text-left  truncate "> <!---{shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}--->
                 {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
