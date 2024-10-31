@@ -93,12 +93,12 @@
                 <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.actor_id} />
             {/if}
 
-            <div class="flex flex-col text-xs">
+            <div class="flex flex-col w-full text-xs">
                 {#if !inCommunity && post.community}
                     <CommunityLink bind:community={post.community} {avatarSize} />
                 {/if}
                 
-                <span class="flex flex-col sm:flex-row sm:gap-1 flex-wrap">
+                <span class="flex flex-col sm:flex-row sm:gap-1">
                     {#if !inProfile && post.creator}
                         <div class="flex flex-wrap items-center" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'} text-slate-600 dark:text-zinc-400">Posted by&nbsp;</span>
