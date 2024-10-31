@@ -56,7 +56,7 @@
 </script>
 
 
-<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline w-fit" 
+<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline min-w-fit" 
     style="max-width: calc(100% - 52px);"
     on:click={loadProfileModal} 
 >
@@ -124,6 +124,15 @@
                             <Icon src={Trash} mini size="12" />
                         </div>
                     {/if}
+
+                    {#if badges && user.published && isNewAccount(user.published)}
+                        <Badge label="New Account: {user.published}"  color="gray">
+                            <Icon src={Cake} mini size="{inline ? '16' : '12'}"/>
+                            {#if inline}
+                                <RelativeDate date={user.published}/>
+                            {/if}
+                        </Badge>
+                    {/if}
                 </span>
             </span>
             
@@ -132,6 +141,7 @@
         </span>
     </span> 
   
+    <!---
     {#if badges}
         <span class="flex flex-row min-w-fit flex-wrap gap-1 ml-1">
             {#if user.published && isNewAccount(user.published)}
@@ -144,5 +154,6 @@
             {/if}
         </span>
     {/if}
+    --->
     
 </a>
