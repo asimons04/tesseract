@@ -70,7 +70,7 @@
             
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
             
-            <video bind:this={video} class="rounded-2xl max-w-full max-h-[75vh] max-w-[88vw] mx-auto" 
+            <video bind:this={video} class="rounded-2xl w-full {displayType=='feed' ? 'max-h-[40vh]' : 'max-h-[80vh]'} mx-auto" 
                 class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed')}    
                 controls playsinline {muted} {autoplay}  {loop}
             >
