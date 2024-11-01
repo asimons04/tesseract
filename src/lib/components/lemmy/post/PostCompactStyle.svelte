@@ -54,7 +54,7 @@
             
             <div class="flex flex-row w-full gap-2">
                 
-                <div class="flex flex-col gap-1 {!$userSettings.uiState.hideCompactThumbnails && post.post.thumbnail_url ? 'w-[calc(100%-128px)]' : 'w-full'}">
+                <div class="flex flex-col gap-1 {!$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url))? 'w-[calc(100%-128px)]' : 'w-full'}">
                     <PostTitle bind:post />
 
                     {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
