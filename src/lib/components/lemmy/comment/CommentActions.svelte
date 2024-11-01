@@ -87,14 +87,14 @@
             {/await}
         {/if}
 
-        <Button on:click={() => (debug = true)} size="square-sm" color="tertiary-border" title="Debug Info">
+        <Button on:click={() => (debug = true)} size="square-md" color="tertiary-border" title="Debug Info">
             <Icon src={BugAnt} mini  width={14} height={14} slot="icon" />
         </Button>
     {/if}
 
     <!--- Comment Moderation Menu--->
     {#if onHomeInstance && $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
-        <Button color="tertiary-border" size="square-sm" title="Moderation" icon={ShieldCheck} iconSize={14} on:click={() => postModerationModal(comment) } />    
+        <Button color="tertiary-border" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={14} on:click={() => postModerationModal(comment) } />    
     {/if}
   
     <!---Comment Action Menu --->
@@ -104,7 +104,7 @@
             on:click={toggleOpen}
             aria-label="Comment actions"
             color="tertiary-border"
-            size="square-sm"
+            size="square-md"
             let:toggleOpen
         >
             <Icon src={EllipsisHorizontal} width={16} height={16} mini slot="icon" />
