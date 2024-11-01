@@ -59,6 +59,20 @@
     <DebugButton bind:post />
   
     
+    
+
+    <!--- Moderation Menu--->
+    <!---
+    {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+        <Button color="tertiary-border" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
+    {/if}
+    --->
+
+    <!---Explore Menu--->
+    <!---
+        <InstanceMenu bind:post bind:expandCompact />
+    --->
+    
     <!--- Expand Compact Post to Card--->
     {#if $userSettings.showCompactPosts}
         <Button  color="tertiary-border" title="{expandCompact ? 'Collapse' : 'Expand'}" 
@@ -70,16 +84,8 @@
             <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />
         </Button>
     {/if}
-
-    <!--- Moderation Menu--->
-    {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-        <Button color="tertiary-border" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
-    {/if}
-
-    <!---Explore Menu--->
-    <InstanceMenu bind:post bind:expandCompact />
-        
+    
     <!--- Post Actions Menu --->
-    <PostActionsMenu bind:post bind:expandCompact />
+    <!--<PostActionsMenu bind:post bind:expandCompact />-->
     
 </div>
