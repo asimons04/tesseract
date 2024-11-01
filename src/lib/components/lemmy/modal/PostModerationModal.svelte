@@ -695,7 +695,7 @@
                 <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove.remove}>
                     
                     {#if !isCommentView(item)}
-                        <PostMeta post={item} noClick/>
+                        <PostMeta post={item} actions={false} expandCompact={false} noClick/>
                     {:else}
                         <CommentMeta comment={item} content noClick/>
                     {/if}

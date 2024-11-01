@@ -28,8 +28,8 @@
    
     export let post: PostView
     export let displayType: PostDisplayType
-    export let expandCompact: boolean
-    export let postContainer: HTMLDivElement
+    //export let expandCompact: boolean
+    //export let postContainer: HTMLDivElement
 
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
@@ -73,7 +73,7 @@
         <InstanceMenu bind:post bind:expandCompact />
     --->
     
-    <!--- Expand Compact Post to Card--->
+    <!--- Expand Compact Post to Card
     {#if $userSettings.showCompactPosts}
         <Button  color="tertiary-border" title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
@@ -84,6 +84,7 @@
             <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />
         </Button>
     {/if}
+    --->
     
     <!--- Post Actions Menu --->
     <!--<PostActionsMenu bind:post bind:expandCompact />-->

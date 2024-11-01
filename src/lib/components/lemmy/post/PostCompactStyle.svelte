@@ -42,7 +42,7 @@
     <!--- If post is NSFW, only show the metadata + title and overlay the rest--->
     {#if post.post.nsfw}
         <div class="flex flex-col gap-1 w-full">
-            <PostMeta bind:post={post} showTitle={true} {collapseBadges}/>                
+            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges}/>                
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} text="[Reveal NSFW Post]"/>
         </div>
     {:else}
@@ -50,7 +50,7 @@
         <!---Image and Video Posts--->
         <!---These will have the thumbnail in the upper-right corner rather than in the metadata--->
         {#if  (['image', 'video'].includes(postType)) }
-            <PostMeta bind:post showTitle={false} {collapseBadges}/>
+            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges}/>
             
             <div class="flex flex-row w-full gap-2">
                 
@@ -116,7 +116,7 @@
         <!---Link posts with embed description, etc--->
         {:else}
 
-            <PostMeta bind:post showTitle={true} {collapseBadges}/>
+            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges}/>
                     
             <PostLink bind:post bind:displayType compact={true}
                 on:clickThumbnail={() => {
@@ -148,7 +148,7 @@
     <div class="flex flex-row w-full">
         {#if actions}
             <div class="w-full h-full grid items-end">
-                <PostActions  bind:post  bind:expandCompact bind:postContainer {displayType}
+                <PostActions  bind:post  {displayType}
                     on:reply
                     on:edit={(e) => {
                         toast({

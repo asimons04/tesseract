@@ -10,6 +10,7 @@
     import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { scrollToTop } from './helpers.js'
     import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings'
 
@@ -24,6 +25,8 @@
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
+    ArrowsPointingIn,
+        ArrowsPointingOut,
         Bookmark,
         ExclamationCircle,
         Icon,
@@ -50,6 +53,10 @@
     export let avatarSize:number                = 48;
     export let noClick:boolean                  = false;
     
+    export let expandCompact: boolean           
+    export let postContainer: HTMLDivElement|undefined = undefined
+    export let actions: boolean                 = true
+    
     let inCommunity:boolean     = false
     let inProfile:boolean       = false
     let userIsModerator:boolean = false 
@@ -72,7 +79,7 @@
             
             <!---Show Community Icon if Not in Community--->
             {#if post.community && !inCommunity}
-                <span class="flex flex-col items-end gap-1">
+                <span class="flex flex-col my-auto items-end gap-1">
                     <Avatar bind:url={post.community.icon} width={avatarSize} alt={post.community.name} community={true}/>
                     
                     <!---Only show subscribe button for logged-in users and not on post create pages--->
@@ -100,7 +107,9 @@
             
             <!---Show user's avatar if viewing posts in a community--->
             {:else if inCommunity && post.creator}
-                <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.actor_id} />
+                <span class="flex flex-col my-auto items-end gap-1">
+                    <Avatar bind:url={post.creator.avatar} width={avatarSize} alt={post.creator.actor_id} />
+                </span>
             {/if}
 
             <div class="flex flex-col w-full text-xs">
@@ -179,20 +188,33 @@
 
 
             <!---Post Action Buttons--->
-            <div class="flex flex-row items-start gap-2 ml-auto">
-                
-                <!---Moderation --->
-                {#if $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-                    <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
-                {/if}
-                
-                <!---Instances--->
-                <InstanceMenu bind:post />
+            {#if actions}
+                <div class="flex flex-row items-start gap-2 ml-auto">
+                    
+                    <!---Moderation --->
+                    {#if $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+                        <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
+                    {/if}
 
-                <!---Post Actions--->
-                <PostActionsMenu bind:post  />
-            </div>
-            
+                    <!--- Expand Compact Post to Card--->
+                    {#if $userSettings.showCompactPosts}
+                        <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                            on:click={() => {  
+                                expandCompact = !expandCompact; 
+                                if (postContainer) scrollToTop(postContainer)
+                            }}
+                        >
+                            <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />
+                        </Button>
+                    {/if}
+                    
+                    <!---Instances--->
+                    <InstanceMenu bind:post />
+
+                    <!---Post Actions--->
+                    <PostActionsMenu bind:post  />
+                </div>
+            {/if}
             
         </span>
     </div>
