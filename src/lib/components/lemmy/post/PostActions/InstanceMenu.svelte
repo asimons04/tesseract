@@ -24,17 +24,10 @@
         NoSymbol,
         Eye
     } from 'svelte-hero-icons'
-    
-
 
     export let post:PostView
-    export let expandCompact: boolean
-
-    let alignment: Alignment = getMenuAlignment(expandCompact)
     
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
-    $: $userSettings.showCompactPosts, alignment = getMenuAlignment(expandCompact)
-    $: $userSettings.uiState.reverseActionBar, alignment = getMenuAlignment(expandCompact)
 
     let blockingInstance = false;
     async function doBlockInstance(instance_id:number, hostname:string, confirm:boolean=false):Promise<void> {
@@ -82,17 +75,19 @@
 
 
 <!---Explore Menu--->
-<Menu alignment={alignment} containerClass="overflow-auto">
-    <Button slot="button" aria-label="Explore" let:toggleOpen on:click={toggleOpen} size="square-md" title="Instances" color="tertiary-border">
+<Menu alignment="bottom-right" containerClass="overflow-auto">
+    <Button slot="button" aria-label="Explore" let:toggleOpen on:click={toggleOpen} size="square-md" title="Instances" color="tertiary">
         <Icon slot="icon" src={Server} width={16} mini />
     </Button>
         
+    <!--
     <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
         Instances
         <span class="ml-auto" />
         <Icon slot="icon" src={Server} width={16} mini />
     </li>
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+    -->
     
     <!---Actions for the instance the post was submitted to--->
     <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>
