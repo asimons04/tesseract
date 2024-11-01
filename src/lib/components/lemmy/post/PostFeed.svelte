@@ -5,6 +5,8 @@
         BlockCommunityEvent, 
         BlockInstanceEvent, 
         BlockUserEvent, 
+        HideCommunityEvent, 
+        RemoveCommunityEvent, 
         RemovePostEvent, 
     } from '$lib/ui/events'
     import type { PostView } from 'lemmy-js-client'
@@ -90,8 +92,27 @@
         }
         posts = posts
     }
+
+    function handleHideCommunity(e:HideCommunityEvent) {
+        for (let i:number=0; i < posts.length; i++) {
+            if(posts[i].community.id == e.detail.community_id) {
+                posts[i].community.hidden = e.detail.hidden
+            }
+        }
+        posts = posts
+    }
+
+    function handleRemoveCommunity(e:RemoveCommunityEvent) {
+        for (let i:number=0; i < posts.length; i++) {
+            if(posts[i].community.id == e.detail.community_id) {
+                posts[i].community.removed = e.detail.removed
+            }
+        }
+        posts = posts
+    }
     
 </script>
+
 
 <svelte:window 
     on:banUser={handleBanInstance}
@@ -99,6 +120,8 @@
     on:blockUser={handleUserBlock} 
     on:blockCommunity={handleCommunityBlock} 
     on:blockInstance={handleInstanceBlock}
+    on:hideCommunity={handleHideCommunity}
+    on:removeCommunity={handleRemoveCommunity}
     on:removePost={handleRemovePost}
 
 />
