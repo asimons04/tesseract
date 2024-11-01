@@ -107,7 +107,7 @@
 <Card class="flex flex-col rounded-md p-3 flex-1 max-w-full gap-1">
 
     {#if 'person_mention' in item || 'comment_reply' in item}
-        <PostMeta post={item}/>
+        <PostMeta post={item} actions={false} expandCompact={false}/>
         
         <div class="flex flex-col" class:mt-2={$profile?.user && item.post.creator_id != $profile.user.local_user_view.person.id}>
             <SectionTitle class="mb-2 text-xs">Reply</SectionTitle>
