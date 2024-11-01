@@ -122,7 +122,7 @@ export interface HideCommunityEvent extends CustomEvent {
  * @param name The name of the custom event e.g. blockUser
  * @param detail The details of the event to pass to the window event listener
 */
-export const dispatchWindowEvent = function<DetailType> (name:string, detail:DetailType) {
+export const dispatchWindowEvent = function<DetailType> (name:string, detail?:DetailType) {
     window.dispatchEvent(
         new CustomEvent(name, { 
             bubbles: true,
