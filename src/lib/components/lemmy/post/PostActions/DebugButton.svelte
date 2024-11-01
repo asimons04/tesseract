@@ -1,11 +1,14 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     import { userSettings } from '$lib/settings'
+    
     import Button from '$lib/components/input/Button.svelte'
     import { Icon, BugAnt } from 'svelte-hero-icons'
     
+    
     export let post:PostView
     let debug:boolean = false;
+
 </script>
 
 {#if $userSettings.debugInfo}
