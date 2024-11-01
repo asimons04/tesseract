@@ -35,17 +35,28 @@
     export let disablePostLinks:boolean = false
     export let collapseBadges:boolean = false;
     
-    export let expandCompact: boolean = !($userSettings.showCompactPosts)
+    // Flesh out this "automatic" behavior.
+    /**
+      Add setting toggle for 'Automatic Card View'
+      List post types that should be viewed always as cards when this is enabled?
+      Can toggle each type to add it to an array that's checked here (instead of the static array used for test/dev
+    */
+
+    // The compact/card view is now determined by the state of `expandCompact` 
+
+    export let expandCompact: boolean = 
+        (
+            ['image'].includes(getPostType(post)) && !post?.read
+        ) 
+            ? true
+            : !($userSettings.showCompactPosts)
 
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement
     let inViewport = false
-
-
     let postType = getPostType(post)
     
     $:  post, postType = getPostType(post)
-
     $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
 
     function markPostAsRead() {
@@ -160,7 +171,11 @@
     }
 
     function handleCompactViewChange() {
-        expandCompact = !($userSettings.showCompactPosts)
+        expandCompact = (['image'].includes(getPostType(post))) 
+        ? true
+        : !($userSettings.showCompactPosts)
+        
+        //expandCompact = !($userSettings.showCompactPosts)
     }
 </script>
 
