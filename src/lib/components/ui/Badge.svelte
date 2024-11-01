@@ -35,7 +35,8 @@
     {click ? '' : 'pointer-events-none'}
     {$$props.class}
     " 
-    title={label} on:click
+    title={label} 
+    on:click
 >   
     {#if icon}
         <Icon src={icon} mini width={iconSize} />
