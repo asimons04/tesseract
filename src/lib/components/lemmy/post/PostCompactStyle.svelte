@@ -60,6 +60,21 @@
                     {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
                         <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText class="my-1" />
                     {/if}
+
+                    {#if actions}
+                        <div class="flex flex-row w-full h-full grid items-end">
+                            <PostActions  bind:post  {displayType}
+                                on:reply
+                                on:edit={(e) => {
+                                    toast({
+                                        title: 'Confirmation',
+                                        content: 'The post was edited successfully.',
+                                        type: 'success',
+                                    })
+                                }}
+                            />
+                        </div>
+                    {/if}
                 </div>
 
                 {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url))}
@@ -129,6 +144,21 @@
                     class="mt-2 mb-1"
                 />
             {/if}
+
+            {#if actions}
+                <div class="flex flex-row w-full h-full grid items-end">
+                    <PostActions  bind:post  {displayType}
+                        on:reply
+                        on:edit={(e) => {
+                            toast({
+                                title: 'Confirmation',
+                                content: 'The post was edited successfully.',
+                                type: 'success',
+                            })
+                        }}
+                    />
+                </div>
+            {/if}
             
 
         {/if}
@@ -145,9 +175,10 @@
     
     
     <!--- Post Action Bar--->
-    <div class="flex flex-row w-full">
+    <!---<div class="flex flex-row w-full">--->
+        <!---
         {#if actions}
-            <div class="w-full h-full grid items-end">
+            <div class="flex flex-row w-full h-full grid items-end">
                 <PostActions  bind:post  {displayType}
                     on:reply
                     on:edit={(e) => {
@@ -160,5 +191,6 @@
                 />
             </div>
         {/if}
-    </div>
+        --->
+    <!---</div>--->
 </Card>
