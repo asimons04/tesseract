@@ -10,8 +10,10 @@
         shortenCommunityName,
         subscribe 
     } from '$lib/components/lemmy/community/helpers'
+    
     import { dispatchWindowEvent } from '$lib/ui/events'
-    import { getClient } from "$lib/lemmy"
+    import { fullCommunityName } from "$lib/util";
+    import { getClient, hideCommunity } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { imageProxyURL } from "$lib/image-proxy"
     import { instance } from "$lib/instance"
@@ -58,8 +60,9 @@
         Minus,
         Rss,
         Cog6Tooth,
+        EyeSlash,
     } from "svelte-hero-icons";
-    import { fullCommunityName } from "$lib/util";
+    
     
     export let community: Community | undefined
     export let open: boolean = false
@@ -67,6 +70,9 @@
     
     let loading = false
     let blocking = false
+    let removing = false
+    let hiding = false
+
     let communityDetails: GetCommunityResponse
     let communityGroupModal = false
     let communityDetailsOpen = false
@@ -136,6 +142,50 @@
         finally {
             loading = false
         }
+    }
+
+    async function remove() {
+        if (!$profile?.jwt) return
+        removing = true
+        
+        const removed = communityDetails.community_view.community.removed
+
+        try {
+            await getClient().removeCommunity({
+                community_id: communityDetails.community_view.community.id,
+                removed: !removed,
+            })
+            communityDetails.community_view.community.removed = !removed
+
+            dispatchWindowEvent('removeCommunity', {
+                community_id: communityDetails.community_view.community.id,
+                removed: communityDetails.community_view.community.removed
+            })
+        } catch (error) {
+            toast({ content: error as any, type: 'error' })
+        }
+        removing = false
+    }
+
+
+    async function hide() {
+        if (!$profile?.jwt) return
+        hiding = true
+        
+        const hidden = communityDetails.community_view.community.hidden;
+        try {
+            await hideCommunity(communityDetails.community_view.community.id, !hidden); 
+            communityDetails.community_view.community.hidden = !hidden
+
+            dispatchWindowEvent('hideCommunity', {
+                community_id: communityDetails.community_view.community.id,
+                hidden: communityDetails.community_view.community.hidden
+            })
+
+        } catch (error) {
+            toast({content: error as any, type: 'error'})
+        }
+        hiding = false;
     }
 </script>
 
@@ -358,7 +408,21 @@
                             {communityBlocked ? 'Unblock' : 'Block'} Community
                         </Button>
 
-                        
+                        <!---Admin-Only Options--->
+
+                        {#if isAdmin($profile.user) }
+                            
+                            <!---Remove Community--->
+                            <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" loading={removing} on:click={() => remove() } >
+                                {communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community
+                            </Button>
+
+                            <!---Hide Community--->
+                            <Button color="tertiary-border" icon={EyeSlash} alignment="left" class="w-full" loading={removing} on:click={() => hide() } >
+                                {communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community
+                            </Button>
+
+                        {/if}
                     {/if}
                 </div>
             {/if}
