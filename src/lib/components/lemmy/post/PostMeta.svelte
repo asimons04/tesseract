@@ -197,7 +197,7 @@
                     {/if}
 
                     <!--- Expand Compact Post to Card--->
-                    {#if $userSettings.showCompactPosts}
+                    <!--{#if $userSettings.showCompactPosts}-->
                         <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                             on:click={() => {  
                                 expandCompact = !expandCompact; 
@@ -206,7 +206,7 @@
                         >
                             <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />
                         </Button>
-                    {/if}
+                    <!--{/if}-->
                     
                     <!---Instances--->
                     <InstanceMenu bind:post />

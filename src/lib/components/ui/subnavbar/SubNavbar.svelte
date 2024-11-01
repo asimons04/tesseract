@@ -3,6 +3,7 @@
 
     import { arrayRange, searchParam } from '$lib/util.js'
     import { createEventDispatcher } from 'svelte'
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
@@ -44,7 +45,6 @@
         Window,
         Cog6Tooth,
     } from 'svelte-hero-icons'
-
 
     export let iconSize:number = 28
 
@@ -109,6 +109,7 @@
                 $userSettings.showCompactPosts = false
                 $userSettings.uiState.postBodyPreviewLength = 240
                 $userSettings.uiState.feedMargins = true
+                dispatchWindowEvent('changeCompactView')
                 break
             
             case 'compact':
@@ -116,6 +117,7 @@
                 $userSettings.uiState.postBodyPreviewLength = 240
                 $userSettings.uiState.feedMargins = true
                 $userSettings.uiState.hideCompactThumbnails = false
+                dispatchWindowEvent('changeCompactView')
                 break
 
             case 'compacter':
@@ -123,6 +125,7 @@
                 $userSettings.uiState.postBodyPreviewLength = 0
                 $userSettings.uiState.feedMargins = true
                 $userSettings.uiState.hideCompactThumbnails = false
+                dispatchWindowEvent('changeCompactView')
                 break
 
             case 'wide-compact':
@@ -130,6 +133,7 @@
                 $userSettings.uiState.postBodyPreviewLength = 240
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = false
+                dispatchWindowEvent('changeCompactView')
                 break
 
             case 'more-compact':
@@ -137,6 +141,7 @@
                 $userSettings.uiState.postBodyPreviewLength = 0
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = false
+                dispatchWindowEvent('changeCompactView')
                 break
             
             case 'ultra-compact':
@@ -144,6 +149,7 @@
                 $userSettings.uiState.postBodyPreviewLength = -1
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = true
+                dispatchWindowEvent('changeCompactView')
                 break
 
             case 'reader':
@@ -151,6 +157,7 @@
                 $userSettings.uiState.postBodyPreviewLength = 10000
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = false
+                dispatchWindowEvent('changeCompactView')
                 break
         }
 

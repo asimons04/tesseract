@@ -35,7 +35,7 @@
     export let disablePostLinks:boolean = false
     export let collapseBadges:boolean = false;
     
-    export let expandCompact: boolean = false
+    export let expandCompact: boolean = !($userSettings.showCompactPosts)
 
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement
@@ -44,7 +44,7 @@
 
     let postType = getPostType(post)
     
-    $: post, postType = getPostType(post)
+    $:  post, postType = getPostType(post)
 
     $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
 
@@ -158,6 +158,10 @@
             post = post
         }
     }
+
+    function handleCompactViewChange() {
+        expandCompact = !($userSettings.showCompactPosts)
+    }
 </script>
 
 
@@ -167,6 +171,7 @@
     on:blockUser={handleUserBlock} 
     on:blockCommunity={handleCommunityBlock} 
     on:blockInstance={handleInstanceBlock}
+    on:changeCompactView={handleCompactViewChange}
     on:featurePost={handleFeaturePost}
     on:hideCommunity={handleHideCommunity}
     on:lockPost={handleLockPost}
@@ -197,8 +202,8 @@
     >
 
         <!--- Compact Posts --->
-        <!---{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact && displayType=='feed')) }--->
-        {#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }
+        <!--{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }-->
+        {#if  (forceCompact || !expandCompact) }
             <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges}
                 bind:post 
                 bind:expandCompact 
