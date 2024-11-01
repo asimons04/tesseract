@@ -10,7 +10,7 @@
     import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    import { scrollToTop } from './helpers.js'
+    import { postType as getPostType, scrollToTop } from './helpers.js'
     import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings'
 
@@ -61,7 +61,8 @@
     let inProfile:boolean       = false
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
-    
+    let postType = getPostType(post)
+
     $: post
     $: inCommunity      = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
     $: inProfile        = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
@@ -197,16 +198,17 @@
                     {/if}
 
                     <!--- Expand Compact Post to Card--->
-                    <!--{#if $userSettings.showCompactPosts}-->
+                    <!---{#if $userSettings.showCompactPosts}-->
+                    {#if postType != 'text' }
                         <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                            icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
+                            iconSize={16}
                             on:click={() => {  
                                 expandCompact = !expandCompact; 
                                 if (postContainer) scrollToTop(postContainer)
                             }}
-                        >
-                            <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" slot="icon" />
-                        </Button>
-                    <!--{/if}-->
+                        />
+                    {/if}
                     
                     <!---Instances--->
                     <InstanceMenu bind:post />
