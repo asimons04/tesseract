@@ -9,11 +9,10 @@
     import Markdown from '$lib/components/markdown/Markdown.svelte'
 
     import { 
-        Icon, 
         ChevronDown,
         ChevronUp
     } from 'svelte-hero-icons'
-    
+  
 
     export let post:PostView
     export let postContainer: HTMLDivElement
@@ -51,11 +50,10 @@
 </script> 
 
 
-<div class="flex flex-col text-sm gap-1 rounded-md {$$props.class}">    
-
-    {#if source}        
+{#if source}
+    <div class="flex flex-col text-sm gap-1 rounded-md {$$props.class}">    
         {#if displayType == 'post' }
-               <Markdown bind:source {inline}/>
+            <Markdown bind:source {inline}/>
             <slot />
         {/if}
 
@@ -70,8 +68,9 @@
                 <Markdown bind:source {inline} noImages/>
             </div>
         {/if}
-    {/if}
-</div>
+    </div>
+{/if}
+
 
 <!---Expand/Collapse Button--->
 {#if !hideExpandButton }
