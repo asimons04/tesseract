@@ -67,9 +67,14 @@
             </span>
         {/if}
 
-        <span class="flex flex-wrap w-full {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {$userSettings.uiState.showInstances ? '' : '!flex-row'} gap-0" class:ml-0.5={avatar} >
+        <span class="flex flex-wrap w-full 
+                {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} 
+                {$userSettings.uiState.showInstances ? '' : inline ? '!flex-row' : ''} gap-0
+            " 
+            class:ml-0.5={avatar} 
+        >
             
-            <span class="font-bold text-left  truncate "> <!---{shortenDisplayName ? 'max-w-[100px] overflow-hidden text-ellipsis' : ''}--->
+            <span class="font-bold text-left  truncate ">
                 {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
             </span>
             
