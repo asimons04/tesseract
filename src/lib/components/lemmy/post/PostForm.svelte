@@ -343,7 +343,7 @@
     }
 
     async function searchForPostByURL(background:boolean=false) {
-        if (!data.url) return
+        if (!data.url || inModal) return
         URLSearchResults = [] as PostView[]
         
         try {
@@ -533,7 +533,7 @@
                 {:else if URLSearchResults.length > 0}
                     <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex w-full flex-col max-h-[20vh] overflow-y-scroll">
                         {#each URLSearchResults as crosspost}
-                            <CrosspostItem {crosspost} showTitle showUser noClick />
+                            <CrosspostItem {crosspost} showTitle showUser noClick voteButtons={false}/>
                         {/each}
                     </div>
                 {:else}
