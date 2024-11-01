@@ -4,6 +4,7 @@
     
     export let date: string
     export let relativeTo: Date = new Date()
+    export let short: boolean = false
     export let options: Intl.RelativeTimeFormatOptions = {
         numeric: 'always',
         style: 'narrow',
@@ -71,7 +72,8 @@
   
                     const rtf = new Intl.RelativeTimeFormat(language, options)
   
-                    return rtf.format(-value, thresholds[i].unit as any)
+                    if (short) return rtf.format(-value, thresholds[i].unit as any).replace('ago', '').trim()
+                    else return rtf.format(-value, thresholds[i].unit as any)
                 }
             }
             return 'Now'
