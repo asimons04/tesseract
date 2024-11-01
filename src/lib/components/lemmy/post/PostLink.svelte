@@ -7,7 +7,6 @@
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Link from '$lib/components/input/Link.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MBFC from '$lib/MBFC/MBFC.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import PostEmbedDescription from './PostEmbedDescription.svelte';
@@ -19,8 +18,6 @@
 
     let postType = 'text'
     $: post, postType = identifyPostType(post)
-
-
 </script>
 
 
