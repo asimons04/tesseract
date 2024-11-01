@@ -124,6 +124,7 @@ interface Settings {
         hideCompactThumbnails: boolean
         autoUpdateDates: boolean
         defaultCommunityDropdownPanel: 'subscribed' | 'favorites'
+        dedicatedModButton: boolean
     }
     highlightCode: boolean
     highlightInlineCode: boolean
@@ -186,7 +187,8 @@ export const defaultSettings: Settings = {
         view:                                                           'card',
         hideCompactThumbnails:                                          false,
         autoUpdateDates:                                                true,
-        defaultCommunityDropdownPanel:                                  'favorites'
+        defaultCommunityDropdownPanel:                                  'favorites',
+        dedicatedModButton:                                             true,
 
     },
 

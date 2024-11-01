@@ -78,6 +78,7 @@
         Tag,
         Clock,
         UserGroup,
+        ShieldCheck,
     } from 'svelte-hero-icons'
     
 
@@ -405,6 +406,8 @@
             description="Show the instance for communities in the sidebar community list."
         />
 
+        
+
         <!---Show Banners--->
         <SettingToggle icon={Photo} title="Show Banners" bind:value={$userSettings.uiState.showBannersInCards}
             description="Show the site/community/user banners in their respective cards."
@@ -676,7 +679,13 @@
 
     <!---Moderation Options--->
     <SettingsCollapseSection bind:expanded={open.moderation} icon={HandRaised} title="Moderation" condition={amModOfAny($profile?.user)}>
-        <div class="flexrow font-normal text-xs">
+        
+        <!---Show/Hide Dedicated Mod Button--->
+        <SettingToggle icon={ShieldCheck} title="Show Mod Button" bind:value={$userSettings.uiState.dedicatedModButton}
+            description="Show a dedicated 'Moderation' button on posts. If disabled, the Moderation tools will be available in the post actions menu."
+        />
+        
+        <div class="flexrow font-normal pt-2 text-xs">
             <div class="flexcol flexcol-33">
                 <span class="font-bold">Moderation Removal Reply Template</span>
                 <p class="font-normal">The preset to use for "Reply reason" in a submission removal.</p>

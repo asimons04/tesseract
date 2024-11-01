@@ -6,10 +6,13 @@
         PostView 
     } from 'lemmy-js-client'
     
+    import { amMod, isAdmin, postModerationModal } from '$lib/components/lemmy/moderation/moderation'
+    import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { subscribe } from '../community/helpers.js'
-    
+    import { userSettings } from '$lib/settings'
+
     import Avatar from '$lib/components/ui/Avatar.svelte'
     import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
@@ -33,12 +36,13 @@
         ShieldCheck,
         Trash,
     } from 'svelte-hero-icons'
+    import Button from '$lib/components/input/Button.svelte';
     
     
     
     
 
-    export let post: PostView  
+    export let post: PostView  //| CommentReplyView | PersonMentionView             
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
     export let collapseBadges:boolean           = false;
@@ -56,6 +60,7 @@
     $: inProfile        = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
+    $: onHomeInstance   = ($page.params.instance ?? $instance)  == $instance
 </script>
 
 
@@ -175,11 +180,11 @@
 
             <!---Post Action Buttons--->
             <div class="flex flex-row items-start gap-2 ml-auto">
-                <!---Moderation
-                {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+                
+                <!---Moderation --->
+                {#if $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
                     <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
                 {/if}
-                --->
                 
                 <!---Instances--->
                 <InstanceMenu bind:post />
