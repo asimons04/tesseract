@@ -22,13 +22,14 @@
 
 {#if displayType == 'post'}
 <Button
-    size="sm"
+    size="md"
     color="tertiary-border"
     disabled={post.post.locked || post.post.removed || post.post.deleted || !$profile?.user || !onHomeInstance}
     hidden={post.post.locked || !$profile?.user}
+    icon={ArrowUturnLeft}
+    iconSize={22}
     on:click={() => { dispatcher('reply') }}
 >
-    <Icon src={ArrowUturnLeft} width={14} height={14} mini />
     <span class="text-sm">Reply</span>
 </Button>
 {/if}
