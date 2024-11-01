@@ -83,7 +83,7 @@
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
                     <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 
-                        class="max-w-full ml-auto mr-auto object-cover rounded-md [min(40vh,800px)]"
+                        class="max-w-full ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)]"
                     />
                 </div>
             </div>

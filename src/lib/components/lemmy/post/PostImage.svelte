@@ -54,7 +54,7 @@
     <!---Rendering in post page--->
     {:else}
         <ZoomableImage url={url} altText={post.post.name} {zoomable}
-            class="ml-auto mr-auto object-contain rounded-md h-auto xl:min-h-[500px] z-30"
+            class="ml-auto mr-auto object-contain rounded-md min-h-[min(40vh,800px)] z-30"
         />
 
     {/if}
