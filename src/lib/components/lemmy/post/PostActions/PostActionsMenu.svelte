@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { PostView } from 'lemmy-js-client'
+    import type { CommentReplyView, PersonMentionView, PostView } from 'lemmy-js-client'
     import { type Alignment, getMenuAlignment } from '$lib/components/ui/menu/menu.js'
     
-    import { report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { amMod, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
     import { goto } from '$app/navigation';
@@ -10,7 +10,6 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -34,39 +33,35 @@
         Trash,
         User,
         Window,
+        ShieldCheck,
     } from 'svelte-hero-icons'
     
-    export let post:PostView
+    export let post:PostView 
     export let menuIconSize:number  = 16
     export let icon:IconSource = EllipsisHorizontal;
-    export let expandCompact: boolean
     
-    let alignment:Alignment = getMenuAlignment(expandCompact)
     let editing = false;
 
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
-    
-    $: $userSettings.showCompactPosts, alignment = getMenuAlignment(expandCompact)
-    $: $userSettings.uiState.reverseActionBar, alignment = getMenuAlignment(expandCompact)
 </script>
 
 {#if $profile?.user?.local_user_view.person.id == post.creator.id && editing}
     <PostEditorModal bind:open={editing} bind:post />
 {/if}
 
-<Menu bind:alignment containerClass="overflow-auto">
-    <Button slot="button" aria-label="Post actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Post actions" color="tertiary-border" >
+<Menu containerClass="overflow-auto" alignment="bottom-right">
+    <Button slot="button" aria-label="Post actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Post actions" color="tertiary" >
         <Icon slot="icon" src={icon} width={menuIconSize} mini />
     </Button>
 
-    <!---Post Actions --->
+    <!---Post Actions 
     <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
         Post
         <span class="ml-auto"/>
         <Icon slot="icon" src={Window} width={16} mini />
     </li>
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-    
+    --->
 
     <!---Edit if owned by self--->
     {#if $profile?.user?.local_user_view.person.id == post.creator.id}
@@ -168,7 +163,7 @@
             <!---Report Post--->
             <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary" disabled={post.post.removed}>
                 <Icon src={Flag} width={16} mini />
-                Report Post
+                Report Post...
             </MenuButton>
         {/if}
 
@@ -190,6 +185,13 @@
             >
                 <Icon src={Trash} width={16} mini />
                 {post.post.deleted ? 'Restore' : 'Delete'}
+            </MenuButton>
+        {/if}
+
+        {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+            <MenuButton title="Moderation" color="dangerSecondary" on:click={() => postModerationModal(post) }>
+                <Icon src={ShieldCheck} width={16} mini />
+                Moderation...
             </MenuButton>
         {/if}
 
