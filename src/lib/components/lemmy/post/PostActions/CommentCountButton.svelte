@@ -20,13 +20,14 @@
 
 
 <Button
-    size="sm"
+    size="md"
     href={`/post/${getInstance()}/${post.post.id}`}
     newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
     class="!text-inherit h-8 px-3 {$$props.class}"
     title="{post.counts.comments} Comments {post.unread_comments > 0 ? `(${post.unread_comments} new)` : ''}"
     color="tertiary-border"
+    icon={ChatBubbleOvalLeftEllipsis}
+    iconSize={22}
 >
-    <Icon slot="icon" src={ChatBubbleOvalLeftEllipsis} mini width={16} height={16} />
     <FormattedNumber number={post.counts.comments} />
 </Button>
