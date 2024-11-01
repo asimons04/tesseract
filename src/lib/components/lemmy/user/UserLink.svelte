@@ -76,7 +76,7 @@
             
             <span class="flex flex-row gap-1">
                 {#if showInstance ?? $userSettings.uiState.showInstances}
-                    <span class="text-slate-500 dark:text-zinc-500 font-normal truncate">
+                    <span class="opacity-70 font-normal truncate">
                         {inline ? '@' : ''}{new URL(user.actor_id).hostname}
                     </span>
                 {/if}
