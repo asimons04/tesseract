@@ -26,6 +26,8 @@
 
 
     export let post:    PostView
+    export let small: boolean = false
+
 
     let onHomeInstance: boolean = true
     $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
@@ -63,21 +65,23 @@
         disabled={!$profile?.user || !onHomeInstance}
         aria-label="Upvote"
         class="{post.my_vote == 1 ? voteColor(post.my_vote) : ''}"
-        size="sm"
+        size="{small ? 'sm' : 'md'}"
         color="tertiary"
         alignment="center"
+        icon={
+            $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes
+                ? ArrowUp
+                : Heart
+        }  
+        iconSize={small ? 16 : 22}
         on:click={async () => {
             post.counts = await vote(post.my_vote == 1 ? 0 : 1)
             post.my_vote = post.my_vote == 1 ? 0 : 1
         }}
 
+
     >
-        <Icon mini size="18" src={
-            $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes
-                ? ArrowUp
-                : Heart
-            }  
-        />
+
         {#if $userSettings.uiState.showScores}
             <FormattedNumber number={post.counts.upvotes} />
         {/if}
@@ -91,15 +95,16 @@
             disabled={!$profile?.user || !onHomeInstance}
             aria-label="Downvote"
             class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
-            size="sm"
+            size="{small ? 'sm' : 'md'}"
             color="tertiary"
+            icon={ArrowDown}
+            iconSize={small ? 16 : 22}
             on:click={async () => {
                 post.counts = await vote(post.my_vote == -1 ? 0 : -1)
                 post.my_vote = post.my_vote == -1 ? 0 : -1
             }}
 
         >
-            <Icon src={ArrowDown} mini size="18" />
             {#if $userSettings.uiState.showScores}
                 <FormattedNumber number={post.counts.downvotes} />
             {/if}
