@@ -28,8 +28,9 @@
             background-position: center center;
             background-repeat: no-repeat;
     ">
-        
-        <div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-slate-100/[.75] dark:bg-zinc-900/[.80] rounded-lg {clazz}" {...$$restProps}>
+
+        <!---<div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-white/80 dark:bg-black/80 rounded-lg {clazz}" {...$$restProps}>--->
+        <div class="w-full break-words border dark:border-zinc-800 bg-slate-700/80 text-white rounded-lg {clazz}" {...$$restProps}>  <!---dark:bg-zinc-950/80 --->
             <slot />
         </div>
     </div>
