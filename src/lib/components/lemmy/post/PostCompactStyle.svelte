@@ -60,7 +60,9 @@
                     {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
                         <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText class="my-1" />
                     {/if}
-
+                    
+                    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                    
                     {#if actions}
                         <div class="flex flex-row w-full h-full grid items-end">
                             <PostActions  bind:post  {displayType}
@@ -144,7 +146,9 @@
                     class="mt-2 mb-1"
                 />
             {/if}
-
+            
+            <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+            
             {#if actions}
                 <div class="flex flex-row w-full h-full grid items-end">
                     <PostActions  bind:post  {displayType}
@@ -171,8 +175,9 @@
         
 
     <!--- Crossposts --->
+    <!---
     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-    
+    --->
     
     <!--- Post Action Bar--->
     <!---<div class="flex flex-row w-full">--->
