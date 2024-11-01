@@ -10,7 +10,7 @@
     import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    import { postType as getPostType, scrollToTop } from './helpers.js'
+    import { postType as getPostType, isImage, isVideo, scrollToTop } from './helpers.js'
     import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings'
 
@@ -199,7 +199,7 @@
 
                     <!--- Expand Compact Post to Card--->
                     <!---{#if $userSettings.showCompactPosts}-->
-                    {#if postType != 'text' }
+                    {#if postType != 'text' && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
                         <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                             icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
                             iconSize={16}
