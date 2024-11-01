@@ -19,6 +19,7 @@
     
     const dispatcher = createEventDispatcher()
     const cardClass = "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50"
+    //const cardClass = "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-white/20 dark:bg-black/20"
 
     let expandPreviewText = false
     let source: string | undefined = undefined
