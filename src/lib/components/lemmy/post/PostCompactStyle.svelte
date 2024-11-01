@@ -21,6 +21,7 @@
     import PostLink from './PostLink.svelte';
     
     import { ArrowsPointingOut, Icon } from 'svelte-hero-icons';
+    import PostTitle from './PostTitle.svelte';
     
 
     export let post: PostView
@@ -49,28 +50,20 @@
         <!---Image and Video Posts--->
         <!---These will have the thumbnail in the upper-right corner rather than in the metadata--->
         {#if  (['image', 'video'].includes(postType)) }
+            <PostMeta bind:post showTitle={false} {collapseBadges}/>
             
             <div class="flex flex-row w-full gap-2">
                 
                 <div class="flex flex-col gap-1 {!$userSettings.uiState.hideCompactThumbnails && post.post.thumbnail_url ? 'w-[calc(100%-128px)]' : 'w-full'}">
-                    <PostMeta bind:post={post} showTitle={true} {collapseBadges}/>            
-                    
-                    {#if post.post.url && !(['image'].includes(postType))}
-                        <span class="flex flex-row flex-wrap my-auto w-full gap-2 mb-1">
-                            <ArchiveLinkSelector url={post.post?.url} {postType}/>
-                            <Link class="text-xs min-w-[0%] max-w-[100%] text-ellipsis" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-                            <MBFC post={post} rightJustify={true}/>
-                        </span>
-                    {/if}
+                    <PostTitle bind:post />
 
                     {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
                         <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText class="my-1" />
                     {/if}
                 </div>
-                
+
                 {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url))}
-                    
-                    <div class="flex-none w-[128px] h-[128px] mx-auto mt-2 overflow-hidden">
+                    <div class="flex-none w-[128px] h-[128px] mx-auto  overflow-hidden">
                     
                         <!--- Expand the post in place when clicking thumbnail--->
                         <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
@@ -119,11 +112,11 @@
                     
                 {/if}
             </div>
-        
+
         <!---Link posts with embed description, etc--->
         {:else}
 
-            <PostMeta bind:post showTitle={true} {collapseBadges}/>                
+            <PostMeta bind:post showTitle={true} {collapseBadges}/>
                     
             <PostLink bind:post bind:displayType compact={true}
                 on:clickThumbnail={() => {
