@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { CommentReplyView, PersonMentionView, PostView } from 'lemmy-js-client'
-    import { type Alignment, getMenuAlignment } from '$lib/components/ui/menu/menu.js'
+    import type { PostView } from 'lemmy-js-client'
+
     
     import { amMod, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
@@ -35,6 +35,7 @@
         Window,
         ShieldCheck,
     } from 'svelte-hero-icons'
+    
     
     export let post:PostView 
     export let menuIconSize:number  = 16
@@ -195,6 +196,6 @@
             </MenuButton>
         {/if}
 
-        
     {/if}
+
 </Menu>
