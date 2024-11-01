@@ -33,6 +33,7 @@
         XCircle,
         EyeSlash,
         Language,
+        BugAnt,
     } from "svelte-hero-icons"
 
 
@@ -142,6 +143,9 @@
 
                 <!---Hide Posts from Users of Blocked Instances--->
                 <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} small={true}/>
+
+                <!--Show Debug Button--->
+                <SettingToggle title="Show Debug Button" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
             </div>
         </div>
     </div>
