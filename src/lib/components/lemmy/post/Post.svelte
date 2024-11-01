@@ -6,8 +6,10 @@
         BlockInstanceEvent, 
         BlockUserEvent, 
         FeaturePostEvent,
+        HideCommunityEvent,
         LockPostEvent,
         PurgePostEvent, 
+        RemoveCommunityEvent, 
         RemovePostEvent, 
         SubscribeEvent 
     } from '$lib/ui/events'
@@ -142,8 +144,20 @@
             post.post.featured_local = false
         }
     }
+   
+   function handleHideCommunity(e:HideCommunityEvent) {
+        if (post?.community.id == e.detail.community_id) {
+            post.community.hidden = e.detail.hidden
+            post = post
+        }
+    }
 
-    
+    function handleRemoveCommunity(e:RemoveCommunityEvent) {
+        if (post?.community.id == e.detail.community_id) {
+            post.community.removed = e.detail.removed
+            post = post
+        }
+    }
 </script>
 
 
@@ -154,8 +168,10 @@
     on:blockCommunity={handleCommunityBlock} 
     on:blockInstance={handleInstanceBlock}
     on:featurePost={handleFeaturePost}
+    on:hideCommunity={handleHideCommunity}
     on:lockPost={handleLockPost}
     on:subscribe={handleSubscribeUnsubscribe}
+    on:removeCommunity={handleRemoveCommunity}
     on:removePost={handleRemovePost}
     on:purgePost={handlePurgePost}
 
