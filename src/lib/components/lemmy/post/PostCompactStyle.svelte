@@ -4,16 +4,13 @@
     
     
     import { imageProxyURL } from '$lib/image-proxy'
-    import {isImage, isVideo, postType as identifyPostType} from './helpers.js'
+    import {isImage, isVideo } from './helpers.js'
     import { scrollToTop } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
-    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    import MBFC from '$lib/MBFC/MBFC.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
     import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
@@ -32,8 +29,7 @@
     export let disablePostLinks:boolean = false
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
-
-    $: postType = identifyPostType(post)
+    export let postType: PostType
 </script>
 
 

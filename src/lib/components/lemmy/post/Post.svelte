@@ -58,7 +58,23 @@
     
     $:  post, postType = getPostType(post)
     $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
-
+    $: post, applyDummyThumbnail()
+    
+    function applyDummyThumbnail() {
+        if (!post || post?.post?.thumbnail_url) return
+        
+        let pType = getPostType(post)
+        
+        switch (pType) {
+            case 'dailymotion':
+                post.post.thumbnail_url = '/img/dailymotion.png'
+                break
+            case 'youtube':
+                post.post.thumbnail_url = '/img/youtube.png'
+                break
+        }
+       
+    }
     function markPostAsRead() {
         if (!post || !inViewport || !$profile?.jwt || post.read) return
         
@@ -171,7 +187,7 @@
     }
 
     function handleCompactViewChange() {
-        expandCompact = (['image'].includes(getPostType(post))) 
+        expandCompact = (['image'].includes(getPostType(post))) && !post?.read
         ? true
         : !($userSettings.showCompactPosts)
         
@@ -219,7 +235,7 @@
         <!--- Compact Posts --->
         <!--{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }-->
         {#if  (forceCompact || !expandCompact) }
-            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges}
+            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType}
                 bind:post 
                 bind:expandCompact 
                 bind:expandPreviewText  
