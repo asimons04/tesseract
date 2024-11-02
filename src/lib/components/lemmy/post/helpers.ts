@@ -49,7 +49,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    'audio' | 'image' | 'video' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' | 'peertube' |
+    'audio' | 'image' | 'video' | 'dailymotion' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' | 'peertube' |
     'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -212,6 +212,17 @@ export const isSongLink = (url:string):boolean => {
         url.startsWith('https://album.link') ||
         url.startsWith('https://song.link')
     )
+}
+
+export const isDailymotion = (url?:string): boolean => {
+    if (!url) return false
+    try {
+        let testURL = new URL(url)
+        return ['www.dailymotion.com', 'dailymotion.com', 'dai.ly'].includes(testURL.hostname)
+    }
+    catch {
+        return false
+    }
 }
 
 
@@ -384,6 +395,8 @@ export const postType = (post: PostView | undefined ) => {
         return "peertube"
     }
 
+    if (isDailymotion(post.post.url)) return 'dailymotion'
+    
 
     // These need to be last
     if (
