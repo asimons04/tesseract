@@ -43,7 +43,7 @@
 </script>
 
 <ImageContainer>
-    {#if displayType == 'feed' || (displayType == 'post' && !$userSettings.embeddedMedia.post)}
+    {#if clickToPlay}
         <ClickToPlayOverlay bind:show={clickToPlay} displayType={displayType} on:click={(e)=> dispatcher('click', e)}/>
         
         <ZoomableImage url={thumbnail_url} bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={zoomable}
