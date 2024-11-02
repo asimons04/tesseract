@@ -4,6 +4,7 @@
     
     import PostAudio from '$lib/components/lemmy/post/PostAudio.svelte'
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
+    import PostDailymotion from '$lib/components/lemmy/post/PostDailymotion.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
@@ -85,3 +86,7 @@
     <PostPeerTube bind:post bind:postContainer {displayType} />
 {/if}
 
+<!---Dailymotion Embed--->
+{#if postType == 'dailymotion'}
+    <PostDailymotion bind:post bind:postContainer {displayType} />
+{/if}
