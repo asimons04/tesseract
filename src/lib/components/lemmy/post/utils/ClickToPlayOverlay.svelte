@@ -13,10 +13,11 @@
 
 
 <!---Click to Remove Blur--->    
-{#if show && (displayType =='feed' || (displayType == 'post' && !$userSettings.embeddedMedia.post))}
+<!---&& (displayType =='feed' || (displayType == 'post' && !$userSettings.embeddedMedia.post))--->
+{#if show }
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="absolute z-[5] left-0 top-0 w-full h-full bg-black/35" 
+    <div class="absolute z-[5] left-0 top-0 w-full h-full bg-slate-200/35 dark:bg-zinc-800/35" 
         on:click={(
             //@ts-ignore
             e
