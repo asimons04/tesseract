@@ -348,7 +348,7 @@ export const buildSonglinkEmbedLink = (postURL:string, displayType: 'post'|'feed
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
-export const postType = (post: PostView | undefined ) => {
+export const postType = (post: PostView | undefined ): PostType => {
     
     if (!post) return 'text'
     
