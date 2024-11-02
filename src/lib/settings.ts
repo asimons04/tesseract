@@ -1,4 +1,5 @@
 import type { CommentSortType, CommunityView, SortType } from 'lemmy-js-client'
+import type { PostType} from '$lib/components/lemmy/post/helpers'
 import { type Writable, writable } from 'svelte/store'
 import { env } from '$env/dynamic/public'
 
@@ -68,75 +69,77 @@ interface Settings {
         newAccountMinAge: number
         MBFCLowCredibility: boolean
         minimizeBotComments: boolean
-        hideUsersFromBlockedInstances: boolean
+        hideUsersFromBlockedInstances: boolean      
     }
     notifications: {
-        enabled: boolean
-        pollRate: number
+        enabled: boolean                                                // Technically used to enable/disable notifications, but it's hardcoded to true
+        pollRate: number                                                // How often to check for new notifications from the API
         // how often to check in the background
-        notifRate: number
+        notifRate: number                                               // Unsure. Inherited from Photon, but I belive it's vestigial and can be removed.
     }
-    displayNames: boolean
-    nsfwBlur: boolean
-    tagNSFWCommunities: boolean
+    displayNames: boolean                                               // Enable to show user/community display names. Disable to use their system names.
+    nsfwBlur: boolean                                                   // Enable to blur NSFW posts
+    tagNSFWCommunities: boolean                                         // No longer used; need to remove
     moderation: {
-        removalReasonPreset: string
+        removalReasonPreset: string                                     // The preset template for moderation replies
     },
     openInNewTab: {
-        links: boolean,
-        posts: boolean,
+        links: boolean,                                                 // Enable to open external links in a new tab
+        posts: boolean,                                                 // Enable to load posts in a new tab
     },
-    debugInfo: boolean
+    debugInfo: boolean                                                  // Enable to show a 'debug' button on post/comments and other objects for development purposes
     embeddedMedia: {
-        feed: boolean
-        post: boolean
-        YTFrontend: YouTubeFrontend
-        customInvidious: string
-        userDefinedInvidious: string[],
-        autoplay: boolean
-        loop:boolean
+        feed: boolean                                                   // Whether to enable media embeds in the feed
+        post: boolean                                                   // Whether to enable media embeds on post pages
+        YTFrontend: YouTubeFrontend                                     // YouTube or Custom - which YT frontend to use
+        customInvidious: string                                         // The currently selected/active Invidious/Piped instance to use in alternate links/player
+        userDefinedInvidious: string[],                                 // An array of invidious/piped domains to use as alternate  Youtube Frontends
+        autoplay: boolean                                               // Whether to autoplay media when clicking into a post.
+        loop:boolean                                                    // Whether media should loop. Pretty much only works with direct videos (mp4, etc)
     }
-    linkifyHashtags: boolean
-    extractFlairsFromTitle: boolean,
+    linkifyHashtags: boolean                                            // Enable to extract hashtags and turn them into search links
+    extractFlairsFromTitle: boolean,                                    // Enable to turn [bracketed text] in post titles into flairs
     uiState: {
-        disableDownvotes: boolean
-        linkPreviews: boolean,
-        postBodyPreviewLength: number,
-        expandSidebar: boolean
-        expandCommunitySidebar: boolean
-        feedMargins:boolean
-        postsPerPage: number
-        maxScrollPosts: number
-        MBFCBadges: boolean
-        showInstances: boolean
-        showInstancesSidebarCommunityList: boolean
-        showFullURL: boolean
-        expandCrossPosts: boolean
-        matchCrossPostOnTitle: boolean
-        showBannersInCards: boolean
-        stretchCardBanner: boolean
-        reverseActionBar: boolean
-        showScores: boolean
-        showAltText:boolean
-        filterAnnoyingCCLicense: boolean
-        infiniteScroll: boolean
-        view: PostViewType
-        hideCompactThumbnails: boolean
-        autoUpdateDates: boolean
-        defaultCommunityDropdownPanel: 'subscribed' | 'favorites'
-        dedicatedModButton: boolean
+        disableDownvotes: boolean                                       // Enable to disable downvotes and hide downvote counts.
+        linkPreviews: boolean,                                          // Enable to preview markdown links in modals. Disable to go directly to the link target
+        postBodyPreviewLength: number,                                  // The number of characters to show in the post body preview in the feed
+        expandSidebar: boolean                                          // Used internally to control hiding/showing the lefthand sidebar 
+        expandCommunitySidebar: boolean                                 // Used internally to control hiding/showing the site/community/user sidebar (key name is vestigial)
+        feedMargins:boolean                                             // Enable to have margins on the side of the post feed, disable to make posts full width
+        postsPerPage: number                                            // Number of posts to fetch per page (infinite scroll or manual pagination)
+        maxScrollPosts: number                                          // The maximum number of posts to keep in the infinite scroll buffer
+        MBFCBadges: boolean                                             // Enable to show MBFC badges on posts that have a domain in its dataset
+        showInstances: boolean                                          // Enable to show instances for users and communities on posts/comments
+        showInstancesSidebarCommunityList: boolean                      // Enable to show the instances for communities in the sidebar and "My Communities" dropdown
+        showFullURL: boolean                                            // Enable to show the full URLs on post links; disable to show just the domain
+        expandCrossPosts: boolean                                       // Enable to expand the crosspost lists by default. Disable to show them collapsed by default
+        matchCrossPostOnTitle: boolean                                  // Enable to match crossposts on title as well as URL
+        showBannersInCards: boolean                                     // Enable to show site/community/user banners in their cards or disable to have blank cards
+        stretchCardBanner: boolean                                      // Enable to stretch the banner images to fill the card or center them (disable)
+        reverseActionBar: boolean                                       // Enable to reverse the direction of the post/comment action bars
+        showScores: boolean                                             // Enable to show post/comment scores in the UI; disable to hide
+        showAltText:boolean                                             // Enable to show alt text as a caption on markdown images
+        filterAnnoyingCCLicense: boolean                                // Whether to pre-process posts/comments to filter out by regex those annoying CC licenses
+        infiniteScroll: boolean                                         // Whether to use infinite scroll or manual pagination
+        view: PostViewType                                              // Selected/active post view type
+        hideCompactThumbnails: boolean                                  // Hide thumbnails when viewing posts in compact mode (used for 'ultra-compact')
+        autoUpdateDates: boolean                                        // Whether to use an interval to live update the post publish/edit times
+        defaultCommunityDropdownPanel: 'subscribed' | 'favorites'       // What panel should be displayed in the "My Communities" dropdown by default.
+        dedicatedModButton: boolean                                     // Enable to put a dedicated "mod" button posts; disable to access mod actions from post menu
+        hybridViewAsCardTypes: PostType[]                               // The post types which should display by default as cards when using "Hybrid" view mode
+        hybridViewKeepReadCollapsed: boolean                            // Enable to keep read posts collapsed in compact view rather than auto expanding to cards
     }
-    highlightCode: boolean
-    highlightInlineCode: boolean
-    inlineImages: boolean
-    experimentalFeatures: boolean
-    proxyMedia: {
-        enabled: boolean,
-        fallback: boolean,
-        useForImageUploads: boolean
+    highlightCode: boolean                                              // Enable to use highlight.js code highlighting on code blocks
+    highlightInlineCode: boolean                                        // Enable to use highlight.js code hightlighting on inline code
+    inlineImages: boolean                                               // Enable to render markdown images inline. Disable to show an image link instead.
+    experimentalFeatures: boolean                                       // Enable features marked 'experimental'
+    proxyMedia: {                                                       // Media proxy options: Only used if the server settings to enable media proxying/caching are enabled.
+        enabled: boolean,                                               // Enable to proxy direct media (images, video) through the image proxy
+        fallback: boolean,                                              // Enable to fallback to direct fetch if the proxy cannot fetch the resource.
+        useForImageUploads: boolean                                     // Enable to re-write image uploads to go through the local image proxy rather than direct from pict-rs
     }
-    convertUploadsToWebp: boolean,
-    convertUploadQuality: number
+    convertUploadsToWebp: boolean,                                      // Used internally to keep setting of whether uploaded and pasted images should be converted to webp locally before uploading
+    convertUploadQuality: number                                        // The quality level used when converting to webp
     
 
 
@@ -189,7 +192,8 @@ export const defaultSettings: Settings = {
         autoUpdateDates:                                                true,
         defaultCommunityDropdownPanel:                                  'favorites',
         dedicatedModButton:                                             true,
-
+        hybridViewAsCardTypes:                                          ['image'],
+        hybridViewKeepReadCollapsed:                                    true,
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
