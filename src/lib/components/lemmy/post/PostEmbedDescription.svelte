@@ -54,7 +54,7 @@
         </div>
 
         {#if showThumbnail && thumbnail_url}
-            <button class="flex flex-none w-[128px] h-[128px] rounded-lg shadow-lg" 
+            <button class="flex flex-none w-[128px] h-[128px] rounded-lg shadow-lg bg-white/80" 
                 style="background-image: url('{imageProxyURL(thumbnail_url, 256, 'webp')}'); 
                     background-size: cover; 
                     background-position: center center;
