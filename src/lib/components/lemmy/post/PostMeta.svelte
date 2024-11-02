@@ -199,7 +199,7 @@
 
                     <!--- Expand Compact Post to Card--->
                     <!---{#if $userSettings.showCompactPosts}-->
-                    {#if postType != 'text' && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
+                    {#if postType != 'text' && (postType == 'dailymotion' || post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
                         <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                             icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
                             iconSize={16}
