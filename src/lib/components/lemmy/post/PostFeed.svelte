@@ -33,9 +33,10 @@
     // Handlers for custom window event that's raised when a user or community is blocked. Used to show/hide posts in the feed
     function handleBanCommunity(e:BanCommunityEvent) {
         for (let i:number=0; i < posts.length; i++) {
+            
             if (posts[i].creator.id == e.detail.person_id && posts[i].community.id == e.detail.community_id) {
                 posts[i].creator_banned_from_community = e.detail.banned
-                posts[i].post.removed = e.detail.remove_content
+                if (e.detail.remove_content) posts[i].post.removed = e.detail.remove_content
             }
         }
         posts = posts
@@ -45,7 +46,7 @@
         for (let i:number=0; i < posts.length; i++) {
             if (posts[i].creator.id == e.detail.person_id) {
                 posts[i].creator.banned = e.detail.banned
-                posts[i].post.removed = e.detail.remove_content
+                if (e.detail.remove_content) posts[i].post.removed = e.detail.remove_content
             }
         }
         posts = posts
