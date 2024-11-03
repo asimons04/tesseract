@@ -35,22 +35,8 @@
     export let disablePostLinks:boolean = false
     export let collapseBadges:boolean = false;
     
-    // Flesh out this "automatic" behavior.
-    /**
-      Add setting toggle for 'Automatic Card View'
-      List post types that should be viewed always as cards when this is enabled?
-      Can toggle each type to add it to an array that's checked here (instead of the static array used for test/dev
-    */
 
-    // The compact/card view is now determined by the state of `expandCompact` 
-
-    export let expandCompact: boolean = 
-        (
-            ['image'].includes(getPostType(post)) && !post?.read
-        ) 
-            ? true
-            : !($userSettings.showCompactPosts)
-
+    let expandCompact: boolean = computeExpandCompact()
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement
     let inViewport = false
@@ -58,7 +44,7 @@
     
     $:  post, postType = getPostType(post)
     $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
-    $: post, applyDummyThumbnail()
+    $:  post, applyDummyThumbnail()
     
     function applyDummyThumbnail() {
         if (!post || post?.post?.thumbnail_url) return
@@ -75,6 +61,7 @@
         }
        
     }
+
     function markPostAsRead() {
         if (!post || !inViewport || !$profile?.jwt || post.read) return
         
@@ -128,6 +115,7 @@
             post = post
         }
     }
+
     function handleCommunityBlock(e:BlockCommunityEvent) {
         if (post?.community.id == e.detail.community_id) {
             post.community.hidden = e.detail.blocked
@@ -187,11 +175,21 @@
     }
 
     function handleCompactViewChange() {
-        expandCompact = (['image'].includes(getPostType(post))) && !post?.read
-        ? true
-        : !($userSettings.showCompactPosts)
+        expandCompact = computeExpandCompact()
+    }
+
+    /** Determines whether a compact post should be shown expanded to a card if "hybrid" view set. Returns 'true' if post should render as card, 'false' if compact */
+    function computeExpandCompact() {
+        // If view is not set to 'hybrid' return based on 'show compact posts' value
+        if ($userSettings.uiState.view != 'hybrid') return !($userSettings.showCompactPosts)
+
+        let result = 
+            $userSettings.uiState.hybridViewAsCardTypes.includes(getPostType(post)) && 
+            (post?.read && $userSettings.uiState.hybridViewKeepReadCollapsed ? false : true)
+                ? true
+                : false
         
-        //expandCompact = !($userSettings.showCompactPosts)
+        return result
     }
 </script>
 

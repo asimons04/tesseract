@@ -14,9 +14,11 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
+    import EditHybridViewPostTypesModal from './EditHybridViewPostTypesModal.svelte'
     import Logo from '$lib/components/ui/Logo.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+    import SettingButton from '$lib/components/ui/settings/SettingButton.svelte'
     import SettingEditArray from '$lib/components/ui/settings/SettingEditArray.svelte'
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
@@ -328,7 +330,8 @@
         media: false,
         moderation: false,
         filters: false,
-        import: false
+        import: false,
+        hybridPostEditorModal: false
     }
 
     let profileData: MyUserInfo | undefined = undefined
@@ -341,6 +344,8 @@
 <svelte:head>
     <title>Settings</title>
 </svelte:head>
+
+<EditHybridViewPostTypesModal bind:open={open.hybridPostEditorModal} />
 
 <SubNavbar home back toggleCommunitySidebar/>
 
@@ -467,7 +472,7 @@
         
 
         <!---Reset to Default Settings--->
-        <div class="flex flex-row w-full gap-2 py-2" class:hidden={!$userSettings.highlightCode}>
+        <div class="flex flex-row w-full gap-2 py-2">
             <div class="flex flex-col">
                 <p class="text-sm font-bold flex flex-row gap-2">
                     <Icon src={ArrowPath} mini width={16}/>
@@ -521,6 +526,11 @@
         <SettingMultiSelect title="Post Style" icon={QueueList} description="Style of posts to display in the feed by default"
             options={[false, true]} optionNames={['Cards', 'Compact']}
             bind:selected={$userSettings.showCompactPosts}
+        />
+
+        <!---Hybrid View post type <editor--->
+        <SettingButton title="Hybrid View Configuration" buttonText="Configure" icon={Window} on:click={() => open.hybridPostEditorModal = true}
+            description="Edit the post types which should show as cards when using the Hybrid post view in the feed."
         />
        
         <!---Post Body Preview Length--->
