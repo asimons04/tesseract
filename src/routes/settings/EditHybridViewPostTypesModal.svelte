@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { PostType } from '$lib/components/lemmy/post/helpers'
     
-    import { slide } from 'svelte/transition';
     import { userSettings } from '$lib/settings'
     
     import Modal from "$lib/components/ui/modal/Modal.svelte"
@@ -59,10 +58,9 @@
     capitalizeTitle={true}
     title="Configure Hybrid View"
 >
-    <div class="p-2 font-normal text-sm">
+    <div class="p-2 font-normal text-sm my-2">
         In Hybrid view, posts default to compact mode unless configured to show as cards.  Select the post types you want to show as cards
-        when using the hybrid view.  You can also opt to have posts show in compact mode if they are already read (unread posts will still show 
-        as cards if their type is enabled here).
+        when using the hybrid view.
     </div>  
 
     <SettingToggleContainer>
