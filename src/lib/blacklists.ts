@@ -39,6 +39,28 @@ const LINK_SHORTENERS = [
     ...BLACKLIST_CONFIG.LINK_SHORTENER_BLACKLIST
 ]
 
+const FACEBOOK = [
+    'facebook.com',
+    'www.facebook.com'
+]
+
+const REDDIT = [
+    'reddit.com',
+    'old.reddit.com',
+    'new.reddit.com',
+    'out.reddit.com'
+]
+
+const TWITTER = [
+    'x.com',
+    'twitter.com',
+    'www.twitter.com',
+    'www.x.com',
+
+]
+
+
+
 
 export function validateURL(testURL?:string): URLValidateResponse {
     if (!testURL) return { allowed: false, reason: 'No URL Supplied'}
