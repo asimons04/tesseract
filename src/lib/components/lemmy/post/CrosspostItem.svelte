@@ -34,31 +34,7 @@
 </script>
 
 <div class="flex flex-row gap-2 items-center w-full">
-    <div class="flex flex-row min-w-fit gap-1 ml-auto {getTextSize()}">
-        <span class="hidden md:flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
-            
-            <RelativeDate date={crosspost.post.published} />
-            {#if crosspost.post.updated}
-                <span class="flex flex-row items-center gap-1 ml-1">•
-                    <Icon src={Pencil} solid size="12" title="Edited" />
-                    <RelativeDate date={crosspost.post.updated}/>
-                </span>
-            {/if}
-        </span>
-
-        {#if $userSettings.uiState.showScores && !voteButtons}
-        <span class="flex flex-row gap-2 font-normal items-center">
-            <Icon src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown} mini width={iconSize} height={iconSize}/>
-            <FormattedNumber number={crosspost.counts.score} />
-        </span>
-        {/if}
-
     
-        <span class="flex flex-row gap-2 font-normal items-center" >
-            <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
-            <FormattedNumber number={crosspost.counts.comments} />
-        </span>
-    </div>
     
     <a class="flex flex-col gap-1 items-start w-full
             hover:dark:bg-zinc-800 hover:bg-slate-200
@@ -85,8 +61,33 @@
                     {/if}
                 </div>
 
+                <div class="ml-auto"/>
                 
+                <div class="flex flex-row min-w-fit gap-1 ml-auto {getTextSize()}">
+                    <span class="hidden md:flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
+                        
+                        <RelativeDate date={crosspost.post.published} />
+                        {#if crosspost.post.updated}
+                            <span class="flex flex-row items-center gap-1 ml-1">•
+                                <Icon src={Pencil} solid size="12" title="Edited" />
+                                <RelativeDate date={crosspost.post.updated}/>
+                            </span>
+                        {/if}
+                    </span>
+            
+                    {#if $userSettings.uiState.showScores && !voteButtons}
+                    <span class="flex flex-row gap-2 font-normal items-center">
+                        <Icon src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown} mini width={iconSize} height={iconSize}/>
+                        <FormattedNumber number={crosspost.counts.score} />
+                    </span>
+                    {/if}
 
+                    <span class="flex flex-row gap-2 font-normal items-center" >
+                        <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
+                        <FormattedNumber number={crosspost.counts.comments} />
+                    </span>
+                    
+                </div>
             </div>
         </div>
     </a>
