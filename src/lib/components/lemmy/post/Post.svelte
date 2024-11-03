@@ -174,6 +174,10 @@
         }
     }
 
+    function handleRefreshFeed() {
+        expandCompact = computeExpandCompact()
+    }
+
     function handleCompactViewChange() {
         expandCompact = computeExpandCompact()
     }
@@ -205,6 +209,7 @@
     on:hideCommunity={handleHideCommunity}
     on:lockPost={handleLockPost}
     on:subscribe={handleSubscribeUnsubscribe}
+    on:refreshFeed={handleRefreshFeed}
     on:removeCommunity={handleRemoveCommunity}
     on:removePost={handleRemovePost}
     on:purgePost={handlePurgePost}
