@@ -187,7 +187,7 @@ export const defaultSettings: Settings = {
         showAltText:                                                    false,
         filterAnnoyingCCLicense:                                        false,
         infiniteScroll:                                                 true,
-        view:                                                           'card',
+        view:                                                           'hybrid',
         hideCompactThumbnails:                                          false,
         autoUpdateDates:                                                true,
         defaultCommunityDropdownPanel:                                  'favorites',
