@@ -3,7 +3,7 @@
 
     import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
     import { amModOfAny } from '$lib/components/lemmy/moderation/moderation'
-    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
+    import { fixLemmyEncodings, postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
     import { getClient} from '$lib/lemmy.js'
     import { onMount } from 'svelte';
     import { profile } from '$lib/auth.js'
@@ -523,9 +523,11 @@
         
 
         <!---Post Style--->
-        <SettingMultiSelect title="Post Style" icon={QueueList} description="Style of posts to display in the feed by default"
-            options={[false, true]} optionNames={['Cards', 'Compact']}
-            bind:selected={$userSettings.showCompactPosts}
+        <SettingMultiSelect title="Post Style" icon={QueueList} description="Style of posts to display in the feed by default."
+            options={postViewTypes.options}
+            optionNames={postViewTypes.optionNames}
+            on:select={selectViewType}
+            bind:selected={$userSettings.uiState.view}
         />
 
         <!---Hybrid View post type <editor--->
