@@ -103,13 +103,12 @@
     const selectViewType= async (e: CustomEvent) => {
         const viewType = e.detail as PostViewType
         $userSettings.uiState.view = viewType
-        
+
         switch(viewType) {
             case 'card':
                 $userSettings.showCompactPosts = false
                 $userSettings.uiState.postBodyPreviewLength = 240
                 $userSettings.uiState.feedMargins = true
-                dispatchWindowEvent('changeCompactView')
                 break
             
             case 'compact':
@@ -117,7 +116,13 @@
                 $userSettings.uiState.postBodyPreviewLength = 240
                 $userSettings.uiState.feedMargins = true
                 $userSettings.uiState.hideCompactThumbnails = false
-                dispatchWindowEvent('changeCompactView')
+                break
+
+            case 'hybrid':
+                $userSettings.showCompactPosts = true
+                $userSettings.uiState.postBodyPreviewLength = 240
+                $userSettings.uiState.feedMargins = true
+                $userSettings.uiState.hideCompactThumbnails = false
                 break
 
             case 'compacter':
@@ -125,7 +130,6 @@
                 $userSettings.uiState.postBodyPreviewLength = 0
                 $userSettings.uiState.feedMargins = true
                 $userSettings.uiState.hideCompactThumbnails = false
-                dispatchWindowEvent('changeCompactView')
                 break
 
             case 'wide-compact':
@@ -133,7 +137,6 @@
                 $userSettings.uiState.postBodyPreviewLength = 240
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = false
-                dispatchWindowEvent('changeCompactView')
                 break
 
             case 'more-compact':
@@ -141,7 +144,6 @@
                 $userSettings.uiState.postBodyPreviewLength = 0
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = false
-                dispatchWindowEvent('changeCompactView')
                 break
             
             case 'ultra-compact':
@@ -149,7 +151,6 @@
                 $userSettings.uiState.postBodyPreviewLength = -1
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = true
-                dispatchWindowEvent('changeCompactView')
                 break
 
             case 'reader':
@@ -157,10 +158,10 @@
                 $userSettings.uiState.postBodyPreviewLength = 10000
                 $userSettings.uiState.feedMargins = false
                 $userSettings.uiState.hideCompactThumbnails = false
-                dispatchWindowEvent('changeCompactView')
                 break
         }
-
+        
+        dispatchWindowEvent('changeCompactView')
         await scrollToLastSeenPost()
     }
 
@@ -240,8 +241,8 @@
             {#if compactSwitch}
                 <SelectMenu
                     alignment="bottom-center"
-                    options={['card', 'compact', 'compacter', 'wide-compact', 'more-compact', 'ultra-compact', 'reader']}
-                    optionNames={['Card', 'Compact', "Compacter", 'Wide Compact', 'More Compact', 'Ultra Compact', 'Reader']}
+                    options={['card', 'hybrid', 'compact', 'compacter', 'wide-compact', 'more-compact', 'ultra-compact', 'reader']}
+                    optionNames={['Card', 'Hybrid', 'Compact', "Compacter", 'Wide Compact', 'More Compact', 'Ultra Compact', 'Reader']}
                     selected={$userSettings.uiState.view}
                     title="Post View Type"
                     icon={Window}
