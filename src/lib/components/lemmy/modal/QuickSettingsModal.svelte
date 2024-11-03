@@ -2,13 +2,13 @@
    
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
-    import { scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers';
+    import { scrollToLastSeenPost, postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers';
     import { searchParam } from '$lib/util';
     import { site } from '$lib/lemmy';
     import { userSettings} from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte';
-    import Card from '../../ui/Card.svelte';
+    import EditHybridViewPostTypesModal from '$routes/settings/EditHybridViewPostTypesModal.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import SettingMultiSelect from '../../ui/settings/SettingMultiSelect.svelte';
     import SettingToggle from "../../ui/settings/SettingToggle.svelte"
@@ -38,7 +38,8 @@
 
 
     export let open: boolean = false
-    
+    let hybridViewEditorOpen = false
+
     let listingTypeOnSelect = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
 
     let toggleCardCompactView = async () => {
@@ -57,10 +58,12 @@
     }
 </script>
 
+
 <!-- svelte-ignore missing-declaration -->
 <Modal bind:open icon={Cog6Tooth} card  width="max-w-4xl" title="Quick Settings" >
     
-    
+    <EditHybridViewPostTypesModal bind:open={hybridViewEditorOpen} />
+
     <div class="flex flex-col w-full p-2 gap-2 cursor-default">
 
         <!---User Settings--->
@@ -68,6 +71,14 @@
         
         
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
+                <SettingMultiSelect icon={Language} 
+                    title="Application Font" 
+                    padding={true} small={true}
+                    options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+                    optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+                    bind:selected={$userSettings.font}
+                />
+                
                 <SettingMultiSelect icon={Photo} 
                     title="Post Body Preview Length"
                     padding={true} small={true}
@@ -78,17 +89,26 @@
 
 
                 <!---Post Style--->
-                <SettingToggle title="Show Compact Posts" icon={$userSettings.showCompactPosts ? QueueList : Photo}  small={true}
-                    bind:value={$userSettings.showCompactPosts} 
-                    on:change={async (e) => await toggleCardCompactView() }
-                />
+                <SettingMultiSelect title="Post Style" icon={QueueList} small
+                    options={postViewTypes.options}
+                    optionNames={postViewTypes.optionNames}
+                    on:select={selectViewType}
+                    bind:selected={$userSettings.uiState.view}
+                >
+                    {#if $userSettings.uiState.view == 'hybrid'}
+                        <p class="font-normal text-xs">
+                            <button class="text-sky-700 dark:text-sky-500 text-left hover:underline" on:click={() => hybridViewEditorOpen = true }>
+                                Configure
+                            </button>
+                            hybrid view options.
+                        </p>
+                    {/if}
+                </SettingMultiSelect>
                 
                 <!---Open in New Tab--->
                 <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
 
-                <!---Open Posts in New Tab--->
-                <SettingToggle title="Open Posts in New Tab" icon={ArrowTopRightOnSquare} bind:value={$userSettings.openInNewTab.posts} small={true} />
-
+                
                 <!---Use Link Preview Modals--->
                 <SettingToggle icon={LinkIcon} title="Preview Links in Modal" bind:value={$userSettings.uiState.linkPreviews} small={true}/>
 
@@ -99,32 +119,27 @@
                 <SettingToggle icon={Server} title="Show Instance Names" bind:value={$userSettings.uiState.showInstances} small={true}/>
 
                 <!---Show Instances in Sidebar--->
-                <SettingToggle icon={Server} title="Show Instance Names in Sidebar" bind:value={$userSettings.uiState.showInstancesSidebarCommunityList}/>
+                <SettingToggle icon={Server} title="Show Instance Names in Sidebar" bind:value={$userSettings.uiState.showInstancesSidebarCommunityList} small/>
                 
-                <!---Show Scores--->
-                <SettingToggle title="Show Scores" icon={Trophy} bind:value={$userSettings.uiState.showScores} small={true} />
+                <!---Show full URLs--->
+                <SettingToggle icon={LinkIcon} title="Show Full URLs" bind:value={$userSettings.uiState.showFullURL} small={true} />
                 
-                 <!---Disable Downvotes--->
-                 {#if $site?.site_view?.local_site?.enable_downvotes}
-                    <SettingToggle icon={ArrowDown} title="Disable Downvotes"  bind:value={$userSettings.uiState.disableDownvotes} small={true} />
-                {/if}
+                
+                
                
             </div>
 
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
-                <SettingMultiSelect icon={Language} 
-                    title="Application Font" 
-                    padding={true} small={true}
-                    options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
-                    optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
-                    bind:selected={$userSettings.font}
-                />
-
-                <!---Show full URLs--->
-                <SettingToggle icon={LinkIcon} title="Show Full URLs" bind:value={$userSettings.uiState.showFullURL} small={true} />
-                
                 <!---Reverse Action Bar--->
                 <SettingToggle title="Reverse Action Bar" icon={ArrowsRightLeft} bind:value={$userSettings.uiState.reverseActionBar} small={true}/>
+                
+                <!---Show Scores--->
+                <SettingToggle title="Show Scores" icon={Trophy} bind:value={$userSettings.uiState.showScores} small={true} />
+                
+                <!---Disable Downvotes--->
+                {#if $site?.site_view?.local_site?.enable_downvotes}
+                    <SettingToggle icon={ArrowDown} title="Disable Downvotes"  bind:value={$userSettings.uiState.disableDownvotes} small={true} />
+                {/if}
 
                 <!---Expand Crosspost List--->
                 <SettingToggle title="Expand Crosspost List" icon={BarsArrowDown} bind:value={$userSettings.uiState.expandCrossPosts} small={true}/>
@@ -161,7 +176,7 @@
                 open = false
             }}
         >
-            <span class="hidden md:flex">Settings</span>
+            <span class="hidden md:flex">All Settings</span>
         </Button>
     </div>
 
