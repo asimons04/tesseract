@@ -64,46 +64,51 @@
     
     <EditHybridViewPostTypesModal bind:open={hybridViewEditorOpen} />
 
-    <div class="flex flex-col w-full p-2 gap-2 cursor-default">
+    <div class="flex flex-col divide-y w-full p-2 gap-2 cursor-default max-h-[70vh] overflow-y-scroll">
+        
+        
+        <div class="flex flex-col divide-y gap-0 pr-2 items-start w-full">
+            <!---Font--->
+            <SettingMultiSelect icon={Language} 
+                title="Application Font" 
+                padding={true} small={true}
+                options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+                optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+                bind:selected={$userSettings.font}
+            />
 
+            <!---Post Body Preview Length--->
+            <SettingMultiSelect icon={Photo} 
+                title="Post Body Preview Length"
+                padding={true} small={true}
+                optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000', '2000', '10000']}
+                options={[-1, 0, 50, 120, 240, 500, 750, 1000, 2000, 10000]}
+                bind:selected={$userSettings.uiState.postBodyPreviewLength}
+            />
+
+            <!---Post Style--->
+            <SettingMultiSelect title="Post Style" icon={QueueList} small
+                options={postViewTypes.options}
+                optionNames={postViewTypes.optionNames}
+                on:select={selectViewType}
+                bind:selected={$userSettings.uiState.view}
+            >
+                {#if $userSettings.uiState.view == 'hybrid'}
+                    <p class="font-normal text-xs">
+                        <button class="text-sky-700 dark:text-sky-500 text-left hover:underline" on:click={() => hybridViewEditorOpen = true }>
+                            Configure
+                        </button>
+                        hybrid view options.
+                    </p>
+                {/if}
+            </SettingMultiSelect>
+        </div>
+        
         <!---User Settings--->
-        <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2 max-h-[70vh] items-start w-full overflow-y-scroll">
-        
-        
+        <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2  items-start w-full ">
+
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
-                <SettingMultiSelect icon={Language} 
-                    title="Application Font" 
-                    padding={true} small={true}
-                    options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
-                    optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
-                    bind:selected={$userSettings.font}
-                />
                 
-                <SettingMultiSelect icon={Photo} 
-                    title="Post Body Preview Length"
-                    padding={true} small={true}
-                    optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000', '2000', '10000']}
-                    options={[-1, 0, 50, 120, 240, 500, 750, 1000, 2000, 10000]}
-                    bind:selected={$userSettings.uiState.postBodyPreviewLength}
-                />
-
-
-                <!---Post Style--->
-                <SettingMultiSelect title="Post Style" icon={QueueList} small
-                    options={postViewTypes.options}
-                    optionNames={postViewTypes.optionNames}
-                    on:select={selectViewType}
-                    bind:selected={$userSettings.uiState.view}
-                >
-                    {#if $userSettings.uiState.view == 'hybrid'}
-                        <p class="font-normal text-xs">
-                            <button class="text-sky-700 dark:text-sky-500 text-left hover:underline" on:click={() => hybridViewEditorOpen = true }>
-                                Configure
-                            </button>
-                            hybrid view options.
-                        </p>
-                    {/if}
-                </SettingMultiSelect>
                 
                 <!---Open in New Tab--->
                 <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
@@ -124,9 +129,11 @@
                 <!---Show full URLs--->
                 <SettingToggle icon={LinkIcon} title="Show Full URLs" bind:value={$userSettings.uiState.showFullURL} small={true} />
                 
-                
-                
-               
+                <!---Hide Posts from Users of Blocked Instances--->
+                <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} small={true}/>
+
+                <!--Show Debug Button--->
+                <SettingToggle title="Show Debug Button" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
             </div>
 
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
@@ -156,11 +163,7 @@
                 <!---Enable Flairs--->
                 <SettingToggle title="Enable Flairs" icon={Tag} bind:value={$userSettings.extractFlairsFromTitle} small={true} />
 
-                <!---Hide Posts from Users of Blocked Instances--->
-                <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} small={true}/>
-
-                <!--Show Debug Button--->
-                <SettingToggle title="Show Debug Button" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
+                
             </div>
         </div>
     </div>
