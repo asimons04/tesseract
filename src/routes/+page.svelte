@@ -4,6 +4,7 @@
     
     import { amModOfAny } from '$lib/components/lemmy/moderation/moderation';
     import { beforeNavigate, goto } from '$app/navigation'
+    import { dispatchWindowEvent } from '$lib/ui/events';
     import { 
         mergeNewInfiniteScrollBatch,
         scrollToLastSeenPost, 
@@ -21,7 +22,7 @@
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import Avatar from '$lib/components/ui/Avatar.svelte';
+    
 
     export let data
     
@@ -70,6 +71,7 @@
     
     async function refresh() {
         PageSnapshot.clear()
+        dispatchWindowEvent('refreshFeed')
         infiniteScroll.exhausted = false
         infiniteScroll.truncated = false
         window.scrollTo(0,0)
