@@ -205,7 +205,7 @@
                             iconSize={16}
                             on:click={() => {  
                                 expandCompact = !expandCompact; 
-                                if (postContainer) scrollToTop(postContainer)
+                                //if (postContainer) scrollToTop(postContainer)
                             }}
                         />
                     {/if}
