@@ -43,7 +43,7 @@
     }
 </script>
 
-<a href="{linkFromCommunity(community)}" class="items-center flex flex-row gap-2 {noClick ? 'pointer-events-none' : ''} hover:underline {heading ? 'font-bold text-2xl' : ''}" 
+<a href="{linkFromCommunity(community)}" class="items-center flex flex-row gap-2 {noClick ? 'pointer-events-none' : ''} hover:underline {heading ? 'font-bold text-2xl' : ''} {$$props.class}" 
     title={fixLemmyEncodings(community.title)}
     on:click={loadCommunityProfileModal}
 >

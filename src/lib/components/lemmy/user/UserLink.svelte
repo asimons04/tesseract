@@ -56,7 +56,7 @@
 </script>
 
 
-<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline min-w-fit" 
+<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline min-w-fit {$$props.class}" 
     style="max-width: calc(100% - 52px);"
     on:click={loadProfileModal} 
 >
