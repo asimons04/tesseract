@@ -3,22 +3,22 @@
 
     import { arrayRange, searchParam } from '$lib/util.js'
     import { createEventDispatcher } from 'svelte'
-    import { dispatchWindowEvent } from '$lib/ui/events'
-    import { setSessionStorage } from '$lib/session'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { quickSettingsModal } from '$lib/components/lemmy/moderation/moderation'
-    import { type PostViewType, userSettings } from '$lib/settings'
+    import { setSessionStorage } from '$lib/session'
+    import { userSettings } from '$lib/settings'
     
-    import { getPostTitleWithoutFlairs, scrollToLastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { 
+        getPostTitleWithoutFlairs, 
+        scrollToLastSeenPost,
+        selectViewType
+    } from '$lib/components/lemmy/post/helpers'
     
     import { 
         sortOptions as defaultSortOptions, 
         sortOptionNames as defaultSortOptionNames
     } from '$lib/lemmy'
-    
-    
-    
     
     import Button from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
@@ -30,10 +30,8 @@
         ArrowPath,
         ArrowsPointingIn,
         ArrowsPointingOut,
-        ArrowSmallRight,
         BarsArrowDown,
         Bars3,
-        ChartBar,
         ChevronDoubleDown,
         ChevronDoubleRight,
         ChevronDoubleUp,
@@ -41,7 +39,6 @@
         ChevronUp,
         DocumentDuplicate,
         Home,
-        QueueList,
         Window,
         Cog6Tooth,
     } from 'svelte-hero-icons'
@@ -94,78 +91,6 @@
             navRefresh?: null,
             navPageSelect?: number
         }>()
-
-    const toggleCardCompactView = async () => {
-        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-        await scrollToLastSeenPost()
-    }
-
-    const selectViewType= async (e: CustomEvent) => {
-        const viewType = e.detail as PostViewType
-        $userSettings.uiState.view = viewType
-
-        switch(viewType) {
-            case 'card':
-                $userSettings.showCompactPosts = false
-                $userSettings.uiState.postBodyPreviewLength = 240
-                $userSettings.uiState.feedMargins = true
-                break
-            
-            case 'compact':
-                $userSettings.showCompactPosts = true
-                $userSettings.uiState.postBodyPreviewLength = 240
-                $userSettings.uiState.feedMargins = true
-                $userSettings.uiState.hideCompactThumbnails = false
-                break
-
-            case 'hybrid':
-                $userSettings.showCompactPosts = true
-                $userSettings.uiState.postBodyPreviewLength = 240
-                $userSettings.uiState.feedMargins = true
-                $userSettings.uiState.hideCompactThumbnails = false
-                break
-
-            case 'compacter':
-                $userSettings.showCompactPosts = true
-                $userSettings.uiState.postBodyPreviewLength = 0
-                $userSettings.uiState.feedMargins = true
-                $userSettings.uiState.hideCompactThumbnails = false
-                break
-
-            case 'wide-compact':
-                $userSettings.showCompactPosts = true
-                $userSettings.uiState.postBodyPreviewLength = 240
-                $userSettings.uiState.feedMargins = false
-                $userSettings.uiState.hideCompactThumbnails = false
-                break
-
-            case 'more-compact':
-                $userSettings.showCompactPosts = true
-                $userSettings.uiState.postBodyPreviewLength = 0
-                $userSettings.uiState.feedMargins = false
-                $userSettings.uiState.hideCompactThumbnails = false
-                break
-            
-            case 'ultra-compact':
-                $userSettings.showCompactPosts = true
-                $userSettings.uiState.postBodyPreviewLength = -1
-                $userSettings.uiState.feedMargins = false
-                $userSettings.uiState.hideCompactThumbnails = true
-                break
-
-            case 'reader':
-                $userSettings.showCompactPosts = true
-                $userSettings.uiState.postBodyPreviewLength = 10000
-                $userSettings.uiState.feedMargins = false
-                $userSettings.uiState.hideCompactThumbnails = false
-                break
-        }
-        
-        dispatchWindowEvent('changeCompactView')
-        await scrollToLastSeenPost()
-    }
-
-
 </script>
 
 

@@ -37,8 +37,9 @@ import { getSessionStorage, setSessionStorage } from '$lib/session'
 import { goto } from '$app/navigation'
 import { lookup as MBFCLookup } from '$lib/MBFC/client'
 import { page } from '$app/stores'
-import { userSettings as UserSettings} from '$lib/settings.js'
+import { userSettings as UserSettings, type PostViewType} from '$lib/settings.js'
 import { YTFrontends } from '$lib/settings.js'
+import { dispatchWindowEvent } from '$lib/ui/events'
 
 
 
@@ -961,3 +962,78 @@ export function createFakePostView(): LemmyPostView {
     }
 }
 
+
+
+// Post View Types and Handler for Selecting them
+export const postViewTypes = {
+    options: ['card', 'hybrid', 'compact', 'compacter', 'wide-compact', 'more-compact', 'ultra-compact', 'reader'],
+    optionNames: ['Card', 'Hybrid', 'Compact', "Compacter", 'Wide Compact', 'More Compact', 'Ultra Compact', 'Reader']
+}
+export const selectViewType= async (e: CustomEvent) => {
+    const viewType = e.detail as PostViewType
+    
+    const $userSettings = get(UserSettings)
+    
+    $userSettings.uiState.view = viewType
+
+    switch(viewType) {
+        case 'card':
+            $userSettings.showCompactPosts = false
+            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.feedMargins = true
+            break
+        
+        case 'compact':
+            $userSettings.showCompactPosts = true
+            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.feedMargins = true
+            $userSettings.uiState.hideCompactThumbnails = false
+            break
+
+        case 'hybrid':
+            $userSettings.showCompactPosts = true
+            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.feedMargins = true
+            $userSettings.uiState.hideCompactThumbnails = false
+            break
+
+        case 'compacter':
+            $userSettings.showCompactPosts = true
+            $userSettings.uiState.postBodyPreviewLength = 0
+            $userSettings.uiState.feedMargins = true
+            $userSettings.uiState.hideCompactThumbnails = false
+            break
+
+        case 'wide-compact':
+            $userSettings.showCompactPosts = true
+            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.feedMargins = false
+            $userSettings.uiState.hideCompactThumbnails = false
+            break
+
+        case 'more-compact':
+            $userSettings.showCompactPosts = true
+            $userSettings.uiState.postBodyPreviewLength = 0
+            $userSettings.uiState.feedMargins = false
+            $userSettings.uiState.hideCompactThumbnails = false
+            break
+        
+        case 'ultra-compact':
+            $userSettings.showCompactPosts = true
+            $userSettings.uiState.postBodyPreviewLength = -1
+            $userSettings.uiState.feedMargins = false
+            $userSettings.uiState.hideCompactThumbnails = true
+            break
+
+        case 'reader':
+            $userSettings.showCompactPosts = true
+            $userSettings.uiState.postBodyPreviewLength = 10000
+            $userSettings.uiState.feedMargins = false
+            $userSettings.uiState.hideCompactThumbnails = false
+            break
+    }
+    
+    UserSettings.set($userSettings)
+    dispatchWindowEvent('changeCompactView')
+    await scrollToLastSeenPost()
+}
