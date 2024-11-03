@@ -2,6 +2,8 @@
   import type { IconSource } from 'svelte-hero-icons'
   import {
     CheckCircle,
+    Eye,
+    EyeSlash,
     Fire,
     Icon,
     InformationCircle,
@@ -167,6 +169,22 @@
                     icon: UserPlus,
                     class: 'text-green-600 dark:text-green-400',
                     text: 'Transfer Community'
+                }
+            }
+
+            case 'hideCommunity': {
+                return {
+                    icon: EyeSlash,
+                    class: 'text-red-600 dark:text-red-400',
+                    text: 'Hide Community'
+                }
+            }
+
+            case 'unhideCommunity': {
+                return {
+                    icon: Eye,
+                    class: 'text-green-600 dark:text-green-400',
+                    text: 'Unhide Community'
                 }
             }
         }

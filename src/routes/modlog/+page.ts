@@ -43,6 +43,8 @@ export type ActionName =
     | 'removeCommunity'
     | 'restoreCommunity'
     | 'transferCommunity'
+    | 'hideCommunity'
+    | 'unhideCommunity'
     | 'Unknown'
 
 type ModAction =
@@ -161,6 +163,18 @@ export const _toModLog = (item: ModAction): ModLog => {
             link: `/c/${item.community.name}@${new URL(item.community.actor_id).hostname}`,
         }
     }
+    else if ('mod_hide_community' in item) {
+        return {
+            actionName: item.mod_hide_community.hidden ? 'hideCommunity' : 'unhideCommunity',
+            community: item.community,
+            timestamp: timestamp(item.mod_hide_community.when_),
+            when: item.mod_hide_community.when_,
+            moderator: item.admin,
+            reason: item.mod_hide_community.reason,
+            link: `/c/${item.community.name}@${new URL(item.community.actor_id).hostname}`,
+        }
+    }
+
     else if ('mod_add_community' in item) {
         return {
             actionName: item.mod_add_community.removed ? 'modRemove' : 'modAdd',
