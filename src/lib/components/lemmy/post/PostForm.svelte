@@ -37,7 +37,7 @@
     import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import PostPreview from './PostCardStyle.svelte'
+    import PostPreview from './Post.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
@@ -571,13 +571,13 @@
     
     {#if inModal}
         <div bind:this={postContainer} class="mt-4 pb-3">
-            <PostPreview  bind:postContainer post={previewPost}  actions={false}  displayType="post"  bind:expandCompact={compactPosts} autoplay={false}  />
+            <PostPreview  post={previewPost}  actions={false}  displayType="post"  autoplay={false}  />
         </div>
     {:else}
     
         <FeedContainer>
             <div bind:this={postContainer} class="mt-4 pb-3">
-                <PostPreview  bind:postContainer post={previewPost}  actions={false}  displayType="post"  bind:expandCompact={compactPosts} autoplay={false}  />
+                <PostPreview  post={previewPost}  actions={false}  displayType="post"   autoplay={false}  />
             </div>
         </FeedContainer>
     {/if}
