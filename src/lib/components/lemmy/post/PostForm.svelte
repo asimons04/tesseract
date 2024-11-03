@@ -70,6 +70,7 @@
     export let hideCommunityInput = false
     export let textEditorRows:number = 10
     export let inModal = false
+    export let editing: boolean = false
 
     let postContainer: HTMLDivElement
 
@@ -106,7 +107,6 @@
     let fetchingMetadata = false
     let previewPost: PostView | undefined
     let resetting        = false
-    let compactPosts     = false
     
     
     let searching        = false
@@ -124,7 +124,6 @@
     $: if (!$userSettings.proxyMedia.useForImageUploads && uploadResponse?.url)    data.url = uploadResponse.url
 
     // Reset URL search results when the community changes
-    //$:  data.community, resetSearch()
     $:  data.community, rerunSearch()
 
     async function submit() {
@@ -343,7 +342,7 @@
     }
 
     async function searchForPostByURL(background:boolean=false) {
-        if (!data.url || inModal) return
+        if (!data.url || editing) return
         URLSearchResults = [] as PostView[]
         
         try {
@@ -407,11 +406,15 @@
             <Button  loading={resetting} disabled={previewing||resetting} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
                 on:click={async () => {
                     resetting = true
+                    // Reset the crosspost search
+                    resetSearch()
+                    
                     if (uploadResponse) deletePostImage()
                     for (let i=0; i < bodyImages.length; i++) {
                         await deleteImageUpload(bodyImages[i])
                     }
                     bodyImages = bodyImages = []
+                   
                     data = objectCopy(default_data)
                     data = data
                     resetting = false
@@ -464,7 +467,7 @@
             <div class="flex flex-row gap-2 w-full items-end">
                 <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse) ? true : false} 
                     on:change={() => {
-                        if (!inModal) searchForPostByURL(true)
+                        if (!editing) searchForPostByURL(true)
                     }}
                     on:paste={async (e) => { 
                         pastingImage = true
@@ -489,7 +492,7 @@
                     icon={MagnifyingGlass} iconSize={18}
                     loading={searching} disabled={!data.url || searching || fetchingMetadata || uploadResponse} title="Search for Existing Posts"
                     on:click={() => (searchForPostByURL())}
-                    hidden={inModal}
+                    hidden={editing}
                 />
                 
 
