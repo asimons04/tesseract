@@ -22,7 +22,7 @@
 
 
 <Modal bind:open={open} preventCloseOnClickOut fullHeight={false} icon={PencilSquare} bind:maximized allowMaximize={true} card={false} title="Editing Post" width="max-w-4xl">
-    <PostForm editingPost={post} bind:textEditorRows inModal={true}
+    <PostForm editingPost={post} bind:textEditorRows inModal={true} editing
         on:submit={(e) => {
             open = false
             post = e.detail
