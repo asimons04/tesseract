@@ -46,6 +46,7 @@
   export let title: string = ''
   export let hidden:boolean = false
   export let loaderWidth: number | undefined = undefined
+  export let iconClass: string = ''
 
   // const dispatch = createEventDispatcher()
   export let href: string | undefined = undefined
@@ -91,7 +92,9 @@
             {:else if $$slots.icon}
                 <slot name="icon" />
             {:else if icon}
-                <Icon src={icon} width={iconSize} mini />
+                
+                <Icon src={icon} width={iconSize} mini class="{iconClass}"/>
+                
             {/if}
             <slot />
         </div>
@@ -135,7 +138,7 @@
             {:else if $$slots.icon}
                 <slot name="icon" />
             {:else if icon}
-                <Icon src={icon} width={iconSize} mini />
+                <Icon src={icon} width={iconSize} mini class="{iconClass}"/>
             {/if}
             <slot />
         </div>
