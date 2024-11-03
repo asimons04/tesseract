@@ -74,41 +74,48 @@
     {/if}
 
     <StickyCard class="{$$props.class}">
-        <Card class="p-2 text-base overflow-hidden" backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, undefined, 'webp') : ''}>
+        <Card class="flex flex-col p-2 text-base overflow-hidden min-h-[190px]" backgroundImage={($userSettings.uiState.showBannersInCards && person?.person?.banner) ? imageProxyURL(person.person.banner, undefined, 'webp') : ''}>
             
-            <UserLink badges bind:user={person.person} useDisplayNames inline={false} bind:admin={is_admin} avatar={true} avatarSize={64} showInstance/>
+            <UserLink badges bind:user={person.person} useDisplayNames inline={false} bind:admin={is_admin} avatar={true} avatarSize={64} showInstance
+                class="text-lg"
+            />
+            
+            <div class="mt-auto"/>
             
             <!---Stats Row--->
-            <div class="flex flex-row p-3 mx-auto">
-                <div class="text-sm flex flex-row gap-8 mx-auto">
-                    <span class="flex flex-row items-center gap-2" title="Cake Day">
-                        <Icon src={Cake} width={16} height={16} mini />
-                        <span class="capitalize">
-                            <RelativeDate date={person.person?.published}/>
+            <Card elevation={0} class="p-1 opacity-80">
+                <div class="flex flex-row p-1 mx-auto">
+                    <div class="text-sm flex flex-row gap-8 mx-auto">
+                        <span class="flex flex-row items-center gap-2" title="Cake Day">
+                            <Icon src={Cake} width={16} height={16} mini />
+                            <span class="capitalize">
+                                <RelativeDate date={person.person?.published}/>
+                            </span>
                         </span>
-                    </span>
-                
-                    <span class="flex flex-row items-center gap-2" title="Posts">
-                        <Icon src={PencilSquare} width={16} height={16} mini />
-                        <FormattedNumber number={person.counts.post_count} />
-                    </span>
-        
-                    <span class="flex flex-row items-center gap-2" title="Comments">
-                        <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                        <FormattedNumber number={person.counts.comment_count} />
-                    </span>
                     
-                    <!---
-                    {#if person.counts.post_score && person.counts.comment_score}
-                    <span class="flex flex-row items-center gap-2" title="Content Score">
-                        <Icon src={Trophy} width={16} height={16} mini />
-                        <FormattedNumber number={(person.counts.post_score + person.counts.comment_score)} />
-                    </span>
-                    {/if}
-                    --->
-                    
+                        <span class="flex flex-row items-center gap-2" title="Posts">
+                            <Icon src={PencilSquare} width={16} height={16} mini />
+                            <FormattedNumber number={person.counts.post_count} />
+                        </span>
+            
+                        <span class="flex flex-row items-center gap-2" title="Comments">
+                            <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
+                            <FormattedNumber number={person.counts.comment_count} />
+                        </span>
+                        
+                        <!---
+                        {#if person.counts.post_score && person.counts.comment_score}
+                        <span class="flex flex-row items-center gap-2" title="Content Score">
+                            <Icon src={Trophy} width={16} height={16} mini />
+                            <FormattedNumber number={(person.counts.post_score + person.counts.comment_score)} />
+                        </span>
+                        {/if}
+                        --->
+                        
+                    </div>
                 </div>
-            </div>
+            </Card>
+
         </Card>
 
         

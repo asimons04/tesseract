@@ -224,37 +224,40 @@
                         !{communityDetails.community_view.community.name}@{new URL(communityDetails.community_view.community.actor_id).hostname}
                     </span>
                     
+                    <div class="mt-2" />
 
-                    <div class="flex flex-row mt-1">
-                        
-                        <div class="text-xs md:text-sm flex flex-row w-full md:w-3/4 flex-wrap gap-2 justify-between">
-                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Cake Day">
-                                <Icon src={Cake} width={16} height={16} mini />
-                                <span class="capitalize">
-                                    <RelativeDate date={communityDetails.community_view.community.published}/>
-                                </span>
-                            </span>
+                    <Card elevation={0} class="p-2 w-fit opacity-80 w-full">
+                        <div class="flex flex-row">
                             
-                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Subscribers">
-                                <Icon src={UserGroup} width={16} height={16} mini />
+                            <div class="mx-auto text-xs md:text-sm flex flex-row gap-4 flex-wrap justify-between">
+                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Cake Day">
+                                    <Icon src={Cake} width={16} height={16} mini />
+                                    <span class="capitalize">
+                                        <RelativeDate date={communityDetails.community_view.community.published}/>
+                                    </span>
+                                </span>
                                 
-                                {#if communityDetails.community_view.counts.subscribers_local}
-                                    <FormattedNumber number={communityDetails.community_view.counts.subscribers_local} /> / 
-                                {/if}
-                                <FormattedNumber number={communityDetails.community_view.counts.subscribers} />
-                            </span>
+                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Subscribers">
+                                    <Icon src={UserGroup} width={16} height={16} mini />
+                                    
+                                    {#if communityDetails.community_view.counts.subscribers_local}
+                                        <FormattedNumber number={communityDetails.community_view.counts.subscribers_local} /> / 
+                                    {/if}
+                                    <FormattedNumber number={communityDetails.community_view.counts.subscribers} />
+                                </span>
 
-                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Posts">
-                                <Icon src={PencilSquare} width={16} height={16} mini />
-                                <FormattedNumber number={communityDetails.community_view.counts.posts} />
-                            </span>
-                
-                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Comments">
-                                <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                                <FormattedNumber number={communityDetails.community_view.counts.comments} />
-                            </span>
+                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Posts">
+                                    <Icon src={PencilSquare} width={16} height={16} mini />
+                                    <FormattedNumber number={communityDetails.community_view.counts.posts} />
+                                </span>
+                    
+                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Comments">
+                                    <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
+                                    <FormattedNumber number={communityDetails.community_view.counts.comments} />
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
         </Card>

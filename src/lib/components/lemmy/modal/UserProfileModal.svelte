@@ -168,35 +168,38 @@
 
                     <span class="text-xs font-normal">@{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}</span>
                     
+                    <div class="mt-2"/>
 
-                    <div class="flex flex-row mt-1">
-                        
-                        <div class="text-xs md:text-sm flex flex-row w-full md:w-3/4 flex-wrap gap-2 justify-between">
-                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Cake Day">
-                                <Icon src={Cake} width={16} height={16} mini />
-                                <span class="capitalize">
-                                    <RelativeDate date={personDetails.person_view.person?.published}/>
+                    <Card elevation={0} class="p-2 w-fit opacity-80 w-full">
+                        <div class="flex flex-row">
+                            
+                            <div class="mx-auto text-xs md:text-sm flex flex-row w-full md:w-3/4 flex-wrap gap-2 justify-between">
+                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Cake Day">
+                                    <Icon src={Cake} width={16} height={16} mini />
+                                    <span class="capitalize">
+                                        <RelativeDate date={personDetails.person_view.person?.published}/>
+                                    </span>
                                 </span>
-                            </span>
-                        
-                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Posts">
-                                <Icon src={PencilSquare} width={16} height={16} mini />
-                                <FormattedNumber number={personDetails.person_view.counts.post_count} />
-                            </span>
-                
-                            <span class="flex flex-row items-center gap-1 md:gap-2" title="Comments">
-                                <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                                <FormattedNumber number={personDetails.person_view.counts.comment_count} />
-                            </span>
+                            
+                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Posts">
+                                    <Icon src={PencilSquare} width={16} height={16} mini />
+                                    <FormattedNumber number={personDetails.person_view.counts.post_count} />
+                                </span>
+                    
+                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Comments">
+                                    <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
+                                    <FormattedNumber number={personDetails.person_view.counts.comment_count} />
+                                </span>
 
-                            {#if mostRecentItem}
-                                <span class="flex flex-row items-center gap-1 md:gap-2" title="Last Activity">
-                                    <Icon src={Clock} width={16} height={16} mini />
-                                    <RelativeDate date={mostRecentItem}/>
-                                </span>
-                            {/if}
+                                {#if mostRecentItem}
+                                    <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Last Activity">
+                                        <Icon src={Clock} width={16} height={16} mini />
+                                        <RelativeDate date={mostRecentItem}/>
+                                    </span>
+                                {/if}
+                            </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
         </Card>
