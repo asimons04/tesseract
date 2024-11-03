@@ -16,6 +16,7 @@ export let small:boolean = false
 export let color: ButtonColor = "primary"
 export let disabled: boolean = false
 export let loading: boolean = false
+export let buttonText: string | undefined = undefined
 
 const dispatcher = createEventDispatcher()
 </script>
@@ -41,8 +42,7 @@ const dispatcher = createEventDispatcher()
         <div class="mx-auto"/>
         
         <Button {color} {disabled} {loading} size="lg" title={title} icon={icon} iconSize={20} on:click={ (e) => dispatcher('click', e) }>
-            {title}
+            {buttonText ?? title}
         </Button>
-        <!--<Switch bind:enabled={value} on:change={(e) => dispatcher('change', e.detail)}/>-->
     </div>
 {/if}
