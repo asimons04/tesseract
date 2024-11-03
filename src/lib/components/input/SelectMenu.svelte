@@ -83,7 +83,9 @@
                 dispatcher('select', option)
             }}
         >   
-            <span class="flex flex-row w-full text-left justify-between">
+            <span class="flex flex-row w-full text-left justify-between
+                {(optionNames[options.findIndex((o) => selected == o)] || selected) == (optionNames[index] || option) ? 'font-bold' : ''}
+            ">
                 {optionNames[index] || option}
                 
                 <!---Show an indicator icon next to the selected option--->
