@@ -75,7 +75,6 @@
     
     let loading = false
     let blocking = false
-    let removing = false
 
     let communityDetails: GetCommunityResponse
     let communityGroupModal = false
@@ -238,14 +237,52 @@
     }
 </script>
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
-    capitalizeTitle={true}
+<!---
     title={
         shortenCommunityName(communityDetails?.community_view?.community?.title, 45) ?? 
         communityDetails?.community_view?.community?.name ?? 
         'Community Details'
     }
+--->
+
+<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
+    capitalizeTitle={true} title="Community"
 >
+
+    <!---Quick Actions (These are placed into the modal title bar)--->
+    <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
+        {#if communityDetails}
+            <span class="ml-auto"/>
+            
+            {#if $profile?.user && !communityBlocked}
+                
+            <!---Favorite Community--->
+                <Button color="tertiary" icon={Star} iconSize={24} size="square-lg" 
+                    title="{isFavorited ? 'Un-Favorite' : 'Favorite'} Community"
+                    iconClass="{isFavorited ? 'text-amber-500' : ''}" 
+                    on:click={()=> {
+                        isFavorited = !isFavorited
+                        addFavorite(communityDetails.community_view.community, isFavorited)
+                    }}
+                />
+
+                <!---Add to Group--->
+                <Button color="tertiary" icon={UserGroup} iconSize={24} size="square-lg"
+                    title="Add/Remove to Group"
+                    on:click={(e) => { communityGroupModal = true }}
+                />
+            {/if}
+
+            <!---Modlog--->
+            <Button color="tertiary" icon={Newspaper} iconSize={24} size="square-lg" 
+                title="Modlog"
+                on:click={()=> {
+                    goto(`/modlog?community=${communityDetails.community_view.community.id.toString()}`)
+                    open = false
+                }}
+            />
+        {/if}
+    </div>
 
     {#if loading}
         <span class="flex mx-auto my-auto">
@@ -395,44 +432,8 @@
 
         <!---Main Menu--->
         {#if action == 'none'}
-            
-            <!---Quick Actions--->
-            <div class="flex flex-row gap-2 px-8 w-full items-center">
-                <span class="ml-auto"/>
-                
-                {#if $profile?.user && !communityBlocked}
-                    <!---Favorite Community--->
-                    <Button color="tertiary-border" icon={Star} iconSize={24} size="square-lg" 
-                        title="{isFavorited ? 'Un-Favorite' : 'Favorite'} Community"
-                        iconClass="{isFavorited ? 'text-amber-500' : ''}" 
-                        on:click={()=> {
-                            isFavorited = !isFavorited
-                            addFavorite(communityDetails.community_view.community, isFavorited)
-                        }}
-                    />
 
-                    <!---Add to Group--->
-                    <Button color="tertiary-border" icon={UserGroup} iconSize={24} size="square-lg"
-                        title="Add/Remove to Group"
-                        on:click={(e) => { communityGroupModal = true }}
-                    />
-                {/if}
-
-                <!---Modlog--->
-                <Button color="tertiary-border" icon={Newspaper} iconSize={24} size="square-lg" 
-                    title="Modlog"
-                    on:click={()=> {
-                        goto(`/modlog?community=${communityDetails.community_view.community.id.toString()}`)
-                        open = false
-                    }}
-                />
-                
-
-            </div>
-        
-            <span class="mt-2" />
-
-            <!---Community Card--->
+        <!---Community Card--->
             <Card backgroundImage={($userSettings.uiState.showBannersInCards && communityDetails?.community_view.community.banner) ? imageProxyURL(communityDetails?.community_view.community.banner, undefined, 'webp') : ''} >
                 <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
                     <div class="flex-shrink-0">
@@ -494,16 +495,6 @@
 
                 <!--- Action Buttons for this Community (Fade away if any of the accordions are open)--->
                 <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" transition:slide>
-                    
-                    <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full"
-                        on:click={()=> {
-                            //modalWidth="max-w-2xl"
-                            action='communityDetails'
-                        }}
-                    >
-                        Community Details...
-                    </Button>
-                    
                     <!---Go to Community--->
                     {#if !communityBlocked}
                         <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
@@ -515,6 +506,17 @@
                             Browse Community
                         </Button>
                     {/if}
+
+                    <!--- Community Details/Info--->
+                    <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full"
+                        on:click={()=> {
+                            modalWidth='max-w-3xl'
+                            action='communityDetails'
+                        }}
+                    >
+                        Community Details...
+                    </Button>
+                    
 
                     <!---Create Post--->
                     {#if $profile?.user && !communityBlocked}
