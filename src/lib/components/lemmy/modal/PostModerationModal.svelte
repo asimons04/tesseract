@@ -673,6 +673,35 @@
 
 <Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth}>
     
+    <!---Pin Community, Pin Local, Lock/Unlock--->
+    <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
+        
+        {#if !isCommentView(item)}
+            <span class="ml-auto" />    
+            
+            <div class="flex flex-row w-full items-center gap-2">
+                
+                <!---Feature Post (Community)--->
+                <Button color="tertiary" icon={Megaphone} loading={pinning} iconSize={20} size="square-lg" 
+                    title="{item.post.featured_community ? 'Unpin' : 'Pin'} in Community"
+                    iconClass={item.post.featured_community ? 'text-green-500' : ''}
+                    on:click={() => pin(!item.post.featured_community, false)}
+                />
+
+                
+                <!---Lock/Unlock Post--->
+                <Button color="tertiary" icon={LockClosed} iconSize={20} size="square-lg" 
+                    title="{item.post.locked ? 'Unlock' : 'Lock'} Post"        
+                    iconClass={item.post.locked ? 'text-amber-500' : ''}    
+                    loading={locking}
+                    on:click={() => lock(!item.post.locked)}
+                />
+            </div>
+        {/if}
+    </div>
+
+
+
     <!---Remove/Restore/Purge Content--->
     {#if action == 'removing'}
     
@@ -1026,36 +1055,7 @@
                 </div>
             </Card>
 
-            <!---Pin Community, Pin Local, Lock/Unlock--->
-            {#if !isCommentView(item)}
-                <div class="flex flex-row w-full my-4 items-center gap-2">
-                    
-                    <!---Feature Post (Community)--->
-                    <Button color="tertiary-border" icon={Megaphone} loading={pinning} alignment="left" class="w-full" 
-                        on:click={() => pin(!item.post.featured_community, false)}
-                    >
-                        {item.post.featured_community ? 'Unpin' : 'Pin'}
-                    </Button>
-
-                    <!---Feature Post (Instance)--->
-                    {#if isAdmin($profile?.user)}
-                        <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
-                            on:click={() => pin(!item.post.featured_local, true)}
-                        >
-                            {item.post.featured_local ? 'Unfeature' : 'Feature'}
-                        </Button>
-                    {/if}
-                    
-                    <!---Lock/Unlock Post--->
-                    <Button color="tertiary-border" icon={item.post.locked ? LockOpen : LockClosed} alignment="left" class="w-full" 
-                        loading={locking}
-                        on:click={() => lock(!item.post.locked)}
-                    >
-                        {item.post.locked ? 'Unlock' : 'Lock'}
-                    </Button>
-
-                </div>
-            {/if}
+            
 
             <!---Community Info--->
             <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full" 
@@ -1086,6 +1086,15 @@
                     on:click={() => distinguish() }
                 >
                     {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
+                </Button>
+            {/if}
+
+            <!---Feature Post (Instance)--->
+            {#if isAdmin($profile?.user)}
+                <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
+                    on:click={() => pin(!item.post.featured_local, true)}
+                >
+                    {item.post.featured_local ? 'Unfeature' : 'Feature'} Instance
                 </Button>
             {/if}
 
