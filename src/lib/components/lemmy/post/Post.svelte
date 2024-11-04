@@ -34,9 +34,8 @@
     export let forceCompact:boolean = false;
     export let disablePostLinks:boolean = false
     export let collapseBadges:boolean = false;
-    
+    export let expandCompact: boolean = computeExpandCompact()
 
-    let expandCompact: boolean = computeExpandCompact()
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement
     let inViewport = false
