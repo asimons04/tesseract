@@ -125,14 +125,16 @@
                         </h1>
                         
                         <span class="flex flex-row gap-2 items-center ml-auto">
+                            <slot name="title-bar-buttons"/>
+                            
                             {#if allowMaximize}
-                            <span class="hidden lg:flex">
-                                <Button title="{maximized ? 'Un-maximize' : 'Maximize'}" size="md" rounded="lg" color="tertiary" 
-                                    on:click={() => (maximize())}
-                                >
-                                    <Icon src={maximized ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" />
-                                </Button>
-                            </span>
+                                <span class="hidden lg:flex">
+                                    <Button title="{maximized ? 'Un-maximize' : 'Maximize'}" size="md" rounded="lg" color="tertiary" 
+                                        on:click={() => (maximize())}
+                                    >
+                                        <Icon src={maximized ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" />
+                                    </Button>
+                                </span>
                             {/if}
                             
                             <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={(e) => {
