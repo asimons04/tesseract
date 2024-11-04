@@ -104,15 +104,15 @@
     >
   
         <div transition:scale={{ start: 0.5, easing: expoOut }}
-            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[95svh]' : height} {$$props.class}"
+            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[90vh]' : height} {$$props.class}"
             
         >
-            <div class="w-full dark:!bg-zinc-950 rounded-xl {width} box-border mx-auto {fullHeight ? 'h-full' : height}">
+            <div class="w-full dark:!bg-zinc-950 rounded-xl {width} box-border mx-auto {fullHeight ? 'h-[90vh]' : height}">
                 <div bind:this={modalElement} tabindex="-1" role="dialog"
                     class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
                         bg-white dark:bg-zinc-950 
                         border border-slate-200 dark:border-zinc-800 
-                        {fullHeight ? 'h-[95vh]' : height}
+                        {fullHeight ? 'h-[90vh]' : height}
                         {action ? 'border-b-0 rounded-b-none' : ''}
                     "
                 >
@@ -149,14 +149,14 @@
                         </span>
                     </div>
                     
-                    <div class="flex flex-col overflow-y-auto w-full h-full"
+                    <div class="flex flex-col overflow-y-auto pr-2 w-full h-full"
                         use:swipe={{
                             touchAction: 'pan-y',
                             minSwipeDistance: 120
                         }}  on:swipe={onSwipe}
                     >
                         {#if card}
-                            <Card class="flex flex-col p-4">
+                            <Card class="flex flex-col p-4 max-h-[75svh]">
                                 <slot />
                             </Card>
                         {:else}
