@@ -983,8 +983,8 @@
             <span class="text-sm font-normal">
                 {
                     modlog.showThisCommunityOnly
-                        ? 'Showing only modlog events for this user in the current community.'
-                        : 'Showing all modlog events for this user.'
+                        ? `Showing only modlog events for ${item.creator.display_name ?? item.creator.name}@${new URL(item.creator.actor_id).hostname} in ${item.community.name}@${new URL(item.community.actor_id).hostname}.`
+                        : `Showing all modlog events for ${item.creator.display_name ?? item.creator.name}@${new URL(item.creator.actor_id).hostname}.`
                 }
                 You may also 
                 <button on:click={ () => {
@@ -1045,7 +1045,7 @@
 
     <!---Default/Moderation Action List--->
     {#if action == 'none'}
-        <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide>
+        <div class="flex flex-col gap-2 mt-0 w-full items-center" transition:slide>
             
             <Card class="p-2 w-full">
                 <div class="flex flex-row gap-2 justify-between w-full items-center text-xs overflow-hidden">
@@ -1056,114 +1056,114 @@
             </Card>
 
             
-
-            <!---Community Info--->
-            <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full" 
-                on:click={() => {
-                    modalWidth='max-w-3xl'
-                    action = 'communityInfo' 
-                }}
-            >
-                Community Details...
-            </Button>
-
-
-            <!---Creator's Modlog History--->
-            <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
-                on:click={() => {
-                    modalWidth = 'max-w-4xl'
-                    action = 'modlog'
-                    modlog.init()
-                }}
-            >
-                Creator's Modlog History...
-            </Button>
-
-            <!---Distinguish Comment--->
-            <!---Lemmy devs are ridiculous and changed the behavior so you could only distinguish your own comments.  Fuckin' bullshit--->
-            {#if isCommentView(item) && $profile?.user && item.creator_is_moderator && $profile.user.local_user_view.person.id == item.creator.id}
-                <Button color="tertiary-border" icon={Sparkles} alignment="left" class="w-full"
-                    on:click={() => distinguish() }
-                >
-                    {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
-                </Button>
-            {/if}
-
-            <!---Feature Post (Instance)--->
-            {#if isAdmin($profile?.user)}
-                <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
-                    on:click={() => pin(!item.post.featured_local, true)}
-                >
-                    {item.post.featured_local ? 'Unfeature' : 'Feature'} Instance
-                </Button>
-            {/if}
-
-            <!---Vote Viewer--->
-            {#if !purged && isAdmin($profile?.user)}
-                <Button color="tertiary-border" icon={HandThumbUp} alignment="left" class="w-full" 
-                    on:click={() => {
-                        showVotes.init()
-                        action = 'showVotes' 
-                    }}
-                >
-                    View Votes...
-                </Button>
-            {/if}
-
-
-            <!---Remove/Restore Item--->
-            {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
-                <Button color="{removed ? 'tertiary-border' : 'tertiary-border'}" icon={Trash} alignment="left" class="w-full" 
+            <div class="flex flex-col gap-2 px-8 mt-0 w-full items-center">
+                <!---Community Info--->
+                <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
-                        remove.purge = false
-                        action = 'removing'
+                        action = 'communityInfo' 
                     }}
                 >
-                    {removed ? 'Restore' : 'Remove'} {isCommentView(item) ? 'Comment' : 'Post'}...
+                    Community Details...
                 </Button>
-            {/if}
 
-            <!---Purge Item--->
-            {#if !purged && isAdmin($profile?.user) }
-                <Button color="tertiary-border" icon={Fire} alignment="left" class="w-full" 
-                    on:click={() => {
-                        modalWidth='max-w-3xl'
-                        remove.purge = true
-                        action = 'removing'
-                    }}
-                >
-                    Purge {isCommentView(item) ? 'Comment' : 'Post'}...
-                </Button>
-            {/if}
 
-            <!---Ban User (Community) --->
-            {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
-                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
+                <!---Creator's Modlog History--->
+                <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
                     on:click={() => {
-                        modalWidth='max-w-3xl'
-                        ban.reset()
-                        ban.community = item.community
-                        action = 'banning'
+                        modalWidth = 'max-w-4xl'
+                        action = 'modlog'
+                        modlog.init()
                     }}
                 >
-                    {item.creator_banned_from_community ? 'Unban' : 'Ban'} Community...
+                    Creator's Modlog History...
                 </Button>
-            {/if}
-            
-            <!---Ban User (Instance) --->
-            {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
-                <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
-                    on:click={() => {
-                        modalWidth='max-w-3xl'
-                        ban.reset()
-                        action = 'banning'
-                    }}
-                >
-                    {item.creator.banned ? 'Unban' : 'Ban'} Instance...
-                </Button>
-            {/if}
-            
+
+                <!---Distinguish Comment--->
+                <!---Lemmy devs are ridiculous and changed the behavior so you could only distinguish your own comments.  Fuckin' bullshit--->
+                {#if isCommentView(item) && $profile?.user && item.creator_is_moderator && $profile.user.local_user_view.person.id == item.creator.id}
+                    <Button color="tertiary-border" icon={Sparkles} alignment="left" class="w-full"
+                        on:click={() => distinguish() }
+                    >
+                        {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
+                    </Button>
+                {/if}
+
+                <!---Feature Post (Instance)--->
+                {#if isAdmin($profile?.user) && !isCommentView(item)}
+                    <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
+                        on:click={() => pin(!item.post.featured_local, true)}
+                    >
+                        {item.post.featured_local ? 'Unfeature' : 'Feature'} Instance
+                    </Button>
+                {/if}
+
+                <!---Vote Viewer--->
+                {#if !purged && isAdmin($profile?.user)}
+                    <Button color="tertiary-border" icon={HandThumbUp} alignment="left" class="w-full" 
+                        on:click={() => {
+                            showVotes.init()
+                            action = 'showVotes' 
+                        }}
+                    >
+                        View Votes...
+                    </Button>
+                {/if}
+
+
+                <!---Remove/Restore Item--->
+                {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
+                    <Button color="{removed ? 'tertiary-border' : 'tertiary-border'}" icon={Trash} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth='max-w-3xl'
+                            remove.purge = false
+                            action = 'removing'
+                        }}
+                    >
+                        {removed ? 'Restore' : 'Remove'} {isCommentView(item) ? 'Comment' : 'Post'}...
+                    </Button>
+                {/if}
+
+                <!---Purge Item--->
+                {#if !purged && isAdmin($profile?.user) }
+                    <Button color="tertiary-border" icon={Fire} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth='max-w-3xl'
+                            remove.purge = true
+                            action = 'removing'
+                        }}
+                    >
+                        Purge {isCommentView(item) ? 'Comment' : 'Post'}...
+                    </Button>
+                {/if}
+
+                <!---Ban User (Community) --->
+                {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
+                    <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth='max-w-3xl'
+                            ban.reset()
+                            ban.community = item.community
+                            action = 'banning'
+                        }}
+                    >
+                        {item.creator_banned_from_community ? 'Unban' : 'Ban'} Community...
+                    </Button>
+                {/if}
+                
+                <!---Ban User (Instance) --->
+                {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
+                    <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth='max-w-3xl'
+                            ban.reset()
+                            action = 'banning'
+                        }}
+                    >
+                        {item.creator.banned ? 'Unban' : 'Ban'} Instance...
+                    </Button>
+                {/if}
+            </div>
         </div>
     {/if}
 
