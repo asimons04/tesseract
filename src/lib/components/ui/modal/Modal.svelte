@@ -156,7 +156,7 @@
                         }}  on:swipe={onSwipe}
                     >
                         {#if card}
-                            <Card class="flex flex-col p-4 max-h-[75svh]">
+                            <Card class="flex flex-col p-4 overflow-y-auto max-h-[75svh]">
                                 <slot />
                             </Card>
                         {:else}
