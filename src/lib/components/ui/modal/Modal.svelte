@@ -16,7 +16,7 @@
     export let icon:IconSource = undefined;
 
     export let fullHeight:boolean = false
-    export let height:string = 'h-auto'
+    export let height:string = 'max-h-[90vh]'
     export let width:string = 'min-w-[50%]'
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
@@ -112,7 +112,7 @@
                     class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
                         bg-white dark:bg-zinc-950 
                         border border-slate-200 dark:border-zinc-800 
-                        {fullHeight ? 'h-[95vh]' : 'h-auto'}
+                        {fullHeight ? 'h-[95vh]' : height}
                         {action ? 'border-b-0 rounded-b-none' : ''}
                     "
                 >
