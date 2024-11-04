@@ -62,6 +62,7 @@
     
     export let url: string
     export let open: boolean = false
+    export let iframe: boolean = false
 
     let loading = false
     let data: GetSiteMetadataResponse|undefined = undefined
@@ -91,7 +92,7 @@
     async function setIframeURL() {
         try {
             iframeURL = new URL(url)
-            if (url.endsWith('.pdf')) iframeView = true
+            if (iframe || url.endsWith('.pdf')) iframeView = true
         }
         catch {
             iframeURL = undefined

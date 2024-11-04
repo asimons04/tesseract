@@ -43,6 +43,7 @@ interface Modals {
     linkPreview: {
         open: boolean
         url: string
+        iframe: boolean
     },
     postModeration: {
         open: boolean
@@ -114,7 +115,8 @@ export let modals = writable<Modals>({
     },
     linkPreview: {
         open: false,
-        url: ''
+        url: '',
+        iframe: false
     },
     postModeration: {
         open: false,
@@ -262,12 +264,13 @@ export function voteViewerModal(type:'post'|'comment', submission_id:number) {
 
 
 /** Launches the link preview modal */
-export function linkPreviewModal(url: string) {
+export function linkPreviewModal(url: string, iframe=false) {
     modals.update((m) => ({
         ...m,
         linkPreview: {
             open: true,
-            url: url
+            url: url,
+            iframe: iframe
         }
     }))
 }

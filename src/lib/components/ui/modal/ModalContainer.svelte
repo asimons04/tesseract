@@ -89,7 +89,7 @@
 
 
 {#if $modals.linkPreview.open}
-    <LinkPreviewModal bind:open={$modals.linkPreview.open} url={$modals.linkPreview.url} />
+    <LinkPreviewModal bind:open={$modals.linkPreview.open} url={$modals.linkPreview.url} iframe={$modals.linkPreview.iframe}/>
 {/if}
 
 
