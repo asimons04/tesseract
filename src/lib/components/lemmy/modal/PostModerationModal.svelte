@@ -90,6 +90,7 @@
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import PostMeta from '../post/PostMeta.svelte'
+    import ReportItemForm from './components/ReportItemForm.svelte'
     import SettingDateInput from '$lib/components/ui/settings/SettingDateInput.svelte'
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
@@ -107,11 +108,13 @@
         ChatBubbleLeftRight,
         ExclamationTriangle,
         Fire,
+        Flag,
         HandThumbUp,
         Icon,
         InformationCircle,
         LockClosed,
         LockOpen,
+        MapPin,
         Megaphone,
         Newspaper,
         NoSymbol,
@@ -123,7 +126,7 @@
     export let open: boolean = false
     export let item: PostView | CommentView
 
-    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'showVotes' | 'removing' = 'none'
+    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'showVotes' | 'removing' | 'reporting' = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
@@ -673,16 +676,37 @@
 
 <Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth}>
     
-    <!---Pin Community, Pin Local, Lock/Unlock--->
+    <!---Toggle Actions for the Modal Title Bar--->
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
+        <span class="ml-auto" />    
+        <div class="flex flex-row w-full items-center gap-2">
+
+            <!---Toggle Actions for Comments--->
+            {#if isCommentView(item)}
+                <!---Distinguish Comment--->
+                <!---Lemmy devs are ridiculous and changed the behavior so you could only distinguish your own comments.  Fuckin' bullshit--->
+                {#if $profile?.user && item.creator_is_moderator && $profile.user.local_user_view.person.id == item.creator.id}
+                    <Button color="tertiary" icon={Sparkles} iconSize={20} size="square-lg" 
+                        title="{item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'} Comment"
+                        iconClass={item.comment.distinguished ? 'text-green-500' : ''}
+                        on:click={() => distinguish() }
+                    />
+                {/if}
+            {/if}
         
-        {#if !isCommentView(item)}
-            <span class="ml-auto" />    
-            
-            <div class="flex flex-row w-full items-center gap-2">
-                
+            <!---Toggle Actions for Posts--->
+            {#if !isCommentView(item)}
+                <!---Feature Post (Instance)--->
+                {#if isAdmin($profile?.user) && !isCommentView(item)}
+                    <Button color="tertiary" icon={Megaphone} loading={pinningInstance} iconSize={20} size="square-lg" 
+                        title="{item.post.featured_local ? 'Unfeature' : 'Feature'} on Instance"
+                        iconClass={item.post.featured_local ? 'text-green-500' : ''}
+                        on:click={() => pin(!item.post.featured_local, true)}
+                    />
+                {/if}
+
                 <!---Feature Post (Community)--->
-                <Button color="tertiary" icon={Megaphone} loading={pinning} iconSize={20} size="square-lg" 
+                <Button color="tertiary" icon={MapPin} loading={pinning} iconSize={20} size="square-lg" 
                     title="{item.post.featured_community ? 'Unpin' : 'Pin'} in Community"
                     iconClass={item.post.featured_community ? 'text-green-500' : ''}
                     on:click={() => pin(!item.post.featured_community, false)}
@@ -696,11 +720,32 @@
                     loading={locking}
                     on:click={() => lock(!item.post.locked)}
                 />
-            </div>
-        {/if}
+            {/if}
+        </div>
     </div>
 
+    <!---Report the Submission--->
+    {#if action == 'reporting'}
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>
+                
+            <!---Section Header--->
+            <div class="flex flex-row gap-4 items-center">
+                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                    on:click={()=> returnMainMenu()}  
+                />
+                <span class="text-lg">
+                    Reporting
+                    {isCommentView(item) ? 'Comment' : 'Post'}
+                </span>
+            </div>
+            
 
+            <!---Remove/Purge/Restore Form--->
+            <Card class="flex flex-col p-4">    
+                <ReportItemForm bind:item on:reported={() => returnMainMenu() }/>
+            </Card>
+        </div>
+    {/if}
 
     <!---Remove/Restore/Purge Content--->
     {#if action == 'removing'}
@@ -1050,7 +1095,6 @@
             <Card class="p-2 w-full">
                 <div class="flex flex-row gap-2 justify-between w-full items-center text-xs overflow-hidden">
                     <CommunityLink community={item.community} avatar inline={false} avatarSize={42} />
-
                     <UserLink user={item.creator} avatar inline={false} avatarSize={42} community_banned={item.creator_banned_from_community} mod={item.creator_is_moderator} admin={item.creator_is_admin} />
                 </div>
             </Card>
@@ -1079,24 +1123,6 @@
                     Creator's Modlog History...
                 </Button>
 
-                <!---Distinguish Comment--->
-                <!---Lemmy devs are ridiculous and changed the behavior so you could only distinguish your own comments.  Fuckin' bullshit--->
-                {#if isCommentView(item) && $profile?.user && item.creator_is_moderator && $profile.user.local_user_view.person.id == item.creator.id}
-                    <Button color="tertiary-border" icon={Sparkles} alignment="left" class="w-full"
-                        on:click={() => distinguish() }
-                    >
-                        {item.comment.distinguished ? 'Un-Distinguish' : 'Distinguish'}
-                    </Button>
-                {/if}
-
-                <!---Feature Post (Instance)--->
-                {#if isAdmin($profile?.user) && !isCommentView(item)}
-                    <Button color="tertiary-border" icon={Megaphone} loading={pinningInstance} alignment="left" class="w-full" 
-                        on:click={() => pin(!item.post.featured_local, true)}
-                    >
-                        {item.post.featured_local ? 'Unfeature' : 'Feature'} Instance
-                    </Button>
-                {/if}
 
                 <!---Vote Viewer--->
                 {#if !purged && isAdmin($profile?.user)}
@@ -1110,10 +1136,22 @@
                     </Button>
                 {/if}
 
+                <!---Report Item Button (Only useful for local admins)--->
+                {#if !purged && !removed && $profile?.user && isAdmin($profile?.user)}
+                    <Button color="tertiary-border" icon={Flag} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth='max-w-3xl'
+                            action = 'reporting'
+                        }}
+                    >
+                        Report {isCommentView(item) ? 'Comment' : 'Post'}...
+                    </Button>
+                {/if}
+
 
                 <!---Remove/Restore Item--->
                 {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
-                    <Button color="{removed ? 'tertiary-border' : 'tertiary-border'}" icon={Trash} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
                             remove.purge = false
