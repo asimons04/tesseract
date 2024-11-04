@@ -25,7 +25,7 @@
 </script>
 
 <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view.community.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''} >
-    <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
+    <div class="flex flex-row gap-2 md:gap-3 items-center p-3">
         <div class="flex-shrink-0">
             <Avatar width={128} fullRes ring url={community_view.community.icon} alt={community_view.community.name} community />
         </div>
