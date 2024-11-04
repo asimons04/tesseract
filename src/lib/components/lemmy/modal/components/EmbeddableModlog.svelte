@@ -169,7 +169,7 @@
         </div>
     {:else}
         
-    <!---Heading row --->
+        <!---Heading row --->
         <div class="flex flex-row items-center gap-2 {headingRowClass}">
 
             <span class="ml-auto" />
