@@ -20,7 +20,7 @@
     export let background:boolean = false
 </script>
 
-<div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''}" style="width: {width}px; height: {width}px;">
+<div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''}" style="min-width: {Math.round(width * 0.75)}px; max-width: {width}px; min-height: {Math.round(width * 0.75)}px; max-height: {width}px;">
     {#if url}
         <ZoomableImage url={url} title={title} altText={alt} 
             resolution={fullRes ? undefined : findClosestNumber(sizes, width) } 
