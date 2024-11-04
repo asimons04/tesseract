@@ -25,15 +25,13 @@
     import { userSettings } from '$lib/settings'
     
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
-    import Avatar from "$lib/components/ui/Avatar.svelte"
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
-    import CommunityLink from "../community/CommunityLink.svelte"
-    import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
+    import CommunityCardSmall from "../community/CommunityCardSmall.svelte";
     import Markdown from "$lib/components/markdown/Markdown.svelte";
+    import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import RelativeDate from "$lib/components/util/RelativeDate.svelte"
+    import PostForm from "../post/PostForm.svelte";
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     import UserLink from "../user/UserLink.svelte";
     
@@ -65,8 +63,10 @@
         Check,
         Eye,
     } from "svelte-hero-icons";
-    import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte";
-    import PostForm from "../post/PostForm.svelte";
+    
+    
+    
+    
     
     
     export let community: Community | undefined
@@ -237,14 +237,6 @@
     }
 </script>
 
-<!---
-    title={
-        shortenCommunityName(communityDetails?.community_view?.community?.title, 45) ?? 
-        communityDetails?.community_view?.community?.name ?? 
-        'Community Details'
-    }
---->
-
 <Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
     capitalizeTitle={true} title="Community"
 >
@@ -308,8 +300,8 @@
                     </span>
                 </div>
                 
+                <CommunityCardSmall bind:community_view={communityDetails.community_view} />
 
-                <!---Remove/Purge/Restore Form--->
                 <Card class="flex flex-col p-4 max-h-[50vh] overflow-y-auto">
                     <!---Community details/sidebar info--->
                     <Markdown source={communityDetails.community_view.community.description ?? '*No community details were provided.*'}/>
@@ -341,7 +333,6 @@
                     </span>
                 </div>
                 
-
                 <!---Remove/Purge/Restore Form--->
                 <Card class="flex flex-col p-4 max-h-[50vh] overflow-y-auto">
                     <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove.remove}>
@@ -378,7 +369,6 @@
                     </span>
                 </div>
                 
-
                 <!---Remove/Purge/Restore Form--->
                 <Card class="flex flex-col p-4 max-h-[50vh] overflow-y-auto">
                     <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={hide.hide}>
@@ -433,61 +423,8 @@
         <!---Main Menu--->
         {#if action == 'none'}
 
-        <!---Community Card--->
-            <Card backgroundImage={($userSettings.uiState.showBannersInCards && communityDetails?.community_view.community.banner) ? imageProxyURL(communityDetails?.community_view.community.banner, undefined, 'webp') : ''} >
-                <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
-                    <div class="flex-shrink-0">
-                        <Avatar width={128} fullRes ring url={communityDetails.community_view.community.icon} alt={communityDetails.community_view.community.name} community />
-                    </div>
-
-                    <div class="flex flex-col gap-1 w-full overflow-hidden">
-                        <span class="font-bold text-lg">
-                            <CommunityLink name href useDisplayNames showInstance={false} community={communityDetails.community_view.community} 
-                                on:click={ () => open=false }
-                            />
-                        </span>
-
-                        <span class="text-xs font-normal">
-                            !{communityDetails.community_view.community.name}@{new URL(communityDetails.community_view.community.actor_id).hostname}
-                        </span>
-                        
-                        <div class="mt-2" />
-
-                        <Card elevation={0} class="p-1 w-fit opacity-80 w-full">
-                            <div class="flex flex-row">
-                                
-                                <div class="mx-auto text-xs md:text-sm flex flex-row gap-4 flex-wrap justify-between">
-                                    <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Cake Day">
-                                        <Icon src={Cake} width={16} height={16} mini />
-                                        <span class="capitalize">
-                                            <RelativeDate date={communityDetails.community_view.community.published}/>
-                                        </span>
-                                    </span>
-                                    
-                                    <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Subscribers">
-                                        <Icon src={UserGroup} width={16} height={16} mini />
-                                        
-                                        {#if communityDetails.community_view.counts.subscribers_local}
-                                            <FormattedNumber number={communityDetails.community_view.counts.subscribers_local} /> / 
-                                        {/if}
-                                        <FormattedNumber number={communityDetails.community_view.counts.subscribers} />
-                                    </span>
-
-                                    <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Posts">
-                                        <Icon src={PencilSquare} width={16} height={16} mini />
-                                        <FormattedNumber number={communityDetails.community_view.counts.posts} />
-                                    </span>
-                        
-                                    <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Comments">
-                                        <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                                        <FormattedNumber number={communityDetails.community_view.counts.comments} />
-                                    </span>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </div>
-            </Card>
+            <!---Community Card--->
+            <CommunityCardSmall bind:community_view={communityDetails.community_view} />
 
             <span class="mt-2" />
 
