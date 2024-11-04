@@ -250,7 +250,7 @@
             {#if $profile?.user && !communityBlocked}
                 
             <!---Favorite Community--->
-                <Button color="tertiary" icon={Star} iconSize={24} size="square-lg" 
+                <Button color="tertiary" icon={Star} iconSize={20} size="square-lg" 
                     title="{isFavorited ? 'Un-Favorite' : 'Favorite'} Community"
                     iconClass="{isFavorited ? 'text-amber-500' : ''}" 
                     on:click={()=> {
@@ -260,14 +260,14 @@
                 />
 
                 <!---Add to Group--->
-                <Button color="tertiary" icon={UserGroup} iconSize={24} size="square-lg"
+                <Button color="tertiary" icon={UserGroup} iconSize={20} size="square-lg"
                     title="Add/Remove to Group"
                     on:click={(e) => { communityGroupModal = true }}
                 />
             {/if}
 
             <!---Modlog--->
-            <Button color="tertiary" icon={Newspaper} iconSize={24} size="square-lg" 
+            <Button color="tertiary" icon={Newspaper} iconSize={20} size="square-lg" 
                 title="Modlog"
                 on:click={()=> {
                     goto(`/modlog?community=${communityDetails.community_view.community.id.toString()}`)
