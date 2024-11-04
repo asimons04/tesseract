@@ -45,6 +45,26 @@ removeAdmin {username}
 ```
 
 ## 1.4.20
+
+### Remaining To Do:
+#### Post Component
+1) Flesh out this "hybrid" card view behavior.
+- Add setting toggle for 'Automatic Card View'
+- List post types that should be viewed always as cards when this is enabled?
+- Can toggle each type to add it to an array that's checked here (instead of the static array used for test/dev)
+- Don't expand read posts (optional)
+
+
+#### Community Profile Modal Component
+1) Add sub-panels for Remove/Restore Community and Hide Community to provide a reason (remove/restore) and confirmation (both)
+
+1) Move "Community Details" into a sub-panel like it is in the moderation 
+
+1) Integrate community modlog as in the moderation component
+    - Keep separate button to view it in the full-featured modlog
+
+1) 
+
 ### Bugfixes: Minor
 - May only have been an issue for admins, but administratively hidden and removed communities will now no longer show up in community autocomplete results.
     - They will still show up when filtering for a community in the modlog though (though only admins should be able to see those results)
@@ -56,7 +76,7 @@ removeAdmin {username}
 - Fixed Gifs not previewing if just 'url' is present (i.e. no thumbanil_url or embed_video_url)
 - Indicate post's removed/deleted/lock state in the comment item component when viewing profiles
 - When "Match Crossposts on Title" is enabled, posts with the same title but different URLs will no longer be erroneously rolled up
-- "Distinguish" now only shows on your own comments if you are a moderator.  This matches the stupid API behavior because the Lemmy devs suck. (Wow I really *can't* go one release without throwing deserved shade at them, can I?)
+- "Distinguish" now only shows on your own comments if you are a moderator.  This matches the stupid API behavior because...the Lemmy devs don't listen to anyone. (Wow I really *can't* go one release without throwing deserved shade at them, can I?)
 
 
 
@@ -75,6 +95,22 @@ If startup takes too long, you can always delete all of the `.cache` objects man
 
 ## New Features / Changes
 
+### "Hybrid" Post View
+Rather than a binary choice of "card" or "compact", hybrid view will let you set a list of post types (image, video, article, etc) that you want to render as cards while displaying everything else as compact.  This is the new default view.
+
+This is useful, for example, to let memes and news articles co-exist without having to expand every meme image manually in compact view or view every article thumbnail card-sized.
+
+The behavior and post types can be configured from `Quick Settings -> Post Style -> Hybrid` and then clicking the link for "Configure" -or- from `Settings -> Feed- > Hybrid View Configuration`
+
+By default, only image posts are expanded to cards.
+
+In addition to setting the types of posts that should render as cards, you can optionlly keep read posts collapsed into compact view when they would otherwise be cards if they were unread.  This is enabled by default, but can be easily disabled.
+
+There is also a new regular view called "Compacter".  It is the same as compact but post body is fully collapsed.  Similar to "More Compact" but not full width.
+
+
+
+
 ### Post Form Now Automatically Searches for Crossposts/Duplicates
 When you are creating a post, the URL will be searched to see if you're posting something that's already been posted.  It should do this automatically when the URL field changes or the URL is set and the community changes.  The behavior is slightly different depending on if a community is defined:
 
@@ -86,6 +122,16 @@ The latter behavior is particularly useful if you want to avoid accidentally pos
 
 If for whatever reason it doesn't trigger automatically, the "Magnifying Glass" icon to the right of the URL field can trigger the search manually.
 
+Also note that behavior #2 only works if you're posting to a Lemmy community since it makes a remote API call to the community's home instance using the Lemmy API.  Thus, it cannot search a remote Kbin/Piefed, etc instance.  
+
+### Can Now Vote on Crossposts Without Clicking Into It
+Vote buttons have been added to the crosspost items, so you can now vote on them from the feed and post.
+
+In the feed, since the cross_posts are rolled up manually from regular post objects, the voting works as expected.
+
+Unfortunately, when clicked into a post, the API call does not add the `my_vote` variable to the `cross_posts` array.  So while you can vote on the crosspost, and the vote will be correctly recorded, your vote will only display correctly while you're on that page.  Since the API doesn't return the vote you cast, on refresh or subsequent loads, the vote button will not indicate which way you voted.  If you try to vote again, the score will not necessarily change.  Yet another feature I want to implement hampered by dumb API decisions.
+
+
 
 ### Moderation Menu Has Been Replaced With New Moderation Modal
 The moderation menu on posts and comments has been removed.  The reason is that the menus were getting cluttered when new things are added, especially for admins who have more options available than regular mods.  Rather than creating sub-menus (yuck!) or introducing separate UI elements for admin controls, I've just scrapped the whole thing and started over.
@@ -94,7 +140,7 @@ The "mod" button will now open a modal containing all the mod tools that are app
 
 The cool thing about the new mod modal is that all of the tools are packaged into it.  It doesn't open separate modals for banning/unbanning, removing/restoring, etc.  It even has the community details available so that mods can reference the rules when issuing actions without leaving the item they're working with.
 
-#### Current Capabilities
+#### Current Capabilities and Features
 - A mini-banner heading showing the current community with its icon and the creator of the item and their avatar/info.
     - Both communtiy and user are clickable to bring up their respective profile modals to get more info (these pop up in separate modals and aren't integrated into the mod modal)
 - Pin/Unpin the post to the community
@@ -106,14 +152,23 @@ The cool thing about the new mod modal is that all of the tools are packaged int
 - Purge the post or comment (admin only)
 - Ban/Unban the user from the community
 - Ban/Unban the user from the instance (admins only)
-- View the user's modlog history (currently a link, but integrating a modlog view is in progress)
+- Distinguish/undistinguish mod comments 
+- View the user's modlog history
+    - Defaults to their history in the community relevant to the current item
+    - Can toggle between their modlog history in the community and their full modlog history
+    - Also has link to the full modlog viewer filtered for that user.
 
-- To do:  Distinguish Comment
 
+All tools stay within the same modal, and it shrinks/expands to accommodate the various integrated tools.
 
-With the exception of the (current implementation) of the user modlog, everything stays within the same modal, and it shrinks/expands to accommodate the various integrated tools.
+### Improved Community Modals
+To reduce clutter, the "Favorite/Unfavorite", "Add/Remove to Group", and "Modlog" buttons have been moved to the modal title bar as icon-only buttons.  
 
+"Create Post" is no longer a link to the community's create post page. It now shows the create post form right in the modal.  There is a button in the upper-right which will take you to the `/c/{community}/create_post` page if you want to use the old form (it's the same form).
 
+"Remove/Restore" and "Hide/Unhide" have been integrated.  They will also now prompt for an optional reason to show in the modlog.
+
+The "Community Details" is now a panel (like in the moderation modal) rather than being an accordion.  Same functionality, different packaging.
 
 
 
@@ -136,7 +191,11 @@ The internal lists of public Invidious and Piped instances has been combined and
 On the admin side of things, the env var `PUBLIC_CUSTOM_PIPED` has been deprecated.  For now, it will simply be combined with the `PUBLIC_CUSTOM_INVIDIOUS` list.  Eventually the Piped list will be removed, but that is TBD.  Those lists are also only used for detection and are no longer presented as possible frontends for the user to select.  If a user wants to use Invidious/Piped, they *must* supply their own instance in their settings.
 
 
-## Post Rendering Refreshes
+## Misc UI Tweaks
+- Legacy user and community menus in `/u/{user}` and `/c/{community}` cards have been removed.  The functionality has been moved into the respecctive user/community modals.
+
+- Community link pill buttons are now gray instead of orange.  The orange was just...too much.  User link buttons are still blue.
+
 - Better display of metadata from posted links
 
 - Cleaner compact view (also incorporates metadata display better)
@@ -156,20 +215,16 @@ On the admin side of things, the env var `PUBLIC_CUSTOM_PIPED` has been deprecat
 - Direct audio links (MP3, etc) now have renderers; they only rendered in the markdown post body and comments previously. Now if the post URL is an audio link, a player will embed.
 
 
-
 - Show link selector, link, and MBFC even if metadata fails to load in preview modal.  Also show that info while fetching metadata.
 
 
-### New View Option
-**Compacter**:  Same as compact but post body is fully collapsed.  Same as "More Compact" but not full width.
-
 
 ## Better Integration with Pifed/Mbin/etc
-When clicking a link that goes to a post or comment, Tesseract will massage the URL to attempt to render it locally.  This works well for Lemmy, but non-Lemmy services which use the same `/post/{id}` and `/comment/{id}` URL format don't work with Lemmy API calls.  
+When clicking a link that goes to a post or comment, Tesseract will massage the URL to attempt to render it locally (extract the instance and post ID and do a remote API call to fetch it for local rendering).  This works great for Lemmy, but non-Lemmy services which use the same `/post/{id}` and `/comment/{id}` URL format don't work with Lemmy API calls.  
 
 Before, this would throw a generic 500 "Failed to fetch post" error.  The UX has been improved in this release by showing a clearer error message as well as a button to visit the post on its home instance.
 
-Additionally, if a local post fails to load, added conditional verbiage to indicate a local post may have been removed by its creator or removed by a moderator. 
+Additionally, if a local post fails to load, there's now conditional verbiage to indicate a local post may have been removed by its creator or removed by a moderator, and there is no button to visit it on the home instance (since it *is* the home instance).
 
 ---
 
