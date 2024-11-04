@@ -43,10 +43,10 @@
             
             <div class="mt-2" />
 
-            <Card elevation={0} class="p-1 w-fit opacity-80 w-full">
+            <Card elevation={0} class="p-1 w-fit opacity-80 w-fit">
                 <div class="flex flex-row">
                     
-                    <div class="mx-auto text-xs md:text-sm flex flex-row gap-4 flex-wrap justify-between">
+                    <div class="text-xs md:text-sm flex flex-row gap-4 flex-wrap justify-between">
                         <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Cake Day">
                             <Icon src={Cake} width={16} height={16} mini />
                             <span class="capitalize">
