@@ -19,6 +19,7 @@
     export let displayType:PostDisplayType  = 'post'
     export let expandPreviewText:boolean    = false
     export let inline:boolean               = false
+    export let offsetExpandButton: boolean  = false
     
     let source: string = ''
     let hideExpandButton = false
@@ -75,6 +76,7 @@
 <!---Expand/Collapse Button--->
 {#if !hideExpandButton }
 <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
+    iconClass="{offsetExpandButton ? 'ml-[128px]' : ''}"
     title="{expandPreviewText ? 'Collapse' : 'Expand'}"
     icon={expandPreviewText ? ChevronUp : ChevronDown}
     iconSize={24}

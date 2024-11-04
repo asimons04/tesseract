@@ -54,7 +54,7 @@
                     <PostTitle bind:post />
 
                     {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-                        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText class="my-1" />
+                        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText class="my-1" offsetExpandButton/>
                     {/if}
                     
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
