@@ -1,6 +1,7 @@
 <script lang="ts">
     import { lookup } from '$lib/MBFC/client'
     import { isYouTube, removeURLParams } from "../helpers"
+    import { linkPreviewModal } from "$lib/components/lemmy/moderation/moderation";
     import { toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings'
 
@@ -12,10 +13,12 @@
         CheckBadge,
         ChevronDown, 
         ChevronUp, 
+        Eye, 
         Icon, 
         Link as LinkIcon,
         Share,
     } from 'svelte-hero-icons'
+    import Link from '$lib/components/input/Link.svelte';
 
     export let url:string | undefined
     export let postType:string = 'link'
@@ -127,6 +130,18 @@
             <Icon src={Share} width={16} mini />
             Copy Link
         </MenuButton>
+        
+        <!--{#if !(url.startsWith('/'))}-->
+            <MenuButton title="Preview" color="info"
+                on:click={(e) => {
+                    linkPreviewModal(url)
+                }}
+            >
+                <Icon src={Eye} width={16} mini />
+                Preview
+            </MenuButton>
+        <!--{/if}-->
+        
 
     </Menu>
 {/if}
