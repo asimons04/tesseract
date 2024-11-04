@@ -84,7 +84,7 @@
     let action: 'none' | 'communityDetails' | 'removing' | 'hiding' | 'createPost' = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
-
+    
     // Reactive hack (rather than just monitoring community directly) since updating the modal store changes the community (though back to its original value)
     // and causes the loader to re-run needlessly.
 
@@ -235,6 +235,7 @@
         modalWidth = defaultWidth
         action = 'none'
     }
+    
 </script>
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
