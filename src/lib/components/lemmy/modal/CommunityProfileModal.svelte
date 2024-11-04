@@ -63,6 +63,7 @@
         Check,
         Eye,
     } from "svelte-hero-icons";
+    import EmbeddableModlog from "./components/EmbeddableModlog.svelte";
     
     
     
@@ -75,13 +76,14 @@
     
     let loading = false
     let blocking = false
+    let subscribing = false
 
     let communityDetails: GetCommunityResponse
     let communityGroupModal = false
     let communityDetailsOpen = false
     
 
-    let action: 'none' | 'communityDetails' | 'removing' | 'hiding' | 'createPost' = 'none'
+    let action: 'none' | 'communityDetails' | 'removing' | 'hiding' | 'createPost' | 'modlog'  = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
     
@@ -239,7 +241,12 @@
 </script>
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
-    capitalizeTitle={true} title="Community"
+    capitalizeTitle={true}
+    title={
+        shortenCommunityName(communityDetails?.community_view?.community?.title, 25) ?? 
+        communityDetails?.community_view?.community?.name ?? 
+        'Community Details'
+    }
 >
 
     <!---Quick Actions (These are placed into the modal title bar)--->
@@ -248,8 +255,24 @@
             <span class="ml-auto"/>
             
             {#if $profile?.user && !communityBlocked}
-                
-            <!---Favorite Community--->
+                <!---Subscribe/Unsubscribe--->
+                <Button color="tertiary" icon={Rss} iconSize={20} size="square-lg"
+                    title="{subscribed ? 'Unsubscribe from' : 'Subscribe to'} Community"    
+                    iconClass="{subscribed ? 'text-amber-500' : ''}" 
+                    loading={subscribing}
+                    on:click={async ()=> {
+                        subscribing = true
+                        subscribed = await subscribe(communityDetails.community_view.community, subscribed)
+                        subscribing = false
+                        subscribed = subscribed
+                        communityDetails.community_view.subscribed = subscribed
+                            ? 'Subscribed'
+                            : 'NotSubscribed'
+                    }}
+                />
+
+
+                <!---Favorite Community--->
                 <Button color="tertiary" icon={Star} iconSize={20} size="square-lg" 
                     title="{isFavorited ? 'Un-Favorite' : 'Favorite'} Community"
                     iconClass="{isFavorited ? 'text-amber-500' : ''}" 
@@ -264,16 +287,9 @@
                     title="Add/Remove to Group"
                     on:click={(e) => { communityGroupModal = true }}
                 />
+                
             {/if}
-
-            <!---Modlog--->
-            <Button color="tertiary" icon={Newspaper} iconSize={20} size="square-lg" 
-                title="Modlog"
-                on:click={()=> {
-                    goto(`/modlog?community=${communityDetails.community_view.community.id.toString()}`)
-                    open = false
-                }}
-            />
+            
         {/if}
     </div>
 
@@ -421,6 +437,31 @@
             </div>
         {/if}
 
+        <!---User's Modlog History--->
+        {#if action == 'modlog'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+        
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={(e)=> {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            returnMainMenu() 
+                        }}
+                    />
+                    <div class="flex flex-row w-full justify-between">
+                        <span class="text-lg">
+                            Modlog
+                        </span>
+                    </div>
+                </div>
+                
+                <EmbeddableModlog community={communityDetails.community_view.community} headingRowClass="mt-[-50px]" on:gotoFullModlog={() => open = false }/>    
+            </div>
+        
+        {/if}
+
         <!---Main Menu--->
         {#if action == 'none'}
 
@@ -469,23 +510,20 @@
                             Create Post...
                         </Button>
                     {/if}
+
+                    <!---Community Modlog--->
+                    <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
+                        on:click={()=> {
+                            modalWidth = 'max-w-3xl'
+                            action='modlog'
+                        }}
+                    >
+                        Community Modlog...
+                    </Button>
                     
                     {#if $profile?.user}
 
-                        {#if !communityBlocked}    
-                            <!---Unsubscribe--->
-                            <Button color="tertiary-border" icon={subscribed ? Minus : Rss} alignment="left" class="w-full"
-                                on:click={async () => {
-                                    subscribed = await subscribe(communityDetails.community_view.community, subscribed)
-                                    subscribed = subscribed
-                                    communityDetails.community_view.subscribed = subscribed
-                                        ? 'Subscribed'
-                                        : 'NotSubscribed'
-                                }}
-                            >
-                                {subscribed ? 'Unsubscribe' : 'Subscribe'}
-                            </Button>
-                        {/if}
+                       
 
                         <!---Community Settings (if mod or local admin of a local community)--->
                         {#if $profile?.user && amMod($profile.user, communityDetails.community_view.community)}
