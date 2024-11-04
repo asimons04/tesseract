@@ -117,7 +117,7 @@
                     "
                 >
                     <div class="flex flex-row max-w-full">
-                        <h1 class="flex flex-row items-center font-bold text-xl gap-2 w-fit {capitalizeTitle ? 'capitalize' : ''}">
+                        <h1 class="flex flex-row items-center font-bold text-xl gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
                             {#if icon} 
                                 <Icon src={icon} mini width={28}/>
                             {/if}
