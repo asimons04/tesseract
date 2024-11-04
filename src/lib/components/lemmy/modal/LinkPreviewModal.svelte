@@ -68,7 +68,7 @@
     let postContainer:HTMLDivElement
     let post: PostView | undefined  = undefined
     let postType: PostType
-    let displayType='feed' as PostDisplayType    
+    let displayType='post' as PostDisplayType    
     let fetchError = false
     let previewHistory = [] as string[]
     
