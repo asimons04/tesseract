@@ -516,7 +516,7 @@
                 <div class="flex flex-row items-start w-full justify-between">
                     <span class="font-bold text-sm text-left mb-1 w-max self-start">
                         { data.community 
-                            ? `Existing posts in ${data.community.name}@${new URL(data.community.actor_id).hostname}` 
+                            ? `Existing posts in community` 
                             : `Crossposts`
                         }
                         ({URLSearchResults.length})
