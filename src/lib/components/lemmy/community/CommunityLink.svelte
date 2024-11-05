@@ -43,16 +43,20 @@
     }
 </script>
 
-<a href="{linkFromCommunity(community)}" class="items-center flex flex-row gap-2 {noClick ? 'pointer-events-none' : ''} hover:underline {heading ? 'font-bold text-2xl' : ''} {$$props.class}" 
+<a href="{linkFromCommunity(community)}" class="items-center flex flex-row gap-2 {noClick ? 'pointer-events-none' : ''} hover:underline {heading ? 'font-bold text-2xl' : ''} w-full {$$props.class}" 
     title={fixLemmyEncodings(community.title)}
     on:click={loadCommunityProfileModal}
 >
     {#if avatar}
-        <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true} background={avatarBackground}/>
+        <div style="width: {avatarSize}px">
+            <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true} background={avatarBackground}/>
+        </div>
     {/if}
 
     {#if name}
-        <span class="flex flex-wrap text-left {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}">
+        <span class="flex flex-wrap text-left {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}"
+            style="width:calc(100% - {avatarSize}px);"
+        >
 
             {useDisplayNames ?? $userSettings.displayNames 
                 ? shortenCommunityName(community.title, maxNameLength)
