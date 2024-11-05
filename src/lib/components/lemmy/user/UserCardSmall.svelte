@@ -35,13 +35,13 @@
 <Card backgroundImage={($userSettings.uiState.showBannersInCards && person_view.person.banner) ? imageProxyURL(person_view.person.banner, undefined, 'webp') : ''} 
     class="p-0 !items-start"
 >
-    <div class="flex flex-row gap-1 md:gap-3 items-start p-2">
+    <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
         
-        <div class="flex-shrink-0" style="min-width: {Math.round(avatarWidth * 0.75)}px; max-width: min({avatarWidth}px, 25%);">
+        <div class="flex-shrink-0 p-2" style="min-width: {Math.round(avatarWidth * 0.75)}px; max-width: min({avatarWidth}px, 25%);">
             <Avatar width={avatarWidth} fullRes ring url={person_view.person.avatar} alt={person_view.person.actor_id}  class="mx-auto"/>
         </div>
 
-        <div class="flex flex-col gap-1 w-3/4 overflow-hidden">
+        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
             <span class="font-bold w-full text-xl">
                 <UserLink badges user={person_view.person} showInstance={false} useDisplayNames {href} admin={person_view.is_admin} {mod} blocked={blocked}
                     on:click={() => dispatcher('clickUserLink') }
