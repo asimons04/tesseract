@@ -30,7 +30,7 @@
     ">
 
         <!---<div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-white/80 dark:bg-black/80 rounded-lg {clazz}" {...$$restProps}>--->
-        <div class="w-full break-words border dark:border-zinc-800 bg-white/90 dark:bg-black/80 rounded-3xl {clazz}" {...$$restProps}>  <!---dark:bg-zinc-950/80 --->
+        <div class="w-full break-words border dark:border-zinc-800 bg-white/50 dark:bg-black/50 rounded-3xl {clazz}" {...$$restProps}>  <!---dark:bg-zinc-950/80 --->
             <slot />
         </div>
     </div>
