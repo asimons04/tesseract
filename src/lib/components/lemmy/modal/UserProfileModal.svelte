@@ -20,6 +20,7 @@
     import Card from "$lib/components/ui/Card.svelte"
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
     import CommunityLink from "../community/CommunityLink.svelte";
+    import EmbeddableModlog from "./components/EmbeddableModlog.svelte"
     import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
     import Markdown from "$lib/components/markdown/Markdown.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
@@ -46,8 +47,10 @@
         Trash,
         User,
         UserCircle,
-        ArrowTopRightOnSquare, 
+        ArrowTopRightOnSquare,
+        ArrowLeft, 
     } from "svelte-hero-icons";
+    import UserCardSmall from "../user/UserCardSmall.svelte";
     
     
     export let user:Person | undefined
@@ -64,10 +67,16 @@
     let aboutMe = false
     let originalUser = user
     
+    let defaultWidth = 'max-w-xl'
+    let modalWidth = defaultWidth
+
+    let action: 'none' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' = 'none'
+
     $:  if (originalUser != user) {
         originalUser = user
         loadDetails()
     }
+    
     onMount(async () => loadDetails())
         
     async function loadDetails() {
@@ -130,82 +139,89 @@
             personDetails.person_view.person.banned = e.detail.banned
         }
     }
+
+    // Returns the modal to the main menu
+    function returnMainMenu() {
+        modalWidth = defaultWidth
+        action = 'none'
+    }
   
 </script>
 
 <svelte:window on:banUser={handleBanUser} />
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width="max-w-xl"
+<Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth}
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
 >
+
+    <!---Title Bar Buttons--->
+    <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
+        <span class="ml-auto" />
+        
+        {#if personDetails}
+            <!---Copy Lemmyverse Link--->
+            <Button color="tertiary" size="square-lg" icon={Share} iconSize={20} title="Copy Lemmyverse Link"
+                on:click={() => {
+                    if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                    toast({
+                        type: 'success',
+                        content: `Copied Lemmyverse link to clipboard`,
+                        title: 'Copied'
+                    })
+                    
+                }}
+            />
+
+            <!--- Copy Actor ID--->
+            <Button color="tertiary" size="square-lg" icon={LinkIcon} iconSize={20} title="Copy Actor ID"
+                on:click={() => {
+                    if (personDetails?.person_view.person) navigator.clipboard.writeText(personDetails.person_view.person.actor_id)
+                    toast({
+                        type: 'success',
+                        content: `Copied actor ID to clipboard`,
+                        title: 'Copied'
+                    })
+                    
+                }}
+            />
+            
+            <!---Go to Profile Page--->
+            <Button color="tertiary" icon={ArrowTopRightOnSquare} iconSize={20} size="square-lg" title="Go to User's Profile"
+                on:click={()=> {
+                    if (!personDetails) return
+
+                    // If viewing own account go to /profile/user otherwise, goto /u/{user}@{instance}
+                    if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
+                        goto('/profile/user')
+                        open = false
+                    }
+                    else {    
+                        goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                        open = false
+                    }
+                }}
+            />
+        {/if}
+    </div>
+    
+    <!---Loading Spinner--->
     {#if loading}
         <span class="flex mx-auto my-auto">
             <Spinner width={24}/>
         </span>
     {/if}
     
-    <!---DM and Ban Modals Inside This Modal--->
-    {#if messaging && personDetails}
-    <UserSendMessageModal bind:open={messaging} bind:person={personDetails.person_view} />
-    {/if}
+    {#if !loading && personDetails}
+    
+    
+        <!---DM and Ban Modals Inside This Modal--->
+        {#if messaging}
+            <UserSendMessageModal bind:open={messaging} bind:person={personDetails.person_view} />
+        {/if}
 
-   
-    <!--- User Card and Action Buttons--->
-    {#if !loading && personDetails?.person_view.person}
         
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && personDetails?.person_view.person.banner) ? imageProxyURL(personDetails.person_view.person.banner, undefined, 'webp') : ''} >
-            <div class="flex flex-row gap-1 md:gap-3 items-center p-3">
-                <div class="flex-shrink-0">
-                    <Avatar width={128} fullRes ring url={personDetails.person_view.person.avatar} alt={personDetails.person_view.person.actor_id}  />
-                </div>
-
-                <div class="flex flex-col gap-1 w-full overflow-hidden">
-                    <span class="font-bold text-lg">
-                        <UserLink badges user={personDetails.person_view.person} showInstance={false} useDisplayNames href admin={personDetails.person_view.is_admin} mod={mod} blocked={userBlocked}
-                            on:click={() => open=false }
-                        />
-                    </span>
-
-                    <span class="text-xs font-normal">@{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}</span>
-                    
-                    <div class="mt-2"/>
-
-                    <Card elevation={0} class="p-2 w-fit opacity-80 w-full">
-                        <div class="flex flex-row">
-                            
-                            <div class="mx-auto text-xs md:text-sm flex flex-row w-full md:w-3/4 flex-wrap gap-2 justify-between">
-                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Cake Day">
-                                    <Icon src={Cake} width={16} height={16} mini />
-                                    <span class="capitalize">
-                                        <RelativeDate date={personDetails.person_view.person?.published}/>
-                                    </span>
-                                </span>
-                            
-                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Posts">
-                                    <Icon src={PencilSquare} width={16} height={16} mini />
-                                    <FormattedNumber number={personDetails.person_view.counts.post_count} />
-                                </span>
-                    
-                                <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Comments">
-                                    <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                                    <FormattedNumber number={personDetails.person_view.counts.comment_count} />
-                                </span>
-
-                                {#if mostRecentItem}
-                                    <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Last Activity">
-                                        <Icon src={Clock} width={16} height={16} mini />
-                                        <RelativeDate date={mostRecentItem}/>
-                                    </span>
-                                {/if}
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            </div>
-        </Card>
-
-        <!---About Me--->
-        <CollapseButton bind:expanded={aboutMe} icon={InformationCircle} title="About Me" innerClass="max-h-[45vh] overflow-y-scroll">
+        <!---User Bio--->
+        {#if action == 'userDetails'}
             <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
 
             <!---Communities This User Moderates--->
@@ -216,11 +232,44 @@
                     <CommunityLink community={community.community} avatar on:click={() => open = false }/>
                 {/each}
             {/if}
-        </CollapseButton>
+        {/if}
+
+        <!---User's Modlog History--->
+        {#if action == 'modlog'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+        
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={(e)=> {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            returnMainMenu() 
+                        }}
+                    />
+                    <div class="flex flex-row w-full justify-between">
+                        <span class="text-lg">
+                            Modlog
+                        </span>
+                    </div>
+                </div>
+                
+                <EmbeddableModlog moderatee={personDetails.person_view.person} headingRowClass="mt-[-50px]" on:gotoFullModlog={() => open = false }/>    
+            </div>
+        
+        {/if}
 
 
-        <!--- Action Buttons for this User--->
-        {#if !aboutMe}
+        {#if action == 'none'}
+            <!--- User Card and Action Buttons--->
+            <UserCardSmall person_view={personDetails.person_view} blocked={userBlocked} mod={mod} {mostRecentItem} href 
+                on:clickUserLink={() => open = false }
+            />
+
+            <span class="mt-2"/>
+
+            <!--- Action Buttons for this User--->
+        
             <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide>
                 
                 <!---View User's Profile--->
@@ -245,50 +294,26 @@
 
                     <!---View on Home Instance (if not same instance as current)--->
                     {#if $instance != new URL(personDetails.person_view.person.actor_id).hostname}
-                    <Button color="tertiary-border" icon={Home} size="square-md" title="View on User's Home Instance"
-                         href="{personDetails.person_view.person.actor_id}" newtab={true}
-                    />
+                        <Button color="tertiary-border" icon={Home} size="square-md" title="View on User's Home Instance"
+                            href="{personDetails.person_view.person.actor_id}" newtab={true}
+                        />
                     {/if}
-
-
-                    <!---Go to Profle in New Tab--->
-                    <Button color="tertiary-border" icon={ArrowTopRightOnSquare} size="square-md" title="Go to user's profile in new window"
-                        on:click={()=> {
-                            if (!personDetails) return
-
-                            // If viewing own account go to /profile/user otherwise, goto /u/{user}@{instance}
-                            if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
-                                window.open('/profile/user')
-                            }
-                            else {    
-                                window.open(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
-                            }
-                        }}
-                    />
                 </div>
 
-     
+    
 
                 <!---See User's Modlog History--->
-                <div class="flex flex-row gap-2 items-center w-full">
-                    <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
-                        on:click={() => {
-                            if (!personDetails) return
-                            goto(`/modlog?other_person_id=${personDetails.person_view.person.id.toString()}`)        
-                            open = false
-                        }}
-                    >
-                        Modlog History
-                    </Button>
-
-                    <!---Go to User Modlog in New Tab--->
-                    <Button color="tertiary-border" icon={ArrowTopRightOnSquare} size="square-md" title="Open user's modlog history in new window."
-                        on:click={()=> {
-                            if (!personDetails) return
-                            window.open(`/modlog?other_person_id=${personDetails.person_view.person.id.toString()}`)        
-                        }}
-                    />
-                </div>
+                <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
+                    on:click={() => {
+                        if (!personDetails) return
+                        modalWidth = "max-w-3xl"
+                        action = 'modlog'
+                        //goto(`/modlog?other_person_id=${personDetails.person_view.person.id.toString()}`)        
+                        //open = false
+                    }}
+                >
+                    Modlog History...
+                </Button>
                 
                 <div class="flex flex-row gap-2 items-center w-full">
                     <!---Send Direct Message--->
@@ -314,44 +339,15 @@
 
                 
                 <!---Search for Alts, Copy Lemmyverse and Actor ID Links--->
-                <div class="flex flex-row gap-2 items-center w-full">
-                    <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} alignment="left"
-                        on:click={() => {
-                            if (!personDetails) return
-                            goto(`/search?type=Users&q=${personDetails.person_view.person.name}`, {invalidateAll: true})
-                            open=false
-                        }}
-                    >
-                        Search for Alts
-                    </Button>
-                    
-                    <!---Copy Lemmyverse Link to User--->
-                    <Button color="tertiary-border" size="square-md" icon={Share} title="Copy Lemmyverse Link"
-                        on:click={() => {
-                            if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
-                            toast({
-                                type: 'success',
-                                content: `Copied Lemmyverse link to clipboard`,
-                                title: 'Copied'
-                            })
-                            
-                        }}
-                    />
-
-                    <!--- Copy Actor ID--->
-                    <Button color="tertiary-border" size="square-md" icon={LinkIcon} title="Copy Actor ID"
-                        on:click={() => {
-                            if (personDetails?.person_view.person) navigator.clipboard.writeText(personDetails.person_view.person.actor_id)
-                            toast({
-                                type: 'success',
-                                content: `Copied actor ID to clipboard`,
-                                title: 'Copied'
-                            })
-                            
-                        }}
-                    />
-                </div>
-
+                <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} alignment="left"
+                    on:click={() => {
+                        if (!personDetails) return
+                        goto(`/search?type=Users&q=${personDetails.person_view.person.name}`, {invalidateAll: true})
+                        open=false
+                    }}
+                >
+                    Search for Alts
+                </Button>
                 
                 
                 <!---Block User--->
@@ -389,11 +385,11 @@
                 
 
             </div>
+        
         {/if}
 
-        
+            
+
     {/if}
-
-
 </Modal>
 
