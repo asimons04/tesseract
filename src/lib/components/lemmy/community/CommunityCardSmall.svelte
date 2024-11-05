@@ -20,61 +20,65 @@
     } from 'svelte-hero-icons'
 
     export let community_view: CommunityView
+    export let href: boolean = false            // If true, community link in the card will go to the /c/ page. False, default, will open the community modal.
 
+    let avatarWidth = 128
     const dispatcher = createEventDispatcher()
 </script>
 
-<Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view.community.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''} >
-    <div class="flex flex-row gap-2 md:gap-3 items-center p-3">
-        <div class="flex-shrink-0">
-            <Avatar width={128} fullRes ring url={community_view.community.icon} alt={community_view.community.name} community />
+<Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view.community.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''} 
+    class="p-0 !items-start"
+>
+    <div class="flex flex-row gap-1 md:gap-3 items-start p-2">
+        <div class="flex-shrink-0" style="min-width: {Math.round(avatarWidth * 0.75)}px; max-width: min({avatarWidth}px, 25%);">
+            <Avatar width={avatarWidth} fullRes ring url={community_view.community.icon} alt={community_view.community.name} community />
         </div>
 
-        <div class="flex flex-col gap-1 w-full overflow-hidden">
-            <span class="font-bold text-lg">
-                <CommunityLink name href useDisplayNames showInstance={false} community={community_view.community} 
+        <div class="flex flex-col gap-1 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
+            <span class="font-bold w-full text-xl">
+                <CommunityLink name href={href} useDisplayNames showInstance={false} community={community_view.community} 
                     on:click={ () => dispatcher('communityLinkClick') }
                 />
             </span>
 
-            <span class="text-xs font-normal">
+            <span class="text-base font-normal truncate">
                 !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
             </span>
-            
-            <div class="mt-2" />
-
-            <Card elevation={0} class="p-1 w-fit opacity-80 w-fit">
-                <div class="flex flex-row">
-                    
-                    <div class="text-xs md:text-sm flex flex-row gap-4 flex-wrap justify-between">
-                        <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Cake Day">
-                            <Icon src={Cake} width={16} height={16} mini />
-                            <span class="capitalize">
-                                <RelativeDate date={community_view.community.published}/>
-                            </span>
-                        </span>
-                        
-                        <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Subscribers">
-                            <Icon src={UserGroup} width={16} height={16} mini />
-                            
-                            {#if community_view.counts.subscribers_local}
-                                <FormattedNumber number={community_view.counts.subscribers_local} /> / 
-                            {/if}
-                            <FormattedNumber number={community_view.counts.subscribers} />
-                        </span>
-
-                        <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Posts">
-                            <Icon src={PencilSquare} width={16} height={16} mini />
-                            <FormattedNumber number={community_view.counts.posts} />
-                        </span>
-            
-                        <span class="flex flex-row mx-auto items-center gap-1 md:gap-2" title="Comments">
-                            <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                            <FormattedNumber number={community_view.counts.comments} />
-                        </span>
-                    </div>
-                </div>
-            </Card>
         </div>
     </div>
+
+    <div class="mt-2" />
+
+    <Card elevation={0} class="p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 rounded-b-3xl rounded-t-none">
+        <div class="flex flex-row w-full">
+            
+            <div class="text-xs md:text-sm flex flex-row gap-0 px-2 w-full flex-wrap justify-between">
+                <span class="flex flex-col mx-auto items-center gap-1 md:gap-2" title="Cake Day">
+                    <Icon src={Cake} width={20}  mini />
+                    <span class="capitalize">
+                        <RelativeDate date={community_view.community.published}/>
+                    </span>
+                </span>
+                
+                <span class="flex flex-col mx-auto items-center gap-1 md:gap-2" title="Subscribers">
+                    <Icon src={UserGroup} width={20}  mini />
+                    
+                    {#if community_view.counts.subscribers_local}
+                        <FormattedNumber number={community_view.counts.subscribers_local} /> / 
+                    {/if}
+                    <FormattedNumber number={community_view.counts.subscribers} />
+                </span>
+
+                <span class="flex flex-col mx-auto items-center gap-1 md:gap-2" title="Posts">
+                    <Icon src={PencilSquare} width={20}  mini />
+                    <FormattedNumber number={community_view.counts.posts} />
+                </span>
+    
+                <span class="flex flex-col mx-auto items-center gap-1 md:gap-2" title="Comments">
+                    <Icon src={ChatBubbleOvalLeftEllipsis} width={20}  mini />
+                    <FormattedNumber number={community_view.counts.comments} />
+                </span>
+            </div>
+        </div>
+    </Card>
 </Card>

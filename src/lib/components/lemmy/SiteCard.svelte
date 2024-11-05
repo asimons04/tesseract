@@ -27,6 +27,7 @@
         UserGroup,
     } from 'svelte-hero-icons'
     import { slide } from 'svelte/transition';
+    import SiteCardSmall from './SiteCardSmall.svelte';
     
 
     export let site: SiteView
@@ -52,75 +53,7 @@
 </script>
 
 <StickyCard class="{$$props.class}">
-    <Card backgroundImage={($userSettings.uiState.showBannersInCards && site?.site?.banner) ? imageProxyURL(site.site.banner, undefined, 'webp') : undefined}
-        class="flex flex-col p-2 text-base overflow-hidden min-h-[190px]"
-    >
-        <div class="flex flex-row gap-3 items-start p-3">
-            {#if site.site.icon}
-                <Avatar width={64} url={site.site.icon} alt={site.site.name} zoomable={true} fullRes={true} circle={false} />
-            {/if}
-            
-            
-            <div class="flex flex-col w-full">
-                <div class="flex flex-row">
-                    <span class="flex flex-col">
-                        <h1 class="font-bold text-lg">{site.site.name}</h1>
-                        <span class="text-base opacity-60">
-                            {new URL(site.site.actor_id).hostname}
-                        </span>
-                    </span>
-
-                    <div class="ml-auto flex flex-col">
-                        <span class="flex flex-row mx-auto items-center gap-2 text-sm" title="Created">
-                            <Icon src={Calendar} width={16} height={16} mini />
-                            <RelativeDate date={site.site.published} />
-                        </span>
-                        
-                        <span class="flex flex-row mx-auto items-center gap-2 text-sm" title="Version">
-                            <Icon src={Server} width={16} height={16} mini />
-                            {version.split('-')[0]}
-                        </span>
-                    </div>
-
-                </div>
-            </div>
-
-                
-        </div>
-
-        <div class="my-auto p-3 italic">
-            <Markdown source={site.site.description} />
-        </div>
-        
-        <div class="mt-auto" />
-
-        <Card elevation={0} class="p-1 opacity-80">
-            <div class="flex flex-row p-1 mx-auto">
-                
-                <div class="text-sm flex flex-row flex-wrap gap-8 mx-auto">
-                    <span class="flex flex-row mx-auto items-center gap-2" title="Users">
-                        <Icon src={UserGroup} width={16} height={16} mini />
-                        <FormattedNumber number={site.counts.users} />
-                    </span>
-
-                    <span class="flex flex-row mx-auto items-center gap-2" title="Posts">
-                        <Icon src={PencilSquare} width={16} height={16} mini />
-                        <FormattedNumber number={site.counts.posts} />
-                    </span>
-
-                    <span class="flex flex-row mx-auto items-center gap-2" title="Comments">
-                        <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                        <FormattedNumber number={site.counts.comments} />
-                    </span>
-
-                    <span class="flex flex-row mx-auto items-center gap-2" title="Communities">
-                        <Icon src={Newspaper} width={16} height={16} mini />
-                        <FormattedNumber number={site.counts.communities} />
-                    </span>
-                </div>
-            </div>
-        </Card>
-    </Card>
+    <SiteCardSmall {site} {version} />
     
     {#if !expanded.admins && !expanded.site && !expanded.legal}
     <div class="flex flex-col w-full my-2" transition:slide>

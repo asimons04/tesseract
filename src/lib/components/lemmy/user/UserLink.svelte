@@ -60,11 +60,11 @@
     style="max-width: calc(100% - 52px);"
     on:click={loadProfileModal} 
 >
-    <span class="flex flex-row w-full gap-1 items-center">
+    <span class="flex flex-row w-full gap-1 items-center w-fit">
         {#if avatar}
-            <span class="items-center">    
-                <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
-            </span>
+            
+            <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
+            
         {/if}
 
         <span class="flex flex-wrap w-full 

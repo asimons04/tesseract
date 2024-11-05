@@ -56,6 +56,7 @@
         UserGroup,
     } from 'svelte-hero-icons'
     import CommunityLink from './CommunityLink.svelte';
+    import CommunityCardSmall from './CommunityCardSmall.svelte';
     
     
     
@@ -161,48 +162,9 @@
 
     <!--- Hideable div to contain the main part of the community sidebar --->
     <StickyCard class="{$$props.class}" >
-        <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view?.community?.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''}
-            class="p-2 text-base overflow-hidden min-h-[190px]"
-        >
-            <div class="flex flex-col gap-2 h-full">
-                <CommunityLink avatar avatarSize={64} useDisplayNames showInstance inline={false}
-                    bind:community={community_view.community} 
-                    class="text-lg"
-                />
-
-                <div class="mt-auto"/>
-
-                <!-- Community subscribers, counts, etc --->
-                <Card elevation={0} class="p-1 w-full opacity-80">
-                    <div class="flex flex-row p-1 mx-auto">
-                        
-                        <div class="text-sm flex flex-row flex-wrap gap-8 mx-auto">
-                            <span class="flex flex-row items-center gap-2" title="Created">
-                                <Icon src={Calendar} width={16} height={16} mini />
-                                <RelativeDate date={community_view.community.published} />
-                            </span>
-
-                            <span class="flex flex-row items-center gap-2" title="Subscribers">
-                                <Icon src={UserGroup} width={16} height={16} mini />
-                                <FormattedNumber number={community_view.counts.subscribers} />
-                            </span>
-
-                            <span class="flex flex-row items-center gap-2" title="Posts">
-                                <Icon src={PencilSquare} width={16} height={16} mini />
-                                <FormattedNumber number={community_view.counts.posts} />
-                            </span>
-
-                            <span class="flex flex-row items-center gap-2" title="Comments">
-                                <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                                <FormattedNumber number={community_view.counts.comments} />
-                            </span>
-                        </div>
-                    </div>
-                </Card>
-            </div>
-
-            
-        </Card>
+        
+        
+        <CommunityCardSmall community_view={community_view} />
             
         <!--- Convenience button to create post --->
         <div class="w-full mt-2 flex flex-row gap-2 hidden xl:flex">
