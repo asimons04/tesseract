@@ -180,7 +180,7 @@
                 {/if}
 
                 {#if item.link || item.content}
-                    <li class="flex flex-nowrap gap-1">
+                    <li class="flex flex-nowrap gap-1 overflow-hidden">
                         <strong>Item:</strong>
                         {#if item.link && item.content}
                             <Link bind:href={item.link} highlight newtab={$userSettings.openInNewTab.links}>{item.content}</Link>
