@@ -317,9 +317,8 @@
                     </span>
                 </div>
                 
-                <CommunityCardSmall bind:community_view={communityDetails.community_view} on:communityLinkClick={() => open = false }/>
 
-                <Card class="flex flex-col p-4 max-h-[50vh] overflow-y-auto">
+                <Card class="flex flex-col p-4 max-h-[45vh] overflow-y-auto">
                     <!---Community details/sidebar info--->
                     <Markdown source={communityDetails.community_view.community.description ?? '*No community details were provided.*'}/>
 
@@ -466,7 +465,7 @@
         {#if action == 'none'}
 
             <!---Community Card--->
-            <CommunityCardSmall bind:community_view={communityDetails.community_view} on:communityLinkClick={() => open = false }/>
+            <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false }/>
 
             <span class="mt-2" />
 
