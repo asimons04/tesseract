@@ -29,7 +29,7 @@
     href="/c/{community.name}@{new URL(community.actor_id).hostname}"
     title="{community.title.replace('&amp;', '&')}@{new URL(community.actor_id).hostname}"
 >
-    <CommunityLink bind:community 
+    <CommunityLink bind:community class="!w-fit"
         boldCommunityName={true} 
         avatarSize={expanded ? 28 : 20} 
         avatar 
