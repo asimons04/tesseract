@@ -11,20 +11,19 @@
         subscribe 
     } from '$lib/components/lemmy/community/helpers'
     
-    import { dispatchWindowEvent } from '$lib/ui/events'
-    import { fullCommunityName } from "$lib/util";
-    import { getClient, hideCommunity } from "$lib/lemmy"
-    import { goto } from "$app/navigation"
-    import { imageProxyURL } from "$lib/image-proxy"
-    import { instance } from "$lib/instance"
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
+    import { dispatchWindowEvent } from '$lib/ui/events'
+    import { expoIn } from "svelte/easing"
+    import { fullCommunityName } from "$lib/util";
+    import { getClient } from "$lib/lemmy"
+    import { goto } from "$app/navigation"
     import { onMount } from "svelte";
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
-    import { userSettings } from '$lib/settings'
     
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
+    import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
     import CommunityCardSmall from "$lib/components/lemmy/community/CommunityCardSmall.svelte";
@@ -37,38 +36,22 @@
     import UserLink from "../user/UserLink.svelte";
     
     import { 
-        Icon,
         ArrowTopRightOnSquare,
-        Cake,
-        ChatBubbleOvalLeftEllipsis,
-        Clock,
-        Envelope,
-        Hashtag,
-        Home,
-        Link as LinkIcon,
         Newspaper,
         NoSymbol,
         PencilSquare,
-        Share,
         Trash,
-        User, 
-        MagnifyingGlass,
         InformationCircle,
         UserGroup,
         Star,
-        Minus,
         Rss,
         Cog6Tooth,
         EyeSlash,
         ArrowLeft,
         Check,
         Eye,
+        Scale,
     } from "svelte-hero-icons";
-    
-    
-    
-    
-    
     
     
     export let community: Community | undefined
@@ -84,7 +67,7 @@
     let communityDetailsOpen = false
     
 
-    let action: 'none' | 'communityDetails' | 'removing' | 'hiding' | 'createPost' | 'modlog'  = 'none'
+    let action: 'none' | 'banning' | 'blocking' | 'communityDetails' | 'removing' | 'hiding' | 'createPost' | 'modlog'  = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
     
@@ -155,7 +138,35 @@
         }
     }
 
+    async function block() {
+        blocking = true
+        try {
+            communityBlocked = await blockUnblockCommunity(communityDetails.community_view.community.id, !communityBlocked)
+        
+            dispatchWindowEvent('blockCommunity', { 
+                community_id: communityDetails.community_view.community.id,
+                blocked: communityBlocked
+            })
 
+            // If community is blocked, remove it from favorites and mark subscribed as false since the API will unsubscribe you as part of the block procedure.
+            if (communityBlocked) {
+                subscribed = false
+                if (isFavorited) {
+                    addFavorite(communityDetails.community_view.community, false)
+                    isFavorited = false
+                }
+            }
+        }
+        catch {
+            toast({
+                    type: 'error',
+                    title: 'Error',
+                    content: 'Failed to block/unblock the community'
+                })
+        }
+        returnMainMenu()
+        blocking = false
+    }
 
     let remove = {
         removing: false,
@@ -303,10 +314,63 @@
     {#if !loading && communityDetails?.community_view}
         <AddCommunityGroup bind:open={communityGroupModal} community={communityDetails.community_view.community} />
 
+        <!---Ban/Unban Tool--->
+        {#if action == 'banning'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
+                    
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={()=> returnMainMenu()}  
+                    />
+                    <span class="text-lg">
+                        Ban/Unban User From Community
+                    </span>
+                </div>
+                
+                <Card class="flex flex-col p-4 gap-4">
+                    <BanUnbanCommunityForm community={communityDetails.community_view.community} on:ban={() => returnMainMenu() }/>
+                </Card>
+            </div>
+        {/if}
+
+        {#if action == 'blocking'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
+                        
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={()=> returnMainMenu()}  
+                    />
+                    <span class="text-lg">
+                        {communityBlocked ? 'Unblock' : 'Block'} Community
+                    </span>
+                </div>
+                
+                <Card class="flex flex-col p-4 gap-4">
+                    <span class="text-sm font-normal">
+                        <span class="font-bold">Confirm</span>:
+                        Are you sure you want to {communityBlocked ? 'unblock' : 'block'}
+                        {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}@{new URL(communityDetails.community_view.community.actor_id).hostname}?
+                    </span>
+
+                    <Button loading={blocking} disabled={blocking} icon={NoSymbol}
+                        color={communityBlocked ? 'primary' : 'danger'} 
+                        size="lg" class="w-full flex-shrink-0" 
+                        title="{communityBlocked ? 'Unblock' : 'Block'} Community"
+                        on:click={block}
+                    >
+                        {communityBlocked ? 'Unblock' : 'Block'} Community
+                    </Button>
+
+
+                </Card>
+            </div>
+        {/if}
         
         <!---Community Details Panel--->
         {#if action == 'communityDetails'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
                     
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -338,7 +402,7 @@
 
         <!---Remove Community Panel--->
         {#if action == 'removing'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
                 
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -374,7 +438,7 @@
 
         <!---Hiding Community--->
         {#if action == 'hiding'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
                     
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -410,7 +474,7 @@
 
         <!---Create Post Form--->
         {#if action == 'createPost'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
                         
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -442,7 +506,7 @@
 
         <!---User's Modlog History--->
         {#if action == 'modlog'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
         
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -467,16 +531,14 @@
 
         <!---Main Menu--->
         {#if action == 'none'}
+            <div class="flex flex-col gap-2 w-full" transition:slide={{easing:expoIn}}>
+                <!---Community Card--->
+                <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false } />
 
-            <!---Community Card--->
-            <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false } />
+                <span class="mt-2" />
 
-            <span class="mt-2" />
-
-            <div class="flex flex-col gap-2 w-full">
-
-                <!--- Action Buttons for this Community (Fade away if any of the accordions are open)--->
-                <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" transition:slide>
+                <!--- Action Buttons for this Community--->
+                <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" >
                     <!---Go to Community--->
                     {#if !communityBlocked}
                         <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
@@ -524,9 +586,9 @@
                         Community Modlog...
                     </Button>
                     
-                    {#if $profile?.user}
 
-                       
+                    <!---Options that Required Authenticated User--->
+                    {#if $profile?.user}
 
                         <!---Community Settings (if mod or local admin of a local community)--->
                         {#if $profile?.user && amMod($profile.user, communityDetails.community_view.community)}
@@ -540,35 +602,33 @@
                         </Button>
                         {/if} 
 
+                        <!---Ban User Tool--->
+                        {#if $profile?.user && (amMod($profile.user, communityDetails.community_view.community) || isAdmin($profile.user) )}
+                            <Button color="tertiary-border" icon={Scale} alignment="left" class="w-full"
+                                on:click={ () => {
+                                    modalWidth = 'max-w-3xl'
+                                    action = 'banning'
+                                }}
+                            >
+                                Ban/Unban User...
+                        </Button>
+                        {/if} 
+
                         <!---Block Community--->
                         <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" loading={blocking}
+                            title="{communityBlocked ? 'Unblock' : 'Block'} Community"
                             on:click={async ()=> {
-                                blocking = true
-                                communityBlocked = await blockUnblockCommunity(communityDetails.community_view.community.id, !communityBlocked)
-                                
-                                dispatchWindowEvent('blockCommunity', { 
-                                    community_id: communityDetails.community_view.community.id,
-                                    blocked: communityBlocked
-                                })
-
-                                // If community is blocked, remove it from favorites and mark subscribed as false since the API will unsubscribe you as part of the block procedure.
-                                if (communityBlocked) {
-                                    subscribed = false
-                                    if (isFavorited) {
-                                        addFavorite(communityDetails.community_view.community, false)
-                                        isFavorited = false
-                                    }
-                                }
-                                blocking = false
+                                action = 'blocking'
                             }}
                         >
-                            {communityBlocked ? 'Unblock' : 'Block'} Community
+                            {communityBlocked ? 'Unblock' : 'Block'} Community...
                         </Button>
 
                         <!---Admin-Only Options--->
                         {#if isAdmin($profile.user) }
                             <!---Remove Community--->
-                            <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" loading={remove.removing} 
+                            <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" loading={remove.removing} 
+                                title="{communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community"
                                 on:click={()=> {
                                     modalWidth="max-w-2xl"
                                     action='removing'
@@ -578,7 +638,9 @@
                             </Button>
 
                             <!---Hide Community--->
-                            <Button color="tertiary-border" icon={EyeSlash} alignment="left" class="w-full" loading={hide.hiding} on:click={() => {
+                            <Button color="tertiary-border" icon={EyeSlash} alignment="left" class="w-full" loading={hide.hiding} 
+                                title="{communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community"
+                                on:click={() => {
                                     modalWidth="max-w-2xl"
                                     action="hiding"
                                 }}

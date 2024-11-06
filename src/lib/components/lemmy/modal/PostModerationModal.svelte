@@ -32,27 +32,27 @@
     import type { CommentView, Community, Person, PostView, VoteView } from 'lemmy-js-client'
     import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
 
-    import { amMod, isAdmin, removalTemplate } from '../moderation/moderation';
+    import { amMod, isAdmin, removalTemplate } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
-    import { fullCommunityName } from '$lib/util';
+    import { expoIn } from 'svelte/easing'
+    import { fullCommunityName } from '$lib/util'
     import { getClient } from '$lib/lemmy'
-    import { goto } from '$app/navigation';
-    import { isCommentView } from '$lib/lemmy/item';
+    import { isCommentView } from '$lib/lemmy/item'
     import { isPostView } from '$lib/components/lemmy/post/helpers'
     import { profile } from '$lib/auth'
-    import { shortenCommunityName } from '../community/helpers';
+    import { shortenCommunityName } from '../community/helpers'
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings'
 
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import BanUserForm from './components/BanUserForm.svelte';
+    import BanUserForm from './components/BanUserForm.svelte'
     import Button from "$lib/components/input/Button.svelte"
     import Card from '$lib/components/ui/Card.svelte'
     import CommentMeta from '../comment/CommentMeta.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import EmbeddableModlog from './components/EmbeddableModlog.svelte';
+    import EmbeddableModlog from './components/EmbeddableModlog.svelte'
     import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
@@ -535,7 +535,7 @@
 
     <!---Report the Submission--->
     {#if action == 'reporting'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
                 
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -559,7 +559,7 @@
     <!---Remove/Restore/Purge Content--->
     {#if action == 'removing'}
     
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
             
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -626,7 +626,7 @@
 
     <!---Ban/Unban--->
     {#if action == 'banning'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
             
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -653,7 +653,7 @@
     
     <!---Vote Viewer--->
     {#if action == 'showVotes'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
                 
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -712,7 +712,7 @@
 
     <!---Community Details--->
     {#if action == 'communityInfo'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
                 
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -755,7 +755,7 @@
     
     <!---Modlog--->
     {#if action == 'modlog'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
     
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -805,7 +805,7 @@
 
     <!---Message--->
     {#if action == 'messaging'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
                     
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -832,7 +832,7 @@
 
     <!---Default/Moderation Action List--->
     {#if action == 'none'}
-        <div class="flex flex-col gap-2 mt-0 w-full items-center" transition:slide>
+        <div class="flex flex-col gap-2 mt-0 w-full items-center" transition:slide={{easing:expoIn}}>
             
             <Card class="p-2 w-full">
                 <div class="flex flex-row gap-2 justify-between w-full items-center text-xs sm:text-sm overflow-hidden">
@@ -889,6 +889,16 @@
                     </Button>
                 {/if}
 
+                <!---Send Message Creator--->
+                <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
+                    on:click={() => {
+                        modalWidth='max-w-3xl'
+                        action = 'messaging'
+                    }}
+                    >
+                    Send Message to Creator...
+                </Button>
+
 
                 <!---Remove/Restore Item--->
                 {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
@@ -903,15 +913,7 @@
                     </Button>
                 {/if}
 
-                <!---Send Message Creator--->
-                <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
-                    on:click={() => {
-                        modalWidth='max-w-3xl'
-                        action = 'messaging'
-                    }}
-                >
-                    Send Message to Creator...
-                </Button>
+                
                 
 
                 <!---Purge Item--->
