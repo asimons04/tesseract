@@ -41,7 +41,7 @@
             <Avatar width={avatarWidth} fullRes ring url={person_view.person.avatar} alt={person_view.person.actor_id}  class="mx-auto"/>
         </div>
 
-        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
+        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
             <span class="font-bold w-full text-xl">
                 <UserLink badges user={person_view.person} showInstance={false} useDisplayNames {href} admin={person_view.is_admin} {mod} blocked={blocked}
                     on:click={() => dispatcher('clickUserLink') }

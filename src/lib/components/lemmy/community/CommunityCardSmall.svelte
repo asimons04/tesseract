@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { CommunityView } from "lemmy-js-client"
-    
+        
     import { createEventDispatcher } from "svelte"
     import { imageProxyURL } from "$lib/image-proxy"
     import { userSettings } from '$lib/settings'
@@ -16,12 +16,13 @@
         Cake,
         ChatBubbleOvalLeftEllipsis,
         PencilSquare,
-        UserGroup
+        UserGroup,
     } from 'svelte-hero-icons'
+    
 
     export let community_view: CommunityView
     export let href: boolean = false            // If true, community link in the card will go to the /c/ page. False, default, will open the community modal.
-
+   
     let avatarWidth = 128
     const dispatcher = createEventDispatcher()
 </script>
@@ -34,13 +35,13 @@
             <Avatar width={avatarWidth} fullRes ring url={community_view.community.icon} alt={community_view.community.name} community />
         </div>
 
-        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
+        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">            
             <span class="font-bold w-full text-xl">
                 <CommunityLink name href={href} useDisplayNames showInstance={false} community={community_view.community} 
                     on:click={ () => dispatcher('communityLinkClick') }
                 />
             </span>
-
+            
             <span class="text-base font-normal truncate">
                 !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
             </span>

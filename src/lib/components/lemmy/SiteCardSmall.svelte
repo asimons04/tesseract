@@ -39,10 +39,10 @@
     <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
         
         <div class="flex-shrink-0 p-2" style="min-width: {Math.round(avatarWidth * 0.75)}px; max-width: min({avatarWidth}px, 25%);">
-            <Avatar width={avatarWidth} fullRes ring={false} circle={false}  url={site.site.icon} alt={site.site.name}  class="mx-auto" community/>
+            <Avatar width={avatarWidth} fullRes rounded ring={false} circle={false}  url={site.site.icon} alt={site.site.name}  class="mx-auto" community/>
         </div>
 
-        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
+        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
             
             <span class="flex flex-row w-full">
                 
@@ -56,7 +56,7 @@
                     </span>
                 </span>
 
-                <div class="flex flex-col w-full mt-auto items-end pr-2">
+                <div class="flex flex-col mt-auto items-end pr-2">
                     <span class="flex flex-row items-center gap-2 text-sm" title="API Version">
                         <Icon src={Server} width={16} height={16} mini />
                         {version.split('-')[0]}
@@ -72,7 +72,7 @@
     <div class="mt-2"/>
 
     <Card elevation={0} class="p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 rounded-b-3xl rounded-t-none">
-        <div class="my-auto p-3 italic">
+        <div class="my-auto p-3 italic text-center">
             <Markdown source={site.site.description} />
         </div>
 
