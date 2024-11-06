@@ -11,6 +11,7 @@
     export let alt: string = ''
     export let title: string = ''
     export let circle: boolean = true
+    export let rounded: boolean = false
     export let ring: boolean = false
 
     export let width: number
@@ -22,7 +23,7 @@
 
 <!--<div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''} mx-auto " style="width: {width}px; height: {width}px;">-->
 <div style={`min-width: ${Math.round(width * 0.75)}px; max-width: ${width+2}px;`}>
-    <div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
+    <div class="{circle ? 'rounded-full' : ''} {rounded ? 'rounded-xl' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
         {#if url}
             <ZoomableImage url={url} title={title} altText={alt} 
                 resolution={fullRes ? undefined : findClosestNumber(sizes, width) } 
@@ -30,6 +31,7 @@
                 class="aspect-square object-cover overflow-hidden !w-full
                     {ring ? 'ring-2 ring-sky-700' : ''} 
                     {circle ? 'rounded-full' : ''}
+                    {rounded ? 'rounded-xl' : ''}
                     {$$props.class}
                 "
             />
