@@ -1,78 +1,47 @@
 <script lang="ts">
     import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
     
-    import {addFavorite, isFavorite } from '$lib/favorites'
+    import { isFavorite } from '$lib/favorites'
 
     import { addSubscription } from '$lib/lemmy/user.js'
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { communityProfileModal } from '../moderation/moderation'
     import { createPost } from '$lib/components/lemmy/community/helpers';
     import { fullCommunityName } from '$lib/util.js'
     import { getClient, hideCommunity } from '$lib/lemmy.js'
-    import { goto } from '$app/navigation';
-    import {imageProxyURL} from '$lib/image-proxy'
-    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { userSettings } from '$lib/settings.js'
     
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
-    import Avatar from '$lib/components/ui/Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import CommunityCardSmall from './CommunityCardSmall.svelte';
     import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Menu from '$lib/components/ui/menu/Menu.svelte'
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
+    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte'
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
     
 
     import {
-        Calendar,
-        ChatBubbleOvalLeftEllipsis,
         Cog6Tooth,
-        EllipsisHorizontal,
         EllipsisVertical,
-        Eye,
-        EyeSlash,
         HandRaised,
         Icon,
         InformationCircle,
         Minus,
-        MinusCircle,
-        Newspaper,
         PencilSquare,
-        Plus,
-        PlusCircle,
-        QueueList,
         Rss,
-        ShieldCheck,
-        ShieldExclamation,
-        Star,
-        Trash,
-        UserGroup,
     } from 'svelte-hero-icons'
-    import CommunityLink from './CommunityLink.svelte';
-    import CommunityCardSmall from './CommunityCardSmall.svelte';
-    
-    
-    
 
     export let community_view: CommunityView 
     export let moderators: Array<CommunityModeratorView> = []
     
     let groupAddModal:boolean = false
+    
     let loading = {
-        blocking: false,
-        hiding: false,
-        removing: false,
         subscribing: false,
     }
 
-    $: favorite = isFavorite(community_view.community)
 
     async function subscribe() {
         if (!$profile?.jwt) return
@@ -93,64 +62,7 @@
         loading.subscribing = false
     }
 
-    async function remove() {
-        if (!$profile?.jwt) return
-        loading.removing = true
-        
-        const removed = community_view.community.removed
 
-        try {
-            await getClient().removeCommunity({
-                community_id: community_view.community.id,
-                removed: !removed,
-            })
-            community_view.community.removed = !removed
-        } catch (error) {
-            toast({ content: error as any, type: 'error' })
-        }
-        loading.removing = false
-    }
-
-    async function block() {
-        if (!$profile?.jwt) return
-        loading.blocking = true
-        const blocked = community_view.blocked
-
-        try {
-            await getClient().blockCommunity({
-                community_id: community_view.community.id,
-                block: !blocked,
-            })
-            community_view.blocked = !blocked
-        } catch (error) {
-            toast({ content: error as any, type: 'error' })
-        }
-      
-        loading.blocking = false
-        
-        goto($page.url.toString(), {
-            invalidateAll: true,
-        })
-    }
-
-    async function hide() {
-        if (!$profile?.jwt) return
-        loading.hiding = true
-        
-        const hidden = community_view.community.hidden;
-        try {
-            await hideCommunity(community_view.community.id, !hidden); 
-            community_view.community.hidden = !hidden
-
-        } catch (error) {
-            toast({content: error as any, type: 'error'})
-        }
-        loading.hiding = false;
-
-        goto($page.url.toString(), {
-            invalidateAll: true,
-        })
-    }
 
 </script>
 
@@ -197,6 +109,12 @@
                             : 'Subscribe'
                     }
                 </Button>
+
+                <Button color="tertiary-border" size="square-lg" icon={EllipsisVertical} iconSize={20}  title="Community Actions"
+                    on:click={() => {
+                        communityProfileModal(community_view.community)
+                    }}
+                />
             {/if}
         </div>
 
