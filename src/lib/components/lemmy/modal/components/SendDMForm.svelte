@@ -46,7 +46,7 @@
 
 </script>
 
-<form on:submit|preventDefault={sendMessage} class="flex flex-col gap-4">
+<form on:submit|preventDefault={sendMessage} class="flex flex-col gap-4 overflow-x-hidden">
         
     <p class="inline-flex flex-row gap-2 items-center pointer-events-none">
         To: <UserLink avatar user={person} />
