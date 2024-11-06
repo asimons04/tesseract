@@ -392,7 +392,7 @@
                     <div class="flex flex-row gap-2 items-center w-full">
                         <!---Send Direct Message--->
                         {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-                            <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
+                            <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" disabled={personDetails.person_view.person.banned}
                                 on:click={() => {
                                     modalWidth="max-w-3xl"
                                     action='messaging'
@@ -402,7 +402,7 @@
                             </Button>
 
                             <!---Message in Matrix--->
-                            {#if personDetails.person_view.person.matrix_user_id}
+                            {#if personDetails.person_view.person.matrix_user_id && !personDetails.person_view.person.banned}
                                 <Button color="tertiary-border" icon={Hashtag} size="square-md" link title="Message on Matrix"
                                     href="https://matrix.to/#/{personDetails.person_view.person.matrix_user_id}" newtab={true}
                                 />

@@ -810,6 +810,7 @@
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
                 <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                    disabled={item.creator.banned}
                     on:click={(e)=> {
                         e.preventDefault()
                         e.stopPropagation()
