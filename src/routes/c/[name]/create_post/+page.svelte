@@ -15,7 +15,7 @@
     <title>Create post in {data.community.community_view.community.title}</title>
 </svelte:head>
 
-<SubNavbar home back toggleMargins toggleCommunitySidebar compactSwitch/>
+<SubNavbar home back toggleMargins toggleCommunitySidebar />
 
 <MainContentArea>
     
