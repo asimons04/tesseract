@@ -181,7 +181,7 @@ export const defaultSettings: Settings = {
         expandCrossPosts:                                               true,
         matchCrossPostOnTitle: toBool(env.PUBLIC_MATCH_XPOST_TITLE)     ?? true,
         showBannersInCards:                                             true,
-        stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? false,
+        stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? true,
         reverseActionBar:                                               false,
         showScores:                                                     true,
         showAltText:                                                    false,
@@ -201,7 +201,7 @@ export const defaultSettings: Settings = {
     showCompactPosts:   toBool(env.PUBLIC_SHOW_COMPACT_POSTS)           ??  false,
     
     defaultSort: {
-        sort:       env.PUBLIC_DEFAULT_FEED_SORT as SortType            ??  'Active',
+        sort:       env.PUBLIC_DEFAULT_FEED_SORT as SortType            ??  'Scaled',
         feed:       env.PUBLIC_DEFAULT_FEED as FeedType                 ??  'Local',
         comments:   env.PUBLIC_DEFAULT_COMMENT_SORT as CommentSortType  ??  'Hot'
     },
