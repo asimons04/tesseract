@@ -7,7 +7,7 @@ export const PageSnapshot = {
     /** Stores the provided data object to storage under the key of the current page route*/
     capture: function(data:any):void {
         const Page = get(page)
-        if (!page) return 
+        if (!Page) return 
         
         const key = this.getKey()
         storage.session.set(key, data)    
@@ -16,7 +16,7 @@ export const PageSnapshot = {
     /** Clears the current page's data from localStorage */
     clear: function(): void {
         const Page = get(page)
-        if (!page) return
+        if (!Page) return
         
         const key = this.getKey()
         storage.session.remove(key)
@@ -56,7 +56,7 @@ export const storage = {
                 return
             }
             catch (err) {
-                console.error(err)
+                console.warn(err)
                 return
             }
         },
@@ -71,7 +71,7 @@ export const storage = {
                 return undefined
             }
             catch (err) {
-                console.error(err)
+                console.warn(err)
                 return undefined
             }
         },
@@ -83,8 +83,8 @@ export const storage = {
                 return true
             }
             catch (err) {
-                console.error(err);
                 sessionStorage.removeItem(key)
+                console.warn(err);
                 return false
             }
         }
