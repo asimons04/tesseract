@@ -27,7 +27,8 @@
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
-    import CommunityCardSmall from "../community/CommunityCardSmall.svelte";
+    import CommunityCardSmall from "$lib/components/lemmy/community/CommunityCardSmall.svelte";
+    import EmbeddableModlog from "./components/EmbeddableModlog.svelte";
     import Markdown from "$lib/components/markdown/Markdown.svelte";
     import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
@@ -63,7 +64,7 @@
         Check,
         Eye,
     } from "svelte-hero-icons";
-    import EmbeddableModlog from "./components/EmbeddableModlog.svelte";
+    
     
     
     
@@ -416,7 +417,7 @@
                     <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
                         on:click={()=> returnMainMenu()}  
                     />
-                    <span class="text-lg">
+                    <span class="text-lg truncate">
                         Create Post in {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}
                     </span>
                     
@@ -431,7 +432,10 @@
                 </div>
         
                 <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal editing={false}
-                    on:submit={(e) => goto(`/post/${e.detail.post.id}`)}
+                    on:submit={(e) => {
+                        goto(`/post/${e.detail.post.id}`)
+                        open = false
+                    }}
                 />
             </div>
         {/if}
@@ -465,7 +469,7 @@
         {#if action == 'none'}
 
             <!---Community Card--->
-            <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false }/>
+            <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false } />
 
             <span class="mt-2" />
 
