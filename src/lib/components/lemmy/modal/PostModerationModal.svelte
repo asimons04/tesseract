@@ -791,16 +791,6 @@
                         ? `Showing only modlog events for ${item.creator.display_name ?? item.creator.name}@${new URL(item.creator.actor_id).hostname} in ${item.community.name}@${new URL(item.community.actor_id).hostname}.`
                         : `Showing all modlog events for ${item.creator.display_name ?? item.creator.name}@${new URL(item.creator.actor_id).hostname}.`
                 }
-                You may also 
-                <button on:click={ () => {
-                    goto(`/modlog?other_person_id=${item.creator.id}`)
-                    open = false
-                }} 
-                    class="text-sky-700 dark:text-sky-500 text-left hover:underline"
-                    title="Full modlog" highlight>
-                    view the full modlog
-                </button>
-                for the user.
             </span>
             
             {#if modlogCommunityOnly}
