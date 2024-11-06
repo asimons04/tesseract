@@ -1,34 +1,5 @@
 <script lang="ts">
-    interface BanContainer {
-        reason: string
-        loading: boolean
-        removeContent: boolean
-        community?: Community
-        expiry: string
-
-        banUser: any
-        reset: any
-    }
-    
-    interface ModlogContainer {
-        loading: boolean   
-        searchURL: URL
-        page: number
-        fetchError: boolean
-        results: ModLog[]
-        containerDiv: HTMLDivElement | undefined
-        showThisCommunityOnly: boolean
-
-        init: any
-        load: any
-        clearCommunity: any
-        setCommunity: any
-        clearUser: any
-        setUser: any
-        setPage: any
-        reset: any
-    }
-    
+   
     interface RemoveItemContainer {
         purge: boolean
         reason: string
@@ -58,18 +29,16 @@
         loadMore: any
     }
 
-    import type { CommentView, Community, PostView, VoteView } from 'lemmy-js-client'
+    import type { CommentView, Community, Person, PostView, VoteView } from 'lemmy-js-client'
     import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
-    import type { ModLog } from '$routes/modlog/+page'
 
     import { amMod, isAdmin, removalTemplate } from '../moderation/moderation';
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { fullCommunityName } from '$lib/util';
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation';
-    import { isComment, isCommentView } from '$lib/lemmy/item';
+    import { isCommentView } from '$lib/lemmy/item';
     import { isPostView } from '$lib/components/lemmy/post/helpers'
-    import { load as loadModlog } from '$routes/modlog/+page'
     import { profile } from '$lib/auth'
     import { shortenCommunityName } from '../community/helpers';
     import { slide } from 'svelte/transition'
@@ -78,20 +47,20 @@
 
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
+    import BanUserForm from './components/BanUserForm.svelte';
     import Button from "$lib/components/input/Button.svelte"
     import Card from '$lib/components/ui/Card.svelte'
     import CommentMeta from '../comment/CommentMeta.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import EmbeddableModlog from './components/EmbeddableModlog.svelte';
     import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import ModlogItemList from '$routes/modlog/item/ModlogItemList.svelte'
-    import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import PostMeta from '../post/PostMeta.svelte'
     import ReportItemForm from './components/ReportItemForm.svelte'
-    import SettingDateInput from '$lib/components/ui/settings/SettingDateInput.svelte'
+    import SendDMForm from "./components/SendDMForm.svelte"
     import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
@@ -101,11 +70,10 @@
     import { 
         ArrowDown,
         ArrowLeft,
-        ArrowPath,
         ArrowUp,
-        CalendarDays,
         ChatBubbleLeft,
         ChatBubbleLeftRight,
+        Envelope,
         ExclamationTriangle,
         Fire,
         Flag,
@@ -113,7 +81,6 @@
         Icon,
         InformationCircle,
         LockClosed,
-        LockOpen,
         MapPin,
         Megaphone,
         Newspaper,
@@ -123,10 +90,12 @@
         Trash,
     } from "svelte-hero-icons"
     
+    
+    
     export let open: boolean = false
     export let item: PostView | CommentView
 
-    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'showVotes' | 'removing' | 'reporting' = 'none'
+    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'messaging' | 'showVotes' | 'removing' | 'reporting' = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
@@ -135,6 +104,9 @@
     let pinningInstance = false
     let purged  = false
     
+    let banCommunity: Community | undefined = undefined
+    let modlogCommunityOnly = true
+
     // Make the Post/Comment item reactive
     $: item
     
@@ -318,108 +290,6 @@
     } as RemoveItemContainer
     
 
-    // Object to hold the components for banning a user
-    let ban = {
-        community: undefined,
-        reason: '',
-        expiry: '',
-        loading: false,
-        removeContent: false,
-
-        banUser: async function() {
-            if (!$profile?.user || !$profile?.jwt) return
-        
-        
-            ban.loading = true
-            let bannedInstance = item.creator.banned
-            let bannedCommunity = item.creator_banned_from_community
-        
-            try {
-                let date: number | undefined
-                // Validate ban expiry date
-                if (ban.expiry != '') {
-                    date = Date.parse(ban.expiry)
-                    if (Number.isNaN(date) || date < Date.now()) {
-                        //invalidDateErrorToast()
-                        ban.loading = false
-                        return
-                    }
-                }
-
-                // Ban from community if `community` is provided in the call
-                if (ban.community) {
-                    const response = await getClient().banFromCommunity({
-                        ban: item.creator_banned_from_community ? false : true ,
-                        community_id: item.community.id,
-                        person_id: item.creator.id,
-                        reason: ban.reason || undefined,
-                        remove_data: ban.removeContent,
-                        expires: date ? Math.floor(date / 1000) : undefined,
-                    })
-
-                    bannedCommunity = response?.banned
-                    
-                    // Dispatch global event so other components can react
-                    dispatchWindowEvent('banCommunity', {
-                        person_id: item.creator.id,
-                        community_id: item.community.id,
-                        banned: bannedCommunity,
-                        remove_content: ban.removeContent
-                    })
-
-                }
-                
-                // Ban from instance if no community provided
-                else {
-                    const response = await getClient().banPerson({
-                        ban: !item.creator.banned,
-                        person_id: item.creator.id,
-                        reason: ban.reason || undefined,
-                        remove_data: ban.removeContent,
-                        expires: date ? Math.floor(date / 1000) : undefined,
-                    })
-
-                    bannedInstance = response?.person_view.person.banned
-
-                    // Dispatch global event so other components can react
-                    dispatchWindowEvent('banUser', {
-                        person_id: item.creator.id,
-                        banned: bannedInstance,
-                        remove_content: ban.removeContent
-                    })
-
-                }
-                
-                toast({
-                    content: `Successfully ${ (ban.community ? bannedCommunity : bannedInstance ) ? 'banned' : 'unbanned'}  ${item.creator.name}@${new URL(item.creator.actor_id).hostname} ${ban.community ? 'from the community' : 'from the instance'}.`,
-                    type: 'success',
-                    title: 'Success'
-                })
-
-                returnMainMenu()
-                ban.reset()
-
-            } catch (err) {
-                ban.loading = false
-                toast({
-                    content: err as any,
-                    type: 'error',
-                    title: 'Error'
-                })
-            }
-        
-        
-        },
-
-        reset: function() {
-            ban.community = undefined
-            ban.reason = ''
-            ban.expiry = ''
-            ban.loading = false
-            ban.removeContent = false
-        }
-    } as BanContainer
-
     
     // Object to hold the vote viewer components
     let showVotes = {
@@ -498,67 +368,6 @@
             showVotes.infiniteScrollState.loading = false
         }
     } as ShowVoteContainer
-
-    // Object to hold the modlog viewer components
-    let modlog = {
-        loading: false,
-        searchURL: new URL('https://localhost'),
-        page: 1,
-        results: [] as ModLog[], 
-        fetchError: false,
-        containerDiv: undefined,
-        showThisCommunityOnly: true,
-
-        init: async function() {
-            modlog.reset()
-            modlog.setPage()
-            modlog.setUser()
-            modlog.setCommunity()
-            modlog.load()
-        },
-
-        load: async function () {
-            modlog.loading = true
-            
-            try {
-                modlog.results = (await loadModlog({url: modlog.searchURL})).modlog
-            }
-            catch {
-                modlog.fetchError = true
-                modlog.results = [] as ModLog[]
-            }
-            modlog.loading = false
-        },
-
-        setPage: function(pageNum?:number) {
-            if (pageNum) modlog.page = pageNum
-            modlog.searchURL.searchParams.set('page', modlog.page.toString())
-        },
-
-        clearCommunity: function() {
-            modlog.searchURL.searchParams.delete('community')
-        },
-
-        setCommunity: function() {
-            modlog.searchURL.searchParams.set('community', item.community.id.toString())
-        },
-
-        clearUser: function() {
-            modlog.searchURL.searchParams.delete('other_person_id')
-        },
-
-        setUser: function() {
-            modlog.searchURL.searchParams.set('other_person_id', item.creator.id.toString())
-        },
-
-        reset: function() {
-            modlog.page = 1
-            modlog.fetchError = false
-            modlog.loading = false
-            modlog.showThisCommunityOnly = true
-        }
-    } as ModlogContainer
-    
 
 
     // Returns the modal to the main menu
@@ -829,58 +638,15 @@
                     }}
                 />
                 <span class="text-lg">
-                    {(ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'} User From {ban.community ? 'Community' : 'Instance'}
+                    {(banCommunity ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'} User From {banCommunity ? 'Community' : 'Instance'}
                 </span>
             </div>
 
             <!---Ban/Unban Instance/Community Form--->
             <Card class="flex flex-col p-4">
-                <form class="flex flex-col gap-4" on:submit|preventDefault={ban.banUser}>
-                    
-                    <div class="flex flex-col gap-1">
-                        
-                        
-                        <span class="text-sm">
-                            {(ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unbanning' : 'Banning'} from
-                            <span class="font-bold">
-                                {
-                                    ban.community 
-                                    ? `${item.community.name}@${new URL(item.community.actor_id).hostname}`
-                                    : 'Instance'
-                                }
-                            </span>
-                        </span>
-                        
-                        
-                        <span class="flex flex-row gap-1 text-xs items-center">
-                            <Avatar url={item.creator.avatar} alt={item.creator.actor_id} width={24} />
-                            <span class="font-bold">{item.creator.name}@{new URL(item.creator.actor_id).hostname}</span>
-                        </span>
-                    
-                    
-                        
-
-                    </div>
-
-
-                    <MarkdownEditor required previewButton images={false} rows={6} 
-                        bind:value={ban.reason} label="Reason"
-                        placeholder="Why are you { (ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'unbanning' : 'banning'} {item.creator.name}@{new URL(item.creator.actor_id).hostname}?"
-                    >
-                        <Button submit color="primary" loading={ban.loading} disabled={ban.loading} size="lg" slot="actions">
-                            {(ban.community ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'}
-                        </Button>
-                    </MarkdownEditor>
-
-                    {#if !(ban.community ? item.creator_banned_from_community : item.creator.banned)}
-                        <SettingToggleContainer>
-                            <SettingToggle bind:value={ban.removeContent} icon={Trash} title="Remove Content" description="Remove all of this user's content when banning." />
-                            <SettingDateInput bind:value={ban.expiry} icon={CalendarDays} title="Ban Expires" description="To effect a temporary ban, enter a date for the ban to expire. Leave blank for a permanent ban." />
-                        </SettingToggleContainer>
-                    {/if}
-                
-                    
-                </form>
+                <BanUserForm bind:person={item.creator} bind:creator_banned_from_community={item.creator_banned_from_community} bind:community={banCommunity}
+                    on:ban={() => returnMainMenu()}
+                />
             </Card>
         </div>
     {/if}
@@ -1006,28 +772,22 @@
                     </span>
 
                     <span class="flex flex-row gap-1">
-                        <Button size="square-sm" class="h-8 w-8" color="tertiary-border" icon={ArrowPath} title="Refresh" on:click={() => modlog.load()} />
-
                         <Button size="sm" color="tertiary-border" class="h-8"
                             icon={Newspaper}
                             on:click={() => {
-                                modlog.showThisCommunityOnly = !modlog.showThisCommunityOnly
-                                modlog.showThisCommunityOnly
-                                    ? modlog.setCommunity()
-                                    : modlog.clearCommunity()
-                                modlog.load()
+                                modlogCommunityOnly = !modlogCommunityOnly
 
                             }}
                         >
-                            {modlog.showThisCommunityOnly ? 'All' : 'Community'}
+                            {modlogCommunityOnly ? 'All' : 'Community'}
                         </Button>
                     </span>
                 </div>
             </div>
 
-            <span class="text-sm font-normal">
+            <span class="text-sm font-normal" style="width:calc(100% - 120px);">
                 {
-                    modlog.showThisCommunityOnly
+                    modlogCommunityOnly
                         ? `Showing only modlog events for ${item.creator.display_name ?? item.creator.name}@${new URL(item.creator.actor_id).hostname} in ${item.community.name}@${new URL(item.community.actor_id).hostname}.`
                         : `Showing all modlog events for ${item.creator.display_name ?? item.creator.name}@${new URL(item.creator.actor_id).hostname}.`
                 }
@@ -1042,49 +802,40 @@
                 </button>
                 for the user.
             </span>
-
-            <!---Modlog View--->
-            {#if modlog.loading}
-                <div class="flex w-full"> <!---min-h-[30vh]--->
-                    <span class="flex flex-col gap-4 mx-auto my-auto">
-                        <Spinner width={64} />
-                    </span>
-                </div>
             
+            {#if modlogCommunityOnly}
+                <EmbeddableModlog moderatee={item.creator} community={item.community} headingRowClass="mt-[-50px]"/>
             {:else}
-
-                <div class="flex flex-col w-full gap-4">
-                    
-                    <div bind:this={modlog.containerDiv} class="flex flex-col gap-4 mt-2 max-h-[50vh] overflow-y-scroll p-2">
-                        {#if modlog.results.length > 0}
-                            {#each modlog.results as modlogItem}
-                                <div class="bg-slate-100 dark:bg-zinc-800 text-black dark:text-slate-100 border border-slate-900 dark:border-zinc-100 p-2 text-sm rounded-md leading-[22px]">    
-                                    <ModlogItemList bind:item={modlogItem} actions={false} hideCommunity={modlog.showThisCommunityOnly}/>
-                                </div>
-                            {/each}
-                        {:else}
-                            {#if !modlog.fetchError}
-                                <span class="mx-auto my-auto">
-                                    <Placeholder icon={Newspaper} title="No Results" description="No modlog results returned" />
-                                </span>
-                            {:else}
-                                <span class="mx-auto my-auto">
-                                    <Placeholder icon={ExclamationTriangle} title="Fetch Error" description="Unable to load the modlog from the API." />
-                                </span>
-                            {/if}
-                        {/if}
-                    </div>
-                    
-                    <Pageination bind:page={modlog.page} on:change={(e) => {
-                        modlog.setPage(e.detail)
-                        modlog.load()
-                        modlog.containerDiv?.scrollTo(0,0)
-                    }}/>
-                </div>
+                <EmbeddableModlog moderatee={item.creator}  headingRowClass="mt-[-50px]"/>
             {/if}
 
         </div>
 
+    {/if}
+
+    <!---Message--->
+    {#if action == 'messaging'}
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+                    
+            <!---Section Header--->
+            <div class="flex flex-row gap-4 items-center">
+                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                    on:click={(e)=> {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        returnMainMenu() 
+                    }}
+                />
+                <div class="flex flex-row w-full justify-between">
+                    <span class="text-lg">
+                        Send Direct Message
+                    </span>
+                </div>
+            </div>
+            <Card class="flex flex-col p-4">
+                <SendDMForm person={item.creator} on:sendMessage={() => returnMainMenu() }/>
+            </Card>
+        </div>
     {/if}
 
 
@@ -1117,7 +868,6 @@
                     on:click={() => {
                         modalWidth = 'max-w-4xl'
                         action = 'modlog'
-                        modlog.init()
                     }}
                 >
                     Creator's Modlog History...
@@ -1162,6 +912,17 @@
                     </Button>
                 {/if}
 
+                <!---Send Message Creator--->
+                <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
+                    on:click={() => {
+                        modalWidth='max-w-3xl'
+                        action = 'messaging'
+                    }}
+                >
+                    Send Message to Creator...
+                </Button>
+                
+
                 <!---Purge Item--->
                 {#if !purged && isAdmin($profile?.user) }
                     <Button color="tertiary-border" icon={Fire} alignment="left" class="w-full" 
@@ -1180,8 +941,7 @@
                     <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
-                            ban.reset()
-                            ban.community = item.community
+                            banCommunity = item.community
                             action = 'banning'
                         }}
                     >
@@ -1194,7 +954,7 @@
                     <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
-                            ban.reset()
+                            banCommunity = undefined
                             action = 'banning'
                         }}
                     >

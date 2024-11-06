@@ -5,7 +5,6 @@
 
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
-    import { imageProxyURL } from "$lib/image-proxy"
     import { instance } from "$lib/instance"
     import { ban, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { isBlocked, blockUser } from '$lib/lemmy/user'
@@ -13,21 +12,16 @@
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
-    import { userSettings } from '$lib/settings'
     
-    import Avatar from "$lib/components/ui/Avatar.svelte"
+    import BanUserForm from "./components/BanUserForm.svelte"
     import Button from "$lib/components/input/Button.svelte"
-    import Card from "$lib/components/ui/Card.svelte"
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
     import CommunityLink from "../community/CommunityLink.svelte";
     import EmbeddableModlog from "./components/EmbeddableModlog.svelte"
-    import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
     import Markdown from "$lib/components/markdown/Markdown.svelte";
     import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import RelativeDate from "$lib/components/util/RelativeDate.svelte"
+    import SendDMForm from "./components/SendDMForm.svelte";
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
-    import UserLink from "../user/UserLink.svelte"
-    import UserSendMessageModal from "./UserSendMessageModal.svelte"
+    import UserCardSmall from "../user/UserCardSmall.svelte";
 
     import { 
         Icon,
@@ -50,7 +44,9 @@
         ArrowTopRightOnSquare,
         ArrowLeft, 
     } from "svelte-hero-icons";
-    import UserCardSmall from "../user/UserCardSmall.svelte";
+    import Card from "$lib/components/ui/Card.svelte";
+    
+    
     
     
     export let user:Person | undefined
@@ -214,15 +210,80 @@
     {#if !loading && personDetails}
     
     
+        <!---Ban User--->
+        {#if action == 'banning'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+                    
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={(e)=> {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            returnMainMenu() 
+                        }}
+                    />
+                    <div class="flex flex-row w-full justify-between">
+                        <span class="text-lg">
+                            Ban User
+                        </span>
+                    </div>
+                </div>
+                <Card class="flex flex-col p-4">
+                    <BanUserForm bind:person={personDetails.person_view.person} on:ban={() => returnMainMenu() }/>
+                </Card>
+                
+            </div>
+        {/if}
+
         <!---DM and Ban Modals Inside This Modal--->
-        {#if messaging}
-            <UserSendMessageModal bind:open={messaging} bind:person={personDetails.person_view} />
+        {#if action == 'messaging'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+                
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={(e)=> {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            returnMainMenu() 
+                        }}
+                    />
+                    <div class="flex flex-row w-full justify-between">
+                        <span class="text-lg">
+                            Send Direct Message
+                        </span>
+                    </div>
+                </div>
+                <Card class="flex flex-col p-4">
+                    <SendDMForm person={personDetails.person_view.person} on:sendMessage={() => returnMainMenu() }/>
+                </Card>
+            </div>
         {/if}
 
         
         <!---User Bio--->
         {#if action == 'userDetails'}
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide>     
+                
+            <!---Section Header--->
+            <div class="flex flex-row gap-4 items-center">
+                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                    on:click={(e)=> {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        returnMainMenu() 
+                    }}
+                />
+                <div class="flex flex-row w-full justify-between">
+                    <span class="text-lg">
+                        User Details
+                    </span>
+                </div>
+            </div>
+            
             <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
+        </div>
 
             <!---Communities This User Moderates--->
             {#if personDetails.moderates.length > 0}
@@ -308,8 +369,6 @@
                         if (!personDetails) return
                         modalWidth = "max-w-3xl"
                         action = 'modlog'
-                        //goto(`/modlog?other_person_id=${personDetails.person_view.person.id.toString()}`)        
-                        //open = false
                     }}
                 >
                     Modlog History...
@@ -320,10 +379,11 @@
                     {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
                         <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
                             on:click={() => {
-                                messaging = true
+                                modalWidth="max-w-3xl"
+                                action='messaging'
                             }}
                         >
-                            Send Message
+                            Send Message...
                         </Button>
 
                         <!---Message in Matrix--->
@@ -372,13 +432,15 @@
                 
                 <!---Ban User--->
                 {#if isAdmin($profile?.user) && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-                    <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
                         on:click={() => {
                             //open = false
-                            ban(personDetails.person_view.person.banned, personDetails.person_view.person)
+                            //ban(personDetails.person_view.person.banned, personDetails.person_view.person)
+                            modalWidth = 'max-w-3xl'
+                            action = 'banning'
                         }}
                     >
-                        {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}
+                        {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}...
                     </Button>
                 {/if}
 
