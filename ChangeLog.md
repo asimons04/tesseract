@@ -46,25 +46,6 @@ removeAdmin {username}
 
 ## 1.4.20
 
-### Remaining To Do:
-#### Post Component
-1) Flesh out this "hybrid" card view behavior.
-- Add setting toggle for 'Automatic Card View'
-- List post types that should be viewed always as cards when this is enabled?
-- Can toggle each type to add it to an array that's checked here (instead of the static array used for test/dev)
-- Don't expand read posts (optional)
-
-
-#### Community Profile Modal Component
-1) Add sub-panels for Remove/Restore Community and Hide Community to provide a reason (remove/restore) and confirmation (both)
-
-1) Move "Community Details" into a sub-panel like it is in the moderation 
-
-1) Integrate community modlog as in the moderation component
-    - Keep separate button to view it in the full-featured modlog
-
-1) 
-
 ### Bugfixes: Minor
 - May only have been an issue for admins, but administratively hidden and removed communities will now no longer show up in community autocomplete results.
     - They will still show up when filtering for a community in the modlog though (though only admins should be able to see those results)
@@ -77,7 +58,7 @@ removeAdmin {username}
 - Indicate post's removed/deleted/lock state in the comment item component when viewing profiles
 - When "Match Crossposts on Title" is enabled, posts with the same title but different URLs will no longer be erroneously rolled up
 - "Distinguish" now only shows on your own comments if you are a moderator.  This matches the stupid API behavior because...the Lemmy devs don't listen to anyone. (Wow I really *can't* go one release without throwing deserved shade at them, can I?)
-
+- Modlog now shows hide/unhide and remove/restore community events.
 
 
 
@@ -116,7 +97,7 @@ When you are creating a post, the URL will be searched to see if you're posting 
 
 1) If the community is **not** set, then it will search for any posts on your instance matching that URL.  The label will be "Crossposts".
 
-1) If the community **is** set, then it will do a remote API call to search the *home instance of that community* for any posts to that community with that URL.  The label will be "Existing posts in {community}@{instance}.
+1) If the community **is** set, then it will do a remote API call to search the *home instance of that community* for any posts to that community with that URL.  The label will be "Existing posts".
 
 The latter behavior is particularly useful if you want to avoid accidentally posting a duplicate that may have been posted by someone you've blocked or by someone your instance doesn't federate with.  Those posts may not be visible to you locally, so the remote search should help identify them so you don't clutter up the feed and/or add extra work for the moderator who usually removes duplicate posts.
 
@@ -124,14 +105,15 @@ If for whatever reason it doesn't trigger automatically, the "Magnifying Glass" 
 
 Also note that behavior #2 only works if you're posting to a Lemmy community since it makes a remote API call to the community's home instance using the Lemmy API.  Thus, it cannot search a remote Kbin/Piefed, etc instance.  
 
-### Can Now Vote on Crossposts Without Clicking Into It
+### Can Now Vote on Crossposts Without Clicking Into Them
 Vote buttons have been added to the crosspost items, so you can now vote on them from the feed and post.
 
 In the feed, since the cross_posts are rolled up manually from regular post objects, the voting works as expected.
 
 Unfortunately, when clicked into a post, the API call does not add the `my_vote` variable to the `cross_posts` array.  So while you can vote on the crosspost, and the vote will be correctly recorded, your vote will only display correctly while you're on that page.  Since the API doesn't return the vote you cast, on refresh or subsequent loads, the vote button will not indicate which way you voted.  If you try to vote again, the score will not necessarily change.  Yet another feature I want to implement hampered by dumb API decisions.
 
-
+### DailyMotion Video Embeds Now Supported
+I forgot Dailymotion existed until someone posted a link a while back.  Upon inspection, they have an embed API, so I figured why not add support for it.
 
 ### Moderation Menu Has Been Replaced With New Moderation Modal
 The moderation menu on posts and comments has been removed.  The reason is that the menus were getting cluttered when new things are added, especially for admins who have more options available than regular mods.  Rather than creating sub-menus (yuck!) or introducing separate UI elements for admin controls, I've just scrapped the whole thing and started over.
@@ -146,9 +128,10 @@ The cool thing about the new mod modal is that all of the tools are packaged int
 - Pin/Unpin the post to the community
 - Feature/Unfeature the post on the instance (admins only)
 - Lock/Unlock the post
-- View the community details/sidebar info relevant to the current item (post or comment)
+- View the community details relevant to the current item (post or comment)
 - View the votes for the item (admins only until whatever version of Lemmy lets mods do this for their communities)
 - Remove/Restore the post or comment (shows the post meta header or the comment meta header and comment previews)
+- Send a DM to the post/comment's creator
 - Purge the post or comment (admin only)
 - Ban/Unban the user from the community
 - Ban/Unban the user from the instance (admins only)
@@ -161,14 +144,35 @@ The cool thing about the new mod modal is that all of the tools are packaged int
 
 All tools stay within the same modal, and it shrinks/expands to accommodate the various integrated tools.
 
+
+
+
+
 ### Improved Community Modals
-To reduce clutter, the "Favorite/Unfavorite", "Add/Remove to Group", and "Modlog" buttons have been moved to the modal title bar as icon-only buttons.  
+To reduce clutter, the "Subscribe/Unsubscribe" (RSS Icon), "Favorite/Unfavorite" (Star), "Add/Remove to Group" (3 People) buttons have been moved to the modal title bar as icon-only buttons.  
 
-"Create Post" is no longer a link to the community's create post page. It now shows the create post form right in the modal.  There is a button in the upper-right which will take you to the `/c/{community}/create_post` page if you want to use the old form (it's the same form).
+"Create Post" is no longer a link to the community's create post page. It now shows the create post form right in the modal.  There is a button in the upper-right which will take you to the `/c/{community}/create_post` page if you want to use the old form ( 🖼️ 👩🏻‍🦰 🖼️ it's the same form).
 
-"Remove/Restore" and "Hide/Unhide" have been integrated.  They will also now prompt for an optional reason to show in the modlog.
+For admins, "Remove/Restore Community" and "Hide/Unhide Community" have been integrated.  They will also now prompt for an optional reason to show in the modlog.
 
 The "Community Details" is now a panel (like in the moderation modal) rather than being an accordion.  Same functionality, different packaging.
+
+You can now view the community's modlog directly in the modal.
+
+Added the direct ban/unban user tool to the community modal.  Instance admins and community moderators can now manually ban/unban users from the community without having to dig up a submission.  Useful to revisit an old ban or to ban a known troll making the rounds before they hit your community.
+
+
+### Improved User Modals
+The "Copy Lemmyverse Link" and "Copy Actor ID" buttons have been moved to the modal's title bar as icon-only buttons.
+    - The "Share" icon is for Copy Lemmyverse Link.  This is used to share an instance-agnostic link to a user.
+    - The "Link" icon is for Copy Actor ID.  
+    - The box with arrow in top right icon will take you to the user's profile.
+
+Can view user's modlog history directly in the modal
+
+Can send a message to the user directly from the modal
+
+For admins, the "ban/unban user" form is now integrated directly into the modal.
 
 
 
@@ -192,6 +196,8 @@ On the admin side of things, the env var `PUBLIC_CUSTOM_PIPED` has been deprecat
 
 
 ## Misc UI Tweaks
+- Lots of UI polish all around.  Too numerous to list individually.
+
 - Legacy user and community menus in `/u/{user}` and `/c/{community}` cards have been removed.  The functionality has been moved into the respecctive user/community modals.
 
 - Community link pill buttons are now gray instead of orange.  The orange was just...too much.  User link buttons are still blue.
