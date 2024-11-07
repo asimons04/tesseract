@@ -443,7 +443,7 @@ export const scrollToTop = async function(element:HTMLElement|undefined|null, sm
         } 
         
 
-        let y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+        let y = element.getBoundingClientRect().top + window.scrollY - offset;
 
         if (smooth) {
             window.scrollTo({top: y, behavior: 'smooth'});
