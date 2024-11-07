@@ -22,7 +22,8 @@
 </script>
 
 <!--<div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''} mx-auto " style="width: {width}px; height: {width}px;">-->
-<div style={`min-width: ${Math.round(width * 0.75)}px; max-width: ${width+2}px;`}>
+<!--<div style={`min-width: ${Math.round(width * 0.75)}px; max-width: ${width+2}px;`}>-->
+<div style="max-width: {width+2}px;">
     <div class="{circle ? 'rounded-full' : ''} {rounded ? 'rounded-xl' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
         {#if url}
             <ZoomableImage url={url} title={title} altText={alt} 
@@ -36,7 +37,14 @@
                 "
             />
         {:else}
-            <div class="w-full h-full aspect-square object-cover overflow-hidden {circle ? 'rounded-full' : ''} {ring ? 'ring-2 ring-sky-700' : ''}  {$$props.class}"  >
+            <div class="w-full h-full aspect-square object-cover overflow-hidden 
+                    {circle ? 'rounded-full' : ''} 
+                    {rounded ? 'rounded-xl' : ''} 
+                    {ring ? 'ring-2 ring-sky-700' : ''}  
+                    {$$props.class}
+                "  
+                style="width: {width}px;"
+            >
                 {#if community}
                     {@html createAvatar(initials, {
                         seed: alt,
