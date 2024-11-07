@@ -50,7 +50,7 @@
     export let moderators: Array<CommunityModeratorView> = [];
     export let collapseBadges:boolean           = false;
     export let hideBadges:boolean               = false;
-    export let avatarSize:number                = 48;
+    export let avatarSize:number                = 42;
     export let noClick:boolean                  = false;
     
     export let expandCompact: boolean           
@@ -205,7 +205,7 @@
                             iconSize={16}
                             on:click={() => {  
                                 expandCompact = !expandCompact; 
-                                //if (postContainer) scrollToTop(postContainer)
+                                if (postContainer) scrollToTop(postContainer)
                             }}
                         />
                     {/if}
