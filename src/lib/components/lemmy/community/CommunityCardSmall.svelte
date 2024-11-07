@@ -7,8 +7,8 @@
     import { userSettings } from '$lib/settings'
 
     import Avatar from "$lib/components/ui/Avatar.svelte"
+    import Badge from "$lib/components/ui/Badge.svelte";
     import Card from "$lib/components/ui/Card.svelte"
-    import CommunityLink from "./CommunityLink.svelte"
     import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
     import RelativeDate from "$lib/components/util/RelativeDate.svelte"
 
@@ -18,7 +18,9 @@
         ChatBubbleOvalLeftEllipsis,
         PencilSquare,
         UserGroup,
+        EyeSlash,
     } from 'svelte-hero-icons'
+    
     
 
     export let community_view: CommunityView
@@ -32,7 +34,7 @@
     class="p-0 !items-start"
 >
     <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
-        <div class="flex-shrink-0 p-2" style="min-width: {Math.round(avatarWidth * 0.75)}px; max-width: min({avatarWidth}px, 25%);">
+        <div class="p-2">
             <Avatar width={avatarWidth} fullRes ring url={community_view.community.icon} alt={community_view.community.name} community />
         </div>
 
@@ -60,6 +62,14 @@
            
             <span class="text-base font-normal truncate">
                 !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
+            </span>
+
+            <span class="flex flex-row flex-wrap w-full gap-2 text-sm font-normal mt-1">
+                {#if community_view.blocked}
+                    <Badge color="red" icon={EyeSlash} inline click={false} rightJustify={false}>
+                        Blocked
+                    </Badge>
+                {/if}
             </span>
         </div>
     </div>

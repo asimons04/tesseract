@@ -38,7 +38,7 @@
 >
     <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
         
-        <div class="flex-shrink-0 p-2" style="min-width: {Math.round(avatarWidth * 0.75)}px; max-width: min({avatarWidth}px, 25%);">
+        <div class="p-2">
             <Avatar width={avatarWidth} fullRes rounded ring={false} circle={false}  url={site.site.icon} alt={site.site.name}  class="mx-auto" community/>
         </div>
 

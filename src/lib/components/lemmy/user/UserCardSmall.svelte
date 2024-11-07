@@ -3,13 +3,14 @@
     
     import { createEventDispatcher } from "svelte"
     import { imageProxyURL } from "$lib/image-proxy"
+    import { userProfileModal } from "../moderation/moderation";
     import { userSettings } from '$lib/settings'
 
     import Avatar from "$lib/components/ui/Avatar.svelte"
+    import Badge from "$lib/components/ui/Badge.svelte";
     import Card from "$lib/components/ui/Card.svelte"
     import FormattedNumber from "$lib/components/util/FormattedNumber.svelte"
     import RelativeDate from "$lib/components/util/RelativeDate.svelte"
-    import UserLink from "./UserLink.svelte"
 
     import {
         Icon,
@@ -17,8 +18,12 @@
         ChatBubbleOvalLeftEllipsis,
         Clock,
         PencilSquare,
+        ShieldExclamation,
+        EyeSlash,
+        NoSymbol,
     } from 'svelte-hero-icons'
-    import { userProfileModal } from "../moderation/moderation";
+    
+    
     
 
     export let person_view: PersonView
@@ -38,7 +43,7 @@
 >
     <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
         
-        <div class="flex-shrink-0 p-2" style="min-width: {Math.round(avatarWidth * 0.75)}px; max-width: min({avatarWidth}px, 25%);">
+        <div class="p-2">
             <Avatar width={avatarWidth} fullRes ring url={person_view.person.avatar} alt={person_view.person.actor_id}  class="mx-auto"/>
         </div>
 
@@ -64,6 +69,26 @@
             
             <span class="text-base font-normal truncate">
                 @{person_view.person.name}@{new URL(person_view.person.actor_id).hostname}
+            </span>
+
+            <span class="flex flex-row flex-wrap w-full gap-2 text-sm font-normal mt-1">
+                {#if mod}
+                    <Badge color="green" icon={ShieldExclamation} inline click={false} rightJustify={false}>
+                        Mod
+                    </Badge>
+                {/if}
+
+                {#if blocked}
+                    <Badge color="red" icon={EyeSlash} inline click={false} rightJustify={false}>
+                        Blocked
+                    </Badge>
+                {/if}
+
+                {#if person_view.person.banned}
+                    <Badge color="red" icon={NoSymbol} inline click={false} rightJustify={false}>
+                        Banned
+                    </Badge>
+                {/if}
             </span>
             
         </div>
