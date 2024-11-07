@@ -64,10 +64,12 @@
                 <span class="flex flex-col mx-auto items-center gap-1 md:gap-2" title="Subscribers">
                     <Icon src={UserGroup} width={20}  mini />
                     
-                    {#if community_view.counts.subscribers_local}
-                        <FormattedNumber number={community_view.counts.subscribers_local} /> / 
-                    {/if}
-                    <FormattedNumber number={community_view.counts.subscribers} />
+                    <span class="flex flex-row mx-auto items-center gap-1">
+                        {#if community_view.counts.subscribers_local}
+                            <FormattedNumber number={community_view.counts.subscribers_local} /> / 
+                        {/if}
+                        <FormattedNumber number={community_view.counts.subscribers} />
+                    </span>
                 </span>
 
                 <span class="flex flex-col mx-auto items-center gap-1 md:gap-2" title="Posts">
