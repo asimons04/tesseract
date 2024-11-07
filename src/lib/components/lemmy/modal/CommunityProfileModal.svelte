@@ -255,7 +255,7 @@
 <Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
     capitalizeTitle={true}
     title={
-        shortenCommunityName(communityDetails?.community_view?.community?.title, 25) ?? 
+        shortenCommunityName(communityDetails?.community_view?.community?.title, 35) ?? 
         communityDetails?.community_view?.community?.name ?? 
         'Community Details'
     }
