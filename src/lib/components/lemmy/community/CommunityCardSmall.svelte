@@ -26,7 +26,7 @@
     export let community_view: CommunityView
     export let href: boolean = false            // If true, community link in the card will go to the /c/ page. False, default, will open the community modal.
    
-    let avatarWidth = 128
+    let avatarWidth = 96
     const dispatcher = createEventDispatcher()
 </script>
 
@@ -34,11 +34,13 @@
     class="p-0 !items-start"
 >
     <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
-        <div class="p-2">
+        <div class="p-2 flex-shrink-1">
             <Avatar width={avatarWidth} fullRes ring url={community_view.community.icon} alt={community_view.community.name} community />
         </div>
 
-        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">            
+        <div class="flex flex-col gap-0 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4"
+            style="width: calc(100% - {avatarWidth}px;"
+        >
             
             <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}"
                 class="text-left items-center hover:underline capitalize font-bold text-xl truncate"     

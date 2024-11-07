@@ -32,7 +32,7 @@
     export let mostRecentItem: string|undefined = undefined
     export let href: boolean = false            // If true, user link in the card will go to the /u/ page. False, default, will open the modal.
 
-    let avatarWidth = 128
+    let avatarWidth = 96
     const dispatcher = createEventDispatcher()
 </script>
 
@@ -43,11 +43,13 @@
 >
     <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
         
-        <div class="p-2">
+        <div class="p-2 flex-shrink-1">
             <Avatar width={avatarWidth} fullRes ring url={person_view.person.avatar} alt={person_view.person.actor_id}  class="mx-auto"/>
         </div>
 
-        <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
+        <div class="flex flex-col gap-0  overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4"
+            style="width: calc(100% - {avatarWidth}px;"
+        >
             <a href="/u/{person_view.person.name}@{new URL(person_view.person.actor_id).hostname}"
                 class="text-left items-center hover:underline capitalize font-bold text-xl truncate"     
                 title={person_view.person.display_name ?? person_view.person.name}
