@@ -1,13 +1,12 @@
 <script lang="ts">
     import type { 
-        CommentReplyView, 
         CommunityModeratorView, 
-        PersonMentionView, 
         PostView 
     } from 'lemmy-js-client'
     
     import { amMod, isAdmin, postModerationModal } from '$lib/components/lemmy/moderation/moderation'
     import { instance } from '$lib/instance.js'
+    import { dispatchWindowEvent } from '$lib/ui/events.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { postType as getPostType, isImage, isVideo, scrollToTop } from './helpers.js'
@@ -115,14 +114,22 @@
 
             <div class="flex flex-col w-full text-xs">
                 {#if !inCommunity && post.community}
-                    <CommunityLink bind:community={post.community} {avatarSize} />
+                    <CommunityLink bind:community={post.community} {avatarSize} noClick={!actions}/>
                 {/if}
                 
                 <span class="flex flex-col sm:flex-row sm:gap-1">
                     {#if !inProfile && post.creator}
                         <div class="flex flex-wrap items-center w-full" class:text-slate-900={!post.community} class:dark:text-zinc-100={!post.community}>
                             <span class="hidden {collapseBadges ? '' : 'md:block'} text-slate-600 dark:text-zinc-400">Posted by&nbsp;</span>
-                            <UserLink avatarSize={20} bind:user={post.creator} mod={post.creator_is_moderator} admin={post.creator_is_admin} community_banned={post.creator_banned_from_community} avatar={!post.community} bind:blocked={post.creator_blocked}/>
+                            <UserLink avatarSize={20} 
+                                bind:user={post.creator} 
+                                mod={post.creator_is_moderator} 
+                                admin={post.creator_is_admin} 
+                                community_banned={post.creator_banned_from_community} 
+                                avatar={!post.community} 
+                                bind:blocked={post.creator_blocked} 
+                                noClick={!actions} 
+                            />
                         </div>
                     {/if}
                 </span>
@@ -189,34 +196,35 @@
 
 
             <!---Post Action Buttons--->
-            {#if actions}
-                <div class="flex flex-row items-start gap-2 ml-auto">
-                    
-                    <!---Moderation --->
-                    {#if $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-                        <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
-                    {/if}
+            <div class="flex flex-row items-start gap-2 ml-auto">
+                
+                <!---Moderation --->
+                {#if actions && $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+                    <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
+                {/if}
 
-                    <!--- Expand Compact Post to Card--->
-                    <!---{#if $userSettings.showCompactPosts}-->
-                    {#if postType != 'text' && (postType == 'dailymotion' || post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
-                        <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                            icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
-                            iconSize={16}
-                            on:click={() => {  
-                                expandCompact = !expandCompact; 
-                                if (postContainer) scrollToTop(postContainer)
-                            }}
-                        />
-                    {/if}
-                    
-                    <!---Instances--->
+                <!--- Expand Compact Post to Card--->
+                <!---{#if $userSettings.showCompactPosts}-->
+                {#if postType != 'text' && (postType == 'dailymotion' || post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
+                    <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                        icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
+                        iconSize={16}
+                        on:click={() => {  
+                            expandCompact = !expandCompact; 
+                            if (postContainer) scrollToTop(postContainer)
+                        }}
+                    />
+                {/if}
+                
+                <!---Instances--->
+                {#if actions}
                     <InstanceMenu bind:post />
 
                     <!---Post Actions--->
                     <PostActionsMenu bind:post  />
-                </div>
-            {/if}
+                {/if}
+            </div>
+            
             
         </span>
     </div>

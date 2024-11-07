@@ -36,7 +36,7 @@
 
 
 <Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
-    <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges}/>
+    <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges} {actions}/>
 
     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType}>    
         <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
@@ -50,17 +50,17 @@
     <!--- Crossposts --->
     <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="mb-1"/>
 
-    {#if actions}
-        <PostActions  bind:post  {displayType}
-            on:reply
-            on:edit={(e) => {
-                post = post
-                toast({
-                    title: 'Confirmation',
-                    content: 'The post was edited successfully.',
-                    type: 'success',
-                })
-            }}
-        />
-    {/if}
+    
+    <PostActions  bind:post  {displayType}
+        on:reply
+        on:edit={(e) => {
+            post = post
+            toast({
+                title: 'Confirmation',
+                content: 'The post was edited successfully.',
+                type: 'success',
+            })
+        }}
+    />
+    
 </Card>

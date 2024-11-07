@@ -28,7 +28,7 @@
     export let comment: CommentView
     export let actions:boolean = true
     export let collapseBadges:boolean = false;
- 
+
     let commentContainer:HTMLDivElement
     const elementID = Number(comment.post.id + '.' + comment.comment.id)
 
@@ -40,7 +40,7 @@
     <Card class="flex flex-col rounded-md p-3 flex-1 gap-1">
         
         <div class="flex flex-row justify-between gap-1 items-center">
-            <CommentMeta bind:comment />
+            <CommentMeta bind:comment noClick={!actions}/>
             
             <Button
                 color="tertiary-border"

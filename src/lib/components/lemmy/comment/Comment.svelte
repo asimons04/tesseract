@@ -236,15 +236,16 @@
                     } />
             </div>
             
-            {#if actions}
-                <div class="flex flex-row gap-2 items-center">
-                    <CommentActions
-                        bind:comment={node.comment_view}
-                        bind:replying
-                        on:edit={() => (editing = true)}
-                    />
-                </div>
-            {/if}
+            
+            <div class="flex flex-row gap-2 items-center">
+                <CommentActions
+                    {actions}
+                    bind:comment={node.comment_view}
+                    bind:replying
+                    on:edit={() => (editing = true)}
+                />
+            </div>
+            
         </div>
         {#if replying}
             <div class="max-w-full my-2">

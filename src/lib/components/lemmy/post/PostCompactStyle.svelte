@@ -38,7 +38,7 @@
     <!--- If post is NSFW, only show the metadata + title and overlay the rest--->
     {#if post.post.nsfw}
         <div class="flex flex-col gap-1 w-full">
-            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges}/>                
+            <PostMeta bind:post bind:postContainer bind:expandCompact {actions} showTitle={true} {collapseBadges}/>                
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} text="[Reveal NSFW Post]"/>
         </div>
     {:else}
@@ -46,7 +46,7 @@
         <!---Image and Video Posts--->
         <!---These will have the thumbnail in the upper-right corner rather than in the metadata--->
         {#if  (['image', 'video'].includes(postType)) }
-            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges}/>
+            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions}/>
             
             <div class="flex flex-row w-full gap-2">
                 
@@ -59,20 +59,20 @@
                     
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                     
-                    {#if actions}
-                        <div class="flex flex-row w-full h-full grid items-end">
-                            <PostActions  bind:post  {displayType}
-                                on:reply
-                                on:edit={(e) => {
-                                    toast({
-                                        title: 'Confirmation',
-                                        content: 'The post was edited successfully.',
-                                        type: 'success',
-                                    })
-                                }}
-                            />
-                        </div>
-                    {/if}
+                    
+                    <div class="flex flex-row w-full h-full grid items-end">
+                        <PostActions  bind:post  {displayType}
+                            on:reply
+                            on:edit={(e) => {
+                                toast({
+                                    title: 'Confirmation',
+                                    content: 'The post was edited successfully.',
+                                    type: 'success',
+                                })
+                            }}
+                        />
+                    </div>
+                    
                 </div>
 
                 {#if !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url))}
@@ -129,7 +129,7 @@
         <!---Link posts with embed description, etc--->
         {:else}
 
-            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges}/>
+            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges} {actions}/>
                     
             <PostLink bind:post bind:displayType compact={true}
                 on:clickThumbnail={() => {
@@ -145,20 +145,20 @@
             
             <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
             
-            {#if actions}
-                <div class="flex flex-row w-full h-full grid items-end">
-                    <PostActions  bind:post  {displayType}
-                        on:reply
-                        on:edit={(e) => {
-                            toast({
-                                title: 'Confirmation',
-                                content: 'The post was edited successfully.',
-                                type: 'success',
-                            })
-                        }}
-                    />
-                </div>
-            {/if}
+            
+            <div class="flex flex-row w-full h-full grid items-end">
+                <PostActions  bind:post  {displayType}
+                    on:reply
+                    on:edit={(e) => {
+                        toast({
+                            title: 'Confirmation',
+                            content: 'The post was edited successfully.',
+                            type: 'success',
+                        })
+                    }}
+                />
+            </div>
+            
             
 
         {/if}

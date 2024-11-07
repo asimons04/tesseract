@@ -14,7 +14,7 @@
    
     export let post: PostView
     export let displayType: PostDisplayType
-
+    export let actions: boolean = true
     //$: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
 </script>
@@ -26,20 +26,21 @@
 
     <!--- Post Vote Buttons--->
     <PostVote bind:post  />
+    {#if actions}
+        <!--- Comment Count and Link to Post--->
+        {#if displayType == 'feed'}
+            <CommentCountButton bind:post displayType={displayType} />
+        {/if}
+        
 
-    <!--- Comment Count and Link to Post--->
-    {#if displayType == 'feed'}
-        <CommentCountButton bind:post displayType={displayType} />
+        <!---Reply Button that enables the comment form--->
+        <PostReplyButton displayType={displayType} on:reply bind:post/>
+    
+        <!--- Spacer --->
+        <div class="ml-auto" />
+        
+
+        <!---Debug Button--->
+        <DebugButton bind:post />
     {/if}
-    
-
-    <!---Reply Button that enables the comment form--->
-    <PostReplyButton displayType={displayType} on:reply bind:post/>
-  
-    <!--- Spacer --->
-    <div class="ml-auto" />
-    
-
-    <!---Debug Button--->
-    <DebugButton bind:post />
 </div>
