@@ -35,7 +35,7 @@
     export let community_banned:boolean = false
     export let blocked: boolean = false
     export let inline: boolean = true
-
+    export let noClick: boolean = false
     const dispatcher = createEventDispatcher()
     
     function linkFromCommunity(user: Person) {
@@ -56,8 +56,12 @@
 </script>
 
 
-<a href="{linkFromCommunity(user)}"class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline min-w-fit {$$props.class}" 
-    on:click={loadProfileModal} 
+<a href={linkFromCommunity(user)} on:click={loadProfileModal} 
+    class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline min-w-fit 
+        {noClick ? 'pointer-events-none' : ''} 
+        {$$props.class}
+    " 
+    
 >
     <span class="flex flex-row w-full gap-1 items-center w-fit">
         {#if avatar}
