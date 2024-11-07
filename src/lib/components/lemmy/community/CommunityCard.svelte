@@ -80,42 +80,42 @@
             
         <!--- Convenience button to create post --->
         <div class="w-full mt-2 flex flex-row gap-2 hidden xl:flex">
-            {#if $profile?.jwt && $profile?.user}
-                
-                <!---Create Post--->
-                <Button color="tertiary-border" class="w-full" size="lg"
-                    on:click={() => createPost(community_view.community)}
-                    hidden={
-                        (community_view.community.posting_restricted_to_mods && !amMod($profile.user, community_view.community)) || 
-                        community_view.community.removed
-                    }
-                >
-                    <Icon src={PencilSquare} mini size="16" slot="icon" />
-                    Create Post
-                </Button>
 
-                <!---Subscrube/UnSubscribe--->
-                <Button color="tertiary-border" class="w-full" size="lg" loading={loading.subscribing}
-                    disabled={loading.subscribing || community_view.community.removed } 
-                    on:click={ (e) => {
-                        e.stopPropagation();
-                        subscribe();
-                    }}
-                >
-                    <Icon src={community_view.subscribed == 'Subscribed' ? Minus : Rss} mini size="16"/>
-                    {
-                        (community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending')
-                            ? 'Unsubscribe'
-                            : 'Subscribe'
-                    }
-                </Button>
+            <!---Create Post--->
+            <Button color="tertiary-border" class="w-[45%]" size="lg"
+                on:click={() => createPost(community_view.community)}
+                icon={PencilSquare}
+                disabled={
+                    (community_view.community.posting_restricted_to_mods && !amMod($profile?.user, community_view.community)) || 
+                    community_view.community.removed ||
+                    (!$profile?.jwt)
+                }
+            >
+                Create Post
+            </Button>
 
-                <Button color="tertiary-border" size="square-lg" icon={EllipsisVertical} iconSize={20}  title="Community Actions"
-                    on:click={() => {
-                        communityProfileModal(community_view.community)
-                    }}
-                />
-            {/if}
+            <!---Subscrube/UnSubscribe--->
+            <Button color="tertiary-border" class="w-[45%]" size="lg" loading={loading.subscribing}
+                disabled={loading.subscribing || community_view.community.removed || !$profile?.jwt} 
+                icon={community_view.subscribed == 'Subscribed' ? Minus : Rss}
+                on:click={ (e) => {
+                    e.stopPropagation();
+                    subscribe();
+                }}
+            >
+                {
+                    (community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending')
+                        ? 'Unsubscribe'
+                        : 'Subscribe'
+                }
+            </Button>
+
+            <Button color="tertiary-border" class="w-[10%]" size="square-lg" icon={EllipsisVertical} iconSize={20}  title="Community Actions"
+                on:click={() => {
+                    communityProfileModal(community_view.community)
+                }}
+            />
+            
         </div>
 
         <!---Settings buttons for Mod/Admin--->
