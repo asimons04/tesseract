@@ -26,7 +26,7 @@
     
 
     export let comment: CommentView                 
-    export let avatarSize = 48;
+    export let avatarSize = 42;
     export let hideBadges = false
     export let noClick = false
     export let content: boolean = false     // Show the comment content (only used for moderation UI purposes)
