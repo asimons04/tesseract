@@ -48,9 +48,7 @@
     on:click={loadCommunityProfileModal}
 >
     {#if avatar}
-        <div style="width: {avatarSize}px">
-            <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true} background={avatarBackground}/>
-        </div>
+        <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true} background={avatarBackground}/>
     {/if}
 
     {#if name}
