@@ -18,6 +18,7 @@
         Clock,
         PencilSquare,
     } from 'svelte-hero-icons'
+    import { userProfileModal } from "../moderation/moderation";
     
 
     export let person_view: PersonView
@@ -42,16 +43,28 @@
         </div>
 
         <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">
-            <span class="font-bold w-full text-xl">
-                <UserLink badges user={person_view.person} showInstance={false} useDisplayNames {href} admin={person_view.is_admin} {mod} blocked={blocked}
-                    on:click={() => dispatcher('clickUserLink') }
-                />
-            </span>
-
+            <a href="/u/{person_view.person.name}@{new URL(person_view.person.actor_id).hostname}"
+                class="text-left items-center hover:underline capitalize font-bold text-xl truncate"     
+                title={person_view.person.display_name ?? person_view.person.name}
+                on:click={(
+                    //@ts-ignore
+                    e
+                ) => {
+                    if (href) {
+                        dispatcher('clickUserLink')
+                        return
+                    }
+                    e.preventDefault()
+                    e.stopPropagation()    
+                    userProfileModal(person_view.person) 
+                }}
+            >
+                {person_view.person.display_name ?? person_view.person.name}
+            </a>
+            
             <span class="text-base font-normal truncate">
                 @{person_view.person.name}@{new URL(person_view.person.actor_id).hostname}
             </span>
-
             
         </div>
     </div>

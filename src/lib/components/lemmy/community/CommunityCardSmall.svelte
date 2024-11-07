@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { CommunityView } from "lemmy-js-client"
-        
+
+    import { communityProfileModal } from '../moderation/moderation'
     import { createEventDispatcher } from "svelte"
     import { imageProxyURL } from "$lib/image-proxy"
     import { userSettings } from '$lib/settings'
@@ -36,12 +37,27 @@
         </div>
 
         <div class="flex flex-col gap-0 w-3/4 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4">            
-            <span class="font-bold w-full text-xl">
-                <CommunityLink name href={href} useDisplayNames showInstance={false} community={community_view.community} 
-                    on:click={ () => dispatcher('communityLinkClick') }
-                />
-            </span>
             
+            <a href="/c/{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}"
+                class="text-left items-center hover:underline capitalize font-bold text-xl truncate"     
+                title={community_view.community.title ?? community_view.community.name}
+                on:click={(
+                    //@ts-ignore
+                    e
+                ) => {
+                    if (href) {
+                        dispatcher('communityLinkClick')
+                        return
+                    }
+                    e.preventDefault()
+                    e.stopPropagation()    
+                    communityProfileModal(community_view.community) 
+                }}
+            >
+                {community_view.community.title ?? community_view.community.name}
+            </a>
+            
+           
             <span class="text-base font-normal truncate">
                 !{community_view.community.name}@{new URL(community_view.community.actor_id).hostname}
             </span>
