@@ -1,23 +1,14 @@
 <script lang="ts">
-   
-    interface RemoveItemContainer {
-        purge: boolean
-        reason: string
-        loading: boolean
-        replyWithReason: boolean
-        replyReason: string
-        privateMessage: boolean
 
-        reset: any
-        remove: any
-        setReplyReason: any
-    }
-
-
-    import type { CommentView, Community, PostView, VoteView } from 'lemmy-js-client'
+    import type { CommentView, Community, PostView } from 'lemmy-js-client'
+    import type { 
+        BanUserEvent,
+        PurgeCommentEvent,
+        PurgePostEvent
+    } from '$lib/ui/events'
 
     import { amMod, isAdmin, removalTemplate } from '../moderation/moderation'
-    import { dispatchWindowEvent, type BanUserEvent } from '$lib/ui/events';
+    import { dispatchWindowEvent } from '$lib/ui/events';
     import { expoIn } from 'svelte/easing'
     import { fullCommunityName } from '$lib/util'
     import { getClient } from '$lib/lemmy'
@@ -34,21 +25,12 @@
     import BanUserForm from './components/BanUserForm.svelte'
     import Button from "$lib/components/input/Button.svelte"
     import Card from '$lib/components/ui/Card.svelte'
-    import CommentMeta from '../comment/CommentMeta.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import EmbeddableModlog from './components/EmbeddableModlog.svelte'
-    import InfiniteScrollDiv from '$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import PostMeta from '../post/PostMeta.svelte'
     import ReportItemForm from './components/ReportItemForm.svelte'
     import SendDMForm from "./components/SendDMForm.svelte"
-    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
-    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
-    import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '../user/UserLink.svelte'
 
     import { 
@@ -74,6 +56,7 @@
         Trash,
     } from "svelte-hero-icons"
     import VoteViewer from './components/VoteViewer.svelte';
+    import RemoveItemForm from './components/RemoveItemForm.svelte';
     
     
     
@@ -94,9 +77,6 @@
 
     // Make the Post/Comment item reactive
     $: item
-    
-    // Watch the reply reason options and automatically update the mod reply based on the removal / restore reason.
-    $: remove.replyReason = remove.replyWithReason ? remove.setReplyReason(remove.reason) : ''
 
     // Reactive helper variable to determine if the item is removed.
     $:  removed = item
@@ -108,174 +88,7 @@
     // Object to hold the components for removing a submission
     let remove = {
         purge: false,
-        reason: '',
-        loading: false,
-        replyWithReason: false,
-        replyReason: '',
-        privateMessage: false,
-        
-        reset: function() {
-            remove.purge = false
-            remove.reason = ''
-            remove.loading = false
-            remove.replyWithReason = false
-            remove.replyReason = ''
-            remove.privateMessage = false
-        },
-
-        remove: async function () {
-            if (!item) return
-            if (!$profile?.jwt) throw new Error('Unauthenticated')
-
-            remove.loading = true
-
-            try {
-                if (remove.purge) {
-                    
-                    // Purge Comment
-                    if (isCommentView(item)) {
-                        await getClient(undefined).purgeComment({
-                            comment_id: item.comment.id,
-                            reason: remove.reason,
-                        })
-
-                        dispatchWindowEvent('purgeComment', {
-                            comment_id: item.comment.id,
-                            purged: true
-                        })
-                    } 
-                    // Purge Post
-                    else {
-                        await getClient(undefined).purgePost({
-                            post_id: item.post.id,
-                            reason: remove.reason,
-                        })
-
-                        dispatchWindowEvent('purgePost', {
-                            post_id: item.post.id,
-                            purged: true
-                        })
-                    }
-                    
-                    toast({
-                        content: 'Successfully purged that submission.',
-                        type: 'success',
-                        title: 'Success'
-                    })
-                    
-                    // Return to mod menu and set purged flag to true
-                    purged = true
-                    remove.reset()
-                    returnMainMenu()
-                    return
-                }
-
-            
-                // Remove Comment
-                if (isCommentView(item)) {
-                    await getClient().removeComment({
-                        comment_id: item.comment.id,
-                        removed: !removed,
-                        reason: remove.reason || undefined,
-                    })
-                    item.comment.removed = !removed
-                    
-                    dispatchWindowEvent('removeComment', {
-                        comment_id: item.comment.id,
-                        removed: item.comment.removed
-                    })
-                } 
-
-                // Remove Post
-                else if (isPostView(item)) {
-                    await getClient().removePost({
-                        post_id: item.post.id,
-                        removed: !removed,
-                        reason: remove.reason || undefined,
-                    })
-                    item.post.removed = !removed
-                    
-                    dispatchWindowEvent('removePost', {
-                        post_id: item.post.id,
-                        removed: item.post.removed
-                    })
-                }
-
-                // Send reply with removal reason if selected
-                if (remove.replyWithReason) {
-                    if (remove.replyReason == '') {
-                        toast({
-                            content: 'Your reply cannot be empty if "Reply reason" is enabled.',
-                            type: 'warning',
-                            title: 'Reply Text is Required'
-                        })
-                        return
-                    }
-                    
-                    // Send a DM or comment depending on selected option
-                    if (remove.privateMessage) {
-                        await getClient()
-                            .createPrivateMessage({
-                                content: remove.replyReason,
-                                recipient_id: isCommentView(item)
-                                    ? item.comment.creator_id
-                                    : item.post.creator_id,
-                            })
-                            .catch(() => {
-                                toast({
-                                    content: 'Failed to message user. Removing anyway...',
-                                    type: 'warning',
-                                })
-                            })
-                    } else {
-                        await getClient().createComment({
-                            content: remove.replyReason,
-                            post_id: item.post.id,
-                            parent_id: isCommentView(item) ? item.comment.id : undefined,
-                        })
-                        .catch(() => {
-                            toast({
-                                content: 'Failed to post reply. Removing anyway...',
-                                type: 'warning',
-                            })
-                        })
-                    }
-                }
-                
-
-                // Return to the mod menu and reset the reason value
-                remove.reset()
-                returnMainMenu()
-
-                toast({
-                    content: `Successfully ${removed ? 'restored' : 'removed'} that submission.`,
-                    type: 'success',
-                    title: 'Success'
-                })
-            } catch (err) {
-                toast({
-                    content: (err as any) ?? 'The API returned an error when processing this request, but no details were provided.',
-                    type: 'error',
-                    title: 'Error'
-                })
-            }
-        },
-
-        setReplyReason: function (reason: string) {
-            if (!item) return `no template`
-
-            return removalTemplate($userSettings.moderation.removalReasonPreset, {
-                communityLink: `!${fullCommunityName(item!.community.name, item!.community.actor_id)}`,
-                postTitle: item.post.name,
-                reason: reason,
-                username: item.creator.name,
-            })
-        }
-
-    } as RemoveItemContainer
-    
-
-    
+    }
 
     // Returns the modal to the main menu
     function returnMainMenu() {
@@ -388,10 +201,16 @@
         }
     }
 
+    function handlePurgeItem(e:PurgeCommentEvent|PurgePostEvent) {
+        purged = e.detail.purged
+    }
 </script>
 
 
-
+<svelte:window 
+    on:purgePost={handlePurgeItem} 
+    on:purgeComment={handlePurgeItem}
+/>
 
 <Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth}>
     
@@ -485,49 +304,7 @@
 
             <!---Remove/Purge/Restore Form--->
             <Card class="flex flex-col p-4">
-                <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove.remove}>
-                    
-                    {#if !isCommentView(item)}
-                        <PostMeta post={item} actions={false} expandCompact={false} noClick/>
-                    {:else}
-                        <CommentMeta comment={item} content noClick/>
-                    {/if}
-
-
-                    <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={remove.reason}>
-                        <Button 
-                            color={remove.purge ? 'danger' : 'primary'} 
-                            icon={remove.purge ? Fire : Trash}
-                            iconSize={16}
-                            size="lg" 
-                            loading={remove.loading} 
-                            disabled={remove.loading} 
-                            submit 
-                            slot="actions"
-                        >
-                            { remove.purge ? 'Purge' : removed ? 'Restore' : 'Remove' }
-                        </Button>
-                    </MarkdownEditor>
-                    
-                    <!--- Only show "Reply with reason" if you're a mod of the community or an admin and the content is local--->
-                    {#if !removed &&  !remove.purge && ( amMod($profile?.user, item.community) || (isAdmin($profile?.user) && item.community.local))}
-                        <SettingToggleContainer>
-                            <SettingToggle bind:value={remove.replyWithReason} icon={ChatBubbleLeft} title="Reply with Reason" 
-                                description="Send the user a comment or DM with the reason for the the mod action" 
-                            />
-                            
-                            <SettingMultiSelect icon={ChatBubbleLeftRight} title="Message Type" 
-                                description="Choose whether to reply as a comment to the removed item or as a direct message"
-                                options={[false, true]} optionNames={['Comment', 'Message']} bind:selected={remove.privateMessage}
-                                condition={remove.replyWithReason}
-                            />
-                        </SettingToggleContainer>
-
-                        {#if remove.replyWithReason}
-                            <MarkdownEditor previewButton images={false} bind:value={remove.replyReason} placeholder={remove.replyReason} rows={6} label="Reply"/>
-                        {/if}
-                    {/if}
-                </form>
+                <RemoveItemForm bind:item bind:removed bind:purged purge={remove.purge} on:finish={() => returnMainMenu()}/>
             </Card>
             
         </div>
