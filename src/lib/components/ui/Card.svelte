@@ -22,7 +22,7 @@
 </script>
 
 {#if backgroundImage}
-    <div class="flex items-stretch backdrop-blur-lg bg-black/80 dark:bg-white/80 rounded-3xl" 
+    <div class="flex items-stretch backdrop-blur-lg bg-black/80 dark:bg-white/80 rounded-2xl" 
         style="background-image: url('{backgroundImage}'); 
             background-size: {$userSettings.uiState.stretchCardBanner ? 'cover' : 'auto'}; 
             background-position: center center;
@@ -30,12 +30,12 @@
     ">
 
         <!---<div class="w-full break-words border border-slate-200 dark:border-zinc-800 bg-white/80 dark:bg-black/80 rounded-lg {clazz}" {...$$restProps}>--->
-        <div class="w-full break-words border dark:border-zinc-800 bg-white/50 dark:bg-black/50 rounded-3xl {clazz}" {...$$restProps}>  <!---dark:bg-zinc-950/80 --->
+        <div class="w-full break-words border dark:border-zinc-800 bg-white/50 dark:bg-black/50 rounded-2xl {clazz}" {...$$restProps}>  <!---dark:bg-zinc-950/80 --->
             <slot />
         </div>
     </div>
 {:else}
-    <div class="break-words {getColor(cardColor)} rounded-3xl {clazz}" {...$$restProps}>
+    <div class="break-words {getColor(cardColor)} rounded-2xl {clazz}" {...$$restProps}>
         <slot />
     </div>
 {/if}

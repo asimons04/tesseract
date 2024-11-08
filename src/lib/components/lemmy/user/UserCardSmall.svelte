@@ -47,7 +47,7 @@
             <Avatar width={avatarWidth} fullRes ring url={person_view.person.avatar} alt={person_view.person.actor_id}  class="mx-auto"/>
         </div>
 
-        <div class="flex flex-col gap-0  overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4"
+        <div class="flex flex-col gap-0  overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-2xl rounded-tr-2xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4"
             style="width: calc(100% - {avatarWidth}px;"
         >
             <a href="/u/{person_view.person.name}@{new URL(person_view.person.actor_id).hostname}"
@@ -98,7 +98,7 @@
 
     <div class="mt-2"/>
 
-    <Card elevation={0} class="p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 rounded-b-3xl rounded-t-none">
+    <Card elevation={0} class="p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 rounded-b-2xl rounded-t-none">
         <div class="flex flex-row w-full">
             
             <div class="mx-auto text-xs md:text-sm flex flex-row w-full flex-wrap gap-0 px-2 justify-between">

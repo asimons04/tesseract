@@ -38,7 +38,7 @@
             <Avatar width={avatarWidth} fullRes ring url={community_view.community.icon} alt={community_view.community.name} community />
         </div>
 
-        <div class="flex flex-col gap-0 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-3xl rounded-tr-3xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4"
+        <div class="flex flex-col gap-0 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-2xl rounded-tr-2xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4"
             style="width: calc(100% - {avatarWidth}px;"
         >
             
@@ -78,7 +78,7 @@
 
     <div class="mt-2" />
 
-    <Card elevation={0} class="p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 rounded-b-3xl rounded-t-none">
+    <Card elevation={0} class="p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 rounded-b-2xl rounded-t-none">
         <div class="flex flex-row w-full">
             
             <div class="text-xs md:text-sm flex flex-row gap-0 px-2 w-full flex-wrap justify-between">
