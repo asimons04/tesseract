@@ -28,6 +28,7 @@
 
     export let person_view: PersonView
     export let mod: boolean = false
+    export let admin: boolean = false
     export let blocked: boolean = false
     export let mostRecentItem: string|undefined = undefined
     export let href: boolean = false            // If true, user link in the card will go to the /u/ page. False, default, will open the modal.
@@ -77,6 +78,12 @@
                 {#if mod}
                     <Badge color="green" icon={ShieldExclamation} inline click={false} rightJustify={false}>
                         Mod
+                    </Badge>
+                {/if}
+
+                {#if admin}
+                    <Badge color="red" icon={ShieldExclamation} inline click={false} rightJustify={false}>
+                        Admin
                     </Badge>
                 {/if}
 
