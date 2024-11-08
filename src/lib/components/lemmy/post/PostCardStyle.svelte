@@ -25,7 +25,8 @@
     export let expandPreviewText:boolean = false
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
-    
+    export let inCommunity:boolean = false
+    export let inProfile: boolean = false
    
     // Determine post type based on its attributes
     let postType: PostType
@@ -36,7 +37,7 @@
 
 
 <Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
-    <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges} {actions}/>
+    <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges} {actions} {inCommunity} {inProfile}/>
 
     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType}>    
         <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />

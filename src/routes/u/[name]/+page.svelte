@@ -151,7 +151,7 @@
                     <CommentItem bind:comment={item} />
                 
                 {:else if item && !isCommentView(item) && (data.type == 'all' || data.type == 'posts')}
-                    <Post bind:post={item} />
+                    <Post bind:post={item} inProfile/>
                 {/if}
             {/each}
         </FeedContainer>

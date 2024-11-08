@@ -36,6 +36,9 @@
     export let collapseBadges:boolean = false;
     export let expandCompact: boolean = computeExpandCompact()
 
+    export let inCommunity: boolean = false
+    export let inProfile: boolean = false
+
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement
     let inViewport = false
@@ -237,18 +240,18 @@
         <!--- Compact Posts --->
         <!--{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }-->
         {#if  (forceCompact || !expandCompact) }
-            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType}
+            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
                 bind:post 
                 bind:expandCompact 
                 bind:expandPreviewText  
-                bind:postContainer  
+                bind:postContainer
                 on:reply
             />
 
 
         <!--- Card Posts --->
         {:else}
-            <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} 
+            <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
                 bind:post 
                 bind:expandCompact 
                 bind:expandPreviewText  

@@ -87,7 +87,7 @@
                     <CommentItem bind:comment={item} actions={false}/>
                 
                 {:else if item && !isCommentView(item) && (type == 'all' || type == 'posts')}
-                    <Post bind:post={item} actions={false}/>
+                    <Post bind:post={item} actions={false} inProfile/>
                 {/if}
             {/each}
             

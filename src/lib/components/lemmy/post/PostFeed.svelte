@@ -27,7 +27,7 @@
     
 
     export let posts: PostView[]
-
+    export let inCommunity: boolean = false
     
 
     // Handlers for custom window event that's raised when a user or community is blocked. Used to show/hide posts in the feed
@@ -157,7 +157,7 @@
                     !($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility')
                 }
                     <div transition:fade>
-                        <Post bind:post={post} displayType="feed" />
+                        <Post bind:post={post} displayType="feed" {inCommunity}/>
                     </div>
                 {/if}
             {/each}

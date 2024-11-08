@@ -55,15 +55,16 @@
     export let postContainer: HTMLDivElement|undefined = undefined
     export let actions: boolean                 = true
     
-    let inCommunity:boolean     = false
-    let inProfile:boolean       = false
+    export let inCommunity:boolean     = false
+    export let inProfile:boolean       = false
+    
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
     let postType = getPostType(post)
 
     $: post
-    $: inCommunity      = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
-    $: inProfile        = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
+    //$: inCommunity      = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
+    //$: inProfile        = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
     $: onHomeInstance   = ($page.params.instance ?? $instance)  == $instance

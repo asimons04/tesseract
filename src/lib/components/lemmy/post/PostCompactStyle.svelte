@@ -30,6 +30,8 @@
     export let collapseBadges:boolean = false;
     export let postContainer: HTMLDivElement
     export let postType: PostType
+    export let inCommunity:boolean = false
+    export let inProfile: boolean = false
 </script>
 
 
@@ -38,7 +40,7 @@
     <!--- If post is NSFW, only show the metadata + title and overlay the rest--->
     {#if post.post.nsfw}
         <div class="flex flex-col gap-1 w-full">
-            <PostMeta bind:post bind:postContainer bind:expandCompact {actions} showTitle={true} {collapseBadges}/>                
+            <PostMeta bind:post bind:postContainer bind:expandCompact {actions} showTitle={true} {collapseBadges} {inCommunity} {inProfile}/>                
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} text="[Reveal NSFW Post]"/>
         </div>
     {:else}
@@ -46,7 +48,7 @@
         <!---Image and Video Posts--->
         <!---These will have the thumbnail in the upper-right corner rather than in the metadata--->
         {#if  (['image', 'video'].includes(postType)) }
-            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions}/>
+            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile}/>
             
             <div class="flex flex-row w-full gap-2">
                 
@@ -129,7 +131,7 @@
         <!---Link posts with embed description, etc--->
         {:else}
 
-            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges} {actions}/>
+            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile}/>
                     
             <PostLink bind:post bind:displayType compact={true}
                 on:clickThumbnail={() => {

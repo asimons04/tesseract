@@ -138,7 +138,7 @@
                 goto(window.location.href, {invalidateAll: true})
             }}
         />
-        <PostFeed posts={data.posts.posts}/>
+        <PostFeed posts={data.posts.posts} inCommunity />
         
         <InfiniteScroll bind:loading={infiniteScroll.loading} bind:exhausted={infiniteScroll.exhausted} threshold={500} bind:enabled={infiniteScroll.enabled}
             disableBack={ $page.url.searchParams.get('page_cursor') ? false : true }

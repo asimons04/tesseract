@@ -73,7 +73,7 @@
         {#if posts?.posts?.length > 0 }
             
             {#each posts.posts as item, idx (item.post.id)}
-                <Post bind:post={item} actions={false}/>
+                <Post bind:post={item} actions={false} inCommunity={true}/>
             {/each}
             
         {:else}
