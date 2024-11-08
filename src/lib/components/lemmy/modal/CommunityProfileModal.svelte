@@ -52,6 +52,7 @@
         Eye,
         Scale,
     } from "svelte-hero-icons";
+    import CommunityFeed from "./components/CommunityFeed.svelte";
     
     
     export let community: Community | undefined
@@ -67,7 +68,19 @@
     let communityDetailsOpen = false
     
 
-    let action: 'none' | 'banning' | 'blocking' | 'communityDetails' | 'removing' | 'hiding' | 'createPost' | 'modlog'  = 'none'
+    let action: 
+        'none'              |   
+        'banning'           | 
+        'blocking'          | 
+        'browsing'          | 
+        'communityDetails'  | 
+        'createPost'        | 
+        'hiding'            | 
+        'modlog'            |
+        'removing'           
+    = 'none'
+
+
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
     
@@ -230,11 +243,13 @@
                 })
 
                 hide.reset()
+                returnMainMenu()
 
             } catch (error) {
                 toast({content: error as any, type: 'error'})
             }
             hide.hiding = false
+            
         },
         
         reset: function() {
@@ -251,6 +266,8 @@
     }
     
 </script>
+
+<svelte:window on:clickIntoPost={() => open = false } />
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
     capitalizeTitle={true}
@@ -365,6 +382,23 @@
 
 
                 </Card>
+            </div>
+        {/if}
+
+        {#if action == 'browsing'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
+                        
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={()=> returnMainMenu()}  
+                    />
+                    <span class="text-lg">
+                        Browse Community
+                    </span>
+                </div>
+
+                <CommunityFeed community_id={communityDetails.community_view.community.id} />
             </div>
         {/if}
         
@@ -541,13 +575,22 @@
                 <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" >
                     <!---Go to Community--->
                     {#if !communityBlocked}
-                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                    <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
                             on:click={()=> {
                                 goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
                                 open = false
                             }}
                         >
-                            Browse Community
+                            Go to Community
+                        </Button>    
+                    
+                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                            on:click={()=> {
+                                modalWidth = 'max-w-3xl'
+                                action = 'browsing'
+                            }}
+                        >
+                            Browse Community...
                         </Button>
                     {/if}
 
