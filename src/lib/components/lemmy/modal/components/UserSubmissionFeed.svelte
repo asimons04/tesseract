@@ -8,7 +8,6 @@
     
 
     import CommentItem from "../../comment/CommentItem.svelte";
-    import MultiSelect from "$lib/components/input/MultiSelect.svelte";
     import Post from "../../post/Post.svelte";
     import Placeholder from "$lib/components/ui/Placeholder.svelte";
     import Pageination from "$lib/components/ui/Pageination.svelte";
@@ -19,7 +18,7 @@
     export let person_id: number
     export let community_id: number | undefined = undefined
     export let type: 'all' | 'posts' | 'comments' = 'all'
-    
+
     let page = 1
     let loading = false
     let submissions = [] as (PostView|CommentView)[]
