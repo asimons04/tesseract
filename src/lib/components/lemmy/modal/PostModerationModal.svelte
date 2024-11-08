@@ -559,7 +559,7 @@
                         action = 'userSubmissions'
                     }}
                 >
-                    Posts/Comments in Community...
+                    Creator's Submissions in Community...
                 </Button>
 
 
