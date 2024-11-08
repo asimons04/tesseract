@@ -25,10 +25,8 @@
     import UserCardSmall from "../user/UserCardSmall.svelte";
 
     import { 
-        Icon,
-        Cake,
-        ChatBubbleOvalLeftEllipsis,
-        Clock,
+        ArrowTopRightOnSquare,
+        ArrowLeft, 
         Envelope,
         Hashtag,
         Home,
@@ -37,16 +35,16 @@
         MagnifyingGlass,
         Newspaper,
         NoSymbol,
-        PencilSquare,
         Share,
-        Trash,
         User,
         UserCircle,
-        ArrowTopRightOnSquare,
-        ArrowLeft, 
+        Window as WindowIcon,
     } from "svelte-hero-icons";
+    
     import Card from "$lib/components/ui/Card.svelte";
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
+    import UserSubmissionFeed from "./components/UserSubmissionFeed.svelte";
+    import Pageination from "$lib/components/ui/Pageination.svelte";
     
     
     
@@ -68,7 +66,7 @@
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
-    let action: 'none' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' = 'none'
+    let action: 'none' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions'  = 'none'
 
     $:  if (originalUser != user) {
         originalUser = user
@@ -138,6 +136,7 @@
         }
     }
 
+
     // Returns the modal to the main menu
     function returnMainMenu() {
         modalWidth = defaultWidth
@@ -146,7 +145,7 @@
   
 </script>
 
-<svelte:window on:banUser={handleBanUser} />
+<svelte:window on:banUser={handleBanUser} on:clickIntoPost={()=> open = false} />
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth}
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
@@ -322,7 +321,34 @@
         
         {/if}
 
+        <!---User's Submission Feed--->
+        {#if action == 'submissions'}
+            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
+            
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 items-center">
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                        on:click={(e)=> {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            returnMainMenu() 
+                        }}
+                    />
+                    <div class="flex flex-row w-full justify-between">
+                        <span class="text-lg">
+                            Posts/Comments
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col w-full max-h-[70vh]">
+                    <UserSubmissionFeed person_id={personDetails.person_view.person.id} headingRowClass="mt-[-30px]" />    
+                </div>
+            </div>    
+        
+        {/if}
 
+        <!---Main Menu--->
         {#if action == 'none'}
             <div class="flex flex-col gap-2 w-full" transition:slide={{easing:expoIn}}>
                 <!--- User Card and Action Buttons--->
@@ -378,6 +404,16 @@
                             {/if}
                         </div>
 
+                        <!---View Submissions--->
+                        <Button color="tertiary-border" icon={WindowIcon} alignment="left" class="w-full"
+                            on:click={() => {
+                                if (!personDetails) return
+                                modalWidth = "max-w-3xl"
+                                action = 'submissions'
+                            }}
+                        >
+                            View Posts/Comments...
+                        </Button>
             
 
                         <!---See User's Modlog History--->

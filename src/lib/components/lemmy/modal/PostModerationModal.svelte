@@ -29,22 +29,18 @@
     import EmbeddableModlog from './components/EmbeddableModlog.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
+    import RemoveItemForm from './components/RemoveItemForm.svelte'
     import ReportItemForm from './components/ReportItemForm.svelte'
     import SendDMForm from "./components/SendDMForm.svelte"
     import UserLink from '../user/UserLink.svelte'
+    import VoteViewer from './components/VoteViewer.svelte';
 
     import { 
-        ArrowDown,
         ArrowLeft,
-        ArrowUp,
-        ChatBubbleLeft,
-        ChatBubbleLeftRight,
         Envelope,
-        ExclamationTriangle,
         Fire,
         Flag,
         HandThumbUp,
-        Icon,
         InformationCircle,
         LockClosed,
         MapPin,
@@ -54,16 +50,18 @@
         ShieldExclamation, 
         Sparkles, 
         Trash,
+        Window as WindowIcon
     } from "svelte-hero-icons"
-    import VoteViewer from './components/VoteViewer.svelte';
-    import RemoveItemForm from './components/RemoveItemForm.svelte';
+    import UserSubmissionFeed from './components/UserSubmissionFeed.svelte';
+    
+    
     
     
     
     export let open: boolean = false
     export let item: PostView | CommentView
 
-    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'messaging' | 'showVotes' | 'removing' | 'reporting' = 'none'
+    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'messaging' | 'showVotes' | 'removing' | 'reporting' | 'userSubmissions' = 'none'
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
@@ -204,12 +202,14 @@
     function handlePurgeItem(e:PurgeCommentEvent|PurgePostEvent) {
         purged = e.detail.purged
     }
+
 </script>
 
 
 <svelte:window 
     on:purgePost={handlePurgeItem} 
     on:purgeComment={handlePurgeItem}
+    on:clickIntoPost={() => open = false }
 />
 
 <Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth}>
@@ -261,6 +261,34 @@
             {/if}
         </div>
     </div>
+
+
+
+    <!---User Submissions in the Community--->
+    {#if action == 'userSubmissions'}
+        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
+            
+            <!---Section Header--->
+            <div class="flex flex-row gap-4 items-center">
+                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
+                    on:click={(e)=> {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        returnMainMenu() 
+                    }}
+                />
+                <div class="flex flex-row w-full justify-between">
+                    <span class="text-lg">
+                        Posts/Comments
+                    </span>
+                </div>
+            </div>
+            
+            <div class="flex flex-col w-full max-h-[70vh]">
+                <UserSubmissionFeed person_id={item.creator.id} community_id={item.community.id} headingRowClass="mt-[-40px]" />    
+            </div>
+        </div>
+    {/if}
 
     <!---Report the Submission--->
     {#if action == 'reporting'}
@@ -447,9 +475,9 @@
             </span>
             
             {#if modlogCommunityOnly}
-                <EmbeddableModlog moderatee={item.creator} community={item.community} headingRowClass="mt-[-50px]"/>
+                <EmbeddableModlog moderatee={item.creator} community={item.community} headingRowClass="mt-[-30px]"/>
             {:else}
-                <EmbeddableModlog moderatee={item.creator}  headingRowClass="mt-[-50px]"/>
+                <EmbeddableModlog moderatee={item.creator}  headingRowClass="mt-[-30px]"/>
             {/if}
 
         </div>
@@ -517,6 +545,16 @@
                     Creator's Modlog History...
                 </Button>
 
+                <!---View Submissions--->
+                <Button color="tertiary-border" icon={WindowIcon} alignment="left" class="w-full"
+                    on:click={() => {
+                        modalWidth = "max-w-3xl"
+                        action = 'userSubmissions'
+                    }}
+                >
+                    Posts/Comments in Community...
+                </Button>
+
 
                 <!---Vote Viewer--->
                 {#if !purged && isAdmin($profile?.user)}
@@ -540,6 +578,7 @@
                         Report {isCommentView(item) ? 'Comment' : 'Post'}...
                     </Button>
                 {/if}
+                
 
                 <!---Send Message Creator--->
                 <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
