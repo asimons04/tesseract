@@ -576,7 +576,17 @@
                 <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" >
                     <!---Go to Community--->
                     {#if !communityBlocked}
-                    <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                        <!--- Community Details/Info--->
+                        <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full"
+                            on:click={()=> {
+                                modalWidth='max-w-3xl'
+                                action='communityDetails'
+                            }}
+                        >
+                            Community Details...
+                        </Button>
+
+                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
                             on:click={()=> {
                                 goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
                                 open = false
@@ -595,15 +605,7 @@
                         </Button>
                     {/if}
 
-                    <!--- Community Details/Info--->
-                    <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full"
-                        on:click={()=> {
-                            modalWidth='max-w-3xl'
-                            action='communityDetails'
-                        }}
-                    >
-                        Community Details...
-                    </Button>
+                    
                     
 
                     <!---Create Post--->
