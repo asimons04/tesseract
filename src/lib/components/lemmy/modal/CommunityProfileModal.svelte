@@ -36,21 +36,22 @@
     import UserLink from "../user/UserLink.svelte";
     
     import { 
+        ArrowLeft,
         ArrowTopRightOnSquare,
+        Check,
+        Cog6Tooth,
+        Eye,
+        EyeSlash,
+        InformationCircle,
         Newspaper,
         NoSymbol,
         PencilSquare,
-        Trash,
-        InformationCircle,
-        UserGroup,
-        Star,
         Rss,
-        Cog6Tooth,
-        EyeSlash,
-        ArrowLeft,
-        Check,
-        Eye,
         Scale,
+        Star,
+        Trash,
+        UserGroup,
+        Window as WindowIcon
     } from "svelte-hero-icons";
     import CommunityFeed from "./components/CommunityFeed.svelte";
     
@@ -584,7 +585,7 @@
                             Go to Community
                         </Button>    
                     
-                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                        <Button color="tertiary-border" icon={WindowIcon} alignment="left" class="w-full"
                             on:click={()=> {
                                 modalWidth = 'max-w-3xl'
                                 action = 'browsing'
