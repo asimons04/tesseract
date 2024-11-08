@@ -140,7 +140,7 @@
             {/if}
             
             {#if community_view?.community?.description}
-                <CollapseButton icon={InformationCircle} title="Community Details" expanded={false}>
+                <CollapseButton icon={InformationCircle} title="Community Details" expanded={true}>
                     <Markdown source={community_view.community.description} />
                 </CollapseButton>
             {/if}
