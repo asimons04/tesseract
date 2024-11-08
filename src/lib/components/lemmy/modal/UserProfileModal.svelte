@@ -337,7 +337,7 @@
                     
                     <div class="flex flex-row w-full items-center justify-between">
                         <span class="text-lg">
-                            Posts/Comments
+                            History
                         </span>
 
                         <MultiSelect headless
@@ -419,7 +419,7 @@
                                 action = 'submissions'
                             }}
                         >
-                            View Posts/Comments...
+                            View History...
                         </Button>
             
 
