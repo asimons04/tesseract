@@ -2,23 +2,20 @@
 
     import type { CommentView, Community, PostView } from 'lemmy-js-client'
     import type { 
-        BanUserEvent,
         PurgeCommentEvent,
         PurgePostEvent
     } from '$lib/ui/events'
 
-    import { amMod, isAdmin, removalTemplate } from '../moderation/moderation'
+    import { amMod, isAdmin } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { expoIn } from 'svelte/easing'
-    import { fullCommunityName } from '$lib/util'
     import { getClient } from '$lib/lemmy'
     import { isCommentView } from '$lib/lemmy/item'
-    import { isPostView } from '$lib/components/lemmy/post/helpers'
     import { profile } from '$lib/auth'
     import { shortenCommunityName } from '../community/helpers'
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts'
-    import { userSettings } from '$lib/settings'
+
 
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -29,11 +26,13 @@
     import EmbeddableModlog from './components/EmbeddableModlog.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
+    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import RemoveItemForm from './components/RemoveItemForm.svelte'
     import ReportItemForm from './components/ReportItemForm.svelte'
     import SendDMForm from "./components/SendDMForm.svelte"
     import UserLink from '../user/UserLink.svelte'
-    import VoteViewer from './components/VoteViewer.svelte';
+    import UserSubmissionFeed from './components/UserSubmissionFeed.svelte'
+    import VoteViewer from './components/VoteViewer.svelte'
 
     import { 
         ArrowLeft,
@@ -52,7 +51,8 @@
         Trash,
         Window as WindowIcon
     } from "svelte-hero-icons"
-    import UserSubmissionFeed from './components/UserSubmissionFeed.svelte';
+    
+    
     
     
     
@@ -69,7 +69,7 @@
     let pinning = false
     let pinningInstance = false
     let purged  = false
-    
+    let submissionType: 'all' | 'posts' | 'comments' = 'all'
     let banCommunity: Community | undefined = undefined
     let modlogCommunityOnly = true
 
@@ -277,15 +277,22 @@
                         returnMainMenu() 
                     }}
                 />
-                <div class="flex flex-row w-full justify-between">
+
+                <div class="flex flex-row w-full items-center justify-between">
                     <span class="text-lg">
                         Posts/Comments
                     </span>
+
+                    <MultiSelect headless
+                        options={['all', 'posts', 'comments']}
+                        optionNames={['All', 'Posts', 'Comments']}
+                        bind:selected={submissionType}
+                    />
                 </div>
             </div>
             
             <div class="flex flex-col w-full max-h-[70vh]">
-                <UserSubmissionFeed person_id={item.creator.id} community_id={item.community.id} headingRowClass="mt-[-40px]" />    
+                <UserSubmissionFeed person_id={item.creator.id} community_id={item.community.id} bind:type={submissionType} />    
             </div>
         </div>
     {/if}

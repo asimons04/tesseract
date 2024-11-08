@@ -45,6 +45,7 @@
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
     import UserSubmissionFeed from "./components/UserSubmissionFeed.svelte";
     import Pageination from "$lib/components/ui/Pageination.svelte";
+    import MultiSelect from "$lib/components/input/MultiSelect.svelte";
     
     
     
@@ -56,10 +57,9 @@
     let loading = false
     let personDetails: GetPersonDetailsResponse
     let blocking = false
-    let messaging = false
     let mostRecentItem: string|undefined = undefined
     let userBlocked = false
-    
+    let submissionType: 'all' | 'posts' | 'comments' = 'all'
     let aboutMe = false
     let originalUser = user
     
@@ -334,15 +334,22 @@
                             returnMainMenu() 
                         }}
                     />
-                    <div class="flex flex-row w-full justify-between">
+                    
+                    <div class="flex flex-row w-full items-center justify-between">
                         <span class="text-lg">
                             Posts/Comments
                         </span>
+
+                        <MultiSelect headless
+                            options={['all', 'posts', 'comments']}
+                            optionNames={['All', 'Posts', 'Comments']}
+                            bind:selected={submissionType}
+                        />
                     </div>
                 </div>
                 
                 <div class="flex flex-col w-full max-h-[70vh]">
-                    <UserSubmissionFeed person_id={personDetails.person_view.person.id} headingRowClass="mt-[-30px]" />    
+                    <UserSubmissionFeed person_id={personDetails.person_view.person.id}  bind:type={submissionType} />
                 </div>
             </div>    
         

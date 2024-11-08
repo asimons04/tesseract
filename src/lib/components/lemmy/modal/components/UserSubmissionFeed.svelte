@@ -18,16 +18,23 @@
     
     export let person_id: number
     export let community_id: number | undefined = undefined
-    export let headingRowClass: string = ''
+    export let type: 'all' | 'posts' | 'comments' = 'all'
     
     let page = 1
     let loading = false
     let submissions = [] as (PostView|CommentView)[]
-    let type: 'all' | 'posts' | 'comments' = 'all'
+    
     let scrollContainer: HTMLDivElement
 
     onMount(() => load())
 
+    $: type, onTypeChange()
+    
+    function onTypeChange() {
+        submissions = submissions = []
+        page = 1
+        load()
+    }
     // Fetch the user details by person ID
     async function load():Promise<void> {
         try {
@@ -64,22 +71,6 @@
     }
 
 </script>
-
-<!---Heading row --->
-<div class="flex flex-row items-center gap-2 {headingRowClass}">
-    <span class="ml-auto" />
-    
-    <MultiSelect headless
-        options={['all', 'posts', 'comments']}
-        optionNames={['All', 'Posts', 'Comments']}
-        bind:selected={type}
-        on:select={(e) => {
-            submissions = submissions = []
-            page = 1
-            load()
-        }}
-    />
-</div>
 
 <div bind:this={scrollContainer} class="flex flex-col w-full mt-2 gap-4 overflow-x-hidden overflow-y-scroll" >
     {#if loading}
