@@ -55,6 +55,7 @@
 
 {#if href}
     <a
+        on:click
         {href}
         target="{newtab ? '_blank' : undefined}"
         {...$$restProps}
