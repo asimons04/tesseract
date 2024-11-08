@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { CommunityView } from "lemmy-js-client"
+    import type { HideCommunityEvent, RemoveCommunityEvent } from "$lib/ui/events"
 
     import { communityProfileModal } from '../moderation/moderation'
     import { createEventDispatcher } from "svelte"
@@ -19,7 +20,10 @@
         PencilSquare,
         UserGroup,
         EyeSlash,
+        NoSymbol,
+        Trash,
     } from 'svelte-hero-icons'
+    
     
     
 
@@ -28,7 +32,19 @@
    
     let avatarWidth = 96
     const dispatcher = createEventDispatcher()
+
+    function handleHideCommunity(e:HideCommunityEvent) {
+        if (community_view.community.id == e.detail.community_id) community_view.community.hidden = e.detail.hidden
+    }
+
+    function handleRemoveCommunity(e:RemoveCommunityEvent) {
+        if (community_view.community.id == e.detail.community_id) community_view.community.removed = e.detail.removed
+    }
+
 </script>
+
+
+<svelte:window on:hideCommunity={handleHideCommunity} on:removeCommunity={handleRemoveCommunity} />
 
 <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view.community.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''} 
     class="p-0 !items-start"
@@ -70,6 +86,24 @@
                 {#if community_view.blocked}
                     <Badge color="red" icon={EyeSlash} inline click={false} rightJustify={false}>
                         Blocked
+                    </Badge>
+                {/if}
+
+                {#if community_view.banned_from_community}
+                    <Badge color="red" icon={NoSymbol} inline click={false} rightJustify={false}>
+                        Banned
+                    </Badge>
+                {/if}
+
+                {#if community_view.community.hidden}
+                    <Badge color="red" icon={EyeSlash} inline click={false} rightJustify={false}>
+                        Hidden
+                    </Badge>
+                {/if}
+
+                {#if community_view.community.removed}
+                    <Badge color="red" icon={Trash} inline click={false} rightJustify={false}>
+                        Removed
                     </Badge>
                 {/if}
             </span>
