@@ -8,7 +8,7 @@
     import CommentMeta from '$lib/components/lemmy/comment/CommentMeta.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     
-    
+    import { dispatchWindowEvent } from '$lib/ui/events';
     import { fade } from 'svelte/transition'
     import { getPostTitleWithoutFlairs } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
@@ -24,6 +24,7 @@
         Trash
     } from 'svelte-hero-icons'
     
+    
 
     export let comment: CommentView
     export let actions:boolean = true
@@ -37,7 +38,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div id={elementID.toString()} on:mouseover={() => lastSeenPost.set(elementID)} on:touchstart={() => lastSeenPost.set(elementID)}  bind:this={commentContainer} transition:fade>
-    <Card class="flex flex-col rounded-md p-3 flex-1 gap-1">
+    <Card class="flex flex-col p-2 flex-1 gap-1">
         
         <div class="flex flex-row justify-between gap-1 items-center">
             <CommentMeta bind:comment noClick={!actions}/>
@@ -48,6 +49,7 @@
                 size="sm"
                 class="self-start"
                 title="Jump to Comment"
+                on:click={() => dispatchWindowEvent('clickIntoPost') }
             >
                 <Icon src={ArrowTopRightOnSquare} width={16}/>
             </Button>
@@ -67,6 +69,7 @@
                             e.preventDefault()
                             e.stopPropagation()
                             goto(`/post/${getInstance()}/${comment.post.id}`)
+                            dispatchWindowEvent('clickIntoPost')
                         }
                     }} 
                 class="text-sm font-bold text-left"

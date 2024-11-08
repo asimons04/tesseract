@@ -2,6 +2,7 @@
     import type { PostView } from 'lemmy-js-client'
     import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
 
+    import { dispatchWindowEvent } from '$lib/ui/events';
     import { getInstance } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
     
@@ -9,9 +10,9 @@
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     
     import {
-        Icon,
         ChatBubbleOvalLeftEllipsis
     } from 'svelte-hero-icons'
+    
 
     export let displayType:PostDisplayType
     export let post:PostView
@@ -28,6 +29,7 @@
     color="tertiary-border"
     icon={ChatBubbleOvalLeftEllipsis}
     iconSize={22}
+    on:click={() => dispatchWindowEvent('clickIntoPost') }
 >
     <FormattedNumber number={post.counts.comments} />
 </Button>

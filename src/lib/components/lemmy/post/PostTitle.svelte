@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { CommentReplyView, PersonMentionView, PostView } from 'lemmy-js-client'
+    
+    import { dispatchWindowEvent } from '$lib/ui/events.js'
     import { 
         extractFlairsFromTitle,
         fixLemmyEncodings, 
@@ -16,6 +18,7 @@
 
     export let post:PostView | CommentReplyView | PersonMentionView
     export let flairs: boolean = true
+    
     // Extract any [flairs] from the post title and update the title to remove them.
     let postName: string = post.post.name
     let postFlairs:string[] = []
@@ -42,6 +45,7 @@
                 e.preventDefault()
                 e.stopPropagation()
                 goto(`/post/${getInstance()}/${post.post.id}`) 
+                dispatchWindowEvent('clickIntoPost')
             }
         }
     }
@@ -61,6 +65,7 @@
                         e.preventDefault()
                         e.stopPropagation()
                         goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
+                        dispatchWindowEvent('clickIntoPost')
                     }}
                 >
                     {flair}
