@@ -61,12 +61,11 @@
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
     let postType = getPostType(post)
-
+    let subscribed = false
+    
     $: post
-    //$: inCommunity      = ($page.url.pathname.startsWith("/c/") && !$page.url.pathname.includes('create_post')) 
-    //$: inProfile        = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
-    $: userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
-    $: subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
+    $: post, userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
+    $: post, subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
     $: onHomeInstance   = ($page.params.instance ?? $instance)  == $instance
 </script>
 
