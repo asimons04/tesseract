@@ -44,6 +44,23 @@ removeAdmin {username}
 
 ```
 
+
+## 1.4.21
+### Bugfixes
+- Added missing padding on placeholder initials if there is no site logo
+
+### New Features
+
+#### Preview Community and User Feeds in Modals
+You can now view a user's or a community's feeds in their respective modals when clicking a user or community link.
+
+The preview has also been added to the moderation modal.  However, in the moderation modal, it limits the feed to just the user and community relevant to the item that initiated the mod modal.  e.g.  if you click the mod button for a post/comment in the FoodPorn community by user  Bob, the only submissions that will be shown are Bob's submissions to FoodPorn.  This should help with taking mod actions as you can check for patterns of rule-violating behavior without having to leave the mod tool.
+
+Another use case is previewing new communities when you click on a pill-button link.  e.g.  if someone comments about a cool community and uses the `!community@instance.xyz` format (as they should), you can click on it which will resolve it automatically.  From there, you can click "Browse Community..." to see what kinds of posts it has before commiting to subscribing (okay, that's a very tiny commitment, lol, but you get my point).
+
+
+---
+
 ## 1.4.20
 
 ### Bugfixes: Minor
