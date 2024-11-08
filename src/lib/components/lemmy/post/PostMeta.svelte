@@ -6,7 +6,6 @@
     
     import { amMod, isAdmin, postModerationModal } from '$lib/components/lemmy/moderation/moderation'
     import { instance } from '$lib/instance.js'
-    import { dispatchWindowEvent } from '$lib/ui/events.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { postType as getPostType, isImage, isVideo, scrollToTop } from './helpers.js'
