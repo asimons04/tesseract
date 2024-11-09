@@ -28,11 +28,15 @@ const LINK_SHORTENERS = [
     'archive.ph',
     'bit.ly',
     'bl.ink',
+    'g.co',
     'ghostarchive.org',
     'goo.gl',
+    'm.me',
     'ow.ly',
     'rb.gy',
+    'search.app',
     'short.cm',
+    't.co',
     'tinyurl.com',
     'web.archive.org',
     'zpr.io',
@@ -41,7 +45,8 @@ const LINK_SHORTENERS = [
 
 const FACEBOOK = [
     'facebook.com',
-    'www.facebook.com'
+    'www.facebook.com',
+    'm.me'
 ]
 
 const REDDIT = [
@@ -53,6 +58,7 @@ const REDDIT = [
 
 const TWITTER = [
     'x.com',
+    't.co',
     'twitter.com',
     'www.twitter.com',
     'www.x.com',
