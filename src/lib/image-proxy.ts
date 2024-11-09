@@ -21,10 +21,10 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
         
         // Only add the thumbnail and format parameters to pictrs URLs (to avoid caching multiple version of a GIF from Giphy, etc where those aren't respected)
         try {
-            if (image_url.includes('/pictrs/image')) {
+            if (image_url.includes('/pictrs/image') && !(image_url.includes('.gif')) ) {
                 const u = new URL(image_url)
                 if (size)   u.searchParams.set('thumbnail', size.toString())
-                if (format) u.searchParams.set('format', format)
+                if (format && !image_url.endsWith(format)) u.searchParams.set('format', format)
                 return u.href
             }
             else return image_url
@@ -66,6 +66,8 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
 
     // Build the image proxy URL to return
     try {
+        url = applySizeFormat(url, size, format)
+
         let image = new URL(url);
         
         let host = image.host;
@@ -76,16 +78,6 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
             params.append('fallback', 'true');
         }
 
-        // Only add the thumbnail and format parameters to pictrs URLs (to avoid caching multiple version of a GIF from Giphy, etc where those aren't respected)
-        if (url.includes('/pictrs/image')) {
-            if (size) {
-                params.set('thumbnail', size.toString());
-            }
-
-            if (format) {
-                params.set('format', format)
-            }
-        }
 
         return `${origin}/image_proxy/${host}${path}?${params}`
     }
