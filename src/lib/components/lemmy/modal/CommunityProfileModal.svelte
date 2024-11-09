@@ -574,8 +574,19 @@
 
                 <!--- Action Buttons for this Community--->
                 <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" >
-                    <!---Go to Community--->
+                    
                     {#if !communityBlocked}
+
+                        <!---Go to Community--->
+                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                            on:click={()=> {
+                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
+                                open = false
+                            }}
+                        >
+                            Go to Community
+                        </Button> 
+
                         <!--- Community Details/Info--->
                         <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full"
                             on:click={()=> {
@@ -586,15 +597,8 @@
                             Community Details...
                         </Button>
 
-                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
-                            on:click={()=> {
-                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
-                                open = false
-                            }}
-                        >
-                            Go to Community
-                        </Button>    
-                    
+                           
+                        <!---Browse Community's Posts in the  Modal--->
                         <Button color="tertiary-border" icon={WindowIcon} alignment="left" class="w-full"
                             on:click={()=> {
                                 modalWidth = 'max-w-3xl'
@@ -604,8 +608,6 @@
                             Browse Community...
                         </Button>
                     {/if}
-
-                    
                     
 
                     <!---Create Post--->
