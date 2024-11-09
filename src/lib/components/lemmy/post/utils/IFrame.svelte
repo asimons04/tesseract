@@ -20,11 +20,11 @@
     }
 </style>
 
-<div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full p-1">
+<div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full">
     <div class="ml-auto mr-auto max-w-full">
         <div class="flexiframe-container rounded-2xl max-w-screen max-h-[480px] mx-auto">
             <iframe 
-                class="flexiframe"
+                class="flexiframe p-1 rounded-2xl"
                 src="{embedURL.href}" 
                 allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                 loading="lazy"
