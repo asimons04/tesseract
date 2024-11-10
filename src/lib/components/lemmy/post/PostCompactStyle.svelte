@@ -4,7 +4,7 @@
     
     
     import { imageProxyURL } from '$lib/image-proxy'
-    import {isImage, isVideo } from './helpers.js'
+    import {isAudio, isImage, isVideo } from './helpers.js'
     import { scrollToTop } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
@@ -52,7 +52,7 @@
             
             <div class="flex flex-row w-full gap-2">
                 
-                <div class="flex flex-col gap-1 {!$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url))? 'w-[calc(100%-128px)]' : 'w-full'}">
+                <div class="flex flex-col gap-1 {!$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) || isAudio(post.post.url)) ? 'w-[calc(100%-132px)]' : 'w-full'}">
                     <PostTitle bind:post />
 
                     {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
