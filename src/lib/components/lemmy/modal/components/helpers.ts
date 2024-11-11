@@ -7,6 +7,9 @@ export interface FeedController {
     refresh: (clearSnapshot?: boolean) => void,
     scrollBottom: () => void,
     scrollTop: () => void,
+    clearSnapshot: () => void,
+    takeSnapshot: () => void,
+    loadSnapshot: () => boolean,
     community_id?: number
     community_name?: string
     data: any
@@ -14,5 +17,6 @@ export interface FeedController {
     liked_only?: boolean,
     saved_only?: boolean,
     sort: SortType
+    storageKey: string,
     type: ListingType
 }

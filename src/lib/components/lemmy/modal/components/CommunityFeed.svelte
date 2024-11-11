@@ -9,6 +9,7 @@
     import { dispatchWindowEvent, type ClickIntoPostEvent } from "$lib/ui/events"
     import { getClient } from "$lib/lemmy"
     import {  goto } from '$app/navigation';
+    import { instance } from '$lib/instance'
     import { onDestroy, onMount } from "svelte"
     import { page as pageStore } from '$app/stores'
     import { userSettings } from "$lib/settings";
@@ -19,7 +20,7 @@
     import Pageination from "$lib/components/ui/Pageination.svelte";
     import Spinner from "$lib/components/ui/loader/Spinner.svelte";
     
-    import { ArchiveBox } from "svelte-hero-icons";
+    import { ArchiveBox, ChatBubbleLeftEllipsis } from "svelte-hero-icons";
     
     
     export let community_id: number | undefined     = undefined
@@ -31,6 +32,8 @@
     export let sort: SortType                       = 'New'
     export let actions: boolean                     = false
     
+    $:  debugMode = $userSettings.debugInfo
+
     let posts = {
         next_page: undefined,
         posts: [] as PostView[]
@@ -50,16 +53,16 @@
 
     // Keep an array where the index is the page number and the element is the page cursor. Position 0 is a placeholder, 1 is undefined intentionally
     let page_cursors =  [undefined, undefined] as (string|undefined)[]
-    let storageKey = updateStorageKey()
-
+    
     // Controller that can be expored and used outside the component. Includes getters/setters for parameters.
     export const controller = {
+                
         load: async function(initial?:boolean): Promise<void> {
             try {
-                console.log("Initial: ", initial)
+                if (debugMode) console.log("Initial load requested: ", initial ?? false)
 
                 if (loading || scrollState.loading) {
-                    console.log("already loading; returning")
+                    if (debugMode) console.log("Loader is already loading; returning")
                     return
                 }
 
@@ -67,37 +70,20 @@
                     ? scrollState.loading = true
                     : loading = true
 
-                let pageSnapshot = compressedStorage.retrieve(storageKey)
+                // Give the loader time to start animating
+                await sleep(50)
 
-                if (pageSnapshot) {
+                // If this is an initial load and there is snapshot data, return early and don't fetch anything from the API yet.
+                if ( this.loadSnapshot() && initial) {
+                    if (debugMode) console.log("Initial load from snapshot. Not loading from API until requested")
 
-                    if ('posts' in pageSnapshot)             posts = pageSnapshot.posts
-                    if ('page' in pageSnapshot)              page = pageSnapshot.page
-                    if ('last_clicked_post' in pageSnapshot) last_clicked_post = pageSnapshot.last_clicked_post
-                    if ('page_cursors' in pageSnapshot)      page_cursors = pageSnapshot.page_cursors
-                    if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
-                    if ('type' in pageSnapshot)              type = pageSnapshot.type
-                    if ('liked_only' in pageSnapshot)        liked_only = pageSnapshot.liked_only
-                    if ('disliked_only' in pageSnapshot)     disliked_only = pageSnapshot.disliked_only
-                    if ('saved_only' in pageSnapshot)        saved_only = pageSnapshot.saved_only
-                    if ('community_id' in pageSnapshot)      community_id = pageSnapshot.community_id
-                    if ('community_name' in pageSnapshot)    community_name = pageSnapshot.community_name
-
-                    console.log("Snapshot loaded")
-                    
-                    
-                    if (initial) {
-                        $userSettings.uiState.infiniteScroll
-                            ? scrollState.loading = false
-                            : loading = false
-                        return
-                    }
-                    
+                    $userSettings.uiState.infiniteScroll
+                        ? scrollState.loading = false
+                        : loading = false
+                    return
                 }
-                
 
-                console.log("Running fetch")
-
+                if (debugMode) console.log("Running post fetch against the API.")
 
                 const batch = await getClient().getPosts({
                     limit: $userSettings?.uiState?.postsPerPage ?? 20,
@@ -140,15 +126,16 @@
                 posts = posts
                 
                 // Store the data after each fetch?
-                compressedStorage.store(storageKey, this.data)
+                //compressedStorage.store(this.storageKey, this.data)
+                this.takeSnapshot()
             }
             catch (err){
-                console.log(err);
+                if (debugMode) console.log(err);
             }
         },
         
         reset: function(clearSnapshot?: boolean) {
-            if (clearSnapshot) compressedStorage.remove(storageKey)
+            if (clearSnapshot) this.clearSnapshot()
             page = 1
             loading = false
             last_clicked_post = -1
@@ -176,6 +163,47 @@
 
         scrollTop: function() {
             scrollContainer.scrollTo(0,0)
+        },
+
+        takeSnapshot: function() {
+            compressedStorage.store(this.storageKey, this.data)
+        },
+
+        clearSnapshot: function() {
+            compressedStorage.remove(this.storageKey)
+        },
+
+        loadSnapshot: function() {
+            const pageSnapshot = compressedStorage.retrieve(this.storageKey)
+
+            if (pageSnapshot) {
+
+                if ('posts' in pageSnapshot)             posts = pageSnapshot.posts
+                if ('page' in pageSnapshot)              page = pageSnapshot.page
+                if ('last_clicked_post' in pageSnapshot) last_clicked_post = pageSnapshot.last_clicked_post
+                if ('page_cursors' in pageSnapshot)      page_cursors = pageSnapshot.page_cursors
+                if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
+                if ('type' in pageSnapshot)              type = pageSnapshot.type
+                if ('liked_only' in pageSnapshot)        liked_only = pageSnapshot.liked_only
+                if ('disliked_only' in pageSnapshot)     disliked_only = pageSnapshot.disliked_only
+                if ('saved_only' in pageSnapshot)        saved_only = pageSnapshot.saved_only
+                if ('community_id' in pageSnapshot)      community_id = pageSnapshot.community_id
+                if ('community_name' in pageSnapshot)    community_name = pageSnapshot.community_name
+
+                if (debugMode) console.log("Snapshot loaded: ", this.storageKey)
+                return true
+            }
+            return false
+        },
+
+        
+
+        // Getter to get the storage key based on the params
+        get storageKey() {
+           return `snapshot_data_${$instance}_` + btoa(JSON.stringify({
+                community_id,
+                community_name,
+            }))
         },
 
         // Getter for the component's operational data and state
@@ -281,64 +309,59 @@
 
 
  
-
+    // React if the community changes
+    $: $pageStore.params.name, community_name, changeCommunity($pageStore.params.name)
+    $: $pageStore.url.searchParams, parseURLParams()
     
 
-
+    // React to community changing in the URL route (/c/community -> /c/community2)
     function changeCommunity(name:string) {
-        if (controller.community_name != name) {
-            
-            // If changing communities, store a snapshot of the current community's data
-            compressedStorage.store(storageKey, controller.data)
+        // Don't do anything if the current community name is the same as the old one.
+        if (controller.community_name == name) return
 
-            console.log("Responding to community change")
-            controller.community_name = name
-            storageKey = updateStorageKey()
-            controller.refresh()
-        }
+        // If changing communities, store a snapshot of the current community's data
+        controller.takeSnapshot()
 
+        if (debugMode) console.log("Responding to community change")
+        controller.community_name = name
+        controller.storageKey = controller.storageKey
+        controller.refresh()
     }
-
-    function updateStorageKey() {
-        return 'snapshot_data_' + btoa(JSON.stringify({
-            community_id,
-            community_name,
-        }))
-    }
-    
-
-    
 
     // React to URL params
-    if ($pageStore.url.searchParams.has('sort'))    controller.sort = $pageStore.url.searchParams.get('sort') as SortType
-    if ($pageStore.url.searchParams.has('type'))    controller.type = $pageStore.url.searchParams.get('type') as ListingType
+    function parseURLParams() {
+        if (debugMode) console.log("URL params changed: parsing and applying")
+
+        if ($pageStore.url.searchParams.has('sort'))    controller.sort = $pageStore.url.searchParams.get('sort') as SortType
+        if ($pageStore.url.searchParams.has('type'))    controller.type = $pageStore.url.searchParams.get('type') as ListingType
+        
+        if ($pageStore.url.searchParams.has('disliked_only')) {
+            controller.disliked_only = true
+            controller.liked_only = undefined
+        }
+
+        if ($pageStore.url.searchParams.has('liked_only')) {
+            controller.disliked_only = undefined
+            controller.liked_only = true
+        }
+    }
+
     
-    if ($pageStore.url.searchParams.has('disliked_only')) {
-        controller.disliked_only = true
-        controller.liked_only = undefined
-    }
-
-    if ($pageStore.url.searchParams.has('liked_only')) {
-        controller.disliked_only = undefined
-        controller.liked_only = true
-    }
-
-    $: $pageStore.params.name, changeCommunity($pageStore.params.name)
 
     // When clicking into a post, an event is dispatched.  Store the post ID in the data that's put into the snapshot
     function handleClickIntoPost(e:ClickIntoPostEvent) {
         last_clicked_post = e.detail.post_id
-        //compressedStorage.store(storageKey, controller.data)
     }
 
 
     onMount(async () => {
+        if (debugMode) console.log("Mounting component and calling loader with initial flag set.")
         await controller.load(true) 
     })
 
     onDestroy(() => {
-        console.log("Component destroyed; saving data")
-        compressedStorage.store(storageKey, controller.data)
+        if (debugMode) console.log("Component destroyed; saving data")
+        controller.takeSnapshot()
     })
 
 </script>
@@ -376,7 +399,7 @@
                 on:loadMore={ () => {
                     // Hack to override the auto loading state
                     scrollState.loading = false
-                    console.log("got loadMore")
+                    if (debugMode) console.log("Received loadMore event from infinite scroll component")
                     controller.load()
                 }}
             />
@@ -384,8 +407,8 @@
     {:else}
         <Pageination bind:page class="px-4" on:change={async (e) => {
             page = e.detail
-            //snapshot.store(storageKey, controller.data)
-            compressedStorage.remove(storageKey)
+            
+            controller.clearSnapshot()
             await controller.load(true)
             scrollContainer.scrollTo(0,0)
         }}/>
