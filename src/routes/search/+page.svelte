@@ -173,11 +173,19 @@
         searchURL = new URL(origin)
         searchURL.pathname = path
 
+        if (filter.query?.startsWith('!')) {
+            filter.type = 'Communities'
+        }
+
+        if (filter.query?.startsWith('@')) {
+            filter.type = 'Users'
+        }
+
         if (filter.person)      searchURL.searchParams.set('person_id', filter.person.id.toString())
         if (filter.community)   searchURL.searchParams.set('community_id', filter.community.id.toString())
         if (filter.sort)        searchURL.searchParams.set('sort', filter.sort)
         
-        if (filter.type) searchURL.searchParams.set('type', filter.type)
+        if (filter.type)        searchURL.searchParams.set('type', filter.type)
 
         if (filter.page)        searchURL.searchParams.set('page', filter.page.toString())
         if (filter.query)       searchURL.searchParams.set('q', filter.query)
@@ -245,6 +253,8 @@
         if (data.filters?.community?.community_view) filter.community = data.filters.community.community_view.community
         if (data.filters?.person?.person_view) filter.person = data.filters.person.person_view.person
         if (data.query) filter.query = data.query
+        if (data.type) filter.type = data.type
+
     })
 
 
@@ -467,7 +477,7 @@
     <!---Show federated resolve if any--->
     
     {#if data?.streamed?.object}
-    <FeedContainer>
+    <FeedContainer class="!h-auto">
         {#await data.streamed.object}
             <div class="flex flex-col gap-2 items-center mx-auto mt-4" out:slide={{ axis: 'y', easing: expoOut }} >
                 <Spinner width={48} />

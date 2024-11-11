@@ -15,7 +15,7 @@
     type T = $$Generic
 
     export let options: T[] = []
-    export let optionNames: string[] = []
+    export let optionNames: T[] = []
     export let selected: T
     export let label: string | undefined = undefined
     export let alignment: Alignment = 'bottom-left'

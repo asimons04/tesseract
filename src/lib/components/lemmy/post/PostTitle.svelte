@@ -45,7 +45,7 @@
                 e.preventDefault()
                 e.stopPropagation()
                 goto(`/post/${getInstance()}/${post.post.id}`) 
-                dispatchWindowEvent('clickIntoPost')
+                dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
             }
         }
     }
@@ -65,7 +65,7 @@
                         e.preventDefault()
                         e.stopPropagation()
                         goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
-                        dispatchWindowEvent('clickIntoPost')
+                        //dispatchWindowEvent('clickIntoPost')
                     }}
                 >
                     {flair}

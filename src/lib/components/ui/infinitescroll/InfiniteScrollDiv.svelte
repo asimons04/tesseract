@@ -14,6 +14,7 @@
     export let threshold: number = 500              // Number of pixels from the bottom before dispatching the load more event
     export let element: HTMLDivElement | HTMLMenuElement
     export let exhaustedMessage: string = 'No More Results to Load'
+    export let disabled: boolean = false
     export let state:InfiniteScrollStateVars = {
         loading: false,
         exhausted: false,
@@ -27,6 +28,7 @@
     function onScroll(e:any) {
         const offset = element.scrollHeight - (element.clientHeight + element.scrollTop)
         if (offset <= threshold && !state.loading && !state.exhausted) {
+            if (disabled) return
             state.loading = true
             dispatcher('loadMore')
         }

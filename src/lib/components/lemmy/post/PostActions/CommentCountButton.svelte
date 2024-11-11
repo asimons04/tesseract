@@ -12,6 +12,7 @@
     import {
         ChatBubbleOvalLeftEllipsis
     } from 'svelte-hero-icons'
+    import { goto } from '$app/navigation';
     
 
     export let displayType:PostDisplayType
@@ -29,7 +30,12 @@
     color="tertiary-border"
     icon={ChatBubbleOvalLeftEllipsis}
     iconSize={22}
-    on:click={() => dispatchWindowEvent('clickIntoPost') }
+    on:click={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        dispatchWindowEvent('clickIntoPost', {post_id: post.post.id}) 
+        goto(`/post/${getInstance()}/${post.post.id}`)
+    }}
 >
     <FormattedNumber number={post.counts.comments} />
 </Button>

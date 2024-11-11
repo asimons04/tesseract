@@ -1,4 +1,4 @@
-import { type GetSiteResponse, LemmyHttp } from 'lemmy-js-client'
+import { type GetSiteResponse, LemmyHttp, type SortType } from 'lemmy-js-client'
 import { error } from '@sveltejs/kit'
 import { get, writable } from 'svelte/store'
 import { profile, profileData } from '$lib/auth.js'
@@ -109,7 +109,7 @@ export async function hideCommunity(communityID:number, hidden:boolean, reason:s
 
 
 
-export let sortOptions:string[] = [
+export let sortOptions:SortType[] = [
     'Active',
     'Scaled',
     'Hot',

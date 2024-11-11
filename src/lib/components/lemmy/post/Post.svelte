@@ -1,21 +1,23 @@
 <script lang="ts">
-    import type { 
-        BanCommunityEvent, 
-        BanUserEvent, 
-        BlockCommunityEvent, 
-        BlockInstanceEvent, 
-        BlockUserEvent, 
-        FeaturePostEvent,
-        HideCommunityEvent,
-        LockPostEvent,
-        PurgePostEvent, 
-        RemoveCommunityEvent, 
-        RemovePostEvent, 
-        SubscribeEvent 
+    import { 
+    dispatchWindowEvent,
+        type BanCommunityEvent, 
+        type BanUserEvent, 
+        type BlockCommunityEvent, 
+        type BlockInstanceEvent, 
+        type BlockUserEvent, 
+        type FeaturePostEvent,
+        type HideCommunityEvent,
+        type LockPostEvent,
+        type PurgePostEvent, 
+        type RemoveCommunityEvent, 
+        type RemovePostEvent, 
+        type ScrollPostIntoViewEvent, 
+        type SubscribeEvent 
     } from '$lib/ui/events'
 
     import type { PostView } from 'lemmy-js-client'
-    import { type PostType, type PostDisplayType, postType as getPostType } from './helpers.js'
+    import { type PostType, type PostDisplayType, postType as getPostType, sleep } from './helpers.js'
 
     import { fade } from 'svelte/transition'
     import { getClient, site } from '$lib/lemmy'
@@ -26,6 +28,7 @@
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
+    import { onMount } from 'svelte';
 
     export let post: PostView | undefined
     export let actions: boolean = true
@@ -36,6 +39,7 @@
     export let collapseBadges:boolean = false;
     export let expandCompact: boolean = computeExpandCompact()
 
+    export let scrollTo:number = -1
     export let inCommunity: boolean = false
     export let inProfile: boolean = false
 
@@ -184,6 +188,21 @@
         expandCompact = computeExpandCompact()
     }
 
+
+    async function scrollIntoView() {
+        if (scrollTo == post?.post.id) {
+            console.log("Scrolling post into view via param")
+            await sleep(150)
+            postContainer.scrollIntoView({
+                behavior: 'instant',
+                block: 'center'
+
+            })
+        }
+    }
+
+    onMount(async () => await scrollIntoView() )
+
     /** Determines whether a compact post should be shown expanded to a card if "hybrid" view set. Returns 'true' if post should render as card, 'false' if compact */
     function computeExpandCompact() {
         // If view is not set to 'hybrid' return based on 'show compact posts' value
@@ -215,7 +234,6 @@
     on:removeCommunity={handleRemoveCommunity}
     on:removePost={handleRemovePost}
     on:purgePost={handlePurgePost}
-
 />
 
 <PostIsInViewport bind:postContainer bind:inViewport threshold={.6}/>
@@ -227,18 +245,23 @@
         id={post.post.id.toString()} 
         
         on:mouseover={() => { 
-            if (post) lastSeenPost.set(post.post.id)
+            if (post) {
+                lastSeenPost.set(post.post.id)
+                dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
+            }
         }} 
         
         on:touchstart={() => {
-            if (post) lastSeenPost.set(post.post.id) 
-        }} 
+            if (post) {
+                lastSeenPost.set(post.post.id) 
+                dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
+            }
+        }}
         bind:this={postContainer}
         transition:fade
     >
 
         <!--- Compact Posts --->
-        <!--{#if  (forceCompact || ($userSettings.showCompactPosts && !expandCompact )) }-->
         {#if  (forceCompact || !expandCompact) }
             <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
                 bind:post 

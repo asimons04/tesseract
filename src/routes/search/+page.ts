@@ -31,9 +31,21 @@ export async function load({ url }: LoadParams) {
 
     const page      = Number(url.searchParams.get('page')) || 1
     const sort      = url.searchParams.get('sort') ?? 'New'
-    const type      = url.searchParams.get('type') ?? 'All'
+    
     const limit     = Number(url.searchParams.get('limit')) || 50;
-    const query     = url.searchParams.get('q') ?? ((community || person) ? ' ' : undefined)
+    let query     = url.searchParams.get('q') ?? ((community || person) ? ' ' : undefined)
+    let type      = url.searchParams.get('type') ?? 'All'
+    let originalQuery = query
+
+    if (query?.startsWith('@')) {
+        type = 'Users'
+        query = query.substring(1)
+    }
+
+    if (query?.startsWith('!')) {
+        type = 'Communities'
+        query = query.substring(1)
+    }
 
     const filters: Filters = {
         community: undefined,
@@ -55,7 +67,7 @@ export async function load({ url }: LoadParams) {
     }
 
 
-    if (query) {
+    if (query && originalQuery) {
         const results = await getClient().search({
             q: query ?? ' ',
             community_id: community ?? undefined,
@@ -107,9 +119,9 @@ export async function load({ url }: LoadParams) {
             results: everything,
             limit: limit,
             streamed: {
-                object: ( get(profile)?.jwt && (query.startsWith('!') || query.startsWith('@') || query.startsWith('https://') ))
+                object: ( get(profile)?.jwt && (originalQuery?.startsWith('!') || originalQuery?.startsWith('@') || originalQuery?.startsWith('https://')) )
                 ? getClient().resolveObject({
-                    q: query,
+                    q: originalQuery,
                 })
                 : undefined,
             },

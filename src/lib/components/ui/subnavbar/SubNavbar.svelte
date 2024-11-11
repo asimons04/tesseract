@@ -49,7 +49,11 @@
     export let home:boolean = false             // Return to home
     export let back:boolean = false             // Back (literally emulates browser back button)
     export let backPreventDefault:boolean = false   // Prevent the default behavior for "back" button.
+    
+    
     export let scrollButtons:boolean = false    // Scroll to top/bottom buttons
+    export let scrollPreventDefault: boolean = false    // Send an event instead of taking an action
+    
     export let pageUpDownButtons:boolean = false // Page up/down
     export let compactSwitch:boolean = false    // Switch between compact and card posts
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
@@ -70,9 +74,9 @@
 
     // Sort menu
     export let sortMenu:boolean                 = false
-    export let sortOptions:string[]             =  defaultSortOptions
+    export let sortOptions:SortType[]           =  defaultSortOptions
     export let sortOptionNames:string[]         =  defaultSortOptionNames
-    export let selectedSortOption:string        = ''
+    export let selectedSortOption:SortType      = 'New'
     export let sortPreventDefault:boolean       = false
 
     // Page Selection
@@ -86,10 +90,12 @@
 
     const dispatcher = createEventDispatcher
         <{ 
-            navChangeSort?: string,
+            navChangeSort?: SortType,
             navBack?: null,
             navRefresh?: null,
-            navPageSelect?: number
+            navPageSelect?: number,
+            navScrollBottom?: null,
+            navScrollTop?: null
         }>()
 </script>
 
@@ -155,8 +161,8 @@
                     icon={BarsArrowDown}
                     iconSize={18}
                     on:select={(e) => {
-                        // @ts-ignore
                         if (!sortPreventDefault) searchParam($page.url, 'sort', e.detail, 'page')
+                        // @ts-ignore
                         dispatcher('navChangeSort', e.detail)
                     }}
                 />
@@ -264,7 +270,6 @@
             <!--Page Down-->
             <button class="mr-2 cursor-pointer" title="Page Down"
                 on:click={() => {
-                    
                     window.scrollBy(0, (window.visualViewport?.height ?? 628) - 128)
                 }}
             >
@@ -288,7 +293,12 @@
         {#if scrollButtons}
             <Button title="Scroll to Bottom" size="sm" color="tertiary"
                 on:click={() => {
-                    window.scrollTo(0,document.body.scrollHeight);
+                    if (scrollPreventDefault) {
+                        dispatcher('navScrollBottom')
+                    }
+                    else {
+                        window.scrollTo(0,document.body.scrollHeight);
+                    }
                 }}
             >
                 <Icon src={ChevronDoubleDown} width={iconSize} />
@@ -298,7 +308,12 @@
             <!--Jump to Top-->
             <Button title="Scroll to Top" size="sm" color="tertiary"
                 on:click={() => {
-                    window.scrollTo(0,0);
+                    if (scrollPreventDefault) {
+                        dispatcher('navScrollTop')
+                    }
+                    else {
+                        window.scrollTo(0,0);
+                    }
                 }}
             >
                 <Icon src={ChevronDoubleUp} width={iconSize} />

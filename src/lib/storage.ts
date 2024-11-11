@@ -1,6 +1,20 @@
 import { page } from '$app/stores'
 import { get } from 'svelte/store'
 
+import * as pako from 'pako'
+import { Buffer } from 'buffer'
+
+const utils = {
+    bufferTob64: function (u8:Uint8Array) {
+        return Buffer.from(u8).toString('base64')
+    },
+
+    b64ToBuffer: function(b64:string) {
+        return new Uint8Array(Buffer.from(b64, 'base64'))
+    }
+}
+
+
 /** Store data for the current page + params to session storage but one snapshot per key to avoid storage constraints */
 export const PageSnapshot = {
    
@@ -67,8 +81,12 @@ export const storage = {
             try {
                 //const value = localStorage.getItem(key)
                 const value = sessionStorage.getItem(key)
-                if (value) return JSON.parse(value)
-                return undefined
+                if (!value) return undefined
+
+                return JSON.parse(
+                    pako.inflate(utils.b64ToBuffer(value), {to: 'string'})
+                )
+                
             }
             catch (err) {
                 console.warn(err)
@@ -79,7 +97,10 @@ export const storage = {
         set: function (key: string, value: any): boolean {
             try {
                 //localStorage.setItem(key, JSON.stringify(value))
-                sessionStorage.setItem(key, JSON.stringify(value))
+                const compressed = utils.bufferTob64(
+                    pako.deflate(JSON.stringify(value), {level: 9})
+                )
+                sessionStorage.setItem(key, compressed)
                 return true
             }
             catch (err) {
@@ -126,5 +147,56 @@ export const storage = {
                 return false
             }
         }
+    }
+}
+
+
+// Compressed Session Storage
+export const compressedStorage = {
+    bufferTob64: function (u8:Uint8Array): string {
+        return Buffer.from(u8).toString('base64')
+    },
+
+    b64ToBuffer: function(b64:string): Uint8Array {
+        return new Uint8Array(Buffer.from(b64, 'base64'))
+    },
+
+    compressObject: function(obj: any):string|undefined {
+        try {
+            return this.bufferTob64(
+                pako.deflate(
+                    JSON.stringify(obj), {level: 9}
+                )
+            )
+        }
+        catch { return undefined }
+    },
+
+    decompressObject: function(compressed:string): string|undefined {
+        try {
+            return JSON.parse(
+                pako.inflate(this.b64ToBuffer(compressed), {to: 'string'})
+            )
+        }
+        catch { return undefined }
+    },
+
+    remove: function(key:string): void {
+        sessionStorage.removeItem(key)
+    },
+
+    retrieve: function(key:string): any {
+        const value = sessionStorage.getItem(key)
+        if (!value) return undefined
+        try { 
+            //this.remove(key)
+            return this.decompressObject(value) 
+        }
+        catch  { return undefined }
+    },
+    
+    store: function(key:string, data:any) {
+        const compressed = this.compressObject(data)
+        if (compressed) sessionStorage.setItem(key, compressed)
     }
 }
