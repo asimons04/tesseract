@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte'
     import { userSettings } from '$lib/settings'
     
-    export let date: string
+    export let date: string | number
     export let relativeTo: Date = new Date()
     export let short: boolean = false
     export let options: Intl.RelativeTimeFormatOptions = {
@@ -10,7 +10,7 @@
         style: 'narrow',
     }
 
-    const stringToDate = (date: string): Date => new Date(date)
+    const stringToDate = (date: number|string): Date => new Date(date)
     const toLocaleDateString = (date: Date): string => {
         try {
             return date.toLocaleString()
