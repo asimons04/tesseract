@@ -1,22 +1,21 @@
 <script lang="ts">
-    import Navbar from '$lib/components/ui/Navbar.svelte'
     import '../style/app.css'
-    import '../style/highlight.js.css'
+    
     import { navigating } from '$app/stores'
     import nProgress from 'nprogress'
     import 'nprogress/nprogress.css'
     
-    
-    
+    import { inDarkTheme } from '$lib/ui/colors.js'
     import { onMount } from 'svelte'
     // @ts-ignore
     import { pwaInfo } from 'virtual:pwa-info'
     import PwaReload from '$lib/PwaReload.svelte'
-    import { inDarkTheme } from '$lib/ui/colors.js'
+    
     import { userSettings } from '$lib/settings.js'
 
 
     import ModalContainer from '$lib/components/ui/modal/ModalContainer.svelte'
+    import Navbar from '$lib/components/ui/Navbar.svelte'
     import Sidebar from '$lib/components/ui/sidebar/Sidebar.svelte'
     import ToastContainer from '$lib/components/ui/toasts/ToastContainer.svelte'
     
@@ -27,18 +26,14 @@
     })
 
     $: {
-        if ($navigating) {
-            if (typeof document != 'undefined') {
-                nProgress.start()
-                document?.documentElement?.classList?.toggle('wait', true)
-            }
+        if ($navigating && typeof document != 'undefined') {
+            nProgress.start()
+            document?.documentElement?.classList?.toggle('wait', true)
         }
 
-        if (!$navigating) {
-            if (typeof document != 'undefined') {
-                nProgress.done()
-                document?.documentElement?.classList?.toggle('wait', false)
-            }
+        if (!$navigating && typeof document != 'undefined') {
+            nProgress.done()
+            document?.documentElement?.classList?.toggle('wait', false)
         }
     }
 
@@ -48,6 +43,8 @@
     onMount(() => {
         const element = document.getElementById('loader-animation')
         if (element) element.remove()
+
+        
     })
   
 </script>
