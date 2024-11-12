@@ -1,4 +1,4 @@
-import type { CommentSortType, CommunityView, SortType } from 'lemmy-js-client'
+import type { CommentSortType, CommunityView, ListingType, SortType } from 'lemmy-js-client'
 import type { PostType} from '$lib/components/lemmy/post/helpers'
 import { type Writable, writable } from 'svelte/store'
 import { env } from '$env/dynamic/public'
@@ -42,10 +42,8 @@ const isBrowser = () => {
     return false;
 }
 
-export type FeedType = 'All' | 'Subscribed' | 'Local'
 
 export type YouTubeFrontend = "YouTube" | "Custom"
-
 export type PostViewType = 'card' | 'compact' | 'compacter' | 'wide-compact' | 'more-compact' | 'ultra-compact' | 'reader' | 'hybrid'
 
 interface Settings {
@@ -56,7 +54,7 @@ interface Settings {
     font: 'font-system' | 'font-sans' | 'font-serif' | 'font-roboto' | 'font-inter' | 'font-opendyslexic' | 'font-reddit' | 'font-ubuntu' | 'font-urbanist'
     defaultSort: {
         sort: SortType
-        feed: FeedType
+        feed: ListingType
         comments: CommentSortType
     }
     markReadOnScroll: boolean
@@ -168,7 +166,7 @@ export const defaultSettings: Settings = {
     uiState: {
         disableDownvotes:                                               false,
         linkPreviews:                                                   true,
-        postBodyPreviewLength:                                          240,
+        postBodyPreviewLength:                                          120,
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,
@@ -202,7 +200,7 @@ export const defaultSettings: Settings = {
     
     defaultSort: {
         sort:       env.PUBLIC_DEFAULT_FEED_SORT as SortType            ??  'Scaled',
-        feed:       env.PUBLIC_DEFAULT_FEED as FeedType                 ??  'Local',
+        feed:       env.PUBLIC_DEFAULT_FEED as ListingType              ??  'All',
         comments:   env.PUBLIC_DEFAULT_COMMENT_SORT as CommentSortType  ??  'Hot'
     },
     markReadOnScroll:                                                   false,
