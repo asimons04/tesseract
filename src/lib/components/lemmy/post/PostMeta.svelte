@@ -74,7 +74,7 @@
 
     <div class="flex flex-col gap-1">
 
-        <span class="flex flex-row gap-2 text-sm items-start">
+        <span class="flex flex-row gap-2 text-sm items-center">
             
             <!---Show Community Icon if Not in Community--->
             {#if post.community && !inCommunity}
@@ -145,85 +145,71 @@
 
             </div>
 
-            <!--- Post Badges --->
-            {#if !hideBadges}
-                <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
-                    <!--- Media Bias Fact Check
-                    {#if isPostView(post) && post && $userSettings.uiState.MBFCBadges && post.post.url && ['link','thumbLink'].includes(postType(post) ?? ' ') }
-                        <MBFC post={post} {collapseBadges}/>
-                    {/if}
-                    --->
+            <div class="flex flex-col gap-1">
+                <!--- Post Badges --->
+                {#if !hideBadges}
+                    <div class="flex flex-row ml-auto gap-2 items-end">
+                        {#if post.post.nsfw}
+                            <Badge label="NSFW" color="red" icon={ExclamationCircle} click={false}>
+                                <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
+                            </Badge>
+                        {/if}
+
+                        {#if post.saved}
+                            <Badge label="Saved" color="yellow" icon={Bookmark} click={false}/>
+                        {/if}
+                        
+                        {#if post.post.locked}
+                            <Badge label="Locked" color="yellow" icon={LockClosed} click={false} />
+                        {/if}
+                        
+                        {#if post.post.removed}
+                            <Badge label="Removed" color="red" icon={NoSymbol} click={false} />
+                        {/if}
+                        
+                        {#if post.post.deleted}
+                            <Badge label="Deleted" color="red" icon={Trash} click={false} />
+                        {/if}
+                        
+                        {#if (post.post.featured_local || post.post.featured_community)}
+                            <Badge label="Featured" color="green" icon={Megaphone} click={false} />
+                        {/if}
+                        
+                    </div>
+                {/if}
+
+
+                <!---Post Action Buttons--->
+                <div class="flex flex-row items-start gap-2 ml-auto">
                     
-                    {#if post.post.nsfw}
-                        <Badge label="NSFW" color="red" icon={ExclamationCircle} click={false}>
-                            <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
-                        </Badge>
+                    <!---Moderation --->
+                    {#if actions && $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
+                        <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
                     {/if}
 
-                    {#if post.saved}
-                        <Badge label="Saved" color="yellow" icon={Bookmark} click={false}>
-                            <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>
-                        </Badge>
+                    <!--- Expand Compact Post to Card--->
+                    <!---{#if $userSettings.showCompactPosts}-->
+                    {#if postType != 'text' && (postType == 'dailymotion' || post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
+                        <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                            icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
+                            iconSize={16}
+                            on:click={() => {  
+                                expandCompact = !expandCompact; 
+                                if (postContainer) {
+                                    //scrollToTop(postContainer)
+                                }
+                            }}
+                        />
                     {/if}
                     
-                    {#if post.post.locked}
-                        <Badge label="Locked" color="yellow" icon={LockClosed} click={false}>
-                            <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Locked</span>
-                        </Badge>
+                    <!---Instances--->
+                    {#if actions}
+                        <InstanceMenu bind:post />
+
+                        <!---Post Actions--->
+                        <PostActionsMenu bind:post on:edit/>
                     {/if}
-                    
-                    {#if post.post.removed}
-                        <Badge label="Removed" color="red" icon={NoSymbol} click={false}>
-                            <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>
-                        </Badge>
-                    {/if}
-                    
-                    {#if post.post.deleted}
-                        <Badge label="Deleted" color="red" icon={Trash} click={false}>
-                            <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>
-                        </Badge>
-                    {/if}
-                    
-                    {#if (post.post.featured_local || post.post.featured_community)}
-                        <Badge label="Featured" color="green" icon={Megaphone} click={false}>
-                            <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">Featured</span>
-                        </Badge>
-                    {/if}
-                    
                 </div>
-            {/if}
-
-
-            <!---Post Action Buttons--->
-            <div class="flex flex-row items-start gap-2 ml-auto">
-                
-                <!---Moderation --->
-                {#if actions && $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-                    <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
-                {/if}
-
-                <!--- Expand Compact Post to Card--->
-                <!---{#if $userSettings.showCompactPosts}-->
-                {#if postType != 'text' && (postType == 'dailymotion' || post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
-                    <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                        icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
-                        iconSize={16}
-                        on:click={() => {  
-                            expandCompact = !expandCompact; 
-                            if (postContainer) {
-                                //scrollToTop(postContainer)
-                            }
-                        }}
-                    />
-                {/if}
-                
-                <!---Instances--->
-                {#if actions}
-                    <InstanceMenu bind:post />
-
-                    <!---Post Actions--->
-                    <PostActionsMenu bind:post on:edit/>
-                {/if}
             </div>
             
             
