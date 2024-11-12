@@ -34,28 +34,14 @@
         EyeSlash,
         Language,
         BugAnt,
+        ChevronDoubleDown,
     } from "svelte-hero-icons"
 
 
     export let open: boolean = false
     let hybridViewEditorOpen = false
 
-    let listingTypeOnSelect = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
-
-    let toggleCardCompactView = async () => {
-        $userSettings.showCompactPosts = !$userSettings.showCompactPosts
-        /*
-        if ($userSettings.showCompactPosts) {
-            $userSettings.uiState.feedMargins = false
-            $userSettings.uiState.postBodyPreviewLength = 0
-        }
-        else {
-            $userSettings.uiState.feedMargins = true
-            $userSettings.uiState.postBodyPreviewLength = 240
-        }
-        */
-        await scrollToLastSeenPost()
-    }
+    
 </script>
 
 
@@ -108,7 +94,8 @@
         <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2  items-start w-full ">
 
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
-                
+                <!---Infinite Scroll--->
+                <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll} small/>
                 
                 <!---Open in New Tab--->
                 <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
@@ -156,6 +143,9 @@
 
                 <!---Enable Embeds in Feed--->
                 <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed} small={true}/>
+
+                <!---Enable Embeds in Posts--->
+                <SettingToggle title="Enable Embeds in Posts" icon={Film} bind:value={$userSettings.embeddedMedia.post} small={true}/>
 
                 <!---Enable Hashtags--->
                 <SettingToggle title="Enable Hashtags" icon={Hashtag} bind:value={$userSettings.linkifyHashtags} small={true} />
