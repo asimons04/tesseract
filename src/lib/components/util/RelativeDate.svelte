@@ -83,7 +83,7 @@
     }
 </script>
   
-<time class="whitespace-nowrap" datetime={dateTime} title={dateTime}>
+<time class="whitespace-nowrap {$$props.class}" datetime={dateTime} title={dateTime}>
     {#key relativeTo}
         {formatRelativeDate(stringToDate(date))}
     {/key}
