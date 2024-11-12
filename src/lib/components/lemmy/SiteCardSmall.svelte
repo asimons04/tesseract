@@ -38,8 +38,17 @@
 >
     <div class="flex flex-row gap-1 md:gap-3 items-start p-0">
         
-        <div class="p-2 flex-shrink-1">
-            <Avatar width={avatarWidth} fullRes rounded ring={false} circle={false}  url={site.site.icon} alt={site.site.name}  class="mx-auto" community/>
+        <div class="pl-2 pt-2 flex-shrink-1">
+            <Avatar fullRes community 
+                lazyload={false}
+                fadeIn={false}
+                width={avatarWidth}  
+                rounded ring={false} 
+                circle={false}  
+                url={site.site.icon} 
+                alt={site.site.name}  
+                class="mx-auto" 
+            />
         </div>
 
         <div class="flex flex-col gap-0 overflow-hidden break-words border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-950 rounded-bl-2xl rounded-tr-2xl p-1 w-fit opacity-70 w-full !border-slate-300 dark:!border-zinc-800 pl-4"

@@ -19,6 +19,8 @@
     export let community:boolean = false
     export let zoomable:boolean = true
     export let background:boolean = false
+    export let lazyload: boolean = true
+    export let fadeIn: boolean = true
 </script>
 
 <!--<div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''} mx-auto " style="width: {width}px; height: {width}px;">-->
@@ -26,7 +28,7 @@
 <div style="width: {width+2}px;">
     <div class="{circle ? 'rounded-full' : ''} {rounded ? 'rounded-xl' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
         {#if url}
-            <ZoomableImage url={url} title={title} altText={alt} 
+            <ZoomableImage url={url} title={title} altText={alt} {lazyload} {fadeIn}
                 resolution={fullRes ? undefined : findClosestNumber(sizes, width) } 
                 zoomable={zoomable && fullRes}
                 class="aspect-square object-cover overflow-hidden !w-full

@@ -39,10 +39,13 @@
     export let altText:string = ''
     export let title:string = ''
     export let zoomable:boolean = true
-    
+    export let lazyload:boolean = false
+    export let fadeIn:boolean = true
+
     let dispatcher = createEventDispatcher()
     let loaded = false
     
+    let loading = lazyload ? 'lazy' : 'eager'
     // Class not used due to chicken/egg, but leaving in until I move it to a util library for outside use
     export class Zoomable {
         element: any
@@ -165,15 +168,15 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <img src="{imageProxyURL(url, resolution, 'webp')}"
-        class="{$$props.class} opacity-0 transition-opacity duration-150 
+        class="{$$props.class} 
+            {fadeIn ? 'opacity-0 transition-opacity duration-150' : ''}  {loaded ? 'opacity-100' : ''}
             {zoomable ? 'cursor-zoom-in' : ''}
         "
         referrerpolicy="no-referrer"
-        class:opacity-100={loaded}
         class:blur-2xl={(nsfw && $userSettings.nsfwBlur)}
         alt={altText}
         title={title}
-        loading="lazy"
+        {loading}
         on:load={() => (loaded = true)}
         on:click={(
             //@ts-ignore
