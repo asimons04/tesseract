@@ -19,6 +19,7 @@
     
     import { ArrowsPointingOut, Icon } from 'svelte-hero-icons';
     import PostTitle from './PostTitle.svelte';
+    import CompactPostThumbnail from './utils/CompactPostThumbnail.svelte';
     
 
     export let post: PostView
@@ -33,15 +34,26 @@
     export let inCommunity:boolean = false
     export let inProfile: boolean = false
 
-    $:  showThumbnail = !$userSettings.uiState.hideCompactThumbnails && (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url))
+    $:  showThumbnail = (
+        displayType=='post' || (
+            !$userSettings.uiState.hideCompactThumbnails && 
+            (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url))
+        )
+    
+    ) ? true : false
+
+    $:  imageOnly = (
+        ['image', 'video'].includes(postType) &&
+        (!post.post.body || post.post.body?.trim() == '' || post.post.body.length < 250)
+    )
 </script>
 
 
-<Card class="flex flex-col w-full p-2 gap-0 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >
+<Card class="flex flex-col w-full p-2 gap-1 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >
     
     <!--- If post is NSFW, only show the metadata + title and overlay the rest--->
     {#if post.post.nsfw && displayType=='feed'}
-        <div class="flex flex-col gap-1 w-full">
+        <div class="flex flex-col gap-1 items-end w-full">
             <PostMeta bind:post bind:postContainer bind:expandCompact {actions} showTitle={true} {collapseBadges} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} text="[Reveal NSFW Post]"/>
             <PostActions  bind:post  {displayType} on:reply />
@@ -51,100 +63,51 @@
         <!---Image and Video Posts--->
         <!---These will have the thumbnail in the upper-right corner rather than in the metadata--->
         {#if  (['image', 'video'].includes(postType)) }
-            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
             
-            <div class="flex flex-row w-full gap-2">
+        
+            <!---Posts that have only a direct video or image and a body less than 250 characters--->
+            {#if imageOnly}
                 
-                <div class="flex flex-col gap-1 w-full">
-                    <PostTitle bind:post />
+                <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+                <div class="flex flex-row gap-2">
+                    <div class="flex flex-col w-[calc(100%-132px)] gap-1">
+                        <PostTitle bind:post />
+                        <PostBody bind:post {displayType} bind:expandPreviewText />
+                        <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
 
-                    {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-                        
-                        <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText class="my-1" >
-                            <div class="{showThumbnail ? 'p-2 float-right flex-none w-[128px] h-[128px] mx-auto  overflow-hidden' : 'hidden'}" slot="thumbnail">
-                                {#if showThumbnail}                                
-                                    <!--- Expand the post in place when clicking thumbnail--->
-                                    <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                                        on:click={() => {  
-                                            expandCompact = !expandCompact; 
-                                            scrollToTop(postContainer)
-                                        }}
-                                    >
-                                        
-                                        {#if post.post.thumbnail_url || isImage(post.post.url)}
-                                            <img
-                                                src="{
-                                                    post.post.url?.endsWith('.gif')
-                                                        ? imageProxyURL(post.post.url)
-                                                        : post.post.embed_video_url?.endsWith('.gif')
-                                                            ? imageProxyURL(post.post.embed_video_url)
-                                                            : imageProxyURL(post.post.thumbnail_url ?? post.post.url, 256, 'webp')
-                                                }"
-                                                loading="lazy"
-                                                alt={post.post.name}
-                                                class="object-cover bg-slate-100 rounded-md w-[128px] h-[128px]  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg"
-                                                class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
-                                            />
-                                        {:else if post.post.url && isVideo(post.post.url)}
-                                            <video class="object-cover bg-slate-100 rounded-md w-[128px] h-[128px]  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg" 
-                                                class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed')}    
-                                                playsinline muted={true} autoplay={false}
-                                                preload="metadata"
-                                            >
-                                                <source src="{post.post.url}" type="{
-                                                    new URL(post.post.url).pathname.endsWith('mp4') || new URL(post.post.url).pathname.endsWith('m4v')
-                                                        ? 'video/mp4' 
-                                                        : new URL(post.post.url).pathname.endsWith('webm') 
-                                                            ? "video/webm" 
-                                                            : new URL(post.post.url).pathname.endsWith('mov') 
-                                                                ? "video/mp4"
-                                                                : ''
-                                                }" />
-                                            </video>
-                                        {/if}
-                                        <span class="flex w-fit p-1 rounded-lg relative left-[5px] bottom-[30px] text-black dark:text-white bg-slate-100/50 dark:bg-zinc-900/60">
-                                            <Icon src={ArrowsPointingOut} width={16} mini />
-                                        </span>
-                                    </button>
-                                {/if}
-                            </div>
-                        </PostBody>
-                    {/if}
-                    
-                    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-                    
-                    
-                    <div class="flex flex-row w-full h-full grid items-end">
+                        <div class="mt-auto" />
                         <PostActions  bind:post  {displayType} on:reply />
                     </div>
-                    
+                    <CompactPostThumbnail bind:post bind:expandCompact bind:postContainer bind:displayType/>
                 </div>
-            </div>
+                
+            <!---Posts that have an image/video and a post body greater than 250 chars--->
+            {:else}
+                <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+                <div class="flex flex-row gap-2">
+                    <div class="flex flex-col w-[calc(100%-132px)] gap-1">
+                        <PostTitle bind:post />
+                        {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
+                            <PostBody bind:post {displayType} bind:expandPreviewText class="my-1" />
+                        {/if}
+                        <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                        
+                        <PostActions  bind:post  {displayType} on:reply />
+                    </div>
+                    <CompactPostThumbnail bind:post bind:expandCompact bind:postContainer bind:displayType {showThumbnail} float />
+                </div>
+            {/if}
 
         <!---Link posts with embed description, etc--->
         {:else}
 
             <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
-                    
-            <PostLink bind:post bind:displayType compact={true}
-                on:clickThumbnail={() => {
-                    expandCompact = !expandCompact
-                }}
-            />
-
+            <PostLink bind:post bind:displayType compact={true} on:clickThumbnail={() => { expandCompact = !expandCompact }} />
             {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-                <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText 
-                    class="mt-2 mb-1"
-                />
+                <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText  class="mt-2 mb-1" />
             {/if}
-            
             <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-            
-            
-            <div class="flex flex-row w-full h-full grid items-end">
-                <PostActions  bind:post  {displayType} on:reply />
-            </div>
-
+            <PostActions  bind:post  {displayType} on:reply />
         {/if}
     {/if}
 </Card>
