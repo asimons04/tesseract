@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { Community, GetCommunityResponse } from "lemmy-js-client"
-    
+    import type { Community, GetCommunityResponse, SortType } from "lemmy-js-client"
+    import type { FeedController } from '../feed/helpers'
     
     import {addFavorite, isFavorite } from '$lib/favorites'
     import { 
@@ -21,12 +21,14 @@
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
-    
+    import { userSettings } from '$lib/settings'
+
     import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
     import CommunityCardSmall from "$lib/components/lemmy/community/CommunityCardSmall.svelte";
+    import PostFeed from "../feed/PostFeed.svelte";
     import EmbeddableModlog from "./components/EmbeddableModlog.svelte";
     import Markdown from "$lib/components/markdown/Markdown.svelte";
     import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte";
@@ -37,6 +39,7 @@
     
     import { 
         ArrowLeft,
+        ArrowPath,
         ArrowTopRightOnSquare,
         Check,
         Cog6Tooth,
@@ -53,8 +56,6 @@
         UserGroup,
         Window as WindowIcon
     } from "svelte-hero-icons";
-    import CommunityFeed from "./components/CommunityFeed.svelte";
-    
     
     export let community: Community | undefined
     export let open: boolean = false
@@ -67,8 +68,7 @@
     let communityDetails: GetCommunityResponse
     let communityGroupModal = false
     let communityDetailsOpen = false
-    
-
+    let feedController: FeedController
     let action: 
         'none'              |   
         'banning'           | 
@@ -395,11 +395,30 @@
                         on:click={()=> returnMainMenu()}  
                     />
                     <span class="text-lg">
-                        Browse Community
+                        Browse
                     </span>
+
+                    <span class="ml-auto" />
+
+                    <Button size="square-md" color="tertiary-border" icon={ArrowPath} title="Refresh" iconSize={24}
+                        on:click={() => {
+                            feedController.refresh(true)
+                        }}
+                    />
+                    
+                    <Button size="square-md" color="tertiary-border" icon={ArrowTopRightOnSquare} title="Go to Community" iconSize={24}
+                        on:click={ () => {
+                            goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
+                            open = false
+                        }}
+                    />
                 </div>
 
-                <CommunityFeed community_id={communityDetails.community_view.community.id} />
+                <div class="flex flex-col gap-2 w-full {$userSettings.uiState.infiniteScroll ? 'max-h-[70vh]' : 'max-h-[60vh]'} overflow-y-scroll" >
+                    <PostFeed bind:controller={feedController} actions={false} 
+                        community_name={`${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`} 
+                    />
+                </div>
             </div>
         {/if}
         
@@ -613,9 +632,11 @@
                     <!---Create Post--->
                     {#if $profile?.user && !communityBlocked}
                         <Button color="tertiary-border" icon={PencilSquare} alignment="left" class="w-full"
+                            disabled={
+                                (communityDetails.community_view.community.posting_restricted_to_mods && !amMod($profile.user, communityDetails.community_view.community)) ||
+                                communityDetails.community_view.community.removed
+                            }
                             on:click={()=> {
-                                //createPost(communityDetails.community_view.community) 
-                                //open = false
                                 modalWidth = 'max-w-4xl'
                                 action='createPost'
                             }}
