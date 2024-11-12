@@ -95,7 +95,7 @@
     <hr class="border-slate-300 dark:border-zinc-800 mt-2"/>
 
     <!---Frontpage--->
-    <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Home" on:click={() => { goto('/', {invalidateAll: true}) }} data-sveltekit-preload-data="off">
+    <SidebarButton href="/?invalidate=true" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off">
         <Icon src={Home} mini size="18" title="Home" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
     </SidebarButton>
