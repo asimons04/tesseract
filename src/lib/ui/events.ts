@@ -124,6 +124,12 @@ export interface ClickIntoPostEvent extends CustomEvent {
     }
 }
 
+export interface LastClickedPostEvent extends CustomEvent {
+    detail: {
+        post_id: number
+    }
+}
+
 export interface ScrollPostIntoViewEvent extends CustomEvent {
     detail: {
         post_id: number
