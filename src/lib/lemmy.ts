@@ -63,51 +63,6 @@ export async function validateInstance(instance: string, setSite:boolean=false):
     }
 }
 
-export async function hideCommunity(communityID:number, hidden:boolean, reason:string = '') {
-    if (!communityID || !get(profile)?.jwt) return
-
-    try {
-        const body = {
-            community_id: communityID,
-            hidden: hidden,
-            reason: reason
-        }
-        const response = await fetch(`https://${get(instance)}/api/v3/community/hide`,
-            {
-                method: 'PUT',
-                headers: { 
-                    'Authorization': `Bearer ${get(profile)?.jwt}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            }
-        )
-
-        const json = await response.json();
-        
-        if (response.status != 200) {
-            throw new Error(
-                `${
-                    (await response.text().catch((_) => undefined)) ??
-                    'Failed to hide community'
-                }: ${response.status}: ${response.statusText}`
-            )
-        }
-
-        return
-    } 
-    catch {
-        throw new Error(
-            `API call failed`
-        )
-    }
-
-    
-
-
-}
-
-
 
 export let sortOptions:SortType[] = [
     'Active',
@@ -165,6 +120,8 @@ export function parseAPIError(err:any) {
 // Do an initial fetch of the site so the logo and site name gets set properly
 // DummyJWT is so the auth module doesn't try to access the profile before it's initialized
 
+/*
 getClient(get(instance), 'dummyJWT').getSite().then((getSiteResponse) => {
     site.set(getSiteResponse)
 })
+*/
