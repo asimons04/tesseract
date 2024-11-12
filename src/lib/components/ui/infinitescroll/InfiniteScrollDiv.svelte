@@ -46,7 +46,7 @@
         <Spinner width={24} />
     
     {:else}
-        <Button color="secondary" class="w-fit mx-auto" title="Load More" bind:disabled={state.exhausted}
+        <Button color="secondary" class="w-fit mx-auto" title="Load More" hidden={disabled} bind:disabled={state.exhausted}
             on:click={() => {
                 state.exhausted = false
                 dispatcher('loadMore')
