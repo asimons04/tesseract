@@ -12,10 +12,10 @@
         ChevronDown,
         ChevronUp
     } from 'svelte-hero-icons'
+    import { dispatchWindowEvent } from '$lib/ui/events';
   
 
     export let post:PostView
-    export let postContainer: HTMLDivElement
     export let displayType:PostDisplayType  = 'post'
     export let expandPreviewText:boolean    = false
     export let inline:boolean               = false
@@ -54,7 +54,11 @@
 {#if source}
     <div class="flex flex-col text-sm gap-1 rounded-md {$$props.class}">    
         {#if displayType == 'post' }
-            <Markdown bind:source {inline}/>
+            <Markdown bind:source {inline}>
+                <div class="m-1" slot="thumbnail">
+                    <slot name="thumbnail" />
+                </div>
+            </Markdown>
             <slot />
         {/if}
 
@@ -66,7 +70,11 @@
                     : ''
                 }
             ">
-                <Markdown bind:source {inline} noImages/>
+                <Markdown bind:source {inline} noImages>
+                    <div class="m-1" slot="thumbnail">
+                        <slot name="thumbnail" />
+                    </div>
+                </Markdown>
             </div>
         {/if}
     </div>
@@ -75,18 +83,18 @@
 
 <!---Expand/Collapse Button--->
 {#if !hideExpandButton }
-<Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
-    iconClass="{offsetExpandButton ? 'ml-[128px]' : ''}"
-    title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-    icon={expandPreviewText ? ChevronUp : ChevronDown}
-    iconSize={24}
-    on:click={() => {
-        expandPreviewText = !expandPreviewText
+    <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
+        iconClass="{offsetExpandButton ? 'ml-[128px]' : ''}"
+        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+        icon={expandPreviewText ? ChevronUp : ChevronDown}
+        iconSize={24}
+        on:click={() => {
+            expandPreviewText = !expandPreviewText
 
-        // Scroll top of post to top on close
-        if (!expandPreviewText) scrollToTop(postContainer)
-    }}
-/>
-    
+            // Scroll top of post to top on close
+            if (!expandPreviewText) dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
+        }}
+    />
+        
 
 {/if}
