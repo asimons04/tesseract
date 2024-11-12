@@ -8,7 +8,7 @@
     import { communityProfileModal } from '../moderation/moderation'
     import { createPost } from '$lib/components/lemmy/community/helpers';
     import { fullCommunityName } from '$lib/util.js'
-    import { getClient, hideCommunity } from '$lib/lemmy.js'
+    import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
