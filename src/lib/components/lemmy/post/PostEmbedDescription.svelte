@@ -23,7 +23,7 @@
 
     let expandPreviewText = false
     let source: string | undefined = undefined
-    let previewLength = 420
+    let previewLength = 120
     $:  description, expandPreviewText, source = (description && description.length > 240 && expandPreviewText)
         ? description
         : (description && description.length > previewLength)
@@ -35,13 +35,15 @@
 
 
 <div class="flex flex-col w-full items-start gap-1 p-2 { card ?  cardClass : ''} {$$props.class}">    
-    <!---Slot for the Archive link selector, post url, and MBFC badge--->
-    <slot/>
+    
+
             
     <div class="flex flex-row w-full items-start gap-1">
         
         <div class="flex flex-col gap-1 {showThumbnail && thumbnail_url ? 'w-[calc(100%-128px)]' : 'w-full'}">
-
+            <!---Slot for the Archive link selector, post url, and MBFC badge--->
+            <slot />
+            
             {#if description && description.length > minLength}
                 {#if title}
                     <Link class="text-sm font-bold md:px-4" href={url} newtab={$userSettings.openInNewTab.links} {title}>
