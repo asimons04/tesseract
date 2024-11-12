@@ -28,13 +28,7 @@
             <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
                 description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
                 url={post.post.url}
-                card={
-                    (
-                        (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
-                        (post.post.embed_description && displayType=='post') ||
-                        (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
-                    ) ? true : false
-                } 
+                card
                 thumbnail_url={post.post.thumbnail_url}
                 showThumbnail={!$userSettings.uiState.hideCompactThumbnails || displayType=='post'}
             >
@@ -50,7 +44,7 @@
 {:else}
     {#if post.post?.url}
     
-        <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card={post.post.embed_description ? true : false} url={post.post.url}>
+        <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card url={post.post.url}>
             <span class="flex flex-row w-full gap-2 px-1">
                 <ArchiveLinkSelector url={post.post?.url} {postType} />
                 <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
@@ -62,21 +56,18 @@
 
     {#if post.post?.thumbnail_url}
         {#if displayType == 'feed'}
-            <!--<a href="/post/{getInstance()}/{post.post.id}" target={ (displayType== 'feed' && $userSettings.openInNewTab.posts) ? '_blank' : undefined } >-->
-                <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
-                    <div class="ml-auto mr-auto max-w-full">
-                        <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
+            <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
+                <div class="ml-auto mr-auto max-w-full">
+                    <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-                        <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
-                            bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={true}
-                            class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(40vh,800px)] z-20"
-                            
-                        />
-                        <!--class="max-w-full ml-auto mr-auto object-cover rounded-md max-h-[min(80vh,800px)]"-->
-                    </div>
-                    
+                    <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
+                        bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={true}
+                        class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(40vh,800px)] z-20"
+                        
+                    />
                 </div>
-            <!--</a>-->
+            </div>
+
         {:else if displayType == 'post'}
             <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-md max-w-full p-1">
                 <div class="ml-auto mr-auto max-w-full">
