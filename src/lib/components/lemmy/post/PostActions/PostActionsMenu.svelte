@@ -47,7 +47,7 @@
 </script>
 
 {#if $profile?.user?.local_user_view.person.id == post.creator.id && editing}
-    <PostEditorModal bind:open={editing} bind:post />
+    <PostEditorModal bind:open={editing} bind:post on:edit/>
 {/if}
 
 <Menu containerClass="overflow-auto" alignment="bottom-right">

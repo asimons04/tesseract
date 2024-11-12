@@ -40,6 +40,7 @@ import { page } from '$app/stores'
 import { userSettings as UserSettings, type PostViewType} from '$lib/settings.js'
 import { YTFrontends } from '$lib/settings.js'
 import { dispatchWindowEvent } from '$lib/ui/events'
+import { toast } from '$lib/components/ui/toasts/toasts'
 
 
 
@@ -969,6 +970,7 @@ export const postViewTypes = {
     options: ['card', 'hybrid', 'compact', 'compacter', 'wide-compact', 'more-compact', 'ultra-compact', 'reader'],
     optionNames: ['Card', 'Hybrid', 'Compact', "Compacter", 'Wide Compact', 'More Compact', 'Ultra Compact', 'Reader']
 }
+
 export const selectViewType= async (e: CustomEvent) => {
     const viewType = e.detail as PostViewType
     
@@ -1036,4 +1038,14 @@ export const selectViewType= async (e: CustomEvent) => {
     UserSettings.set($userSettings)
     dispatchWindowEvent('changeCompactView')
     await scrollToLastSeenPost()
+}
+
+
+export const postEditConfirmation = function() {
+
+    toast({
+        title: 'Confirmation',
+        content: 'The post was edited successfully.',
+        type: 'success',
+    })
 }

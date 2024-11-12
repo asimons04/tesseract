@@ -3,7 +3,7 @@
     import type { PostType, PostDisplayType } from './helpers.js'
     import type { CommunityModeratorView, PostView } from 'lemmy-js-client'
 
-    import { postType as identifyPostType } from './helpers.js'
+    import { postType as identifyPostType, postEditConfirmation } from './helpers.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
     
@@ -37,7 +37,7 @@
 
 
 <Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
-    <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges} {actions} {inCommunity} {inProfile}/>
+    <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
 
     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType}>    
         <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
@@ -50,18 +50,6 @@
 
     <!--- Crossposts --->
     <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="mb-1"/>
-
-    
-    <PostActions  bind:post  {displayType}
-        on:reply
-        on:edit={(e) => {
-            post = post
-            toast({
-                title: 'Confirmation',
-                content: 'The post was edited successfully.',
-                type: 'success',
-            })
-        }}
-    />
+    <PostActions  bind:post  {displayType} on:reply />
     
 </Card>

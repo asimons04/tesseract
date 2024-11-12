@@ -222,7 +222,7 @@
                     <InstanceMenu bind:post />
 
                     <!---Post Actions--->
-                    <PostActionsMenu bind:post  />
+                    <PostActionsMenu bind:post on:edit/>
                 {/if}
             </div>
             
