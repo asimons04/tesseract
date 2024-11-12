@@ -189,7 +189,6 @@ export const compressedStorage = {
         const value = sessionStorage.getItem(key)
         if (!value) return undefined
         try { 
-            //this.remove(key)
             return this.decompressObject(value) 
         }
         catch  { return undefined }
