@@ -108,6 +108,8 @@ profile.subscribe(async (p:Profile|undefined) => {
     instance.set(p.instance.toLowerCase())
 
     // Fetch the user details from the API because p.user is undefined
+    if (get(userSettings)?.debugInfo) console.log("Calling userFromJWT from profile.subscribe")
+
     const user = await userFromJwt(p.jwt, p.instance)
     
     // Set the site store to the data returned from the getSite() call in userFromJwt
@@ -131,7 +133,7 @@ profile.subscribe(async (p:Profile|undefined) => {
 
 // Used at login to store a new user profile
 export async function setUser(jwt: string, inst: string): Promise<UserFromJWTResponse| undefined>  {
-    
+    if (get(userSettings)?.debugInfo) console.log("Calling userFromJWT from setUser")
     const user = await userFromJwt(jwt, inst)
 
     // If user object unresolved for any reason, toast an error and return
@@ -338,7 +340,8 @@ export async function setUserID(id: number, userDetails?:UserFromJWTResponse) {
         
         // Set instance so the JS client will send the auth header
         instance.set(prof.instance.toLowerCase())
-
+        
+        if (get(userSettings)?.debugInfo) console.log("Calling userFromJWT from setUserID")
         const user = userDetails ?? await userFromJwt(prof.jwt, prof.instance)
 
         // If the given JWT doesn't resolve to a user (expired/invalid), throw a toast message and redirect to login
