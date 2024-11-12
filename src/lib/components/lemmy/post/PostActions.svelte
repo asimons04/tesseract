@@ -15,17 +15,14 @@
     export let post: PostView
     export let displayType: PostDisplayType
     export let actions: boolean = true
-    //$: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 
 </script>
 
-<div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-1 sm:gap-2 items-center 
-    {displayType == 'post' ? 'pt-2 mt-auto' : 'mt-1'} 
-    "
->
+<div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full gap-1 sm:gap-2 items-center mt-auto">
 
     <!--- Post Vote Buttons--->
     <PostVote bind:post  />
+    
     {#if actions}
         <!--- Comment Count and Link to Post--->
         {#if displayType == 'feed'}
