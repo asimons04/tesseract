@@ -71,43 +71,45 @@
             .replaceAll(":::spoiler", "\n:::spoiler")
             .replaceAll(/::: /g, '\n:::\n')
         
-        mdText = temp ?? ' '
+        mdText = temp
     }
 
     $:  source, $userSettings.linkifyHashtags,  preProcess(source)
 
 </script>
 
+{#if mdText}
+    <div class="markdown {$$props.class}">
+        {#if inline}
+            {mdText}
+        {:else}
+            
+            <slot name="thumbnail"/>
+            
 
-<div class="markdown {$$props.class}">
-    {#if inline}
-        {mdText}
-    {:else}
-        
-        <slot name="thumbnail"/>
-        
+            <Markdown bind:source={mdText} 
+                options={{
+                    //@ts-ignore (Adding a custom object to the options that get passed to the renderers)
+                    custom: {
+                        noPreview: noPreview,
+                        noImages: noImages
+                    }
+                }}
+                renderers={{
+                    code: MarkdownCode,
+                    codespan: MarkdownCodeSpan,
+                    image: MarkdownImage,
+                    link: MarkdownLink,
+                    spoiler: MarkdownSpoiler,
+                
+                }}
 
-        <Markdown bind:source={mdText} 
-            options={{
-                //@ts-ignore (Adding a custom object to the options that get passed to the renderers)
-                custom: {
-                    noPreview: noPreview,
-                    noImages: noImages
-                }
-            }}
-            renderers={{
-                code: MarkdownCode,
-                codespan: MarkdownCodeSpan,
-                image: MarkdownImage,
-                link: MarkdownLink,
-                spoiler: MarkdownSpoiler,
-              
-            }}
+            />
+        {/if}
+    </div>
+    
 
-        />
-    {/if}
-</div>
-
+{/if}
 
 <style lang="postcss">
     .markdown :global(h1) {
@@ -198,3 +200,5 @@
 
 
 </style>
+
+
