@@ -60,7 +60,7 @@
 </script>
 
 
-<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-800 h-full duration-200">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-800 duration-200">
     <Button
         disabled={!$profile?.user || !onHomeInstance}
         aria-label="Upvote"
