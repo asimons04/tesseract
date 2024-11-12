@@ -1,6 +1,6 @@
 <script lang="ts">
     import { 
-    dispatchWindowEvent,
+        dispatchWindowEvent,
         type BanCommunityEvent, 
         type BanUserEvent, 
         type BlockCommunityEvent, 
@@ -8,6 +8,7 @@
         type BlockUserEvent, 
         type FeaturePostEvent,
         type HideCommunityEvent,
+        type LastClickedPostEvent,
         type LockPostEvent,
         type PurgePostEvent, 
         type RemoveCommunityEvent, 
@@ -47,7 +48,8 @@
     let postContainer: HTMLDivElement
     let inViewport = false
     let postType = getPostType(post)
-    
+    let lastClickedPost = -1
+
     $:  post, postType = getPostType(post)
     $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
     $:  post, applyDummyThumbnail()
@@ -189,13 +191,14 @@
     }
 
 
-    async function scrollIntoView() {
-        if (scrollTo == post?.post.id) {
+    async function scrollIntoView(smooth:boolean = false) {
+        if (scrollTo == post?.post.id && postContainer?.scrollIntoView) {
+            
             console.log("Scrolling post into view via param")
             await sleep(150)
             postContainer.scrollIntoView({
-                behavior: 'instant',
-                block: 'center'
+                behavior: smooth ? 'smooth' : 'instant',
+                block: 'start'
 
             })
         }
@@ -216,6 +219,22 @@
         
         return result
     }
+
+    function announceLastClickedPost(post:PostView|undefined) {
+        if (!post || lastClickedPost == post.post.id) return
+        lastClickedPost = post.post.id
+        //lastSeenPost.set(post.post.id)
+        dispatchWindowEvent('lastClickedPost', {post_id: post.post.id})
+    }
+
+    function handleLastClickedPostEvent(e:LastClickedPostEvent) {
+        lastClickedPost = e.detail.post_id
+    }
+
+    function handleScrollPostIntoView(e:LastClickedPostEvent) {
+        scrollTo = e.detail.post_id
+        scrollIntoView(true)
+    }
 </script>
 
 
@@ -234,6 +253,8 @@
     on:removeCommunity={handleRemoveCommunity}
     on:removePost={handleRemovePost}
     on:purgePost={handlePurgePost}
+    on:lastClickedPost={handleLastClickedPostEvent}
+    on:scrollPostIntoView={handleScrollPostIntoView}
 />
 
 <PostIsInViewport bind:postContainer bind:inViewport threshold={.6}/>
@@ -243,20 +264,8 @@
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div class="relative" 
         id={post.post.id.toString()} 
-        
-        on:mouseover={() => { 
-            if (post) {
-                lastSeenPost.set(post.post.id)
-                dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
-            }
-        }} 
-        
-        on:touchstart={() => {
-            if (post) {
-                lastSeenPost.set(post.post.id) 
-                dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
-            }
-        }}
+        on:mouseover={() => announceLastClickedPost(post) } 
+        on:touchstart={() => announceLastClickedPost(post) } 
         bind:this={postContainer}
         transition:fade
     >
