@@ -79,7 +79,7 @@
     
     <!---Site Logo and Name on left--->
     <div data-sveltekit-preload-data="hover" class="flex flex-row gap-2 items-center mr-auto">
-        <a href="/" class="flex flex-row items-center gap-2">
+        <a href="/?invalidate=true" class="flex flex-row items-center gap-2">
             
             {#if $site && $site.site_view.site.icon && new URL($site.site_view.site.actor_id).hostname == $instance}
                 <Avatar url={$site.site_view.site.icon} alt={$site.site_view.site.name} width={32} res={64} circle={false}/>
