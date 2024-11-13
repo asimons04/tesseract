@@ -981,20 +981,20 @@ export const selectViewType= async (e: CustomEvent) => {
     switch(viewType) {
         case 'card':
             $userSettings.showCompactPosts = false
-            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.postBodyPreviewLength = 120
             $userSettings.uiState.feedMargins = true
             break
         
         case 'compact':
             $userSettings.showCompactPosts = true
-            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.postBodyPreviewLength = 120
             $userSettings.uiState.feedMargins = true
             $userSettings.uiState.hideCompactThumbnails = false
             break
 
         case 'hybrid':
             $userSettings.showCompactPosts = true
-            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.postBodyPreviewLength = 120
             $userSettings.uiState.feedMargins = true
             $userSettings.uiState.hideCompactThumbnails = false
             break
@@ -1008,7 +1008,7 @@ export const selectViewType= async (e: CustomEvent) => {
 
         case 'wide-compact':
             $userSettings.showCompactPosts = true
-            $userSettings.uiState.postBodyPreviewLength = 240
+            $userSettings.uiState.postBodyPreviewLength = 120
             $userSettings.uiState.feedMargins = false
             $userSettings.uiState.hideCompactThumbnails = false
             break
@@ -1037,7 +1037,7 @@ export const selectViewType= async (e: CustomEvent) => {
     
     UserSettings.set($userSettings)
     dispatchWindowEvent('changeCompactView')
-    await scrollToLastSeenPost()
+    //await scrollToLastSeenPost()
 }
 
 
