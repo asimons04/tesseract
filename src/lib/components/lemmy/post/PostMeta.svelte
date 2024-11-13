@@ -74,7 +74,7 @@
 
     <div class="flex flex-col gap-1">
 
-        <span class="flex flex-row gap-2 text-sm items-center">
+        <span class="flex flex-row gap-2 text-sm items-start">
             
             <!---Show Community Icon if Not in Community--->
             {#if post.community && !inCommunity}
