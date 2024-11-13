@@ -70,7 +70,11 @@
     
 
     scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }
-    refreshButton refreshPreventDefault on:navRefresh={()=> feedController.refresh(true) } 
+    refreshButton refreshPreventDefault refreshButtonLoading={feedController.busy} 
+    on:navRefresh={()=> {
+        feedController.refreshing = true
+        feedController.refresh(true) 
+    }} 
 
 
 >
