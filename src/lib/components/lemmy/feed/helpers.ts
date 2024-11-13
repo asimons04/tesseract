@@ -26,6 +26,7 @@ export interface FeedController {
     page_cursors: (string|undefined)[]
 
     // Getters/Setters
+    isLoading: boolean
     busy: boolean
     community_id?: number
     community_name?: string
