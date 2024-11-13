@@ -1,5 +1,5 @@
 <script context="module">
-    const moduleName = 'Feed.svelte';
+    const moduleName = 'PostFeed.svelte';
 </script>
 
 <script lang="ts">
@@ -382,17 +382,23 @@
     }
 
     $:  if ($pageStore.url.searchParams.has('type')) {
-            controller.type = $pageStore.url.searchParams.get('type') as ListingType
+        if ($pageStore.url.searchParams.get('type') != controller.type) {     
+                controller.type = $pageStore.url.searchParams.get('type') as ListingType
+            }
             $pageStore.url.searchParams.delete('type')
             goto($pageStore.url)
         }
 
     $:  if ($pageStore.url.searchParams.has('sort')) {
-            controller.sort = $pageStore.url.searchParams.get('sort') as SortType
+            if ($pageStore.url.searchParams.get('sort') != controller.sort) {
+                controller.sort = $pageStore.url.searchParams.get('sort') as SortType
+            }
             $pageStore.url.searchParams.delete('sort')
             goto($pageStore.url)
         }
 
+    
+    // These aren't fully integrated yet (same for saved_only_
     $:  if ($pageStore.url.searchParams.has('disliked_only')) {
             controller.disliked_only = true    
             $pageStore.url.searchParams.delete('disliked_only')    
@@ -548,6 +554,11 @@
     on:lastClickedPost={handlers.LastClickedPostEvent}
     on:removeCommunity={handlers.RemoveCommunityEvent}
     on:removePost={handlers.RemovePostEvent}
+    
+    on:beforeunload={() => {
+        if (debugMode) console.log(moduleName, ": Page refresh requested; flushing snapshot")
+        controller.clearSnapshot()
+    }}
 />
 
 
