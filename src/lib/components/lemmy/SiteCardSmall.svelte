@@ -20,6 +20,7 @@
         Server,
         UserGroup,
         Newspaper,
+        CubeTransparent,
     } from 'svelte-hero-icons'
     import Markdown from "../markdown/Markdown.svelte";
     
@@ -67,11 +68,21 @@
                     </span>
                 </span>
 
-                <div class="flex flex-col mt-auto items-end pr-2">
+                <div class="flex flex-col mt-auto gap-2 items-end pr-2">
+                    <!---Lemmy API Version--->
                     <span class="flex flex-row items-center gap-2 text-sm" title="API Version">
                         <Icon src={Server} width={16} height={16} mini />
                         {version.split('-')[0]}
                     </span>
+                    
+                    <!---Tesseract Version--->
+                    <!-- svelte-ignore missing-declaration -->
+                    <span class="flex flex-row items-center gap-2 text-sm" title="Tesseract Version">
+                        <Icon src={CubeTransparent} width={16} height={16} mini />
+                        {__VERSION__?.split('-')[0]}
+                    </span>
+
+                    
                 </div>
             </span>
             
