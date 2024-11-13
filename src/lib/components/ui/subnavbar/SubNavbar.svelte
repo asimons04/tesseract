@@ -57,8 +57,11 @@
     export let pageUpDownButtons:boolean = false // Page up/down
     export let compactSwitch:boolean = false    // Switch between compact and card posts
     export let toggleMargins:boolean = false    // Whether to toggle the margins on/off in the feed
+    
     export let refreshButton:boolean = false    // Button to refresh the current page
     export let refreshPreventDefault:boolean = false    // Prevent the default reload with invalidate 
+    export let refreshButtonLoading: boolean = false
+    
     export let toggleCommunitySidebar:boolean = false   //Toggle the right-side community sidebar open/closed
     export let quickSettings:boolean = false
     //export let qsShiftLeft:number = 0           // Number of button slots to shift the quick settings menu to the left of
@@ -233,17 +236,15 @@
         
         <!--- Refresh Button--->
         {#if refreshButton}
-        <Button title="Refresh" size="sm" color="tertiary"
-            on:click={async () => {
-                dispatcher('navRefresh')
-                if (!refreshPreventDefault) {
-                    setSessionStorage('lastClickedPost', undefined)
-                    await goto(window.location.href, {invalidateAll: true});
-                }
-            }}
-            >
-            <Icon src={ArrowPath} width={iconSize}/>
-        </Button>
+            <Button title="Refresh" size="sm" color="tertiary" icon={ArrowPath} {iconSize} bind:loading={refreshButtonLoading}
+                on:click={async () => {
+                    dispatcher('navRefresh')
+                    if (!refreshPreventDefault) {
+                        setSessionStorage('lastClickedPost', undefined)
+                        await goto(window.location.href, {invalidateAll: true});
+                    }
+                }}
+            />
         {/if}
 
         <!---Quick Settings--->
