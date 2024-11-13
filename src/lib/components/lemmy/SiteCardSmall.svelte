@@ -92,7 +92,7 @@
             <div class="mx-auto text-xs md:text-sm flex flex-row w-full flex-wrap gap-0 px-2 justify-between">
                 
                 <span class="flex flex-col mx-auto items-center gap-1 md:gap-2" title="Site Created">
-                    <Icon src={Calendar} width={16} height={20} mini />
+                    <Icon src={Calendar} width={20} mini />
                     <RelativeDate date={site.site.published} />
                 </span>
                 
