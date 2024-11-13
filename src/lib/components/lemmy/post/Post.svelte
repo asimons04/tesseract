@@ -1,3 +1,7 @@
+<script context="module">
+    const moduleName = 'Post.svelte';
+</script>
+
 <script lang="ts">
     import { 
         dispatchWindowEvent,
@@ -21,8 +25,7 @@
     import { type PostType, type PostDisplayType, postType as getPostType, sleep } from './helpers.js'
 
     import { fade } from 'svelte/transition'
-    import { getClient, site } from '$lib/lemmy'
-    import { lastSeenPost } from './helpers.js'
+    import { getClient } from '$lib/lemmy'
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
 
@@ -49,7 +52,8 @@
     let inViewport = false
     let postType = getPostType(post)
     let lastClickedPost = -1
-
+    
+    $:  debugMode = $userSettings.debugInfo
     $:  post, postType = getPostType(post)
     $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
     $:  post, applyDummyThumbnail()
@@ -193,13 +197,11 @@
 
     async function scrollIntoView(smooth:boolean = false) {
         if (scrollTo == post?.post.id && postContainer?.scrollIntoView) {
-            
-            console.log("Scrolling post into view via param")
+            if (debugMode) console.log(moduleName, ": Scrolling post " , post.post.id, "into view via param")
             await sleep(150)
             postContainer.scrollIntoView({
                 behavior: smooth ? 'smooth' : 'instant',
                 block: 'start'
-
             })
         }
     }
