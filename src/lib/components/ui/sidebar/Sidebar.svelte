@@ -32,6 +32,7 @@
         Star,
         UserGroup,
         XCircle,
+        ArrowPath,
     } from 'svelte-hero-icons'
 
     import CommunityGroup from "./CommunityGroup.svelte";
@@ -94,11 +95,19 @@
 
     <hr class="border-slate-300 dark:border-zinc-800 mt-2"/>
 
-    <!---Frontpage--->
-    <SidebarButton href="/?invalidate=true" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off">
-        <Icon src={Home} mini size="18" title="Home" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
-    </SidebarButton>
+    <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
+        
+        <!---Frontpage--->
+        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off" class="w-full">
+            <Icon src={Home} mini size="18" title="Home" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
+        </SidebarButton>
+
+        <!---Latest (New + Refresh)--->
+        <SidebarButton href="/?invalidate=true" expanded={$userSettings.uiState.expandSidebar} title="Refresh" data-sveltekit-preload-data="off">
+            <Icon src={ArrowPath} mini size="18" title="Home" />
+        </SidebarButton>
+    </div>
 
     <!--- Explore Communities / Favorites --->
     
