@@ -90,11 +90,6 @@
             try {
                 if (debugMode) console.log(moduleName, ": Initial load requested: ", initial ?? false)
 
-                if (this.loading || this.scrollState.loading) {
-                    if (debugMode) console.log(moduleName, ": Loader is already loading; returning")
-                    return
-                }
-
                 $userSettings.uiState.infiniteScroll
                     ? this.scrollState.loading = true
                     : this.loading = true
@@ -137,9 +132,12 @@
                     batch.posts = findCrossposts(batch.posts)
                 }
                         
+                // Reset loading values
                 $userSettings.uiState.infiniteScroll
                     ? this.scrollState.loading = false
                     : this.loading = false
+                
+                this.refreshing = false
                 
                 if ($userSettings.uiState.infiniteScroll) {
                     if (batch.posts.length < 1) this.scrollState.exhausted = true
@@ -159,6 +157,8 @@
                 
                 // Store the data after each fetch?
                 this.takeSnapshot()
+
+                
             }
             catch (err){
                 if (debugMode) console.log(err);
@@ -191,7 +191,6 @@
             await this.load()
             this.scrollTop()
             this.refreshing = false
-            
         },
 
         scrollBottom: function(): void {
@@ -570,7 +569,7 @@
 
 
     <!---Only use this loading spinner if infinite scroll is disabled--->
-    {#if controller.loading } <!--&& !$userSettings.uiState.infiniteScroll}-->
+    {#if controller.loading || controller.refreshing} <!--&& !$userSettings.uiState.infiniteScroll}-->
         <span class="flex flex-row w-full h-full items-center">        
             <Spinner width={24} class="mx-auto my-auto"/>
         </span>
@@ -621,18 +620,21 @@
     
     <!---Infinite Scroll or Manual Pagination--->
     {#if $userSettings.uiState.infiniteScroll}
-        <div class="flex flex-col items-center pt-2 my-auto w-full">
-            <InfiniteScrollDiv bind:state={controller.scrollState} bind:element={controller.scrollContainer} threshold={500} disabled={controller.busy}
-                on:loadMore={ () => {
-                    // Hack to override the auto loading state
-                    controller.scrollState.loading = false
-                    if (debugMode) console.log(moduleName, ": Received loadMore event from infinite scroll component")
-                    controller.page++
-                    controller.load()
-                }}
-            />
-        </div>
-    {:else}
+        {#if !controller.refreshing}
+            <div class="flex flex-col items-center pt-2 my-auto w-full">
+                <InfiniteScrollDiv bind:state={controller.scrollState} bind:element={controller.scrollContainer} threshold={500} bind:disabled={controller.busy}
+                    on:loadMore={ () => {
+                        // Hack to override the auto loading state
+                        //controller.scrollState.loading = false
+                        if (debugMode) console.log(moduleName, ": Received loadMore event from infinite scroll component")
+                        controller.page++
+                        controller.load()
+                    }}
+                />
+            </div>
+        {/if}
+    
+    {:else if !controller.refreshing}
         <Pageination bind:page={controller.page} class="px-4 mb-4" on:change={async (e) => {
             controller.page = e.detail
             controller.clearSnapshot()
