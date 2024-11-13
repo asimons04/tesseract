@@ -197,6 +197,10 @@
         @apply flex bg-slate-50 dark:bg-zinc-950;
     }
 
+    .markdown :global(code) {
+        @apply w-full;
+    }
+
 
 
 </style>
