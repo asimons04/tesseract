@@ -45,7 +45,7 @@
   export let iconSize:number = 16
   export let title: string = ''
   export let hidden:boolean = false
-  export let loaderWidth: number | undefined = undefined
+  export let loaderWidth: number | undefined = iconSize
   export let iconClass: string = ''
 
   // const dispatch = createEventDispatcher()
@@ -82,12 +82,12 @@
                     width={loaderWidth
                         ? loaderWidth
                         : size == 'lg'
-                        ? 20
-                        : size == 'md'
-                        ? 18
-                        : size == 'sm'
-                        ? 16
-                        : 16
+                            ? 20
+                            : size == 'md'
+                                ? 18
+                                : size == 'sm'
+                                    ? 16
+                                    : 16
                     }
                 />
             {:else if $$slots.icon}
