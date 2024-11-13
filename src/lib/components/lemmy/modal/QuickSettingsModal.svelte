@@ -120,7 +120,7 @@
                 <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} small={true}/>
 
                 <!--Show Debug Button--->
-                <SettingToggle title="Show Debug Button" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
+                <SettingToggle title="Enable Debug Mode" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
             </div>
 
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
