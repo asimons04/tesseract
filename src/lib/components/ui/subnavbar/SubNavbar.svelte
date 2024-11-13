@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PostView, SortType } from 'lemmy-js-client'
+    import type { ListingType, PostView, SortType } from 'lemmy-js-client'
 
     import { arrayRange, searchParam } from '$lib/util.js'
     import { createEventDispatcher } from 'svelte'
@@ -65,11 +65,11 @@
 
     // Post Listing Type (Local, Subscribed, All)
     export let listingType:boolean              = false;
-    export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All']
-    export let listingTypeOptionNames:string[]  = [...listingTypeOptions]
+    export let listingTypeOptions:string[]      = ['Subscribed', 'Local', 'All'] as ListingType[]
+    export let listingTypeOptionNames:string[]  = [...listingTypeOptions] as ListingType[]
 
-    export let listingTypeOnSelect              = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
-    export let selectedListingType:string       = ''
+    //export let listingTypeOnSelect              = (e:CustomEvent<string>) => { searchParam($page.url, 'type', e.detail, 'page') }
+    export let selectedListingType:string       = 'All'
     export let listingTypeTitle:string          = 'Listing Type'
 
     // Sort menu
@@ -95,7 +95,8 @@
             navRefresh?: null,
             navPageSelect?: number,
             navScrollBottom?: null,
-            navScrollTop?: null
+            navScrollTop?: null,
+            navChangeListingType?: ListingType
         }>()
 </script>
 
@@ -146,7 +147,10 @@
                     title={listingTypeTitle}
                     icon={Bars3}
                     iconSize={18}
-                    on:select={listingTypeOnSelect}
+                    on:select={(e) => {
+                        // @ts-ignore
+                        dispatcher('navChangeListingType', e.detail)
+                    }}
                 />
             {/if}
 
@@ -156,7 +160,7 @@
                     alignment="bottom-left"
                     options={sortOptions}
                     optionNames={sortOptionNames}
-                    selected={selectedSortOption}
+                    bind:selected={selectedSortOption}
                     title="Sort Direction"
                     icon={BarsArrowDown}
                     iconSize={18}
