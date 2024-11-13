@@ -19,12 +19,11 @@
     
     const dispatcher = createEventDispatcher()
     const cardClass = "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50"
-    //const cardClass = "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-white/20 dark:bg-black/20"
 
     let expandPreviewText = false
     let source: string | undefined = undefined
     let previewLength = 120
-    $:  description, expandPreviewText, source = (description && description.length > 240 && expandPreviewText)
+    $:  description, expandPreviewText, source = (description && description.length > previewLength && expandPreviewText)
         ? description
         : (description && description.length > previewLength)
                 ? description?.slice(0, previewLength) + '...'
@@ -40,10 +39,10 @@
             
     <div class="flex flex-row w-full items-start gap-1">
         
-        <div class="flex flex-col gap-1 {showThumbnail && thumbnail_url ? 'w-[calc(100%-128px)]' : 'w-full'}">
+        <div class="flex flex-col gap-1 {showThumbnail && thumbnail_url ? 'w-[calc(100%-64px)] sm:w-[calc(100%-96px)] md:w-[calc(100%-128px)]' : 'w-full'}">
             <!---Slot for the Archive link selector, post url, and MBFC badge--->
             <slot />
-            
+
             {#if description && description.length > minLength}
                 {#if title}
                     <Link class="text-sm font-bold md:px-4" href={url} newtab={$userSettings.openInNewTab.links} {title}>
@@ -52,11 +51,20 @@
                 {/if}
 
                 <Markdown bind:source class="md:px-4 text-slate-700 dark:text-zinc-400 text-xs"/>
+
+                {#if description && description.length > previewLength }
+                    <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
+                        title="{expandPreviewText ? 'Collapse' : 'Expand'}"
+                        on:click={() => { expandPreviewText = !expandPreviewText }}
+                        icon={expandPreviewText ? ChevronUp : ChevronDown}
+                        iconSize={24}
+                    />
+                {/if}
             {/if}
         </div>
 
         {#if showThumbnail && thumbnail_url}
-            <button class="flex flex-none w-[128px] h-[128px] rounded-lg shadow-lg bg-white/80" 
+            <button class="flex flex-none my-auto w-[64px] h-[64px] sm:w-[96px] sm:h-[96px] md:w-[128px] md:h-[128px] rounded-lg shadow-lg bg-white/80" 
                 style="background-image: url('{imageProxyURL(thumbnail_url, 256, 'webp')}'); 
                     background-size: cover; 
                     background-position: center center;
@@ -74,12 +82,5 @@
         {/if}
     </div>
 
-    {#if description && description.length > previewLength }
-        <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
-            title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-            on:click={() => { expandPreviewText = !expandPreviewText }}
-            icon={expandPreviewText ? ChevronUp : ChevronDown}
-            iconSize={24}
-        />
-    {/if}
+    
 </div>
