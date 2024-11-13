@@ -572,7 +572,12 @@
                 Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
             </span>
 
-            <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} on:click={() => controller.refresh(true) }>
+            <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} loading={controller.busy}
+                on:click={() => {
+                    controller.refreshing = true
+                    controller.refresh(true) 
+                }}
+            >
                 Refresh
             </Button>
         </div>
