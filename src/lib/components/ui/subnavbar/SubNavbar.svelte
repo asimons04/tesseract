@@ -231,6 +231,21 @@
         
         
         
+        <!--- Refresh Button--->
+        {#if refreshButton}
+        <Button title="Refresh" size="sm" color="tertiary"
+            on:click={async () => {
+                dispatcher('navRefresh')
+                if (!refreshPreventDefault) {
+                    setSessionStorage('lastClickedPost', undefined)
+                    await goto(window.location.href, {invalidateAll: true});
+                }
+            }}
+            >
+            <Icon src={ArrowPath} width={iconSize}/>
+        </Button>
+        {/if}
+
         <!---Quick Settings--->
         {#if quickSettings}
             <Button title="Quick Settings" size="sm" color="tertiary"
@@ -254,20 +269,7 @@
         {/if}
 
 
-        <!--- Refresh Button--->
-        {#if refreshButton}
-            <Button title="Refresh" size="sm" color="tertiary"
-                on:click={async () => {
-                    dispatcher('navRefresh')
-                    if (!refreshPreventDefault) {
-                        setSessionStorage('lastClickedPost', undefined)
-                        await goto(window.location.href, {invalidateAll: true});
-                    }
-                }}
-                >
-                <Icon src={ArrowPath} width={iconSize}/>
-            </Button>
-        {/if}
+        
 
         <!---Page Up/Down Buttons--->
         {#if pageUpDownButtons}
