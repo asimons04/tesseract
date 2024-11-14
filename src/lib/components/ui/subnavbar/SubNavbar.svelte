@@ -236,7 +236,8 @@
         
         <!--- Refresh Button--->
         {#if refreshButton}
-            <Button title="Refresh" size="sm" color="tertiary" icon={ArrowPath} {iconSize} bind:loading={refreshButtonLoading}
+            <Button title="Refresh" size="sm" color="tertiary" icon={ArrowPath} {iconSize} 
+                bind:loading={refreshButtonLoading} bind:disabled={refreshButtonLoading}
                 on:click={async () => {
                     dispatcher('navRefresh')
                     if (!refreshPreventDefault) {

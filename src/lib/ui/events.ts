@@ -2,6 +2,8 @@
     src/app.d.ts under the svelteHTML HTML prop extensions to avoid IDE errors when adding the custom event listeners
 */
 
+import type { SortType } from "lemmy-js-client"
+
 // Lock Post
 export interface LockPostEvent extends CustomEvent {
     detail: {
@@ -133,6 +135,12 @@ export interface LastClickedPostEvent extends CustomEvent {
 export interface ScrollPostIntoViewEvent extends CustomEvent {
     detail: {
         post_id: number
+    }
+}
+
+export interface SetSortTypeEvent extends CustomEvent {
+    detail: {
+        sort: SortType
     }
 }
 

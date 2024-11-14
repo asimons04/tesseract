@@ -46,8 +46,58 @@ removeAdmin {username}
 
 
 ## 1.4.21
+
+### To Do:
+- Standardize snapshot naming convention
+- Write function to flush snapshots
+- Flush all snapshots when switching betweeen infinite scroll and manual pagination
+
+
+
 ### Bugfixes
 - Added missing padding on placeholder initials if there is no site logo
+
+### Major Changes
+#### Complete Post Feed Rewrite
+Why?   That's a question I asked myself multiple times while I was doing this.  xD
+
+The problem was that the feed was mostly spaghetti code made of the original Photon code plus all the new stuff I've bolted on.  It was crazy complex to make it do all I wanted to do and getting worse every update.  
+
+That alone was enough to merit rebuilding it, but the other problem was that the main feed and the community feeds were separate codebases.  While similar, they differed due to various quirks.
+
+There were more issues under the hood, but they "mostly worked" and any issues were masked by various UX tricks (the programming equivalent of pulling the sofa over a coffee stain on the rug).
+
+I also either need to port Tesseract to Svelte 5 now that it's out or port it to React (haven't decided yet).  Either way, cleaning up the codebase and getting rid of redundancies is going to make that job easier.
+
+The result?
+
+A new feed component which can be plugged in anywhere (modals, community page, main feed page, etc) and has all of the logic encapsulated into it.  It exposes a controller interface allowing the page or component it's embedded in to manage all of its properties and state.
+
+#### Snapshot Subsystem Rewrite
+
+The snapshot subsystem that kept your feed position has been enhanced greatly.
+
+1) Snapshot data is now gzip compressed before being saved to session storage.  
+
+Since the entire API responses are being cached (with all the community info, etc), they quickly grow beyond the 5 MB limit for session and local storage key/value pairs.  (Yes, IndexDB is better, but I'm not quite ready to add that yet).  In testing, compression of the API responses is yielding roughly 80-85% reduction.  Which makes sense as much of the API data is redundant and can compress very well (e.g. two posts in the same community will both have the full community details including the sidebar info etc).  
+
+2) Snapshots now have expirations.  Before, they were there until you manually hit the UI refresh button or closed the tab and the browser discarded the session. 
+
+3)  Each community now remembers your last view settings, viewed post, and scroll state independently.  
+
+Now you can click around through communities and not lose your place in any of them.  The old version would always return you to the start of the feed when switching between communities and was only really used to bring you back from a post to your last spot in the feed.  Now you can go to and fro and get back to where you were (unless the snapshot expires; probably one more reason to make the expiry configurable).
+
+4)  Refreshing the browser will now trigger a reload of the feed (and discard any old snapshot for it)
+
+This is the most visible enhancement.  Before, you needed to either load a new tab or manually hit the UI's refresh button.  SvelteKit was *not* cooperative with reliably letting the app know it was a fresh load in order to handle that automatically.
+
+Now, when you click "Home" (from a community, post, or anywhere but the main feed), you will return to your previous scroll position.  You can manually click "refresh" in the UI to get the new feed, or you can just refresh the page (which is the most intuitive).  The latter behavior 
+
+
+* Snapshots currently have a 15 minute validity window.  I'm still fine-tuning this, and may make it configurable if I can't find a universal sane value.
+
+
+
 
 ### New Features
 
@@ -57,6 +107,9 @@ You can now view a user's or a community's feeds in their respective modals when
 The preview has also been added to the moderation modal.  However, in the moderation modal, it limits the feed to just the user and community relevant to the item that initiated the mod modal.  e.g.  if you click the mod button for a post/comment in the FoodPorn community by user  Bob, the only submissions that will be shown are Bob's submissions to FoodPorn.  This should help with taking mod actions as you can check for patterns of rule-violating behavior without having to leave the mod tool.
 
 Another use case is previewing new communities when you click on a pill-button link.  e.g.  if someone comments about a cool community and uses the `!community@instance.xyz` format (as they should), you can click on it which will resolve it automatically.  From there, you can click "Browse Community..." to see what kinds of posts it has before commiting to subscribing (okay, that's a very tiny commitment, lol, but you get my point).
+
+
+
 
 
 ---

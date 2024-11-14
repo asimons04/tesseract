@@ -12,7 +12,9 @@
         HideCommunityEvent, 
         LastClickedPostEvent, 
         RemoveCommunityEvent, 
-        RemovePostEvent 
+        RemovePostEvent, 
+        SetSortTypeEvent
+
     } from "$lib/ui/events"
     
     import type { FeedController, FeedControllerLoadOptions } from './helpers'
@@ -65,15 +67,6 @@
         posts: [] as PostView[]
     } as GetPostsResponse
     
-    /*
-    $:  {
-        console.log("loading", controller.loading)
-        console.log("scrollstateLoading", controller.scrollState.loading)
-        console.log("Refreshing", controller.refreshing)
-        console.log("Mounting", controller.mounting)
-        console.log("clearingSnapshot", controller.clearingSnapshot)
-    }
-    */
         
     // Controller that can be expored and used outside the component. Includes getters/setters for parameters.
     export const controller = {
@@ -170,6 +163,8 @@
                 // Store the data after each fetch?
                 this.takeSnapshot()
 
+                return
+
                 
             }
             catch (err){
@@ -193,6 +188,8 @@
             posts.posts = [] as PostView[]
 
             posts = posts
+
+            return
         },
 
         refresh: function(clearSnapshot: boolean = false): void {
@@ -204,6 +201,7 @@
                 .then(() => this.load({loadSnapshot: false, append: false}))
                 .then(() => this.scrollTop())
                 .then(() => this.refreshing=false)
+            return
 
         },
 
@@ -230,6 +228,8 @@
             this.clearingSnapshot = true
             compressedStorage.remove(this.storageKey)
             this.clearingSnapshot = false
+
+            return
         },
 
         loadSnapshot: function(): boolean {
@@ -332,6 +332,7 @@
             this.reset(false)
                 .then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: true, append:true}))
+            
         },
 
         get disliked_only(): boolean|undefined {
@@ -376,6 +377,7 @@
             this.reset(true)
                 .then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: false, append: false}))
+            return
 
             
             
@@ -420,8 +422,8 @@
         if ($pageStore.url.searchParams.get('type') != controller.type) {     
                 controller.type = $pageStore.url.searchParams.get('type') as ListingType
             }
-            $pageStore.url.searchParams.delete('type')
-            goto($pageStore.url)
+            //$pageStore.url.searchParams.delete('type')
+            //goto($pageStore.url)
         }
 
     /*
@@ -429,10 +431,11 @@
             if ($pageStore.url.searchParams.get('sort') != controller.sort) {
                 controller.sort = $pageStore.url.searchParams.get('sort') as SortType
             }
-            $pageStore.url.searchParams.delete('sort')
-            goto($pageStore.url)
+            //$pageStore.url.searchParams.delete('sort')
+            //goto($pageStore.url)
     }
     */
+    
     
     // These aren't fully integrated yet (same for saved_only_
     $:  if ($pageStore.url.searchParams.has('disliked_only')) {
@@ -555,6 +558,11 @@
                 }
             }
             posts = posts
+        },
+
+        SetSortTypeEvent(e:SetSortTypeEvent) {
+            console.log(moduleName, ": Received sort type event:", e.detail.sort)
+            if (e.detail.sort != controller.sort) controller.sort = e.detail.sort;
         }
     }
 
@@ -586,6 +594,9 @@
     on:removeCommunity={handlers.RemoveCommunityEvent}
     on:removePost={handlers.RemovePostEvent}
     
+
+    on:setSortType={handlers.SetSortTypeEvent}
+
     on:beforeunload={() => {
         if (debugMode) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()

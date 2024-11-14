@@ -7,6 +7,7 @@
     import type { ListingType, SortType } from 'lemmy-js-client';
     
     import { amModOfAny } from '$lib/components/lemmy/moderation/moderation';
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { userSettings } from '$lib/settings'
     
@@ -19,6 +20,7 @@
     import SiteCardSmall from '$lib/components/lemmy/SiteCardSmall.svelte';
     import Card from '$lib/components/ui/Card.svelte';
     import Markdown from '$lib/components/markdown/Markdown.svelte';
+    import { goto } from '$app/navigation';
 
     export let data
     
@@ -31,7 +33,14 @@
     //let selectedListingType: ListingType = ($page.url.searchParams.get('type') as ListingType) ?? $userSettings.defaultSort.feed ?? 'All'
    
     $: debugMode = $userSettings.debugInfo
-
+    
+    $:  if ($page.url.searchParams.has('sort')) {
+            if ($page.url.searchParams.get('sort') != feedController.sort) {
+                feedController.sort = $page.url.searchParams.get('sort') as SortType
+            }
+            $page.url.searchParams.delete('sort')
+            goto($page.url)
+    }
    
 
     // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
@@ -64,6 +73,7 @@
     sortMenu sortPreventDefault selectedSortOption={feedController.sort} 
      on:navChangeSort={(e) => {
         if (e?.detail && feedController.sort != e.detail) {
+            if (debugMode) console.log(moduleName, "Setting feed controller SORT to:", e.detail)
             feedController.sort = e.detail
         }
     }}
@@ -72,6 +82,7 @@
     scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }
     refreshButton refreshPreventDefault refreshButtonLoading={feedController.busy} 
     on:navRefresh={()=> {
+        if (debugMode) console.log(moduleName, "Calling NAV REFRESH")
         feedController.refreshing = true
         feedController.refresh(true) 
     }} 
@@ -87,9 +98,7 @@
 
     <div class="flex w-full" style="height: calc(100vh - 8rem);">
         <FeedContainer>
-            <PostFeed actions 
-                bind:controller={feedController} 
-            >
+            <PostFeed actions  bind:controller={feedController} >
 
                 <!---Add the Site Banner to the top of the feed below 'xl' width--->
                 <div class="flex xl:hidden flex-col gap-2 w-full" slot="banner">    

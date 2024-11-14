@@ -1,14 +1,13 @@
 <script lang="ts">
     import { LINKED_INSTANCE_URL } from "$lib/instance.js"
 
-    import { expoOut } from 'svelte/easing'
-    import { flip } from 'svelte/animate'
-    import { profile, profileData } from '$lib/auth.js'
+    import { dispatchWindowEvent } from "$lib/ui/events"
+    import { profile } from '$lib/auth.js'
     import { getGroupIndex, sortGroups } from '$lib/favorites'
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
-    import Checkbox from '$lib/components/input/Checkbox.svelte'
+    import CommunityGroup from "./CommunityGroup.svelte";
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
@@ -19,10 +18,8 @@
         ArchiveBox,
         ArrowLeftOnRectangle,
         ArrowTrendingUp,
-        Bolt,
         BuildingOffice,
         CalendarDays,
-        ChevronDoubleLeft,
         Fire,
         GlobeAlt,
         Home,
@@ -35,8 +32,7 @@
         ArrowPath,
     } from 'svelte-hero-icons'
 
-    import CommunityGroup from "./CommunityGroup.svelte";
-    import { goto } from "$app/navigation";
+    
     
     let panel: 'groups' | 'subscribed' | 'favorites' = 'subscribed';
     
@@ -75,19 +71,25 @@
     <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Popular --->
-        <SidebarButton href="/?sort=Active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="off">
+        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="off"
+            on:click={() => dispatchWindowEvent('setSortType', {sort: 'Active'})}
+        >
             <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
         </SidebarButton>
 
         <!---Hot --->
-        <SidebarButton href="/?sort=Hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="off">
+        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="off"
+            on:click={() => dispatchWindowEvent('setSortType', {sort: 'Hot'})}
+        >
             <Icon src={Fire} mini size="18" title="Hot" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Hot</span>
         </SidebarButton>
 
         <!---Top Day --->
-        <SidebarButton href="/?sort=TopDay" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="off">
+        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="off"
+            on:click={() => dispatchWindowEvent('setSortType', {sort: 'TopDay'})}
+        >
             <Icon src={CalendarDays} mini size="18" title="Top Day" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Top Day</span>
         </SidebarButton>
@@ -98,7 +100,9 @@
     <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Frontpage--->
-        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off" class="w-full">
+        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off" class="w-full"
+            on:click={() => dispatchWindowEvent('setSortType', {sort: $userSettings.defaultSort.sort})}
+        >
             <Icon src={Home} mini size="18" title="Home" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
         </SidebarButton>
