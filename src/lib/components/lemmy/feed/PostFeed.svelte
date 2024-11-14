@@ -33,25 +33,24 @@
     import { profile } from '$lib/auth';
     import { userIsInstanceBlocked } from '$lib/lemmy/user'
     import { userSettings } from "$lib/settings"
-
+    
+    import Button from '$lib/components/input/Button.svelte'
     import InfiniteScrollDiv from "$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte"
-    import Post from "../post/Post.svelte";
-    import Placeholder from "$lib/components/ui/Placeholder.svelte"
     import Pageination from "$lib/components/ui/Pageination.svelte"
+    import Placeholder from "$lib/components/ui/Placeholder.svelte"
+    import Post from "../post/Post.svelte";
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
     import { ArchiveBox, ArrowPath, Icon } from "svelte-hero-icons"
-    import Button from '$lib/components/input/Button.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    
     
     export let community_id: number | undefined     = undefined
     export let community_name: string | undefined   = undefined
     export let disliked_only: boolean|undefined     = undefined
     export let liked_only: boolean|undefined        = undefined
     export let saved_only: boolean|undefined        = undefined
-    export let type: ListingType                    = ($pageStore.url.searchParams.get('type') as ListingType) ?? $userSettings.defaultSort.feed ?? 'All'
-    export let sort: SortType                       = ($pageStore.url.searchParams.get('sort') as SortType) ?? $userSettings.defaultSort.sort ?? 'New'
+    export let type: ListingType                    = $userSettings.defaultSort.feed ?? 'All'
+    export let sort: SortType                       = $userSettings.defaultSort.sort ?? 'New'
     export let actions: boolean                     = false
     export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
     
@@ -96,7 +95,7 @@
                     : this.loading = true
 
                 // Give the loader time to start animating
-                await sleep(10)
+                //await sleep(10)
 
                 // If this is an initial load and there is snapshot data, return early and don't fetch anything from the API yet.
                 if ( opts?.loadSnapshot && this.loadSnapshot()) {
@@ -197,7 +196,7 @@
             
             this.refreshing = true
             this.reset(clearSnapshot)
-            sleep(100)
+            //sleep(10)
                 .then(() => this.load({loadSnapshot: false, append: false}))
                 .then(() => this.scrollTop())
                 .then(() => this.refreshing=false)
@@ -330,7 +329,7 @@
             community_name = name
             this.refreshing = true
             this.reset(false)
-                .then(() => sleep(10))
+                //.then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: true, append:true}))
             
         },
@@ -375,7 +374,7 @@
             this.refreshing = true
             
             this.reset(true)
-                .then(() => sleep(10))
+                //.then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: false, append: false}))
             return
 
@@ -393,7 +392,7 @@
             type = t
             this.refreshing = true
             this.reset(true)
-                .then(() => sleep(10))
+                //.then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: false, append: false}))
         }
     } as FeedController
@@ -669,19 +668,17 @@
     <!---Infinite Scroll or Manual Pagination--->
     {#if posts.posts.length > 0 && $userSettings.uiState.infiniteScroll}
         
-        {#if !controller.refreshing}
-            <div class="flex flex-col items-center pt-2 my-auto w-full">
-                <InfiniteScrollDiv bind:state={controller.scrollState} bind:element={controller.scrollContainer} threshold={500} bind:disabled={controller.busy}
-                    on:loadMore={ () => {
-                        // Hack to override the auto loading state
-                        //controller.scrollState.loading = false
-                        if (debugMode) console.log(moduleName, ": Received loadMore event from infinite scroll component")
-                        controller.page++
-                        controller.load({loadSnapshot: false, append: true})
-                    }}
-                />
-            </div>
-        {/if}
+        <div class="flex flex-col items-center pt-2 my-auto w-full">
+            <InfiniteScrollDiv bind:state={controller.scrollState} bind:element={controller.scrollContainer} threshold={500} bind:disabled={controller.busy}
+                on:loadMore={ () => {
+                    // Hack to override the auto loading state
+                    //controller.scrollState.loading = false
+                    if (debugMode) console.log(moduleName, ": Received loadMore event from infinite scroll component")
+                    controller.page++
+                    controller.load({loadSnapshot: false, append: true})
+                }}
+            />
+        </div>
     
     {:else if !controller.refreshing && !$userSettings.uiState.infiniteScroll}
         <Pageination bind:page={controller.page} class="px-4 mb-4" on:change={async (e) => {
