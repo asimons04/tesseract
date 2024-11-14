@@ -41,7 +41,7 @@
 </script>
 
 <CollapseButton>
-    <Avatar width={48} alt={community.community.title ?? community.community.name} url={community.community.icon ?? undefined} community={true} slot="icon"/>
+    <Avatar width={48} alt={community.community.actor_id} url={community.community.icon ?? undefined} community={true} slot="icon"/>
     
     <div class="flex flex-row items-center w-full justify-between" slot="title">
         
@@ -50,7 +50,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span class="break-words  text-base font-bold text-sky-400 hover:underline" on:click|stopPropagation>
-                <CommunityLink href showInstance={false} avatar={false} useDisplayNames community={community.community} />
+                <CommunityLink showInstance={false} avatar={false} useDisplayNames community={community.community} />
             </span>
             
             <span class="flex flex-row flex-wrap opacity-80 text-xs">
