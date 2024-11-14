@@ -116,7 +116,7 @@
     <!--- Explore Communities / Favorites --->
     
     <!---Communities--->
-    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="hover">
+    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="off">
         <Icon src={GlobeAlt} mini size="18" title="Communities" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Explore Communities</span>
     </SidebarButton>
