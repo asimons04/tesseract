@@ -460,8 +460,8 @@
         />
 
         <!---Enable Debug Buttons--->
-        <SettingToggle icon={BugAnt} title="Debug Buttons" bind:value={$userSettings.debugInfo}
-            description="Show debug buttons in the UI"
+        <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
+            description="Show debug buttons in the UI to see post/comment and other raw data. Also enables debug messages in the browser console."
         />
 
         <!---Enable Experimental Features--->

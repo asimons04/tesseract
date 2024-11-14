@@ -38,7 +38,6 @@
      on:navChangeSort={(e) => {
         if (e?.detail && feedController.sort != e.detail) {
             feedController.sort = e.detail
-            feedController.refresh()
         }
     }}
     scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }

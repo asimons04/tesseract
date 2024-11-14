@@ -15,7 +15,7 @@
         RemovePostEvent 
     } from "$lib/ui/events"
     
-    import type { FeedController } from './helpers'
+    import type { FeedController, FeedControllerLoadOptions } from './helpers'
     import type { GetPostsResponse, ListingType, PostView, SortType } from "lemmy-js-client"
     
     import { addMBFCResults, filterKeywords, findCrossposts, isNewAccount, lastSeenPost, sleep } from "../post/helpers"
@@ -65,19 +65,27 @@
         posts: [] as PostView[]
     } as GetPostsResponse
     
-   
+    /*
+    $:  {
+        console.log("loading", controller.loading)
+        console.log("scrollstateLoading", controller.scrollState.loading)
+        console.log("Refreshing", controller.refreshing)
+        console.log("Mounting", controller.mounting)
+        console.log("clearingSnapshot", controller.clearingSnapshot)
+    }
+    */
         
     // Controller that can be expored and used outside the component. Includes getters/setters for parameters.
     export const controller = {
         loading: false,
         refreshing: false,
-        mounting: true,
+        mounting: false,
         clearingSnapshot: false,
         loadedFromSnapshot: false,
         last_refreshed: Math.round(new Date().getTime() /1000),
         page: 1,
         last_clicked_post: undefined,
-        
+        instance: $instance,
         // Keep an array where the index is the page number and the element is the page cursor. Position 0 is a placeholder, 1 is undefined intentionally
         page_cursors: [undefined, undefined] as (string|undefined)[],
 
@@ -86,9 +94,9 @@
             exhausted: false
         },
 
-        load: async function(initial?:boolean): Promise<void> {
+        load: async function(opts?:FeedControllerLoadOptions): Promise<void> {
             try {
-                if (debugMode) console.log(moduleName, ": Initial load requested: ", initial ?? false)
+                if (debugMode) console.log(moduleName, ": Load running.  Opts: ", opts)
 
                 $userSettings.uiState.infiniteScroll
                     ? this.scrollState.loading = true
@@ -98,13 +106,17 @@
                 await sleep(10)
 
                 // If this is an initial load and there is snapshot data, return early and don't fetch anything from the API yet.
-                if ( initial && this.loadSnapshot()) {
+                if ( opts?.loadSnapshot && this.loadSnapshot()) {
                     if (debugMode) console.log(moduleName, ": Initial load from snapshot. Not loading from API until requested")
 
                     $userSettings.uiState.infiniteScroll
                         ? this.scrollState.loading = false
                         : this.loading = false
+                    
                     this.loadedFromSnapshot = true
+                    this.refreshing = false
+
+                    
                     return
                 }
 
@@ -139,7 +151,7 @@
                 
                 this.refreshing = false
                 
-                if ($userSettings.uiState.infiniteScroll) {
+                if (opts?.append && $userSettings.uiState.infiniteScroll) {
                     if (batch.posts.length < 1) this.scrollState.exhausted = true
                     posts = {
                         next_page: batch.next_page,
@@ -172,6 +184,7 @@
             this.page = 1
             this.loading = false
             this.last_clicked_post = -1
+            this.loadedFromSnapshot = false
             this.scrollState.loading = false
             this.scrollState.exhausted = false
             this.page_cursors =  [undefined, undefined]
@@ -182,15 +195,16 @@
             posts = posts
         },
 
-        refresh: async function(clearSnapshot?: boolean): Promise<void> {
+        refresh: function(clearSnapshot: boolean = false): void {
             if (debugMode) console.log(moduleName, ": Refreshing. Clear snapshot?", clearSnapshot)
-            this.refreshing = true
-            this.loadedFromSnapshot = false
             
-            await this.reset(clearSnapshot)
-            await this.load()
-            this.scrollTop()
-            this.refreshing = false
+            this.refreshing = true
+            this.reset(clearSnapshot)
+            sleep(100)
+                .then(() => this.load({loadSnapshot: false, append: false}))
+                .then(() => this.scrollTop())
+                .then(() => this.refreshing=false)
+
         },
 
         scrollBottom: function(): void {
@@ -202,7 +216,7 @@
         },
 
         takeSnapshot: function(): void {
-            if (debugMode) console.log(moduleName, ": Taking snapshot")
+            if (debugMode) console.log(moduleName, ": Taking snapshot: ", community_name)
             compressedStorage.store(this.storageKey, this.data)
         },
 
@@ -212,7 +226,7 @@
                 return
             }
             
-            if (debugMode) console.log(moduleName, ": Clearing snapshot")
+            if (debugMode) console.log(moduleName, ": Clearing snapshot:", this.storageKey)
             this.clearingSnapshot = true
             compressedStorage.remove(this.storageKey)
             this.clearingSnapshot = false
@@ -263,16 +277,15 @@
             return (controller.mounting || controller.loading || controller.refreshing || controller.clearingSnapshot || this.scrollState.loading)
         },
 
+        get isLoading() {
+            return (this.loading || this.scrollState.loading)
+        },
+
         // Getter to get the storage key based on the params
         get storageKey() {
-           return `snapshot_feed_${$instance}_` + btoa(JSON.stringify({
+           return `snapshot_feed_${this.instance}_` + (JSON.stringify({
                 community_id,
                 community_name,
-                //sort,
-                //type,
-                //liked_only,
-                //disliked_only,
-                //saved_only
             }))
         },
 
@@ -299,8 +312,12 @@
         },
 
         set community_id(id:number|undefined) {
+            if (debugMode) console.log("Setting community_name from:", community_id, " to ", id)
             community_name = undefined
             community_id = id
+            this.refreshing = true
+            this.reset(false).then(() => this.load({loadSnapshot: true, append:true}))
+            
         },
 
         get community_name(): string|undefined {
@@ -308,8 +325,13 @@
         },
 
         set community_name(name:string|undefined) {
+            if (debugMode) console.log("Setting community_name from:", community_name, " to ", name)
             community_id = undefined
             community_name = name
+            this.refreshing = true
+            this.reset(false)
+                .then(() => sleep(10))
+                .then(() => this.load({loadSnapshot: true, append:true}))
         },
 
         get disliked_only(): boolean|undefined {
@@ -319,7 +341,7 @@
         set disliked_only(dlo:boolean | undefined) {
             disliked_only = dlo
             liked_only = undefined
-            this.refresh(true)
+            //this.refresh(true)
             
         },
         
@@ -330,7 +352,7 @@
         set liked_only(lo:boolean | undefined) {
             liked_only = lo
             disliked_only = undefined
-            this.refresh(true)
+            //this.refresh(true)
            
         },
 
@@ -347,8 +369,16 @@
         },
 
         set sort(sortType:SortType) {
+            if (debugMode) console.log("Setting sort type:", sort, " to ", sortType)
             sort = sortType
-            this.refresh(true)
+            this.refreshing = true
+            
+            this.reset(true)
+                .then(() => sleep(10))
+                .then(() => this.load({loadSnapshot: false, append: false}))
+
+            
+            
         },
 
         get type(): ListingType {
@@ -356,8 +386,13 @@
         },
 
         set type(t:ListingType) {
+            if (debugMode) console.log("Setting listing type:", type, " to ", t)
+
             type = t
-            this.refresh(true)
+            this.refreshing = true
+            this.reset(true)
+                .then(() => sleep(10))
+                .then(() => this.load({loadSnapshot: false, append: false}))
         }
     } as FeedController
 
@@ -389,14 +424,15 @@
             goto($pageStore.url)
         }
 
+    /*
     $:  if ($pageStore.url.searchParams.has('sort')) {
             if ($pageStore.url.searchParams.get('sort') != controller.sort) {
                 controller.sort = $pageStore.url.searchParams.get('sort') as SortType
             }
             $pageStore.url.searchParams.delete('sort')
             goto($pageStore.url)
-        }
-
+    }
+    */
     
     // These aren't fully integrated yet (same for saved_only_
     $:  if ($pageStore.url.searchParams.has('disliked_only')) {
@@ -415,29 +451,24 @@
 
     // Instance change handler
     function changeInstance(instance:string) {
-        if (controller.busy) return
+        if (controller.busy || controller.instance == instance) return
+
         if (debugMode) console.log(moduleName, ": Responding to instance change")
-        controller.storageKey = controller.storageKey
-        controller.refresh()
+        controller.instance = instance
+
+        // Give the profile a moment to load to hopefully be able to pick up the block lists to avoid a manual refresh of the feed to address
+        setTimeout(() => {
+            controller.refresh()
+        }, 50)
     }
 
     // React to community changing in the URL route (/c/community -> /c/community2)
     function changeCommunity(name:string) {
         // Don't do anything if the current community name is the same as the old one.
         if (controller.busy || controller.community_name == name) return
-
-        // If changing communities, store a snapshot of the current community's data
-        controller.takeSnapshot()
-
-        if (debugMode) console.log(moduleName, ": Responding to community change")
+        if (debugMode) console.log(moduleName, ": Responding to community change:", controller.community_name, "->", name)
         controller.community_name = name
-        controller.storageKey = controller.storageKey
-        controller.refresh()
     }
-
-
-
-
     
 
     // Event Handlers
@@ -531,9 +562,9 @@
 
     // Lifecycle Functions
     onMount(async () => {
-        if (debugMode) console.log(moduleName, ": Mounting component and calling loader with initial flag set.")
+        if (debugMode) console.log(moduleName, ": Mounting component and calling loader.")
         controller.mounting = true
-        await controller.load(true)
+        await controller.load({loadSnapshot: true, append: false})
         controller.mounting = false
     })
 
@@ -572,7 +603,8 @@
                 Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
             </span>
 
-            <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} loading={controller.busy}
+            <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
+                loading={controller.busy} disabled={controller.busy}
                 on:click={() => {
                     controller.refreshing = true
                     controller.refresh(true) 
@@ -585,15 +617,13 @@
 
 
     <!---Only use this loading spinner if infinite scroll is disabled--->
-    {#if controller.loading || controller.refreshing} <!--&& !$userSettings.uiState.infiniteScroll}-->
+    {#if controller.isLoading || controller.refreshing} <!--&& !$userSettings.uiState.infiniteScroll}-->
         <span class="flex flex-row w-full h-full items-center">        
             <Spinner width={24} class="mx-auto my-auto"/>
         </span>
     {/if}
 
-    {#if !controller.loading && posts?.posts?.length > 0 }
-        
-
+    {#if posts?.posts?.length > 0 }
 
         {#each posts.posts as item, idx (item.post.id)}
             {#if 
@@ -635,7 +665,8 @@
 
     
     <!---Infinite Scroll or Manual Pagination--->
-    {#if $userSettings.uiState.infiniteScroll}
+    {#if posts.posts.length > 0 && $userSettings.uiState.infiniteScroll}
+        
         {#if !controller.refreshing}
             <div class="flex flex-col items-center pt-2 my-auto w-full">
                 <InfiniteScrollDiv bind:state={controller.scrollState} bind:element={controller.scrollContainer} threshold={500} bind:disabled={controller.busy}
@@ -644,7 +675,7 @@
                         //controller.scrollState.loading = false
                         if (debugMode) console.log(moduleName, ": Received loadMore event from infinite scroll component")
                         controller.page++
-                        controller.load()
+                        controller.load({loadSnapshot: false, append: true})
                     }}
                 />
             </div>
@@ -654,8 +685,8 @@
         <Pageination bind:page={controller.page} class="px-4 mb-4" on:change={async (e) => {
             controller.page = e.detail
             controller.clearSnapshot()
-            await controller.load(true)
-            controller.scrollContainer.scrollTo(0,0)
+            await controller.load({append: false})
+            controller.scrollTop()
         }}/>
     {/if}
 </div>

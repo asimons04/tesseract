@@ -2,8 +2,13 @@ import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/
 import type { ListingType, SortType } from 'lemmy-js-client'
 
 
+export interface FeedControllerLoadOptions {
+    append?: boolean           // Whether the loader should append to the current posts or replace them. Default undefined/false
+    loadSnapshot?: boolean     // Whether to load from the snapshot (only needed on initial fetch. Default: undefined/false
+}
+
 export interface FeedController {
-    load: (initial?:boolean) => Promise<void>
+    load: (opts?:FeedControllerLoadOptions) => Promise<void>
     reset: (clearSnapshot?:boolean) => Promise<void>,
     refresh: (clearSnapshot?: boolean) => Promise<void>,
     scrollBottom: () => void,
@@ -13,6 +18,7 @@ export interface FeedController {
     loadSnapshot: () => boolean,
     
     // Internal State
+    instance: string
     scrollContainer: HTMLDivElement
     scrollState: InfiniteScrollStateVars
     loading: boolean
