@@ -198,7 +198,7 @@
     async function scrollIntoView(smooth:boolean = false) {
         if (scrollTo == post?.post.id && postContainer?.scrollIntoView) {
             if (debugMode) console.log(moduleName, ": Scrolling post " , post.post.id, "into view via param")
-            await sleep(150)
+            await sleep(50)
             postContainer.scrollIntoView({
                 behavior: smooth ? 'smooth' : 'instant',
                 block: 'start'
