@@ -44,8 +44,9 @@
 
     let dispatcher = createEventDispatcher()
     let loaded = false
-    
+    let img: HTMLImageElement
     let loading = lazyload ? 'lazy' : 'eager'
+    
     // Class not used due to chicken/egg, but leaving in until I move it to a util library for outside use
     export class Zoomable {
         element: any
@@ -167,7 +168,7 @@
 {#if url}   
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <img src="{imageProxyURL(url, resolution, 'webp')}"
+    <img bind:this={img} src="{imageProxyURL(url, resolution, 'webp')}"
         class="{$$props.class} 
             {fadeIn ? 'opacity-0 transition-opacity duration-150' : ''}  {loaded ? 'opacity-100' : ''}
             {zoomable ? 'cursor-zoom-in' : ''}
@@ -177,6 +178,11 @@
         alt={altText}
         title={title}
         {loading}
+        on:error={() => {
+            // If the image errors, try the proxy URL without format, then without resolution, and finally fallback to either original URL or use a placeholder.
+            console.log("ZoomableImage.svelte : Failed to fetch image. Retrying with new URL")
+            img.src=imageProxyURL(url, resolution, undefined) ?? imageProxyURL(url) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
+        }}
         on:load={() => (loaded = true)}
         on:click={(
             //@ts-ignore
