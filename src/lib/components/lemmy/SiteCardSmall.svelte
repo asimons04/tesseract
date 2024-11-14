@@ -23,6 +23,7 @@
         CubeTransparent,
     } from 'svelte-hero-icons'
     import Markdown from "../markdown/Markdown.svelte";
+    import Logo from "../ui/Logo.svelte";
     
 
     export let site: SiteView
@@ -71,7 +72,8 @@
                 <div class="flex flex-col mt-auto gap-2 items-end pr-2">
                     <!---Lemmy API Version--->
                     <span class="flex flex-row items-center gap-2 text-sm" title="API Version">
-                        <Icon src={Server} width={16} height={16} mini />
+                        <!--<Icon src={Server} width={16} height={16} mini />-->
+                        <Logo url="/img/lemmy.svg" rounded={false} width={16}/>
                         {version.split('-')[0]}
                     </span>
                     
