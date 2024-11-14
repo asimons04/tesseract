@@ -23,7 +23,10 @@
 
     <span class="flex flex-row gap-4 items-center">
         <button title="Theme"
-            on:click={ (e) => {
+            on:click={ (
+                //@ts-ignore
+                e
+            ) => {
                 e.stopPropagation();
                 $theme = inDarkTheme() ? 'light' : 'dark'
             }}
