@@ -53,18 +53,22 @@
                 <Markdown bind:source class="md:px-4 text-slate-700 dark:text-zinc-400 text-xs"/>
 
                 {#if description && description.length > previewLength }
-                    <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
+                    <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full 
+                            {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}
+                        "
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
                         on:click={() => { expandPreviewText = !expandPreviewText }}
-                        icon={expandPreviewText ? ChevronUp : ChevronDown}
-                        iconSize={24}
-                    />
+                    >
+                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} width={24} mini 
+                            class="{showThumbnail && thumbnail_url ? 'ml-[64px] sm:ml-[96px] md:ml-[128px]' : ''}"
+                        />
+                    </Button>
                 {/if}
             {/if}
         </div>
 
         {#if showThumbnail && thumbnail_url}
-            <button class="flex flex-none my-auto w-[64px] h-[64px] sm:w-[96px] sm:h-[96px] md:w-[128px] md:h-[128px] rounded-lg shadow-lg bg-white/80" 
+            <button class="flex flex-none  w-[64px] h-[64px] sm:w-[96px] sm:h-[96px] md:w-[128px] md:h-[128px] rounded-lg shadow-lg bg-white/80" 
                 style="background-image: url('{imageProxyURL(thumbnail_url, 256, 'webp')}'); 
                     background-size: cover; 
                     background-position: center center;
