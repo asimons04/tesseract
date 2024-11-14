@@ -426,16 +426,7 @@
             //goto($pageStore.url)
         }
 
-    /*
-    $:  if ($pageStore.url.searchParams.has('sort')) {
-            if ($pageStore.url.searchParams.get('sort') != controller.sort) {
-                controller.sort = $pageStore.url.searchParams.get('sort') as SortType
-            }
-            //$pageStore.url.searchParams.delete('sort')
-            //goto($pageStore.url)
-    }
-    */
-    
+   
     
     // These aren't fully integrated yet (same for saved_only_
     $:  if ($pageStore.url.searchParams.has('disliked_only')) {
@@ -692,7 +683,7 @@
             </div>
         {/if}
     
-    {:else if !controller.refreshing}
+    {:else if !controller.refreshing && !$userSettings.uiState.infiniteScroll}
         <Pageination bind:page={controller.page} class="px-4 mb-4" on:change={async (e) => {
             controller.page = e.detail
             controller.clearSnapshot()
