@@ -43,7 +43,7 @@
     const dispatcher = createEventDispatcher()
     
     // Watch the reply reason options and automatically update the mod reply based on the removal / restore reason.
-    $: remove.replyReason = remove.replyWithReason ? remove.setReplyReason(remove.reason) : ''
+    //$: remove.replyReason = remove.replyWithReason ? remove.setReplyReason(remove.reason) : ''
     
     // Reactive helper variable to determine if the item is removed.
     $:  removed = isCommentView(item)
@@ -115,37 +115,6 @@
                     return
                 }
 
-            
-                // Remove Comment
-                if (isCommentView(item)) {
-                    await getClient().removeComment({
-                        comment_id: item.comment.id,
-                        removed: !removed,
-                        reason: remove.reason || undefined,
-                    })
-                    item.comment.removed = !removed
-                    
-                    dispatchWindowEvent('removeComment', {
-                        comment_id: item.comment.id,
-                        removed: item.comment.removed
-                    })
-                } 
-
-                // Remove Post
-                else if (isPostView(item)) {
-                    await getClient().removePost({
-                        post_id: item.post.id,
-                        removed: !removed,
-                        reason: remove.reason || undefined,
-                    })
-                    item.post.removed = !removed
-                    
-                    dispatchWindowEvent('removePost', {
-                        post_id: item.post.id,
-                        removed: item.post.removed
-                    })
-                }
-
                 // Send reply with removal reason if selected
                 if (remove.replyWithReason) {
                     if (remove.replyReason == '') {
@@ -186,6 +155,38 @@
                         })
                     }
                 }
+
+                // Remove Comment
+                if (isCommentView(item)) {
+                    await getClient().removeComment({
+                        comment_id: item.comment.id,
+                        removed: !removed,
+                        reason: remove.reason || undefined,
+                    })
+                    item.comment.removed = !removed
+                    
+                    dispatchWindowEvent('removeComment', {
+                        comment_id: item.comment.id,
+                        removed: item.comment.removed
+                    })
+                } 
+
+                // Remove Post
+                else if (isPostView(item)) {
+                    await getClient().removePost({
+                        post_id: item.post.id,
+                        removed: !removed,
+                        reason: remove.reason || undefined,
+                    })
+                    item.post.removed = !removed
+                    
+                    dispatchWindowEvent('removePost', {
+                        post_id: item.post.id,
+                        removed: item.post.removed
+                    })
+                }
+
+                
                 
 
                 // Return to the mod menu and reset the reason value
@@ -261,7 +262,22 @@
         </SettingToggleContainer>
 
         {#if remove.replyWithReason}
-            <MarkdownEditor previewButton images={false} bind:value={remove.replyReason} placeholder={remove.replyReason} rows={6} label="Reply"/>
+            <MarkdownEditor previewButton images={false} bind:value={remove.replyReason} placeholder={remove.replyReason} rows={6} label="Reply">
+                <Button 
+                    color="primary" 
+                    icon={ChatBubbleLeft}
+                    iconSize={16}
+                    size="lg" 
+                    loading={remove.loading} 
+                    disabled={remove.loading} 
+                    slot="actions"
+                    on:click={() => {
+                        remove.replyReason = remove.setReplyReason(remove.reason)
+                    }}
+                >
+                    Use Reply Template
+                </Button>
+            </MarkdownEditor>
         {/if}
     {/if}
 </form>
