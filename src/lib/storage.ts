@@ -195,7 +195,13 @@ export const compressedStorage = {
     },
     
     store: function(key:string, data:any) {
-        const compressed = this.compressObject(data)
-        if (compressed) sessionStorage.setItem(key, compressed)
+        try {
+            const compressed = this.compressObject(data)
+            if (compressed) sessionStorage.setItem(key, compressed)
+        }
+        catch {
+            console.log("Failed to save to session storage. Deleting key")
+            sessionStorage.removeItem(key)
+        }
     }
 }
