@@ -17,18 +17,20 @@ export async function load({ params, url }: LoadParams) {
 
         const thread = url.searchParams.get('thread')
         let parentId: number | undefined
+        let threadDepth: number | undefined
 
         if (thread) {
             parentId = Number(thread.split('.')[1])
-
+            threadDepth = thread.split('.').length
+            
             if (!Number.isInteger(parentId)) {
                 parentId = undefined
             }
         }
         
         // Set the max-depth of comments to fetch. Fetch more layers if loading a particular thread, otherwise base it on the total number of comments.
-        const max_depth = (parentId && thread)
-            ? (thread.split('.').length <= 50) ? thread.split('.').length : 50
+        const max_depth = (parentId && threadDepth)
+            ? (threadDepth <= 50) ? threadDepth : 50
             : (post.post_view.counts.comments > 50) ? 2 : 3
 
         const sort = get(userSettings)?.defaultSort?.comments ?? 'Hot'
