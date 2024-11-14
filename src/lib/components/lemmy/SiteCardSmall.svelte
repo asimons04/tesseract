@@ -61,7 +61,9 @@
                 
                 <span class="flex flex-col w-full">
                     <span class="font-bold w-full text-xl">
-                        {site.site.name}
+                        <a href="/site/{new URL(site.site.actor_id).hostname}" class="hover:underline" title="About {site.site.name}">
+                            {site.site.name}
+                        </a>
                     </span>
 
                     <span class="text-base font-normal truncate">
