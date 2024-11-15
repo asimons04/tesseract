@@ -22,12 +22,12 @@
 
 {#if displayType == 'post'}
 <Button
-    size="md"
-    color="tertiary"
+    size="sm"
+    color="tertiary-border"
     disabled={post.post.locked || post.post.removed || post.post.deleted || !$profile?.user || !onHomeInstance}
     hidden={post.post.locked || !$profile?.user}
     icon={ArrowUturnLeft}
-    iconSize={20}
+    iconSize={18}
     on:click={() => { dispatcher('reply') }}
 >
     <span class="text-sm">Reply</span>
