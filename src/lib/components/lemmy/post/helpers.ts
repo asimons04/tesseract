@@ -71,7 +71,7 @@ export const isImage = (url: string | undefined) => {
     try {
         if (!url) return false
         const testURL = new URL(unproxyImage(url))
-        return /\.(avif|jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(testURL.pathname)
+        return /\.(avif|jpeg|jpg|gif|apng|png|svg|bmp|webp)$/i.test(testURL.pathname)
     }
     catch {
         return false

@@ -46,7 +46,8 @@
     let loaded = false
     let img: HTMLImageElement
     let loading = lazyload ? 'lazy' : 'eager'
-    
+    let retryCount = 1
+
     // Class not used due to chicken/egg, but leaving in until I move it to a util library for outside use
     export class Zoomable {
         element: any
@@ -180,8 +181,30 @@
         {loading}
         on:error={() => {
             // If the image errors, try the proxy URL without format, then without resolution, and finally fallback to either original URL or use a placeholder.
-            console.log("ZoomableImage.svelte : Failed to fetch image. Retrying with new URL")
-            img.src=imageProxyURL(url, resolution, undefined) ?? imageProxyURL(url) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
+            switch (retryCount) {
+                case 1:
+                    img.src = imageProxyURL(url, resolution, undefined) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
+                    retryCount++
+                    break
+
+                case 2:
+                    img.src = imageProxyURL(url) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
+                    retryCount++
+                    break
+                 
+                case 3:
+                    img.src = $userSettings.proxyMedia.fallback ? url : '/img/placeholder.png'
+                    retryCount++
+                    break
+
+                default:
+                    console.log("ZoomableImage.svelte : Max retries to fetch image failed; using placeholder")
+                    img.src = '/img/placeholder.png'
+                    retryCount++
+                    break
+
+            }
+            
         }}
         on:load={() => (loaded = true)}
         on:click={(

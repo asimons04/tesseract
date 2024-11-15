@@ -1,6 +1,7 @@
 import { get } from 'svelte/store'
 import { getInstance } from '$lib/lemmy.js'
 import { page } from '$app/stores'
+import { unproxyImage } from '$lib/components/lemmy/post/helpers'
 import { 
     userSettings, 
     ENABLE_MEDIA_PROXY,
@@ -66,6 +67,8 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
 
     // Build the image proxy URL to return
     try {
+        // Before building a proxied URL, un-proxy it from Lemmy's fucking stupid proxy URL that's federated for stupid, stupid, STUPID reasons.
+        url = unproxyImage(url)
         url = applySizeFormat(url, size, format)
 
         let image = new URL(url);

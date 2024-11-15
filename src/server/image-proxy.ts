@@ -148,9 +148,10 @@ const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<void|Re
 }
 
 // Check if the provided URL is an image
+
 function isImage  (url: string | undefined) {
     if (!url) return false
-    return /\.(jpeg|jpg|gif|png|svg|bmp|webp)$/i.test(new URL(url).pathname)
+    return /\.(avif|jpeg|jpg|gif|apng|png|svg|bmp|webp)$/i.test(new URL(url).pathname.toLowerCase())
 }
 
 // Check if provided URL is a video
@@ -159,7 +160,8 @@ function isVideo (inputUrl: string | undefined) {
 
   const url = new URL(inputUrl).pathname.toLowerCase()
 
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v')
+  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
 }
+
 
 

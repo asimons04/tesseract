@@ -2,7 +2,7 @@
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
-    import { unproxyImage, postType as identifyPostType } from './helpers.js'
+    import { postType as identifyPostType } from './helpers.js'
     import { userSettings } from '$lib/settings.js'
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
@@ -60,7 +60,7 @@
                 <div class="ml-auto mr-auto max-w-full">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-                    <ZoomableImage url={unproxyImage(post.post.thumbnail_url)} 
+                    <ZoomableImage url={post.post.thumbnail_url} 
                         bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={true}
                         class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(40vh,800px)] z-20"
                         
@@ -73,7 +73,7 @@
                 <div class="ml-auto mr-auto max-w-full">
                     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
 
-                    <ZoomableImage url={unproxyImage(post.post.thumbnail_url) }  altText={post.post.name} 
+                    <ZoomableImage url={post.post.thumbnail_url}  altText={post.post.name} 
                         class="max-w-full ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)]"
                     />
                 </div>
