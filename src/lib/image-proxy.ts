@@ -82,7 +82,8 @@ export function imageProxyURL(url?:string, size?:number, format?:string): string
         }
 
 
-        return `${origin}/image_proxy/${host}${path}?${params}`
+        //return `${origin}/image_proxy/${host}${path}?${params}`
+        return `/image_proxy/${host}${path}?${params}`
     }
     
     // If building the URL fails, fallback to returning the original
