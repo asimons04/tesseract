@@ -27,7 +27,7 @@
     newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
     class="!text-inherit h-8 px-3 {$$props.class}"
     title="{post.counts.comments} Comments {post.unread_comments > 0 ? `(${post.unread_comments} new)` : ''}"
-    color="tertiary-border"
+    color="tertiary"
     icon={ChatBubbleOvalLeftEllipsis}
     iconSize={22}
     on:click={(e) => {
