@@ -37,7 +37,7 @@
     
 
             
-    <div class="flex flex-row w-full items-start gap-1">
+    <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full items-start gap-1">
         
         <div class="flex flex-col gap-1 {showThumbnail && thumbnail_url ? 'w-[calc(100%-64px)] sm:w-[calc(100%-96px)] md:w-[calc(100%-128px)]' : 'w-full'}">
             <!---Slot for the Archive link selector, post url, and MBFC badge--->
