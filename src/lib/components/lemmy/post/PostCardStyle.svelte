@@ -49,7 +49,8 @@
     
 
     <!--- Crossposts --->
-    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="mb-1"/>
+    <Crossposts bind:post size={displayType=='feed' ? 'xs' : 'sm'} class="my-1"/>
+    <div class="mt-2" />
     <PostActions  bind:post  {displayType} on:reply />
     
 </Card>
