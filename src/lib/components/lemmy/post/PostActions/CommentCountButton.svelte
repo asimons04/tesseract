@@ -10,6 +10,7 @@
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     
     import {
+    ChatBubbleLeftRight,
         ChatBubbleOvalLeftEllipsis
     } from 'svelte-hero-icons'
     import { goto } from '$app/navigation';
@@ -22,14 +23,14 @@
 
 
 <Button
-    size="md"
+    size="sm"
     href={`/post/${getInstance()}/${post.post.id}`}
     newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
-    class="!text-inherit h-8 px-3 {$$props.class}"
+    class="!text-inherit {$$props.class}"
     title="{post.counts.comments} Comments {post.unread_comments > 0 ? `(${post.unread_comments} new)` : ''}"
-    color="tertiary"
-    icon={ChatBubbleOvalLeftEllipsis}
-    iconSize={22}
+    color="tertiary-border"
+    icon={ChatBubbleLeftRight}
+    iconSize={20}
     on:click={(e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -37,5 +38,15 @@
         goto(`/post/${getInstance()}/${post.post.id}`)
     }}
 >
-    <FormattedNumber number={post.counts.comments} />
+    <span class="text-xs opacity-80">    
+        <FormattedNumber number={post.counts.comments} /> 
+        <span class="hidden sm:inline">    
+            {post.counts.comments == 1 ? 'comment' : 'comments'}
+            
+            {#if post.unread_comments > 0 && post.counts.comments > post.unread_comments}
+                ({post.unread_comments} new)
+            {/if}
+        </span>
+    </span>
+    
 </Button>

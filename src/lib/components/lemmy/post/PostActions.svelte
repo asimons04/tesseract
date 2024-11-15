@@ -18,10 +18,10 @@
 
 </script>
 
-<div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full gap-1 sm:gap-2 items-center mt-auto">
+<div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full gap-1 sm:gap-4 items-center mt-auto">
 
     <!--- Post Vote Buttons--->
-    <PostVote bind:post  />
+    <PostVote bind:post />
     
     {#if actions}
         <!--- Comment Count and Link to Post--->

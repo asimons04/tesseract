@@ -59,15 +59,20 @@
 </script>
 
 
-<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center text-sm gap-0">
+<div class="flex 
+        {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} 
+        border border-slate-300 dark:border-zinc-800 items-center text-sm gap-0 rounded-lg
+    "
+>
+    <!--size="{small ? 'sm' : 'md'}"-->
     <Button
         disabled={!$profile?.user || !onHomeInstance}
         aria-label="Upvote"
         class="{post.my_vote == 1 ? voteColor(post.my_vote) : ''}"
-        size="{small ? 'sm' : 'md'}"
+        
         color="tertiary"
         alignment="center"
-        
+        size="sm"
         on:click={async () => {
             post.counts = await vote(post.my_vote == 1 ? 0 : 1)
             post.my_vote = post.my_vote == 1 ? 0 : 1
@@ -93,7 +98,7 @@
             disabled={!$profile?.user || !onHomeInstance}
             aria-label="Downvote"
             class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
-            size="{small ? 'sm' : 'md'}"
+            size="sm"
             color="tertiary"
             on:click={async () => {
                 post.counts = await vote(post.my_vote == -1 ? 0 : -1)

@@ -18,6 +18,7 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import UpvoteIcon from '$lib/components/ui/icons/UpvoteIcon.svelte'
 
     export let comment: CommentView
 
@@ -51,7 +52,7 @@
 
 </script>
 
-<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center rounded-md gap-0 transition-colors cursor-pointer h-[26px] border border-slate-200 dark:border-zinc-800  border rounded-lg">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center gap-0 cursor-pointer border border-slate-300 dark:border-zinc-800 items-center text-sm gap-0 rounded-lg">
     <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
         class="{comment.my_vote == 1 ? voteColor() : ''} !gap-0.5"
         on:click={async () => {
@@ -60,18 +61,17 @@
         }}
         
     >
-        <Icon width={19} mini src={
-            $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes
-                ? ArrowUp
-                : Heart
-            }  
-        />
+        {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
+            <UpvoteIcon width={19} filled={comment.my_vote == 1}/>
+        {:else}
+            <Icon src={Heart} width={19} mini />
+        {/if}
+
         {#if $userSettings.uiState.showScores}
             <FormattedNumber number={comment.counts.upvotes} />
         {/if}
     </Button>
     
-    <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
     
     <!---Hide downvote buttons if site config has globally disabled downvotes--->
     {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
@@ -83,7 +83,8 @@
             }}
             
         >
-            <Icon src={ArrowDown} width={19} mini />
+            <UpvoteIcon width={19} filled={comment.my_vote == -1} downvote/>
+
             {#if $userSettings.uiState.showScores}
                 <FormattedNumber number={comment.counts.downvotes} />
             {/if}
