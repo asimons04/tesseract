@@ -37,8 +37,25 @@
     
 
             
-    <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full items-start gap-1">
-        
+    <div class="flex flex-row w-full items-start gap-1">
+        {#if showThumbnail && thumbnail_url}
+            <button class="flex flex-none  w-[64px] h-[64px] sm:w-[96px] sm:h-[96px] md:w-[128px] md:h-[128px] rounded-lg shadow-lg bg-white/80" 
+                style="background-image: url('{imageProxyURL(thumbnail_url, 256, 'webp')}'); 
+                    background-size: cover; 
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                "
+                on:click={() => {
+                    dispatcher('clickThumbnail')
+                }}
+                
+            >
+                <span class="flex flex-col h-fit mt-auto mb-1 p-1 rounded-lg relative left-[5px] bg-slate-100/50 dark:bg-zinc-900/60">
+                    <Icon src={ArrowsPointingOut} width={16} mini />
+                </span>
+            </button>
+        {/if}
+
         <div class="flex flex-col gap-1 {showThumbnail && thumbnail_url ? 'w-[calc(100%-64px)] sm:w-[calc(100%-96px)] md:w-[calc(100%-128px)]' : 'w-full'}">
             <!---Slot for the Archive link selector, post url, and MBFC badge--->
             <slot />
@@ -60,30 +77,14 @@
                         on:click={() => { expandPreviewText = !expandPreviewText }}
                     >
                         <Icon src={expandPreviewText ? ChevronUp : ChevronDown} width={24} mini 
-                            class="{showThumbnail && thumbnail_url ? 'ml-[64px] sm:ml-[96px] md:ml-[128px]' : ''}"
+                            class="{showThumbnail && thumbnail_url ? 'mr-[68px] sm:mr-[100px] md:mr-[132px]' : ''}"
                         />
                     </Button>
                 {/if}
             {/if}
         </div>
 
-        {#if showThumbnail && thumbnail_url}
-            <button class="flex flex-none  w-[64px] h-[64px] sm:w-[96px] sm:h-[96px] md:w-[128px] md:h-[128px] rounded-lg shadow-lg bg-white/80" 
-                style="background-image: url('{imageProxyURL(thumbnail_url, 256, 'webp')}'); 
-                    background-size: cover; 
-                    background-position: center center;
-                    background-repeat: no-repeat;
-                "
-                on:click={() => {
-                    dispatcher('clickThumbnail')
-                }}
-                
-            >
-                <span class="flex flex-col h-fit mt-auto mb-1 p-1 rounded-lg relative left-[5px] bg-slate-100/50 dark:bg-zinc-900/60">
-                    <Icon src={ArrowsPointingOut} width={16} mini />
-                </span>
-            </button>
-        {/if}
+        
     </div>
 
     
