@@ -70,7 +70,7 @@
     
     <!---Comment Reply Button--->
     {#if actions}
-        <Button size="sm" color="tertiary"
+        <Button size="sm" color="tertiary-border"
             disabled={comment.post.locked || comment.post.removed || comment.post.deleted || !$profile?.user || !onHomeInstance} hidden={comment.post.locked || !$profile?.user}
             on:click={() => (replying = !replying)}
         >
