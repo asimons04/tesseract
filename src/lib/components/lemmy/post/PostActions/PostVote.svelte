@@ -14,10 +14,9 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import UpvoteIcon from '$lib/components/ui/icons/UpvoteIcon.svelte'
 
     import {
-        ArrowUp,
-        ArrowDown,
         Icon,
         Heart,
     } from 'svelte-hero-icons'
@@ -60,7 +59,7 @@
 </script>
 
 
-<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center text-sm gap-0 rounded-lg border border-slate-200 dark:border-zinc-800 duration-200">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} items-center text-sm gap-0">
     <Button
         disabled={!$profile?.user || !onHomeInstance}
         aria-label="Upvote"
@@ -68,12 +67,7 @@
         size="{small ? 'sm' : 'md'}"
         color="tertiary"
         alignment="center"
-        icon={
-            $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes
-                ? ArrowUp
-                : Heart
-        }  
-        iconSize={small ? 16 : 22}
+        
         on:click={async () => {
             post.counts = await vote(post.my_vote == 1 ? 0 : 1)
             post.my_vote = post.my_vote == 1 ? 0 : 1
@@ -81,14 +75,18 @@
 
 
     >
+        {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
+            <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == 1}/>
+        {:else}
+            <Icon src={Heart} width={small ? 16 : 18} mini />
+        {/if}
 
         {#if $userSettings.uiState.showScores}
             <FormattedNumber number={post.counts.upvotes} />
         {/if}
     </Button>
     
-    <div class="border-l h-6 w-0 !p-0 border-slate-200 dark:border-zinc-800"></div>
-   
+  
     <!---Hide downvote buttons if site config has globally disabled downvotes--->
     {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
         <Button
@@ -97,14 +95,14 @@
             class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
             size="{small ? 'sm' : 'md'}"
             color="tertiary"
-            icon={ArrowDown}
-            iconSize={small ? 16 : 22}
             on:click={async () => {
                 post.counts = await vote(post.my_vote == -1 ? 0 : -1)
                 post.my_vote = post.my_vote == -1 ? 0 : -1
             }}
 
         >
+            <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == -1} downvote/>
+
             {#if $userSettings.uiState.showScores}
                 <FormattedNumber number={post.counts.downvotes} />
             {/if}
