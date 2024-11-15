@@ -3,10 +3,7 @@
     import type { PostType, PostDisplayType } from './helpers.js'
     
     
-    import { imageProxyURL } from '$lib/image-proxy'
     import {isAudio, isImage, isVideo, postEditConfirmation } from './helpers.js'
-    import { scrollToTop } from './helpers.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
 
     import Card from '$lib/components/ui/Card.svelte'
@@ -16,8 +13,6 @@
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostLink from './PostLink.svelte';
-    
-    import { ArrowsPointingOut, Icon } from 'svelte-hero-icons';
     import PostTitle from './PostTitle.svelte';
     import CompactPostThumbnail from './utils/CompactPostThumbnail.svelte';
     
@@ -69,13 +64,13 @@
             {#if imageOnly}
                 
                 <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
-                <div class="flex flex-row gap-2">
+                <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                     <div class="flex flex-col w-[calc(100%-132px)] gap-1">
                         <PostTitle bind:post />
                         <PostBody bind:post {displayType} bind:expandPreviewText />
                         <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
 
-                        <div class="mt-auto" />
+                        <div class="mt-2" />
                         <PostActions  bind:post  {displayType} on:reply />
                     </div>
                     <CompactPostThumbnail bind:post bind:expandCompact bind:postContainer bind:displayType/>
@@ -84,7 +79,7 @@
             <!---Posts that have an image/video and a post body greater than 250 chars--->
             {:else}
                 <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
-                <div class="flex flex-row gap-2">
+                <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                     <div class="flex flex-col w-[calc(100%-132px)] gap-1">
                         <PostTitle bind:post />
                         {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
@@ -92,6 +87,7 @@
                         {/if}
                         <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                         
+                        <div class="mt-2" />
                         <PostActions  bind:post  {displayType} on:reply />
                     </div>
                     <CompactPostThumbnail bind:post bind:expandCompact bind:postContainer bind:displayType {showThumbnail} float />
@@ -107,6 +103,7 @@
                 <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText  class="mt-2 mb-1" />
             {/if}
             <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+            <div class="mt-2" />
             <PostActions  bind:post  {displayType} on:reply />
         {/if}
     {/if}
