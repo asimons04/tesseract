@@ -3,6 +3,7 @@
     
     import { createEventDispatcher } from "svelte"
     import { imageProxyURL } from "$lib/image-proxy"
+    import { toast } from "$lib/components/ui/toasts/toasts";
     import { userProfileModal } from "../moderation/moderation";
     import { userSettings } from '$lib/settings'
 
@@ -22,6 +23,7 @@
         EyeSlash,
         NoSymbol,
     } from 'svelte-hero-icons'
+    
     
     
     
@@ -70,9 +72,18 @@
                 {person_view.person.display_name ?? person_view.person.name}
             </a>
             
-            <span class="text-base font-normal truncate">
+            <button class="text-base text-left font-normal truncate"
+                on:click={() => {
+                    navigator.clipboard.writeText(`@${person_view.person.name}@${new URL(person_view.person.actor_id).hostname}`)
+                    toast({
+                        type: 'success',
+                        content: `Copied username to clipboard.`,
+                        title: 'Copied'
+                    })
+                }}
+            >
                 @{person_view.person.name}@{new URL(person_view.person.actor_id).hostname}
-            </span>
+            </button>
 
             <span class="flex flex-row flex-wrap w-full gap-2 text-sm font-normal mt-1">
                 {#if mod}
