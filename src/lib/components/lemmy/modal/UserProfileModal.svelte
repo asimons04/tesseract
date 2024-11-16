@@ -44,15 +44,13 @@
     import Card from "$lib/components/ui/Card.svelte";
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
     import UserSubmissionFeed from "./components/UserSubmissionFeed.svelte";
-    import Pageination from "$lib/components/ui/Pageination.svelte";
     import MultiSelect from "$lib/components/input/MultiSelect.svelte";
-    
-    
     
     
     export let user:Person | undefined
     export let open: boolean = false
     export let mod: boolean = false
+    export let action: 'none' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions'  = 'none'
     
     let loading = false
     let personDetails: GetPersonDetailsResponse
@@ -66,7 +64,7 @@
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
-    let action: 'none' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions'  = 'none'
+    
 
     $:  if (originalUser != user) {
         originalUser = user
