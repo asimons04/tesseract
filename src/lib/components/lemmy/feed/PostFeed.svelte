@@ -22,7 +22,7 @@
     
     import { addMBFCResults, filterKeywords, findCrossposts, isNewAccount, lastSeenPost, sleep } from "../post/helpers"
     import { amMod } from '../moderation/moderation'
-    import { compressedStorage } from '$lib/storage'
+    import { StorageController } from "$lib/storage-controller"
     
     import { fade } from 'svelte/transition'
     import { getClient } from "$lib/lemmy"
@@ -69,6 +69,10 @@
         
     // Controller that can be expored and used outside the component. Includes getters/setters for parameters.
     export const controller = {
+        storage: new StorageController({
+            ttl: snapshotValidity,
+            useCompression: true
+        }),
         loading: false,
         refreshing: false,
         mounting: false,
@@ -94,11 +98,9 @@
                     ? this.scrollState.loading = true
                     : this.loading = true
 
-                // Give the loader time to start animating
-                //await sleep(10)
 
                 // If this is an initial load and there is snapshot data, return early and don't fetch anything from the API yet.
-                if ( opts?.loadSnapshot && this.loadSnapshot()) {
+                if ( opts?.loadSnapshot && await this.loadSnapshot()) {
                     if (debugMode) console.log(moduleName, ": Initial load from snapshot. Not loading from API until requested")
 
                     $userSettings.uiState.infiniteScroll
@@ -128,12 +130,12 @@
                     community_name: community_name
                 })
                 
-                batch.posts = filterKeywords(batch.posts)
-                batch.posts = addMBFCResults(batch.posts)
+                batch.posts = [...filterKeywords(batch.posts)]
+                batch.posts = [...addMBFCResults(batch.posts)]
 
                 // Omit certain post processors if viewing a community (e.g. don't run xpost detection)
                 if (!community_id && !community_name) {
-                    batch.posts = findCrossposts(batch.posts)
+                    batch.posts = [...findCrossposts(batch.posts)]
                 }
                         
                 // Reset loading values
@@ -149,11 +151,14 @@
                         next_page: batch.next_page,
                         posts: [...posts.posts, ...batch.posts]
                     }
+
+                    
                 }
                 else {
                     this.page_cursors[this.page+1] = batch.next_page
-                    posts = batch
+                    posts = {...batch}
                 }
+
 
                 posts = posts
                 
@@ -196,10 +201,9 @@
             
             this.refreshing = true
             this.reset(clearSnapshot)
-            //sleep(10)
                 .then(() => this.load({loadSnapshot: false, append: false}))
                 .then(() => this.scrollTop())
-                .then(() => this.refreshing=false)
+                .then(() => this.isLoading=false)
             return
 
         },
@@ -212,9 +216,9 @@
             this.scrollContainer.scrollTo(0,0)
         },
 
-        takeSnapshot: function(): void {
+        takeSnapshot: async function(): Promise<void> {
             if (debugMode) console.log(moduleName, ": Taking snapshot: ", community_name)
-            compressedStorage.store(this.storageKey, this.data)
+            await this.storage.store(this.storageKey, this.data)
         },
 
         clearSnapshot: function(): void {
@@ -225,30 +229,23 @@
             
             if (debugMode) console.log(moduleName, ": Clearing snapshot:", this.storageKey)
             this.clearingSnapshot = true
-            compressedStorage.remove(this.storageKey)
+            this.storage.remove(this.storageKey)
             this.clearingSnapshot = false
 
             return
         },
 
-        loadSnapshot: function(): boolean {
-            const pageSnapshot = compressedStorage.retrieve(this.storageKey)
+        loadSnapshot: async function(): Promise<boolean> {
+            let pageSnapshot = await this.storage.retrieve(this.storageKey)
 
             if (pageSnapshot) {
                 // Only use snapshots if they're relatively fresh
                 let now = Math.round(new Date().getTime() /1000)
 
-                // Delete any snapshots that do not have timestamps
-                if ( !('last_refreshed' in pageSnapshot)) {
-                    if (debugMode) console.log(moduleName, ": Discarding snapshot that does not have timestamp")
-                    compressedStorage.remove(this.storageKey)
-                    return false
-                }
-
                 // Check age of snapshot; discard if older than 30 minutes (currently hardcoded)
                 if (now - pageSnapshot.last_refreshed > (snapshotValidity * 60)) {
                     if (debugMode) console.log(moduleName, ": Snapshot is expired. Removing.")
-                    compressedStorage.remove(this.storageKey)
+                    this.storage.remove(this.storageKey)
                     return false
                 }
 
@@ -267,17 +264,25 @@
                 if ('community_name' in pageSnapshot)    community_name = pageSnapshot.community_name
 
                 if (debugMode) console.log(moduleName, ": Snapshot loaded: ", this.storageKey)
+                pageSnapshot = null
                 return true
             }
+            pageSnapshot = null
             return false
         },
 
         get busy() {
-            return (controller.mounting || controller.loading || controller.refreshing || controller.clearingSnapshot || this.scrollState.loading)
+            return (this.mounting || this.isLoading || this.refreshing || this.clearingSnapshot )
         },
 
         get isLoading() {
             return (this.loading || this.scrollState.loading)
+        },
+
+        set isLoading(val:boolean) {
+            this.scrollState.loading = val
+            this.refreshing = val
+            this.loading = val
         },
 
         // Getter to get the storage key based on the params
@@ -329,7 +334,6 @@
             community_name = name
             this.refreshing = true
             this.reset(false)
-                //.then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: true, append:true}))
             
         },
@@ -341,7 +345,9 @@
         set disliked_only(dlo:boolean | undefined) {
             disliked_only = dlo
             liked_only = undefined
-            //this.refresh(true)
+            this.refreshing = true
+            this.reset(true)
+                .then(() => this.load({loadSnapshot: true, append:true}))
             
         },
         
@@ -352,7 +358,9 @@
         set liked_only(lo:boolean | undefined) {
             liked_only = lo
             disliked_only = undefined
-            //this.refresh(true)
+            this.refreshing = true
+            this.reset(true)
+                .then(() => this.load({loadSnapshot: true, append:true}))
            
         },
 
@@ -362,6 +370,11 @@
 
         set saved_only(so:boolean|undefined) {
             saved_only = so
+            liked_only = undefined
+            disliked_only = undefined
+            this.refreshing = true
+            this.reset(true)
+                .then(() => this.load({loadSnapshot: true, append:true}))
         },
 
         get sort():SortType {
@@ -374,12 +387,8 @@
             this.refreshing = true
             
             this.reset(true)
-                //.then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: false, append: false}))
             return
-
-            
-            
         },
 
         get type(): ListingType {
@@ -392,8 +401,8 @@
             type = t
             this.refreshing = true
             this.reset(true)
-                //.then(() => sleep(10))
                 .then(() => this.load({loadSnapshot: false, append: false}))
+            return
         }
     } as FeedController
 
@@ -414,32 +423,7 @@
             
             controller.refreshing = true
             controller.refresh(true)
-            
     }
-
-    $:  if ($pageStore.url.searchParams.has('type')) {
-        if ($pageStore.url.searchParams.get('type') != controller.type) {     
-                controller.type = $pageStore.url.searchParams.get('type') as ListingType
-            }
-            //$pageStore.url.searchParams.delete('type')
-            //goto($pageStore.url)
-        }
-
-   
-    
-    // These aren't fully integrated yet (same for saved_only_
-    $:  if ($pageStore.url.searchParams.has('disliked_only')) {
-            controller.disliked_only = true    
-            $pageStore.url.searchParams.delete('disliked_only')    
-            goto($pageStore.url)
-        }
-
-    $:  if ($pageStore.url.searchParams.has('liked_only')) {
-            controller.liked_only = true    
-            $pageStore.url.searchParams.delete('liked_only')     
-            goto($pageStore.url)
-        }
-
 
 
     // Instance change handler
@@ -450,9 +434,7 @@
         controller.instance = instance
 
         // Give the profile a moment to load to hopefully be able to pick up the block lists to avoid a manual refresh of the feed to address
-        setTimeout(() => {
-            controller.refresh()
-        }, 50)
+        sleep(50).then(() => controller.refresh())
     }
 
     // React to community changing in the URL route (/c/community -> /c/community2)
@@ -569,6 +551,7 @@
     onDestroy(() => {
         if (debugMode) console.log(moduleName, ": Component destroyed; saving data")
         controller.takeSnapshot()
+        controller.reset()
     })
 </script>
 
@@ -626,31 +609,31 @@
 
     {#if posts?.posts?.length > 0 }
 
-        {#each posts.posts as item, idx (item.post.id)}
+        {#each posts.posts as post, idx (post.post.id)}
             {#if 
-                !(item.creator_blocked) && 
-                !(item.community.hidden) && 
+                !post.creator_blocked && 
+                !post.community.hidden &&
+                !post.hidden &&  
+                !($userSettings.hidePosts.deleted && post.post.deleted) && 
+                !($userSettings.hidePosts.removed && post.post.removed) &&
+                //@ts-ignore
+                !($userSettings.hidePosts.MBFCLowCredibility && post.post.mbfc?.credibility == 'Low Credibility') &&
                 !(
                     // "or" conditions that should qualify the post to be hidden in the feed unless you're a mod of the community it's posted to
                     // or a local admin and the community is local
                     (
                         // Hide posts from new accounts (if they are not your own posts)
-                        ($userSettings.hidePosts.newAccounts &&  isNewAccount(item.creator.published) && item.creator.id != $profile?.user?.local_user_view?.person?.id) ||
+                        ($userSettings.hidePosts.newAccounts &&  isNewAccount(post.creator.published) && post.creator.id != $profile?.user?.local_user_view?.person?.id) ||
                         
                         // Hide posts from users whose instances you have blocked
-                        ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, item.creator.instance_id))
+                        ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, post.creator.instance_id))
                     ) 
                     // Safety check to ensure moderators and local admins will see the posts for moderation purposes
-                    && (!amMod($profile?.user, item.community))
-                ) &&
-                
-                !($userSettings.hidePosts.deleted && item.post.deleted) && 
-                !($userSettings.hidePosts.removed && item.post.removed) &&
-                //@ts-ignore
-                !($userSettings.hidePosts.MBFCLowCredibility && item.post.mbfc?.credibility == 'Low Credibility')
+                    && (!amMod($profile?.user, post.community))
+                )
             }
                 <div transition:fade>
-                    <Post bind:post={item} scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
+                    <Post bind:post scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
                 </div>
             {/if}
         {/each}
@@ -671,11 +654,10 @@
         <div class="flex flex-col items-center pt-2 my-auto w-full">
             <InfiniteScrollDiv bind:state={controller.scrollState} bind:element={controller.scrollContainer} threshold={500} bind:disabled={controller.busy}
                 on:loadMore={ () => {
-                    // Hack to override the auto loading state
-                    //controller.scrollState.loading = false
                     if (debugMode) console.log(moduleName, ": Received loadMore event from infinite scroll component")
                     controller.page++
                     controller.load({loadSnapshot: false, append: true})
+                        .then(() => { controller.isLoading = false })
                 }}
             />
         </div>
@@ -683,9 +665,11 @@
     {:else if !controller.refreshing && !$userSettings.uiState.infiniteScroll}
         <Pageination bind:page={controller.page} class="px-4 mb-4" on:change={async (e) => {
             controller.page = e.detail
+            controller.refreshing = true
             controller.clearSnapshot()
-            await controller.load({append: false})
-            controller.scrollTop()
+            posts.posts = []
+            controller.load({loadSnapshot: false, append: false})
+                .then(() => controller.scrollTop())
         }}/>
     {/if}
 </div>
