@@ -305,9 +305,9 @@
                 community_name: this.community_name,
                 last_refreshed: this.last_refreshed,
                 page: this.page,
-                posts: posts,
+                posts: {...posts},
                 last_clicked_post: this.last_clicked_post,
-                page_cursors: this.page_cursors
+                page_cursors: [...this.page_cursors]
             }
         },
 
@@ -550,8 +550,7 @@
 
     onDestroy(() => {
         if (debugMode) console.log(moduleName, ": Component destroyed; saving data")
-        controller.takeSnapshot()
-        controller.reset()
+        controller.takeSnapshot().then( () => controller.reset() )
     })
 </script>
 
