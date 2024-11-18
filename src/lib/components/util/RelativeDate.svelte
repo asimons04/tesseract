@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte'
     import { userSettings } from '$lib/settings'
+    import type { SystemTimerEvent } from '$lib/ui/events';
     
     export let date: string | number
     export let relativeTo: Date = new Date()
@@ -11,6 +12,7 @@
     }
 
     const stringToDate = (date: number|string): Date => new Date(date)
+    
     const toLocaleDateString = (date: Date): string => {
         try {
             return date.toLocaleString()
@@ -20,30 +22,14 @@
     }
     
     $: dateTime = toLocaleDateString(stringToDate(date))
-
-    // Set an interval to update the comnparison time every minute
-    let updateInterval:number
-    const startInterval = function() {
-        if ($userSettings.uiState.autoUpdateDates) {
-            updateInterval = window.setInterval(() => {
-            relativeTo = new Date()    
-            }, 60 * 1000)
+    
+    let lastTick: number = 0
+    function handleSystemTimerEvent(e:SystemTimerEvent) {
+        if ( (e.detail.timestamp - lastTick) > 60) {
+            lastTick = e.detail.timestamp
+            relativeTo = new Date()
         }
     }
-
-    const stopInterval = function() {
-        if (!updateInterval) return
-        window.clearInterval(updateInterval)
-    }
-
-    onMount(() => startInterval() )
-    onDestroy(() => stopInterval() )
-
-
-    onDestroy(() => {
-        clearInterval(updateInterval)
-    })
-
 
     function formatRelativeDate(date: Date) {
         try {
@@ -82,6 +68,8 @@
         }
     }
 </script>
+
+<svelte:window on:systemTimer={handleSystemTimerEvent} />
   
 <time class="whitespace-nowrap {$$props.class}" datetime={dateTime} title={dateTime}>
     {#key relativeTo}
