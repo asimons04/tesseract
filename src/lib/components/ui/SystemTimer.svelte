@@ -6,9 +6,9 @@
 
     onMount( () => {
         systemTimer = window.setInterval(() => {
-        let now = Math.round(new Date().getTime() /1000)
-        dispatchWindowEvent('systemTimer', {timestamp: now} )
-    }, 1000)
+            let now = Math.round(new Date().getTime() /1000)
+            dispatchWindowEvent('systemTimer', {timestamp: now} )
+        }, 1000)
     })
 
 
