@@ -11,7 +11,6 @@ export interface StorageControllerData {
     timestamp: number,
     payload: string,
     size: number
-    reduction: string
 }
 
 export class StorageController {
@@ -102,15 +101,13 @@ export class StorageController {
         if (!key || !data) return
         
         try {
-            const dataLength = JSON.stringify(data).length
 
             const payloadData = this.useCompression ? await this.compress(data) : JSON.stringify(data)
             if (!payloadData) throw new Error('Failed to compress data')
                 
             const payload = {
-                size: dataLength,
+                size: JSON.stringify(data).length,
                 payload: payloadData,
-                reduction: (100 - Math.round((payloadData.length/dataLength)*100) ) + '%',
                 timestamp: Math.round(new Date().getTime() /1000)
             } as StorageControllerData
             
