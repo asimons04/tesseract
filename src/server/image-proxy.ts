@@ -38,7 +38,7 @@ export async function image_proxy(event:any) {
     }
 
     try {
-        if ( req.method == 'GET' && ( isImage(req.url) || isVideo(req.url) ) ) {
+        if ( req.method == 'GET' && ( isImage(req.url) || isVideo(req.url) || isAudio(req.url) ) ) {
             
             // Lookup the image URL in the cache and return that if found
             let cacheKey = cache.createKey(imageUrl.href);
@@ -59,7 +59,7 @@ export async function image_proxy(event:any) {
                     }
                 }
                 
-                // Massage the request headers to create a new connection to the target Lemmy instance
+                // Massage the request headers to create a new connection to the target
                 req.headers.delete('origin');
                 req.headers.delete('host');
                 req.headers.delete('if-modified-since');
@@ -126,32 +126,36 @@ export async function image_proxy(event:any) {
 
 
 // Fetch an image
-const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<void|Response> {
-    const data = await fetch(imageUrl, 
-        {
-            method: 'GET',
-            headers: {
-                'accept':       req.headers.get('accept'),
-                'user-agent':   req.headers.get('user-agent')
-            },
-            redirect: "follow",
-            //@ts-ignore
-            signal: AbortSignal.timeout(60 * 1000),
-        }
-    )
-    .catch((error) => {
-        console.log(imageUrl);
-        console.log(error);
-    })
+const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<undefined|Response> {
+    try {
+        const data = await fetch(imageUrl, 
+            {
+                method: 'GET',
+                headers: {
+                    'accept':       req.headers.get('accept'),
+                    'user-agent':   req.headers.get('user-agent')
+                },
+                redirect: "follow",
+                //@ts-ignore
+                signal: AbortSignal.timeout(60 * 1000),
+            }
+        )
+        return data
+    }
+    catch (error) {
+        console.log(imageUrl)
+        console.log(error)
+        return undefined
+    }
     
-    return data;
+    
 }
 
 // Check if the provided URL is an image
 
 function isImage  (url: string | undefined) {
     if (!url) return false
-    return /\.(avif|jpeg|jpg|gif|apng|png|svg|bmp|webp)$/i.test(new URL(url).pathname.toLowerCase())
+    return /\.(avif|jpeg|jpg|gif|apng|png|img|svg|bmp|webp)$/i.test(new URL(url).pathname.toLowerCase())
 }
 
 // Check if provided URL is a video
@@ -163,5 +167,15 @@ function isVideo (inputUrl: string | undefined) {
   return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
 }
 
+export const isAudio = (inputUrl: string | undefined) => {
+    try {
+        if (!inputUrl) return false
+        const testURL = new URL(inputUrl)
+        return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
+    }
+    catch {
+        return false
+    }
+}
 
 
