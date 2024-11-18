@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { InfiniteScrollStateVars } from './helpers'
 
-    import { onDestroy, createEventDispatcher } from 'svelte'
+    import { onDestroy, createEventDispatcher, onMount } from 'svelte'
     import Button from '$lib/components/input/Button.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte';
 
@@ -21,18 +21,21 @@
     }
     const dispatcher = createEventDispatcher();
 
-   $: if (element) {
-        element.addEventListener("scroll", onScroll)
-    }
+   
 
     function onScroll(e:any) {
         const offset = element.scrollHeight - (element.clientHeight + element.scrollTop)
+        
         if (offset <= threshold && !state.loading && !state.exhausted) {
             if (disabled) return
             state.loading = true
             dispatcher('loadMore')
         }
     }
+
+    onMount(() => {
+        if (element) element.addEventListener("scroll", onScroll)
+    })
 
     onDestroy( () => {
         if (element) element.removeEventListener("scroll", onScroll)
