@@ -6,7 +6,7 @@
     import 'nprogress/nprogress.css'
     
     import { inDarkTheme } from '$lib/ui/colors.js'
-    import { onMount } from 'svelte'
+    import { onDestroy, onMount } from 'svelte'
     // @ts-ignore
     import { pwaInfo } from 'virtual:pwa-info'
     import PwaReload from '$lib/PwaReload.svelte'
@@ -17,6 +17,7 @@
     import ModalContainer from '$lib/components/ui/modal/ModalContainer.svelte'
     import Navbar from '$lib/components/ui/Navbar.svelte'
     import Sidebar from '$lib/components/ui/sidebar/Sidebar.svelte'
+    import SystemTimer from '$lib/components/ui/SystemTimer.svelte';
     import ToastContainer from '$lib/components/ui/toasts/ToastContainer.svelte'
     
     nProgress.configure({
@@ -39,13 +40,16 @@
 
     $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
   
+    
+    
+    
     // Clear the loading animation when loaded.
     onMount(() => {
         const element = document.getElementById('loader-animation')
         if (element) element.remove()
-
-        
     })
+
+
   
 </script>
 
@@ -55,6 +59,7 @@
 </svelte:head>
 
 <div class="flex flex-col min-h-screen {$userSettings.font}">
+    <SystemTimer />
     <Navbar />
     <ToastContainer />
     <ModalContainer />
