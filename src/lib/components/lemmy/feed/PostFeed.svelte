@@ -253,10 +253,10 @@
 
                 if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
                 if ('type' in pageSnapshot)              type = pageSnapshot.type
-                if ('posts' in pageSnapshot)             posts = pageSnapshot.posts
+                if ('posts' in pageSnapshot)             posts = {...pageSnapshot.posts}
                 if ('page' in pageSnapshot)              this.page = pageSnapshot.page
                 if ('last_clicked_post' in pageSnapshot) this.last_clicked_post = pageSnapshot.last_clicked_post
-                if ('page_cursors' in pageSnapshot)      this.page_cursors = pageSnapshot.page_cursors
+                if ('page_cursors' in pageSnapshot)      this.page_cursors = [...pageSnapshot.page_cursors]
                 if ('liked_only' in pageSnapshot)        liked_only = pageSnapshot.liked_only
                 if ('disliked_only' in pageSnapshot)     disliked_only = pageSnapshot.disliked_only
                 if ('saved_only' in pageSnapshot)        saved_only = pageSnapshot.saved_only
@@ -416,13 +416,13 @@
             if (debugMode) console.log(moduleName, ": Got invalidate param")
             
             $pageStore.url.searchParams.delete('invalidate')
-            goto($pageStore.url)
+            
             // Set local sort/type and do one refresh (they refresh individually otherwise)
             sort = $userSettings.defaultSort.sort
             type = $userSettings.defaultSort.feed
-            
-            controller.refreshing = true
+
             controller.refresh(true)
+            goto($pageStore.url)
     }
 
 
