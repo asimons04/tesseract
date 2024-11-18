@@ -24,6 +24,10 @@ declare global {
     }
     declare const __VERSION__: string
     declare const __CODENAME__: string  
+    
+    interface ReadableStream<R = any> {
+        [Symbol.asyncIterator](): AsyncIterableIterator<R>;
+    }
 }
 
 
