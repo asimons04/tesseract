@@ -50,7 +50,7 @@
                 }}
                 
             >
-                <span class="flex flex-col h-fit mt-auto mb-1 p-1 rounded-lg relative left-[5px] bg-slate-100/50 dark:bg-zinc-900/60">
+                <span class="flex flex-col h-fit mt-auto ml-auto mr-1 mb-1 p-1 rounded-lg relative bg-slate-100/50 dark:bg-zinc-900/60">
                     <Icon src={ArrowsPointingOut} width={16} mini />
                 </span>
             </button>
