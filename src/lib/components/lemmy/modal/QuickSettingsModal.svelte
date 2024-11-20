@@ -40,8 +40,6 @@
 
     export let open: boolean = false
     let hybridViewEditorOpen = false
-
-    
 </script>
 
 
@@ -95,7 +93,12 @@
 
             <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
                 <!---Infinite Scroll--->
-                <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll} small/>
+                <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll} small
+                    on:change={(e) => {
+                        $userSettings.uiState.infiniteScroll = e.detail
+                        location.reload()
+                    }}
+                />
                 
                 <!---Open in New Tab--->
                 <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
