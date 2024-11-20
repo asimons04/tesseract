@@ -50,7 +50,7 @@
     export let liked_only: boolean|undefined        = undefined
     export let saved_only: boolean|undefined        = undefined
     export let type: ListingType                    = $userSettings.defaultSort.feed ?? 'All'
-    export let sort: SortType                       = ($pageStore.url.searchParams.get('sort') as SortType) ?? $userSettings.defaultSort.sort ?? 'New'
+    export let sort: SortType                       = $userSettings.defaultSort.sort ?? 'New'
     export let actions: boolean                     = false
     export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
     
