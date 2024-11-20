@@ -50,7 +50,7 @@
     export let liked_only: boolean|undefined        = undefined
     export let saved_only: boolean|undefined        = undefined
     export let type: ListingType                    = $userSettings.defaultSort.feed ?? 'All'
-    export let sort: SortType                       = $userSettings.defaultSort.sort ?? 'New'
+    export let sort: SortType                       = ($pageStore.url.searchParams.get('sort') as SortType) ?? $userSettings.defaultSort.sort ?? 'New'
     export let actions: boolean                     = false
     export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
     
@@ -61,18 +61,20 @@
     if (debugMode) console.log(moduleName, ": Sort method:", sort)
     if (debugMode) console.log(moduleName, ": Listing type:", type)
 
-    let posts = {
+    let posts: GetPostsResponse = {
         next_page: undefined,
         posts: [] as PostView[]
-    } as GetPostsResponse
-    
-        
+    }
+    let truncatedPosts: PostView[] = []
+
     // Controller that can be expored and used outside the component. Includes getters/setters for parameters.
     export const controller = {
+        bound: true,
         storage: new StorageController({
             ttl: snapshotValidity,
             useCompression: true
         }),
+        truncated: false,
         loading: false,
         refreshing: false,
         mounting: false,
@@ -88,6 +90,12 @@
         scrollState: {
             loading: false,
             exhausted: false
+        },
+
+        invalidate: function() {
+            sort = $userSettings.defaultSort.sort
+            type = $userSettings.defaultSort.feed
+            controller.refresh(true)
         },
 
         load: async function(opts?:FeedControllerLoadOptions): Promise<void> {
@@ -151,6 +159,16 @@
                         next_page: batch.next_page,
                         posts: [...posts.posts, ...batch.posts]
                     }
+                    
+                    
+                    
+                    /*
+                    if (posts.posts.length > 50) {
+                        const oldPosts = posts.posts.splice(0, (posts.posts.length-50))
+                        truncatedPosts = [...truncatedPosts, ...oldPosts]
+                        this.truncated = true
+                    }
+                    */
 
                     
                 }
@@ -158,8 +176,8 @@
                     this.page_cursors[this.page+1] = batch.next_page
                     posts = {...batch}
                 }
-
-
+                
+                posts.posts = [...findCrossposts(posts.posts)]
                 posts = posts
                 
                 this.last_refreshed = Math.round(new Date().getTime() /1000)
@@ -209,11 +227,11 @@
         },
 
         scrollBottom: function(): void {
-            this.scrollContainer.scrollTo(0,this.scrollContainer.scrollHeight)
+            this.scrollContainer?.scrollTo(0,this.scrollContainer.scrollHeight)
         },
 
         scrollTop: function(): void {
-            this.scrollContainer.scrollTo(0,0)
+            this.scrollContainer?.scrollTo(0,0)
         },
 
         takeSnapshot: async function(): Promise<void> {
@@ -254,6 +272,7 @@
                 if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
                 if ('type' in pageSnapshot)              type = pageSnapshot.type
                 if ('posts' in pageSnapshot)             posts = {...pageSnapshot.posts}
+                if ('truncatedPosts' in pageSnapshot)    truncatedPosts = [...pageSnapshot.truncatedPosts]
                 if ('page' in pageSnapshot)              this.page = pageSnapshot.page
                 if ('last_clicked_post' in pageSnapshot) this.last_clicked_post = pageSnapshot.last_clicked_post
                 if ('page_cursors' in pageSnapshot)      this.page_cursors = [...pageSnapshot.page_cursors]
@@ -306,6 +325,7 @@
                 last_refreshed: this.last_refreshed,
                 page: this.page,
                 posts: {...posts},
+                truncatedPosts: [...truncatedPosts],
                 last_clicked_post: this.last_clicked_post,
                 page_cursors: [...this.page_cursors]
             }
@@ -411,20 +431,6 @@
     // React if the community changes
     $:  $pageStore.params.name, community_name, changeCommunity($pageStore.params.name ?? community_name)
     $:  $instance, changeInstance($instance)
-
-    $:  if ($pageStore.url.searchParams.has('invalidate')) {
-            if (debugMode) console.log(moduleName, ": Got invalidate param")
-            
-            $pageStore.url.searchParams.delete('invalidate')
-            
-            // Set local sort/type and do one refresh (they refresh individually otherwise)
-            sort = $userSettings.defaultSort.sort
-            type = $userSettings.defaultSort.feed
-
-            controller.refresh(true)
-            goto($pageStore.url)
-    }
-
 
     // Instance change handler
     function changeInstance(instance:string) {
@@ -550,7 +556,9 @@
 
     onDestroy(() => {
         if (debugMode) console.log(moduleName, ": Component destroyed; saving data")
-        controller.takeSnapshot().then( () => controller.reset() )
+        controller.takeSnapshot().then( () => {
+            controller.reset() 
+        })
     })
 </script>
 
@@ -598,6 +606,17 @@
         </div>
     {/if}
 
+    {#if controller.truncated && truncatedPosts.length > 0}
+        <Button icon={ArchiveBox} class="w-full" color="tertiary-border" on:click={() => {
+            posts.posts = [...truncatedPosts, ...posts.posts]
+            truncatedPosts = []
+            posts = posts
+        }}>
+            Show {truncatedPosts.length} Hidden Posts
+        </Button>
+
+    {/if}
+
 
     <!---Only use this loading spinner if infinite scroll is disabled--->
     {#if controller.isLoading || controller.refreshing} <!--&& !$userSettings.uiState.infiniteScroll}-->
@@ -632,7 +651,7 @@
                 )
             }
                 <div transition:fade>
-                    <Post bind:post scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
+                    <Post {post} scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
                 </div>
             {/if}
         {/each}

@@ -1,5 +1,5 @@
 import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/helpers'
-import type { ListingType, SortType } from 'lemmy-js-client'
+import type { GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 import type { StorageController } from '$lib/storage-controller'
 
 export interface FeedControllerLoadOptions {
@@ -8,9 +8,10 @@ export interface FeedControllerLoadOptions {
 }
 
 export interface FeedController {
+    invalidate: () => void
     load: (opts?:FeedControllerLoadOptions) => Promise<void>
     reset: (clearSnapshot?:boolean) => Promise<void>,
-    refresh: (clearSnapshot?: boolean) => Promise<void>,
+    refresh: (clearSnapshot?: boolean) => void,
     scrollBottom: () => void,
     scrollTop: () => void,
     clearSnapshot: () => void,
@@ -20,8 +21,10 @@ export interface FeedController {
     storage: StorageController
     
     // Internal State
+    bound: boolean
+    truncated: boolean
     instance: string
-    scrollContainer: HTMLDivElement
+    scrollContainer?: HTMLDivElement
     scrollState: InfiniteScrollStateVars
     loading: boolean
     refreshing: boolean
@@ -45,4 +48,32 @@ export interface FeedController {
     sort: SortType
     storageKey: string,
     type: ListingType
+}
+
+
+export const parseSortType = (sort?:string): SortType => {
+    if (!sort) return 'New'
+    switch(sort?.toLowerCase()) {
+        case 'old':             return "Old"
+        case 'new':             return "New"
+        case 'active':          return 'Active'
+        case 'hot':             return 'Hot'
+        case 'topday':          return "TopDay"
+        case 'topweek':         return "TopWeek"
+        case 'topmonth':        return 'TopMonth'
+        case 'topyear':         return 'TopYear'
+        case 'topall':          return 'TopAll'
+        case 'mostcomments':    return 'MostComments'
+        case 'newcomments':     return 'NewComments'
+        case 'tophour':         return 'TopHour'
+        case 'topsixhour':      return 'TopSixHour'
+        case 'toptwelvehour':   return 'TopTwelveHour'
+        case 'topthreemonths':  return 'TopThreeMonths'
+        case 'topsixmonths':    return 'TopSixMonths'
+        case 'topninemonths':   return 'TopNineMonths'
+        case 'controversial':   return 'Controversial'
+        case 'scaled':          return 'Scaled'
+
+        default:                return 'New'
+    }
 }
