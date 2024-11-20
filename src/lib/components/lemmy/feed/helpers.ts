@@ -55,7 +55,7 @@ export interface FeedController {
 
 
 export const parseSortType = (sort?:string): SortType => {
-    if (!sort) return 'New'
+    if (!sort)                  return get(userSettings)?.defaultSort.sort ?? 'New'
     switch(sort?.toLowerCase()) {
         case 'old':             return "Old"
         case 'new':             return "New"
@@ -82,6 +82,8 @@ export const parseSortType = (sort?:string): SortType => {
 }
 
 export const parseListingType = (lType?:string|null): ListingType  => {
+    if (!lType)             return get(userSettings)?.defaultSort.feed ?? 'All'
+    
     switch(lType?.toLowerCase()) {
         case 'all':         return 'All'
         case 'local':       return 'Local'
