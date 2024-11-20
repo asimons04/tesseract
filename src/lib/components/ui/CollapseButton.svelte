@@ -37,7 +37,7 @@
     </Button>
     
     {#if expanded}
-        <div class="flex flex-col gap-2 pl-2 pr-2 py-2 {innerClass}" transition:slide>
+        <div class="flex flex-col gap-2 pl-4 pr-2 py-2 {innerClass}" transition:slide>
             <slot />
         </div>
     {/if}
