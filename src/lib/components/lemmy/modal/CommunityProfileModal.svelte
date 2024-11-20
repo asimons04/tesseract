@@ -597,7 +597,7 @@
                     {#if !communityBlocked}
 
                         <!---Go to Community--->
-                        <Button color="tertiary-border" icon={UserGroup} alignment="left" class="w-full"
+                        <Button color="tertiary-border" icon={UserGroup} iconSize={20} alignment="left" class="w-full"
                             on:click={()=> {
                                 goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
                                 open = false
@@ -607,7 +607,7 @@
                         </Button> 
 
                         <!--- Community Details/Info--->
-                        <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full"
+                        <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full"
                             on:click={()=> {
                                 modalWidth='max-w-3xl'
                                 action='communityDetails'
@@ -618,7 +618,7 @@
 
                            
                         <!---Browse Community's Posts in the  Modal--->
-                        <Button color="tertiary-border" icon={WindowIcon} alignment="left" class="w-full"
+                        <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                             on:click={()=> {
                                 modalWidth = 'max-w-3xl'
                                 action = 'browsing'
@@ -631,7 +631,7 @@
 
                     <!---Create Post--->
                     {#if $profile?.user && !communityBlocked}
-                        <Button color="tertiary-border" icon={PencilSquare} alignment="left" class="w-full"
+                        <Button color="tertiary-border" icon={PencilSquare} iconSize={20} alignment="left" class="w-full"
                             disabled={
                                 (communityDetails.community_view.community.posting_restricted_to_mods && !amMod($profile.user, communityDetails.community_view.community)) ||
                                 communityDetails.community_view.community.removed
@@ -646,7 +646,7 @@
                     {/if}
 
                     <!---Community Modlog--->
-                    <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
+                    <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
                         on:click={()=> {
                             modalWidth = 'max-w-3xl'
                             action='modlog'
@@ -661,7 +661,7 @@
 
                         <!---Community Settings (if mod or local admin of a local community)--->
                         {#if $profile?.user && amMod($profile.user, communityDetails.community_view.community)}
-                            <Button color="tertiary-border" icon={Cog6Tooth} alignment="left" class="w-full"
+                            <Button color="tertiary-border" icon={Cog6Tooth} iconSize={20} alignment="left" class="w-full"
                                 on:click={ () => {
                                     goto(`/c/${fullCommunityName(communityDetails.community_view.community.name, communityDetails.community_view.community.actor_id)}/settings`)
                                     open = false
@@ -673,7 +673,7 @@
 
                         <!---Ban User Tool--->
                         {#if $profile?.user && (amMod($profile.user, communityDetails.community_view.community) || isAdmin($profile.user) )}
-                            <Button color="tertiary-border" icon={Scale} alignment="left" class="w-full"
+                            <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full"
                                 on:click={ () => {
                                     modalWidth = 'max-w-3xl'
                                     action = 'banning'
@@ -684,7 +684,7 @@
                         {/if} 
 
                         <!---Block Community--->
-                        <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" loading={blocking}
+                        <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" loading={blocking}
                             title="{communityBlocked ? 'Unblock' : 'Block'} Community"
                             on:click={async ()=> {
                                 action = 'blocking'
@@ -696,7 +696,7 @@
                         <!---Admin-Only Options--->
                         {#if isAdmin($profile.user) }
                             <!---Remove Community--->
-                            <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" loading={remove.removing} 
+                            <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" loading={remove.removing} 
                                 title="{communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community"
                                 on:click={()=> {
                                     modalWidth="max-w-2xl"
@@ -707,7 +707,7 @@
                             </Button>
 
                             <!---Hide Community--->
-                            <Button color="tertiary-border" icon={EyeSlash} alignment="left" class="w-full" loading={hide.hiding} 
+                            <Button color="tertiary-border" icon={EyeSlash} iconSize={20} alignment="left" class="w-full" loading={hide.hiding} 
                                 title="{communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community"
                                 on:click={() => {
                                     modalWidth="max-w-2xl"

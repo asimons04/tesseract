@@ -532,7 +532,7 @@
             
             <div class="flex flex-col gap-2 px-8 mt-0 w-full items-center">
                 <!---Community Info--->
-                <Button color="tertiary-border" icon={InformationCircle} alignment="left" class="w-full" 
+                <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
                         action = 'communityInfo' 
@@ -543,7 +543,7 @@
 
 
                 <!---Creator's Modlog History--->
-                <Button color="tertiary-border" icon={Newspaper} alignment="left" class="w-full"
+                <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
                     on:click={() => {
                         modalWidth = 'max-w-4xl'
                         action = 'modlog'
@@ -553,19 +553,19 @@
                 </Button>
 
                 <!---View Submissions--->
-                <Button color="tertiary-border" icon={WindowIcon} alignment="left" class="w-full"
+                <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                     on:click={() => {
                         modalWidth = "max-w-3xl"
                         action = 'userSubmissions'
                     }}
                 >
-                    Creator's Submissions in Community...
+                    Submissions in Community...
                 </Button>
 
 
                 <!---Vote Viewer--->
                 {#if !purged && isAdmin($profile?.user)}
-                    <Button color="tertiary-border" icon={HandThumbUp} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={HandThumbUp} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
                             action = 'showVotes' 
                         }}
@@ -576,7 +576,7 @@
 
                 <!---Report Item Button (Only useful for local admins)--->
                 {#if !purged && !removed && $profile?.user && isAdmin($profile?.user)}
-                    <Button color="tertiary-border" icon={Flag} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={Flag} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
                             action = 'reporting'
@@ -588,7 +588,7 @@
                 
 
                 <!---Send Message Creator--->
-                <Button color="tertiary-border" icon={Envelope} alignment="left" class="w-full" 
+                <Button color="tertiary-border" icon={Envelope} iconSize={20} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth='max-w-3xl'
                         action = 'messaging'
@@ -600,7 +600,7 @@
 
                 <!---Remove/Restore Item--->
                 {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
-                    <Button color="tertiary-border" icon={Trash} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
                             remove.purge = false
@@ -616,7 +616,7 @@
 
                 <!---Purge Item--->
                 {#if !purged && isAdmin($profile?.user) }
-                    <Button color="tertiary-border" icon={Fire} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={Fire} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
                             remove.purge = true
@@ -629,7 +629,7 @@
 
                 <!---Ban User (Community) --->
                 {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
-                    <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
                             banCommunity = item.community
@@ -642,7 +642,7 @@
                 
                 <!---Ban User (Instance) --->
                 {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
-                    <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" 
+                    <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth='max-w-3xl'
                             banCommunity = undefined
