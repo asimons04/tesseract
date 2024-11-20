@@ -31,7 +31,9 @@ export async function load({ params, url }: LoadParams) {
         // Set the max-depth of comments to fetch. Fetch more layers if loading a particular thread, otherwise base it on the total number of comments.
         const max_depth = (parentId && threadDepth)
             ? (threadDepth <= 50) ? threadDepth : 50
-            : (post.post_view.counts.comments > 50) ? 2 : 3
+            : (post.post_view.counts.comments > 50) 
+                ? 2 
+                : 50
 
         const sort = get(userSettings)?.defaultSort?.comments ?? 'Hot'
 
