@@ -5,7 +5,7 @@
     import { createEventDispatcher } from 'svelte'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
-    import { quickSettingsModal } from '$lib/components/lemmy/moderation/moderation'
+    import { amModOfAny, quickSettingsModal } from '$lib/components/lemmy/moderation/moderation'
     import { setSessionStorage } from '$lib/session'
     import { userSettings } from '$lib/settings'
     
@@ -42,6 +42,7 @@
         Window,
         Cog6Tooth,
     } from 'svelte-hero-icons'
+    import { profile } from '$lib/auth';
 
     export let iconSize:number = 28
 
@@ -90,7 +91,16 @@
     // Post/Community/Moderator Action Menus
     export let post:PostView | undefined        = undefined
     export let postTitle:boolean                = false     // Post title in center of bar
-
+    
+    // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
+    $:  if ($profile?.user && amModOfAny($profile.user)) {
+            if (!listingTypeOptions.includes('ModeratorView'))      listingTypeOptions.push('ModeratorView')
+            if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Moderator View")
+        }
+        else {
+            if (listingTypeOptions.includes('ModeratorView'))       listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
+            if (listingTypeOptionNames.includes('ModeratorView'))   listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Moderator View'), 1)
+        }
     const dispatcher = createEventDispatcher
         <{ 
             navChangeSort?: SortType,
