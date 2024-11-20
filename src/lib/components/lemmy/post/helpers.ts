@@ -350,7 +350,7 @@ export const buildSonglinkEmbedLink = (postURL:string, displayType: 'post'|'feed
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
-export const postType = (post: PostView | undefined ): PostType => {
+export const postType = (post: PostView | undefined | null): PostType => {
     
     if (!post) return 'text'
     
@@ -634,7 +634,7 @@ export const findCrossposts = function (posts:PostView[]):PostView[] {
         // Loop over each post
         for (let i:number=0; i<posts.length; i++) {
             let post = {...posts[i]};
-            post.cross_posts = [] as PostView[];
+            post.cross_posts = post.cross_posts ? [...post.cross_posts] : [] as PostView[];
             
             // Loop over each post again to find cross posts.
             for (let j:number=0; j < posts.length; j++) {
