@@ -38,7 +38,7 @@
     
     <a class="flex flex-col gap-1 items-start w-full
             hover:dark:bg-zinc-800 hover:bg-slate-200
-            py-2.5 px-4 
+            py-1 px-2 
             {getTextSize()}
             {noClick ? 'pointer-events-none' : ''}
         " 
@@ -54,10 +54,10 @@
 
             <div class="flex flex-row w-full items-center">
                 
-                <div class="flex flex-col lg:flex-row gap-1">
+                <div class="flex flex-col gap-1">
                     <CommunityLink community={crosspost.community} avatar avatarSize={iconSize}/>
                     {#if showUser}
-                        <span> by <UserLink user={crosspost.creator} avatar={false} /></span>
+                        <span class="hidden lg:block">by <UserLink user={crosspost.creator} avatar={false} /></span>
                     {/if}
                 </div>
 
