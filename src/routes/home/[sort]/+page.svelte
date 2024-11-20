@@ -39,12 +39,12 @@
 
     
     function applyTypeOption() {
-        if (!feedController.bound) return
+        if (!feedController.bound || feedController.type == type) return
         feedController.type = type
     }
 
     function applySortOption() {
-        if (!feedController.bound) return
+        if (!feedController.bound || feedController.sort == sort) return
         feedController.sort = sort
     }
 
@@ -74,13 +74,17 @@
         const url = new URL($page.url)
         url.pathname = `/home/${sort.toLowerCase()}`
         goto(url)
+        
+        //goto(`/home/${sort.toLowerCase()}`)
     }}
     
     
 
-    scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }
+    scrollButtons scrollPreventDefault 
+    on:navScrollBottom={() => feedController.scrollBottom() } 
+    on:navScrollTop={() => feedController.scrollTop() }
+    
     refreshButton refreshPreventDefault refreshButtonLoading={feedController.busy} 
-
     on:navRefresh={()=> {
         if (debugMode) console.log(moduleName, "Calling NAV REFRESH")
         feedController.refreshing = true
