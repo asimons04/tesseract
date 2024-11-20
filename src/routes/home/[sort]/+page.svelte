@@ -74,8 +74,6 @@
         const url = new URL($page.url)
         url.pathname = `/home/${sort.toLowerCase()}`
         goto(url)
-        
-        //goto(`/home/${sort.toLowerCase()}`)
     }}
     
     
