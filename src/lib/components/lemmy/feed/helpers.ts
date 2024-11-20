@@ -2,6 +2,9 @@ import type { InfiniteScrollStateVars } from '$lib/components/ui/infinitescroll/
 import type { GetPostsResponse, ListingType, PostView, SortType } from 'lemmy-js-client'
 import type { StorageController } from '$lib/storage-controller'
 
+import { get } from 'svelte/store'
+import { userSettings } from '$lib/settings'
+
 export interface FeedControllerLoadOptions {
     append?: boolean           // Whether the loader should append to the current posts or replace them. Default undefined/false
     loadSnapshot?: boolean     // Whether to load from the snapshot (only needed on initial fetch. Default: undefined/false
@@ -74,16 +77,16 @@ export const parseSortType = (sort?:string): SortType => {
         case 'controversial':   return 'Controversial'
         case 'scaled':          return 'Scaled'
 
-        default:                return 'New'
+        default:                return get(userSettings)?.defaultSort.sort ?? 'New'
     }
 }
 
-export const parseListingType = (lType?:string|null): ListingType => {
+export const parseListingType = (lType?:string|null): ListingType  => {
     switch(lType?.toLowerCase()) {
         case 'all':         return 'All'
         case 'local':       return 'Local'
         case 'subscribed':  return 'Subscribed'
         
-        default:            return 'All'
+        default:            return get(userSettings)?.defaultSort.feed ?? 'All'
     }
 }
