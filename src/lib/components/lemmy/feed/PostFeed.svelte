@@ -162,13 +162,13 @@
                     
                     
                     
-                    /*
-                    if (posts.posts.length > 50) {
-                        const oldPosts = posts.posts.splice(0, (posts.posts.length-50))
+                    
+                    if (posts.posts.length > $userSettings.uiState.maxScrollPosts) {
+                        const oldPosts = posts.posts.splice(0, (posts.posts.length - $userSettings.uiState.maxScrollPosts))
                         truncatedPosts = [...truncatedPosts, ...oldPosts]
                         this.truncated = true
                     }
-                    */
+                    
 
                     
                 }
@@ -208,7 +208,7 @@
             
             posts.next_page = undefined
             posts.posts = [] as PostView[]
-
+            truncatedPosts = truncatedPosts = []
             posts = posts
 
             return
@@ -272,6 +272,7 @@
                 if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
                 if ('type' in pageSnapshot)              type = pageSnapshot.type
                 if ('posts' in pageSnapshot)             posts = {...pageSnapshot.posts}
+                if ('truncated' in pageSnapshot)         this.truncated = pageSnapshot.truncated
                 if ('truncatedPosts' in pageSnapshot)    truncatedPosts = [...pageSnapshot.truncatedPosts]
                 if ('page' in pageSnapshot)              this.page = pageSnapshot.page
                 if ('last_clicked_post' in pageSnapshot) this.last_clicked_post = pageSnapshot.last_clicked_post
@@ -326,6 +327,7 @@
                 page: this.page,
                 posts: {...posts},
                 truncatedPosts: [...truncatedPosts],
+                truncated: this.truncated,
                 last_clicked_post: this.last_clicked_post,
                 page_cursors: [...this.page_cursors]
             }
@@ -590,9 +592,16 @@
     <!---Note the last refresh time if using infinite scroll--->
     {#if $userSettings.uiState.infiniteScroll || (!$userSettings.uiState.infiniteScroll && controller.page == 1)}
         <div class="flex flex-row w-full items-end border-b dark:border-zinc-700 p-2 justify-between">
-            <span class="text-xs opacity-80">
-                Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
-            </span>
+            <div class="flex flex-col gap-1 text-xs opacity-80">
+                <span>
+                    Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
+                </span>
+                {#if controller.truncated && truncatedPosts.length > 0}
+                    <span>
+                        {truncatedPosts.length} older posts have been hidden. Refresh to see them.
+                    </span>
+                {/if}
+            </div>
 
             <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
                 loading={controller.busy} disabled={controller.busy}
@@ -604,17 +613,6 @@
                 Refresh
             </Button>
         </div>
-    {/if}
-
-    {#if controller.truncated && truncatedPosts.length > 0}
-        <Button icon={ArchiveBox} class="w-full" color="tertiary-border" on:click={() => {
-            posts.posts = [...truncatedPosts, ...posts.posts]
-            truncatedPosts = []
-            posts = posts
-        }}>
-            Show {truncatedPosts.length} Hidden Posts
-        </Button>
-
     {/if}
 
 
