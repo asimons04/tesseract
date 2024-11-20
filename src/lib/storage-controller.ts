@@ -89,7 +89,7 @@ export class StorageController {
             const decompressed = this.useCompression ? await this.decompress(data.payload) : JSON.parse(data.payload)
             if (!decompressed) throw new Error("Failed to decompress retrieved data")
 
-             return decompressed
+            return decompressed
         }
         catch  { 
             this.remove(key)
