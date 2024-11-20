@@ -10,7 +10,7 @@
     import CrosspostItem from '$lib/components/lemmy/post/CrosspostItem.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte';
 
-    import { RocketLaunch } from 'svelte-hero-icons';
+    import { ArrowsRightLeft } from 'svelte-hero-icons'
 
     export let post:PostView
     export let size:string = "xs"
@@ -40,12 +40,12 @@
 {#if post?.cross_posts && post.cross_posts.length > 0}
 <CollapseButton 
     expanded={$userSettings.uiState.expandCrossPosts && post.cross_posts?.length <= 3} 
-    icon={RocketLaunch} 
+    icon={ArrowsRightLeft} 
     iconSize={16}
-    title="Crossposts ({post.cross_posts.length})" 
+    title="{post.cross_posts.length} {post.cross_posts.length == 1 ? 'Crosspost' : 'Crossposts'}"
     class="{$$props.class}"
 >
-    <div class="divide-y divide-slate-200 dark:divide-zinc-800 flex flex-col">
+    <div class="divide-y gap-2 divide-slate-200 dark:divide-zinc-800 flex flex-col">
         {#each post.cross_posts as crosspost}
             <CrosspostItem crosspost={crosspost} textSize={textSize} iconSize={iconSize} />
         {/each}
