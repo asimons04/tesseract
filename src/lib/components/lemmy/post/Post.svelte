@@ -32,9 +32,9 @@
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
 
-    export let post: PostView | undefined
+    export let post: PostView | undefined | null
     export let actions: boolean = true
     export let autoplay:boolean = false;
     export let displayType: PostDisplayType = "feed"
@@ -207,6 +207,7 @@
     }
 
     onMount(async () => await scrollIntoView() )
+    onDestroy(() => post = null)
 
     /** Determines whether a compact post should be shown expanded to a card if "hybrid" view set. Returns 'true' if post should render as card, 'false' if compact */
     function computeExpandCompact() {
@@ -222,10 +223,9 @@
         return result
     }
 
-    function announceLastClickedPost(post:PostView|undefined) {
+    function announceLastClickedPost(post:PostView|undefined|null) {
         if (!post || lastClickedPost == post.post.id) return
         lastClickedPost = post.post.id
-        //lastSeenPost.set(post.post.id)
         dispatchWindowEvent('lastClickedPost', {post_id: post.post.id})
     }
 
@@ -261,38 +261,40 @@
 
 <PostIsInViewport bind:postContainer bind:inViewport threshold={.6}/>
 
-{#if post?.post?.id}
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-    <div class="relative" 
-        id={post.post.id.toString()} 
-        on:mouseover={() => announceLastClickedPost(post) } 
-        on:touchstart={() => announceLastClickedPost(post) } 
-        bind:this={postContainer}
-        transition:fade
-    >
+{#key post?.post.id}
+    {#if post?.post?.id}
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+        <div class="relative" 
+            id={post.post.id.toString()} 
+            on:mouseover={() => announceLastClickedPost(post) } 
+            on:touchstart={() => announceLastClickedPost(post) } 
+            bind:this={postContainer}
+            transition:fade
+        >
 
-        <!--- Compact Posts --->
-        {#if  (forceCompact || !expandCompact) }
-            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
-                bind:post 
-                bind:expandCompact 
-                bind:expandPreviewText  
-                bind:postContainer
-                on:reply
-            />
+            <!--- Compact Posts --->
+            {#if  (forceCompact || !expandCompact) }
+                <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
+                    bind:post 
+                    bind:expandCompact 
+                    bind:expandPreviewText  
+                    bind:postContainer
+                    on:reply
+                />
 
 
-        <!--- Card Posts --->
-        {:else}
-            <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
-                bind:post 
-                bind:expandCompact 
-                bind:expandPreviewText  
-                bind:postContainer
-                on:reply
-                
-            />
-        {/if}
-    </div>
-{/if}
+            <!--- Card Posts --->
+            {:else}
+                <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
+                    bind:post 
+                    bind:expandCompact 
+                    bind:expandPreviewText  
+                    bind:postContainer
+                    on:reply
+                    
+                />
+            {/if}
+        </div>
+    {/if}
+{/key}
