@@ -110,6 +110,8 @@ export class FSCache {
 
         directoryList = this.sortDirectoryContents(directoryList, 'atimeMs', 'asc');
         
+        if (numItems < 1) numItems = 1
+
         for ( let i:number=0; i<numItems; i++) {
             let entry:any = directoryList[i];
             console.log(`\t Evicting ${entry.path} to remain under quota.`);
