@@ -100,7 +100,7 @@
             <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
             <PostLink bind:post bind:displayType compact={true} on:clickThumbnail={() => { expandCompact = !expandCompact }} />
             {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-                <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText  class="mt-2 mb-1" />
+                <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText  class="my-1" />
             {/if}
             <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
             <div class="mt-2" />
