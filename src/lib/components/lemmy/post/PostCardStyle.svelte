@@ -36,7 +36,7 @@
 
 
 
-<Card class="flex flex-col w-full p-3 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
+<Card class="flex flex-col w-full p-2 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
     <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
 
     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType}>    
