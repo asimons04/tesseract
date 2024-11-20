@@ -71,25 +71,19 @@
     <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Popular --->
-        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="off"
-            on:click={() => dispatchWindowEvent('setSortType', {sort: 'Active'})}
-        >
+        <SidebarButton href="/home/active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="off">
             <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
         </SidebarButton>
 
         <!---Hot --->
-        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="off"
-            on:click={() => dispatchWindowEvent('setSortType', {sort: 'Hot'})}
-        >
+        <SidebarButton href="/home/hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="off">
             <Icon src={Fire} mini size="18" title="Hot" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Hot</span>
         </SidebarButton>
 
         <!---Top Day --->
-        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="off"
-            on:click={() => dispatchWindowEvent('setSortType', {sort: 'TopDay'})}
-        >
+        <SidebarButton href="/home/topday" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="off">
             <Icon src={CalendarDays} mini size="18" title="Top Day" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Top Day</span>
         </SidebarButton>
@@ -100,15 +94,13 @@
     <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Frontpage--->
-        <SidebarButton href="/" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off" class="w-full"
-            on:click={() => dispatchWindowEvent('setSortType', {sort: $userSettings.defaultSort.sort})}
-        >
+        <SidebarButton href="/home/{$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off" class="w-full">
             <Icon src={Home} mini size="18" title="Home" />
             <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
         </SidebarButton>
 
         <!---Latest (New + Refresh)--->
-        <SidebarButton href="/?invalidate=true" expanded={$userSettings.uiState.expandSidebar} title="Refresh" data-sveltekit-preload-data="off">
+        <SidebarButton href="/home/{$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}?invalidate=true" expanded={$userSettings.uiState.expandSidebar} title="Refresh" data-sveltekit-preload-data="off">
             <Icon src={ArrowPath} mini size="18" title="Home" />
         </SidebarButton>
     </div>
