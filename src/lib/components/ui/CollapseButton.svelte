@@ -13,15 +13,16 @@
     export let title:string = ' '
     export let heading:boolean = false
     export let innerClass:string = ''
+    export let iconSize:number = 24
 </script>
 
-<div class="flex flex-col gap-1 my-2 border-b border-slate-200 dark:border-zinc-800 ">
+<div class="flex flex-col gap-1 my-2 border-b border-slate-200 dark:border-zinc-800 {$$props.class}">
     <Button color="tertiary" alignment="left" rounded='none' on:click={ ()=> { expanded = !expanded}}>
         <span class="mr-[0.5rem]">
             <slot name="icon" />
             
             {#if icon}
-                <Icon src={icon} mini size="24" />
+                <Icon src={icon} mini width={iconSize} />
             {/if}
         </span>
 
@@ -36,7 +37,7 @@
     </Button>
     
     {#if expanded}
-        <div class="flex flex-col gap-2 pl-4 pr-2 py-2 {innerClass}" transition:slide>
+        <div class="flex flex-col gap-2 pl-2 pr-2 py-2 {innerClass}" transition:slide>
             <slot />
         </div>
     {/if}
