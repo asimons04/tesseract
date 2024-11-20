@@ -1,26 +1,32 @@
 <script lang="ts">
+    import type { SystemTimerEvent } from '$lib/ui/events';
     import type { Tagline } from 'lemmy-js-client'
     
     import { slide } from 'svelte/transition'
 
     import Markdown from "$lib/components/markdown/Markdown.svelte"
     import Card from "$lib/components/ui/Card.svelte"
-    import type { SystemTimerEvent } from '$lib/ui/events';
+    
     
 
     export let taglines: Tagline[] | undefined = undefined
+    export let interval:number = 15
 
-    let tagline = ''
+    let tagline = getRandomTagline()
     let lastTick: number = 0
-
-    if (taglines && taglines.length > 0) {
-        tagline = taglines[Math.floor(Math.random() * taglines.length)].content
+    
+    function getRandomTagline() {
+        if (taglines && taglines.length > 0) {
+            return taglines[Math.floor(Math.random() * taglines.length)].content
+        }
+        return ''
     }
 
+
     function updateTaglineOnInterval(e:SystemTimerEvent) {
-        if ( (e.detail.timestamp - lastTick) > 15) {
+        if ( (e.detail.timestamp - lastTick) > interval) {
             lastTick = e.detail.timestamp
-            if (taglines && taglines.length > 0) tagline = taglines[Math.floor(Math.random() * taglines.length)].content
+            if (taglines && taglines.length > 0) tagline = getRandomTagline()
         }
     }
 </script>

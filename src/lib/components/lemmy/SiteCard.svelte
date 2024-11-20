@@ -35,7 +35,7 @@
     export let taglines: Tagline[] | undefined = undefined
     export let admins: PersonView[] = []
     export let version: string
-
+    export let taglineUpdateInterval: number = 15
     let expanded = {
         admins: false,
         site: false,
@@ -47,7 +47,7 @@
     <SiteCardSmall {site} {version} />
     
     {#if !expanded.admins && !expanded.site && !expanded.legal}
-        <TaglinesCard bind:taglines />
+        <TaglinesCard bind:taglines interval={taglineUpdateInterval}/>
     {/if}
 
     <!--- Collapsible buttons for admins and site info --->

@@ -110,7 +110,7 @@
                     <SiteCardSmall site={data.site.site_view} version={data.site.version}/>
 
                     {#if data.site.taglines && data.site.taglines.length > 0}
-                        <TaglinesCard taglines={data.site.taglines} />
+                        <TaglinesCard taglines={data.site.taglines} interval={10}/>
                     {/if}
                 </div>
 
@@ -120,6 +120,6 @@
     </div>
 
     <!---Show the site card on the right side--->
-    <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} slot="right-panel"/>
+    <SiteCard site={data.site.site_view} taglines={data.site.taglines} admins={data.site.admins} version={data.site.version} taglineUpdateInterval={10} slot="right-panel"/>
 
 </MainContentArea>
