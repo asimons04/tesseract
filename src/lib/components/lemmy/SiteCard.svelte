@@ -28,22 +28,13 @@
     } from 'svelte-hero-icons'
     import { slide } from 'svelte/transition';
     import SiteCardSmall from './SiteCardSmall.svelte';
+    import TaglinesCard from './TaglinesCard.svelte';
     
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
     export let admins: PersonView[] = []
     export let version: string
-
-    // Update the tagline every 30 seconds
-    let tagline:string = ' '
-    
-    if (taglines && taglines.length > 0) {
-        tagline = taglines[Math.floor(Math.random() * taglines.length)].content
-        setInterval(() => {
-            if (taglines && taglines.length > 0) tagline = taglines[Math.floor(Math.random() * taglines.length)].content
-        }, 30*1000)
-    }
 
     let expanded = {
         admins: false,
@@ -56,13 +47,7 @@
     <SiteCardSmall {site} {version} />
     
     {#if !expanded.admins && !expanded.site && !expanded.legal}
-    <div class="flex flex-col w-full my-2" transition:slide>
-        {#if taglines && taglines.length > 0}
-            <Card class="p-2 text-center">
-                <Markdown source={tagline} />
-            </Card>
-        {/if}
-    </div>
+        <TaglinesCard bind:taglines />
     {/if}
 
     <!--- Collapsible buttons for admins and site info --->
