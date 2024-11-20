@@ -77,3 +77,13 @@ export const parseSortType = (sort?:string): SortType => {
         default:                return 'New'
     }
 }
+
+export const parseListingType = (lType?:string|null): ListingType => {
+    switch(lType?.toLowerCase()) {
+        case 'all':         return 'All'
+        case 'local':       return 'Local'
+        case 'subscribed':  return 'Subscribed'
+        
+        default:            return 'All'
+    }
+}
