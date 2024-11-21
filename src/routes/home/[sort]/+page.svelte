@@ -22,7 +22,7 @@
     export let data
     
     let feedController: FeedController = {} as FeedController
-   
+
     $: debugMode = $userSettings.debugInfo
 
     $:  sort = parseSortType($page.params.sort)
@@ -31,13 +31,7 @@
     $:  type = parseListingType($page.url.searchParams.get('type'))
     $:  type, applyTypeOption()
 
-    // Invalidate / Refresh
-    $:  if (feedController.bound && $page.url.searchParams.has('invalidate')) {
-            $page.url.searchParams.delete('invalidate')
-            goto($page.url).then(() => feedController.refresh(true))
-        }
-
-    
+        
     function applyTypeOption() {
         if (!feedController.bound || feedController.type == type) return
         feedController.type = type
@@ -101,7 +95,7 @@
     <div class="flex w-full" style="height: calc(100vh - 8rem);">
         <FeedContainer>
             
-            <PostFeed actions bind:controller={feedController} bind:sort bind:type>
+            <PostFeed actions bind:controller={feedController} bind:sort bind:type >
 
                 <!---Add the Site Banner to the top of the feed below 'xl' width--->
                 <div class="flex xl:hidden flex-col gap-2 w-full" slot="banner">    
