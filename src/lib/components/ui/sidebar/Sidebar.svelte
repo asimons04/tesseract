@@ -4,6 +4,7 @@
     import { dispatchWindowEvent } from "$lib/ui/events"
     import { profile } from '$lib/auth.js'
     import { getGroupIndex, sortGroups } from '$lib/favorites'
+    import { page } from "$app/stores"
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
@@ -31,6 +32,7 @@
         XCircle,
         ArrowPath,
     } from 'svelte-hero-icons'
+    import { goto } from "$app/navigation";
 
     
     
@@ -100,8 +102,17 @@
         </SidebarButton>
 
         <!---Latest (New + Refresh)--->
-        <SidebarButton href="/home/{$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}?invalidate=true" expanded={$userSettings.uiState.expandSidebar} title="Refresh" data-sveltekit-preload-data="off">
-            <Icon src={ArrowPath} mini size="18" title="Home" />
+        <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Refresh" data-sveltekit-preload-data="off"
+            on:click={() => {
+                if ($page.url.pathname.startsWith('/home')) {
+                    location.reload()
+                }
+                else {
+                    goto(`/home/${$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}?invalidate=true`)
+                }
+            }}
+        >
+            <Icon src={ArrowPath} mini size="18" title="Refresh Latest" />
         </SidebarButton>
     </div>
 
