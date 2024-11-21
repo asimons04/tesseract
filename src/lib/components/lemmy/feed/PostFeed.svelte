@@ -95,7 +95,7 @@
         invalidate: function() {
             sort = $userSettings.defaultSort.sort
             type = $userSettings.defaultSort.feed
-            controller.refresh(true)
+            this.refresh(true)
         },
 
         load: async function(opts?:FeedControllerLoadOptions): Promise<void> {
@@ -108,7 +108,7 @@
 
 
                 // If this is an initial load and there is snapshot data, return early and don't fetch anything from the API yet.
-                if ( opts?.loadSnapshot && await this.loadSnapshot()) {
+                if ( opts?.loadSnapshot && !this.refreshing && await this.loadSnapshot()) {
                     if (debugMode) console.log(moduleName, ": Initial load from snapshot. Not loading from API until requested")
 
                     $userSettings.uiState.infiniteScroll
@@ -209,12 +209,13 @@
             posts.next_page = undefined
             posts.posts = [] as PostView[]
             truncatedPosts = truncatedPosts = []
+            this.truncated = false
             posts = posts
 
             return
         },
 
-        refresh: function(clearSnapshot: boolean = false): void {
+        refresh: async function(clearSnapshot: boolean = false): Promise<void> {
             if (debugMode) console.log(moduleName, ": Refreshing. Clear snapshot?", clearSnapshot)
             
             this.refreshing = true
@@ -466,6 +467,7 @@
             }
             posts = posts
         },
+        
         BanUserEvent: function (e:BanUserEvent) {
             for (let i:number=0; i < posts.posts.length; i++) {
                 if (posts.posts[i].creator.id == e.detail.person_id) {
@@ -545,16 +547,34 @@
             if (e.detail.sort != controller.sort) controller.sort = e.detail.sort;
         }
     }
+    
 
+    async function mount() {
+        if (debugMode) console.log(moduleName, ": Mounting component and calling loader.")
+        controller.mounting = true
+        
+        const invalidate = $pageStore.url.searchParams.has('invalidate')
+        
+        if (invalidate) {
+            if (debugMode) console.log(moduleName, ": Detected invalidate parameter. Clearing state...")
+            $pageStore.url.searchParams.delete('invalidate')
+            goto($pageStore.url).then(() => controller.invalidate())
+        }
+        else {
+            await controller.load({loadSnapshot: true, append: false})
+        }
+       
+        controller.mounting = false
+    }
 
 
     // Lifecycle Functions
     onMount(async () => {
-        if (debugMode) console.log(moduleName, ": Mounting component and calling loader.")
-        controller.mounting = true
-        await controller.load({loadSnapshot: true, append: false})
-        controller.mounting = false
+        if (debugMode) console.log(moduleName, ": onMount invoked.")
+        await mount() 
     })
+        
+    
 
     onDestroy(() => {
         if (debugMode) console.log(moduleName, ": Component destroyed; saving data")
