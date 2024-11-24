@@ -67,7 +67,7 @@
                     </Link>
                 {/if}
 
-                <Markdown bind:source class="md:px-4 text-slate-700 dark:text-zinc-400 text-xs"/>
+                <Markdown bind:source noImages noHashtags class="md:px-4 text-slate-700 dark:text-zinc-400 text-xs"/>
 
                 {#if description && description.length > previewLength }
                     <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full 
