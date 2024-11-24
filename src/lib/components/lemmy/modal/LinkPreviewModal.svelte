@@ -141,7 +141,8 @@
 
             post.post.embed_video_url = data.metadata.embed_video_url 
             post.post.thumbnail_url = data.metadata.image
-            post.post.body = data.metadata.description
+            post.post.embed_description = data.metadata.description
+            post.post.embed_title = data.metadata.title
 
             postType = getPostType(post)
 
@@ -198,7 +199,6 @@
                 {/if}
             </div>
             <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
-            <PostBody bind:post bind:postContainer {displayType} />
         </div>
     {/if}
 
