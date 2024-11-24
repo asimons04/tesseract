@@ -42,7 +42,10 @@
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArchiveBox, ArrowPath, Icon } from "svelte-hero-icons"
+    import { ArchiveBox, ArrowPath, Bookmark, Funnel, HandThumbDown, HandThumbUp, Icon } from "svelte-hero-icons"
+    import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
+    import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte";
+    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte";
     
     export let community_id: number | undefined     = undefined
     export let community_name: string | undefined   = undefined
@@ -370,7 +373,7 @@
             liked_only = undefined
             this.refreshing = true
             this.reset(true)
-                .then(() => this.load({loadSnapshot: true, append:true}))
+                .then(() => this.load({loadSnapshot: false, append:false}))
             
         },
         
@@ -383,7 +386,7 @@
             disliked_only = undefined
             this.refreshing = true
             this.reset(true)
-                .then(() => this.load({loadSnapshot: true, append:true}))
+                .then(() => this.load({loadSnapshot: false, append:false}))
            
         },
 
@@ -393,11 +396,11 @@
 
         set saved_only(so:boolean|undefined) {
             saved_only = so
-            liked_only = undefined
-            disliked_only = undefined
+            //liked_only = undefined
+            //disliked_only = undefined
             this.refreshing = true
             this.reset(true)
-                .then(() => this.load({loadSnapshot: true, append:true}))
+                .then(() => this.load({loadSnapshot: false, append:false}))
         },
 
         get sort():SortType {
@@ -611,29 +614,56 @@
 
     <!---Note the last refresh time if using infinite scroll--->
     {#if $userSettings.uiState.infiniteScroll || (!$userSettings.uiState.infiniteScroll && controller.page == 1)}
-        <div class="flex flex-row w-full items-end border-b dark:border-zinc-700 p-2 justify-between">
-            <div class="flex flex-col gap-1 text-xs opacity-80">
-                <span>
-                    Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
-                </span>
-                {#if controller.truncated && truncatedPosts.length > 0}
+        
+        <div class="flex flex-col w-full items-start border-b dark:border-zinc-700">
+            <div class="flex flex-row w-full items-end justify-between">
+                
+                <div class="flex flex-col gap-1 text-xs opacity-80">
                     <span>
-                        {truncatedPosts.length} older posts have been hidden. Refresh to see them.
+                        Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
                     </span>
-                {/if}
+                    {#if controller.truncated && truncatedPosts.length > 0}
+                        <span>
+                            {truncatedPosts.length} older posts have been hidden. Refresh to see them.
+                        </span>
+                    {/if}
+
+                    
+                </div>
+
+                <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
+                    loading={controller.busy} disabled={controller.busy}
+                    on:click={() => {
+                        if (debugMode) console.log(moduleName, ": Refresh button clicked")
+                        controller.refreshing = true
+                        controller.refresh(true) 
+                    }}
+                >
+                    Refresh
+                </Button>
             </div>
 
-            <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
-                loading={controller.busy} disabled={controller.busy}
-                on:click={() => {
-                    controller.refreshing = true
-                    controller.refresh(true) 
-                }}
-            >
-                Refresh
-            </Button>
+            <CollapseButton icon={Funnel} title="Filter Options" bottomBorder={false} class="w-full">
+                <SettingToggleContainer>
+                    <SettingToggle small bind:value={liked_only} icon={HandThumbUp} title="Liked Posts" on:change={(e) => {
+                        controller.liked_only = e.detail  
+                    }}/>
+                    
+                    <SettingToggle small bind:value={disliked_only} icon={HandThumbDown} title="Disliked Posts" on:change={(e) => {
+                        controller.disliked_only = e.detail  
+                    }}/>
+        
+                    <SettingToggle small bind:value={saved_only} icon={Bookmark} title="Saved Posts {community_name || community_id ? 'in this community' : ''}" on:change={(e) => {
+                        controller.saved_only = e.detail  
+                    }}/>
+        
+                </SettingToggleContainer>
+            </CollapseButton>
         </div>
+       
     {/if}
+
+    
 
 
     <!---Only use this loading spinner if infinite scroll is disabled--->
