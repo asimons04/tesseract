@@ -1,3 +1,7 @@
-<div class="flex flex-col divide-y divide-slate-200 dark:divide-zinc-800 gap-4 w-full">
+<script lang="ts">
+    import { dividerColors } from '$lib/ui/colors' 
+</script>
+
+<div class="flex flex-col divide-y {dividerColors} gap-4 w-full">
     <slot/>
 </div>

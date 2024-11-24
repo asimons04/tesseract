@@ -1,9 +1,8 @@
 <script lang="ts">
    
+    import { dividerColors } from '$lib/ui/colors' 
     import { goto } from '$app/navigation';
-    import { page } from '$app/stores';
-    import { scrollToLastSeenPost, postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers';
-    import { searchParam } from '$lib/util';
+    import { postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy';
     import { userSettings} from '$lib/settings'
     
@@ -40,6 +39,7 @@
 
     export let open: boolean = false
     let hybridViewEditorOpen = false
+    
 </script>
 
 
@@ -48,10 +48,10 @@
     
     <EditHybridViewPostTypesModal bind:open={hybridViewEditorOpen} />
 
-    <div class="flex flex-col divide-y w-full p-2 gap-2 cursor-default max-h-[70vh] overflow-y-scroll">
+    <div class="flex flex-col divide-y {dividerColors} w-full p-2 gap-2 cursor-default max-h-[70vh] overflow-y-scroll">
         
         
-        <div class="flex flex-col divide-y gap-0 pr-2 items-start w-full">
+        <div class="flex flex-col divide-y {dividerColors} gap-0 pr-2 items-start w-full">
             <!---Font--->
             <SettingMultiSelect icon={Language} 
                 title="Application Font" 
@@ -89,9 +89,9 @@
         </div>
         
         <!---User Settings--->
-        <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2  items-start w-full ">
+        <div class="flex flex-col divide-y lg:flex-row lg:divide-y-0 lg:gap-4 pr-2 {dividerColors} items-start w-full ">
 
-            <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
+            <div class="flex flex-col gap-2 items-center divide-y {dividerColors} w-full lg:w-1/2">
                 <!---Infinite Scroll--->
                 <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll} small
                     on:change={(e) => {
@@ -126,7 +126,7 @@
                 <SettingToggle title="Enable Debug Mode" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
             </div>
 
-            <div class="flex flex-col gap-2 items-center divide-y w-full lg:w-1/2">
+            <div class="flex flex-col gap-2 items-center divide-y {dividerColors} w-full lg:w-1/2">
                 <!---Reverse Action Bar--->
                 <SettingToggle title="Reverse Action Bar" icon={ArrowsRightLeft} bind:value={$userSettings.uiState.reverseActionBar} small={true}/>
                 

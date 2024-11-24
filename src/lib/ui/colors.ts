@@ -72,6 +72,8 @@ export const buttonColor = {
     none: '',
   }
 
+export let dividerColors = "divide-slate-200 dark:divide-zinc-800"
+
 
 const configuredTheme = (env.PUBLIC_THEME ?? 'system') as 'system' | 'light' | 'dark' | undefined
 export const theme = writable<'system' | 'light' | 'dark'>(configuredTheme)
