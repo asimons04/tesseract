@@ -117,6 +117,19 @@ export function parseAPIError(err:any) {
     return errMsg
 }
 
+
+/** Returns true/false if the API version is greater than or equal to the provided value
+ * @param ver String representing the semantic API version.  e.g.  '0.19.3'
+*/
+export function minAPIVersion(ver:string): boolean {
+    if (!ver) return false
+    const $site = get(site)
+    if (!$site?.version) return false
+    return $site.version.split('-')[0] >= ver
+}
+
+
+
 // Do an initial fetch of the site so the logo and site name gets set properly
 // DummyJWT is so the auth module doesn't try to access the profile before it's initialized
 
