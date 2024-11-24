@@ -27,6 +27,7 @@
         ArrowsPointingOut,
         Bookmark,
         ExclamationCircle,
+        EyeSlash,
         Icon,
         LockClosed,
         Megaphone,
@@ -171,6 +172,10 @@
                             <Badge label="Deleted" color="red" icon={Trash} click={false} />
                         {/if}
                         
+                        {#if post.hidden}
+                            <Badge label="Hidden" color="red" icon={EyeSlash} click={false} />
+                        {/if}
+
                         {#if (post.post.featured_local || post.post.featured_community)}
                             <Badge label="Featured" color="green" icon={Megaphone} click={false} />
                         {/if}
