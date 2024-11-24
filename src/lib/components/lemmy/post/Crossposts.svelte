@@ -45,7 +45,7 @@
     title="{post.cross_posts.length} {post.cross_posts.length == 1 ? 'Crosspost' : 'Crossposts'}"
     class="{$$props.class}"
 >
-    <div class="divide-y gap-2 divide-slate-200 dark:divide-zinc-800 flex flex-col">
+    <div class="divide-y gap-2 divide-slate-200 dark:divide-zinc-800 flex flex-col max-h-[8rem] overflow-y-scroll">
         {#each post.cross_posts as crosspost}
             <CrosspostItem crosspost={crosspost} textSize={textSize} iconSize={iconSize} />
         {/each}
