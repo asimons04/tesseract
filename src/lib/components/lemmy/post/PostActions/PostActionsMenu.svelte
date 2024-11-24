@@ -4,11 +4,12 @@
     
     import { amMod, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
-    import { deleteItem, markAsRead, save } from '$lib/lemmy/contentview.js'
+    import { deleteItem, hide, markAsRead, save } from '$lib/lemmy/contentview.js'
     import { goto } from '$app/navigation';
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
+    import { minAPIVersion } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -35,7 +36,7 @@
         Window,
         ShieldCheck,
     } from 'svelte-hero-icons'
-    
+   
     
     export let post:PostView 
     export let menuIconSize:number  = 16
@@ -153,7 +154,20 @@
         </MenuButton>
         {/if}
 
-        
+    
+        <!---Hide Post (requires at least 0.19.4)--->
+        {#if onHomeInstance && $profile?.user && minAPIVersion('0.19.4')}
+            <MenuButton title="{post.hidden ? 'Unhide' : 'Hide'} Post" color="warning"
+                on:click={async () => {
+                    post.hidden = await hide(post)
+                    post = post
+                }}
+
+            >
+                <Icon src={post.hidden ? Eye : EyeSlash} width={16} mini />
+                {post.hidden ? 'Unhide' : 'Hide'} Post
+            </MenuButton>
+        {/if}
 
         
 
@@ -161,6 +175,9 @@
         <!--- Hide for Self and/or if not on home instance--->
         {#if onHomeInstance && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
             
+            
+
+
             <!---Report Post--->
             <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary" disabled={post.post.removed}>
                 <Icon src={Flag} width={16} mini />

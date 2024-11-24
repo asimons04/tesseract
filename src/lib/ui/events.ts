@@ -71,6 +71,13 @@ export interface BlockUserEvent extends CustomEvent {
     }
 }
 
+export interface HidePostEvent extends CustomEvent {
+    detail: {
+        hide: boolean,
+        post_ids: number[]
+    }
+}
+
 export interface SubscribeEvent extends CustomEvent {
     detail: {
         community_id: number

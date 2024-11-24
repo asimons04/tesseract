@@ -1,3 +1,4 @@
+import { dispatchWindowEvent } from '$lib/ui/events'
 import { getClient } from '$lib/lemmy.js'
 import { isComment, isCommentView, isPostView } from '$lib/lemmy/item.js'
 import type {
@@ -109,4 +110,25 @@ export async function markAsRead(item: ContentView | Submission, read: boolean, 
         ).success
     }
     return false
+}
+
+export async function hide(post:PostView): Promise<boolean> {
+    try {
+        await getClient().hidePost({
+            hide: !post.hidden,
+            post_ids: [post.post.id]
+        })
+        post.hidden = !post.hidden
+        
+        dispatchWindowEvent('hidePost', {
+            hide: post.hidden,
+            post_ids: [post.post.id]
+        })
+        
+        return post.hidden
+    }
+    catch {
+        return post.hidden
+    }
+
 }

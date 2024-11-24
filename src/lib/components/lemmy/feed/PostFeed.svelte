@@ -10,6 +10,7 @@
         BlockInstanceEvent, 
         BlockUserEvent, 
         HideCommunityEvent, 
+        HidePostEvent, 
         LastClickedPostEvent, 
         RemoveCommunityEvent, 
         RemovePostEvent, 
@@ -25,33 +26,37 @@
     import { StorageController } from "$lib/storage-controller"
     
     import { fade } from 'svelte/transition'
-    import { getClient } from "$lib/lemmy"
+    import { getClient, minAPIVersion } from "$lib/lemmy"
     import {  goto } from '$app/navigation'
     import { instance } from '$lib/instance'
     import { onDestroy, onMount } from "svelte"
     import { page as pageStore } from '$app/stores'
-    import { profile } from '$lib/auth';
+    import { profile } from '$lib/auth'
     import { userIsInstanceBlocked } from '$lib/lemmy/user'
     import { userSettings } from "$lib/settings"
     
     import Button from '$lib/components/input/Button.svelte'
+    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
     import InfiniteScrollDiv from "$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte"
     import Pageination from "$lib/components/ui/Pageination.svelte"
     import Placeholder from "$lib/components/ui/Placeholder.svelte"
     import Post from "../post/Post.svelte";
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
+    import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArchiveBox, ArrowPath, Bookmark, Funnel, HandThumbDown, HandThumbUp, Icon } from "svelte-hero-icons"
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
-    import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte";
-    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte";
+    import { ArchiveBox, ArrowPath, Bookmark, Eye, Funnel, HandThumbDown, HandThumbUp } from "svelte-hero-icons"
+    
+    
+    
     
     export let community_id: number | undefined     = undefined
     export let community_name: string | undefined   = undefined
     export let disliked_only: boolean|undefined     = undefined
     export let liked_only: boolean|undefined        = undefined
     export let saved_only: boolean|undefined        = undefined
+    export let show_hidden: boolean|undefined       = !$userSettings.hidePosts.hidden
     export let type: ListingType                    = $userSettings.defaultSort.feed ?? 'All'
     export let sort: SortType                       = $userSettings.defaultSort.sort ?? 'New'
     export let actions: boolean                     = false
@@ -136,6 +141,7 @@
                     disliked_only: disliked_only,
                     liked_only: liked_only,
                     saved_only: saved_only,
+                    show_hidden: show_hidden,
                     type_: type,
                     community_id: community_id,
                     community_name: community_name
@@ -326,6 +332,7 @@
                 liked_only: this.liked_only,
                 disliked_only: this.disliked_only,
                 community_id: this.community_id,
+                show_hidden:    this.show_hidden,
                 community_name: this.community_name,
                 last_refreshed: this.last_refreshed,
                 page: this.page,
@@ -401,6 +408,18 @@
             this.refreshing = true
             this.reset(true)
                 .then(() => this.load({loadSnapshot: false, append:false}))
+        },
+
+        get show_hidden(): boolean | undefined {
+            return show_hidden
+        },
+
+        set show_hidden(val:boolean) {
+            if (debugMode) console.log("Setting show hidden to:", val)
+            show_hidden = val
+            this.refreshing = true
+            this.reset(true)
+                .then(() => this.load({loadSnapshot: false, append: false}))
         },
 
         get sort():SortType {
@@ -513,19 +532,19 @@
             posts = posts
         },
 
-        RemovePostEvent(e:RemovePostEvent) {
+        HideCommunityEvent(e:HideCommunityEvent) {
             for (let i:number=0; i < posts.posts.length; i++) {
-                if (posts.posts[i].post.id == e.detail.post_id) {
-                    posts.posts[i].post.removed = e.detail.removed
+                if (posts.posts[i].community.id == e.detail.community_id) {
+                    posts.posts[i].community.hidden = e.detail.hidden
                 }
             }
             posts = posts
         },
 
-        HideCommunityEvent(e:HideCommunityEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                if (posts.posts[i].community.id == e.detail.community_id) {
-                    posts.posts[i].community.hidden = e.detail.hidden
+        HidePostEvent(e:HidePostEvent) {
+            for (let i:number = 0; i < posts.posts.length; i++) {
+                if (posts.posts[i].post.id in e.detail.post_ids) {
+                    posts.posts[i].hidden = e.detail.hide
                 }
             }
             posts = posts
@@ -540,6 +559,15 @@
             for (let i:number=0; i < posts.posts.length; i++) {
                 if (posts.posts[i].community.id == e.detail.community_id) {
                     posts.posts[i].community.removed = e.detail.removed
+                }
+            }
+            posts = posts
+        },
+
+        RemovePostEvent(e:RemovePostEvent) {
+            for (let i:number=0; i < posts.posts.length; i++) {
+                if (posts.posts[i].post.id == e.detail.post_id) {
+                    posts.posts[i].post.removed = e.detail.removed
                 }
             }
             posts = posts
@@ -595,6 +623,7 @@
     on:blockCommunity={handlers.BlockCommunityEvent} 
     on:blockInstance={handlers.BlockInstanceEvent}
     on:hideCommunity={handlers.HideCommunityEvent}
+    on:hidePost={handlers.HidePostEvent}
     on:lastClickedPost={handlers.LastClickedPostEvent}
     on:removeCommunity={handlers.RemoveCommunityEvent}
     on:removePost={handlers.RemovePostEvent}
@@ -643,22 +672,32 @@
                 </Button>
             </div>
 
-            <CollapseButton icon={Funnel} title="Filter Options" bottomBorder={false} class="w-full">
-                <SettingToggleContainer>
-                    <SettingToggle small bind:value={liked_only} icon={HandThumbUp} title="Liked Posts" on:change={(e) => {
-                        controller.liked_only = e.detail  
-                    }}/>
-                    
-                    <SettingToggle small bind:value={disliked_only} icon={HandThumbDown} title="Disliked Posts" on:change={(e) => {
-                        controller.disliked_only = e.detail  
-                    }}/>
-        
-                    <SettingToggle small bind:value={saved_only} icon={Bookmark} title="Saved Posts {community_name || community_id ? 'in This Community' : ''}" on:change={(e) => {
-                        controller.saved_only = e.detail  
-                    }}/>
-        
-                </SettingToggleContainer>
-            </CollapseButton>
+            {#if $profile?.user}
+                <CollapseButton icon={Funnel} title="Feed Filters" bottomBorder={false} class="w-full">
+                    <SettingToggleContainer>
+                        <SettingToggle small bind:value={liked_only} icon={HandThumbUp} title="Show Only Liked Posts" on:change={(e) => {
+                            controller.liked_only = e.detail  
+                        }}/>
+                        
+                        <SettingToggle small bind:value={disliked_only} icon={HandThumbDown} title="Show Only Disliked Posts" on:change={(e) => {
+                            controller.disliked_only = e.detail  
+                        }}/>
+            
+                        <SettingToggle small bind:value={saved_only} icon={Bookmark} title="Show Only Saved Posts {community_name || community_id ? 'in This Community' : ''}" on:change={(e) => {
+                            controller.saved_only = e.detail  
+                        }}/>
+
+                        <!---Requires at least 0.19.4--->
+                        <SettingToggle small bind:value={show_hidden} icon={Eye} title="Show Hidden Posts" 
+                            condition={minAPIVersion('0.19.4')}
+                            on:change={(e) => {
+                                controller.show_hidden = e.detail
+                                $userSettings.hidePosts.hidden = !e.detail
+                            }}
+                        />
+                    </SettingToggleContainer>
+                </CollapseButton>
+            {/if}
         </div>
        
     {/if}
@@ -667,7 +706,7 @@
 
 
     <!---Only use this loading spinner if infinite scroll is disabled--->
-    {#if controller.isLoading || controller.refreshing} <!--&& !$userSettings.uiState.infiniteScroll}-->
+    {#if controller.isLoading || controller.refreshing} 
         <span class="flex flex-row w-full h-full items-center">        
             <Spinner width={24} class="mx-auto my-auto"/>
         </span>
@@ -679,7 +718,7 @@
             {#if 
                 !post.creator_blocked && 
                 !post.community.hidden &&
-                !post.hidden &&  
+                !(post.hidden && $userSettings.hidePosts.hidden )&&
                 !($userSettings.hidePosts.deleted && post.post.deleted) && 
                 !($userSettings.hidePosts.removed && post.post.removed) &&
                 //@ts-ignore

@@ -61,6 +61,7 @@ interface Settings {
     hidePosts: {
         deleted: boolean
         removed: boolean
+        hidden: boolean
         keywords: boolean
         keywordList: string[]
         newAccounts: boolean
@@ -205,6 +206,7 @@ export const defaultSettings: Settings = {
     },
     markReadOnScroll:                                                   false,
     hidePosts: {
+        hidden:                                                         true,
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,
         keywords:                                                       false,
