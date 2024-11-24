@@ -33,9 +33,8 @@
         }
     }
 
-    onMount(() => {
-        if (element) element.addEventListener("scroll", onScroll)
-    })
+    
+    $:  if (element) element.addEventListener("scroll", onScroll)
 
     onDestroy( () => {
         if (element) element.removeEventListener("scroll", onScroll)
