@@ -653,7 +653,7 @@
                         controller.disliked_only = e.detail  
                     }}/>
         
-                    <SettingToggle small bind:value={saved_only} icon={Bookmark} title="Saved Posts {community_name || community_id ? 'in this community' : ''}" on:change={(e) => {
+                    <SettingToggle small bind:value={saved_only} icon={Bookmark} title="Saved Posts {community_name || community_id ? 'in This Community' : ''}" on:change={(e) => {
                         controller.saved_only = e.detail  
                     }}/>
         
