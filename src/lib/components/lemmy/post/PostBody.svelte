@@ -55,9 +55,7 @@
     <div class="flex flex-col text-sm gap-1 rounded-md {$$props.class}">    
         {#if displayType == 'post' }
             <Markdown bind:source {inline}>
-                <div class="m-1" slot="thumbnail">
-                    <slot name="thumbnail" />
-                </div>
+                <slot name="thumbnail" slot="thumbnail"/>
             </Markdown>
             <slot />
         {/if}
@@ -71,9 +69,7 @@
                 }
             ">
                 <Markdown bind:source {inline} noImages>
-                    <div class="m-1" slot="thumbnail">
-                        <slot name="thumbnail" />
-                    </div>
+                    <slot name="thumbnail" slot="thumbnail" />
                 </Markdown>
             </div>
         {/if}
