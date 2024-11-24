@@ -49,6 +49,8 @@ export interface FeedController {
     liked_only?: boolean,
     saved_only?: boolean,
     show_hidden?: boolean,
+    show_read?: boolean,
+    show_nsfw?: boolean,
     sort: SortType
     storageKey: string,
     type: ListingType

@@ -46,7 +46,7 @@
     import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArchiveBox, ArrowPath, Bookmark, Eye, Funnel, HandThumbDown, HandThumbUp } from "svelte-hero-icons"
+    import { ArchiveBox, ArrowPath, Bookmark, ExclamationCircle, Eye, EyeSlash, Funnel, HandThumbDown, HandThumbUp } from "svelte-hero-icons"
     
     
     
@@ -57,6 +57,8 @@
     export let liked_only: boolean|undefined        = undefined
     export let saved_only: boolean|undefined        = undefined
     export let show_hidden: boolean|undefined       = !$userSettings.hidePosts.hidden
+    export let show_read: boolean | undefined       = !$userSettings.hidePosts.read
+    export let show_nsfw: boolean | undefined       = !$userSettings.hidePosts.nsfw
     export let type: ListingType                    = $userSettings.defaultSort.feed ?? 'All'
     export let sort: SortType                       = $userSettings.defaultSort.sort ?? 'New'
     export let actions: boolean                     = false
@@ -142,6 +144,8 @@
                     liked_only: liked_only,
                     saved_only: saved_only,
                     show_hidden: show_hidden,
+                    show_read: show_read,
+                    show_nsfw: show_nsfw,
                     type_: type,
                     community_id: community_id,
                     community_name: community_name
@@ -282,10 +286,15 @@
                 if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
                 if ('type' in pageSnapshot)              type = pageSnapshot.type
                 if ('posts' in pageSnapshot)             posts = {...pageSnapshot.posts}
+                if ('show_hidden' in pageSnapshot)       show_hidden = pageSnapshot.show_hidden
+                if ('show_read' in pageSnapshot)         show_read = pageSnapshot.show_read
+                if ('show_nsfw' in pageSnapshot)         show_nsfw = pageSnapshot.show_nsfw
+
                 if ('truncated' in pageSnapshot)         this.truncated = pageSnapshot.truncated
                 if ('truncatedPosts' in pageSnapshot)    truncatedPosts = [...pageSnapshot.truncatedPosts]
                 if ('page' in pageSnapshot)              this.page = pageSnapshot.page
                 if ('last_clicked_post' in pageSnapshot) this.last_clicked_post = pageSnapshot.last_clicked_post
+                
                 if ('page_cursors' in pageSnapshot)      this.page_cursors = [...pageSnapshot.page_cursors]
                 if ('liked_only' in pageSnapshot)        liked_only = pageSnapshot.liked_only
                 if ('disliked_only' in pageSnapshot)     disliked_only = pageSnapshot.disliked_only
@@ -333,6 +342,8 @@
                 disliked_only: this.disliked_only,
                 community_id: this.community_id,
                 show_hidden:    this.show_hidden,
+                show_read:      this.show_read,
+                show_nsfw:      this.show_nsfw,
                 community_name: this.community_name,
                 last_refreshed: this.last_refreshed,
                 page: this.page,
@@ -403,8 +414,6 @@
 
         set saved_only(so:boolean|undefined) {
             saved_only = so
-            //liked_only = undefined
-            //disliked_only = undefined
             this.refreshing = true
             this.reset(true)
                 .then(() => this.load({loadSnapshot: false, append:false}))
@@ -417,6 +426,30 @@
         set show_hidden(val:boolean) {
             if (debugMode) console.log("Setting show hidden to:", val)
             show_hidden = val
+            this.refreshing = true
+            this.reset(true)
+                .then(() => this.load({loadSnapshot: false, append: false}))
+        },
+
+        get show_nsfw(): boolean | undefined {
+            return show_nsfw
+        },
+
+        set show_nsfw(val:boolean) {
+            if (debugMode) console.log("Setting show NSFW to:", val)
+            show_nsfw = val
+            this.refreshing = true
+            this.reset(true)
+                .then(() => this.load({loadSnapshot: false, append: false}))
+        },
+
+        get show_read(): boolean |undefined {
+            return show_read
+        },
+
+        set show_read(val:boolean) {
+            if (debugMode) console.log("Setting show read to:", val)
+            show_read = val
             this.refreshing = true
             this.reset(true)
                 .then(() => this.load({loadSnapshot: false, append: false}))
@@ -688,13 +721,32 @@
                         }}/>
 
                         <!---Requires at least 0.19.4--->
-                        <SettingToggle small bind:value={show_hidden} icon={Eye} title="Show Hidden Posts" 
+                        <SettingToggle small bind:value={show_hidden} icon={EyeSlash} title="Show Hidden Posts" 
                             condition={minAPIVersion('0.19.4')}
                             on:change={(e) => {
                                 controller.show_hidden = e.detail
                                 $userSettings.hidePosts.hidden = !e.detail
                             }}
                         />
+
+                        <!---Requires at least 0.19.6--->
+                        <SettingToggle small bind:value={show_read} icon={Eye} title="Show Read Posts" 
+                            condition={minAPIVersion('0.19.6')}
+                            on:change={(e) => {
+                                controller.show_read = e.detail
+                                $userSettings.hidePosts.read = !e.detail
+                            }}
+                        />
+
+                        <SettingToggle small bind:value={show_nsfw} icon={ExclamationCircle} title="Show NSFW Posts" 
+                            condition={minAPIVersion('0.19.6')}
+                            on:change={(e) => {
+                                controller.show_nsfw = e.detail
+                                $userSettings.hidePosts.nsfw = !e.detail
+                            }}
+                        />
+
+
                     </SettingToggleContainer>
                 </CollapseButton>
             {/if}
