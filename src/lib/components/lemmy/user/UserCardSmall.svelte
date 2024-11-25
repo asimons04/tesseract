@@ -28,9 +28,9 @@
     
     
 
-    export let person_view: PersonView
+    export let person_view: PersonView | undefined = undefined
     export let mod: boolean = false
-    export let admin: boolean = false
+    export let admin: boolean = person_view?.is_admin || false
     export let blocked: boolean = false
     export let mostRecentItem: string|undefined = undefined
     export let href: boolean = false            // If true, user link in the card will go to the /u/ page. False, default, will open the modal.
@@ -40,7 +40,7 @@
 </script>
 
 
-
+{#if person_view}
 <Card backgroundImage={($userSettings.uiState.showBannersInCards && person_view.person.banner) ? imageProxyURL(person_view.person.banner, undefined, 'webp') : ''} 
     class="p-0 !items-start"
 >
@@ -147,3 +147,4 @@
         </div>
     </Card>
 </Card>
+{/if}
