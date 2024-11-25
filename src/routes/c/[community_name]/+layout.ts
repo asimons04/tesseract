@@ -14,7 +14,7 @@ export async function load(req: any) {
        
         return {
             community: req.passedCommunity ?? await getClient().getCommunity({
-                name: req.params.name,
+                name: req.params.community_name,
             }),
         }
     }
@@ -40,12 +40,12 @@ export async function load(req: any) {
         })
 
         await getClient().resolveObject({
-            q: '!' + req.params.name,
+            q: '!' + req.params.community_name,
         })
        
         return {
             community: await getClient().getCommunity({
-                name: req.params.name,
+                name: req.params.community_name,
             }),
         }
     }

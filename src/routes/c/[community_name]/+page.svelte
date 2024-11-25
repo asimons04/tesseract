@@ -51,7 +51,7 @@
     <div class="flex w-full" style="height: calc(100vh - 8rem);">
         <FeedContainer>
             <PostFeed actions type="All"
-                bind:community_name={$page.params.name}  
+                bind:community_name={$page.params.community_name}  
                 bind:controller={feedController} 
                 bind:sort={selectedSort}
             >
