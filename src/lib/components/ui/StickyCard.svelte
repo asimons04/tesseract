@@ -1,7 +1,7 @@
 <aside
-    class="sticky top-[8rem] break-words hidden xl:flex flex-col gap-1 z-10 xl:pr-2 -mt-1
+    class="sticky top-[8rem] break-words hidden 2xl:flex flex-col gap-1 z-10 xl:pr-2 -mt-1
     h-full w-full
-    xl:w-[27rem] xl:overflow-auto
+    2xl:w-[27rem] xl:overflow-auto
     max-h-[calc(100svh-9rem)]
     text-sm border-slate-200 dark:border-zinc-800 {$$props.class}"
 >
