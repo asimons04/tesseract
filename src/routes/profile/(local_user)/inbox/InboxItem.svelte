@@ -9,25 +9,39 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
+    import CollapseButton from '$lib/components/ui/CollapseButton.svelte';
     import Comment from '$lib/components/lemmy/comment/Comment.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
-    import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PrivateMessageItem from '$lib/components/lemmy/private_message/PrivateMessageItem.svelte'
     import ReportModal from '$lib/components/lemmy/moderation/ReportModal.svelte'
-    import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
-    import { isRead } from '$lib/lemmy/inbox'
+    import { getInboxItemPublished, isRead } from '$lib/lemmy/inbox'
+    import { isCommentReply, isPersonMention, isPostReply } from '$lib/lemmy/item'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-    import { ChatBubbleOvalLeft, Check, Flag, Icon } from 'svelte-hero-icons'
 
+    import { 
+        AtSymbol, 
+        ChatBubbleLeftEllipsis, 
+        ChatBubbleLeftRight, 
+        ChatBubbleOvalLeft, 
+        Envelope, 
+        EnvelopeOpen, 
+        Flag, 
+        Window as WindowIcon,
+        Icon, 
+        type IconSource 
+    } from 'svelte-hero-icons'
+    import { fade } from 'svelte/transition';
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte';
+    
     export let item: CommentReplyView | PersonMentionView | PrivateMessageView
+    export let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'all' = 'all'
 
     function isPrivateMessage(item: CommentReplyView | PersonMentionView | PrivateMessageView): item is PrivateMessageView {
         return 'private_message' in item
@@ -39,6 +53,13 @@
     let reply = ''
     let loading = false
     let reporting = false
+    let itemType: 'mention' | 'comment_reply' | 'post_reply' | 'private_message'
+   
+    let subject: string
+    let icon: IconSource
+
+    $:  item, generateHeading()
+
 
     async function replyToMessage(message: PrivateMessageView | CommentReplyView | PersonMentionView) {
         if (!$profile?.jwt) return
@@ -82,92 +103,148 @@
                 person_mention_id: item.person_mention.id,
                 read: isRead,
             })
+            item.person_mention.read = isRead
         } 
         else if ('comment_reply' in item) {
             await getClient().markCommentReplyAsRead({
                 comment_reply_id: item.comment_reply.id,
                 read: isRead,
             })
+            item.comment_reply.read = isRead
         }
-        else if ('private_message' in item) {
+        
+        else if (isPrivateMessage(item)) {
             await getClient().markPrivateMessageAsRead({
                 private_message_id: item.private_message.id,
                 read: isRead
             })
+            item.private_message.read = isRead
         }
 
         read = isRead
         if ($profile.user) $profile.user.unreads += isRead ? -1 : 1
         loading = false
     }
+
+
+    function generateHeading() {
+        let creatorName = (item.creator.id == $profile?.user?.local_user_view.person.id)
+            ? 'You'
+            : `u/${item.creator.name}`
+
+        //: `${item.creator.display_name ?? item.creator.name}@${new URL(item.creator.actor_id).hostname}`
+
+        let recipientName = (item.recipient.id == $profile?.user?.local_user_view.person.id)
+            ? 'You'
+            : `${item.recipient.display_name ?? item.recipient.name}@${new URL(item.recipient.actor_id).hostname}`
+
+
+        if (isPersonMention(item)) {
+            itemType = 'mention'
+            subject = `${creatorName} mentioned you.`
+            icon = AtSymbol
+        }
+        
+        if (isCommentReply(item, $profile?.user?.local_user_view.person.id)) {
+            itemType = 'comment_reply'
+            subject = `${creatorName} replied to your comment in c/${item.community.name}`
+            //@${new URL(item.community.actor_id).hostname}
+            icon = ChatBubbleLeftEllipsis
+        }
+
+        if (isPostReply(item, $profile?.user?.local_user_view.person.id)) {
+            itemType = 'post_reply'
+            subject = `${creatorName} replied to your post in c/${item.community.name}`
+            // @${new URL(item.community.actor_id).hostname}
+            icon = WindowIcon
+        }
+
+        if (isPrivateMessage(item)) {
+            itemType = 'private_message'
+            subject = `${creatorName} messaged ${recipientName}`
+            icon = ChatBubbleLeftRight
+        }
+    }
+        
+        
+
+
 </script>
+
+{#if type == 'all' || type == itemType}
+    <span class="flex flex-row w-full" transition:fade>
+        
+        <span class="mt-3 mb-auto w-[50px]">
+            <Button color="tertiary-border" size="sm" title="Mark as {read ? 'unread': 'read'}" on:click={() => markAsRead(!read)}>
+                <Icon src={read ? EnvelopeOpen : Envelope} width={22} mini class={read ? 'opacity-60' : ''}/>
+            </Button>
+        </span>
+        
+        <CollapseButton bind:icon={icon} bold={!read} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px]">
+                <!---Title Component of Collapse Button--->
+                <div class="flex flex-row gap-2 items-start" slot="title" title="{subject}">
+                    <span class="opacity-70">
+                        <RelativeDate date={getInboxItemPublished(item)} />
+                    </span>
+                    {subject}
+                </div>
+            
+                <!---Body Component--->
+                <Card class="p-2">
+                    <div class="flex flex-col gap-2 w-full">
+                        
+                        <!--Post/Comment Reply and Mentions--->
+                        {#if isPostReply(item) || isCommentReply(item) || isPersonMention(item)}
+                            <span class="text-xs">
+                                <CommunityLink avatar bind:community={item.community} />
+                            </span>
+                            
+                            <a href="/comment/{item.comment.id}" class="font-bold text-base">
+                                {item.post.name}
+                            </a>
+                            
+                            <Comment postId={item.post.id} node={{ children: [], comment_view: item, depth: 1 }} replying={false} class="!p-0" />
+                        {/if}
+
+                        <!---Direct Messages--->
+                        {#if isPrivateMessage(item)}
+                            <PrivateMessageItem bind:item read />
+                            
+                            {#if item.recipient.id == $profile?.user?.local_user_view.person.id}
+                                <div class="flex flex-row gap-2 justify-between">
+                                    <Button color="tertiary-border" on:click={() => (replying = !replying)}>
+                                        <Icon mini src={ChatBubbleOvalLeft} width={16} />
+                                        Reply
+                                    </Button>
+                                    
+                                    <span class="flex flex-row gap-2">
+                                        <!---Report PM--->
+                                        <Button class="text-red-500" color="tertiary-border" size="square-md" on:click={() => {reporting=true} } >
+                                            <Icon slot="icon" src={Flag} mini size="16" />
+                                        </Button>
+                                    </span>
+                                </div>
+                            {/if}
+                            
+                            {#if replying}
+                                <div class="mt-2 flex flex-col gap-2">
+                                    <MarkdownEditor placeholder="Message" bind:value={reply} rows={8} previewButton/>
+                                    <div class="ml-auto w-24">
+                                        <Button disabled={loading} {loading} on:click={() => replyToMessage(item)} color="tertiary-border" size="sm">
+                                            Submit
+                                        </Button>
+                                    </div>
+                                </div>
+                            {/if}
+                        {/if}
+                    </div>
+                </Card>
+
+        </CollapseButton>
+    </span>
+{/if}
+
 
 <ReportModal bind:open={reporting} bind:item={item} />
 
-<Card class="flex flex-col rounded-md p-3 flex-1 max-w-full gap-1">
 
-    {#if 'person_mention' in item || 'comment_reply' in item}
-        <PostMeta post={item} actions={false} expandCompact={false}/>
-        
-        <div class="flex flex-col" class:mt-2={$profile?.user && item.post.creator_id != $profile.user.local_user_view.person.id}>
-            <SectionTitle class="mb-2 text-xs">Reply</SectionTitle>
-            
-            {#if $profile?.user && item.post.creator_id != $profile.user.local_user_view.person.id}
-                <div class="flex flex-row text-xs items-center gap-2">
-                    <div class="border-t w-8 rounded-tl h-2 border-l ml-2 border-zinc-700"/>
-                    <div>
-                        <UserLink avatar avatarSize={16} user={$profile.user.local_user_view.person}/>
-                    </div>
-                </div>
-            {/if}
-
-            <Comment postId={item.post.id} node={{ children: [], comment_view: item, depth: 1 }} replying={false} class="!p-0" />
-        </div>
-
-        <div class="flex flex-row ml-auto gap-2">
-            <Button class={read ? '!text-green-500' : ''} color="tertiary-border" size="square-md" {loading} disabled={loading} on:click={() => markAsRead(!read)} >
-                <Icon slot="icon" src={Check} mini size="16" />
-            </Button>
-
-            <Button color="tertiary-border" href="/comment/{item.comment.id}" size="md" class="h-8">
-                Jump
-            </Button>
-        </div>
-    {:else}
-        <PrivateMessageItem bind:item read />
-
-        {#if item.recipient.id == $profile?.user?.local_user_view.person.id}
-            <div class="flex flex-row gap-2 justify-between">
-                <Button color="tertiary-border" on:click={() => (replying = !replying)}>
-                    <Icon mini src={ChatBubbleOvalLeft} width={16} />
-                    Reply
-                </Button>
-                
-                <span class="flex flex-row gap-2">
-                    <!---Report PM--->
-                    <Button class="text-red-500" color="tertiary-border" size="square-md" on:click={() => {reporting=true} } >
-                        <Icon slot="icon" src={Flag} mini size="16" />
-                    </Button>
-                    
-                    <!---Mark PM as Read--->
-                    <Button class={read ? '!text-green-500' : ''} color="tertiary-border" size="square-md" {loading} disabled={loading} on:click={() => markAsRead(!read)} >
-                        <Icon slot="icon" src={Check} mini size="16" />
-                    </Button>
-                </span>
-            </div>
-        {/if}
-    
-        {#if isPrivateMessage(item)}
-            {#if replying}
-                <div class="mt-2 flex flex-col gap-2">
-                    <MarkdownEditor placeholder="Message" bind:value={reply} rows={8} previewButton/>
-                    <div class="ml-auto w-24">
-                        <Button disabled={loading} {loading} on:click={() => replyToMessage(item)} color="tertiary-border" size="sm">
-                            Submit
-                        </Button>
-                    </div>
-                </div>
-            {/if}
-        {/if}
-    {/if}
-</Card>

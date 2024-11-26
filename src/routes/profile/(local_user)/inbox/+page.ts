@@ -22,7 +22,7 @@ export async function load({ url }:LoadParams) {
     const params = {
         limit: 50,
         page: page,
-        unread_only: unreadOnly,
+        unread_only: false,
     }
 
     const [replies, mentions, privateMessages] = await Promise.all([
