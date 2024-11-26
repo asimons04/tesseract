@@ -140,7 +140,7 @@
         {/if}
         
 
-        <div class="flex flex-col gap-2 sm:gap-2 ml-auto mr-auto w-full h-full sm:w-full md:w-[90%]">
+        <div class="flex flex-col gap-2 mx-auto w-full h-full md:w-[90%]">
             <Post 
                 bind:post={data.post.post_view} 
                 displayType="post" 
@@ -164,7 +164,7 @@
             <CommentSection data={data} bind:showCommentForm={showCommentForm} bind:imageUploads/>
         </div>
 
-        <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden xl:flex"/>
+        <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden 2xl:flex"/>
 
     </MainContentArea>
 
