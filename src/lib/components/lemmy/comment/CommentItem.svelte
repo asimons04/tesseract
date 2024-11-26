@@ -1,3 +1,7 @@
+<script context="module">
+    const moduleName ='CommentItem.svelte'
+</script>
+
 <script lang="ts">
     import type { CommentView } from 'lemmy-js-client'
 
@@ -10,12 +14,13 @@
     
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { fade } from 'svelte/transition'
-    import { getPostTitleWithoutFlairs } from '$lib/components/lemmy/post/helpers'
+    import { getPostTitleWithoutFlairs, sleep } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
     import { goto } from '$app/navigation'
     import { lastSeenPost } from '$lib/components/lemmy/post/helpers'
+    import { onMount } from 'svelte';
     import { userSettings } from '$lib/settings'
-    
+     
     import {
         Icon,
         ArrowTopRightOnSquare,
@@ -25,19 +30,47 @@
     } from 'svelte-hero-icons'
     
     
+    
 
     export let comment: CommentView
     export let actions:boolean = true
     export let collapseBadges:boolean = false;
+    export let scrollTo:number = -1
 
     let commentContainer:HTMLDivElement
+    let lastClickedPost = -1
+
     const elementID = Number(comment.post.id + '.' + comment.comment.id)
 
+    $:  debugMode = $userSettings.debugInfo
+
+    onMount(async () => await scrollIntoView() )
+
+    async function scrollIntoView(smooth:boolean = false) {
+        if (scrollTo == elementID) {
+            if (debugMode) console.log(moduleName, ": Scrolling comment " , elementID, "into view via param")
+            await sleep(50)
+            commentContainer.scrollIntoView({
+                behavior: smooth ? 'smooth' : 'instant',
+                block: 'start'
+            })
+        }
+    }
+
+    function announceLastClickedPost(comment:CommentView|undefined|null) {
+        if (!comment || lastClickedPost == elementID) return
+        lastClickedPost = elementID
+        dispatchWindowEvent('lastClickedPost', {post_id: elementID})
+    }
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div id={elementID.toString()} on:mouseover={() => lastSeenPost.set(elementID)} on:touchstart={() => lastSeenPost.set(elementID)}  bind:this={commentContainer} transition:fade>
+<div id={elementID.toString()}  bind:this={commentContainer} transition:fade
+    on:mouseover={() => announceLastClickedPost(comment) } 
+    on:touchstart={() => announceLastClickedPost(comment) }
+
+>
     <Card class="flex flex-col p-2 flex-1 gap-1">
         
         <div class="flex flex-row justify-between gap-1 items-center">
