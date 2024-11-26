@@ -73,6 +73,7 @@ export const buttonColor = {
   }
 
 export let dividerColors = "divide-slate-200 dark:divide-zinc-800"
+export let hrColors = "border-slate-200 dark:border-zinc-800"
 
 
 const configuredTheme = (env.PUBLIC_THEME ?? 'system') as 'system' | 'light' | 'dark' | undefined
