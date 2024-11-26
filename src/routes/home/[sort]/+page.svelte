@@ -98,7 +98,7 @@
             <PostFeed actions bind:controller={feedController} bind:sort bind:type >
 
                 <!---Add the Site Banner to the top of the feed below 'xl' width--->
-                <div class="flex xl:hidden flex-col gap-2 w-full" slot="banner">    
+                <div class="flex 2xl:hidden flex-col gap-2 w-full" slot="banner">    
                     <SiteCardSmall site={data.site.site_view} version={data.site.version}/>
 
                     {#if data.site.taglines && data.site.taglines.length > 0}

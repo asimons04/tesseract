@@ -1,12 +1,17 @@
-import { getClient } from '$lib/lemmy.js'
-import type { Result } from '$lib/lemmy/item.js'
 import type {
-  CommentReplyView,
-  Person,
-  PersonMentionView,
-  PersonView,
-  PrivateMessageView,
+    CommentReplyView,
+    Person,
+    PersonMentionView,
+    PersonView,
+    PrivateMessageView,
 } from 'lemmy-js-client'
+
+import { getClient } from '$lib/lemmy.js'
+import { get } from 'svelte/store'
+import { profile } from '$lib/auth'
+import type { Result } from '$lib/lemmy/item.js'
+
+
 
 export type InboxItemView =
   | PersonMentionView
@@ -35,7 +40,8 @@ export function isRead(item: PersonMentionView | CommentReplyView | PrivateMessa
   }
 
   if ('private_message' in item) {
-    return (item as PrivateMessageView).private_message.read
+    if ( (item as PrivateMessageView).creator.id == get(profile)?.user?.local_user_view.person.id ) return true
+    return  (item as PrivateMessageView).private_message.read 
   }
 
   return false
