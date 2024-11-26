@@ -15,6 +15,8 @@
     export let innerClass:string = ''
     export let iconSize:number = 24
     export let bottomBorder: boolean = true
+    export let bold: boolean = true
+    export let truncate: boolean = false
 </script>
 
 <div class="flex flex-col gap-1 my-2 {bottomBorder ? 'border-b border-slate-200 dark:border-zinc-800' : ''} {$$props.class}">
@@ -27,13 +29,15 @@
             {/if}
         </span>
 
-        <span class="w-full flex flex-row justify-between {heading ? 'text-xl' : 'text-xs'} font-bold">
+        <span class="w-full flex flex-row justify-between {heading ? 'text-xl' : 'text-xs'} {bold ? 'font-bold' : ''} {truncate ? 'truncate' : ''}">
             <slot name="title" />
             {title}
             
-            <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 my-auto">
-                <Icon src={ChevronUp} mini height={18} width={18} class="transition-transform {expanded ? '' : 'rotate-180'}"/>
-            </span>
+            
+        </span>
+        
+        <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 my-auto">
+            <Icon src={ChevronUp} mini height={18} width={18} class="transition-transform {expanded ? '' : 'rotate-180'}"/>
         </span>
     </Button>
     
