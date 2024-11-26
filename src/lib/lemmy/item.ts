@@ -9,6 +9,8 @@ import type {
     Post,
     PrivateMessageReportView,
     PrivateMessageView,
+    PersonMentionView,
+    CommentReplyView,
 } from 'lemmy-js-client'
 
 export type Result =
@@ -22,6 +24,8 @@ export type Result =
   | PostReportView
   | CommentReportView
   | PrivateMessageReportView
+  | PersonMentionView
+  | CommentReplyView
 
 export function getItemPublished(item: Result) {
   
@@ -57,6 +61,7 @@ export function isPost(item: Result): item is Post {
 }
 
 export function isCommentView(item: Result): item is CommentView {
+    if (!item) return false
     return 'comment' in item
 }
 
@@ -82,4 +87,20 @@ export function isCommentReport(item: Result): item is CommentReportView {
 
 export function isPrivateMessageReport(item: Result): item is PrivateMessageReportView {
     return 'private_message_report' in item
+}
+
+export function isPrivateMessage(item: Result): item is PrivateMessageView {
+    return 'private_message' in item
+}
+
+export function isPersonMention(item:Result): item is PersonMentionView {
+    return 'person_mention' in item
+}
+
+export function isCommentReply(item:CommentReplyView | PersonMentionView | PrivateMessageView, my_user_id:number = -1): item is CommentReplyView {
+    return 'comment_reply' in item && item.post.creator_id != my_user_id
+}
+
+export function isPostReply(item:CommentReplyView | PersonMentionView | PrivateMessageView, my_user_id:number = -1): item is CommentReplyView {
+    return 'comment_reply' in item && item.post.creator_id == my_user_id
 }
