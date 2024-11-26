@@ -56,7 +56,7 @@
                 bind:sort={selectedSort}
             >
                 <!---Add the Site Banner to the top of the feed below 'xl' width--->
-                <div class="flex xl:hidden flex-col w-full" slot="banner">    
+                <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px]" slot="banner">    
                     <CommunityCardSmall community_view={data.community.community_view}/>
                 </div>
             </PostFeed>
