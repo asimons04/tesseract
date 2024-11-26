@@ -249,7 +249,7 @@
         },
 
         takeSnapshot: async function(): Promise<void> {
-            if (debugMode) console.log(moduleName, ": Taking snapshot: ", community_name)
+            if (debugMode) console.log(moduleName, ": Taking snapshot: ", this.storageKey)
             await this.storage.store(this.storageKey, this.data)
         },
 
@@ -487,7 +487,7 @@
     
  
     // React if the community changes
-    $:  $pageStore.params.name, community_name, changeCommunity($pageStore.params.name ?? community_name)
+    $:  $pageStore.params.community_name, community_name, changeCommunity($pageStore.params.community_name ?? community_name)
     $:  $instance, changeInstance($instance)
 
     // Instance change handler
@@ -720,7 +720,7 @@
                             controller.saved_only = e.detail  
                         }}/>
 
-                        <!---Requires at least 0.19.4--->
+                        <!---Show Hidden Posts: Requires at least 0.19.4--->
                         <SettingToggle small bind:value={show_hidden} icon={EyeSlash} title="Show Hidden Posts" 
                             condition={minAPIVersion('0.19.4')}
                             on:change={(e) => {
@@ -729,7 +729,7 @@
                             }}
                         />
 
-                        <!---Requires at least 0.19.6--->
+                        <!---Show Read Posts: Requires at least 0.19.6--->
                         <SettingToggle small bind:value={show_read} icon={Eye} title="Show Read Posts" 
                             condition={minAPIVersion('0.19.6')}
                             on:change={(e) => {
@@ -738,6 +738,7 @@
                             }}
                         />
 
+                        <!---Show NSFW Posts: Requires at least 0.19.6--->
                         <SettingToggle small bind:value={show_nsfw} icon={ExclamationCircle} title="Show NSFW Posts" 
                             condition={minAPIVersion('0.19.6')}
                             on:change={(e) => {
