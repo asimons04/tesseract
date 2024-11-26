@@ -11,12 +11,12 @@
     export let community_id:number = 0
     export let person_id:number = 0
     export let placeholder:string|undefined = undefined
-
+    export let fullWidth: boolean = false
 </script>
 
 
-<div class="flex mx-auto">
-    <form name="search" class="hidden lg:flex lg:flex-row gap-1 items-center ml-auto mr-auto"
+<div class="flex mx-auto {fullWidth ? 'w-full' : ''}">
+    <form name="search" class="flex flex-row gap-1 items-center ml-auto mr-auto {fullWidth ? 'w-full' : ''}" 
         on:submit|preventDefault={() => {
             let url = new URL(window.location.href);
             url.pathname = '/search';
@@ -32,32 +32,10 @@
         }}
     >
 
-        <TextInput type="search" name="search_input" placeholder="{placeholder ?? 'Search'}" bind:value={searchTerm}/>
+        <TextInput type="search" name="search_input" placeholder="{placeholder ?? 'Search'}" bind:value={searchTerm} class="{fullWidth ? 'w-full' : ''}"/>
 
         <Button submit color="tertiary">
             <Icon src={MagnifyingGlass} mini width={24} />
         </Button>
     </form>
-    
-    <!---Below large breakpoint, just show a button that will take you to the search page, prepopulated with the community/user details
-    <span class="flex lg:hidden items-center gap-1 ml-auto">
-        <Button color="tertiary"
-            on:click={() => {
-                let url = new URL(window.location.href);
-                url.pathname = '/search';
-                url.searchParams.set('type', type)
-                
-                if (community_id > 0) url.searchParams.set('community_id', community_id.toString())
-                if (person_id > 0) url.searchParams.set('person_id', person_id.toString())
-
-                goto(url, {
-                    invalidateAll: true,
-                })
-            }}
-        >
-            <Icon src={MagnifyingGlass} mini width={24} />
-        </Button>
-    </span>
-    --->
-    
 </div>
