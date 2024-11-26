@@ -357,7 +357,7 @@
 
         <!---Community Sidebar Toggle (hide when screen width less than 'xl' breakpoint when the sidebar hides anyway)--->
         {#if toggleCommunitySidebar}
-            <span class="hidden xl:flex">
+            <span class="hidden 2xl:flex">
                 <Button title="{$userSettings.uiState.expandCommunitySidebar ? 'Collapse': 'Expand'} Community Sidebar"
                     size="sm" color="tertiary" 
                     on:click={() => {
