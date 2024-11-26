@@ -41,6 +41,13 @@
         if (!$profile?.jwt) return post.counts
         
         try {
+            if (!post.read) {
+                getClient().markPostAsRead({
+                    read: true,
+                    post_ids: [post.post.id]
+                }).then(() => {post.read = true})
+            }
+            
             return (await getClient().likePost({
                     post_id: post.post.id,
                     score: vote,
