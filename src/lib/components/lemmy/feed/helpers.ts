@@ -57,6 +57,34 @@ export interface FeedController {
 }
 
 
+export interface UserSubmissionFeedControllerLoadOptions {
+    loadSnapshot?: boolean     // Whether to load from the snapshot (only needed on initial fetch. Default: undefined/false
+}
+
+export interface UserSubmissionFeedController {
+    clearSnapshot: () => void
+    load: (opts?:UserSubmissionFeedControllerLoadOptions) => Promise<void>
+    loadSnapshot: () => Promise<boolean>
+    refresh: (clearSnapshot?:boolean) => void
+    reset: (clearSnapshot?:boolean) => void
+    scrollTop: () => void
+    scrollBottom: () => void
+    takeSnapshot: () => Promise<void>
+
+    storage: StorageController
+    last_refreshed: number
+
+    sort: 'New' | 'TopAll' | 'Old',
+    type: 'all' | 'posts' | 'comments'
+    data: any
+    person_name: string | undefined
+    person_id: number | undefined
+    storageKey: string
+
+}
+
+
+
 export const parseSortType = (sort?:string): SortType => {
     if (!sort)                  return get(userSettings)?.defaultSort.sort ?? 'New'
     switch(sort?.toLowerCase()) {
