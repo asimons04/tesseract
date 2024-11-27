@@ -48,7 +48,7 @@
         <div class="flex w-full" style="height: calc(100vh - 11.6rem);">
             <FeedContainer>
 
-                <UserSubmissionFeed bind:controller={feedController} bind:person_id={$profile.user.local_user_view.person.id}  actions >
+                <UserSubmissionFeed bind:controller={feedController} bind:person_id={$profile.user.local_user_view.person.id} snapshotValidity={5} actions >
                     
                     <!---Add the User's Profile Card, About Me, and List of Communities they Moderate Above the Feed--->                    
                     <div class="flex 2xl:hidden flex-col mx-auto w-full gap-2 max-w-[820px]" slot="banner" let:user>
