@@ -5,24 +5,17 @@
     import { isBlocked } from '$lib/lemmy/user.js'
     import { profile } from '$lib/auth.js'
 
-
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Button from '$lib/components/input/Button.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
+    import CommunityLink from '../community/CommunityLink.svelte';
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import UserCardSmall from './UserCardSmall.svelte';
-    import UserSendMessageModal from '../modal/UserSendMessageModal.svelte'
 
     import {
         ShieldCheck,
         UserCircle,
     } from 'svelte-hero-icons'
-    
-    
-    
-    
     
     export let person: PersonView 
     export let moderates: CommunityModeratorView[]
@@ -31,9 +24,6 @@
     //$: is_admin = (person as PersonView).is_admin ?? (person as LocalUserView).local_user.admin ?? false
     $: is_admin = (person as PersonView).is_admin ?? false
     $: userBlocked = ($profile?.user && person) ? isBlocked($profile.user, person.person.id) : false
-    
-    let blocking = false
-    let messaging = false
 
     function handleBanUser(e:BanUserEvent) {
         if (e.detail.person_id == person.person.id) {
@@ -47,11 +37,6 @@
 <svelte:window on:banUser={handleBanUser} />
 
 {#if display}
-    
-    <!---DM Compose Modal--->
-    {#if $profile?.user}
-        <UserSendMessageModal bind:open={messaging} bind:person={person} />
-    {/if}
 
     <StickyCard class="{$$props.class}">
         <UserCardSmall person_view={person} blocked={userBlocked} href={false} admin={is_admin}/>
@@ -62,29 +47,7 @@
         {#if moderates?.length > 0}
             <CollapseButton icon={ShieldCheck} title="Moderates">
                 {#each moderates as community}
-                    <div class="inline-flex w-full">
-                        <Button
-                            class="hover:bg-slate-200 w-full h-max !px-0"
-                            color="tertiary"
-                            alignment="left"
-                            href="/c/{community.community.name}@{new URL(community.community.actor_id).hostname}"
-                            title="{community.community.title.replace('&amp;', '&')}@{new URL(community.community.actor_id).hostname}"
-                        >
-                            <div class="flex-none">
-                                <Avatar
-                                    url={community.community.icon}
-                                    alt={community.community.name}
-                                    title={community.community.title}
-                                    width={20}
-                                    slot="icon"
-                                />
-                            </div>
-                            
-                            <span class="w-full break-words">
-                                {community.community.title.replace('&amp;', '&')}
-                            </span>
-                        </Button>
-                    </div>
+                    <CommunityLink community={community.community} avatar class="p-1"/>
                 {/each}
             </CollapseButton>
         {/if}
