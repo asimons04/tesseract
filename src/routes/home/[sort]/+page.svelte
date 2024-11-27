@@ -51,7 +51,7 @@
 
 <SubNavbar quickSettings toggleMargins toggleCommunitySidebar compactSwitch
 
-    listingType 
+    listingType moderatorViewItem
     bind:selectedListingType={type}
     on:navChangeListingType={(e) => {
         if (e?.detail) {
