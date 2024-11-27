@@ -78,6 +78,7 @@
 
     // Sort menu
     export let sortMenu:boolean                 = false
+    export let moderatorViewItem: boolean       = false
     export let sortOptions:SortType[]           =  defaultSortOptions
     export let sortOptionNames:string[]         =  defaultSortOptionNames
     export let selectedSortOption:SortType      = 'New'
@@ -93,7 +94,7 @@
     export let postTitle:boolean                = false     // Post title in center of bar
     
     // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
-    $:  if ($profile?.user && amModOfAny($profile.user)) {
+    $:  if (moderatorViewItem && $profile?.user && amModOfAny($profile.user)) {
             if (!listingTypeOptions.includes('ModeratorView'))      listingTypeOptions.push('ModeratorView')
             if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Moderator View")
         }
