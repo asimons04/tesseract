@@ -4,7 +4,7 @@ import { getClient } from '$lib/lemmy.js'
 
 export async function load(req: any) {
     const community = await getClient().getCommunity({
-        name: req.params.name,
+        name: req.params.community_name,
     })
 
     const modlogSearchURL = new URL('https://localhost')
