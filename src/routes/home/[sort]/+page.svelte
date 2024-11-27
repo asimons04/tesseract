@@ -86,7 +86,9 @@
 
 >
     <!---Inline Search in Middle--->
-    <SiteSearch placeholder="Search {data?.site?.site_view?.site?.name ?? "everything"}" slot="center"/>
+    <div class="hidden lg:flex" slot="center">
+        <SiteSearch placeholder="Search {data?.site?.site_view?.site?.name ?? "everything"}"/>
+    </div>
 </SubNavbar>
 
 

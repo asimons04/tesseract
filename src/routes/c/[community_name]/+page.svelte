@@ -43,7 +43,9 @@
     scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }
     refreshButton refreshPreventDefault on:navRefresh={()=> feedController.refresh(true) } 
 >
-    <SiteSearch placeholder="Search {data.community.community_view.community.name}" community_id={data.community.community_view.community.id} slot="center"/>
+    <div class="hidden lg:flex" slot="center">
+        <SiteSearch placeholder="Search {data.community.community_view.community.name}" community_id={data.community.community_view.community.id} />
+    </div>
 </SubNavbar>
 
 <MainContentArea>
