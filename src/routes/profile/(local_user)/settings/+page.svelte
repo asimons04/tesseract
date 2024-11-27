@@ -22,6 +22,7 @@
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
     import TotpSetupModal from './TOTPSetupModal.svelte'
+    import UserCard from '$lib/components/lemmy/user/UserCard.svelte';
 
     import { 
         ArrowDownTray,
@@ -36,6 +37,7 @@
         Trash
 
     } from 'svelte-hero-icons'
+    
     
     export let description = true    
     
@@ -238,4 +240,19 @@
             
         </form>
     {/if}
+
+    <div class="h-full" slot="right-panel">
+        {#if $profile?.user}
+            <UserCard  
+                moderates={$profile.user.moderates} 
+                person={
+                    {
+                        person: $profile.user.local_user_view.person,
+                        is_admin: $profile.user.local_user_view.local_user.admin,
+                        counts: $profile.user.local_user_view.counts
+                    }
+                }
+            />
+        {/if}
+    </div>
 </MainContentArea>

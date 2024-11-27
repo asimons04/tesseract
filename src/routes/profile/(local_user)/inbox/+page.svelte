@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { fly } from 'svelte/transition'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { hrColors } from '$lib/ui/colors'
@@ -7,11 +6,15 @@
     import { profile } from '$lib/auth.js'
     import { searchParam } from '$lib/util.js'
     
-    import Button from '$lib/components/input/Button.svelte'
+    import Card from '$lib/components/ui/Card.svelte'
     import InboxItem from './InboxItem.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
+    import ProfileMenuBar from '$routes/profile/ProfileMenuBar.svelte'
+    import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte';
+    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import UserCard from '$lib/components/lemmy/user/UserCard.svelte';
     
     import {
         AtSymbol,
@@ -25,14 +28,6 @@
         Window as WindowIcon,
     } from 'svelte-hero-icons'
     
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import ProfileMenuBar from '$routes/profile/ProfileMenuBar.svelte';
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte';
-    import Card from '$lib/components/ui/Card.svelte';
-    
-    
-
     export let data
 
     let markingAsRead = false
@@ -63,7 +58,7 @@
     <title>Profile | Inbox</title>
 </svelte:head>
 
-<SubNavbar home back quickSettings refreshButton scrollButtons />
+<SubNavbar home back quickSettings refreshButton scrollButtons toggleCommunitySidebar/>
 
 <MainContentArea>
         
@@ -159,7 +154,18 @@
 
     </div>
 
-
+    <div class="h-full" slot="right-panel">
+        {#if $profile?.user}
+            <UserCard  moderates={$profile.user.moderates} person={
+                    {
+                        person: $profile.user.local_user_view.person,
+                        is_admin: $profile.user.local_user_view.local_user.admin,
+                        counts: $profile.user.local_user_view.counts
+                    }
+                }
+            />
+        {/if}
+    </div>
     
     
 </MainContentArea>
