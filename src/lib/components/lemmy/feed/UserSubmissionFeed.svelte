@@ -21,10 +21,12 @@
     import Pageination from "$lib/components/ui/Pageination.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { PencilSquare } from "svelte-hero-icons";
+    import { ArrowPath, PencilSquare } from "svelte-hero-icons";
     import MultiSelect from "$lib/components/input/MultiSelect.svelte";
     import type { LastClickedPostEvent } from "$lib/ui/events";
     import SiteSearch from "$lib/components/ui/subnavbar/SiteSearch.svelte";
+    import RelativeDate from "$lib/components/util/RelativeDate.svelte";
+    import Button from "$lib/components/input/Button.svelte";
     
     
     export let person_id: number | undefined = undefined
@@ -49,6 +51,7 @@
         person_name: person_name
     }
     let last_item: number | undefined
+    let last_refreshed:number = Math.round(new Date().getTime() /1000)
 
     onMount(async () => {
         if (debugMode) console.log(moduleName, ": Mounting component")
@@ -65,11 +68,9 @@
 
     $:  person_id,      controller.person_id = person_id
     $:  person_name,    controller.person_name = person_name
-    
-  
+
     export const controller: UserSubmissionFeedController = {
-        last_refreshed: Math.round(new Date().getTime() /1000),
-        
+        loadedFromSnapshot: false,
         storage: new StorageController({
             ttl: snapshotValidity,
             useCompression: true
@@ -88,11 +89,13 @@
 
                 if (opts?.loadSnapshot && await this.loadSnapshot()) {
                     if (debugMode) console.log(moduleName, ": Loading data from snapshot:", this.storageKey)
+                    this.loadedFromSnapshot = true
                     loading = false
                     return
                 }
                 
                 if (debugMode) console.log(moduleName, ": Loading data from API.")
+                
                 user = await getClient().getPersonDetails({
                     limit: limit,
                     page: page,
@@ -103,19 +106,7 @@
                 })
                 
                 submissions = [...user.posts, ...user.comments]
-                /*
-                switch(type) {
-                    case 'all':
-                        submissions = [...user.posts, ...user.comments]
-                        break
-                    case 'comments':
-                        submissions = [...user.comments]
-                        break
-                    case 'posts':
-                        submissions = [...user.posts]
-                        break
-                }
-                */
+
                 if (sort.startsWith('Top')) {
                     submissions.sort( (a, b) => b.counts.upvotes - b.counts.downvotes - (a.counts.upvotes - a.counts.downvotes) )
                 } 
@@ -128,7 +119,7 @@
                     submissions.sort( (a, b) => Date.parse(getItemPublished(a)) - Date.parse(getItemPublished(b)) )
                 }
                 
-                this.last_refreshed = Math.round(new Date().getTime() /1000)
+                last_refreshed = Math.round(new Date().getTime() /1000)
                 
                 await this.takeSnapshot()        
                 
@@ -153,7 +144,7 @@
                     return false
                 }
 
-                this.last_refreshed = pageSnapshot.last_refreshed
+                last_refreshed = pageSnapshot.last_refreshed
 
                 // Load values
                 if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
@@ -183,6 +174,7 @@
             submissions = submissions = []
             page = 1
             user = undefined
+            this.loadedFromSnapshot = false
         },
 
         scrollBottom: function() {
@@ -214,9 +206,17 @@
                 type: type,
                 page: page,
                 last_item: last_item,
-                last_refreshed: this.last_refreshed,
+                last_refreshed: last_refreshed,
                 user: user,
             }
+        },
+
+        get last_refreshed() {
+            return last_refreshed
+        },
+
+        set last_refreshed(val:number) {
+            last_refreshed = val
         },
 
         get person_id() {
@@ -281,6 +281,26 @@
 <div bind:this={scrollContainer} class="flex flex-col w-full h-full mt-2 md:pr-2 gap-4 overflow-x-hidden overflow-y-scroll" >
     
     <slot name="banner" {user} />
+    
+    {#if page == 1}
+    <div class="flex flex-row w-full items-end justify-between">
+        <div class="flex flex-col gap-1 text-xs opacity-80">
+            <span>
+                Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
+            </span>
+        </div>
+
+        <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
+            loading={loading} disabled={loading}
+            on:click={() => {
+                if (debugMode) console.log(moduleName, ": Refresh button clicked")
+                controller.refresh(true) 
+            }}
+        >
+            Refresh
+        </Button>
+    </div>
+    {/if}
     
     
     
