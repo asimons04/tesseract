@@ -28,12 +28,16 @@
         Inbox,
         Window as WindowIcon,
     } from 'svelte-hero-icons'
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte';
     
     export let data
 
     let markingAsRead = false
-    let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'unread' | 'all' = 'all'
+    let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'unread' | 'all' = 'unread'
     let showSidebar = true
+    let inbox: HTMLDivElement
+
+    
 
     async function markAllAsRead() {
         if (!$profile?.user) {
@@ -53,23 +57,29 @@
 
         return response.replies
     }
+
+    
 </script>
 
 <svelte:head>
     <title>Profile | Inbox</title>
 </svelte:head>
 
-<SubNavbar home back quickSettings refreshButton scrollButtons toggleCommunitySidebar/>
+<SubNavbar home back quickSettings refreshButton scrollButtons toggleCommunitySidebar
+    scrollPreventDefault
+    on:navScrollBottom={() => inbox.scrollTo(0, inbox.scrollHeight)}
+    on:navScrollTop={() => inbox.scrollTo(0,0)}
+/>
 
 <MainContentArea>
         
     <ProfileMenuBar />
 
     
-    <div class="flex flex-col lg:flex-row gap-2 lg:gap-4 h-full w-full">
+    <div bind:this={inbox} class="flex flex-col lg:flex-row gap-2 lg:gap-4 w-full overflow-y-scroll h-[calc(-11.6rem+100vh)]">
         
         <!---Sticky Inbox Menu--->
-        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[35px]'} lg:sticky lg:top-[12rem]">
+        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[35px]'} lg:sticky lg:top-[1rem]">
             
             <!---Inbox Heading--->
             <span class="hidden lg:flex w-full flex-col gap-1">
@@ -82,27 +92,45 @@
                 <hr class="w-[90%] {hrColors}" />
                 {/if}
             </span>
-            
+
+            <!---Unread Only--->
+            <SidebarButton title="Unread" expanded={showSidebar} class="{type == 'unread' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
+                on:click={() => {
+                    type = 'unread'
+                    searchParam($page.url, 'page', '1')
+                }} 
+            >
+                <Icon src={Envelope} width={18} mini/>
+                
+                <span class="hidden {showSidebar ? 'lg:flex' : ''} w-full">
+                    Unread
+                    <span class="ml-auto">
+                        <FormattedNumber number={$profile?.user?.unreads ?? 0} />
+                    </span>
+                </span>
+            </SidebarButton>
+
             <!---Notification Type Selectors--->
-            <SidebarButton title="All" on:click={() => type = 'all'} expanded={showSidebar} class="{type == 'all' ? '!text-sky-700 dark:!text-sky-500' : ''}" >
+            <SidebarButton title="All" expanded={showSidebar} class="{type == 'all' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
+                on:click={() => {
+                    type = 'all'
+                    searchParam($page.url, 'page', '1')
+                }}
+            >
                 <Icon src={Inbox} width={18} mini/>
                 
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                     All
                 </span>
             </SidebarButton>
-
-            <!---Unread Only--->
-            <SidebarButton title="Unread" on:click={() => type = 'unread'} expanded={showSidebar} class="{type == 'unread' ? '!text-sky-700 dark:!text-sky-500' : ''}" >
-                <Icon src={Envelope} width={18} mini/>
-                
-                <span class="hidden {showSidebar ? 'lg:flex' : ''}">
-                    Unread
-                </span>
-            </SidebarButton>
     
             <!---Comment Replies--->
-            <SidebarButton title="Comment Replies" on:click={() => type = 'comment_reply'} expanded={showSidebar} class="{type == 'comment_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}">
+            <SidebarButton title="Comment Replies" expanded={showSidebar} class="{type == 'comment_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+                on:click={() => {
+                    type = 'comment_reply'
+                    searchParam($page.url, 'page', '1')
+                }}
+            >
                 <Icon src={ChatBubbleLeft} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                     Comment Replies
@@ -111,7 +139,12 @@
             </SidebarButton>
     
             <!---Post Replies--->
-            <SidebarButton title="Post Replies" on:click={() => type = 'post_reply'} expanded={showSidebar} class="{type == 'post_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}">
+            <SidebarButton title="Post Replies" expanded={showSidebar} class="{type == 'post_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+                on:click={() => {
+                    type = 'post_reply'
+                    searchParam($page.url, 'page', '1')
+                }}
+            >
                 <Icon src={WindowIcon} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                     Post Replies
@@ -119,7 +152,12 @@
             </SidebarButton>
     
             <!---Mentions--->
-            <SidebarButton title="Mentions" on:click={() => type = 'mention'} expanded={showSidebar} class="{type == 'mention' ? '!text-sky-700 dark:!text-sky-500' : ''}">
+            <SidebarButton title="Mentions" expanded={showSidebar} class="{type == 'mention' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+                on:click={() => { 
+                    type = 'mention'
+                    searchParam($page.url, 'page', '1')
+                }}
+            >
                 <Icon src={AtSymbol} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                     Mentions
@@ -127,7 +165,12 @@
             </SidebarButton>
     
             <!---Direct Messages--->
-            <SidebarButton title="Direct Messages" on:click={() => type = 'private_message'} expanded={showSidebar} class="{type == 'private_message' ? '!text-sky-700 dark:!text-sky-500' : ''}">
+            <SidebarButton title="Direct Messages" expanded={showSidebar} class="{type == 'private_message' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+                on:click={() => {
+                    type = 'private_message'
+                    searchParam($page.url, 'page', '1')
+                }}
+            >
                 <Icon src={ChatBubbleLeftRight} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                     Direct Messages
