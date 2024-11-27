@@ -73,7 +73,7 @@ export interface UserSubmissionFeedController {
 
     storage: StorageController
     last_refreshed: number
-
+    loadedFromSnapshot: boolean
     sort: 'New' | 'TopAll' | 'Old',
     type: 'all' | 'posts' | 'comments'
     data: any
