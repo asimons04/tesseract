@@ -41,7 +41,7 @@
     import RelativeDate from '$lib/components/util/RelativeDate.svelte';
     
     export let item: CommentReplyView | PersonMentionView | PrivateMessageView
-    export let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'all' = 'all'
+    export let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'unread' | 'all' = 'all'
 
     function isPrivateMessage(item: CommentReplyView | PersonMentionView | PrivateMessageView): item is PrivateMessageView {
         return 'private_message' in item
@@ -171,7 +171,7 @@
 
 </script>
 
-{#if type == 'all' || type == itemType}
+{#if type == 'all' || type == itemType || (type == 'unread' && !read)}
     <span class="flex flex-row w-full" transition:fade>
         
         <span class="mt-3 mb-auto w-[50px]">

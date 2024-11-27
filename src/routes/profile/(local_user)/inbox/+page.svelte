@@ -23,6 +23,7 @@
         Check,
         ChevronDoubleLeft,
         ChevronDoubleRight,
+        Envelope,
         Icon,
         Inbox,
         Window as WindowIcon,
@@ -31,7 +32,7 @@
     export let data
 
     let markingAsRead = false
-    let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'all' = 'all'
+    let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'unread' | 'all' = 'all'
     let showSidebar = true
 
     async function markAllAsRead() {
@@ -64,9 +65,10 @@
         
     <ProfileMenuBar />
 
-
+    
     <div class="flex flex-col lg:flex-row gap-2 h-full w-full">
         
+        <!---Sticky Inbox Menu--->
         <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[35px]'} lg:sticky lg:top-[12rem]">
             
             <!---Inbox Heading--->
@@ -88,9 +90,18 @@
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                     All
                 </span>
+            </SidebarButton>
+
+            <!---Unread Only--->
+            <SidebarButton title="Unread" on:click={() => type = 'unread'} expanded={showSidebar} class="{type == 'unread' ? '!text-sky-700 dark:!text-sky-500' : ''}" >
+                <Icon src={Envelope} width={18} mini/>
                 
+                <span class="hidden {showSidebar ? 'lg:flex' : ''}">
+                    Unread
+                </span>
             </SidebarButton>
     
+            <!---Comment Replies--->
             <SidebarButton title="Comment Replies" on:click={() => type = 'comment_reply'} expanded={showSidebar} class="{type == 'comment_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}">
                 <Icon src={ChatBubbleLeft} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
@@ -99,6 +110,7 @@
                 
             </SidebarButton>
     
+            <!---Post Replies--->
             <SidebarButton title="Post Replies" on:click={() => type = 'post_reply'} expanded={showSidebar} class="{type == 'post_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}">
                 <Icon src={WindowIcon} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
@@ -106,6 +118,7 @@
                 </span>
             </SidebarButton>
     
+            <!---Mentions--->
             <SidebarButton title="Mentions" on:click={() => type = 'mention'} expanded={showSidebar} class="{type == 'mention' ? '!text-sky-700 dark:!text-sky-500' : ''}">
                 <Icon src={AtSymbol} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
@@ -113,6 +126,7 @@
                 </span>
             </SidebarButton>
     
+            <!---Direct Messages--->
             <SidebarButton title="Direct Messages" on:click={() => type = 'private_message'} expanded={showSidebar} class="{type == 'private_message' ? '!text-sky-700 dark:!text-sky-500' : ''}">
                 <Icon src={ChatBubbleLeftRight} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">

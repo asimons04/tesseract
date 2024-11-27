@@ -122,7 +122,7 @@
     <title>Profile | Settings</title>
 </svelte:head>
 
-<SubNavbar back quickSettings scrollButtons />
+<SubNavbar back quickSettings scrollButtons toggleCommunitySidebar/>
 
 <MainContentArea>
         
