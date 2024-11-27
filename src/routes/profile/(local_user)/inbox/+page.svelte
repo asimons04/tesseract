@@ -66,7 +66,7 @@
     <ProfileMenuBar />
 
     
-    <div class="flex flex-col lg:flex-row gap-2 h-full w-full">
+    <div class="flex flex-col lg:flex-row gap-2 lg:gap-4 h-full w-full">
         
         <!---Sticky Inbox Menu--->
         <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[35px]'} lg:sticky lg:top-[12rem]">
