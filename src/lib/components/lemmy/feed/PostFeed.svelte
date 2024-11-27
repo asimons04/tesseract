@@ -173,16 +173,11 @@
                         posts: [...posts.posts, ...batch.posts]
                     }
                     
-                    
-                    
-                    
                     if (posts.posts.length > $userSettings.uiState.maxScrollPosts) {
                         const oldPosts = posts.posts.splice(0, (posts.posts.length - $userSettings.uiState.maxScrollPosts))
                         truncatedPosts = [...truncatedPosts, ...oldPosts]
                         this.truncated = true
                     }
-                    
-
                     
                 }
                 else {
