@@ -32,6 +32,7 @@ function normalizeDomain(domain:string):string {
         .replace(/.*\.elpais\.com/, 'elpais.com')
         .replace(/.*\.mashable\.com/, 'mashable.com')
         .replace(/.*\.medium\.com/, 'medium.com')
+        .replace(/.*\.theregister.com/, 'theregister.com')
         .replace(/.*\.yahoo\.com/, 'news.yahoo.com')
     
     return domain;
