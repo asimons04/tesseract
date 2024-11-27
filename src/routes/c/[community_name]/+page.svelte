@@ -33,7 +33,7 @@
 </svelte:head>
 
 
-<SubNavbar back quickSettings toggleMargins toggleCommunitySidebar compactSwitch
+<SubNavbar home back quickSettings toggleMargins toggleCommunitySidebar compactSwitch
     sortMenu sortPreventDefault bind:selectedSortOption={selectedSort} 
      on:navChangeSort={(e) => {
         if (e?.detail && feedController.sort != e.detail) {
