@@ -48,14 +48,66 @@ removeAdmin {username}
 ## 1.4.21
 
 ### To Do:
+
+#### Snapshot Management
 - Standardize snapshot naming convention
 - Write function to flush snapshots
-- Flush all snapshots when switching betweeen infinite scroll and manual pagination
+    - Flush all snapshots when switching betweeen infinite scroll and manual pagination
+    - Flush all snapshots when changing any infinite scroll parameters
+- Add user setting to customize snapshot validity
+- Move compressed snapshots into a data structure
+```
+snapshot {
+    created: number     //  Unix timestamp representing when the snapshot was created
+    data: string        //  Base64 encoded compressed data payload
+    size: number        //  Length, in bytes, of the uncompressed data
+}
+```
+-Move the logic to check if the snapshot is expired to the storage controller
+    - `isExpired(maxAge:number = $userSettings.maxSnapshotAge)`
+- 
+
+
+#### Features
+Add filter option for domains
+- Include presets (Reddit, Facebook, Twitter) 
+
+#### UI Tweaks
+- Re-add the offset on embed description pulldown and compact image body text pulldown
+- Replace user profile feeds with the one from the modal component
+    - Don't do infinite scroll, just manual
+- Incorporate some kind of window of only the last X number of posts in the feed
+    - Reverse infinite scroll?
+- Add "copy" button to copy a user/community in the @user@instance and !community@instance formats
 
 
 
 ### Bugfixes
 - Added missing padding on placeholder initials if there is no site logo
+- If replying to a post/comment removal via a comment reply, send the reply *before* removing the item otherwise the reply will fail. (when I wrote that in the 0.18.x days, you could reply to removed comments and I just never used that feature since the behavior changed in 0.19.x)
+
+#### Bugfixes for Image Loading and Image Proxy
+For efficiency, Tesseract tries to request `webp` versions of non-animated images at sizes appropriate for their use.  e.g. 128px for icons, 256 for thumbnail images, etc.   Usually this works, but sometimes remote pict-rs gets all pissy about it.  Before, this would cause the image to fail to load until opening it with the Zoom which requested the raw image URL.  Now, I've added error handlers for images to fallback automatically/gracefully.
+
+[Desired Resolution and Format] -> [Desired Resolution] -> [Raw URL at default resolution] -> [Static Placeholder Image]
+
+Similarly, if media proxying is enabled, it will use the same fallback path but via the image proxy.  Depending on the user-defined fallback behavior, it will either try the raw URL or return a placeholder image.
+
+I've also added `apng` animated PNG to the list of supported images.  
+
+The step to unproxy Lemmy's stupid federated proxy URLs has been moved from individual components to the image proxy URL generator function; that function is used for all images anyway and returns either the original URL or the Tesseract's proxy URL depending on user settings and if the admin has enabled the proxy module.  If image proxying is disabled by the admin or the user, it will not unproxy the stupid Lemmy URL and use it as-is.
+
+Did I mention how stupid it is that Lemmy federates the proxied URL for images instead of just returning that via the API to that instance's users? If I haven't, then let me say it's *fucking stupid*.
+
+
+
+### Minor Changes
+#### New `/site` Route
+A new route has been added `/site` which will display the site information (the stuff that usually shows in the sidebar on the main page).  This should make viewing the site rules and such easier.  
+
+To view the site info, click the site name in the banner.
+
+
 
 ### Major Changes
 #### Complete Post Feed Rewrite
@@ -67,11 +119,29 @@ That alone was enough to merit rebuilding it, but the other problem was that the
 
 There were more issues under the hood, but they "mostly worked" and any issues were masked by various UX tricks (the programming equivalent of pulling the sofa over a coffee stain on the rug).
 
-I also either need to port Tesseract to Svelte 5 now that it's out or port it to React (haven't decided yet).  Either way, cleaning up the codebase and getting rid of redundancies is going to make that job easier.
+I also need to port Tesseract to either Svelte 5 now that it's out or to React (haven't decided yet).  Either way, cleaning up the codebase and getting rid of redundancies is going to make that job easier.
 
 The result?
 
 A new feed component which can be plugged in anywhere (modals, community page, main feed page, etc) and has all of the logic encapsulated into it.  It exposes a controller interface allowing the page or component it's embedded in to manage all of its properties and state.
+
+**Notable UX Improvements to the Feed**
+- Manual pagination is now bi-directional.  You can page back and forward without having to use the browser's back button
+- The main feed and each community now remember your scroll position independently.
+- Refreshing the browser will now trigger a fresh pull from the API (I have no idea why Svelte(kit) makes it so difficult to detect if a page has had "invalidate" called, but it does)
+- Browsing a community feed from the community profile modal and clicking the button in the modal to go to the community will keep your place in the community feed.
+
+**Additional Options in the Feed**
+- Can now select "liked only" or "disliked only" to filter to posts you've upvoted/downvoted, respectively
+- Can select "saved only" from the main feed which will show you all of your saved posts (similar to the "Saved" section in the profile)
+    - Can combine with "liked only" and "disliked only"
+
+- Selecting "Liked Only", "Disliked Only", and/or "Saved only" from a community page will show only posts you've liked/disliked/saved in that community.
+- Can toggle "Show NSFW", "Show Hidden", and/or "Show Read" from the main feed and from community pages. (This temporarily overrides whatever's in your profile settings)
+    - "Show Hidden" requires at least 0.19.4 API
+    - "Show Read" and "Show NSFW" require at least 0.19.6 API level
+    - On unsupported APIs, these settings are hidden in the UI and ignored 
+    
 
 #### Snapshot Subsystem Rewrite
 
@@ -97,7 +167,8 @@ Now, when you click "Home" (from a community, post, or anywhere but the main fee
 * Snapshots currently have a 15 minute validity window.  I'm still fine-tuning this, and may make it configurable if I can't find a universal sane value.
 
 
-
+#### New Inbox
+Completely re-wrote the Inbox.
 
 ### New Features
 
