@@ -63,7 +63,7 @@
     export let sort: SortType                       = $userSettings.defaultSort.sort ?? 'New'
     export let actions: boolean                     = false
     export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
-    
+    export let feedName: string                     = 'default'
     
 
     $:  debugMode = $userSettings.debugInfo
@@ -326,7 +326,7 @@
 
         // Getter to get the storage key based on the params
         get storageKey() {
-           return `snapshot_feed_${this.instance}_` + (JSON.stringify({
+           return `snapshot_feed_${feedName}_${this.instance}_` + (JSON.stringify({
                 community_id,
                 community_name,
             }))
