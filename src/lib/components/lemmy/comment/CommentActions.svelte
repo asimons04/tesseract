@@ -211,15 +211,14 @@
                             : `Block ${comment.creator.display_name || comment.creator.name}`
                         }
                     </MenuButton>
+                {/if}
 
-                    <!---Debug Info Button--->
-                    {#if $userSettings.debugInfo}
-                        <MenuButton color="info" title="Debug Info" on:click={() => debugModal(comment) } >
-                            <Icon src={BugAnt} mini  width={16} />
-                            Debug Info...
-                        </MenuButton>
-                    {/if}
-                    
+                <!---Debug Info Button--->
+                {#if $userSettings.debugInfo}
+                    <MenuButton color="info" title="Debug Info" on:click={() => debugModal(comment) } >
+                        <Icon src={BugAnt} mini  width={16} />
+                        Debug Info...
+                    </MenuButton>
                 {/if}
             {/if}
             
