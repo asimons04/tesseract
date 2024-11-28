@@ -12,9 +12,18 @@ import {
     sortOptions as defaultSortOptions, 
     sortOptionNames as defaultSortOptionNames
 } from '$lib/lemmy'
+
 import { writable } from 'svelte/store'
 
+
+export type PostModerationModalPanels = 'none' | 'banning' | 'communityInfo' | 'modlog' | 'messaging' | 'showVotes' | 'removing' | 'reporting' | 'userSubmissions'
+
+
 interface Modals {
+    debug: {
+        open: boolean,
+        object: any
+    },
     reporting: {
         open: boolean
         item: SubmissionView | undefined
@@ -48,6 +57,8 @@ interface Modals {
     postModeration: {
         open: boolean
         item: PostView | CommentView | undefined
+        panel: PostModerationModalPanels
+
     }
     quickSettings: {
         open: boolean
@@ -88,6 +99,11 @@ interface Modals {
 }
 
 export let modals = writable<Modals>({
+    debug: {
+        open: false,
+        object: {},
+    },
+
     reporting: {
         open: false,
         item: undefined,
@@ -120,7 +136,8 @@ export let modals = writable<Modals>({
     },
     postModeration: {
         open: false,
-        item: undefined
+        item: undefined,
+        panel: 'none'
     },
     quickSettings: {
         open: false,
@@ -158,6 +175,17 @@ export let modals = writable<Modals>({
         altText: ''
     }
 })
+
+export function debugModal(object: any) {
+    modals.update((m) => ({
+        ...m,
+        debug: {
+            open: true,
+            object: object
+        }
+
+    }))
+}
 
 export function report(item: SubmissionView, reason:string='') {
   modals.update((m) => ({
@@ -275,12 +303,13 @@ export function linkPreviewModal(url: string, iframe=false) {
     }))
 }
 
-export function postModerationModal(item: PostView|CommentView) {
+export function postModerationModal(item: PostView|CommentView, panel:PostModerationModalPanels = 'none') {
     modals.update((m) => ({
         ...m,
         postModeration: {
             open: true,
-            item: item
+            item: item,
+            panel: panel
         }
     }))
 

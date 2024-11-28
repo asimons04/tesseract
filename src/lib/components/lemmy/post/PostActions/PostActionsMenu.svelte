@@ -2,7 +2,7 @@
     import type { PostView } from 'lemmy-js-client'
 
     
-    import { amMod, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
+    import { amMod, debugModal, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, hide, markAsRead, save } from '$lib/lemmy/contentview.js'
     import { goto } from '$app/navigation';
@@ -11,7 +11,8 @@
     import { profile } from '$lib/auth'
     import { minAPIVersion } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-
+    import { userSettings } from '$lib/settings';
+    
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -35,7 +36,9 @@
         User,
         Window,
         ShieldCheck,
+        BugAnt,
     } from 'svelte-hero-icons'
+    
    
     
     export let post:PostView 
@@ -210,6 +213,13 @@
             <MenuButton title="Moderation" color="dangerSecondary" on:click={() => postModerationModal(post) }>
                 <Icon src={ShieldCheck} width={16} mini />
                 Moderation...
+            </MenuButton>
+        {/if}
+
+        {#if $userSettings.debugInfo}
+            <MenuButton title="Debug Info" color="info" on:click={() => debugModal(post) }>
+                <Icon src={BugAnt} width={16} mini />
+                Debug Info...
             </MenuButton>
         {/if}
 

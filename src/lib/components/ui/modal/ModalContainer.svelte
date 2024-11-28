@@ -3,6 +3,7 @@
     
     import BanModal from '$lib/components/lemmy/moderation/BanModal.svelte'
     import CommunityProfileModal from '$lib/components/lemmy/modal/CommunityProfileModal.svelte'
+    import DebugObject from '$lib/components/util/debug/DebugObject.svelte'
     import FederationStateModal from '$lib/components/lemmy/modal/FederationStateModal.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import LinkPreviewModal from '$lib/components/lemmy/modal/LinkPreviewModal.svelte'
@@ -62,7 +63,7 @@
 
 <!---Post Moderation Modal--->
 {#if $modals.postModeration.open && $modals.postModeration.item}
-    <PostModerationModal bind:open={$modals.postModeration.open} bind:item={$modals.postModeration.item} />
+    <PostModerationModal bind:open={$modals.postModeration.open} bind:item={$modals.postModeration.item} bind:action={$modals.postModeration.panel}/>
 {/if}
 
 
@@ -95,5 +96,10 @@
 
 {#if $modals.zooming.open}
     <ZoomImageModal bind:open={$modals.zooming.open} bind:url={$modals.zooming.url} altText={$modals.zooming.altText} />
+{/if}
+
+
+{#if $modals.debug.open}
+    <DebugObject open={$modals.debug.open} object={$modals.debug.object} />
 {/if}
 

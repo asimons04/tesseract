@@ -6,7 +6,7 @@
         PurgePostEvent
     } from '$lib/ui/events'
 
-    import { amMod, isAdmin } from '../moderation/moderation'
+    import { amMod, isAdmin, type PostModerationModalPanels } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { expoIn } from 'svelte/easing'
     import { getClient } from '$lib/lemmy'
@@ -60,8 +60,8 @@
     
     export let open: boolean = false
     export let item: PostView | CommentView
-
-    let action: 'none' | 'banning' | 'communityInfo' | 'modlog' | 'messaging' | 'showVotes' | 'removing' | 'reporting' | 'userSubmissions' = 'none'
+    export let action: PostModerationModalPanels = 'none'
+    
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 

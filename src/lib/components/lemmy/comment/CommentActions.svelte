@@ -3,6 +3,7 @@
     
     import {
         amMod,
+        debugModal,
         federationStateModal, 
         fediseerModal,
         isAdmin,
@@ -20,8 +21,6 @@
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
-
-    
     
     import Button from '$lib/components/input/Button.svelte'
     import CommentVote from '$lib/components/lemmy/comment/CommentVote.svelte'
@@ -29,7 +28,6 @@
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
 
     import {
-        ArrowLeftCircle,
         ArrowUturnLeft,
         Bookmark,
         BookmarkSlash,
@@ -53,7 +51,6 @@
 
     export let comment: CommentView
     export let replying: boolean = false
-    export let debug: boolean = false
     export let actions: boolean = true
 
     let onHomeInstance: boolean = true
@@ -81,18 +78,7 @@
         <!---Spacer to put the rest of the buttons at the right --->
         <div class="ml-auto" />
         
-        <!---Debug Info Button--->
-        {#if $userSettings.debugInfo}
-            {#if debug}
-                {#await import('$lib/components/util/debug/DebugObject.svelte') then { default: DebugObject }}
-                    <DebugObject object={comment} bind:open={debug} />
-                {/await}
-            {/if}
-
-            <Button on:click={() => (debug = true)} size="square-md" color="tertiary" title="Debug Info">
-                <Icon src={BugAnt} mini  width={14} height={14} slot="icon" />
-            </Button>
-        {/if}
+       
 
         <!--- Comment Moderation Menu--->
         {#if onHomeInstance && $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
@@ -225,6 +211,15 @@
                             : `Block ${comment.creator.display_name || comment.creator.name}`
                         }
                     </MenuButton>
+
+                    <!---Debug Info Button--->
+                    {#if $userSettings.debugInfo}
+                        <MenuButton color="info" title="Debug Info" on:click={() => debugModal(comment) } >
+                            <Icon src={BugAnt} mini  width={16} />
+                            Debug Info...
+                        </MenuButton>
+                    {/if}
+                    
                 {/if}
             {/if}
             
@@ -259,6 +254,8 @@
                     <span>Federation Stats</span>
                 </MenuButton>
             {/if}
+
+            
         </Menu>
     {/if}
 </div>

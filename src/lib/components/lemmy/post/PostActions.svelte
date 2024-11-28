@@ -8,7 +8,6 @@
     
     // Post Action Bar Components
     import CommentCountButton   from './PostActions/CommentCountButton.svelte'
-    import DebugButton          from './PostActions/DebugButton.svelte'
     import PostReplyButton      from './PostActions/PostReplyButton.svelte'
     import PostVote             from './PostActions/PostVote.svelte'
    
@@ -35,9 +34,5 @@
     
         <!--- Spacer --->
         <div class="ml-auto" />
-        
-
-        <!---Debug Button--->
-        <DebugButton bind:post />
     {/if}
 </div>
