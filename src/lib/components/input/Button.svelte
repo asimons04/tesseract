@@ -47,7 +47,8 @@
   export let hidden:boolean = false
   export let loaderWidth: number | undefined = iconSize
   export let iconClass: string = ''
-
+  export let disabled: boolean = false
+  
   // const dispatch = createEventDispatcher()
   export let href: string | undefined = undefined
   export let newtab:boolean = false
@@ -62,6 +63,7 @@
         title={title}
         class:hidden={hidden}
         class="
+            {disabled ? 'disabled' : ''}
             {buttonColor[color]}
             {buttonSize[size]}
             {buttonRoundness[rounded]}
@@ -105,6 +107,7 @@
         {...$$restProps}
         on:click
         class="
+            {disabled ? 'disabled' : ''}
             {buttonColor[color]}
             {buttonSize[size]}
             {buttonRoundness[rounded]}
