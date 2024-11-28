@@ -100,6 +100,6 @@
 
 
 {#if $modals.debug.open}
-    <DebugObject open={$modals.debug.open} object={$modals.debug.object} />
+    <DebugObject bind:open={$modals.debug.open} object={$modals.debug.object} />
 {/if}
 
