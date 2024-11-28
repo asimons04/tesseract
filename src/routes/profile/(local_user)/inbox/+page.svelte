@@ -18,17 +18,20 @@
     
     import {
         AtSymbol,
+        Backward,
         ChatBubbleLeft,
         ChatBubbleLeftRight,
         Check,
         ChevronDoubleLeft,
         ChevronDoubleRight,
         Envelope,
+        Forward,
         Icon,
         Inbox,
         Window as WindowIcon,
     } from 'svelte-hero-icons'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte';
+    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     
     export let data
 
@@ -89,7 +92,7 @@
                     <span class="text-base font-bold">Inbox</span>
                 </span>
 
-                <hr class="w-[90%] {hrColors}" />
+                <hr class="w-full {hrColors}" />
                 {/if}
             </span>
 
@@ -184,10 +187,38 @@
                         Mark All as Read
                     </span>
             </SidebarButton>
+
+            <!---Pagination--->
+            <hr class="hidden lg:flex w-full {hrColors}" />
+            <span class="hidden lg:flex w-full {showSidebar ? 'flex-row' : 'flex-col'} gap-1 text-xs items-center">
+                <!---Previous Page--->
+                <SidebarButton title="Previous Page" disabled={data.page==1} on:click={ () => {
+                    if (data.page > 1) {
+                        let prevPage = data.page - 1
+                        searchParam($page.url, 'page', prevPage.toString())
+                        inbox.scrollTo(0,0)
+                    }
+                }}>
+                    <Icon src={Backward} width={18} mini />
+                </SidebarButton>
+                
+                <span class="mx-auto">
+                    {data.page}
+                </span>
+                
+                <!---Next Page--->
+                <SidebarButton title="Next Page" on:click={ () => {
+                        let nextPage = data.page +1
+                        searchParam($page.url, 'page', nextPage.toString())
+                        inbox.scrollTo(0,0)
+                }}>
+                    <Icon src={Forward} width={18} mini />
+                </SidebarButton>
+            </span>
             
             <!---Collapse Sidebar--->
             <span class="hidden lg:flex w-full flex-col">
-                <hr class="w-[90%] {hrColors}" />
+                <hr class="w-full {hrColors}" />
                 <SidebarButton title="{showSidebar ? 'Collapse' : 'Expand'}" on:click={() => showSidebar = !showSidebar} expanded={showSidebar}>
                     <Icon src={showSidebar ? ChevronDoubleLeft : ChevronDoubleRight} width={18} mini/>
                     {#if showSidebar}Collapse{/if}
@@ -205,7 +236,11 @@
                     <InboxItem bind:item  bind:type/>
                 {/each}
         
-                <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
+                <Pageination page={data.page} on:change={(p) => {
+                    searchParam($page.url, 'page', p.detail.toString())
+                    inbox.scrollTo(0,0)
+                }} 
+                />
             {/if}
         </div>
 
