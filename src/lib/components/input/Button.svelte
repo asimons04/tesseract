@@ -47,7 +47,7 @@
   export let hidden:boolean = false
   export let loaderWidth: number | undefined = iconSize
   export let iconClass: string = ''
-  export let disabled: boolean = false
+  export let inline: boolean = true
   
   // const dispatch = createEventDispatcher()
   export let href: string | undefined = undefined
@@ -63,7 +63,6 @@
         title={title}
         class:hidden={hidden}
         class="
-            {disabled ? 'disabled' : ''}
             {buttonColor[color]}
             {buttonSize[size]}
             {buttonRoundness[rounded]}
@@ -78,7 +77,7 @@
             }
        "
     >
-        <div class="flex flex-row items-center gap-1.5 h-full {buttonAlignment[alignment]}">
+        <div class="flex {inline ? 'flex-row' : 'flex-col'} items-center gap-1.5 h-full {buttonAlignment[alignment]}">
             {#if loading}
                 <Spinner
                     width={loaderWidth
@@ -107,7 +106,6 @@
         {...$$restProps}
         on:click
         class="
-            {disabled ? 'disabled' : ''}
             {buttonColor[color]}
             {buttonSize[size]}
             {buttonRoundness[rounded]}
@@ -125,7 +123,7 @@
             title={title}
             class:hidden={hidden}
     >
-        <div class="flex flex-row items-center gap-1.5 relative {buttonAlignment[alignment]}">
+        <div class="flex {inline ? 'flex-row' : 'flex-col'} items-center gap-1.5 relative {buttonAlignment[alignment]}">
             {#if loading}
                 <Spinner
                     width={loaderWidth
