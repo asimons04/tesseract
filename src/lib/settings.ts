@@ -101,6 +101,7 @@ interface Settings {
     linkifyHashtags: boolean                                            // Enable to extract hashtags and turn them into search links
     extractFlairsFromTitle: boolean,                                    // Enable to turn [bracketed text] in post titles into flairs
     uiState: {
+        inboxDefaultUnread: boolean                                     // If true, the inbox will default to uread messages.
         disableDownvotes: boolean                                       // Enable to disable downvotes and hide downvote counts.
         linkPreviews: boolean,                                          // Enable to preview markdown links in modals. Disable to go directly to the link target
         postBodyPreviewLength: number,                                  // The number of characters to show in the post body preview in the feed
@@ -124,7 +125,6 @@ interface Settings {
         infiniteScroll: boolean                                         // Whether to use infinite scroll or manual pagination
         view: PostViewType                                              // Selected/active post view type
         hideCompactThumbnails: boolean                                  // Hide thumbnails when viewing posts in compact mode (used for 'ultra-compact')
-        autoUpdateDates: boolean                                        // Whether to use an interval to live update the post publish/edit times
         defaultCommunityDropdownPanel: 'subscribed' | 'favorites'       // What panel should be displayed in the "My Communities" dropdown by default.
         dedicatedModButton: boolean                                     // Enable to put a dedicated "mod" button posts; disable to access mod actions from post menu
         hybridViewAsCardTypes: PostType[]                               // The post types which should display by default as cards when using "Hybrid" view mode
@@ -148,7 +148,7 @@ interface Settings {
 
 // Default settings
 export const defaultSettings: Settings = {
-    version: 13,
+    version: 14,
     notifications: {
         enabled:    false,
         pollRate:   60 * 1000,
@@ -167,6 +167,7 @@ export const defaultSettings: Settings = {
     linkifyHashtags: true,
     extractFlairsFromTitle:                                             true,
     uiState: {
+        inboxDefaultUnread:                                             true,
         disableDownvotes:                                               false,
         linkPreviews:                                                   true,
         postBodyPreviewLength:                                          120,
@@ -190,7 +191,6 @@ export const defaultSettings: Settings = {
         infiniteScroll:                                                 true,
         view:                                                           'hybrid',
         hideCompactThumbnails:                                          false,
-        autoUpdateDates:                                                true,
         defaultCommunityDropdownPanel:                                  'favorites',
         dedicatedModButton:                                             true,
         hybridViewAsCardTypes:                                          ['image'],
@@ -516,6 +516,12 @@ export function migrateSettings(old:any) {
             catch {}
 
             old.version = 13
+        }
+
+        if (old.version == 13) {
+            try { delete old.uiState.autoUpdateDates}
+            catch {}
+            old.version = 14
         }
     }
     catch (err) {

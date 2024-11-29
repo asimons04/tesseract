@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { MyUserInfo } from 'lemmy-js-client'
 
-    import { defaultSettings, userSettings, YTFrontends, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
+    import { defaultSettings, userSettings, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
     import { amModOfAny } from '$lib/components/lemmy/moderation/moderation'
     import { fixLemmyEncodings, postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
     import { getClient} from '$lib/lemmy.js'
@@ -25,8 +25,6 @@
     import SettingsCollapseSection from '$lib/components/ui/settings/SettingsCollapseSection.svelte'
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-
-    import ProfileSettings from '$routes/profile/(local_user)/settings/+page.svelte'
     
     import {
         ArrowDown,
@@ -81,6 +79,7 @@
         Clock,
         UserGroup,
         ShieldCheck,
+        Inbox,
     } from 'svelte-hero-icons'
     
 
@@ -356,11 +355,6 @@
         <span class="font-bold text-xl">Configure Tesseract</span>
     </div>
 
-    <!--Profile Options--->
-    <SettingsCollapseSection bind:expanded={open.profile} icon={UserCircle} title="My Profile" condition={($profile?.user && profileData) ? true : false}>
-            <ProfileSettings heading={false} description={false}/>
-    </SettingsCollapseSection>
-
     <!---General Options--->
     <SettingsCollapseSection bind:expanded={open.general} icon={InformationCircle} title="General">
 
@@ -454,9 +448,9 @@
         />
         {/if}
 
-        <!---Auto Update Dates--->
-        <SettingToggle icon={Clock} title="Auto Update Dates"  bind:value={$userSettings.uiState.autoUpdateDates}
-            description="Live-update the published/edited times on posts and comments"
+        <!---Inbox Default to Unread--->
+        <SettingToggle icon={Inbox} title="Inbox Defaults to Unread"  condition={$profile?.user ? true : false} bind:value={$userSettings.uiState.inboxDefaultUnread}
+            description="If enabled, the inbox will default to unread messages. Disable to default to all messages."
         />
 
         <!---Enable Debug Buttons--->
