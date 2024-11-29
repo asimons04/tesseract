@@ -105,6 +105,28 @@
             </li>
             <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
             
+            <!---Actions for Self-Owned Comments--->
+            {#if onHomeInstance && comment.creator.id == $profile?.user?.local_user_view.person.id}
+                <!--- Edit Comment--->
+                <MenuButton color="info" on:click={() => dispatcher('edit', comment)}>
+                    <Icon src={PencilSquare} mini size="16" />
+                    <span>Edit</span>
+                </MenuButton>
+
+                <!---Delete Comment--->
+                <MenuButton color="dangerSecondary"
+                    on:click={async () => {
+                        if ($profile?.jwt)
+                        comment.comment.deleted = await deleteItem(
+                            comment,
+                            !comment.comment.deleted,
+                        )
+                    }}
+                >
+                    <Icon src={Trash} mini size="16" />
+                    <span>{comment.comment.deleted ? 'Restore' : 'Delete'}</span>
+                </MenuButton>
+            {/if}
             
             <!--- Share Comment / Copy URL to Clipboard--->
             <MenuButton color="success"
@@ -139,27 +161,8 @@
             </MenuButton>
             {/if}
 
-            <!---View More Comments from this User in this Community--->
-            {#if onHomeInstance}
-            <MenuButton title="More Comments From {comment.creator.display_name || comment.creator.name}@${new URL(comment.creator.actor_id).hostname}"
-                color="info"
-                link href="/search?type=Comments&community_id={comment.community.id}&person_id={comment.creator.id}&q=%20"
-            >
-                <Icon src={MagnifyingGlass} width={16} mini />
-                More From {comment.creator.display_name || comment.creator.name}
-            </MenuButton>
-            {/if}
-
 
             {#if onHomeInstance && $profile?.jwt}
-                {#if comment.creator.id == $profile.user?.local_user_view.person.id}
-                
-                <!--- Edit Comment--->
-                <MenuButton color="info" on:click={() => dispatcher('edit', comment)}>
-                    <Icon src={PencilSquare} mini size="16" />
-                    <span>Edit</span>
-                </MenuButton>
-                {/if}
             
                 <!--- Save Comment--->
                 <MenuButton color="warning"
@@ -176,27 +179,9 @@
                     <Icon src={comment.saved ? BookmarkSlash : Bookmark} mini size="16" />
                     <span>{comment.saved ? 'Unsave' : 'Save'}</span>
                 </MenuButton>
-
+           
                 
-
-                {#if $profile?.user && $profile.jwt && isCommentMutable(comment, $profile.user.local_user_view)}
-                    <!---Delete Comment--->
-                    <MenuButton color="dangerSecondary"
-                        on:click={async () => {
-                            if ($profile?.jwt)
-                            comment.comment.deleted = await deleteItem(
-                                comment,
-                                !comment.comment.deleted,
-                            )
-                        }}
-                    >
-                        <Icon src={Trash} mini size="16" />
-                        <span>{comment.comment.deleted ? 'Restore' : 'Delete'}</span>
-                    </MenuButton>
-                {/if}
-            
-                
-                {#if $profile.jwt && $profile?.user && $profile.user?.local_user_view.person.id != comment.creator.id}
+                {#if $profile?.user?.local_user_view.person.id != comment.creator.id}
                     <!---Report Comment--->    
                     <MenuButton on:click={() => report(comment)} color="dangerSecondary" disabled={comment.comment.removed}>
                         <Icon src={Flag} mini size="16" />
