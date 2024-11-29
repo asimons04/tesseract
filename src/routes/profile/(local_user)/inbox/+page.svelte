@@ -1,4 +1,6 @@
 <script lang="ts">
+    import type { InboxFeedType } from './+page'
+
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { hrColors } from '$lib/ui/colors'
@@ -7,6 +9,7 @@
     import { searchParam } from '$lib/util.js'
     
     import Card from '$lib/components/ui/Card.svelte'
+    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import InboxItem from './InboxItem.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import Pageination from '$lib/components/ui/Pageination.svelte'
@@ -30,13 +33,11 @@
         Inbox,
         Window as WindowIcon,
     } from 'svelte-hero-icons'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte';
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    
     
     export let data
 
     let markingAsRead = false
-    let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'unread' | 'all' = 'unread'
     let showSidebar = true
     let inbox: HTMLDivElement
 
@@ -79,10 +80,10 @@
     <ProfileMenuBar />
 
     
-    <div bind:this={inbox} class="flex flex-col lg:flex-row gap-2 lg:gap-4 w-full overflow-y-scroll h-[calc(-11.6rem+100vh)]">
+    <div bind:this={inbox} class="flex flex-col lg:flex-row gap-2 lg:gap-4 h-full w-full">
         
         <!---Sticky Inbox Menu--->
-        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[35px]'} lg:sticky lg:top-[1rem]">
+        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[35px]'} lg:sticky lg:top-[13rem]">
             
             <!---Inbox Heading--->
             <span class="hidden lg:flex w-full flex-col gap-1">
@@ -97,9 +98,10 @@
             </span>
 
             <!---Unread Only--->
-            <SidebarButton title="Unread" expanded={showSidebar} class="{type == 'unread' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
+            <SidebarButton title="Unread" expanded={showSidebar} class="{data.type == 'unread' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
                 on:click={() => {
-                    type = 'unread'
+                    $page.url.searchParams.set('type', 'all')
+                    $page.url.searchParams.set('unreadOnly', 'true')
                     searchParam($page.url, 'page', '1')
                 }} 
             >
@@ -108,15 +110,16 @@
                 <span class="hidden {showSidebar ? 'lg:flex' : ''} w-full">
                     Unread
                     <span class="ml-auto">
-                        <FormattedNumber number={$profile?.user?.unreads ?? 0} />
+                        <FormattedNumber number={data.unreadCount ?? 0} />
                     </span>
                 </span>
             </SidebarButton>
 
             <!---Notification Type Selectors--->
-            <SidebarButton title="All" expanded={showSidebar} class="{type == 'all' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
+            <SidebarButton title="All" expanded={showSidebar} class="{data.type == 'all' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
                 on:click={() => {
-                    type = 'all'
+                    $page.url.searchParams.set('type', 'all')
+                    $page.url.searchParams.delete('unreadOnly')
                     searchParam($page.url, 'page', '1')
                 }}
             >
@@ -128,36 +131,26 @@
             </SidebarButton>
     
             <!---Comment Replies--->
-            <SidebarButton title="Comment Replies" expanded={showSidebar} class="{type == 'comment_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+            <SidebarButton title="Replies" expanded={showSidebar} class="{data.type == 'replies' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => {
-                    type = 'comment_reply'
+                    $page.url.searchParams.set('type', 'replies')
+                    $page.url.searchParams.delete('unreadOnly')
                     searchParam($page.url, 'page', '1')
                 }}
             >
                 <Icon src={ChatBubbleLeft} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
-                    Comment Replies
+                    Replies
                 </span>
                 
             </SidebarButton>
     
-            <!---Post Replies--->
-            <SidebarButton title="Post Replies" expanded={showSidebar} class="{type == 'post_reply' ? '!text-sky-700 dark:!text-sky-500' : ''}"
-                on:click={() => {
-                    type = 'post_reply'
-                    searchParam($page.url, 'page', '1')
-                }}
-            >
-                <Icon src={WindowIcon} width={18} mini/>
-                <span class="hidden {showSidebar ? 'lg:flex' : ''}">
-                    Post Replies
-                </span>
-            </SidebarButton>
     
             <!---Mentions--->
-            <SidebarButton title="Mentions" expanded={showSidebar} class="{type == 'mention' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+            <SidebarButton title="Mentions" expanded={showSidebar} class="{data.type == 'mentions' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => { 
-                    type = 'mention'
+                    $page.url.searchParams.set('type', 'mentions')
+                    $page.url.searchParams.delete('unreadOnly')
                     searchParam($page.url, 'page', '1')
                 }}
             >
@@ -168,9 +161,10 @@
             </SidebarButton>
     
             <!---Direct Messages--->
-            <SidebarButton title="Direct Messages" expanded={showSidebar} class="{type == 'private_message' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+            <SidebarButton title="Direct Messages" expanded={showSidebar} class="{data.type == 'messages' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => {
-                    type = 'private_message'
+                    $page.url.searchParams.set('type', 'messages')
+                    $page.url.searchParams.delete('unreadOnly')
                     searchParam($page.url, 'page', '1')
                 }}
             >
@@ -189,32 +183,35 @@
             </SidebarButton>
 
             <!---Pagination--->
-            <hr class="hidden lg:flex w-full {hrColors}" />
-            <span class="hidden lg:flex w-full {showSidebar ? 'flex-row' : 'flex-col'} gap-1 text-xs items-center">
-                <!---Previous Page--->
-                <SidebarButton title="Previous Page" disabled={data.page==1} on:click={ () => {
-                    if (data.page > 1) {
-                        let prevPage = data.page - 1
-                        searchParam($page.url, 'page', prevPage.toString())
-                        inbox.scrollTo(0,0)
-                    }
-                }}>
-                    <Icon src={Backward} width={18} mini />
-                </SidebarButton>
-                
-                <span class="mx-auto">
-                    {data.page}
+            {#if data.page}
+                <hr class="hidden lg:flex w-full {hrColors}" />
+                <span class="hidden lg:flex w-full {showSidebar ? 'flex-row' : 'flex-col'} gap-1 text-xs items-center">
+                    <!---Previous Page--->
+                    
+                    <SidebarButton title="Previous Page" disabled={data.page==1} on:click={ () => {
+                        if (data.page > 1) {
+                            let prevPage = data.page - 1
+                            searchParam($page.url, 'page', prevPage.toString())
+                            inbox.scrollTo(0,0)
+                        }
+                    }}>
+                        <Icon src={Backward} width={18} mini />
+                    </SidebarButton>
+                    
+                    <span class="mx-auto">
+                        {data.page}
+                    </span>
+                    
+                    <!---Next Page--->
+                    <SidebarButton title="Next Page" on:click={ () => {
+                            let nextPage = data.page +1
+                            searchParam($page.url, 'page', nextPage.toString())
+                            inbox.scrollTo(0,0)
+                    }}>
+                        <Icon src={Forward} width={18} mini />
+                    </SidebarButton>
                 </span>
-                
-                <!---Next Page--->
-                <SidebarButton title="Next Page" on:click={ () => {
-                        let nextPage = data.page +1
-                        searchParam($page.url, 'page', nextPage.toString())
-                        inbox.scrollTo(0,0)
-                }}>
-                    <Icon src={Forward} width={18} mini />
-                </SidebarButton>
-            </span>
+            {/if}
             
             <!---Collapse Sidebar--->
             <span class="hidden lg:flex w-full flex-col">
@@ -233,7 +230,10 @@
                 </div>
             {:else}
                 {#each data.data as item}
-                    <InboxItem bind:item  bind:type/>
+                    <InboxItem bind:item  bind:type={data.type} on:markAsRead={(e) => {
+                        if (e.detail) data.unreadCount--
+                        else data.unreadCount++
+                    }}/>
                 {/each}
         
                 <Pageination page={data.page} on:change={(p) => {

@@ -1,11 +1,20 @@
 <script lang="ts">
+    import type { InboxFeedType } from './+page'
     import type {
         CommentReplyView,
         PersonMentionView,
         PrivateMessageView,
     } from 'lemmy-js-client'
-
     
+    import { createEventDispatcher } from 'svelte'
+    import { fade } from 'svelte/transition'
+    import { getClient } from '$lib/lemmy.js'
+    import { goto } from '$app/navigation'
+    import { getInboxItemPublished, isRead } from '$lib/lemmy/inbox'
+    import { isCommentReply, isPersonMention, isPostReply } from '$lib/lemmy/item'
+    import { page } from '$app/stores'
+    import { profile } from '$lib/auth.js'
+    import { toast } from '$lib/components/ui/toasts/toasts.js'
     
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
@@ -14,16 +23,8 @@
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
     import PrivateMessageItem from '$lib/components/lemmy/private_message/PrivateMessageItem.svelte'
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte';
     import ReportModal from '$lib/components/lemmy/moderation/ReportModal.svelte'
-
-    import { getClient } from '$lib/lemmy.js'
-    import { goto } from '$app/navigation'
-    import { getInboxItemPublished, isRead } from '$lib/lemmy/inbox'
-    import { isCommentReply, isPersonMention, isPostReply } from '$lib/lemmy/item'
-    import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-
 
     import { 
         AtSymbol, 
@@ -37,11 +38,13 @@
         Icon, 
         type IconSource 
     } from 'svelte-hero-icons'
-    import { fade } from 'svelte/transition';
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte';
+    
+    
     
     export let item: CommentReplyView | PersonMentionView | PrivateMessageView
-    export let type: 'mention' | 'comment_reply' | 'post_reply' | 'private_message' | 'unread' | 'all' = 'all'
+    export let type: InboxFeedType = 'all'
+
+    const dispatcher = createEventDispatcher()
 
     function isPrivateMessage(item: CommentReplyView | PersonMentionView | PrivateMessageView): item is PrivateMessageView {
         return 'private_message' in item
@@ -53,7 +56,7 @@
     let reply = ''
     let loading = false
     let reporting = false
-    let itemType: 'mention' | 'comment_reply' | 'post_reply' | 'private_message'
+    let itemType: InboxFeedType
    
     let subject: string
     let icon: IconSource
@@ -123,6 +126,7 @@
 
         read = isRead
         if ($profile.user) $profile.user.unreads += isRead ? -1 : 1
+        dispatcher('markAsRead', isRead)
         loading = false
     }
 
@@ -140,27 +144,27 @@
 
 
         if (isPersonMention(item)) {
-            itemType = 'mention'
+            itemType = 'mentions'
             subject = `${creatorName} mentioned you.`
             icon = AtSymbol
         }
         
         if (isCommentReply(item, $profile?.user?.local_user_view.person.id)) {
-            itemType = 'comment_reply'
+            itemType = 'replies'
             subject = `${creatorName} replied to your comment in c/${item.community.name}`
             //@${new URL(item.community.actor_id).hostname}
             icon = ChatBubbleLeftEllipsis
         }
 
         if (isPostReply(item, $profile?.user?.local_user_view.person.id)) {
-            itemType = 'post_reply'
+            itemType = 'replies'
             subject = `${creatorName} replied to your post in c/${item.community.name}`
             // @${new URL(item.community.actor_id).hostname}
             icon = WindowIcon
         }
 
         if (isPrivateMessage(item)) {
-            itemType = 'private_message'
+            itemType = 'messages'
             subject = `${creatorName} messaged ${recipientName}`
             icon = ChatBubbleLeftRight
         }
