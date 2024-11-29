@@ -2,6 +2,7 @@ import { profile } from '$lib/auth.js'
 import { getClient } from '$lib/lemmy.js'
 import { getInboxItemPublished, isRead } from '$lib/lemmy/inbox.js'
 import { get } from 'svelte/store'
+import { userSettings } from '$lib/settings'
 
 export type InboxFeedType = 'unread' | 'replies' | 'mentions' | 'messages' | 'all'
 
@@ -17,7 +18,9 @@ export async function load({ url }:LoadParams) {
     const type: InboxFeedType = (url.searchParams.get('type') as InboxFeedType) || 'all'
     const client = getClient()
     const page = Number(url.searchParams.get('page')) || 1
-    const unreadOnly: boolean = (url.searchParams.has('unreadOnly'))
+    const unreadOnly: boolean = url.searchParams.has('unreadOnly')
+        ? (url.searchParams.get('unreadOnly')=='true' )
+        : get(userSettings)?.uiState.inboxDefaultUnread
 
     const params = {
         limit: 50,

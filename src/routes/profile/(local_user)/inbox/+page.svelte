@@ -119,7 +119,7 @@
             <SidebarButton title="All" expanded={showSidebar} class="{data.type == 'all' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
                 on:click={() => {
                     $page.url.searchParams.set('type', 'all')
-                    $page.url.searchParams.delete('unreadOnly')
+                    $page.url.searchParams.set('unreadOnly', 'false')
                     searchParam($page.url, 'page', '1')
                 }}
             >
@@ -134,7 +134,7 @@
             <SidebarButton title="Replies" expanded={showSidebar} class="{data.type == 'replies' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => {
                     $page.url.searchParams.set('type', 'replies')
-                    $page.url.searchParams.delete('unreadOnly')
+                    $page.url.searchParams.set('unreadOnly', 'false')
                     searchParam($page.url, 'page', '1')
                 }}
             >
@@ -150,7 +150,7 @@
             <SidebarButton title="Mentions" expanded={showSidebar} class="{data.type == 'mentions' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => { 
                     $page.url.searchParams.set('type', 'mentions')
-                    $page.url.searchParams.delete('unreadOnly')
+                    $page.url.searchParams.set('unreadOnly', 'false')
                     searchParam($page.url, 'page', '1')
                 }}
             >
@@ -164,7 +164,7 @@
             <SidebarButton title="Direct Messages" expanded={showSidebar} class="{data.type == 'messages' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => {
                     $page.url.searchParams.set('type', 'messages')
-                    $page.url.searchParams.delete('unreadOnly')
+                    $page.url.searchParams.set('unreadOnly', 'false')
                     searchParam($page.url, 'page', '1')
                 }}
             >
