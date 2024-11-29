@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { onMount, onDestroy } from 'svelte'
-    import { userSettings } from '$lib/settings'
     import type { SystemTimerEvent } from '$lib/ui/events';
     
     export let date: string | number
