@@ -43,7 +43,7 @@
     onMount(async () => {
         if (!data?.post) return
         expandCompact = !(['link', 'thumbLink'].includes(getPostType(data.post.post_view))) ?? false
-        setLastSeenCommunity(data.post.community_view.community)
+        //setLastSeenCommunity(data.post.community_view.community)
 
         // Scroll to top unless jumping to a comment
         if (!$page.url.searchParams.get('thread')) window.scrollTo(0,0);
