@@ -261,40 +261,39 @@
 
 <PostIsInViewport bind:postContainer bind:inViewport threshold={.6}/>
 
-{#key post?.post.id}
-    {#if post?.post?.id}
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-        <div class="relative" 
-            id={post.post.id.toString()} 
-            on:mouseover={() => announceLastClickedPost(post) } 
-            on:touchstart={() => announceLastClickedPost(post) } 
-            bind:this={postContainer}
-            transition:fade
-        >
 
-            <!--- Compact Posts --->
-            {#if  (forceCompact || !expandCompact) }
-                <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
-                    bind:post 
-                    bind:expandCompact 
-                    bind:expandPreviewText  
-                    bind:postContainer
-                    on:reply
-                />
+{#if post?.post?.id}
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+    <div class="relative" 
+        id={post.post.id.toString()} 
+        on:mouseover={() => announceLastClickedPost(post) } 
+        on:touchstart={() => announceLastClickedPost(post) } 
+        bind:this={postContainer}
+        transition:fade
+    >
+
+        <!--- Compact Posts --->
+        {#if  (forceCompact || !expandCompact) }
+            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
+                bind:post 
+                bind:expandCompact 
+                bind:expandPreviewText  
+                bind:postContainer
+                on:reply
+            />
 
 
-            <!--- Card Posts --->
-            {:else}
-                <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
-                    bind:post 
-                    bind:expandCompact 
-                    bind:expandPreviewText  
-                    bind:postContainer
-                    on:reply
-                    
-                />
-            {/if}
-        </div>
-    {/if}
-{/key}
+        <!--- Card Posts --->
+        {:else}
+            <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
+                bind:post 
+                bind:expandCompact 
+                bind:expandPreviewText  
+                bind:postContainer
+                on:reply
+                
+            />
+        {/if}
+    </div>
+{/if}
