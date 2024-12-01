@@ -155,7 +155,7 @@
 {/if}
 
 <div bind:this={commentContainer} class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}" transition:slide>
-    <details bind:open class="flex flex-col gap-1">
+    <details bind:open class="flex flex-col gap-0">
         <summary class="
             {jumpToComment ? jumpToCommentClassSummary : ''}
             {jumpToComment && !open ? 'border-b rounded-b-md' : ''}
