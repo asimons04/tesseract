@@ -4,29 +4,11 @@
 
 import type { SortType } from "lemmy-js-client"
 
-// Lock Post
-export interface LockPostEvent extends CustomEvent {
-    detail: {
-        post_id: number,
-        locked: boolean,
-    }
-}
 
-export interface FeaturePostEvent extends CustomEvent {
 
-    detail: {
-        post_id: number,
-        featured: boolean
-        community_id?: number
-    }
-}
 
-export interface DistinguishCommentEvent extends CustomEvent {
-    detail: {
-        comment_id: number
-        distinguished: boolean
-    }
-}
+
+
 
 // Ban User From Community
 export interface BanCommunityEvent extends CustomEvent {
@@ -71,52 +53,25 @@ export interface BlockUserEvent extends CustomEvent {
     }
 }
 
-export interface HidePostEvent extends CustomEvent {
-    detail: {
-        hide: boolean,
-        post_ids: number[]
-    }
-}
-
-export interface SubscribeEvent extends CustomEvent {
-    detail: {
-        community_id: number
-        subscribed: boolean
-    }
-}
-
-export interface RemovePostEvent extends CustomEvent {
+export interface ClickIntoPostEvent extends CustomEvent {
     detail: {
         post_id: number
-        removed: boolean
     }
 }
 
-export interface RemoveCommentEvent extends CustomEvent {
+export interface DistinguishCommentEvent extends CustomEvent {
     detail: {
         comment_id: number
-        removed: boolean
+        distinguished: boolean
     }
 }
 
-export interface PurgePostEvent extends CustomEvent {
+export interface FeaturePostEvent extends CustomEvent {
+
     detail: {
-        post_id: number
-        purged: boolean
-    }
-}
-
-export interface PurgeCommentEvent extends CustomEvent {
-    detail: {
-        comment_id: number
-        purged: boolean
-    }
-}
-
-export interface RemoveCommunityEvent extends CustomEvent {
-    detail: { 
-        community_id: number
-        removed: boolean
+        post_id: number,
+        featured: boolean
+        community_id?: number
     }
 }
 
@@ -127,15 +82,60 @@ export interface HideCommunityEvent extends CustomEvent {
     }
 }
 
-export interface ClickIntoPostEvent extends CustomEvent {
+export interface HidePostEvent extends CustomEvent {
     detail: {
-        post_id: number
+        hide: boolean,
+        post_ids: number[]
     }
 }
 
 export interface LastClickedPostEvent extends CustomEvent {
     detail: {
         post_id: number
+    }
+}
+
+// Lock Post
+export interface LockPostEvent extends CustomEvent {
+    detail: {
+        post_id: number,
+        locked: boolean,
+    }
+}
+
+export interface PurgeCommentEvent extends CustomEvent {
+    detail: {
+        comment_id: number
+        purged: boolean
+    }
+}
+
+export interface PurgePostEvent extends CustomEvent {
+    detail: {
+        post_id: number
+        purged: boolean
+    }
+}
+
+export interface RemoveCommentEvent extends CustomEvent {
+    detail: {
+        comment_id: number
+        removed: boolean
+    }
+}
+
+export interface RemoveCommunityEvent extends CustomEvent {
+    detail: { 
+        community_id: number
+        removed: boolean
+    }
+}
+
+
+export interface RemovePostEvent extends CustomEvent {
+    detail: {
+        post_id: number
+        removed: boolean
     }
 }
 
@@ -151,11 +151,19 @@ export interface SetSortTypeEvent extends CustomEvent {
     }
 }
 
+export interface SubscribeEvent extends CustomEvent {
+    detail: {
+        community_id: number
+        subscribed: boolean
+    }
+}
+
 export interface SystemTimerEvent extends CustomEvent {
     detail: {
         timestamp: number
     }
 }
+
 
 /** Dispatches a custom event to the window which any mounted component can listen for
  * @param name The name of the custom event e.g. blockUser
