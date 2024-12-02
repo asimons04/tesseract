@@ -69,11 +69,7 @@
     <title>Profile | Inbox</title>
 </svelte:head>
 
-<SubNavbar home back quickSettings refreshButton scrollButtons toggleCommunitySidebar
-    scrollPreventDefault
-    on:navScrollBottom={() => inbox.scrollTo(0, inbox.scrollHeight)}
-    on:navScrollTop={() => inbox.scrollTo(0,0)}
-/>
+<SubNavbar home back quickSettings refreshButton scrollButtons toggleCommunitySidebar  />
 
 <MainContentArea>
         
@@ -83,7 +79,7 @@
     <div bind:this={inbox} class="flex flex-col lg:flex-row gap-2 lg:gap-4 h-full w-full">
         
         <!---Sticky Inbox Menu--->
-        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[35px]'} lg:sticky lg:top-[13rem]">
+        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 {showSidebar ? 'w-fit mx-auto lg:w-[200px]' : 'w-fit mx-auto lg:w-[50px]'} lg:sticky lg:top-[12rem]">
             
             <!---Inbox Heading--->
             <span class="hidden lg:flex w-full flex-col gap-1">
@@ -98,7 +94,7 @@
             </span>
 
             <!---Unread Only--->
-            <SidebarButton title="Unread" expanded={showSidebar} class="{data.type == 'unread' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
+            <SidebarButton title="Unread" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.type == 'unread' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
                 on:click={() => {
                     $page.url.searchParams.set('type', 'all')
                     $page.url.searchParams.set('unreadOnly', 'true')
@@ -116,7 +112,7 @@
             </SidebarButton>
 
             <!---Notification Type Selectors--->
-            <SidebarButton title="All" expanded={showSidebar} class="{data.type == 'all' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
+            <SidebarButton title="All" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.type == 'all' ? '!text-sky-700 dark:!text-sky-500' : ''}" 
                 on:click={() => {
                     $page.url.searchParams.set('type', 'all')
                     $page.url.searchParams.set('unreadOnly', 'false')
@@ -131,7 +127,7 @@
             </SidebarButton>
     
             <!---Comment Replies--->
-            <SidebarButton title="Replies" expanded={showSidebar} class="{data.type == 'replies' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+            <SidebarButton title="Replies" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.type == 'replies' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => {
                     $page.url.searchParams.set('type', 'replies')
                     $page.url.searchParams.set('unreadOnly', 'false')
@@ -147,7 +143,7 @@
     
     
             <!---Mentions--->
-            <SidebarButton title="Mentions" expanded={showSidebar} class="{data.type == 'mentions' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+            <SidebarButton title="Mentions" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.type == 'mentions' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => { 
                     $page.url.searchParams.set('type', 'mentions')
                     $page.url.searchParams.set('unreadOnly', 'false')
@@ -161,7 +157,7 @@
             </SidebarButton>
     
             <!---Direct Messages--->
-            <SidebarButton title="Direct Messages" expanded={showSidebar} class="{data.type == 'messages' ? '!text-sky-700 dark:!text-sky-500' : ''}"
+            <SidebarButton title="Direct Messages" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.type == 'messages' ? '!text-sky-700 dark:!text-sky-500' : ''}"
                 on:click={() => {
                     $page.url.searchParams.set('type', 'messages')
                     $page.url.searchParams.set('unreadOnly', 'false')
@@ -175,7 +171,7 @@
             </SidebarButton>
 
             <!---Mark All As Read--->
-            <SidebarButton title="Mark All as Read" on:click={markAllAsRead} loading={markingAsRead} disabled={markingAsRead}>
+            <SidebarButton title="Mark All as Read" class="{showSidebar ? '' : 'mx-auto'} " on:click={markAllAsRead} loading={markingAsRead} disabled={markingAsRead}>
                     <Icon src={Check} width={18} mini class={markingAsRead ? 'hidden' : ''}/>
                     <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                         Mark All as Read
@@ -216,14 +212,14 @@
             <!---Collapse Sidebar--->
             <span class="hidden lg:flex w-full flex-col">
                 <hr class="w-full {hrColors}" />
-                <SidebarButton title="{showSidebar ? 'Collapse' : 'Expand'}" on:click={() => showSidebar = !showSidebar} expanded={showSidebar}>
+                <SidebarButton title="{showSidebar ? 'Collapse' : 'Expand'}" class="{showSidebar ? '' : 'mx-auto'} " on:click={() => showSidebar = !showSidebar} expanded={showSidebar}>
                     <Icon src={showSidebar ? ChevronDoubleLeft : ChevronDoubleRight} width={18} mini/>
                     {#if showSidebar}Collapse{/if}
                 </SidebarButton>
             </span>
         </Card>
 
-        <div class="flex flex-col gap-2 h-full w-full {showSidebar ? 'w-full lg:w-[calc(100%-200px)]' : 'w-full lg:w-[calc(100%-35px)]'}">
+        <div class="flex flex-col gap-2 h-full w-full {showSidebar ? 'w-full lg:w-[calc(100%-200px-1rem)]' : 'w-full lg:w-[calc(100%-55px-1rem)]'}">
             {#if !data.data || (data.data?.length ?? 0) == 0}
                 <div class="my-auto">
                     <Placeholder icon={Inbox} title="No new notifications" description="Messages, replies, and mentions will appear here." />
@@ -236,11 +232,13 @@
                     }}/>
                 {/each}
         
-                <Pageination page={data.page} on:change={(p) => {
-                    searchParam($page.url, 'page', p.detail.toString())
-                    inbox.scrollTo(0,0)
-                }} 
-                />
+                {#if data.data.length > 0 || (data.data.length < 1 && data.page > 1)}
+                    <Pageination page={data.page} on:change={(p) => {
+                        searchParam($page.url, 'page', p.detail.toString())
+                        inbox.scrollTo(0,0)
+                    }} />
+                {/if}
+                
             {/if}
         </div>
 
