@@ -11,7 +11,7 @@
     import Button from "$lib/components/input/Button.svelte";
     import Markdown from "$lib/components/markdown/Markdown.svelte";
     import RelativeDate from "$lib/components/util/RelativeDate.svelte";
-    import Subscribe from "./Subscribe.svelte";
+    import Subscribe from "$lib/components/lemmy/community/Subscribe.svelte";
 
     import {
         Icon,
@@ -115,8 +115,11 @@
             <Button
                 disabled={subscribing || !$profile?.jwt}
                 loading={subscribing}
-                color="info"
+                icon={Rss}
+                iconSize={24}
+                color="tertiary-border"
                 size="md"
+                class="{community.subscribed == 'NotSubscribed' ? 'opacity-70' : '!text-amber-500'}"
                 title={['Subscribed', 'Pending'].includes(community.subscribed) ? 'Unsubscribe' : 'Subscribe'}
                 
                 on:click ={async (e) => {
@@ -134,17 +137,7 @@
                     }
                 }}
                 
-            >
-                
-                <span class="flex flex-row gap-1 items-center">    
-                    {#if !subscribing}
-                        <Icon mini src={['Subscribed', 'Pending'].includes(community.subscribed) ? Minus : Rss} width={18}/>
-                    {/if}
-                    <span class="hidden md:inline">
-                        {['Subscribed', 'Pending'].includes(community.subscribed) ? 'Unsubscribe' : 'Subscribe'}
-                    </span>
-                </span>
-            </Button>
+            />
         </Subscribe>
     </div>
     
