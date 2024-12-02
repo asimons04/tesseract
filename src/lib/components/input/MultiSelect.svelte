@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { IconSource } from 'svelte-hero-icons'
     import { ChevronDown, Icon } from 'svelte-hero-icons'
 
     import Button from '$lib/components/input/Button.svelte'
@@ -14,6 +15,9 @@
     export let items: number = 4
     export let fullWidth: boolean = false 
     export let selectedFunc: Function|undefined = undefined;
+    export let icon: IconSource | undefined = undefined
+    export let iconSize:number = 14
+    export let label:string = ''
 
 
     if (!selected && selectedFunc) {
@@ -53,8 +57,19 @@
 <div class="flex flex-col gap-1 {fullWidth ? 'w-full' : ''}">
     
     <span class="flex flex-row gap-1">
-        <span><slot name="icon"/></span>
-        <span class="text-sm font-bold"><slot name="label"/></span>
+        <span>
+            {#if icon}
+                <Icon src={icon} width={iconSize} mini />
+            {/if}
+            <slot name="icon"/>
+        </span>
+        
+        <span class="text-sm font-bold">
+            {#if label}
+                {label}
+            {/if}
+            <slot name="label"/>
+        </span>
     </span>
 
     <div class={containerClass}>
