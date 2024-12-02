@@ -63,7 +63,7 @@
             <span class="ml-auto"/>
 
             {#if expanded}
-                <Button size="sm" color="ghost" class="border-none" icon={ArrowTopRightOnSquare} href="/feeds/{group.name}" title="View as Feed"/>
+                <!--<Button size="sm" color="ghost" class="border-none" icon={ArrowTopRightOnSquare} href="/feeds/{group.name}" title="View as Feed"/>-->
 
                 <Menu alignment="bottom-right" itemsClass="h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
                     
@@ -76,11 +76,12 @@
                         {group.name}
                     </span>
             
-                    <!---View Group as Feed--->
+                    <!---View Group as Feed
                     <MenuButton link href="/feeds/{group.name}" title="View as Feed">
                         <Icon src={ArrowTopRightOnSquare} mini size="18"/>
                         View as Feed
                     </MenuButton>
+                    --->
 
                     <!---Create Post --->
                     <MenuButton title="Edit Group" on:click={()=> editCommunityGroup = !editCommunityGroup}>
