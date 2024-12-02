@@ -124,13 +124,14 @@
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Explore Communities</span>
     </SidebarButton>
 
-    <!---Favorites Feed--->
+    <!---Favorites Feed
     {#if $profile?.user}
     <SidebarButton href="/feeds/favorites" expanded={$userSettings.uiState.expandSidebar} title="Favorites" data-sveltekit-preload-data="off">
         <Icon src={Star} mini size="18" title="Feeds" />
         <span class:hidden={!$userSettings.uiState.expandSidebar}>Favorites</span>
     </SidebarButton>
     {/if}
+    --->
 
     
 
