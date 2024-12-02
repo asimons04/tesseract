@@ -51,12 +51,7 @@
         Trash,
         Window as WindowIcon
     } from "svelte-hero-icons"
-    
-    
-    
-    
-    
-    
+    import { onMount } from 'svelte';
     
     export let open: boolean = false
     export let item: PostView | CommentView
@@ -65,12 +60,26 @@
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
+    
+    let panelWidths = {
+        'none': 'max-w-xl',
+        'banning': 'max-w-3xl',
+        'communityInfo': 'max-w-3xl',
+        'messaging': 'max-w-3xl',
+        'modlog': 'max-w-4xl',
+        'removing': 'max-w-3xl',
+        'reporting': 'max-w-3xl',
+        'showVotes': 'max-w-xl',
+        'userSubmissions': 'max-w-3xl',
+    } 
+
+
     let locking = false
     let pinning = false
     let pinningInstance = false
     let purged  = false
     let submissionType: 'all' | 'posts' | 'comments' = 'all'
-    let banCommunity: Community | undefined = undefined
+    let banCommunity: Community | undefined = item.community
     let modlogCommunityOnly = true
 
     // Make the Post/Comment item reactive
@@ -203,6 +212,9 @@
         purged = e.detail.purged
     }
 
+    onMount(() => {
+        modalWidth = panelWidths[action]
+    })
 </script>
 
 
@@ -322,7 +334,6 @@
 
     <!---Remove/Restore/Purge Content--->
     {#if action == 'removing'}
-    
         <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
             
             <!---Section Header--->
@@ -534,7 +545,7 @@
                 <!---Community Info--->
                 <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full" 
                     on:click={() => {
-                        modalWidth='max-w-3xl'
+                        modalWidth = panelWidths['communityInfo']
                         action = 'communityInfo' 
                     }}
                 >
@@ -545,7 +556,7 @@
                 <!---Creator's Modlog History--->
                 <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
                     on:click={() => {
-                        modalWidth = 'max-w-4xl'
+                        modalWidth = panelWidths['modlog']
                         action = 'modlog'
                     }}
                 >
@@ -555,7 +566,7 @@
                 <!---View Submissions--->
                 <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                     on:click={() => {
-                        modalWidth = "max-w-3xl"
+                        modalWidth = panelWidths['userSubmissions']
                         action = 'userSubmissions'
                     }}
                 >
@@ -567,7 +578,8 @@
                 {#if !purged && isAdmin($profile?.user)}
                     <Button color="tertiary-border" icon={HandThumbUp} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
-                            action = 'showVotes' 
+                            modalWidth = panelWidths['showVotes']
+                            action = 'showVotes'
                         }}
                     >
                         View Votes...
@@ -578,7 +590,7 @@
                 {#if !purged && !removed && $profile?.user && isAdmin($profile?.user)}
                     <Button color="tertiary-border" icon={Flag} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
-                            modalWidth='max-w-3xl'
+                            modalWidth = panelWidths['reporting']
                             action = 'reporting'
                         }}
                     >
@@ -590,7 +602,7 @@
                 <!---Send Message Creator--->
                 <Button color="tertiary-border" icon={Envelope} iconSize={20} alignment="left" class="w-full" 
                     on:click={() => {
-                        modalWidth='max-w-3xl'
+                        modalWidth = panelWidths['messaging']
                         action = 'messaging'
                     }}
                     >
@@ -602,7 +614,7 @@
                 {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
                     <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
-                            modalWidth='max-w-3xl'
+                            modalWidth = panelWidths['removing']
                             remove.purge = false
                             action = 'removing'
                         }}
@@ -618,7 +630,7 @@
                 {#if !purged && isAdmin($profile?.user) }
                     <Button color="tertiary-border" icon={Fire} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
-                            modalWidth='max-w-3xl'
+                            modalWidth = panelWidths['removing']
                             remove.purge = true
                             action = 'removing'
                         }}
@@ -631,7 +643,7 @@
                 {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
                     <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
-                            modalWidth='max-w-3xl'
+                            modalWidth = panelWidths['banning']
                             banCommunity = item.community
                             action = 'banning'
                         }}
@@ -644,7 +656,7 @@
                 {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
                     <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
-                            modalWidth='max-w-3xl'
+                            modalWidth = panelWidths['banning']
                             banCommunity = undefined
                             action = 'banning'
                         }}
