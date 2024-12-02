@@ -101,29 +101,29 @@
         <!---Reporter, Reportee, Community, and Resolver--->
         <div class="flex flex-col w-full gap-2 lg:flex-row lg:justify-between lg:items-center">
             
-            <span class="flex flex-col w-full gap-2">
-                <span class="flex flex-row gap-1 text-xs w-full lg:w-1/2">
+            <span class="flex flex-col w-full lg:w-1/2 gap-2">
+                <span class="flex flex-row gap-1 text-xs w-full">
                     <span class="font-bold">Report from: </span>
                     <UserLink user={report.reporter} avatar avatarSize={16}/>
                 </span>
 
-                <span class="flex flex-row gap-1 text-xs w-full lg:w-1/2">
+                <span class="flex flex-row gap-1 text-xs w-full">
                     <span class="font-bold">Report against: </span>
                     <UserLink user={report.reportee} avatar avatarSize={16}/>
                 </span>
             </span>
             
 
-            <span class="flex flex-col w-full gap-2">
+            <span class="flex flex-col w-full lg:w-1/2 gap-2">
                 
                 {#if report.community}
-                <span class="flex flex-row gap-1 text-xs w-full lg:w-1/2">
+                <span class="flex flex-row gap-1 text-xs w-full ">
                     <span class="font-bold">Community: </span>
                     <CommunityLink community={report.community} avatar avatarSize={16}/>
                 </span>
                 {/if}
 
-                <span class="flex flex-row gap-1 text-xs w-full lg:w-1/2">
+                <span class="flex flex-row gap-1 text-xs w-full">
                     <span class="font-bold">Resolved by: </span>
                     {#if report.resolver}
                         <UserLink user={report.resolver} avatar avatarSize={16}/>
