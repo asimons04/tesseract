@@ -62,6 +62,7 @@ export interface UserSubmissionFeedControllerLoadOptions {
 }
 
 export interface UserSubmissionFeedController {
+    clearSearch: () => void
     clearSnapshot: () => void
     load: (opts?:UserSubmissionFeedControllerLoadOptions) => Promise<void>
     loadSnapshot: () => Promise<boolean>
@@ -69,6 +70,7 @@ export interface UserSubmissionFeedController {
     reset: (clearSnapshot?:boolean) => void
     scrollTop: () => void
     scrollBottom: () => void
+    search: (opts?:UserSubmissionFeedControllerLoadOptions) => Promise<void>
     takeSnapshot: () => Promise<void>
 
     storage: StorageController

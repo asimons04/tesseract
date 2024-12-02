@@ -4,9 +4,12 @@
 
 <script lang="ts">
     import type { CommentView, GetPersonDetailsResponse, Person, PostView } from "lemmy-js-client"
-    import type { UserSubmissionFeedController } from '$lib/components/lemmy/feed/helpers'
+    import type { LastClickedPostEvent } from "$lib/ui/events"
+    import type { UserSubmissionFeedController, UserSubmissionFeedControllerLoadOptions } from '$lib/components/lemmy/feed/helpers'
 
+    import { fade } from "svelte/transition"
     import { getClient } from "$lib/lemmy"
+    import { hrColors } from "$lib/ui/colors"
     import { instance } from "$lib/instance";
     import { profile } from '$lib/auth'
     import { getItemPublished, isCommentView, isPostView } from "$lib/lemmy/item"
@@ -15,19 +18,18 @@
     import { StorageController } from "$lib/storage-controller"
     import { userSettings } from "$lib/settings";
 
+    import Button from "$lib/components/input/Button.svelte"
     import CommentItem from "$lib/components/lemmy/comment/CommentItem.svelte"
+    import MultiSelect from "$lib/components/input/MultiSelect.svelte";
     import Post from "$lib/components/lemmy/post/Post.svelte"
     import Placeholder from "$lib/components/ui/Placeholder.svelte"
     import Pageination from "$lib/components/ui/Pageination.svelte"
+    import RelativeDate from "$lib/components/util/RelativeDate.svelte"
+    import SiteSearch from "$lib/components/ui/subnavbar/SiteSearch.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArrowPath, PencilSquare } from "svelte-hero-icons";
-    import MultiSelect from "$lib/components/input/MultiSelect.svelte";
-    import type { LastClickedPostEvent } from "$lib/ui/events";
-    import SiteSearch from "$lib/components/ui/subnavbar/SiteSearch.svelte";
-    import RelativeDate from "$lib/components/util/RelativeDate.svelte";
-    import Button from "$lib/components/input/Button.svelte";
-    
+    import { ArrowLeft, ArrowPath, Icon, MagnifyingGlass, PencilSquare } from "svelte-hero-icons";
+    import TextInput from "$lib/components/input/TextInput.svelte";
     
     export let person_id: number | undefined = undefined
     export let person_name: string | undefined = undefined
@@ -44,6 +46,8 @@
     let page = 1
     let loading = false
     let submissions = [] as (PostView|CommentView)[]
+    let searchResults = [] as (PostView|CommentView)[]
+    let searchTerm: string
     let scrollContainer: HTMLDivElement
     let user: GetPersonDetailsResponse | undefined
     let old = {
@@ -52,6 +56,8 @@
     }
     let last_item: number | undefined
     let last_refreshed:number = Math.round(new Date().getTime() /1000)
+
+    let panel: 'submissions' | 'search' = 'submissions'
 
     onMount(async () => {
         if (debugMode) console.log(moduleName, ": Mounting component")
@@ -76,6 +82,10 @@
             useCompression: true
         }),
         
+        clearSearch: function() {
+            searchResults = []
+        },
+
         clearSnapshot: function() {
             if (debugMode) console.log(moduleName, ": Clearing snapshot:", this.storageKey)
             this.storage.remove(this.storageKey)
@@ -150,7 +160,10 @@
                 if ('sort' in pageSnapshot)              sort = pageSnapshot.sort
                 if ('type' in pageSnapshot)              type = pageSnapshot.type
                 if ('page' in pageSnapshot)              page = pageSnapshot.page
+                if ('panel' in pageSnapshot)             panel = pageSnapshot.panel
                 if ('submissions' in pageSnapshot)       submissions = pageSnapshot.submissions
+                if ('searchResults' in pageSnapshot)     searchResults = pageSnapshot.searchResults
+                if ('searchTerm' in pageSnapshot)        searchTerm = pageSnapshot.searchTerm
                 if ('person_id' in pageSnapshot)         person_id = pageSnapshot.person_id
                 if ('person_name' in pageSnapshot)       person_name = pageSnapshot.person_name
                 if ('last_item' in pageSnapshot)         last_item =  pageSnapshot.last_item
@@ -185,6 +198,55 @@
             scrollContainer?.scrollTo(0,0)
         },
 
+        search: async function(opts?:UserSubmissionFeedControllerLoadOptions) {
+            try {
+                if (debugMode) console.log(moduleName, ": Searching...")
+                loading = true;
+
+                if (opts?.loadSnapshot && await this.loadSnapshot()) {
+                    if (debugMode) console.log(moduleName, ": Loading search data from snapshot:", this.storageKey)
+                    this.loadedFromSnapshot = true
+                    loading = false
+                    return
+                }
+                
+                if (debugMode) console.log(moduleName, ": Searching via the API.")
+                
+                const results = await getClient().search({
+                    listing_type: 'All',
+                    type_: type == 'comments' ? 'Comments' : type == 'posts' ? 'Posts' : 'All',
+                    limit: limit,
+                    page: page,
+                    creator_id: user?.person_view.person.id,
+                    sort: sort,
+                    q: searchTerm
+                })
+                
+                searchResults = [...results.posts, ...results.comments]
+
+                if (sort.startsWith('Top')) {
+                    searchResults.sort( (a, b) => b.counts.upvotes - b.counts.downvotes - (a.counts.upvotes - a.counts.downvotes) )
+                } 
+                
+                else if (sort == 'New') {
+                    searchResults.sort( (a, b) => Date.parse(getItemPublished(b)) - Date.parse(getItemPublished(a)) )
+                }
+                
+                else if (sort == 'Old') {
+                    searchResults.sort( (a, b) => Date.parse(getItemPublished(a)) - Date.parse(getItemPublished(b)) )
+                }
+                
+                last_refreshed = Math.round(new Date().getTime() /1000)
+                
+                await this.takeSnapshot()        
+                
+                loading = false;
+            }
+            catch (err){
+                console.log(err);
+            }
+        },
+
         takeSnapshot: async function() {
             if (debugMode) console.log(moduleName, ": Taking snapshot: ", this.storageKey)
             await this.storage.store(this.storageKey, this.data)
@@ -200,6 +262,9 @@
         get data() {
             return {
                 submissions: submissions,
+                searchResults: searchResults,
+                searchTerm: searchTerm,
+                panel: panel,
                 person_id: person_id,
                 person_name: person_name,
                 sort: sort,
@@ -230,6 +295,7 @@
                 this.refresh()
             }
         },
+
         get person_name() {
             return person_name
         },
@@ -282,99 +348,158 @@
     
     <slot name="banner" {user} />
     
-    {#if page == 1}
-    <div class="flex flex-row w-full items-end justify-between">
-        <div class="flex flex-col gap-1 text-xs opacity-80">
-            <span>
-                Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
-            </span>
-        </div>
+    {#if page == 1 && panel == 'submissions'}
+        <div class="flex flex-row w-full items-end justify-between" transition:fade>
+            <div class="flex flex-col gap-1 text-xs opacity-80">
+                <span>
+                    Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
+                </span>
+            </div>
 
-        <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
-            loading={loading} disabled={loading}
-            on:click={() => {
-                if (debugMode) console.log(moduleName, ": Refresh button clicked")
-                controller.refresh(true) 
+            <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
+                loading={loading} disabled={loading}
+                on:click={() => {
+                    if (debugMode) console.log(moduleName, ": Refresh button clicked")
+                    controller.refresh(true) 
+                }}
+            >
+                Refresh
+            </Button>
+        </div>
+    {/if}
+    
+    <!---Sort, Type, and User Search Bars--->
+    <div class="flex flex-row w-full items-center justify-between" transition:fade>
+        <!---Sort--->
+        <MultiSelect 
+            options={['New', 'TopAll', 'Old']} 
+            optionNames={['New', 'Top', 'Old']}
+            selected={sort}
+            items={0}
+            headless
+            on:select={(e) => {
+                if (loading) return
+                if (debugMode) console.log(moduleName, ": Sort selected.", e.detail)
+                submissions = submissions = []
+                last_item = -1
+                //@ts-ignore
+                sort = e.detail
+                page = 1
+                if (panel == 'submissions') controller.load({loadSnapshot: false})
+                if (panel == 'search') controller.search({loadSnapshot: false})
             }}
-        >
-            Refresh
-        </Button>
+        />
+
+        <!---Item Type--->
+        <MultiSelect
+            options={['all', 'posts', 'comments']}
+            optionNames={['All', 'Posts', 'Comments']}
+            selected={type}
+            items={3}
+            class="ml-auto pr-2"
+            on:select={(e) => {
+                if (loading) return
+                if (debugMode) console.log(moduleName, ": Type selected.", e.detail)
+
+                last_item = -1
+                //@ts-ignore
+                type = e.detail
+                if (panel == 'search') controller.search({loadSnapshot: false})
+
+            }}
+        />
     </div>
+
+    <!---Search Form--->
+    {#if user}
+        <form class="flex flex-row gap-2 items-center w-full" on:submit|preventDefault={() => {
+                if (searchTerm) {
+                    last_item =  -1
+                    page = 1
+                    panel = 'search'
+                    controller.search({loadSnapshot: false})
+                }
+            }}
+        >    
+            <TextInput type="search" name="search_input" placeholder="Search {user.person_view.person.display_name ?? user.person_view.person.name}" bind:value={searchTerm} class="w-full"/>
+            <Button icon={MagnifyingGlass} iconSize={24} color="tertiary" submit />
+        </form>
     {/if}
     
     
-    
     {#if loading}
-        <span class="flex flex-row w-full h-full items-center">        
+        <span class="flex flex-row w-full h-full items-center" transition:fade>        
             <span class="mx-auto my-auto">
                 <Spinner width={24}/>
             </span>
         </span>
     {:else}
+        
+        <!---User Posts/Comments--->
+        {#if panel == 'submissions'}
+            {#if submissions?.length > 0 }
 
-        {#if submissions?.length > 0 }
-            
-            <!---Sort, Type, and User Search Bars--->
-            <div class="flex flex-row w-full items-center justify-between">
-                <!---Sort--->
-                <MultiSelect 
-                    options={['New', 'TopAll', 'Old']} 
-                    optionNames={['New', 'Top', 'Old']}
-                    selected={sort}
-                    items={0}
-                    headless
-                    on:select={(e) => {
-                        if (loading) return
-                        if (debugMode) console.log(moduleName, ": Sort selected.", e.detail)
-                        submissions = submissions = []
+                {#each submissions as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
+                    {#if (type == 'all' || type == 'comments') && isCommentView(item) }
+                        <CommentItem comment={item} {actions} scrollTo={last_item}/>
+                    {:else if (type == 'all' || type == 'posts') && isPostView(item)}
+                        <Post post={item} {actions} inProfile scrollTo={last_item} />
+                    {/if}
+                {/each}
+                
+                
+            {:else}
+                <div class="mt-2 w-full h-full flex flex-col gap-5 mx-auto">
+                    <Placeholder icon={PencilSquare} 
+                        title="{page == 1 ? 'No Submissions' : 'No More Submissions'}" 
+                        description="{page == 1 ? 'This user has not posted or commented anything' : 'There are no more posts or comments for this user'}."
+                    />
+                </div>
+            {/if}
+        {/if}
+
+        <!---Inline Search Results--->
+        {#if panel == 'search'}
+            <!---Section Header--->
+            <div class="flex flex-row gap-4 items-center" transition:fade>
+                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back to Submissions" 
+                    on:click={(e)=> {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        searchTerm = ''
+                        searchResults =  []
                         last_item = -1
-                        //@ts-ignore
-                        sort = e.detail
                         page = 1
+                        panel = 'submissions'
                         controller.load({loadSnapshot: false})
                     }}
                 />
-        
-                <!---Item Type--->
-                <MultiSelect
-                    options={['all', 'posts', 'comments']}
-                    optionNames={['All', 'Posts', 'Comments']}
-                    selected={type}
-                    items={3}
-                    class="ml-auto pr-2"
-                    on:select={(e) => {
-                        if (loading) return
-                        if (debugMode) console.log(moduleName, ": Type selected.", e.detail)
-
-                        last_item = -1
-                        //@ts-ignore
-                        type = e.detail
-
-                    }}
-                />
+                
+                <div class="flex flex-row w-full items-center justify-between">
+                    <span class="text-lg">
+                        Search Results
+                    </span>
+                </div>
             </div>
+            <hr class="{hrColors}" />
             
-            {#if user}
-                <SiteSearch fullWidth person_id={user.person_view.person.id}
-                    placeholder="Search {$userSettings.displayNames ? (user.person_view.person.display_name ?? user.person_view.person.name) : user.person_view.person.name }" 
-                />
+            {#if searchResults.length > 0 }
+                {#each searchResults as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
+                    {#if (type == 'all' || type == 'comments') && isCommentView(item) }
+                        <CommentItem comment={item} {actions} scrollTo={last_item}/>
+                    {:else if (type == 'all' || type == 'posts') && isPostView(item)}
+                        <Post post={item} {actions} inProfile scrollTo={last_item} />
+                    {/if}
+                {/each}
+            {:else}
+                <div class="mt-2 w-full h-full flex flex-col gap-5 mx-auto">
+                    <Placeholder icon={MagnifyingGlass} 
+                        title="{page == 1 ? 'No Results' : 'No More Results'}" 
+                        description="{page == 1 ? 'There are no search results for the provided query.' : 'There are no more search results for the provided query.'}."
+                    />
+                </div>
             {/if}
 
-            {#each submissions as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
-                {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                    <CommentItem comment={item} {actions} scrollTo={last_item}/>
-                {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                    <Post post={item} {actions} inProfile scrollTo={last_item} />
-                {/if}
-            {/each}
-            
-        {:else}
-            <div class="mt-2 w-full h-full flex flex-col gap-5 mx-auto">
-                <Placeholder icon={PencilSquare} 
-                    title="{page == 1 ? 'No Submissions' : 'No More Submissions'}" 
-                    description="{page == 1 ? 'This user has not posted or commented anything' : 'There are no more posts or comments for this user'}."
-                />
-            </div>
         {/if}
 
     {/if}
@@ -383,7 +508,8 @@
 
     <Pageination bind:page class="px-4 mb-4" on:change={(e) => {
         page = e.detail
-        controller.load({loadSnapshot: false})
+        if (panel == 'search')      controller.search({loadSnapshot: false})
+        if (panel == 'submissions') controller.load({loadSnapshot: false})
         scrollContainer.scrollTo(0,0)
     }}/>
 </div>
