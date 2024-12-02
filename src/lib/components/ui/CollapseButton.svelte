@@ -21,7 +21,8 @@
 
 <div class="flex flex-col gap-1 my-2 {bottomBorder ? 'border-b border-slate-200 dark:border-zinc-800' : ''} {$$props.class}">
     <Button color="tertiary" alignment="left" rounded='none' on:click={ ()=> { expanded = !expanded}}>
-        <span class="mr-[0.5rem]">
+        
+        <span class="{$$slots.icon || icon ? 'mr-[0.5rem]' : ''}">
             <slot name="icon" />
             
             {#if icon}
