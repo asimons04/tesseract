@@ -178,7 +178,19 @@
 
         refresh: function(clearSnapshot?:boolean) {
             this.reset(clearSnapshot)
-            this.load({loadSnapshot: false}).then(()=> this.scrollTop())
+            if (panel == 'submissions') this.load({loadSnapshot: false}).then(()=> this.scrollTop())
+            if (panel == 'search') {
+                // Need to re-populate the user if it gets cleared since the search result doesn't provide that.
+                getClient().getPersonDetails({
+                    limit: 1,
+                    page: 1,
+                    person_id: person_id,
+                    username: person_name,
+                })
+                    .then((result) => user = result)
+                    .then(() => this.search({loadSnapshot: false}))
+                    .then(() => this.scrollTop())
+            }
         },
 
         reset: function(clearSnapshot?:boolean) {
