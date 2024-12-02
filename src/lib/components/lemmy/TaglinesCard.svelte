@@ -11,8 +11,9 @@
 
     export let taglines: Tagline[] | undefined = undefined
     export let interval:number = 15
-
-    let tagline = getRandomTagline()
+    let tagline:string
+    
+    $:  taglines, tagline = getRandomTagline()
     let lastTick: number = 0
     
     function getRandomTagline() {
