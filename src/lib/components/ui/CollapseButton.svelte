@@ -32,8 +32,6 @@
         <span class="w-full flex flex-row justify-between {heading ? 'text-xl' : 'text-xs'} {bold ? 'font-bold' : ''} {truncate ? 'truncate' : ''}">
             <slot name="title" />
             {title}
-            
-            
         </span>
         
         <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 my-auto">
