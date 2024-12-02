@@ -1,57 +1,56 @@
 <script lang="ts">
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+    
     import { Icon, type IconSource } from 'svelte-hero-icons'
     
     import { buttonColor, type ButtonColor } from '$lib/ui/colors'
 
-  
-  type ButtonSize = keyof typeof buttonSize
-  type ButtonRoundness = keyof typeof buttonRoundness
-  type ButtonAlignment = keyof typeof buttonAlignment
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
 
-  const buttonAlignment = {
-    left: 'justify-start text-left',
-    center: 'justify-center text-center',
-    right: 'justify-end text-right',
-  }
+    type ButtonSize = keyof typeof buttonSize
+    type ButtonRoundness = keyof typeof buttonRoundness
+    type ButtonAlignment = keyof typeof buttonAlignment
 
+    const buttonAlignment = {
+        left: 'justify-start text-left',
+        center: 'justify-center text-center',
+        right: 'justify-end text-right',
+    }
 
+    const buttonSize = {
+        sm: 'px-2 py-1',
+        md: 'px-3 py-1.5',
+        lg: 'px-4 py-2',
+        'square-sm': 'w-6 h-6',
+        'square-md': 'w-8 h-8',
+        'square-lg': 'w-10 h-10',
+        'square-form': 'w-[46px] h-[42px] p-0'
+    }
 
-  const buttonSize = {
-    sm: 'px-2 py-1',
-    md: 'px-3 py-1.5',
-    lg: 'px-4 py-2',
-    'square-sm': 'w-6 h-6',
-    'square-md': 'w-8 h-8',
-    'square-lg': 'w-10 h-10',
-    'square-form': 'w-[46px] h-[42px] p-0'
-  }
+    const buttonRoundness = {
+        pill: 'rounded-full',
+        lg: 'rounded-lg',
+        md: 'rounded-md',
+        none: '',
+    }
 
-  const buttonRoundness = {
-    pill: 'rounded-full',
-    lg: 'rounded-lg',
-    md: 'rounded-md',
-    none: '',
-  }
+    export let loading = false
+    export let submit = false
 
-  export let loading = false
-  export let submit = false
+    export let color: ButtonColor = 'secondary'
+    export let size: ButtonSize = 'md'
+    export let rounded: ButtonRoundness = 'md'
+    export let alignment: ButtonAlignment = 'center'
+    export let icon: IconSource | undefined = undefined
+    export let iconSize:number = 16
+    export let title: string = ''
+    export let hidden:boolean = false
+    export let loaderWidth: number | undefined = iconSize
+    export let iconClass: string = ''
+    export let inline: boolean = true
+      
+    export let href: string | undefined = undefined
+    export let newtab:boolean = false
 
-  export let color: ButtonColor = 'secondary'
-  export let size: ButtonSize = 'md'
-  export let rounded: ButtonRoundness = 'md'
-  export let alignment: ButtonAlignment = 'center'
-  export let icon: IconSource | undefined = undefined
-  export let iconSize:number = 16
-  export let title: string = ''
-  export let hidden:boolean = false
-  export let loaderWidth: number | undefined = iconSize
-  export let iconClass: string = ''
-  export let inline: boolean = true
-  
-  // const dispatch = createEventDispatcher()
-  export let href: string | undefined = undefined
-  export let newtab:boolean = false
 </script>
 
 {#if href}
