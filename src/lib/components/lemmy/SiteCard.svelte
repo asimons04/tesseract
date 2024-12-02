@@ -1,17 +1,13 @@
 <script lang="ts">
     
     import type { SiteView, PersonView, Tagline } from 'lemmy-js-client'
-    import {imageProxyURL} from '$lib/image-proxy'
-    import { userSettings } from '$lib/settings.js'
     
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '../ui/CollapseButton.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
     import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
+    import SiteCardSmall from './SiteCardSmall.svelte';
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
+    import TaglinesCard from './TaglinesCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
@@ -26,16 +22,13 @@
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
-    import { slide } from 'svelte/transition';
-    import SiteCardSmall from './SiteCardSmall.svelte';
-    import TaglinesCard from './TaglinesCard.svelte';
-    
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
     export let admins: PersonView[] = []
     export let version: string
     export let taglineUpdateInterval: number = 15
+
     let expanded = {
         admins: false,
         site: false,
