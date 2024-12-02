@@ -206,9 +206,6 @@
         }
     }
 
-    onMount(async () => await scrollIntoView() )
-    onDestroy(() => post = null)
-
     /** Determines whether a compact post should be shown expanded to a card if "hybrid" view set. Returns 'true' if post should render as card, 'false' if compact */
     function computeExpandCompact() {
         // If view is not set to 'hybrid' return based on 'show compact posts' value
@@ -237,6 +234,9 @@
         scrollTo = e.detail.post_id
         scrollIntoView(true)
     }
+
+    onMount(async () => await scrollIntoView() )
+    onDestroy(() => post = null)
 </script>
 
 
