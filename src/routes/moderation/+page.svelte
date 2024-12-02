@@ -169,7 +169,7 @@
             {#if showSidebar && moderates.length > 0}
                 <hr class="hidden lg:flex w-full {hrColors}" />    
 
-                <CollapseButton iconSize={18} bottomBorder={false}
+                <CollapseButton iconSize={18} bottomBorder={false} expanded={$page.url.searchParams.has('community_id')}
                     title="By Community" class="hidden lg:flex" innerClass="items-start max-h-[40vh] overflow-y-scroll overflow-x-hidden"
                 >
                     {#each moderates as modCommunity}
