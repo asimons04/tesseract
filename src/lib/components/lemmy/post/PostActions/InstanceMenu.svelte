@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
     
-    import { type Alignment, getMenuAlignment } from '$lib/components/ui/menu/menu.js'
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { federationStateModal, fediseerModal } from '$lib/components/lemmy/moderation/moderation'
     import { getClient } from '$lib/lemmy'
@@ -11,7 +10,6 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { refreshProfile } from '$lib/lemmy/user'
-    import { userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
@@ -79,15 +77,6 @@
     <Button slot="button" aria-label="Explore" let:toggleOpen on:click={toggleOpen} size="square-md" title="Instances" color="tertiary">
         <Icon slot="icon" src={Server} width={16} mini />
     </Button>
-        
-    <!--
-    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
-        Instances
-        <span class="ml-auto" />
-        <Icon slot="icon" src={Server} width={16} mini />
-    </li>
-    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-    -->
     
     <!---Actions for the instance the post was submitted to--->
     <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>
@@ -108,7 +97,7 @@
 
 
 
-    <MenuButton link href="/communities?instance={new URL(post.community.actor_id).hostname}&type=Local" 
+    <MenuButton link href="/communities/{new URL(post.community.actor_id).hostname}/?type=Local" 
         title="Browse communities at {new URL(post.community.actor_id).hostname}" color="success"
     >
         <Icon src={GlobeAlt} width={16} mini />
@@ -147,7 +136,7 @@
         </MenuButton>
         {/if}
 
-        <MenuButton link href="/communities?instance={new URL(post.creator.actor_id).hostname}&type=Local" 
+        <MenuButton link href="/communities/{new URL(post.creator.actor_id).hostname}/?type=Local" 
             title="Browse communities at {new URL(post.creator.actor_id).hostname}" color="success"
         >
             <Icon src={GlobeAlt} width={16} mini />

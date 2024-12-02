@@ -215,7 +215,7 @@
                 <!---Browse Communities--->
                 <MenuButton
                     link color="success"
-                    href="/communities?instance={new URL(comment.creator.actor_id).hostname}&type=Local"
+                    href="/communities/{new URL(comment.creator.actor_id).hostname}/?type=Local"
                     title="Browse communities at {new URL(comment.creator.actor_id).hostname}"
                 >
                     <Icon src={GlobeAlt} width={16} mini />
