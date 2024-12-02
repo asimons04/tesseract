@@ -4,7 +4,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import Subscribe from '$routes/communities/Subscribe.svelte'
+    import Subscribe from './Subscribe.svelte'
 
     import {
         ChatBubbleOvalLeftEllipsis,
