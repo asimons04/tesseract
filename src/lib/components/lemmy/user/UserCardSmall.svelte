@@ -1,6 +1,7 @@
 <script lang="ts">
+    import type { BanUserEvent } from "$lib/ui/events";
     import type { PersonView } from "lemmy-js-client"
-    
+
     import { createEventDispatcher } from "svelte"
     import { imageProxyURL } from "$lib/image-proxy"
     import { toast } from "$lib/components/ui/toasts/toasts";
@@ -23,10 +24,6 @@
         EyeSlash,
         NoSymbol,
     } from 'svelte-hero-icons'
-    
-    
-    
-    
 
     export let person_view: PersonView | undefined = undefined
     export let mod: boolean = false
@@ -37,7 +34,20 @@
 
     let avatarWidth = 96
     const dispatcher = createEventDispatcher()
+
+    const handlers = {
+        BanUserEvent: function(e:BanUserEvent) {
+            if (e.detail.person_id == person_view?.person.id) {
+                person_view.person.banned = e.detail.banned
+            }
+        }
+    }
+
 </script>
+
+<svelte:window
+    on:banUser={handlers.BanUserEvent}
+/>
 
 
 {#if person_view}
