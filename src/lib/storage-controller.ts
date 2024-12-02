@@ -61,12 +61,22 @@ export class StorageController {
     }
 
     expired (timestamp?:number): boolean {
-        if (!timestamp) return false
+        if (!timestamp || this._ttl < 0) return false
 
         const now = Math.round(new Date().getTime() /1000)
         if (now - timestamp > this._ttl) return true
         return false
         
+    }
+
+    // Alias for retrieve
+    async get (key:string): Promise<any> {
+        return await this.retrieve(key)
+    }
+
+    // Alias for store
+    async put (key:string, data: any) {
+        return await this.store(key, data)
     }
 
     async retrieve (key:string): Promise<any> {
