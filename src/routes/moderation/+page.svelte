@@ -168,8 +168,8 @@
             <!---Community Selector--->
             {#if showSidebar && moderates.length > 0}
                 <hr class="hidden lg:flex w-full {hrColors}" />    
-                
-                <CollapseButton icon={UserGroup} iconSize={18} bottomBorder={false}
+
+                <CollapseButton iconSize={18} bottomBorder={false}
                     title="By Community" class="hidden lg:flex" innerClass="items-start max-h-[40vh] overflow-y-scroll overflow-x-hidden"
                 >
                     {#each moderates as modCommunity}

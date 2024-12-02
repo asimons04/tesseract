@@ -3,8 +3,10 @@
     
     import { createEventDispatcher } from "svelte"
     import { fade } from "svelte/transition"
+    import { goto } from "$app/navigation"
     import { hrColors } from "$lib/ui/colors"
     import { getClient } from '$lib/lemmy'
+    import { page } from "$app/stores"
     import { postModerationModal, userProfileModal } from "$lib/components/lemmy/moderation/moderation"
     import { profile } from '$lib/auth'
 
@@ -30,6 +32,7 @@
         Envelope,
         User,
     } from "svelte-hero-icons"
+    
 
     export let report: StandardReport
     const dispatcher = createEventDispatcher()
@@ -72,6 +75,7 @@
         $profile.user.reports = reports.comment_reports + reports.post_reports + (reports.private_message_reports ?? 0)
 
         dispatcher('resolveReport', { resolved: report.resolved})
+        goto($page.url, {invalidateAll: true})
     }
 </script>
 
