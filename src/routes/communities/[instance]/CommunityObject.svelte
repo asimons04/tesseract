@@ -22,6 +22,7 @@
         PencilSquare,
         Rss,
         UserGroup,
+        ArrowTopRightOnSquare,
     } from 'svelte-hero-icons'
    
     
@@ -43,7 +44,7 @@
 <CollapseButton>
     <Avatar width={48} alt={community.community.actor_id} url={community.community.icon ?? undefined} community={true} slot="icon"/>
     
-    <div class="flex flex-row items-center w-full justify-between" slot="title">
+    <div class="flex flex-row gap-2 items-center w-full justify-between" slot="title">
         
         <!--- Avatar + Community Name + !name@instance --->
         <div class="flex flex-col gap-0 w-full" >
@@ -110,6 +111,17 @@
             </div>
         </div>
         
+        <div class="hidden lg:flex">
+            <Button 
+                title="Go to Community"     
+                href="/c/{community.community.name}@{new URL(community.community.actor_id).hostname}"
+                color="tertiary-border" 
+                icon={ArrowTopRightOnSquare} 
+                iconSize={24}
+                size="md"
+            />
+        </div>
+
         <!--- class="{['Subscribed', 'Pending'].includes(community.subscribed) ? '!bg-sky-500 dark:!bg-sky-700' : ''}" --->
         <Subscribe bind:community let:subscribe let:subscribing class="mr-4">
             <Button
