@@ -110,9 +110,14 @@
             {#each INSTANCE_LIST as instance}
                 <MenuButton on:click={() => {
                     searchParams.instance = instance.toLowerCase().replaceAll(' ', '') 
+                    searchParams.page = 1
                     // Default to Local view when switching to browse a remote instance
                     if (searchParams.instance != $profile?.instance) {
                         searchParams.type = 'Local'
+                    }
+                    // If clicking to your own instance, show 'All'
+                    else {
+                        searchParams.type = 'All'
                     }
                     search()
                 }}>
