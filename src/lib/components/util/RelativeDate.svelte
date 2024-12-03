@@ -4,6 +4,7 @@
     export let date: string | number
     export let relativeTo: Date = new Date()
     export let short: boolean = false
+    export let updateInterval: number = 30
     export let options: Intl.RelativeTimeFormatOptions = {
         numeric: 'always',
         style: 'narrow',
@@ -19,11 +20,11 @@
         }
     }
     
-    $: dateTime = toLocaleDateString(stringToDate(date))
+    
     
     let lastTick: number = 0
     function handleSystemTimerEvent(e:SystemTimerEvent) {
-        if ( (e.detail.timestamp - lastTick) > 60) {
+        if ( (e.detail.timestamp - lastTick) > updateInterval) {
             lastTick = e.detail.timestamp
             relativeTo = new Date()
         }
@@ -65,12 +66,15 @@
             return 'Invalid Date'
         }
     }
+
+    let displayVal = formatRelativeDate(stringToDate(date))
+    let dateTime = toLocaleDateString(stringToDate(date))
+
+    $:  relativeTo, displayVal = formatRelativeDate(stringToDate(date))
 </script>
 
 <svelte:window on:systemTimer={handleSystemTimerEvent} />
   
 <time class="whitespace-nowrap {$$props.class}" datetime={dateTime} title={dateTime}>
-    {#key relativeTo}
-        {formatRelativeDate(stringToDate(date))}
-    {/key}
+    {displayVal}
 </time>
