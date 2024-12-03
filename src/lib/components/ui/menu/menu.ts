@@ -8,9 +8,8 @@ export type Alignment =
     | 'bottom-left'
     | 'bottom-center'
     | 'top-center'
-    | 'side-left'
-    | 'side-right'
     | 'left'
+    | undefined
 
 export function getMenuAlignment(expandCompact:boolean = false): Alignment {
     const $userSettings = get(userSettings)
