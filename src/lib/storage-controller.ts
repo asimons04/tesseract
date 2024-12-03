@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer'
+import type { GetCommunityResponse, GetSiteResponse } from 'lemmy-js-client'
 
 export interface StorageControllerOptions {
     type?: 'local' | 'session'                  // Use Session or Local storage
@@ -27,33 +28,41 @@ export class StorageController {
 
     }
 
+    get keys() {
+        return this._type == 'session'
+            ? Object.keys(sessionStorage)
+            : Object.keys(localStorage)
+    }
 
     /** Compresses an object and returns a base64 representation of the compressed string */
     async compress (obj: any): Promise<string|undefined> {
         if (!obj) return undefined
         try {
-            return this.compressor.bufferTob64(
-                await this.compressor.compress(
-                    JSON.stringify(obj)
-                )
-            )
+            return await this.compressor.compress( JSON.stringify(obj) )
+            
         }
         catch { return undefined }
     }
     
     /** Decompresses a base64-encoded string representing a compressed Uint8Array */
-    async decompress(compressed:string): Promise<string|undefined> {
+    async decompress(compressed:string): Promise<any|undefined> {
         if (!compressed) return undefined
 
         try {
             return JSON.parse(
-                await this.compressor.decompress(this.compressor.b64ToBuffer(compressed))
+                await this.compressor.decompress(compressed)
             )
         }
         catch { return undefined }
     }
 
     remove (key:string): void {
+        // Prevent removing critical data from local storage; these keys are not managed by the storage controller.
+        if (this._type == 'local' && ['theme', 'profileData', 'settings', 'seenUntil'].includes(key)) {
+            console.log(`StorageController: Cannot remove key (${key}) from localStorage as it is required and not managed by this subsystem.`)
+            return
+        }
+        
         (this._type == 'session')    
             ? sessionStorage.removeItem(key)
             : localStorage.removeItem(key)
@@ -92,6 +101,7 @@ export class StorageController {
             if ( !('payload' in data)) return undefined
             
             if (this.expired(data.timestamp)) {
+                console.log(`StorageController: Stored item (${key}) is expired. Discarding`)
                 this.remove(key)
                 return undefined
             }
@@ -101,7 +111,8 @@ export class StorageController {
 
             return decompressed
         }
-        catch  { 
+        catch (err) { 
+            console.log(`StorageController: Error retrieving key (${key}:`, err)
             this.remove(key)
             return undefined 
         }
@@ -114,9 +125,14 @@ export class StorageController {
 
             const payloadData = this.useCompression ? await this.compress(data) : JSON.stringify(data)
             if (!payloadData) throw new Error('Failed to compress data')
-                
+            
+            const dataLength = JSON.stringify(data).length
+            const compressedDataLength = payloadData.length
+
             const payload = {
-                size: JSON.stringify(data).length,
+                size: dataLength,
+                compressed_size: compressedDataLength,
+                compress_ratio: (dataLength / compressedDataLength).toFixed(2),
                 payload: payloadData,
                 timestamp: Math.round(new Date().getTime() /1000)
             } as StorageControllerData
@@ -127,12 +143,15 @@ export class StorageController {
 
         }
         catch (err) {
-            console.log(`Failed to save to ${this._type} storage.`, err)
+            console.log(`StorageController: Failed to save to ${this._type} storage.`, err)
             this.remove(key)
         }
     }
 }
 
+
+
+// String Compression Classes
 export interface CompressionOptions {
     format: CompressionFormat
 }
@@ -146,7 +165,7 @@ export class StringCompression {
     }
 
     
-    async compress (str:string): Promise<Uint8Array> {
+    async compress (str:string): Promise<string> {
         const compressedStream = new Blob([str]).stream().pipeThrough(
             new CompressionStream(this._format)
         )
@@ -154,10 +173,12 @@ export class StringCompression {
         for await (const chunk of compressedStream) {
           chunks.push(chunk);
         }
-        return await this.concatUint8Arrays(chunks);
+        return this.bufferTob64(await this.concatUint8Arrays(chunks))
     }
 
-    async decompress(compressedBytes: Uint8Array): Promise<string> {
+    async decompress(compressedString: string): Promise<string> {
+        const compressedBytes = this.b64ToBuffer(compressedString)
+
         const decompressedStream = new Blob([compressedBytes]).stream().pipeThrough(
             new DecompressionStream(this._format)
         )
