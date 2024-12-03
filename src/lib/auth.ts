@@ -102,22 +102,24 @@ profile.subscribe(async (p:Profile|undefined) => {
         return
     }
     // If user details (MyUserInfo from API) are already stored, don't proceed to fetch it.
-    if (p.user) return    
+    if (p.user) {
+        if (get(userSettings)?.debugInfo) console.log("auth.ts::profile.subscribe: Profile already stored. Not fetching.")
+        return    
+    }
 
     // Set the current instance to the instance defined in the profile.
     instance.set(p.instance.toLowerCase())
 
     // Fetch the user details from the API because p.user is undefined
-    if (get(userSettings)?.debugInfo) console.log("Calling userFromJWT from profile.subscribe")
+    if (get(userSettings)?.debugInfo) console.log("auth.ts::profile.subscribe: Calling userFromJWT.")
 
     const user = await userFromJwt(p.jwt, p.instance)
     
     // Set the site store to the data returned from the getSite() call in userFromJwt
-    
-
     if (user?.user && user?.site) {
-        
-        site.set(user.site)
+        let siteData = user.site
+        if (siteData.my_user) delete siteData.my_user
+        site.set(siteData)
         
         // Update the profile store with the retrieved data
         profile.update(() => ({
@@ -205,19 +207,19 @@ export async function setUser(jwt: string, inst: string): Promise<UserFromJWTRes
 
 async function userFromJwt(jwt: string, inst: string): Promise<{ user: PersonData; site: GetSiteResponse } | undefined> {
     try {
-        const getSite = await getClient(inst, jwt).getSite()
-        const myUser = getSite.my_user
-        
-        if (!myUser) return undefined
+        const {my_user, ...siteData} = await getClient(inst, jwt).getSite()
+        site.set(siteData)
+
+        if (!my_user) return undefined
     
         return {
             user: {
                 unreads: 0,
                 reports: 0,
                 registration_applications:0,
-                ...myUser,
+                ...my_user,
             },
-            site: getSite,
+            site: siteData,
         }
     } 
     catch (err) {
@@ -246,6 +248,7 @@ export function resetProfile() {
     profile.set(getDefaultProfile())
     profileData.update((p) => ({ ...p, profile: -1 }))
     getClient().getSite().then((guestSiteInfo) => {
+        if (guestSiteInfo.my_user) delete guestSiteInfo.my_user
         site.set(guestSiteInfo)
     })
 }
@@ -268,7 +271,7 @@ export async function setGuestInstance(instance:string) {
              defaultInstance: instance
         }
     ))
-
+    if (guestSiteInfo?.my_user) delete guestSiteInfo.my_user
     site.set(guestSiteInfo)
 }
 
@@ -341,7 +344,7 @@ export async function setUserID(id: number, userDetails?:UserFromJWTResponse) {
         // Set instance so the JS client will send the auth header
         instance.set(prof.instance.toLowerCase())
         
-        if (get(userSettings)?.debugInfo) console.log("Calling userFromJWT from setUserID")
+        if (get(userSettings)?.debugInfo) console.log("auth.ts: Calling userFromJWT from setUserID")
         const user = userDetails ?? await userFromJwt(prof.jwt, prof.instance)
 
         // If the given JWT doesn't resolve to a user (expired/invalid), throw a toast message and redirect to login
@@ -356,7 +359,11 @@ export async function setUserID(id: number, userDetails?:UserFromJWTResponse) {
         }
 
         // Set the site and current user details from the API
-        site.set(user?.site)
+        if (user?.site) {
+            let siteData = user.site
+            if (siteData.my_user) delete siteData.my_user
+            site.set(siteData)
+        }
         prof.user = user?.user
     }
     // Update the profile store (in memory only) with the data pulled from the API
