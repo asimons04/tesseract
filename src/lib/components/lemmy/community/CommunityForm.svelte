@@ -1,36 +1,32 @@
 <script lang="ts">
-    import type { UploadImageResponse } from 'lemmy-js-client';
+    import type { CommunityView, SubscribedType, UploadImageResponse } from 'lemmy-js-client';
     
     import { addSubscription } from '$lib/lemmy/user.js'
+    import { createFakeCommunityView } from '../post/helpers'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
-    import { imageProxyURL } from '$lib/image-proxy';
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-    import Avatar from '$lib/components/ui/Avatar.svelte';
+    
     import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte';
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte';
+    import CommunityCardSmall from './CommunityCardSmall.svelte';
+    
     import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte';
     import ImageUploadModal from '../modal/ImageUploadModal.svelte'
     import TextInput from '$lib/components/input/TextInput.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte';
+    
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
   
     import {
-        Calendar,
-        ChatBubbleOvalLeftEllipsis,
         ExclamationTriangle, 
         HandRaised,
-        Icon,
-        PencilSquare,
-        UserGroup
     } from 'svelte-hero-icons'
+    
     
     /** The community ID to edit. */
     export let edit: number | undefined = undefined
@@ -122,7 +118,7 @@
         formData.submitting = false
     }
 
-    let currentIcon = formData.icon
+    let currentIcon =   formData.icon
     let currentBanner = formData.banner
     
     let iconUpload: UploadImageResponse | undefined = undefined
@@ -135,11 +131,27 @@
         icon: false,
         banner: false
     }
+
+    let communityPreview:CommunityView
+    $:  formData, communityPreview = generateCommunityPreview()
+    
+    function generateCommunityPreview(): CommunityView {
+        const result = createFakeCommunityView()
+        result.community.banner =   formData.banner
+        result.community.icon =     formData.icon
+        result.community.name =     formData.name
+        result.community.title =    formData.displayName
+        result.community.actor_id = $page.params.name && $page.params.name.includes('@')
+            ? `https://${$page.params.name.split('@')[1]}/c/${formData.name}`
+            : `https://${$instance}/c/${formData.name}`
+        
+        return result
+    }
 </script>
 
 {#if uploading.icon}
     <ImageUploadModal bind:open={uploading.icon} purpose="Community Icon" useAltText={false} on:upload={(e) => {
-        if(e.detail?.url) {
+        if (e.detail?.url) {
             iconUpload = e.detail
             formData.icon = e.detail.url
             uploading.icon = false
@@ -149,7 +161,7 @@
 
 {#if uploading.banner}
     <ImageUploadModal bind:open={uploading.banner} purpose="Community Banner" useAltText={false} on:upload={(e) => {
-        if(e.detail?.url) {
+        if (e.detail?.url) {
             bannerUpload = e.detail
             formData.banner = e.detail.url
             uploading.banner = false
@@ -187,65 +199,8 @@
     <span class="flex flex-col lg:flex-row gap-4 items-start">
         
         <!---Community Card Live Preview--->
-        <div class="w-full lg:w-2/3">
-            
-            <Card backgroundImage={imageProxyURL(formData.banner, undefined, 'webp')}>
-                <div class="flex flex-col gap-2 h-full">
-                    
-                    <!--- Commuinity Avatar, display name, and federation name--->
-                    <div class="flex flex-row gap-3 items-start p-3">
-                        <div class="flex-shrink-0">
-                            <Avatar width={64} bind:url={formData.icon} alt={formData.name ?? 'Untitled'} community={true}/>
-                        </div>
-
-                        <div class="flex flex-col gap-0 w-full">
-                            <div class="flex flex-row">
-                                <h1 class="font-bold text-xl">
-                                        {formData.displayName.replace('&amp;', '&') ?? formData.name}
-                                </h1>
-                            </div>
-                                
-                            <span class="dark:text-zinc-400 text-slate-600 text-xs">
-                                !{formData.name}@{
-                                    $page.params.name && $page.params.name.includes('@')
-                                        ? $page.params.name.split('@')[1]
-                                        : $instance
-                                }
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-auto"/>
-
-                    <!-- Community subscribers, counts. Random numbers are used since the real ones aren't available --->
-                    <div class="flex flex-row p-3 mx-auto">
-                        <div class="text-sm flex flex-row flex-wrap gap-8 mx-auto">
-                            <span class="flex flex-row items-center gap-2" title="Created">
-                                <Icon src={Calendar} width={16} height={16} mini />
-                                <RelativeDate date={new Date().toISOString()} />
-                            </span>
-
-                            <span class="flex flex-row items-center gap-2" title="Subscribers">
-                                <Icon src={UserGroup} width={16} height={16} mini />
-                                <FormattedNumber number={Math.round(Math.random() * 10000)} />
-                            </span>
-
-                            <span class="flex flex-row items-center gap-2" title="Posts">
-                                <Icon src={PencilSquare} width={16} height={16} mini />
-                                <FormattedNumber number={Math.round(Math.random() * 10000)} />
-                            </span>
-
-                            <span class="flex flex-row items-center gap-2" title="Comments">
-                                <Icon src={ChatBubbleOvalLeftEllipsis} width={16} height={16} mini />
-                                <FormattedNumber number={Math.round(Math.random() * 10000)} />
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-            </Card>
-
-            <!--<FileInput label="Banner" bind:files={formData.banner} image preview previewURL={formData.currentBanner} class="w-full"/>-->
+        <div class="w-full lg:w-2/3 pointer-events-none">
+            <CommunityCardSmall community_view={communityPreview} />
         </div>
 
         <div class="flex flex-col gap-2 w-full lg:w-1/3">
