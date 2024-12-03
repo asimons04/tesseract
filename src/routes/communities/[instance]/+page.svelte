@@ -239,15 +239,15 @@
                 await search(true)
             }}
         >
-            <TextInput type="search" class="w-full" placeholder="Keyword" bind:value={searchParams.query}/>
+            <TextInput type="search" class="w-full" placeholder="Search Communities at {data.site.site_view.site.name}" bind:value={searchParams.query}/>
 
-            <Button icon={MagnifyingGlass} iconSize={28} submit color="tertiary-border">
+            <Button icon={MagnifyingGlass} iconSize={28} submit title="Search" color="tertiary-border">
                 <span class="hidden lg:flex">
                     Search
                 </span>
             </Button>
 
-            <Button icon={XCircle} iconSize={28} color="tertiary-border" on:click={() => {
+            <Button icon={XCircle} iconSize={28} color="tertiary-border" title="Reset Search" on:click={() => {
                 searchParams.instance = $profile?.instance
                 searchParams.query = ''
                 searchParams.page = 1
