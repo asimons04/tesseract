@@ -97,7 +97,7 @@
     <!---Instance Selector--->
     <SubnvarbarMenu alignment="bottom-left" icon={ServerStack} shiftLeft={2} slot="far-left">
 
-        <Card class="p-2 m-2 overflow-y-scroll max-h-[40vh]">
+        <Card class="p-2 m-2">
             <!---List of Instances to Choose From--->
             <li class="flex flex-row w-full text-left items-center justify-between text-xs font-bold px-4 py-1 my-1 opacity-80">
                 Select Instance
@@ -107,35 +107,37 @@
             
 
             <!--- List the featured instances provided by the admin--->
-            {#each INSTANCE_LIST as instance}
-                <MenuButton on:click={() => {
-                    searchParams.instance = instance.toLowerCase().replaceAll(' ', '') 
-                    searchParams.page = 1
-                    // Default to Local view when switching to browse a remote instance
-                    if (searchParams.instance != $profile?.instance) {
-                        searchParams.type = 'Local'
-                    }
-                    // If clicking to your own instance, show 'All'
-                    else {
-                        searchParams.type = 'All'
-                    }
-                    search()
-                }}>
-                    <Icon mini src={$homeInstance == instance ? Home : Server} width={24} />
-                    
-                    <span class="flex flex-row w-full text-left justify-between" class:font-bold={searchParams.instance == instance.toLowerCase()}>
-                        {instance}
+            <div class="flex flex-col w-full overflow-y-scroll max-h-[40vh]">
+                {#each INSTANCE_LIST as instance}
+                    <MenuButton on:click={() => {
+                        searchParams.instance = instance.toLowerCase().replaceAll(' ', '') 
+                        searchParams.page = 1
+                        // Default to Local view when switching to browse a remote instance
+                        if (searchParams.instance != $profile?.instance) {
+                            searchParams.type = 'Local'
+                        }
+                        // If clicking to your own instance, show 'All'
+                        else {
+                            searchParams.type = 'All'
+                        }
+                        search()
+                    }}>
+                        <Icon mini src={$homeInstance == instance ? Home : Server} width={24} />
                         
-                        <!---Show an indicator icon next to the selected option--->
-                        {#if searchParams.instance == instance.toLowerCase()}
-                        <span>    
-                            <Icon src={Check} mini width={12}/>
+                        <span class="flex flex-row w-full text-left justify-between" class:font-bold={searchParams.instance == instance.toLowerCase()}>
+                            {instance}
+                            
+                            <!---Show an indicator icon next to the selected option--->
+                            {#if searchParams.instance == instance.toLowerCase()}
+                            <span>    
+                                <Icon src={Check} mini width={12}/>
+                            </span>
+                            {/if}
+            
                         </span>
-                        {/if}
-        
-                    </span>
-                </MenuButton>
-            {/each}
+                    </MenuButton>
+                {/each}
+            </div>
         </Card>
         
         <!--- Manual Instance Input--->
