@@ -1,21 +1,35 @@
-import type { ListingType, SortType } from 'lemmy-js-client'
+import { StorageController } from '$lib/storage-controller'
 
-import { addMBFCResults, filterKeywords } from '$lib/components/lemmy/post/helpers'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
 import { profile } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
-import { userSettings } from '$lib/settings.js'
+import type { GetCommunityResponse } from 'lemmy-js-client'
+
+const storage = new StorageController({
+    type: 'session',
+    ttl: 15,
+    useCompression: true   
+})
+
 
 export async function load(req: any) {
-      
+    const storageKey = `getCommunity:${req.params.community_name}`
+
     try {
-       
-        return {
-            community: req.passedCommunity ?? await getClient().getCommunity({
+       let getCommunityResponse: GetCommunityResponse | undefined = await storage.get(storageKey)
+        
+       if (!getCommunityResponse) {
+            getCommunityResponse = await getClient().getCommunity({
                 name: req.params.community_name,
-            }),
+            })
+
+            storage.put(storageKey, getCommunityResponse)
+        }
+
+        return {
+            community: getCommunityResponse,
         }
     }
     

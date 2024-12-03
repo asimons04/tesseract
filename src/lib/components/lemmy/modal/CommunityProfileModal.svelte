@@ -11,6 +11,8 @@
         subscribe 
     } from '$lib/components/lemmy/community/helpers'
     
+    import { StorageController } from '$lib/storage-controller'
+
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { expoIn } from "svelte/easing"
@@ -60,6 +62,11 @@
     export let community: Community | undefined
     export let open: boolean = false
     
+    const storage = new StorageController({
+        type: 'session',
+        ttl: 15,
+        useCompression: true   
+    })
     
     let loading = false
     let blocking = false
@@ -110,17 +117,25 @@
         
         communityDetailsOpen = false
         loading = true
-
+        const communityLookupName = `${community.name}@${new URL(community.actor_id).hostname}`
+        const storageKey = `getCommunity:${communityLookupName}`
+        
         try {
-            communityDetails = await getClient().getCommunity({
-                name: `${community.name}@${new URL(community.actor_id).hostname}`
-            })
+            communityDetails = await storage.get(storageKey)
+            if (!communityDetails) {    
+                
+                communityDetails = await getClient().getCommunity({
+                    name: communityLookupName
+                })
+
+                await storage.put(storageKey, communityDetails)
+            }
         }
         catch {
             try {
                 // Only resolve if logged in
                 if ($profile?.user) {
-                    let resolve = await getClient().resolveObject({
+                    await getClient().resolveObject({
                         q: `!${community.name}@${new URL(community.actor_id).hostname}`
                     })
                 
