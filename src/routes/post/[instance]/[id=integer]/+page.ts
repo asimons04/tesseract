@@ -1,14 +1,13 @@
-import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { userSettings } from '$lib/settings.js'
-
 
 interface LoadParams {
     params: any,
     url: any,
     fetch?: any
 }
+
 export async function load({ params, url }: LoadParams) {
     try {
         const post = await getClient(params.instance.toLowerCase()).getPost({
