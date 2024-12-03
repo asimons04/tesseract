@@ -20,10 +20,13 @@
         switch (origin) {
             case 'top-right':
                 return 'bottom-[100%] right-0 origin-bottom-right'
+            
             case 'bottom-left':
                 return 'top-[100%] origin-top-left'
+            
             case 'top-left':
                 return 'bottom-[100%] left-0 origin-bottom-left'
+            
             case 'bottom-right':
                 return 'top-[100%] right-0 origin-top-right'
             
@@ -31,15 +34,11 @@
                 return 'bottom-[100%] -left-[50%] origin-bottom'
 
             case 'bottom-center':
-                return 'top-[100%] -left-[200%] origin-top'
+                return 'top-[100%] -left-[100%] origin-top'
 
-            case 'side-left':
-                return 'bottom-[-500%] right-[120%]'
-            case 'side-right':
-                return 'bottom-[-500%] right-[-120%]'
-            
             case "left":
                 return "bottom-[-160%] right-[75%]"
+            
             default:
                 return 'bottom-[100%] origin-top-left'
       }
@@ -62,10 +61,7 @@
   />
   
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="overflow-visible 
-    {absolute ? 'absolute' : 'relative'}
-    cursor-auto {clazz} {itemsClass}
-    "
+<div class="overflow-visible  {absolute ? 'absolute' : 'relative'} cursor-auto {clazz} {itemsClass}"
     bind:this={element}
     tabindex="-1"
 >
