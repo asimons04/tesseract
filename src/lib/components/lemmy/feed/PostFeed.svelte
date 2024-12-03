@@ -118,7 +118,7 @@
 
 
                 // If this is an initial load and there is snapshot data, return early and don't fetch anything from the API yet.
-                if ( opts?.loadSnapshot && !this.refreshing && await this.loadSnapshot()) {
+                if ( opts?.loadSnapshot &&  await this.loadSnapshot()) {
                     if (debugMode) console.log(moduleName, ": Initial load from snapshot. Not loading from API until requested")
 
                     $userSettings.uiState.infiniteScroll
@@ -355,7 +355,7 @@
         },
 
         set community_id(id:number|undefined) {
-            if (debugMode) console.log("Setting community_name from:", community_id, " to ", id)
+            if (debugMode) console.log(moduleName, ": Setting community_id from:", community_id, " to ", id)
             community_name = undefined
             community_id = id
             this.refreshing = true
@@ -368,7 +368,7 @@
         },
 
         set community_name(name:string|undefined) {
-            if (debugMode) console.log("Setting community_name from:", community_name, " to ", name)
+            if (debugMode) console.log(moduleName, ": Setting community_name from:", community_name, " to ", name)
             community_id = undefined
             community_name = name
             this.refreshing = true
@@ -419,7 +419,7 @@
         },
 
         set show_hidden(val:boolean) {
-            if (debugMode) console.log("Setting show hidden to:", val)
+            if (debugMode) console.log(moduleName, ": Setting show hidden to:", val)
             show_hidden = val
             this.refreshing = true
             this.reset(true)
@@ -431,7 +431,7 @@
         },
 
         set show_nsfw(val:boolean) {
-            if (debugMode) console.log("Setting show NSFW to:", val)
+            if (debugMode) console.log(moduleName, ": Setting show NSFW to:", val)
             show_nsfw = val
             this.refreshing = true
             this.reset(true)
@@ -443,7 +443,7 @@
         },
 
         set show_read(val:boolean) {
-            if (debugMode) console.log("Setting show read to:", val)
+            if (debugMode) console.log(moduleName, ": Setting show read to:", val)
             show_read = val
             this.refreshing = true
             this.reset(true)
@@ -455,7 +455,7 @@
         },
 
         set sort(sortType:SortType) {
-            if (debugMode) console.log("Setting sort type:", sort, " to ", sortType)
+            if (debugMode) console.log(moduleName, ": Setting sort type:", sort, " to ", sortType)
             sort = sortType
             this.refreshing = true
             
@@ -469,7 +469,7 @@
         },
 
         set type(t:ListingType) {
-            if (debugMode) console.log("Setting listing type:", type, " to ", t)
+            if (debugMode) console.log(moduleName, ": Setting listing type:", type, " to ", t)
 
             type = t
             this.refreshing = true
