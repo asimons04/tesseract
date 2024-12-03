@@ -266,8 +266,8 @@
 
         get storageKey() {
             return `snapshot_userfeed_${$instance}_` + (JSON.stringify({
-                person_id,
-                person_name,
+                person_id: old.person_id,
+                person_name: old.person_name,
             }))
         },
 
@@ -301,7 +301,7 @@
         },
 
         set person_id(id:number|undefined) {
-            if (!loading && id != old.person_id) {
+            if (!loading && id && id != old.person_id) {
                 if (debugMode) console.log(moduleName, ": Person id changed.", old.person_id, id)
                 old.person_id = id
                 this.refresh()
@@ -313,7 +313,7 @@
         },
 
         set person_name(name:string|undefined) {
-            if (!loading && name != old.person_name) {
+            if (!loading && name && name != old.person_name) {
                 if (debugMode) console.log(moduleName, ": Person name changed.", old.person_name, name)
                 old.person_name = name
                 this.refresh()
