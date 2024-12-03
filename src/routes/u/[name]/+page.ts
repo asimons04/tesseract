@@ -31,7 +31,7 @@ export async function load({ params, url }: LoadParams) {
         
         // If site data for that instance isn't already cached, fetch it and cache it.
         if (!siteData) {
-            siteData = await getClient().getSite()
+            siteData = await getClient(instance).getSite()
             
             // Don't store the user's profile data in case this is the local instance
             if (siteData?.my_user) delete siteData.my_user
@@ -43,7 +43,8 @@ export async function load({ params, url }: LoadParams) {
     }
     
     // If any issue, just use the site data for the home instance
-    catch {
+    catch (err) {
+        console.log(err)
         siteData = get(site) ?? await getClient().getSite()
     }
 
