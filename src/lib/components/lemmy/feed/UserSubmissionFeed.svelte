@@ -28,7 +28,7 @@
     import SiteSearch from "$lib/components/ui/subnavbar/SiteSearch.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArrowLeft, ArrowPath, Icon, MagnifyingGlass, PencilSquare } from "svelte-hero-icons";
+    import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, Icon, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons";
     import TextInput from "$lib/components/input/TextInput.svelte";
     
     export let person_id: number | undefined = undefined
@@ -384,6 +384,8 @@
     <div class="flex flex-row w-full items-center justify-between" transition:fade>
         <!---Sort--->
         <MultiSelect 
+            label="Sort"
+            icon={BarsArrowDown}
             options={['New', 'TopAll', 'Old']} 
             optionNames={['New', 'Top', 'Old']}
             selected={sort}
@@ -404,6 +406,8 @@
 
         <!---Item Type--->
         <MultiSelect
+            label="Submission Type"
+            icon={Bars3}
             options={['all', 'posts', 'comments']}
             optionNames={['All', 'Posts', 'Comments']}
             selected={type}
@@ -434,7 +438,13 @@
             }}
         >    
             <TextInput type="search" name="search_input" placeholder="Search {user.person_view.person.display_name ?? user.person_view.person.name}" bind:value={searchTerm} class="w-full"/>
-            <Button icon={MagnifyingGlass} iconSize={24} color="tertiary" submit />
+            <Button icon={MagnifyingGlass} iconSize={24} color="tertiary-border" title="Search" submit />
+            <Button icon={XCircle} iconSize={24} color="tertiary-border" title="Reset" disabled={panel == 'submissions'} on:click={() => {
+                last_item = -1
+                page = 1
+                searchTerm = ''
+                searchResults = []
+            }}/>
         </form>
     {/if}
     
