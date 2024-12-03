@@ -110,24 +110,26 @@
                 <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noHashtags/>
             </a> 
             
-            <!---Indicator Badges--->
-            {#if comment.post.removed}
-                <Badge label="Removed" color="red">
-                    <Icon src={NoSymbol} mini size="14" />
-                </Badge>
-            {/if}
+            <div class="flex flex-row gap-1 items-center">
+                <!---Indicator Badges--->
+                {#if comment.post.removed}
+                    <Badge label="Removed" color="red" click={false}>
+                        <Icon src={NoSymbol} mini size="14" />
+                    </Badge>
+                {/if}
 
-            {#if comment.post.locked}
-                <Badge label="Locked" color="yellow">
-                    <Icon src={LockClosed} mini size="14" />
-                </Badge>
-            {/if}
+                {#if comment.post.locked}
+                    <Badge label="Locked" color="yellow" click={false}>
+                        <Icon src={LockClosed} mini size="14" />
+                    </Badge>
+                {/if}
 
-            {#if comment.post.deleted}
-                <Badge label="Deleted" color="red">
-                    <Icon src={Trash} mini size="14" />
-                </Badge>
-            {/if}
+                {#if comment.post.deleted}
+                    <Badge label="Deleted" color="red" click={false}>
+                        <Icon src={Trash} mini size="14" />
+                    </Badge>
+                {/if}
+            </div>
 
             
         </div>
