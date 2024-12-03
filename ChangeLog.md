@@ -63,28 +63,19 @@ snapshot {
     size: number        //  Length, in bytes, of the uncompressed data
 }
 ```
--Move the logic to check if the snapshot is expired to the storage controller
-    - `isExpired(maxAge:number = $userSettings.maxSnapshotAge)`
-- 
 
 
-#### Features
+#### Features (to do)
 Add filter option for domains
 - Include presets (Reddit, Facebook, Twitter) 
 
-#### UI Tweaks
-- Re-add the offset on embed description pulldown and compact image body text pulldown
-- Replace user profile feeds with the one from the modal component
-    - Don't do infinite scroll, just manual
-- Incorporate some kind of window of only the last X number of posts in the feed
-    - Reverse infinite scroll?
-- Add "copy" button to copy a user/community in the @user@instance and !community@instance formats
-
-
+## 1.4.21
 
 ### Bugfixes
 - Added missing padding on placeholder initials if there is no site logo
 - If replying to a post/comment removal via a comment reply, send the reply *before* removing the item otherwise the reply will fail. (when I wrote that in the 0.18.x days, you could reply to removed comments and I just never used that feature since the behavior changed in 0.19.x)
+- When switching instances or loading the site info for another instance into the site sidebar, the taglines would sometimes get stuck on the previous instance's values.
+
 
 #### Bugfixes for Image Loading and Image Proxy
 For efficiency, Tesseract tries to request `webp` versions of non-animated images at sizes appropriate for their use.  e.g. 128px for icons, 256 for thumbnail images, etc.   Usually this works, but sometimes remote pict-rs gets all pissy about it.  Before, this would cause the image to fail to load until opening it with the Zoom which requested the raw image URL.  Now, I've added error handlers for images to fallback automatically/gracefully.
@@ -99,85 +90,112 @@ The step to unproxy Lemmy's stupid federated proxy URLs has been moved from indi
 
 Did I mention how stupid it is that Lemmy federates the proxied URL for images instead of just returning that via the API to that instance's users? If I haven't, then let me say it's *fucking stupid*.
 
-
-
-### Minor Changes
-#### New `/site` Route
-A new route has been added `/site` which will display the site information (the stuff that usually shows in the sidebar on the main page).  This should make viewing the site rules and such easier.  
-
-To view the site info, click the site name in the banner.
-
-
-
-### Major Changes
-#### Complete Post Feed Rewrite
-Why?   That's a question I asked myself multiple times while I was doing this.  xD
-
-The problem was that the feed was mostly spaghetti code made of the original Photon code plus all the new stuff I've bolted on.  It was crazy complex to make it do all I wanted to do and getting worse every update.  
-
-That alone was enough to merit rebuilding it, but the other problem was that the main feed and the community feeds were separate codebases.  While similar, they differed due to various quirks.
-
-There were more issues under the hood, but they "mostly worked" and any issues were masked by various UX tricks (the programming equivalent of pulling the sofa over a coffee stain on the rug).
-
-I also need to port Tesseract to either Svelte 5 now that it's out or to React (haven't decided yet).  Either way, cleaning up the codebase and getting rid of redundancies is going to make that job easier.
-
-The result?
-
-A new feed component which can be plugged in anywhere (modals, community page, main feed page, etc) and has all of the logic encapsulated into it.  It exposes a controller interface allowing the page or component it's embedded in to manage all of its properties and state.
-
-**Notable UX Improvements to the Feed**
-- Manual pagination is now bi-directional.  You can page back and forward without having to use the browser's back button
-- The main feed and each community now remember your scroll position independently.
-- Refreshing the browser will now trigger a fresh pull from the API (I have no idea why Svelte(kit) makes it so difficult to detect if a page has had "invalidate" called, but it does)
-- Browsing a community feed from the community profile modal and clicking the button in the modal to go to the community will keep your place in the community feed.
-
-**Additional Options in the Feed**
-- Can now select "liked only" or "disliked only" to filter to posts you've upvoted/downvoted, respectively
-- Can select "saved only" from the main feed which will show you all of your saved posts (similar to the "Saved" section in the profile)
-    - Can combine with "liked only" and "disliked only"
-
-- Selecting "Liked Only", "Disliked Only", and/or "Saved only" from a community page will show only posts you've liked/disliked/saved in that community.
-- Can toggle "Show NSFW", "Show Hidden", and/or "Show Read" from the main feed and from community pages. (This temporarily overrides whatever's in your profile settings)
-    - "Show Hidden" requires at least 0.19.4 API
-    - "Show Read" and "Show NSFW" require at least 0.19.6 API level
-    - On unsupported APIs, these settings are hidden in the UI and ignored 
-    
-
-#### Snapshot Subsystem Rewrite
-
-The snapshot subsystem that kept your feed position has been enhanced greatly.
-
-1) Snapshot data is now gzip compressed before being saved to session storage.  
-
-Since the entire API responses are being cached (with all the community info, etc), they quickly grow beyond the 5 MB limit for session and local storage key/value pairs.  (Yes, IndexDB is better, but I'm not quite ready to add that yet).  In testing, compression of the API responses is yielding roughly 80-85% reduction.  Which makes sense as much of the API data is redundant and can compress very well (e.g. two posts in the same community will both have the full community details including the sidebar info etc).  
-
-2) Snapshots now have expirations.  Before, they were there until you manually hit the UI refresh button or closed the tab and the browser discarded the session. 
-
-3)  Each community now remembers your last view settings, viewed post, and scroll state independently.  
-
-Now you can click around through communities and not lose your place in any of them.  The old version would always return you to the start of the feed when switching between communities and was only really used to bring you back from a post to your last spot in the feed.  Now you can go to and fro and get back to where you were (unless the snapshot expires; probably one more reason to make the expiry configurable).
-
-4)  Refreshing the browser will now trigger a reload of the feed (and discard any old snapshot for it)
-
-This is the most visible enhancement.  Before, you needed to either load a new tab or manually hit the UI's refresh button.  SvelteKit was *not* cooperative with reliably letting the app know it was a fresh load in order to handle that automatically.
-
-Now, when you click "Home" (from a community, post, or anywhere but the main feed), you will return to your previous scroll position.  You can manually click "refresh" in the UI to get the new feed, or you can just refresh the page (which is the most intuitive).  The latter behavior 
-
-
-* Snapshots currently have a 15 minute validity window.  I'm still fine-tuning this, and may make it configurable if I can't find a universal sane value.
-
-
-#### New Inbox
-Completely re-wrote the Inbox.
+---
 
 ### New Features
+
+#### Initial Support for 0.19.4+ API Functions
+Tesseract is still designed for 0.19.3 as its baseline.  However, I updated the JS client to the latest one for 0.19.7 since it's backwards compatible.  While I don't have all the newer features built-in yet, I do have some that become available when the API level supports it. This also means I can start working on new user-facing features for the later API versions.  The mod/admin features will have to wait until my instance is updated so I can be able to test those.
 
 #### Preview Community and User Feeds in Modals
 You can now view a user's or a community's feeds in their respective modals when clicking a user or community link.
 
-The preview has also been added to the moderation modal.  However, in the moderation modal, it limits the feed to just the user and community relevant to the item that initiated the mod modal.  e.g.  if you click the mod button for a post/comment in the FoodPorn community by user  Bob, the only submissions that will be shown are Bob's submissions to FoodPorn.  This should help with taking mod actions as you can check for patterns of rule-violating behavior without having to leave the mod tool.
+The preview has also been added to the moderation modal.  However, in the moderation modal, it limits the feed to just the user and community relevant to the item that initiated the mod modal.  e.g.  if you click the mod button for a post/comment in the FoodPorn community by user  Bob, the only submissions that will be shown are Bob's submissions to FoodPorn.  This should help with performing mod actions as you can check for patterns of rule-violating behavior without having to leave the mod tool.
 
 Another use case is previewing new communities when you click on a pill-button link.  e.g.  if someone comments about a cool community and uses the `!community@instance.xyz` format (as they should), you can click on it which will resolve it automatically.  From there, you can click "Browse Community..." to see what kinds of posts it has before commiting to subscribing (okay, that's a very tiny commitment, lol, but you get my point).
+
+
+#### New Feed Capabilities
+The feeds were re-written as components to be more modular and consistent.  Mostly, if I did my job right, you won't think I did anything at all.  That said, they do have a few new tricks:
+
+- Feed filter options for "Show Only [Liked | Disliked | Saved] Posts".  
+- Feed filter options for "Show Hidden", "Show NSFW", and "Show Read Posts". Requires 0.19.4+ for show hidden and 0.19.6+ for "Show NSFW" and "Show Read"
+    - Those options will be hidden if the instance is below the required API version.
+- Can hide/unhide posts; accessible from the post action menu (three dots, top-right).  Requires 0.19.4+.
+- Better state preservation. The snapshot subsystem has been overhauled, and the data is now compressed before being stored into session storage
+- Refreshing the browser will now clear the snapshot for the current feed and re-fetch from the API. i.e. refreshing the app/page will pull the data from the API as expected instead of reloading a stale cache / requiring to manually press the app's refresh button.
+- Manual pagination is now bi-directional.  You can page back without having to use the browser's 'back' button.
+- Switching between communities will remember your position and sort options in each (until the snapshot expires. Currently 15 minutes)
+
+
+### UI Tweaks
+- Clicking a community link to bring up the modal will now allow you to browse the community from within the modal (nice for previewing communities)
+- Clicking the `@username@instance.xyz` in the user profile modals will copy the username to the clipboard
+- New vote buttons
+- Redesigned comment count button on posts in feed; now shows unread count
+- Redesigned crosspost container
+- Moved thumbnail image to the left on link previews
+- Moved 'debug' button into post/comment action menus (removed dedicated button)
+- Instance names in the site cards are now clickable. Eventually they will open an instance modal with nice options (similar to user and community modals), but for now, it just goes to `/site/{instance}` to view the instance details in a nice page (rather than a cramped sidebar).
+- Clicking "Home" in the sidebar will take you back to your previous scroll position.
+
+---
+
+### Removed Features :(
+
+#### Browsing Favorites / Groups as a Feed
+This capability was always experimental.  The initial implementation wasn't great, but it worked well enough, and I had a plan to improve it.  Unfortunately, before I could put that into motion, the Lemmy devs, in their infinite "knows better than everyone else" wisdom, removed the post ranking metrics from the API.  This meant I could no longer do any kind of sorting beyond score and date.  
+
+So, since then (0.19.0 or thereabouts), the custom feeds feature has remained in place, cripped, and begging for death.  In 1.4.21, I finally decided to put it out of its misery.
+
+I do have a plan to resurrect the feature, but it's going to require backend support.  I have a partial Tesseract API server, but I've not worked on it in a good while.  Even still, if I do dust that off and go that route, custom feeds will only work for the "default" instance Tesseract is deployed to and only if the admin runs the API service for it.  Not sure how practical that will be, but since it's something I would want to offer on my own instance, I may still work toward it, though at a low priority.
+
+#### Option to Disable Automatic Timestamp Updates
+I changed the way the timestamps on posts/comments, etc update.  Prior to this release, each had its own `setInterval` in the component and operated independently. In this release, I introduced a system timer that dispatches events at an interval.  The date components now simply listen for this event and recalculate. With this change, the option to disable them doesn't really provide any benefit.  
+
+
+---
+
+### Changes and Enhancements
+
+#### Community Explorer
+- Moved listing type, sort options, and keyword search out of sub-navbar and into the "feed" area.
+- State is now maintained in the URL, so paging back and forward will keep the state correctly (it didn't maintain any state previously)
+- Calls to local and remote `getSite` are cached in session storage to reduce bandwidth (used to populate the site sidebar)
+- Tweaked the 'subscribe' buttons
+- Added a dedicated button to go directly to the `/c/{community}` page for each entry
+- Clicking the community name will open the community modal for additional options
+- The instance is now route based rather than URL param.  e.g.  `/communities/{instance}`
+- Your home instance now has a "home" icon in the instance dropdown
+
+#### User Profile Pages (including local profile)
+- Uses the new, component-based feed rather than the bespoke one used previously.
+- User banner, stats, "about" info, and moderates list is now above the feed rather than in the sidebar (except local profile; that's still to the side except on mobile)
+- Sidebar is now populated with the home instance details for the user (banner, icon, name, stats, admins, site description, legal, etc). Non-local profiles o nly.
+- Sidebar site info is now cached in the browser's session storage to reduce network traffic and load on remote servers
+- Better state preservation when navigating in/out.  Right now, the snapshot validity is 5 minutes for user profiles versus 15 minutes for the main feed and communities. 
+- Integrated search. No longer just a shortcut to the `/search` page with the user pre-set.  
+- The sort options and type (posts/comment/all) menus have been moved from the sub-navbar to above the feed.
+- Added card background to section menu	of local profile
+- Lots of under the hood changes, none should be visible except what's listed :)
+
+#### New Inbox
+- Looks/behaves much more like an email inbox
+- Inbox items are collapsed into accordions. Open to view the message.
+- Configurable default inbox: can be "all " or "unread".  Setting is in Settings->General->Default Inbox
+- Collapsible side menu to switch between message types, all, and unread. Also has convenience pagination buttons. The "mark all as read" button has also been moved here.
+- Removed the dropdown menus from the sub-navbar; those are now in the collapsible side menu
+- The envelope icon to the left of the message container is the "mark as read/unread" button.
+
+
+#### New Moderation/Reports Manager
+- Removed the custom buttons from the sub-navbar. Filters are now in its sidebar.
+- Now uses the same layout as the inbox
+- Has a sidebar for switching between unread/all and filtering by community.  Also includes pagination.
+- The check button to the left of the collapsible report is the resolve/unresolve button.  Green check = resolved, white check is unresolved.
+- Unread reports are bolded
+- Can filter reports by community
+- Removed the moderation action form since it's a brute to maintain and has received mixed reviews from users.
+- Each item has a few quick action buttons for mod tasks. Use the "All Mod Actions..." button to bring up the moderation modal to access all options.
+- Looks less awful on mobile :)
+
+
+### Known Quirks
+- Switching accounts will reload the feed before any of your blocks and filters are applied.  To work around, refresh the feed or the browser after switching accounts.  I'm trying to find a graceful way to handle this.
+
+- Changing any of the infinite scroll options (or switching between infinite and manual pagination) requires any existing feed snapshots to be cleared.  If you switch options from the quick settings menu, it will automatically refresh the browser as a workaround hack.  If you switch them from the main settings page, you'll need to manually refresh the feed or the browser to clear them.  Again, I have a way to deal with this, but I'm not certain it's the most graceful (though it's more graceful than force-refreshing the browser lol).
+
+
 
 
 
