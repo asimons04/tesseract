@@ -11,7 +11,9 @@ import type {
     SortType, 
     CommentReplyView, 
     PersonMentionView, 
-    LocalUserView 
+    LocalUserView, 
+    CommunityView,
+    SubscribedType
 } from 'lemmy-js-client'
 
 import type { MBFCReport } from '$lib/MBFC/types'
@@ -916,6 +918,28 @@ export function createFakeCommunity(): Community {
         title: 'Dummy',
         visibility: 'Public'
     }
+}
+
+export function createFakeCommunityView(): CommunityView {
+    const result = {
+        community: createFakeCommunity(),
+        subscribed: 'Subscribed' as SubscribedType,
+        blocked: false,
+        banned_from_community: false,
+        counts: {
+            community_id:-1, 
+            subscribers: 1500,
+            posts: 750,
+            comments: 2500,
+            published: new Date().toISOString(),
+            users_active_day: 42,
+            users_active_week: 84,
+            users_active_month: 128,
+            users_active_half_year: 420,
+            subscribers_local: 750
+        }
+    }
+    return result
 }
 
 export function createFakePerson(): Person {
