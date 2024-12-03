@@ -1,5 +1,7 @@
 <script lang="ts">
     import { FEATURED_INSTANCES } from '$lib/settings'
+    import { goto } from '$app/navigation';
+    import { hrColors } from '$lib/ui/colors';
     import { instance as homeInstance} from '$lib/instance'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
@@ -13,11 +15,11 @@
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
-    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
+    import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import SubnvarbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
+    import SubnavbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     import {
@@ -35,13 +37,6 @@
         XCircle,
     } from 'svelte-hero-icons'
     
-    import { load } from './+page'
-    import { goto } from '$app/navigation';
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte';
-    import { hrColors } from '$lib/ui/colors';
-    
-    
-
     export let data
     
     let searchParams = {
@@ -93,92 +88,8 @@
 
 <SubNavbar home back scrollButtons toggleCommunitySidebar
     refreshButton refreshPreventDefault on:navRefresh={() => search(true) }
->
-    <!---Instance Selector--->
-    <SubnvarbarMenu alignment="bottom-left" icon={ServerStack} shiftLeft={2} slot="far-left">
+/>
 
-        <Card class="p-2 m-2">
-            <!---List of Instances to Choose From--->
-            <li class="flex flex-row w-full text-left items-center justify-between text-xs font-bold px-4 py-1 my-1 opacity-80">
-                Select Instance
-                <Icon src={ServerStack} mini width={24}/>
-            </li>
-            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-            
-
-            <!--- List the featured instances provided by the admin--->
-            <div class="flex flex-col w-full overflow-y-scroll max-h-[40vh]">
-                {#each INSTANCE_LIST as instance}
-                    <MenuButton on:click={() => {
-                        searchParams.instance = instance.toLowerCase().replaceAll(' ', '') 
-                        searchParams.page = 1
-                        // Default to Local view when switching to browse a remote instance
-                        if (searchParams.instance != $profile?.instance) {
-                            searchParams.type = 'Local'
-                        }
-                        // If clicking to your own instance, show 'All'
-                        else {
-                            searchParams.type = 'All'
-                        }
-                        search()
-                    }}>
-                        <Icon mini src={$homeInstance == instance ? Home : Server} width={24} />
-                        
-                        <span class="flex flex-row w-full text-left justify-between" class:font-bold={searchParams.instance == instance.toLowerCase()}>
-                            {instance}
-                            
-                            <!---Show an indicator icon next to the selected option--->
-                            {#if searchParams.instance == instance.toLowerCase()}
-                            <span>    
-                                <Icon src={Check} mini width={12}/>
-                            </span>
-                            {/if}
-            
-                        </span>
-                    </MenuButton>
-                {/each}
-            </div>
-        </Card>
-        
-        <!--- Manual Instance Input--->
-        <Card class="p-2 m-2">
-            <!-- svelte-ignore a11y-click-events-have-key-events --> <!-- svelte-ignore a11y-no-noninteractive-element-interactions --> <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <div class="flex flex-col gap-1 w-full" on:click|stopPropagation>
-                <span class="font-bold text-xs text-left">Browse another instance:</span>
-                
-                <form class="flex flex-row gap-4 w-full justify-between"  on:submit={ async() => {
-                    if (!(INSTANCE_LIST.includes(customInstance))) {
-                        
-                        if (await validateInstance(customInstance)) {
-                            INSTANCE_LIST.push(customInstance)
-                            INSTANCE_LIST.sort()
-                            INSTANCE_LIST = INSTANCE_LIST
-                            searchParams.instance = customInstance
-                            searchParams.type = 'Local'
-                            customInstance = ''
-
-                            search(true)
-                        }
-                        else {
-                            toast({
-                                title: 'Invalid Instance',
-                                type: 'error',
-                                content: 'Unable to contact the provided instance. Please check the domain and try again.'
-                            })
-                        }
-                    }
-                }}>
-                    <TextInput bind:value={customInstance} placeholder={searchParams.instance} focus={false} class="w-full"/>
-                    
-                    <button class="flex flex-row gap-1 ml-auto" type="submit">
-                        <Icon mini src={ArrowRightOnRectangle} width={24} />
-                    </button>
-                </form>
-            </div>
-        </Card>
-    </SubnvarbarMenu>
-
-</SubNavbar>
 
 <MainContentArea>
     <span class="flex flex-row gap-4 items-center font-bold text-xl text-center mx-auto pl-3">
@@ -198,35 +109,109 @@
         <hr class={hrColors} />
 
         <div class="flex flex-row items-center w-full justify-between">
+            <!---Instance--->
+            <SubnavbarMenu alignment="bottom-left" icon={ServerStack} title="Instance" topHR={false} showTitleOnButton containerClass="mt-auto">
+
+                <Card class="p-2 m-2">
+                    <!--- List the featured instances provided by the admin--->
+                    <div class="flex flex-col w-full overflow-y-scroll max-h-[30vh]">
+                        {#each INSTANCE_LIST as instance}
+                            <MenuButton on:click={() => {
+                                searchParams.instance = instance.toLowerCase().replaceAll(' ', '') 
+                                searchParams.page = 1
+                                // Default to Local view when switching to browse a remote instance
+                                if (searchParams.instance != $profile?.instance) {
+                                    searchParams.type = 'Local'
+                                }
+                                // If clicking to your own instance, show 'All'
+                                else {
+                                    searchParams.type = 'All'
+                                }
+                                search()
+                            }}>
+                                <Icon mini src={$homeInstance == instance ? Home : Server} width={24} />
+                                
+                                <span class="flex flex-row w-full text-left justify-between" class:font-bold={searchParams.instance == instance.toLowerCase()}>
+                                    {instance}
+                                    
+                                    <!---Show an indicator icon next to the selected option--->
+                                    {#if searchParams.instance == instance.toLowerCase()}
+                                    <span>    
+                                        <Icon src={Check} mini width={12}/>
+                                    </span>
+                                    {/if}
+                    
+                                </span>
+                            </MenuButton>
+                        {/each}
+                    </div>
+                </Card>
+
+                <!--- Manual Instance Input--->
+                <div class="p-2 m-2">
+                    <!-- svelte-ignore a11y-click-events-have-key-events --> <!-- svelte-ignore a11y-no-noninteractive-element-interactions --> <!-- svelte-ignore a11y-no-static-element-interactions -->
+                    <div class="flex flex-col gap-1 w-full" on:click|stopPropagation>
+                        <span class="font-bold text-xs text-left">Browse another instance:</span>
+                        
+                        <form class="flex flex-row gap-4 w-full justify-between"  on:submit={ async() => {
+                            if (!(INSTANCE_LIST.includes(customInstance))) {
+                                
+                                if (await validateInstance(customInstance)) {
+                                    INSTANCE_LIST.push(customInstance)
+                                    INSTANCE_LIST.sort()
+                                    INSTANCE_LIST = INSTANCE_LIST
+                                    searchParams.instance = customInstance
+                                    searchParams.type = 'Local'
+                                    customInstance = ''
+
+                                    search(true)
+                                }
+                                else {
+                                    toast({
+                                        title: 'Invalid Instance',
+                                        type: 'error',
+                                        content: 'Unable to contact the provided instance. Please check the domain and try again.'
+                                    })
+                                }
+                            }
+                        }}>
+                            <TextInput bind:value={customInstance} placeholder={searchParams.instance} focus={false} class="w-full"/>
+                            
+                            <button class="flex flex-row gap-1 ml-auto" type="submit">
+                                <Icon mini src={ArrowRightOnRectangle} width={24} />
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </SubnavbarMenu>
+            
             <!---Listing Type--->
-            <MultiSelect
-                label="Listing Type"
+            <SelectMenu
+                title="Listing Type"    
                 icon={Bars3}
-                padding={false} small={true}
                 options={
                     data.instance == $homeInstance
                     ?  ['Subscribed', 'Local', 'All']
                     :  ['Local', 'All']
                 }
                 selected={searchParams.type}
-                items={0}
-                headless
+                alignment="bottom-center"
                 on:select={(e) => { 
                     searchParams.type = e.detail
                     searchParams.page = 1
                     search()
                 }}
             />
+            
 
-            <MultiSelect
-                label="Sort Direction"    
+            <SelectMenu
+                title="Sort Direction"
                 icon={ChartBar}
-                padding={false} small={true}
                 options={["asc", "desc", "posts_desc", "subscribers_desc"]}
                 optionNames={["A-Z", "Z-A", "Most Posts", "Most Subscribers"]}
                 selected={searchParams.sort}
-                items={0}
-                headless
+                alignment="bottom-right"                
+                
                 on:select={(e) => { 
                     searchParams.page = 1
                     searchParams.sort = e.detail
