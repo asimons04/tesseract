@@ -24,6 +24,7 @@
         UserGroup,
         ArrowTopRightOnSquare,
     } from 'svelte-hero-icons'
+    import { hrColors } from "$lib/ui/colors";
    
     
     export let community: CommunityView
@@ -41,76 +42,93 @@
 
 </script>
 
-<CollapseButton>
-    <Avatar width={48} alt={community.community.actor_id} url={community.community.icon ?? undefined} community={true} slot="icon"/>
-    
-    <div class="flex flex-row gap-2 items-center w-full justify-between" slot="title">
+<div class="flex flex-row gap-2 w-full items-start">
+    <CollapseButton bottomBorder={false} class="!my-0 w-full">
+        <Avatar width={48} alt={community.community.actor_id} url={community.community.icon ?? undefined} community={true} slot="icon"/>
         
-        <!--- Avatar + Community Name + !name@instance --->
-        <div class="flex flex-col gap-0 w-full" >
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span class="break-words  text-base font-bold text-sky-400 hover:underline" on:click|stopPropagation>
-                <CommunityLink showInstance={false} avatar={false} useDisplayNames community={community.community} />
-            </span>
+        <div class="flex flex-row gap-2 items-center w-full justify-between" slot="title">
             
-            <span class="flex flex-row flex-wrap opacity-80 text-xs">
-                <span>!{community.community.name}</span>
-                <span>@{new URL(community.community.actor_id).hostname}</span>
-            </span>
-
-            <!--- Icons/Counts Row --->
-            <div class="flex flex-row flex-wrap gap-3 mt-2 font-normal items-center">
+            <!--- Avatar + Community Name + !name@instance --->
+            <div class="flex flex-col gap-0 w-full" >
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <span class="break-words  text-base font-bold text-sky-400 hover:underline" on:click|stopPropagation>
+                    <CommunityLink showInstance={false} avatar={false} useDisplayNames community={community.community} />
+                </span>
                 
-                <!---Community Created Date (Relative) --->
-                <div class="flex flex-row gap-1 items-center">
-                    <Icon src={CalendarDays} width={16} mini/>
-                    <span>
-                        <RelativeDate date={community.community.published} />
+                <span class="flex flex-col gap-2 lg:flex-row lg:justify-between w-full">
+                    <span class="flex flex-row flex-wrap opacity-80 text-xs">
+                        <span>!{community.community.name}</span>
+                        <span>@{new URL(community.community.actor_id).hostname}</span>
                     </span>
-                </div>
 
-                <!--- Subscriber Count --->
-                <div class="flex flex-row gap-1 items-center">
-                    <Icon src={UserGroup} width={16} mini />
-                    <span>
-                        {Intl.NumberFormat('en', { notation: 'compact' }).format(community.counts.subscribers)}
+                    <!--- Icons/Counts Row --->
+                    <span class="flex flex-row flex-wrap gap-3 font-normal items-center">
+                        
+                        <!---Community Created Date (Relative) --->
+                        <div class="flex flex-row gap-1 items-center">
+                            <Icon src={CalendarDays} width={16} mini/>
+                            <span>
+                                <RelativeDate date={community.community.published} />
+                            </span>
+                        </div>
+
+                        <!--- Subscriber Count --->
+                        <div class="flex flex-row gap-1 items-center">
+                            <Icon src={UserGroup} width={16} mini />
+                            <span>
+                                {Intl.NumberFormat('en', { notation: 'compact' }).format(community.counts.subscribers)}
+                            </span>
+                        </div>
+
+                        <!---Post Count--->
+                        <div class="flex flex-row gap-1 items-center">
+                            <Icon src={PencilSquare} mini width={16} />
+                            <span>
+                                {Intl.NumberFormat('en', { notation: 'compact' }).format(community.counts.posts)}
+                            </span>
+                        </div>
+
+                        <!---Comment Count--->
+                        <div class="flex flex-row gap-1 items-center">
+                            <Icon src={ChatBubbleOvalLeftEllipsis} mini width={16} />
+                            <span>
+                                {Intl.NumberFormat('en', { notation: 'compact' }).format(community.counts.comments)}
+                            </span>
+                        </div>
+                        
+                        <!--- Posting Restricted to Mods Indicator--->
+                        {#if community.community.posting_restricted_to_mods}
+                            <div class="flex flex-row gap-1 items-center" title="Posting is Restricted to Mods Only">
+                                <Icon src={LockClosed} mini width={16} />
+                            </div>
+                        {/if}
+
+                        <!--- NSFW Indicator Badge --->
+                        {#if community.community.nsfw}
+                            <div class="flex flex-row gap-1 items-center">
+                                <Badge color="red">NSFW</Badge>
+                            </div>
+                        {/if}
+
                     </span>
-                </div>
-
-                <!---Post Count--->
-                <div class="flex flex-row gap-1 items-center">
-                    <Icon src={PencilSquare} mini width={16} />
-                    <span>
-                        {Intl.NumberFormat('en', { notation: 'compact' }).format(community.counts.posts)}
-                    </span>
-                </div>
-
-                <!---Comment Count--->
-                <div class="flex flex-row gap-1 items-center">
-                    <Icon src={ChatBubbleOvalLeftEllipsis} mini width={16} />
-                    <span>
-                        {Intl.NumberFormat('en', { notation: 'compact' }).format(community.counts.comments)}
-                    </span>
-                </div>
-                
-                <!--- Posting Restricted to Mods Indicator--->
-                {#if community.community.posting_restricted_to_mods}
-                    <div class="flex flex-row gap-1 items-center" title="Posting is Restricted to Mods Only">
-                        <Icon src={LockClosed} mini width={16} />
-                    </div>
-                {/if}
-
-                <!--- NSFW Indicator Badge --->
-                {#if community.community.nsfw}
-                    <div class="flex flex-row gap-1 items-center">
-                        <Badge color="red">NSFW</Badge>
-                    </div>
-                {/if}
-
+                </span>
             </div>
+            
+            
         </div>
         
+        <!---Collapsed Area--->    
+        <div class="flex flex-col gap-1 text-sm max-w-full">
+            
+            <!---Community Description--->
+            <div class="flex flex-col w-full">
+                <Markdown source={community.community.description ?? '*No community information was provided.*'}/>
+            </div>
+        </div>
+    </CollapseButton>
+    
+    <div class="flex flex-row items-start gap-4 mt-4">
         <div class="hidden lg:flex">
             <Button 
                 title="Go to Community"     
@@ -122,7 +140,6 @@
             />
         </div>
 
-        <!--- class="{['Subscribed', 'Pending'].includes(community.subscribed) ? '!bg-sky-500 dark:!bg-sky-700' : ''}" --->
         <Subscribe bind:community let:subscribe let:subscribing class="mr-4">
             <Button
                 disabled={subscribing || !$profile?.jwt}
@@ -152,14 +169,7 @@
             />
         </Subscribe>
     </div>
-    
-    <!---Collapsed Area--->    
-    <div class="flex flex-col gap-1 text-sm max-w-full">
-        
-        <!---Community Description--->
-        <div class="flex flex-col w-full">
-            <Markdown source={community.community.description ?? '*No community information was provided.*'}/>
-        </div>
-    </div>
-</CollapseButton>
+</div>
+
+<hr class="{hrColors}" />
 
