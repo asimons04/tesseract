@@ -356,10 +356,12 @@
 
         set community_id(id:number|undefined) {
             if (debugMode) console.log(moduleName, ": Setting community_id from:", community_id, " to ", id)
-            community_name = undefined
-            community_id = id
-            this.refreshing = true
-            this.reset(false).then(() => this.load({loadSnapshot: true, append:true}))
+            this.takeSnapshot().then(() => {
+                community_name = undefined
+                community_id = id
+                this.refreshing = true
+                this.reset(false).then(() => this.load({loadSnapshot: true, append:true}))
+            })
             
         },
 
@@ -369,11 +371,13 @@
 
         set community_name(name:string|undefined) {
             if (debugMode) console.log(moduleName, ": Setting community_name from:", community_name, " to ", name)
-            community_id = undefined
-            community_name = name
-            this.refreshing = true
-            this.reset(false)
-                .then(() => this.load({loadSnapshot: true, append:true}))
+            this.takeSnapshot().then(() => {
+                community_id = undefined
+                community_name = name
+                this.refreshing = true
+                this.reset(false)
+                    .then(() => this.load({loadSnapshot: true, append:true}))
+            })
             
         },
 
