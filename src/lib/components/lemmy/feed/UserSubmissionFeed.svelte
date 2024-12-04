@@ -53,7 +53,8 @@
     let user: GetPersonDetailsResponse | undefined
     let old = {
         person_id: person_id,
-        person_name: person_name
+        person_name: person_name,
+        community_id: community_id
     }
     let last_item: number | undefined
     let last_refreshed:number = Math.round(new Date().getTime() /1000)
@@ -269,6 +270,7 @@
             return `snapshot_userfeed_${$instance}_` + (JSON.stringify({
                 person_id: old.person_id,
                 person_name: old.person_name,
+                community_id: old.community_id
             }))
         },
 
