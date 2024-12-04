@@ -60,18 +60,16 @@
                             {#if user.person_view.person.bio}
                                 <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
                                     <Markdown source={user.person_view.person.bio} />
+
+                                    <!---List of Communities Moderated--->
+                                    {#if user.moderates?.length > 0}
+                                        <span class="text-sm font-bold">Moderates:</span>
+                                        {#each user.moderates as community}
+                                            <CommunityLink community={community.community} avatar class="p-1"/>
+                                        {/each}
+                                    {/if}
                                 </CollapseButton>
                             {/if}
-
-                            <!---List of Communities Moderated--->
-                            {#if user.moderates?.length > 0}
-                                <CollapseButton icon={ShieldCheck} title="Moderates">
-                                    {#each user.moderates as community, idx (community.community.id)}
-                                        <CommunityLink community={community.community} avatar />
-                                    {/each}
-                                </CollapseButton>
-                            {/if}
-
                         {/if}
                     </div>
 
