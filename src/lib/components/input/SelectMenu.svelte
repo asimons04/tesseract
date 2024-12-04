@@ -36,7 +36,7 @@
 </script>
 
 
-<Menu {alignment} {fullWidth} containerClass="!z-[30]" >
+<Menu {alignment} {fullWidth} containerClass="!z-[20]" >
     <button slot="button" let:toggleOpen on:click={toggleOpen} class="{fullWidth ? 'w-full' : 'w-max'} relative" title="{title}">
         
         <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer p-2
