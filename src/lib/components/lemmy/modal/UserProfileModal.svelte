@@ -43,7 +43,8 @@
     
     import Card from "$lib/components/ui/Card.svelte";
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
-    import UserSubmissionFeed from "./components/UserSubmissionFeed.svelte";
+    //import UserSubmissionFeed from "./components/UserSubmissionFeed.svelte";
+    import UserSubmissionFeed from '$lib/components/lemmy/feed/UserSubmissionFeed.svelte'
     import MultiSelect from "$lib/components/input/MultiSelect.svelte";
     
     
@@ -337,17 +338,11 @@
                         <span class="text-lg">
                             History
                         </span>
-
-                        <MultiSelect headless
-                            options={['all', 'posts', 'comments']}
-                            optionNames={['All', 'Posts', 'Comments']}
-                            bind:selected={submissionType}
-                        />
                     </div>
                 </div>
                 
                 <div class="flex flex-col w-full max-h-[70vh]">
-                    <UserSubmissionFeed person_id={personDetails.person_view.person.id}  bind:type={submissionType} />
+                    <UserSubmissionFeed person_name="{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}" />
                 </div>
             </div>    
         
