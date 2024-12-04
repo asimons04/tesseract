@@ -30,6 +30,7 @@
     
     import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, Icon, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons";
     import TextInput from "$lib/components/input/TextInput.svelte";
+    import SelectMenu from "$lib/components/input/SelectMenu.svelte";
     
     export let person_id: number | undefined = undefined
     export let person_name: string | undefined = undefined
@@ -360,8 +361,9 @@
     
     <slot name="banner" {user} />
     
+    <!---Last Refreshed Indicator and Refresh Button--->
     {#if page == 1 && panel == 'submissions'}
-        <div class="flex flex-row w-full items-end justify-between" transition:fade>
+        <div class="flex flex-row w-full items-end justify-between mb-1" transition:fade>
             <div class="flex flex-col gap-1 text-xs opacity-80">
                 <span>
                     Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
@@ -383,14 +385,13 @@
     <!---Sort, Type, and User Search Bars--->
     <div class="flex flex-row w-full items-center justify-between" transition:fade>
         <!---Sort--->
-        <MultiSelect 
-            label="Sort"
+        <SelectMenu 
+            title="Sort"
             icon={BarsArrowDown}
             options={['New', 'TopAll', 'Old']} 
             optionNames={['New', 'Top', 'Old']}
             selected={sort}
-            items={0}
-            headless
+            alignment="bottom-left"
             on:select={(e) => {
                 if (loading) return
                 if (debugMode) console.log(moduleName, ": Sort selected.", e.detail)
@@ -405,14 +406,13 @@
         />
 
         <!---Item Type--->
-        <MultiSelect
-            label="Submission Type"
+        <SelectMenu
+            title="Submission Type"
             icon={Bars3}
             options={['all', 'posts', 'comments']}
             optionNames={['All', 'Posts', 'Comments']}
             selected={type}
-            items={3}
-            class="ml-auto pr-2"
+            alignment="bottom-right"
             on:select={(e) => {
                 if (loading) return
                 if (debugMode) console.log(moduleName, ": Type selected.", e.detail)
@@ -439,14 +439,21 @@
         >    
             <TextInput type="search" name="search_input" placeholder="Search {user.person_view.person.display_name ?? user.person_view.person.name}" bind:value={searchTerm} class="w-full"/>
             <Button icon={MagnifyingGlass} iconSize={24} color="tertiary-border" title="Search" submit />
-            <Button icon={XCircle} iconSize={24} color="tertiary-border" title="Reset" disabled={panel == 'submissions'} on:click={() => {
-                last_item = -1
-                page = 1
-                searchTerm = ''
-                searchResults = []
-            }}/>
+            
+            {#if panel == 'search'}
+                <Button icon={XCircle} iconSize={24} color="tertiary-border" title="Reset" on:click={() => {
+                    last_item = -1
+                    page = 1
+                    searchTerm = ''
+                    searchResults = []
+                }}/>
+            {/if}
         </form>
     {/if}
+
+    
+
+    
     
     
     {#if loading}
