@@ -40,22 +40,21 @@
 
     <StickyCard class="{$$props.class}">
         <UserCardSmall person_view={person} blocked={userBlocked} href={false} admin={is_admin}/>
-
         
         <div class="hidden xl:block w-full overflow-y-auto">
-        <!---List of Communities Moderated--->
-        {#if moderates?.length > 0}
-            <CollapseButton icon={ShieldCheck} title="Moderates">
-                {#each moderates as community}
-                    <CommunityLink community={community.community} avatar class="p-1"/>
-                {/each}
-            </CollapseButton>
-        {/if}
         
         <!---Person Bio--->
         {#if person?.person?.bio}
             <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
                 <Markdown source={person.person.bio} />
+                
+                <!---List of Communities Moderated--->
+                {#if moderates?.length > 0}
+                    <span class="text-sm font-bold">Moderates:</span>
+                    {#each moderates as community}
+                        <CommunityLink community={community.community} avatar class="p-1"/>
+                    {/each}
+                {/if}
             </CollapseButton>
         {/if}
         </div>
