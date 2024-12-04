@@ -36,6 +36,7 @@
         ServerStack,
         XCircle,
     } from 'svelte-hero-icons'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     
     export let data
     
@@ -258,15 +259,11 @@
     {/if}
 
 
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col h-full gap-4">
         {#if data.communities.length == 0 && !searching}
-            <div class="text-slate-600 dark:text-zinc-400 flex flex-col justify-center items-center py-8">
-                <Icon src={QuestionMarkCircle} size="32" solid />
-                <h1 class="font-bold text-2xl">No communities</h1>
-                <p class="mt-2 text-center">
-                    There are no communities with that name. Try refining your search.
-                </p>
-            </div>
+            <Placeholder icon={QuestionMarkCircle} size="32" class="mx-auto"
+                title="No {data.page > 1 ? 'More' : ''} Communities"
+                description="No communities were returned from the query." />
         {/if}
 
         {#each data.communities as community}
