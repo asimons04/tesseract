@@ -1,6 +1,4 @@
 <script lang="ts">
-    import type { PageData } from './$types.js'
-    
     import { flip } from 'svelte/animate'
     import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy.js'
@@ -17,9 +15,7 @@
     
     import { Icon, Plus, ShieldCheck, Trash } from 'svelte-hero-icons'
     
-    
-    
-    export let data: PageData
+    export let data
 
     let formData = {
         newModerator: '',
@@ -141,7 +137,7 @@
     <title>Moderator Team</title>
 </svelte:head>
 
-<MainContentArea>
+<MainContentArea class="gap-2">
     <h1 class="font-bold text-2xl">Moderator Team</h1>
     
     <p class="font-normal text-sm">

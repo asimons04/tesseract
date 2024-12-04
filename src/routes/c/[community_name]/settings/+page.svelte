@@ -6,7 +6,6 @@
     import { amMod, isAdmin, isTopMod } from '$lib/components/lemmy/moderation/moderation'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
-    import { refreshProfile } from '$lib/lemmy/user.js';
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
     import CommunityForm from '$lib/components/lemmy/community/CommunityForm.svelte'
@@ -14,6 +13,7 @@
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte';
 
     import { CursorArrowRays, Eye, EyeSlash, Trash } from 'svelte-hero-icons'
+    import { hrColors } from '$lib/ui/colors';
 
     export let data
 
@@ -109,7 +109,7 @@
     <title>Community Settings</title>
 </svelte:head>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-4 w-full my-2">
     <CommunityForm
         edit={data.community.community_view.community.id}
         formData={{
@@ -127,72 +127,73 @@
         <svelte:fragment slot="formtitle">Settings</svelte:fragment>
     </CommunityForm>
     
-    <span class="flex w-full border-t" />
-        <SettingToggleContainer>
-            {#if isTopMod($profile?.user, data.community) || isAdmin($profile?.user)}
+    <hr class="{hrColors}" />
+
+    <SettingToggleContainer>
+        {#if isTopMod($profile?.user, data.community) || isAdmin($profile?.user)}
+        
+            <SettingButton 
+                icon={Trash} 
+                color={data.community.community_view.community.deleted ? 'success' : 'danger'}
+                title="{data.community.community_view.community.deleted ? 'Restore' : 'Delete'}" 
+                description="{data.community.community_view.community.deleted ? 'Restore' : 'Delete'} Community. 
+                    {!isTopMod($profile?.user, data.community) ? `Note: Only the top mod can delete/undelete the community. Admins will need to takeover the community
+                        before they can use this option.` : ''}
+                "
+                disabled={!isTopMod($profile?.user, data.community)}
+                on:click={ async() => {
+                    data.community.community_view.community.deleted = await deleteCommunity(data.community.community_view.community.id, !data.community.community_view.community.deleted)
+                    goto($page.url, {invalidateAll: true})
+                }}
+            />
+        {/if}
+
+        <!---Community Actions for Admins--->
+        {#if isAdmin($profile?.user)}
             
-                <SettingButton 
-                    icon={Trash} 
-                    color={data.community.community_view.community.deleted ? 'success' : 'danger'}
-                    title="{data.community.community_view.community.deleted ? 'Restore' : 'Delete'} Community" 
-                    description="{data.community.community_view.community.deleted ? 'Restore' : 'Delete'} Community. 
-                        {!isTopMod($profile?.user, data.community) ? `Note: Only the top mod can delete/undelete the community. Admins will need to takeover the community
-                            before they can use this option.` : ''}
-                    "
-                    disabled={!isTopMod($profile?.user, data.community)}
-                    on:click={ async() => {
-                        data.community.community_view.community.deleted = await deleteCommunity(data.community.community_view.community.id, !data.community.community_view.community.deleted)
-                        goto($page.url, {invalidateAll: true})
-                    }}
-                />
-            {/if}
+            <!---Takeover Community--->
+            <SettingButton 
+                icon={CursorArrowRays} 
+                color="primary"
+                title="Takeover" 
+                description="Set your account as the top mod for this community. This will allow you to delete/restore it. To set a new top mod, use the 
+                    'Team' panel."
+                loading={transferring}
+                disabled={isTopMod($profile?.user, data.community)}
+                on:click={ async() => {
+                    await takeOverCommunity()                        
+                    goto($page.url, {invalidateAll: true})
+                }}
+            />
 
-            <!---Community Actions for Admins--->
-            {#if isAdmin($profile?.user)}
-                
-                <!---Takeover Community--->
-                <SettingButton 
-                    icon={CursorArrowRays} 
-                    color="primary"
-                    title="Takeover Community" 
-                    description="Set your account as the top mod for this community. This will allow you to delete/restore it. To set a new top mod, use the 
-                        'Team' panel."
-                    loading={transferring}
-                    disabled={isTopMod($profile?.user, data.community)}
-                    on:click={ async() => {
-                        await takeOverCommunity()                        
-                        goto($page.url, {invalidateAll: true})
-                    }}
-                />
+            <!---Hide Community--->
+            <SettingButton 
+                icon={data.community.community_view.community.hidden ? Eye : EyeSlash} 
+                color="primary"
+                title="{data.community.community_view.community.hidden ? 'Unhide' : 'Hide'}" 
+                description="{data.community.community_view.community.hidden ? 'Unhide' : 'Hide'} this community from showing up to non-admin users."
+                loading={hiding}
+                on:click={ async() => {
+                    await hideCommunity()                        
+                    goto($page.url, {invalidateAll: true})
+                }}
+            />
 
-                <!---Hide Community--->
-                <SettingButton 
-                    icon={data.community.community_view.community.hidden ? Eye : EyeSlash} 
-                    color="primary"
-                    title="{data.community.community_view.community.hidden ? 'Unhide' : 'Hide'} Community" 
-                    description="{data.community.community_view.community.hidden ? 'Unhide' : 'Hide'} this community from showing up to non-admin users."
-                    loading={hiding}
-                    on:click={ async() => {
-                        await hideCommunity()                        
-                        goto($page.url, {invalidateAll: true})
-                    }}
-                />
-
-                <!---Remove Community--->
-                <SettingButton 
-                    icon={Trash} 
-                    color="{data.community.community_view.community.removed ? 'success' : 'danger'}"
-                    title="{data.community.community_view.community.removed ? 'Restore' : 'Remove'} Community" 
-                    description="{data.community.community_view.community.removed ? 'Restore' : 'Remove'} this community."
-                    loading={removing}
-                    on:click={ async() => {
-                        await removeCommunity()                        
-                        goto($page.url, {invalidateAll: true})
-                    }}
-                />
+            <!---Remove Community--->
+            <SettingButton 
+                icon={Trash} 
+                color="{data.community.community_view.community.removed ? 'success' : 'danger'}"
+                title="{data.community.community_view.community.removed ? 'Restore' : 'Remove'}" 
+                description="{data.community.community_view.community.removed ? 'Restore' : 'Remove'} this community."
+                loading={removing}
+                on:click={ async() => {
+                    await removeCommunity()                        
+                    goto($page.url, {invalidateAll: true})
+                }}
+            />
 
 
-            {/if}
-        </SettingToggleContainer>
+        {/if}
+    </SettingToggleContainer>
     
 </div>

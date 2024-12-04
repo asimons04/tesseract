@@ -139,7 +139,7 @@
 </svelte:head>
 
 
-<MainContentArea>
+<MainContentArea class="gap-2">
     <h1 class="font-bold text-2xl">Moderation</h1>
     
     <Setting>
