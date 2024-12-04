@@ -99,7 +99,7 @@
 
 
 {#if data?.post}
-    <SubNavbar back scrollButtons refreshButton postTitle quickSettings toggleCommunitySidebar bind:post={data.post.post_view} 
+    <SubNavbar home back scrollButtons refreshButton postTitle quickSettings toggleCommunitySidebar bind:post={data.post.post_view} 
         refreshPreventDefault on:navRefresh={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }
     />
 
