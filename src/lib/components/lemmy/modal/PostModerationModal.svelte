@@ -11,6 +11,7 @@
     import { expoIn } from 'svelte/easing'
     import { getClient } from '$lib/lemmy'
     import { isCommentView } from '$lib/lemmy/item'
+    import { onMount } from 'svelte'
     import { profile } from '$lib/auth'
     import { shortenCommunityName } from '../community/helpers'
     import { slide } from 'svelte/transition'
@@ -26,12 +27,11 @@
     import EmbeddableModlog from './components/EmbeddableModlog.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
     import RemoveItemForm from './components/RemoveItemForm.svelte'
     import ReportItemForm from './components/ReportItemForm.svelte'
     import SendDMForm from "./components/SendDMForm.svelte"
     import UserLink from '../user/UserLink.svelte'
-    import UserSubmissionFeed from './components/UserSubmissionFeed.svelte'
+    import UserSubmissionFeed from '$lib/components/lemmy/feed/UserSubmissionFeed.svelte'
     import VoteViewer from './components/VoteViewer.svelte'
 
     import { 
@@ -51,7 +51,7 @@
         Trash,
         Window as WindowIcon
     } from "svelte-hero-icons"
-    import { onMount } from 'svelte';
+    
     
     export let open: boolean = false
     export let item: PostView | CommentView
@@ -78,7 +78,6 @@
     let pinning = false
     let pinningInstance = false
     let purged  = false
-    let submissionType: 'all' | 'posts' | 'comments' = 'all'
     let banCommunity: Community | undefined = item.community
     let modlogCommunityOnly = true
 
@@ -294,17 +293,11 @@
                     <span class="text-lg">
                         Posts/Comments
                     </span>
-
-                    <MultiSelect headless
-                        options={['all', 'posts', 'comments']}
-                        optionNames={['All', 'Posts', 'Comments']}
-                        bind:selected={submissionType}
-                    />
                 </div>
             </div>
             
             <div class="flex flex-col w-full max-h-[70vh]">
-                <UserSubmissionFeed person_id={item.creator.id} community_id={item.community.id} bind:type={submissionType} />    
+                <UserSubmissionFeed person_name="{item.creator.name}@{new URL(item.creator.actor_id).hostname}" community_id={item.community.id}/>
             </div>
         </div>
     {/if}
