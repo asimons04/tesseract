@@ -4,7 +4,7 @@
 
 <script lang="ts">
     import type { CommentView, GetPersonDetailsResponse, Person, PostView } from "lemmy-js-client"
-    import type { LastClickedPostEvent } from "$lib/ui/events"
+    import type { ChangeProfileEvent, LastClickedPostEvent } from "$lib/ui/events"
     import type { UserSubmissionFeedController, UserSubmissionFeedControllerLoadOptions } from '$lib/components/lemmy/feed/helpers'
 
     import { fade } from "svelte/transition"
@@ -28,9 +28,10 @@
     import SiteSearch from "$lib/components/ui/subnavbar/SiteSearch.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, Icon, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons";
+    import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, ExclamationTriangle, Icon, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons";
     import TextInput from "$lib/components/input/TextInput.svelte";
     import SelectMenu from "$lib/components/input/SelectMenu.svelte";
+    import { sleep } from "../post/helpers";
     
     export let person_id: number | undefined = undefined
     export let person_name: string | undefined = undefined
@@ -46,6 +47,7 @@
 
     let page = 1
     let loading = false
+    let loadError = false
     let submissions = [] as (PostView|CommentView)[]
     let searchResults = [] as (PostView|CommentView)[]
     let searchTerm: string
@@ -137,8 +139,11 @@
                 
                 loading = false;
             }
-            catch (err){
+            catch (err) {
+                loading = false
+                loadError = true
                 console.log(err);
+                this.clearSnapshot()
             }
         },
 
@@ -199,6 +204,7 @@
             if (clearSnapshot) this.clearSnapshot()
             last_item = -1
             submissions = submissions = []
+            loadError = false
             page = 1
             user = undefined
             this.loadedFromSnapshot = false
@@ -270,7 +276,8 @@
             return `snapshot_userfeed_${$instance}_` + (JSON.stringify({
                 person_id: old.person_id,
                 person_name: old.person_name,
-                community_id: old.community_id
+                community_id: old.community_id,
+                profileID: $profile?.id
             }))
         },
 
@@ -342,6 +349,13 @@
     }
 
     const handlers = {
+        ChangeProfileEvent(e:ChangeProfileEvent) {
+            if (debugMode) console.log(moduleName, ": Responding to profile change")
+
+            controller.reset()
+            controller.load({loadSnapshot: true})
+        },
+        
         LastClickedPostEvent(e:LastClickedPostEvent) {
             if (debugMode) console.log(moduleName, ": Setting 'last_item' to ", e.detail.post_id)
             last_item = e.detail.post_id
@@ -352,6 +366,7 @@
 
 <svelte:window 
     on:lastClickedPost={handlers.LastClickedPostEvent}
+    on:changeProfile={handlers.ChangeProfileEvent}
     on:beforeunload={() => {
         if (debugMode) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()
@@ -457,15 +472,23 @@
 
     
     
-    
     {#if loading}
         <span class="flex flex-row w-full h-full items-center" transition:fade>        
             <span class="mx-auto my-auto">
                 <Spinner width={24}/>
             </span>
         </span>
-    {:else}
-        
+    {/if}
+    
+    {#if loadError}
+        <span class="flex flex-row w-full h-full items-center" transition:fade>        
+            <span class="mx-auto my-auto">
+                <Placeholder icon={ExclamationTriangle} title="Load Error" description="Unable to load details for this user: {person_id ?? person_name}" />
+            </span>
+        </span>
+    {/if}
+
+    {#if !loading && !loadError}   
         <!---User Posts/Comments--->
         {#if panel == 'submissions'}
             {#if submissions?.length > 0 }
