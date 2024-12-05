@@ -15,10 +15,10 @@ export interface StorageControllerData {
 }
 
 export class StorageController {
-    _type: 'local' | 'session'
-    _ttl: number
-    compressor
-    useCompression: boolean
+    _type: 'local' | 'session'      // Whether to use localStorage (persistent) or sessionStorage (clears when the tab closes) in the browser
+    _ttl: number                    // Number representing the number of minutes a snapshot should be considered valid
+    compressor: StringCompression   // The internal object holding an instance of the StringCompression class 
+    useCompression: boolean         // Whether compression should be used (default) or data stored as-is
 
     constructor(opts?:StorageControllerOptions) {
         this._type = opts?.type ?? 'session'
