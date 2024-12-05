@@ -27,6 +27,7 @@ export interface FeedController {
     bound: boolean
     truncated: boolean
     instance: string
+    profileID: number
     scrollContainer?: HTMLDivElement
     scrollState: InfiniteScrollStateVars
     loading: boolean
