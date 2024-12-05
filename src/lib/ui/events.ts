@@ -171,11 +171,26 @@ export interface SystemTimerEvent extends CustomEvent {
 }
 
 
+export type TesseractEvent = 
+    'banUser'           |
+    'banCommunity'      | 
+    'blockUser'         |
+    'blockCommunity'    |
+    'blockInstance'     |
+    'changeProfile'     |
+    'hideCommunity'     |
+    'hidePost'          |
+    'lastClickedPost'   |
+    'lastClickedPost'   |
+    'removeCommunity'   |
+    'setSortType'     
+
+
 /** Dispatches a custom event to the window which any mounted component can listen for
  * @param name The name of the custom event e.g. blockUser
  * @param detail The details of the event to pass to the window event listener
 */
-export const dispatchWindowEvent = function<DetailType> (name:string, detail?:DetailType) {
+export const dispatchWindowEvent = function<DetailType> (name:TesseractEvent, detail?:DetailType) {
     window.dispatchEvent(
         new CustomEvent(name, { 
             bubbles: true,
@@ -183,3 +198,27 @@ export const dispatchWindowEvent = function<DetailType> (name:string, detail?:De
         })
     )
 }
+
+
+  
+
+
+
+/* List of Events
+    
+    - banUser <BanUserEvent>
+    - banCommunity <BanCommunityEvent>
+    - blockUser <BlockUserEvent>
+    - blockCommunity <BlockCommunityEvent>
+    - blockInstance <BlockInstanceEvent>
+    - changeProfile <ChangeProfileEvent>
+    - hideCommunity <HideCommunityEvent>
+    - hidePost <HidePostEvent>
+    - lastClickedPost <LastClickedPostEvent>
+    - removeCommunity <RemoveCommunityEvent>
+    - removePost <RemovePostEvent>
+    - setSortType <SetSortTypeEvent>
+
+
+
+*/
