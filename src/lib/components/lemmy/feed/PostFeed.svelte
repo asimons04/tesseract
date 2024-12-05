@@ -9,6 +9,7 @@
         BlockCommunityEvent, 
         BlockInstanceEvent, 
         BlockUserEvent, 
+        ChangeProfileEvent, 
         HideCommunityEvent, 
         HidePostEvent, 
         LastClickedPostEvent, 
@@ -94,6 +95,7 @@
         page: 1,
         last_clicked_post: undefined,
         instance: $instance,
+        profileID: $profile?.id ?? -1,
         // Keep an array where the index is the page number and the element is the page cursor. Position 0 is a placeholder, 1 is undefined intentionally
         page_cursors: [undefined, undefined] as (string|undefined)[],
 
@@ -199,6 +201,7 @@
             }
             catch (err){
                 if (debugMode) console.log(err);
+                this.clearSnapshot()
             }
         },
         
@@ -275,6 +278,7 @@
                     this.storage.remove(this.storageKey)
                     return false
                 }
+                
 
                 this.last_refreshed = pageSnapshot.last_refreshed
 
@@ -324,6 +328,7 @@
            return `snapshot_feed_${feedName}_${this.instance}_` + (JSON.stringify({
                 community_id,
                 community_name,
+                profileID: $profile?.id
             }))
         },
 
@@ -487,18 +492,7 @@
  
     // React if the community changes
     $:  $pageStore.params.community_name, community_name, changeCommunity($pageStore.params.community_name ?? community_name)
-    $:  $instance, changeInstance($instance)
 
-    // Instance change handler
-    function changeInstance(instance:string) {
-        if (controller.busy || controller.instance == instance) return
-
-        if (debugMode) console.log(moduleName, ": Responding to instance change")
-        controller.instance = instance
-
-        // Give the profile a moment to load to hopefully be able to pick up the block lists to avoid a manual refresh of the feed to address
-        sleep(50).then(() => controller.refresh())
-    }
 
     // React to community changing in the URL route (/c/community -> /c/community2)
     function changeCommunity(name:string) {
@@ -562,6 +556,13 @@
                 }
             }
             posts = posts
+        },
+
+        ChangeProfileEvent(e:ChangeProfileEvent) {
+            if (debugMode) console.log(moduleName, ": Responding to profile change")
+            if ($profile?.instance) controller.instance = $profile.instance
+            controller.reset()
+                .then(() => controller.load({loadSnapshot: true, append:false}))
         },
 
         HideCommunityEvent(e:HideCommunityEvent) {
@@ -654,6 +655,7 @@
     on:blockUser={handlers.BlockUserEvent} 
     on:blockCommunity={handlers.BlockCommunityEvent} 
     on:blockInstance={handlers.BlockInstanceEvent}
+    on:changeProfile={handlers.ChangeProfileEvent}
     on:hideCommunity={handlers.HideCommunityEvent}
     on:hidePost={handlers.HidePostEvent}
     on:lastClickedPost={handlers.LastClickedPostEvent}
