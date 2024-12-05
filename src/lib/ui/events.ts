@@ -4,10 +4,44 @@
 
 import type { SortType } from "lemmy-js-client"
 
+export type TesseractEvent = 
+    'banUser'           |
+    'banCommunity'      | 
+    'blockUser'         |
+    'blockCommunity'    |
+    'blockInstance'     |
+    'changeCompactView' |
+    'changeProfile'     |
+    'clickIntoPost'     |
+    'distinguishComment'|
+    'featurePost'       |
+    'hideCommunity'     |
+    'hidePost'          |
+    'lastClickedPost'   |
+    'lockPost'          |
+    'purgeComment'      |
+    'purgePost'         |
+    'removeComment'     |
+    'removeCommunity'   |
+    'removePost'        |
+    'scrollPostIntoView'|
+    'setSortType'       |
+    'subscribe'         |
+    'systemTimer'
 
 
-
-
+/** Dispatches a custom event to the window which any mounted component can listen for
+ * @param name The name of the custom event e.g. blockUser
+ * @param detail The details of the event to pass to the window event listener
+*/
+export const dispatchWindowEvent = function<DetailType> (name:TesseractEvent, detail?:DetailType) {
+    window.dispatchEvent(
+        new CustomEvent(name, { 
+            bubbles: true,
+            detail: detail
+        })
+    )
+}
 
 
 // Ban User From Community
@@ -53,18 +87,21 @@ export interface BlockUserEvent extends CustomEvent {
     }
 }
 
+// Changing profiles in the UI
 export interface ChangeProfileEvent extends CustomEvent {
     detail: {
         pid: number
     }
 }
 
+// Dispatched when clicking into a post (usually used to close the open modal that initiated it)
 export interface ClickIntoPostEvent extends CustomEvent {
     detail: {
         post_id: number
     }
 }
 
+// Distinguish a comment
 export interface DistinguishCommentEvent extends CustomEvent {
     detail: {
         comment_id: number
@@ -72,6 +109,8 @@ export interface DistinguishCommentEvent extends CustomEvent {
     }
 }
 
+
+// Feature a post (community or instance)
 export interface FeaturePostEvent extends CustomEvent {
 
     detail: {
@@ -81,6 +120,7 @@ export interface FeaturePostEvent extends CustomEvent {
     }
 }
 
+// Hide a Community
 export interface HideCommunityEvent extends CustomEvent {
     detail: { 
         community_id: number
@@ -88,6 +128,7 @@ export interface HideCommunityEvent extends CustomEvent {
     }
 }
 
+// Hide a Post
 export interface HidePostEvent extends CustomEvent {
     detail: {
         hide: boolean,
@@ -95,6 +136,7 @@ export interface HidePostEvent extends CustomEvent {
     }
 }
 
+// Dispatches on touchStart/mouseover/click from posts to track the last one that was interacted with; used to restore scroll position when reloading feed from snapshot
 export interface LastClickedPostEvent extends CustomEvent {
     detail: {
         post_id: number
@@ -109,6 +151,7 @@ export interface LockPostEvent extends CustomEvent {
     }
 }
 
+// Purging a Comment
 export interface PurgeCommentEvent extends CustomEvent {
     detail: {
         comment_id: number
@@ -116,6 +159,7 @@ export interface PurgeCommentEvent extends CustomEvent {
     }
 }
 
+// Purging a Post
 export interface PurgePostEvent extends CustomEvent {
     detail: {
         post_id: number
@@ -123,6 +167,7 @@ export interface PurgePostEvent extends CustomEvent {
     }
 }
 
+// Remove Comment
 export interface RemoveCommentEvent extends CustomEvent {
     detail: {
         comment_id: number
@@ -130,6 +175,7 @@ export interface RemoveCommentEvent extends CustomEvent {
     }
 }
 
+// Remove Community
 export interface RemoveCommunityEvent extends CustomEvent {
     detail: { 
         community_id: number
@@ -137,7 +183,7 @@ export interface RemoveCommunityEvent extends CustomEvent {
     }
 }
 
-
+// Remove Post
 export interface RemovePostEvent extends CustomEvent {
     detail: {
         post_id: number
@@ -145,18 +191,21 @@ export interface RemovePostEvent extends CustomEvent {
     }
 }
 
+// Triggers a post to scroll itself into view
 export interface ScrollPostIntoViewEvent extends CustomEvent {
     detail: {
         post_id: number
     }
 }
 
+// Triggers when the sort type changes (used on main feed to plumb in external controls for feed component)
 export interface SetSortTypeEvent extends CustomEvent {
     detail: {
         sort: SortType
     }
 }
 
+// Dispatches when subscribing/unsubscribing to a community
 export interface SubscribeEvent extends CustomEvent {
     detail: {
         community_id: number
@@ -164,61 +213,9 @@ export interface SubscribeEvent extends CustomEvent {
     }
 }
 
+// Dispatched from the app-level setInterval to trigger updates in the UI
 export interface SystemTimerEvent extends CustomEvent {
     detail: {
         timestamp: number
     }
 }
-
-
-export type TesseractEvent = 
-    'banUser'           |
-    'banCommunity'      | 
-    'blockUser'         |
-    'blockCommunity'    |
-    'blockInstance'     |
-    'changeProfile'     |
-    'hideCommunity'     |
-    'hidePost'          |
-    'lastClickedPost'   |
-    'lastClickedPost'   |
-    'removeCommunity'   |
-    'setSortType'     
-
-
-/** Dispatches a custom event to the window which any mounted component can listen for
- * @param name The name of the custom event e.g. blockUser
- * @param detail The details of the event to pass to the window event listener
-*/
-export const dispatchWindowEvent = function<DetailType> (name:TesseractEvent, detail?:DetailType) {
-    window.dispatchEvent(
-        new CustomEvent(name, { 
-            bubbles: true,
-            detail: detail
-        })
-    )
-}
-
-
-  
-
-
-
-/* List of Events
-    
-    - banUser <BanUserEvent>
-    - banCommunity <BanCommunityEvent>
-    - blockUser <BlockUserEvent>
-    - blockCommunity <BlockCommunityEvent>
-    - blockInstance <BlockInstanceEvent>
-    - changeProfile <ChangeProfileEvent>
-    - hideCommunity <HideCommunityEvent>
-    - hidePost <HidePostEvent>
-    - lastClickedPost <LastClickedPostEvent>
-    - removeCommunity <RemoveCommunityEvent>
-    - removePost <RemovePostEvent>
-    - setSortType <SetSortTypeEvent>
-
-
-
-*/
