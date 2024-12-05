@@ -53,6 +53,12 @@ export interface BlockUserEvent extends CustomEvent {
     }
 }
 
+export interface ChangeProfileEvent extends CustomEvent {
+    detail: {
+        pid: number
+    }
+}
+
 export interface ClickIntoPostEvent extends CustomEvent {
     detail: {
         post_id: number
