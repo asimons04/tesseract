@@ -6,6 +6,7 @@ interface UserFromJWTResponse {
 import type { Community, GetSiteResponse, MyUserInfo, SortType } from 'lemmy-js-client'
 
 import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+import { dispatchWindowEvent } from '$lib/ui/events'
 import { DEFAULT_INSTANCE_URL, instance } from '$lib/instance.js'
 import { get, writable } from 'svelte/store'
 import { getClient, site } from '$lib/lemmy.js'
@@ -369,6 +370,9 @@ export async function setUserID(id: number, userDetails?:UserFromJWTResponse) {
     // Update the profile store (in memory only) with the data pulled from the API
     profile.update(() => prof ?? getDefaultProfile())
 
+    // Dispatch an event to let other components know the profile has changed
+    dispatchWindowEvent('changeProfile', { pid: id})
+    
     // Return the profile to the caller
     return prof
 }
