@@ -6,19 +6,7 @@
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
 
-    import { page } from '$app/stores'
-    import { goto } from '$app/navigation'
-    import { LINKED_INSTANCE_URL } from "$lib/instance.js";
-    
-    
-    
-
     export let data;
-
-    if (LINKED_INSTANCE_URL && LINKED_INSTANCE_URL != $page.params.instance) {
-        goto(`/legal/${LINKED_INSTANCE_URL}`);
-    }
-
 </script>
 
 <svelte:head>
