@@ -154,7 +154,9 @@
                     <div class="flex flex-col gap-1 w-full" on:click|stopPropagation>
                         <span class="font-bold text-xs text-left">Browse another instance:</span>
                         
-                        <form class="flex flex-row gap-4 w-full justify-between"  on:submit={ async() => {
+                        <form class="flex flex-row gap-4 w-full justify-between"  on:submit|preventDefault={ async() => {
+                            if (!customInstance) return
+
                             if (!(INSTANCE_LIST.includes(customInstance))) {
                                 
                                 if (await validateInstance(customInstance)) {
@@ -175,10 +177,18 @@
                                     })
                                 }
                             }
+                            
+                            // If the entered instance is already on the list, just switch to it
+                            else {
+                                searchParams.instance = customInstance
+                                searchParams.type = 'Local'
+                                customInstance = ''
+                                search(true)
+                            }
                         }}>
                             <TextInput bind:value={customInstance} placeholder={searchParams.instance} focus={false} class="w-full"/>
                             
-                            <button class="flex flex-row gap-1 ml-auto" type="submit">
+                            <button class="flex flex-row gap-1 ml-auto" title="Set Custom Instance" type="submit">
                                 <Icon mini src={ArrowRightOnRectangle} width={24} />
                             </button>
                         </form>
