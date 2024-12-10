@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { CommunityGroup } from '$lib/auth'
-    import { goto } from '$app/navigation'
     import { removeGroup } from '$lib/favorites'
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts';
@@ -14,12 +13,11 @@
 
     import {
         Icon,
-        ArchiveBox,
-        ArrowTopRightOnSquare,
         Bars3,
+        Folder,
+        FolderOpen,
         PencilSquare,
         Trash,
-        UserGroup
     } from 'svelte-hero-icons'
 
     export let group:CommunityGroup
@@ -56,7 +54,7 @@
             flex flex-row w-full px-2 gap-1 items-center rounded-md {open ? '!bg-slate-200 dark:!bg-zinc-800' : ''}"
         >
             <SidebarButton class="w-full" title="{open ? 'Collapse' : 'Expand'} {group.name}" on:click={() => open = !open}>
-                <Icon src={ArchiveBox} mini size="16"/>
+                <Icon src={open ? FolderOpen : Folder} mini size="16"/>
                 <span class="font-bold">{group.name}</span>
             </SidebarButton>
 
