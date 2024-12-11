@@ -18,6 +18,8 @@ const FAKE_NEWS = [
     'www.kaggle.com',
     'tiblur.com',
     'www.tiblur.com',
+    'todaycnn.com',
+    'www.todaycnn.com',
     ...BLACKLIST_CONFIG.FAKE_NEWS_BLACKLIST
 ]
 
