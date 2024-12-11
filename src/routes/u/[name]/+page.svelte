@@ -51,9 +51,9 @@
                         <UserCardSmall person_view={user.person_view} />
                         
                         <!---Person Bio--->
-                        {#if user.person_view.person.bio}
+                        {#if user.person_view.person.bio || user.moderates?.length > 0}
                             <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
-                                <Markdown source={user.person_view.person.bio} />
+                                <Markdown source={user.person_view.person.bio ?? "*User has not provided a bio.*"} />
 
                                 <!---List of Communities Moderated--->
                                 {#if user.moderates?.length > 0}
