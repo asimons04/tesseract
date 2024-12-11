@@ -101,10 +101,14 @@
     </span>
 
     
-    <p class="text-slate-600 dark:text-zinc-400 mt-2">
-        Browse the communities on {data.site.site_view.site.name}.  By default, only communities local to this instance are shown.  You can switch the type to "All"
-        and browse/search all communities known to {data.site.site_view.site.name}.  
-    </p>
+    <span class="text-slate-600 dark:text-zinc-400 mt-2">
+        <p>
+            Browse and/or subscribe to the communities on {data.site.site_view.site.name}.  By default, only communities local to this instance are shown.  
+            You can switch the type to "All" and browse/search all communities known to {data.site.site_view.site.name}.  Browsing 'all' on a remote
+            instance, particularly a larger one that's subscribed to lots of communities, can be useful for discovering communites without knowing 
+            what instance they're on.
+        </p>
+    </span>
 
     <div class="flex flex-col gap-2 w-full my-2">
         <hr class={hrColors} />
