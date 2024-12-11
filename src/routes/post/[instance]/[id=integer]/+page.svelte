@@ -109,7 +109,7 @@
         {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
             
 
-            <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2">
+            <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2 my-2">
                 
                 <div class="flex flex-row gap-2 items-center w-full">
                     <span class="items-center">
