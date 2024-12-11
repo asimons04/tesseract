@@ -15,6 +15,7 @@
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import SelectMenu from '$lib/components/input/SelectMenu.svelte';
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import Spinner from '$lib/components/ui/loader/Spinner.svelte';
@@ -36,7 +37,7 @@
         ServerStack,
         XCircle,
     } from 'svelte-hero-icons'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte';
+    
     
     export let data
     
@@ -50,7 +51,6 @@
     let customInstance = ''
     let searching = false
 
-    $: if (data.instance) searchParams.instance = data.instance
 
     async function search(refresh:boolean=false) {
         if (searchParams.query) $page.url.searchParams.set('q', searchParams.query)
