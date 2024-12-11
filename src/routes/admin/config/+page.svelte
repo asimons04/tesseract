@@ -4,7 +4,7 @@
     
     
     import { addAdmin } from '$lib/lemmy/user.js'
-    import { getClient } from '$lib/lemmy.js'
+    import { getClient, site } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance.js'
     import { profile } from '$lib/auth.js'
@@ -193,6 +193,9 @@
 
             await getClient().editSite({...formData})
             
+            // Update the site store with the new values
+            getClient().getSite().then((siteData) => site.set(siteData))
+
             toast({
                 content: 'Updated your site.',
                 type: 'success',
