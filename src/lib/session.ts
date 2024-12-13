@@ -9,6 +9,7 @@ interface SessionStorage {
         url: string | undefined
         nsfw: boolean
         loading: boolean
+        alt_text?: string
     }
     lastClickedPost?: {
         postID: number | undefined

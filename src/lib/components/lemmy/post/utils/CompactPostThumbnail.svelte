@@ -36,7 +36,7 @@
                                 : imageProxyURL(post.post.thumbnail_url ?? post.post.url, 256, 'webp')
                     }"
                     loading="lazy"
-                    alt={post.post.name}
+                    alt={post.post.alt_text ?? post.post.name}
                     class="object-cover bg-slate-100 rounded-md w-[128px] h-[128px]  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg"
                     class:blur-lg={(post.post.nsfw && $userSettings.nsfwBlur)}
                 />

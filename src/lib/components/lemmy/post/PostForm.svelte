@@ -1,5 +1,6 @@
 <script lang="ts">
     interface PostData {
+        alt_text?: string
         community?: Community
         name: string
         body?: string
@@ -18,7 +19,7 @@
     import { ENABLE_MEDIA_PROXY } from '$lib/settings'
     import { createEventDispatcher } from 'svelte'
     import { blobToFileList, deleteImageUpload, readImageFromClipboard } from '$lib/components/uploads/helpers';
-    import { getClient } from '$lib/lemmy.js'
+    import { getClient, minAPIVersion } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { isImage, isVideo } from './helpers'
     import { objectCopy } from '$lib/util'
@@ -33,6 +34,7 @@
     import Card from '$lib/components/ui/Card.svelte';
     import CommunityAutocomplete from '../CommunityAutocomplete.svelte';
     import CommunityLink from '../community/CommunityLink.svelte'
+    import CrosspostItem from './CrosspostItem.svelte';
     import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
     import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
     import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
@@ -40,6 +42,7 @@
     import PostPreview from './Post.svelte'
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
     
     import { 
@@ -57,8 +60,8 @@
         Window,
         XCircle
     } from 'svelte-hero-icons'
-    import CrosspostItem from './CrosspostItem.svelte';
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
+    
+    
     
     
     // The post to edit, as passed from the PostActions component
@@ -81,6 +84,7 @@
         body: editingPost?.post.body,
         url: editingPost?.post.url,
         nsfw: editingPost?.post.nsfw ?? false,
+        alt_text: editingPost?.post.alt_text,
         loading: false,
         embed_description: editingPost?.post.embed_description,
         embed_video_url: editingPost?.post.embed_video_url,
@@ -154,6 +158,7 @@
                     url: data.url || undefined,
                     post_id: editingPost.post.id,
                     nsfw: data.nsfw,
+                    alt_text: data.alt_text
                 })
 
                 if (!post) throw new Error('Failed to edit post')
@@ -167,6 +172,7 @@
                     body: data.body,
                     url: data.url || undefined,
                     nsfw: data.nsfw,
+                    alt_text: data.alt_text
                 })
 
                 if (!post) throw new Error('Failed to create post')
@@ -251,15 +257,7 @@
             await getWebsiteMetadata()
         }
         
-
-        if (!data.name) {
-            toast({
-                content: 'No post title was provided, and metadata fetch failed to populate it. Please provide a title for the post',
-                type: 'error',
-                title: 'No Title',
-            })
-            return
-        }
+        if (!data.name) data.name = 'Untitled'
             
         // If editing a post and the post details were passed, add them to the preview
         if (editingPost) {
@@ -271,6 +269,7 @@
             newPost.post.url = data.url;
             newPost.post.name = data.name;
             newPost.post.nsfw = data.nsfw;
+            newPost.post.alt_text = data.alt_text
             
             // Unset these for the prevew generation step (if present from the original post)
             newPost.post.embed_description = undefined
@@ -299,7 +298,8 @@
                     featured_local: false,
                     featured_community: false,
                     language_id: -1,
-                    published: new Date().toISOString()
+                    published: new Date().toISOString(),
+                    alt_text: data.alt_text
                 },
                 creator: objectCopy($profile.user?.local_user_view.person),
 
@@ -357,13 +357,15 @@
                 ? data.community.name + '@' + new URL(data.community.actor_id).hostname
                 : undefined
             
-                let results = await getClient(instance).search({
+            let results = await getClient(instance).search({
                 q: data.url,
                 type_: 'Url',
                 community_name: community_name
             })
 
             searching = false
+            
+            
             URLSearchResults = URLSearchResults = results?.posts ?? []
 
             if (background && URLSearchResults.length > 0) showSearch = true
@@ -508,6 +510,10 @@
                     }}
                 />
             </div>
+
+            {#if minAPIVersion("0.19.5") && isImage(data.url)}
+                <TextInput label="Alt Text" bind:value={data.alt_text} />
+            {/if}
 
             <!---Results for Existing Posts by that URL--->
             {#if showSearch}

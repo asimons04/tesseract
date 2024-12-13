@@ -46,14 +46,14 @@
     {#if clickToPlay}
         <ClickToPlayOverlay bind:show={clickToPlay} displayType={displayType} on:click={(e)=> dispatcher('click', e)}/>
         
-        <ZoomableImage bind:url={thumbnail_url} bind:nsfw={post.post.nsfw} altText={post.post.name} zoomable={zoomable}
+        <ZoomableImage bind:url={thumbnail_url} bind:nsfw={post.post.nsfw} altText={post.post.alt_text ?? post.post.name} zoomable={zoomable}
             class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(50vh,800px)] z-20 {$$props.class}"
             on:click={(e)=> dispatcher('click', e)}
         />
     
     <!---Rendering in post page--->
     {:else}
-        <ZoomableImage url={url} altText={post.post.name} {zoomable}
+        <ZoomableImage url={url} altText={post.post.alt_text ?? post.post.name} {zoomable}
             class="ml-auto mr-auto object-contain rounded-md min-h-[min(40vh,800px)] {displayType=='feed' ? 'max-h-[min(50vh,800px)]' : ''} z-30"
         />
 

@@ -727,6 +727,7 @@ export const crossPost = function(post:PostView):void {
         name: post.post.name,
         loading: false,
         nsfw: post.post.nsfw,
+        alt_text: post.post.alt_text,
         image: null,
     })
     goto('/create/post?crosspost=true')
