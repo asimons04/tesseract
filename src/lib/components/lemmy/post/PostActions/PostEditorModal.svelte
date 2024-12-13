@@ -4,7 +4,6 @@
     
     import Modal from '$lib/components/ui/modal/Modal.svelte'
     import PostForm from '$lib/components/lemmy/post/PostForm.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     
     import { PencilSquare } from 'svelte-hero-icons'
 
