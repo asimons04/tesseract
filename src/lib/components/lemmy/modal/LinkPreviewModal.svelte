@@ -93,7 +93,7 @@
         try {
             iframeURL = new URL(url)
             if (iframe || url.endsWith('.pdf')) iframeView = true
-            if (new URL(url).hostname.includes('wikipedia.org')) iframeView = true
+            if (iframeURL.hostname.includes('wikipedia.org')) iframeView = true
         }
         catch {
             iframeURL = undefined
