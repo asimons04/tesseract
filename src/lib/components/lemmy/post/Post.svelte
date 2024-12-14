@@ -236,7 +236,13 @@
     }
 
     onMount(async () => await scrollIntoView() )
-    onDestroy(() => post = null)
+    onDestroy(() => {
+        post = null
+        postContainer.remove()
+        //@ts-ignore
+        //postContainer = null
+        
+    })
 </script>
 
 

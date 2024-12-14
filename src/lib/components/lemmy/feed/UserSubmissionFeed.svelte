@@ -73,6 +73,7 @@
         if (debugMode) console.log(moduleName, ": Component destroyed; saving data")
         controller.takeSnapshot().then( () => {
             controller.reset() 
+            scrollContainer.remove()
         })
     })
 

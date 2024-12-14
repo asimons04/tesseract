@@ -644,6 +644,7 @@
         if (debugMode) console.log(moduleName, ": Component destroyed; saving data")
         controller.takeSnapshot().then( () => {
             controller.reset() 
+            controller.scrollContainer?.remove()
         })
     })
 </script>
@@ -668,6 +669,8 @@
     on:beforeunload={() => {
         if (debugMode) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()
+        controller.reset()
+        controller.scrollContainer?.remove()
     }}
 />
 
