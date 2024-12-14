@@ -511,7 +511,7 @@
                 />
             </div>
 
-            {#if minAPIVersion("0.19.5") && isImage(data.url)}
+            {#if minAPIVersion("0.19.5") && (isImage(data.url) || isVideo(data.url))}
                 <TextInput label="Alt Text" bind:value={data.alt_text} />
             {/if}
 

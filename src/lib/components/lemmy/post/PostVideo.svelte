@@ -73,6 +73,7 @@
             <video bind:this={video} class="rounded-2xl w-full {displayType=='feed' ? 'max-h-[40vh]' : 'max-h-[65vh]'} mx-auto" 
                 class:blur-2xl={(post.post.nsfw && $userSettings.nsfwBlur && displayType=='feed')}    
                 controls playsinline {muted} {autoplay}  {loop}
+                aria-label={post.post.alt_text ?? post.post.name}
             >
                 <source src="{source}" type="{
                     new URL(source).pathname.endsWith('mp4') || new URL(source).pathname.endsWith('m4v')
