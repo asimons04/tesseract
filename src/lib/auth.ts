@@ -441,10 +441,9 @@ setInterval(async () => {
 saveToStorage('seenUntil', Date.now().toString(), false)
 
 export async function getInboxNotifications(dontUpdate: boolean = false) {
-    if (!get(profile) || !get(userSettings).notifications.enabled) return
+    //if (!get(profile) || !get(userSettings).notifications.enabled) return
 
-    const { jwt } = get(profile)!
-    if (!jwt) return
+    if (!get(profile)) return
 
     let until = Number(localStorage.getItem('seenUntil'))
 
@@ -454,18 +453,36 @@ export async function getInboxNotifications(dontUpdate: boolean = false) {
         until = now
     }
 
-    const inbox = await getInbox(jwt, until)
+    const inbox = await getInbox(until)
+    console.log(inbox)
+    
+    if (Notification.permission != 'denied') {
+        Notification.requestPermission()
+    }
 
     inbox.forEach((item) => {
+        let title: string
+        const sender = `${item.person.display_name ?? item.person.name}@${new URL(item.person.actor_id).hostname}`
+        switch(item.type) {
+            case 'comment_reply':
+                title= `${sender} replied to you.`
+                break
+            case 'person_mention':
+                title= `${sender} mentioned you.`
+                break
+            case 'private_message':
+                title= `${sender} messaged you.`
+                break
+        }
         const notif = new Notification(
-            item.person.display_name ?? item.person.name,
+            title,
             {
                 body: item.body,
                 timestamp: item.created,
-                icon: item.person.avatar,
+                icon: item.person.avatar ?? '/logo_512.png',
             }
         )
-        notif.onclick = (e) => { window.open('/inbox')}
+        notif.onclick = (e) => { window.open('/profile/inbox')}
     })
 
     if (dontUpdate) return
