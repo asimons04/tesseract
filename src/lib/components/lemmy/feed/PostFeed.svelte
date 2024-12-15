@@ -218,6 +218,17 @@
             this.page_cursors =  [undefined, undefined]
             
             posts.next_page = undefined
+            
+            for (let i=0; i < posts.posts.length; i++) {
+                //@ts-ignore
+                posts.posts[i] = null
+            }
+
+            for (let i=0; i < truncatedPosts.length; i++) {
+                //@ts-ignore
+                truncatedPosts[i] = null    
+            }
+            
             posts.posts = [] as PostView[]
             truncatedPosts = truncatedPosts = []
             this.truncated = false
@@ -663,6 +674,11 @@
     on:removeCommunity={handlers.RemoveCommunityEvent}
     on:removePost={handlers.RemovePostEvent}
     
+    on:refreshFeed={() => {
+        if (debugMode) console.log(moduleName, ": Responding to refresh feed event.")
+        controller.refreshing = true
+        controller.refresh(true) 
+    }}
 
     on:setSortType={handlers.SetSortTypeEvent}
 

@@ -2,6 +2,7 @@
     import type { Community } from 'lemmy-js-client'
     
     import { isFavorite, addFavorite } from '$lib/favorites'
+    import { onDestroy } from 'svelte'
     import { userSettings } from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte'
@@ -11,6 +12,8 @@
         Icon,
         Star
     } from 'svelte-hero-icons'
+    
+    
 
     export let community:Community
     export let hidden:boolean = false
@@ -19,17 +22,25 @@
 
     let favorite = false
     $: community, favorite = isFavorite(community)
+
+    let button: any
+
+    onDestroy(() => {
+        if (button?.remove) button.remove()
+        button = null
+    })
 </script>
 
 
 <Button {hidden}
+    bind:this={button}
     class="!text-xs hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
     color="tertiary"
     alignment="left"
     href="/c/{community.name}@{new URL(community.actor_id).hostname}"
     title="{community.title.replace('&amp;', '&')}@{new URL(community.actor_id).hostname}"
 >
-    <CommunityLink bind:community class="!w-fit"
+    <CommunityLink {community} class="!w-fit"
         boldCommunityName={true} 
         avatarSize={expanded ? 28 : 20} 
         avatar 

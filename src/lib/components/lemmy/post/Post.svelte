@@ -34,7 +34,7 @@
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import { onDestroy, onMount } from 'svelte';
 
-    export let post: PostView | undefined | null
+    export let post: PostView | null
     export let actions: boolean = true
     export let autoplay:boolean = false;
     export let displayType: PostDisplayType = "feed"
@@ -48,15 +48,14 @@
     export let inProfile: boolean = false
 
     let expandPreviewText:boolean
-    let postContainer: HTMLDivElement
+    let postContainer: HTMLDivElement | null
     let inViewport = false
     let postType = getPostType(post)
     let lastClickedPost = -1
     
     $:  debugMode = $userSettings.debugInfo
-    $:  post, postType = getPostType(post)
-    $:  inViewport, setTimeout(() => markPostAsRead(), 1500)
-    $:  post, applyDummyThumbnail()
+    $:  post?.post.id, postType = getPostType(post)
+    $:  post?.post.id, applyDummyThumbnail()
     
     function applyDummyThumbnail() {
         if (!post || post?.post?.thumbnail_url) return
@@ -236,12 +235,11 @@
     }
 
     onMount(async () => await scrollIntoView() )
+    
     onDestroy(() => {
+        postContainer?.remove()
         post = null
-        postContainer.remove()
-        //@ts-ignore
-        //postContainer = null
-        
+        postContainer = null
     })
 </script>
 
@@ -265,10 +263,10 @@
     on:scrollPostIntoView={handleScrollPostIntoView}
 />
 
-<PostIsInViewport bind:postContainer bind:inViewport threshold={.6}/>
 
 
-{#if post?.post?.id}
+
+{#if post}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div class="relative" 
@@ -278,6 +276,11 @@
         bind:this={postContainer}
         transition:fade
     >
+        <PostIsInViewport bind:postContainer threshold={.6} on:inViewport={(e) => {
+                inViewport = e.detail
+                setTimeout(() => markPostAsRead(), 1500)
+            }}
+        />
 
         <!--- Compact Posts --->
         {#if  (forceCompact || !expandCompact) }
@@ -298,8 +301,10 @@
                 bind:expandPreviewText  
                 bind:postContainer
                 on:reply
-                
             />
         {/if}
     </div>
 {/if}
+
+
+
