@@ -39,11 +39,9 @@
     import IFrame from "../post/utils/IFrame.svelte"
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import Placeholder from "$lib/components/ui/Placeholder.svelte";
+    import PostLink from "$lib/components/lemmy/post/PostLink.svelte"
+    import PostMediaRenderers from "$lib/components/lemmy/post/PostMediaRenderers.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
-    
-    // Post Media Renderers
-    import PostBody from "$lib/components/lemmy/post/PostBody.svelte";
-    import PostMediaRenderers from "$lib/components/lemmy/post/PostMediaRenderers.svelte";
     
 
     import { 
@@ -51,13 +49,12 @@
         ArrowTopRightOnSquare,
         ExclamationTriangle,
         Eye,
-        Icon,
         Link as LinkIcon,
         Share,
         Window,
         XCircle,
     } from "svelte-hero-icons";
-    import PostLink from "../post/PostLink.svelte";
+    
     
     
     export let url: string
