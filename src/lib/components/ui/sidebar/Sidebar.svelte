@@ -105,7 +105,7 @@
         <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Refresh" data-sveltekit-preload-data="off"
             on:click={() => {
                 if ($page.url.pathname.startsWith('/home')) {
-                    location.reload()
+                    dispatchWindowEvent('refreshFeed')
                 }
                 else {
                     goto(`/home/${$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}?invalidate=true`)

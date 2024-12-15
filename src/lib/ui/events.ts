@@ -21,6 +21,7 @@ export type TesseractEvent =
     'lockPost'          |
     'purgeComment'      |
     'purgePost'         |
+    'refreshFeed'       |
     'removeComment'     |
     'removeCommunity'   |
     'removePost'        |
