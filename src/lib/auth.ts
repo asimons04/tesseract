@@ -10,7 +10,6 @@ import { dispatchWindowEvent } from '$lib/ui/events'
 import { DEFAULT_INSTANCE_URL, instance } from '$lib/instance.js'
 import { get, writable } from 'svelte/store'
 import { getClient, site } from '$lib/lemmy.js'
-import { getInbox, getInboxItemPublished } from '$lib/lemmy/inbox.js'
 import { goto } from '$app/navigation'
 import { moveItem } from '$lib/util.js'
 import { userSettings } from '$lib/settings.js'
@@ -391,101 +390,7 @@ export function moveProfile(id: number, up: boolean) {
     }
 }
 
-const getNotificationCount = async (mod: boolean, admin:boolean=false) => {
-    const unreads = await getClient().getUnreadCount()
 
-    let reports: number = 0
 
-    if (mod) {
-        const reportRes = await getClient().getReportCount({})
 
-    reports =
-        reportRes.comment_reports +
-        reportRes.post_reports +
-        (reportRes.private_message_reports ?? 0)
-    }
 
-    let applications = 0
-    if (admin) {
-        applications = (await getClient().listRegistrationApplications(
-            { unread_only: true }
-        ))?.registration_applications?.length ?? 0
-    }
-
-    return {
-        unreads: unreads.mentions + unreads.private_messages + unreads.replies,
-        reports: reports,
-        registration_applications: applications
-    }
-}
-
-// show unread dot
-setInterval(async () => {
-    if (!get(profile)) return
-
-    const { user, jwt } = get(profile)!
-    if (!jwt || !user) return
-
-    const notifs = await getNotificationCount(amModOfAny(user) ?? false, isAdmin(user) ?? false)
-
-    user.unreads = notifs.unreads
-    user.reports = notifs.reports
-    user.registration_applications = notifs.registration_applications
-
-    profile.update((p) => ({
-        ...p!,
-        user: user,
-    }))
-}, get(userSettings).notifications.pollRate ?? 30 * 1000)
-
-saveToStorage('seenUntil', Date.now().toString(), false)
-
-export async function getInboxNotifications(dontUpdate: boolean = false) {
-    //if (!get(profile) || !get(userSettings).notifications.enabled) return
-
-    if (!get(profile)) return
-
-    let until = Number(localStorage.getItem('seenUntil'))
-
-    if (Number.isNaN(until) || until == 0) {
-        const now = Date.now()
-        localStorage.setItem('seenUntil', now.toString())
-        until = now
-    }
-
-    const inbox = await getInbox(until)
-    console.log(inbox)
-    
-    if (Notification.permission != 'denied') {
-        Notification.requestPermission()
-    }
-
-    inbox.forEach((item) => {
-        let title: string
-        const sender = `${item.person.display_name ?? item.person.name}@${new URL(item.person.actor_id).hostname}`
-        switch(item.type) {
-            case 'comment_reply':
-                title= `${sender} replied to you.`
-                break
-            case 'person_mention':
-                title= `${sender} mentioned you.`
-                break
-            case 'private_message':
-                title= `${sender} messaged you.`
-                break
-        }
-        const notif = new Notification(
-            title,
-            {
-                body: item.body,
-                timestamp: item.created,
-                icon: item.person.avatar ?? '/logo_512.png',
-            }
-        )
-        notif.onclick = (e) => { window.open('/profile/inbox')}
-    })
-
-    if (dontUpdate) return
-
-    localStorage.setItem('seenUntil', Date.now().toString())
-}
