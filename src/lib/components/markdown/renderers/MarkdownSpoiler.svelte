@@ -32,5 +32,7 @@
   
 <details>
     <summary><strong>{title}</strong></summary>
-        <MarkdownTokens tokens={token.tokens} {renderers} {options} />
+        <span class="flex w-full pl-4">    
+            <MarkdownTokens tokens={token.tokens} {renderers} {options} />
+        </span>
 </details>

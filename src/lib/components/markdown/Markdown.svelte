@@ -50,20 +50,29 @@
     })
     
     function preProcess(text:string) {
-        // Fix Lemmy's stupid encoding quirks.
-        let temp = fixLemmyEncodings(text)
+        let inCodeBlock = false
+        let temp = text.replaceAll('&amp;', '&') + '\n'
 
-        // Add a newline to help with some regexes
-        temp = temp + '\n'
+        let lines = temp.split('\n')
         
-        // Turn /c, /u, !, and @ community and user links into markdown links
-        if (!noUserCommunityLink) temp = findUserCommunityLinks(temp)
-        
-        // Regex-remove those obnoxious anti-AI licenses
-        temp = filterAnnoyingCCLicenseOnComments(temp)
-        
-        // Convert hashtags to MD links
-        if (!noHashtags) temp = hashtagsToMDLinks(temp)
+        for (let i=0; i < lines.length; i++) {
+            
+            let line = lines[i]
+           
+            if (!inCodeBlock && line.startsWith('```'))     inCodeBlock = true
+            else if (inCodeBlock && line.startsWith('```')) inCodeBlock = false
+
+            if (!inCodeBlock) {
+                line = fixLemmyEncodings(line)
+                if (!noUserCommunityLink) line = findUserCommunityLinks(line)
+                if (!noHashtags) line = hashtagsToMDLinks(line)
+                if ($userSettings.uiState.filterAnnoyingCCLicense) line = filterAnnoyingCCLicenseOnComments(line)
+            }
+
+            lines[i] = line
+        }
+
+        temp = lines.join('\n')
         
         // Fix detection of custom containers for spoilers
         temp = temp
@@ -72,6 +81,8 @@
             .replaceAll(/::: /g, '\n:::\n')
         
         mdText = temp
+
+
     }
 
     $:  source, $userSettings.linkifyHashtags,  preProcess(source)
