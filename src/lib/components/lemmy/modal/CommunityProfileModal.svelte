@@ -16,9 +16,10 @@
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { expoIn } from "svelte/easing"
-    import { fullCommunityName } from "$lib/util";
+    import { fullCommunityName } from "$lib/util"
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
+    import { instance } from "$lib/instance"
     import { onMount } from "svelte";
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
@@ -58,6 +59,7 @@
         UserGroup,
         Window as WindowIcon
     } from "svelte-hero-icons";
+    
     
     export let community: Community | undefined
     export let open: boolean = false
@@ -118,7 +120,7 @@
         communityDetailsOpen = false
         loading = true
         const communityLookupName = `${community.name}@${new URL(community.actor_id).hostname}`
-        const storageKey = `getCommunity:${communityLookupName}`
+        const storageKey = `getCommunity_${$instance}:${communityLookupName}`
         
         try {
             communityDetails = await storage.get(storageKey)

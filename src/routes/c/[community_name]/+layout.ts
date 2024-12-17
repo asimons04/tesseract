@@ -3,9 +3,11 @@ import { StorageController } from '$lib/storage-controller'
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
+import { instance } from '$lib/instance'
 import { profile } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 import type { GetCommunityResponse } from 'lemmy-js-client'
+
 
 const storage = new StorageController({
     type: 'session',
@@ -13,9 +15,10 @@ const storage = new StorageController({
     useCompression: true   
 })
 
+const $instance = get(instance)
 
 export async function load(req: any) {
-    const storageKey = `getCommunity:${req.params.community_name}`
+    const storageKey = `getCommunity_${$instance}:${req.params.community_name}`
 
     try {
        let getCommunityResponse: GetCommunityResponse | undefined = await storage.get(storageKey)
