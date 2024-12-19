@@ -2,15 +2,13 @@
     import type { SystemTimerEvent } from '$lib/ui/events'
     import { amModOfAny,isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy'
-    import { getInbox, getInboxItemPublished } from '$lib/lemmy/inbox.js'
+    import { getInbox } from '$lib/lemmy/inbox.js'
     import { profile } from '$lib/auth'
-    import { userSettings } from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    import Spinner from '../loader/Spinner.svelte';
 
     import {
         Icon,
