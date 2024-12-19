@@ -656,6 +656,8 @@
         controller.takeSnapshot().then( () => {
             controller.reset() 
             controller.scrollContainer?.remove()
+            //@ts-ignore
+            controller.scrollContainer = null
         })
     })
 </script>
@@ -687,6 +689,8 @@
         controller.clearSnapshot()
         controller.reset()
         controller.scrollContainer?.remove()
+        
+        
     }}
 />
 
