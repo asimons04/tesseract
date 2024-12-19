@@ -28,9 +28,8 @@
     export let disabled:boolean = false
     export let title:string = '';
     export let newtab:boolean = false;
-    
-    //export let toggleOpen:Function|undefined
-    
+    export let preventDefault = false
+
     const click = createEventDispatcher()
 </script>
 
@@ -61,7 +60,13 @@
                 (
                     //@ts-ignore
                     e
-                ) => click('click', e)}
+                ) => {
+                    if (preventDefault) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                    }
+                    click('click', e)
+                }}
             title="{title}"
             type="button"
             class="flex flex-row gap-2 items-center px-4 py-1 w-full text-sm text-start
