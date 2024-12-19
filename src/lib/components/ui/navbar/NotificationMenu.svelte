@@ -10,16 +10,15 @@
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import ShieldIcon from '$lib/components/lemmy/moderation/ShieldIcon.svelte'
-    
+    import Spinner from '../loader/Spinner.svelte';
+
     import {
         Icon,
         Bell,
         Clipboard,
         InboxArrowDown,
+        ArrowPath,
     } from 'svelte-hero-icons'
-    
-    
-    
 
     export let size:number = 28
 
@@ -123,7 +122,7 @@
             user: $profile.user,
         }))
 
-        polling = true
+        polling = false
     }
 
     function handleSystemTimer(e:SystemTimerEvent) {
@@ -176,10 +175,8 @@
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
 
     <!----Messages--->
-    <MenuButton link href="/profile/inbox" data-sveltekit-preload-data="hover" aria-label="Moderation"
-        class="max-md:h-8 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
-    >
-        <Icon src={InboxArrowDown} mini size="16" />
+    <MenuButton link href="/profile/inbox" color="secondary" data-sveltekit-preload-data="hover" aria-label="Moderation">
+        <Icon src={InboxArrowDown} mini size="16" slot="icon"/>
         Inbox
         <span class="text-xs font-bold text-zinc-100 bg-red-800 px-2 py-0.5 rounded-md ml-auto">
             {$profile.user.unreads ?? 0}
@@ -188,10 +185,8 @@
 
     <!---Reports--->
     {#if amModOfAny($profile?.user)}
-    <MenuButton link href="/moderation" data-sveltekit-preload-data="hover" aria-label="Moderation"
-        class="max-md:h-8 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
-    >
-        <ShieldIcon filled width={16} />
+    <MenuButton link href="/moderation" color="secondary" data-sveltekit-preload-data="hover" aria-label="Moderation">
+        <ShieldIcon filled width={16} slot="icon"/>
         Reports
         <span class="text-xs font-bold text-zinc-100 bg-green-700 px-2 py-0.5 rounded-md ml-auto">
             {$profile?.user?.reports ?? 0}
@@ -201,17 +196,20 @@
 
     <!---Registration Applications--->
     {#if isAdmin($profile.user)}
-    <MenuButton link href="/admin/applications/" data-sveltekit-preload-data="hover" aria-label="Registration Applications"
-        class="max-md:h-8 dark:text-zinc-300 text-slate-700 hover:text-inherit hover:bg-slate-200 hover:dark:text-inherit relative hover:border-slate-300"
-    >
-        <Icon src={Clipboard} mini size="16" />
+    <MenuButton link href="/admin/applications/" color="secondary" data-sveltekit-preload-data="hover" aria-label="Registration Applications">
+        <Icon src={Clipboard} mini size="16" slot="icon" />
         Registration Applications
         <span class="text-xs font-bold text-zinc-100 bg-sky-800 px-2 py-0.5 rounded-md ml-auto">
             {$profile.user.registration_applications ?? 0}
         </span>
     </MenuButton>
     {/if}
-
+    
+    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+    <MenuButton color="secondary" aria-label="Check for Notifications" loading={polling} preventDefault on:click={async (e) => await pollNotifications() } >
+        <Icon src={ArrowPath} mini size="16" slot="icon"/>
+        Check for Notificaitons
+    </MenuButton>
 
 </Menu>
 {/if}
