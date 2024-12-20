@@ -46,7 +46,7 @@ export function findUserCommunityLinks(source: string) {
     }
 
     // Find '!community@instance.xyz'and turn into localized links
-    const communityRE = /(?<!`)!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!`)/gi
+    const communityRE = /(?<!\w|`|\/|\[)!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!`|.*\])/gi
     let communities = source.matchAll(communityRE)
     for (let community of communities) {
         if (community.groups?.community && community.groups?.instance) {
@@ -83,6 +83,7 @@ export const photonify = (link: string) => {
         return `/comment/${match?.[1]}/${match?.[2]}`
     }
   
+    /*
     if (regexes.user.test(link)) {
         const match = link.match(regexes.user)
         if (!match) return
@@ -94,5 +95,6 @@ export const photonify = (link: string) => {
         if (!match) return
         return `/c/${match?.[2]}@${match?.[1]}`
     }
+    */
 
 }
