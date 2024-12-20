@@ -30,6 +30,7 @@ const LINK_SHORTENERS = [
     'archive.ph',
     'bit.ly',
     'bl.ink',
+    'blobstreaming.org',
     'g.co',
     'ghostarchive.org',
     'goo.gl',
