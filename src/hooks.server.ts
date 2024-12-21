@@ -4,6 +4,7 @@ import { router } from './server/router.js'
 // Route Handlers
 import { fediseer_router }      from './lib/fediseer/server.js'
 import { image_proxy }          from './server/image-proxy.js'
+import { loops_router }         from './server/loops-api'
 import { mbfc_router }          from './lib/MBFC/server.js'
 import { proxy_pictrs_upload }  from './server/upload-image.js'
 
@@ -28,6 +29,10 @@ const routes = [
         route: `${api}/mbfc*`,
         handler: mbfc_router
     },
+    {
+        route: `${api}/loops*`,
+        handler: loops_router
+    }
     
 ]
 

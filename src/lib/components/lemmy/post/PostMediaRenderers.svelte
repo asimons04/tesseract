@@ -6,6 +6,7 @@
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
     import PostDailymotion from '$lib/components/lemmy/post/PostDailymotion.svelte'
     import PostLink from '$lib/components/lemmy/post/PostLink.svelte'
+    import PostLoops from './PostLoops.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
     import PostPeerTube from '$lib/components/lemmy/post/PostPeerTube.svelte'
@@ -15,6 +16,7 @@
     import PostVideo from '$lib/components/lemmy/post/PostVideo.svelte'
     import PostVimeo from '$lib/components/lemmy/post/PostVimeo.svelte'
     import PostYouTube from '$lib/components/lemmy/post/PostYouTube.svelte'
+    
 
     
     export let post: PostView
@@ -45,6 +47,12 @@
 {#if postType == "video"}
     <PostVideo bind:post bind:postContainer {displayType} {autoplay} loop={loop}/>
 {/if}
+
+<!--- Loops Post --->
+{#if postType == "loops"}
+    <PostLoops bind:post bind:postContainer {displayType} {autoplay} loop={loop}/>
+{/if}
+
 
 <!--- Bandcamp Embed --->
 {#if postType == "bandcamp"}

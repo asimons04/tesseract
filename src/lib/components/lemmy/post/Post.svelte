@@ -69,6 +69,9 @@
             case 'youtube':
                 post.post.thumbnail_url = '/img/youtube.png'
                 break
+            case 'loops':
+                post.post.thumbnail_url = '/img/loops.png'
+                break
         }
        
     }

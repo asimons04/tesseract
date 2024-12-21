@@ -4,16 +4,17 @@
     import { userSettings } from '$lib/settings'
     
     import { Icon, Play } from 'svelte-hero-icons'
+    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
 
     export let show:boolean
     export let displayType:PostDisplayType = 'feed'
+    export let loading: boolean = false
 
     let dispatcher = createEventDispatcher()
 </script>
 
 
 <!---Click to Remove Blur--->    
-<!---&& (displayType =='feed' || (displayType == 'post' && !$userSettings.embeddedMedia.post))--->
 {#if show }
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -25,7 +26,7 @@
             if (show) {
                 e.preventDefault();
                 e.stopPropagation();
-                show = show = false;
+                //show = show = false;
                 dispatcher('click', e)
             }
         }}
@@ -35,7 +36,11 @@
             bg-white/50 dark:bg-black/50 hover:text-sky-500
             "
         >
-            <Icon src={Play} mini width={64} />
+            {#if loading}
+                <Spinner width={64}/>
+            {:else}
+                <Icon src={Play} mini width={64} />
+            {/if}
         </div>
     </div>
 {:else}

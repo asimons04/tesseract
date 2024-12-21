@@ -53,7 +53,7 @@ let userSettings: any = get(UserSettings);
 export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
-    'audio' | 'image' | 'video' | 'dailymotion' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' | 'peertube' |
+    'audio' | 'image' | 'video' | 'loops' | 'dailymotion' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' | 'peertube' |
     'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'text';
 
 // Check whether current user can make changes to posts/comments
@@ -395,14 +395,18 @@ export const postType = (post: PostView | undefined | null): PostType => {
         return "songlink"
     }
 
+    // Peertube
     if (post.post.embed_video_url && isPeertube(post.post.embed_video_url)) {
         return "peertube"
     }
 
+    // Loops Videos
+    if (post.post.url?.startsWith('https://loops.video/v/')) return "loops"
+
     if (isDailymotion(post.post.url)) return 'dailymotion'
     
 
-    // These need to be last
+    // These need to be last since they're basically fallbacks
     if (
         post.post.url && !post.post.thumbnail_url) {
         return "link"

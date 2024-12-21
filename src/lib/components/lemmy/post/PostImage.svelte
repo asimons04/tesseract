@@ -12,7 +12,8 @@
     export let displayType: PostDisplayType
     export let zoomable:boolean = true
     export let clickToPlay:boolean = false
-    
+    export let loading: boolean = false
+
     let thumbnail_url:string
     let url:string
     
@@ -44,7 +45,7 @@
 
 <ImageContainer>
     {#if clickToPlay}
-        <ClickToPlayOverlay bind:show={clickToPlay} displayType={displayType} on:click={(e)=> dispatcher('click', e)}/>
+        <ClickToPlayOverlay bind:show={clickToPlay} bind:loading displayType={displayType} on:click={(e)=> dispatcher('click', e)}/>
         
         <ZoomableImage bind:url={thumbnail_url} bind:nsfw={post.post.nsfw} altText={post.post.alt_text ?? post.post.name} zoomable={zoomable}
             class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(50vh,800px)] z-20 {$$props.class}"
