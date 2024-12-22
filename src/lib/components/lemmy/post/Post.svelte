@@ -241,8 +241,8 @@
     
     onDestroy(() => {
         postContainer?.remove()
-        post = null
-        postContainer = null
+        //post = null
+        //postContainer = null
     })
 </script>
 
