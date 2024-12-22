@@ -126,9 +126,9 @@ Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with 
 
 
 ### Highly Configurable
-- User-configurable image/video sizes in feed and posts
 - Full Lemmy server config options (up to 0.19.3, anyway).
 - Most aspects of the UI can be configured by the end user. Server admins can set default preferences via `env` vars.
+- Lots of config options available to the user to fine-tune many aspects of the UI.
 
 ### Better Moderation Tools than Lemmy-UI
 - Can access moderation actions from the feed _without_ having to click into the post as with Lemmy-UI (at least as of 0.19.3)
