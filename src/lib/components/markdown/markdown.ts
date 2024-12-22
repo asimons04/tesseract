@@ -26,7 +26,8 @@ export function hashtagsToMDLinks(source:string) {
     
     for (let tag of hashtags) {
         let replacementText = `[${tag[0].trim()}](/search?q=${encodeURIComponent(tag[0].trim())})`
-        source = source.replace(tag[0], replacementText)
+        let find = new RegExp(tag[0] + '\\b')
+        source = source.replace(find, replacementText)
     }
     return source
 }
