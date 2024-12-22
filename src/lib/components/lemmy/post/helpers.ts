@@ -818,7 +818,7 @@ export function extractFlairsFromTitle(title:string): {name: string, flairs: Arr
      
     // Function to call recursively to extract flairs from the beginning and end of the title
     const extractFlairs = function (title:string): number {
-        const flairRegex = new RegExp(/^(\[.[^\]]+\])|(\[.[^\]]+\])$/g)
+        const flairRegex = new RegExp(/^(\[.?[^\]]+\])|(\[.?[^\]]+\])$/g)
         
         let foundFlairs = [] as string[]
         let foundFlairs2 = [] as string[]
