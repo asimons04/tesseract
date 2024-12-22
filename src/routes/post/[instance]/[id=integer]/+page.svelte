@@ -9,7 +9,6 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
-    import { setLastSeenCommunity } from '$lib/components/lemmy/community/helpers.js';
     import { userSettings } from '$lib/settings.js'
     
     import Button from '$lib/components/input/Button.svelte'
@@ -18,6 +17,7 @@
     import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
     import Post from '$lib/components/lemmy/post/Post.svelte'
+    import Placeholder from '$lib/components/ui/Placeholder.svelte';
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
 
     import {
@@ -27,7 +27,7 @@
         Home,
         ExclamationCircle,
     } from 'svelte-hero-icons'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte';
+    
 
     
     export let data
@@ -43,7 +43,6 @@
     onMount(async () => {
         if (!data?.post) return
         expandCompact = !(['link', 'thumbLink'].includes(getPostType(data.post.post_view))) ?? false
-        //setLastSeenCommunity(data.post.community_view.community)
 
         // Scroll to top unless jumping to a comment
         if (!$page.url.searchParams.get('thread')) window.scrollTo(0,0);
@@ -145,7 +144,7 @@
                 bind:post={data.post.post_view} 
                 displayType="post" 
                 actions={true} 
-                expandCompact={expandCompact}
+                {expandCompact}
                 on:reply={() => {
                     showCommentForm = !showCommentForm
                     
@@ -161,7 +160,7 @@
             
             />      
 
-            <CommentSection data={data} bind:showCommentForm={showCommentForm} bind:imageUploads/>
+            <CommentSection data={data} bind:showCommentForm bind:imageUploads/>
         </div>
 
         <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden 2xl:flex"/>
