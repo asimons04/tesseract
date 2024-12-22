@@ -37,22 +37,26 @@ export function findUserCommunityLinks(source: string) {
     // The 'photonify' processor in the Links renderer will handle other formats and further process these
 
     // Find @user@instance.xyz and turn into localized links
-    const userRE = /(?<!\w|`|\/|\[)@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!`|.*\])/gi
+    const userRE = /(?<!\w|`|\/|\[)@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!.*`|.*\])/gi
     let users = source.matchAll(userRE)
+    
     for (let user of users) {
+        console.log(user)
         if (user.groups?.username && user.groups?.instance) {
             let replacementText = `[@${user.groups.username}@${user.groups.instance}](/u/${user.groups.username}@${user.groups.instance})`
-            source = source.replaceAll(user[0], replacementText)
+            let find = new RegExp(user[0] + '(?!.*`|.*\])', "gi")
+            source = source.replaceAll(find, replacementText)
         }
     }
 
     // Find '!community@instance.xyz'and turn into localized links
-    const communityRE = /(?<!\w|`|\/|\[)!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!`|.*\])/gi
+    const communityRE = /(?<!\w|`|\/|\[)!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!.*`|.*\])/gi
     let communities = source.matchAll(communityRE)
     for (let community of communities) {
         if (community.groups?.community && community.groups?.instance) {
             let replacementText = `[!${community.groups.community}@${community.groups.instance}](/c/${community.groups.community}@${community.groups.instance})`
-            source = source.replaceAll(community[0], replacementText)
+            let find = new RegExp(community[0] + '(?!.*`|.*\])', "gi")
+            source = source.replaceAll(find, replacementText)
         }
     }
 
