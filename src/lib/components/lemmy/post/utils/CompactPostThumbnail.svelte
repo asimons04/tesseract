@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { PostView } from "lemmy-js-client"
     
-    import { isImage, isVideo, scrollToTop, type PostDisplayType } from "../helpers"
+    import { isImage, isVideo, type PostDisplayType } from "../helpers"
     import { imageProxyURL } from "$lib/image-proxy"
     import { userSettings } from "$lib/settings"
     
@@ -9,7 +9,6 @@
 
     export let post: PostView
     export let expandCompact:boolean = false
-    export let postContainer: HTMLDivElement
     export let displayType: PostDisplayType = 'feed'
     export let showThumbnail: boolean = true
     export let float: boolean = false
@@ -22,7 +21,6 @@
         <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
             on:click={() => {  
                 expandCompact = !expandCompact; 
-                scrollToTop(postContainer)
             }}
         >
 

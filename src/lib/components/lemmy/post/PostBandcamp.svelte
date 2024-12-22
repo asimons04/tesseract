@@ -2,24 +2,21 @@
     import type { PostDisplayType } from './helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
-    import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings  } from '$lib/settings.js'
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Link from '$lib/components/input/Link.svelte'
     import PostEmbedDescription from './PostEmbedDescription.svelte';
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
-    
 
     export let post: PostView
     export let displayType: PostDisplayType
-    export let postContainer: HTMLDivElement
-    
+    export let inViewport = false
+
     let clickToPlayClicked = false
     let embedURL:   string = ""
-    let inViewport = false
+    
 
     // Generate the embed URL for the given post URL
     $:  if (post.post && post.post.embed_video_url) {
@@ -57,8 +54,6 @@
         border:0;
     }
 </style>
-
-<PostIsInViewport bind:postContainer bind:inViewport />
 
 {#if showAsEmbed}
     <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail

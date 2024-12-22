@@ -10,15 +10,14 @@
     import Link from '$lib/components/input/Link.svelte'
     import PostEmbedDescription from './PostEmbedDescription.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
-    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     
     export let post: PostView
     export let displayType: PostDisplayType
     export let autoplay:boolean|undefined = undefined;
-    export let postContainer: HTMLDivElement
-    
+    export let inViewport = false
+
     let embedURL:   URL | undefined
-    let inViewport = false
+    
     let clickToPlayClicked = false
 
     $:  if (post.post?.url) embedURL = buildSonglinkEmbedLink(post.post.url, displayType, autoplay)
@@ -32,8 +31,6 @@
     $:  if (!inViewport) clickToPlayClicked = false
 </script>
 
-
-<PostIsInViewport bind:postContainer bind:inViewport />
 
 {#if showAsEmbed && embedURL}
     <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail

@@ -51,9 +51,8 @@
     export let hideBadges:boolean               = false;
     export let avatarSize:number                = 42;
     export let noClick:boolean                  = false;
-    
+   
     export let expandCompact: boolean           
-    export let postContainer: HTMLDivElement|undefined = undefined
     export let actions: boolean                 = true
     
     export let inCommunity:boolean     = false
@@ -200,9 +199,6 @@
                             iconSize={16}
                             on:click={() => {  
                                 expandCompact = !expandCompact; 
-                                if (postContainer) {
-                                    //scrollToTop(postContainer)
-                                }
                             }}
                         />
                     {/if}

@@ -9,7 +9,6 @@
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
-    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from './PostImage.svelte';
     
     
@@ -17,11 +16,11 @@
     export let autoplay:boolean = false;
     export let loop:boolean = false;
     export let displayType:PostDisplayType = 'feed'
-    export let postContainer: HTMLDivElement
+    export let inViewport = false
 
     let clickToPlayClicked = false
     let muted = autoplay
-    let inViewport = false
+    
     let video: HTMLVideoElement | undefined = undefined
 
     $:  source = post.post.url && isVideo(post.post.url) 
@@ -43,8 +42,11 @@
         
     // Unset click to play when out of viewport (revert to thumbnail or pause)
     $:  if (!inViewport) {
+            if (video) {
+                video.pause() 
+                video.remove()
+            }
             clickToPlayClicked = false
-            if (video) video.pause() 
         }
     
     function clickToPlay() {
@@ -57,7 +59,6 @@
 
 </script>
 
-<PostIsInViewport bind:postContainer bind:inViewport />
 <span class="flex flex-row w-full gap-2 px-1">
     <ArchiveLinkSelector url={post.post?.url} postType='video' />    
     <Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />

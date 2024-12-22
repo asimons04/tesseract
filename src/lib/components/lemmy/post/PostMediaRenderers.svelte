@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostType, PostDisplayType } from './helpers.js'
-    import type { CommunityModeratorView, PostView } from 'lemmy-js-client'
+    import type { PostView } from 'lemmy-js-client'
     
     import PostAudio from '$lib/components/lemmy/post/PostAudio.svelte'
     import PostBandcamp from '$lib/components/lemmy/post/PostBandcamp.svelte'
@@ -22,10 +22,9 @@
     export let post: PostView
     export let postType: PostType
     export let displayType: PostDisplayType
-    export let postContainer: HTMLDivElement
     export let autoplay:boolean|undefined = undefined;
     export let loop:boolean | undefined = undefined
-
+    export let inViewport: boolean = false
 </script>
 
 <!--- Link-style post without thumbnail URL--->
@@ -40,61 +39,61 @@
 
 <!--- Direct Audio FIle Post --->
 {#if postType == "audio"}
-    <PostAudio bind:post bind:postContainer {displayType}/>
+    <PostAudio bind:post bind:inViewport {displayType}/>
 {/if}
 
 <!--- Direct Video Post --->
 {#if postType == "video"}
-    <PostVideo bind:post bind:postContainer {displayType} {autoplay} loop={loop}/>
+    <PostVideo bind:post bind:inViewport {displayType} {autoplay} loop={loop}/>
 {/if}
 
 <!--- Loops Post --->
 {#if postType == "loops"}
-    <PostLoops bind:post bind:postContainer {displayType} {autoplay} loop={loop}/>
+    <PostLoops bind:post bind:inViewport {displayType} {autoplay} loop={loop}/>
 {/if}
 
 
 <!--- Bandcamp Embed --->
 {#if postType == "bandcamp"}
-    <PostBandcamp bind:post bind:postContainer {displayType}/>
+    <PostBandcamp bind:post bind:inViewport {displayType}/>
 {/if}
 
 <!--- YouTube Video Post (or other supported embed: YT, Invidious, Spotify --->
 {#if postType == "youtube"}
-    <PostYouTube bind:post bind:postContainer {displayType} {autoplay}/>
+    <PostYouTube bind:post bind:inViewport {displayType} {autoplay}/>
 {/if}
 
 <!--- Spotify Embed --->
 {#if postType == "spotify"}
-    <PostSpotify bind:post bind:postContainer {displayType} />
+    <PostSpotify bind:post bind:inViewport  {displayType} />
 {/if}
 
 <!--- Soundcloud Embed --->
 {#if postType == "soundcloud"}
-    <PostSoundCloud bind:post bind:postContainer {displayType} />
+    <PostSoundCloud bind:post bind:inViewport {displayType} />
 {/if}
 
 <!--- Vimeo Embed --->
 {#if postType == "vimeo"}
-    <PostVimeo bind:post bind:postContainer {displayType} />
+    <PostVimeo bind:post bind:inViewport {displayType} />
 {/if}
 
 <!--- Odysee Embed --->
 {#if postType == "odysee"}
-    <PostOdysee bind:post bind:postContainer {displayType} />
+    <PostOdysee bind:post bind:inViewport {displayType} />
 {/if}
 
 <!--- SongLink Embed --->
 {#if postType == "songlink"}
-    <PostSongLink bind:post bind:postContainer {displayType} />
+    <PostSongLink bind:post bind:inViewport {displayType} />
 {/if}
 
 <!---Peertube Embed--->
 {#if postType == 'peertube'}
-    <PostPeerTube bind:post bind:postContainer {displayType} />
+    <PostPeerTube bind:post bind:inViewport {displayType} />
 {/if}
 
 <!---Dailymotion Embed--->
 {#if postType == 'dailymotion'}
-    <PostDailymotion bind:post bind:postContainer {displayType} />
+    <PostDailymotion bind:post bind:inViewport {displayType} />
 {/if}

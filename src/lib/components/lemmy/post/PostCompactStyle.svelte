@@ -24,7 +24,6 @@
     export let expandPreviewText:boolean 
     export let disablePostLinks:boolean = false
     export let collapseBadges:boolean = false;
-    export let postContainer: HTMLDivElement
     export let postType: PostType
     export let inCommunity:boolean = false
     export let inProfile: boolean = false
@@ -49,7 +48,7 @@
     <!--- If post is NSFW, only show the metadata + title and overlay the rest--->
     {#if post.post.nsfw && displayType=='feed'}
         <div class="flex flex-col gap-1 items-end w-full">
-            <PostMeta bind:post bind:postContainer bind:expandCompact {actions} showTitle={true} {collapseBadges} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+            <PostMeta bind:post bind:expandCompact {actions} showTitle={true} {collapseBadges} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} text="[Reveal NSFW Post]"/>
             <PostActions  bind:post  {displayType} on:reply />
         </div>
@@ -63,7 +62,7 @@
             <!---Posts that have only a direct video or image and a body less than 250 characters--->
             {#if imageOnly}
                 
-                <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+                <PostMeta bind:post bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
                 <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                     <div class="flex flex-col w-[calc(100%-132px)] gap-1">
                         <PostTitle bind:post />
@@ -73,12 +72,12 @@
                         <div class="mt-2" />
                         <PostActions  bind:post  {displayType} on:reply />
                     </div>
-                    <CompactPostThumbnail bind:post bind:expandCompact bind:postContainer bind:displayType/>
+                    <CompactPostThumbnail bind:post bind:expandCompact bind:displayType/>
                 </div>
                 
             <!---Posts that have an image/video and a post body greater than 250 chars--->
             {:else}
-                <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+                <PostMeta bind:post bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
                 <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                     <div class="flex flex-col w-[calc(100%-132px)] gap-1">
                         <PostTitle bind:post />
@@ -90,17 +89,17 @@
                         <div class="mt-2" />
                         <PostActions  bind:post  {displayType} on:reply />
                     </div>
-                    <CompactPostThumbnail bind:post bind:expandCompact bind:postContainer bind:displayType {showThumbnail} float />
+                    <CompactPostThumbnail bind:post bind:expandCompact bind:displayType {showThumbnail} float />
                 </div>
             {/if}
 
         <!---Link posts with embed description, etc--->
         {:else}
 
-            <PostMeta bind:post bind:postContainer bind:expandCompact showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+            <PostMeta bind:post bind:expandCompact showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
             <PostLink bind:post bind:displayType compact={true} on:clickThumbnail={() => { expandCompact = !expandCompact }} />
             {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-                <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText  class="my-1" />
+                <PostBody bind:post {displayType} bind:expandPreviewText  class="my-1" />
             {/if}
             <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
             <div class="mt-2" />

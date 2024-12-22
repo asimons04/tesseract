@@ -8,16 +8,14 @@
     import IFrame from './utils/IFrame.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import PostEmbedDescription from './PostEmbedDescription.svelte';
-    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     
     
     
     export let post: PostView
     export let displayType: PostDisplayType
-    export let postContainer: HTMLDivElement
+    export let inViewport = false
 
-    let inViewport = false
     let embedURL:   URL
     let clickToPlayClicked = false
     
@@ -39,9 +37,6 @@
     $:  if (!inViewport) clickToPlayClicked = false
 
 </script>
-
-
-<PostIsInViewport bind:postContainer bind:inViewport />
 
 {#if showAsEmbed}
     <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail

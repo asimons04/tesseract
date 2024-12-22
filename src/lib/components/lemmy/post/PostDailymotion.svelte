@@ -7,21 +7,17 @@
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
     import IFrame from './utils/IFrame.svelte'
     import Link from '$lib/components/input/Link.svelte'
-    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from '$lib/components/lemmy/post/PostImage.svelte'
     import PostEmbedDescription from './PostEmbedDescription.svelte';
     
 
     export let post: PostView
     export let displayType: PostDisplayType
-    export let postContainer:HTMLDivElement
+    export let inViewport = false
 
     let videoID:    string | null | undefined
     let embedURL:   URL 
-    
-    let inViewport = false
     let clickToPlayClicked = false
-    
     
     $:  if (post.post?.url) {
             // Parse URLs to pick out video IDs to create embed URLs
@@ -46,8 +42,6 @@
     $:  if (!post.post.thumbnail_url) post.post.thumbnail_url = '/img/transparent.png'
 </script>
 
-
-<PostIsInViewport bind:postContainer bind:inViewport />
 
 {#if showAsEmbed}
     <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail

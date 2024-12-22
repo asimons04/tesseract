@@ -24,10 +24,10 @@
     export let moderators: Array<CommunityModeratorView> = [];
     export let expandPreviewText:boolean = false
     export let collapseBadges:boolean = false;
-    export let postContainer: HTMLDivElement
     export let inCommunity:boolean = false
     export let inProfile: boolean = false
-   
+    export let inViewport: boolean = false
+
     // Determine post type based on its attributes
     let postType: PostType
     $: post, postType = identifyPostType(post)
@@ -37,13 +37,13 @@
 
 
 <Card class="flex flex-col w-full p-2 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
-    <PostMeta bind:post bind:expandCompact bind:postContainer moderators={moderators} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+    <PostMeta bind:post bind:expandCompact moderators={moderators} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
 
     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType}>    
-        <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
+        <PostMediaRenderers bind:post bind:displayType bind:postType bind:autoplay bind:loop bind:inViewport/>
 
         {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength  >= 0) || displayType=='post'}
-            <PostBody bind:post bind:postContainer {displayType} bind:expandPreviewText />
+            <PostBody bind:post {displayType} bind:expandPreviewText />
         {/if}
     </NSFWOverlay>
     

@@ -18,11 +18,11 @@
     export let autoplay:boolean = false;
     export let loop:boolean = false;
     export let displayType:PostDisplayType = 'feed'
-    export let postContainer: HTMLDivElement
+    export let inViewport = false
 
     let clickToPlayClicked = false
     let muted = autoplay
-    let inViewport = false
+    
     let video: HTMLVideoElement | undefined = undefined
     let source: string | undefined = undefined
     let loading = false
@@ -58,8 +58,6 @@
     }
 
 </script>
-
-<PostIsInViewport bind:postContainer bind:inViewport />
 
 <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
         description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 

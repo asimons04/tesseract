@@ -15,11 +15,11 @@
     export let autoplay:boolean = false;
     export let loop:boolean = false;
     export let displayType:PostDisplayType = 'feed'
-    export let postContainer: HTMLDivElement
+    export let inViewport = false
 
     let clickToPlayClicked = false
     let muted = autoplay
-    let inViewport = false
+    
     let audio: HTMLAudioElement | undefined = undefined
 
     $:  source = post.post.url && isAudio(post.post.url) 
@@ -54,8 +54,6 @@
 
 
 </script>
-
-<PostIsInViewport bind:postContainer bind:inViewport />
 
 <Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
 
