@@ -7,7 +7,6 @@
     import Spinner from '$lib/components/ui/loader/Spinner.svelte';
 
     export let show:boolean
-    export let displayType:PostDisplayType = 'feed'
     export let loading: boolean = false
 
     let dispatcher = createEventDispatcher()
