@@ -13,6 +13,9 @@ export default defineConfig({
         type: 'module',
         navigateFallback: '/',
       },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3000000
+      },
       manifest: {
         name: 'Tesseract for Lemmy',
         short_name: 'Tesseract',
@@ -35,5 +38,6 @@ export default defineConfig({
   define: {
     __VERSION__: JSON.stringify(process.env.npm_package_version),
     __CODENAME__: JSON.stringify("Intrepid")
+    
   },
 })
