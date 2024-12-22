@@ -66,11 +66,7 @@
 </script>
 
 
-<div class="flex 
-        {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} 
-        border border-slate-300 dark:border-zinc-800 items-center text-sm gap-0 rounded-lg
-    "
->
+<div class="flex flex-row border border-slate-300 dark:border-zinc-800 items-center text-sm gap-0 rounded-lg">
     <!--size="{small ? 'sm' : 'md'}"-->
     <Button
         disabled={!$profile?.user || !onHomeInstance}
