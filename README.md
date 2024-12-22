@@ -154,9 +154,6 @@ Tesseract is designed to be self hosted.  You can even run it from localhost if 
 ---
 
 ### Deploying the Image
-Replace `example.com` in the line below with the base URL of your instance.  This example exposes the container's port on `8080` but you can/should change that to whatever port you need or have free on your host.  
-
-Additional environment variables for configuring Tesseract can be found further down in the README.
 
 ### Tags Used
 The base image is `ghcr.io/asimons04/tesseract`.  Tags are used to specify the version.
