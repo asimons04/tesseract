@@ -11,6 +11,7 @@
     import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from './PostImage.svelte'
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
     
     
     export let post: PostView 
@@ -30,7 +31,7 @@
         try {
             const response = await fetch(`/tesseract/api/loops/lookup?loops_url=${post.post.url}`)
             const result = await response.json()
-            if (result?.video_url) return result.video_url
+            if (result?.video_url) return imageProxyURL(result.video_url)
         }
         catch { return undefined }
     }
@@ -59,10 +60,23 @@
 </script>
 
 <PostIsInViewport bind:postContainer bind:inViewport />
-<span class="flex flex-row w-full gap-2 px-1">
-    <ArchiveLinkSelector url={post.post?.url} postType='video' />    
-    <Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
-</span>
+
+<PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    > 
+        <span class="flex flex-row w-full gap-2 px-1">
+            <ArchiveLinkSelector url={post.post?.url} postType='video' />    
+            <Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
+        </span>
+</PostEmbedDescription>
 
 
 {#if source && (showAsEmbed || !post.post.thumbnail_url)}
