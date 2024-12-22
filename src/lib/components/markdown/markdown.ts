@@ -62,8 +62,10 @@ export function findUserCommunityLinks(source: string) {
 const regexes = {
     post: /^https:\/\/([a-zA-Z0-9\.\-]+)\/post\/(\d+)$/,
     comment: /^https:\/\/([a-zA-Z0-9\.\-]+)\/comment\/(\d+)$/,
-    user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/(?!@)(.*)$/,
-    community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/(.*)$/
+    //user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/(?!@)(.*)$/,
+    //community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/(.*)$/
+    user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/([^@]+)$/,
+    community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/([^@]+)$/
 }
 
 /**
@@ -83,7 +85,7 @@ export const photonify = (link: string) => {
         return `/comment/${match?.[1]}/${match?.[2]}`
     }
   
-    /*
+    
     if (regexes.user.test(link)) {
         const match = link.match(regexes.user)
         if (!match) return
@@ -93,8 +95,8 @@ export const photonify = (link: string) => {
     if (regexes.community.test(link)) {
         const match = link.match(regexes.community)
         if (!match) return
+        console.log(`/c/${match?.[2]}@${match?.[1]}`)
         return `/c/${match?.[2]}@${match?.[1]}`
     }
-    */
 
 }
