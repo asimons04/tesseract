@@ -1,0 +1,72 @@
+services:
+  tesseract:
+    image: ghcr.io/asimons04/tesseract:v1.4.21
+    environment:
+      # The domain of Tesseract's 'default' instance. This is the only required config variable
+      - PUBLIC_INSTANCE_URL=lemmy.world
+      
+      # By default, Tesseract locks itself to the configured instance. To allow users to add accounts from other instances, set this to false.
+      - PUBLIC_LOCK_TO_INSTANCE=false
+      
+      # Feed, feed sort, and comment sort settings
+      - PUBLIC_DEFAULT_FEED=All
+      - PUBLIC_DEFAULT_FEED_SORT=Scaled
+      - PUBLIC_DEFAULT_COMMENT_SORT=Top
+
+      # Default to Dark Theme instead of "System"
+      - PUBLIC_THEME=dark
+
+      # Media Proxying
+      # Enable the media proxying module and make it available for use.  It is disabled by default.
+      - PUBLIC_ENABLE_MEDIA_PROXY=true
+      
+      # List of domains that should not be proxied (content reasons, because they won't work with the proxy, etc)
+      - PUBLIC_MEDIA_PROXY_BLACKLIST=mintboard.org,iili.io,img.shields.io
+      - PUBLIC_ENABLE_MEDIA_PROXY_LOCAL=true
+      
+      # Pre-set the "Use media proxy" setting for all users.  If set to false (default), users will need to go into Settings->Media to enable image proxying.
+      - PUBLIC_ENABLE_USER_MEDIA_PROXY=true
+
+      # Media Caching; disabled by default. Enabled and configured here.
+      - PUBLIC_ENABLE_MEDIA_CACHE=true
+      - PUBLIC_ENABLE_MEDIA_CACHE_LOCAL=true
+      - PUBLIC_MEDIA_CACHE_DURATION=4320
+      - PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS=true
+      - PUBLIC_MEDIA_CACHE_MAX_SIZE=500
+      - PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL=5
+      - PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP=true
+      
+      # List of Invidious/Piped domains which should be used for detection. See docs/CustomYoutubeFrontends.md for more in fo.
+      - |-
+        PUBLIC_CUSTOM_INVIDIOUS=
+          i.devol.it,
+          piped.adminforge.de
+      
+      # List of instances that will be pre-populated into the instance selector on the community explorer page. The default instance is included by default and does not need to be listed here.
+      - |-
+        PUBLIC_FEATURED_INSTANCES=
+          lemmy.world,
+          mander.xyz,
+          programming.dev,
+          lemm.ee,
+          lemmy.ca,
+          lemmy.cafe,
+          literature.cafe,
+          sh.itjust.works,
+          lemmy.blahaj.zone,
+          slrpnk.net,
+          startrek.website,
+          beehaw.org,
+          sopuli.xyz,
+          lemmy.zip
+    
+    # Tesseract uses /app/cache inside the container to persist lookups and for the media cache. This will work without a volume, but anything cached will not persist after the container is restarted.
+    
+    # Note:  The host directory must be owned by UID/GID 1000.
+    volumes:
+      - ./cache:/app/cache
+    
+    # Bind to localhost:8081 instead of the container's default port of 3000
+    ports:
+      - 127.0.0.1:8081:3000
+    restart: "always"
