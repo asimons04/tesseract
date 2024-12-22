@@ -42,10 +42,11 @@ The options will be ignored and UI elements hidden if the currently-connected in
 Will be added once Sublinks is released.
 
 ## Feature Highlights
-The following features are unique to Tesseract:
+
 
 ### Full Media Support in Feed and Posts 
   - Loops (new in 1.4.21)
+  - Peertube
   - Spotify
   - YouTube/Invidious/Piped
   - Soundcloud
@@ -53,8 +54,8 @@ The following features are unique to Tesseract:
   - Bandcamp
   - Odysee
   - [Song Link](https://odesli.co/)
-  - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
-  - Peertube.  PT support is kind of cool because you can already follow PeerTube channels in Lemmy. With the addition of support for their embeds, this makes following your favorite creator even easier. Upvotes/downvotes to a Peertube post will federate out to thumbs-up/thumbs-down on PT's side, and comments will at least federate to PT.
+  - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.
+  
   
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
