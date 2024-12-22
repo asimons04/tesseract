@@ -4,7 +4,7 @@
 
     export let postContainer:HTMLDivElement
     export let inViewport:boolean = false
-    export let delay: number = 2000
+    export let delay: number = 500
     export let threshold: number = 0
 
     const dispatch = createEventDispatcher()
