@@ -24,7 +24,6 @@
             if (entry.isIntersecting) {
                 inViewport = true
                 dispatch('inViewport', true)
-
                 clearTimeout(timeout)
                 return
             }
