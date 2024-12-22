@@ -71,14 +71,35 @@ Add filter option for domains
 
 ## 1.4.21
 
+### Overview
+This release could *probably* be considered 1.5.0 rather than a 1.4.x point release, but I'm going to wait until I raise the minimum supported API level before bumping the minor version.  Currently, I do have support for 0.19.4+ features, but they're limited to a few new filtering options in the feeds.  I've also added the capability to automatically enable/disable features that require different API versions, so I'll likely be adding some more 0.19.4+ user-facing features in the coming releases.  The newer admin/mod features, if any, will need to wait until my own instance is updated past 0.19.3 since I will be unable to test those (I can test the user-level stuff against a different instnace with one of my alt accounts there).  
+
+Most of the work in this release has been re-writing core components, getting rid of some legacy stuff, and stanardizing any redundant sections with shared components.  All of this is to make the upcoming task of porting to either Svelte 5  or React easier (haven't decided which yet; I'm annoyed that Svelte has so many breaking changes. We also use React at work which is more stable in the long term).
+
+
+
 ### Bugfixes
 - Added missing padding on placeholder initials if there is no site logo
+
 - If replying to a post/comment removal via a comment reply, send the reply *before* removing the item otherwise the reply will fail. (when I wrote that in the 0.18.x days, you could reply to removed comments and I just never used that feature since the behavior changed in 0.19.x)
+
 - When switching instances or loading the site info for another instance into the site sidebar, the taglines would sometimes get stuck on the previous instance's values.
+
+- Images would fail to render if alt text had a `@user@instance.xyz` or `!community@instance.xyz` in the alt text since it would trigger the pre-processor to convert them into user/community links.
+
+- Memory optimization hacks; good lord Svelte is a hoarder and refuses to let go of shit.  This is a huge reason why I'm probably going to port Tesseract to React instead of going to Svelte 5. Even if the memory leaks are fixed in Svelte 5, they basically turned it into React anyway, so might as well use that.
+
+- Fix bug where overlap in hashtags (e.g. #Photography and #Photo) would mangle the longer tag.
+
+- Markdown inside of code blocks is no longer pre-processed.  This should fix quirks when viewing code snippets and some of the includes get incorrectly turned into hashtags.  It also let me simplify some of the regex patterns since they no longer have to account for code blocks with look aheads/behinds.
+
+
+
+- Bugfixes for bugs introduced during the rewrites have been omitted, but a lot of time was spent tracking those down and squashing them.
 
 
 #### Bugfixes for Image Loading and Image Proxy
-For efficiency, Tesseract tries to request `webp` versions of non-animated images at sizes appropriate for their use.  e.g. 128px for icons, 256 for thumbnail images, etc.   Usually this works, but sometimes remote pict-rs gets all pissy about it.  Before, this would cause the image to fail to load until opening it with the Zoom which requested the raw image URL.  Now, I've added error handlers for images to fallback automatically/gracefully.
+For efficiency, Tesseract tries to request `webp` versions of non-animated images at sizes appropriate for their use.  e.g. 128px for icons, 256 for thumbnail images, etc.   Usually this works, but sometimes remote pict-rs gets all pissy about it.  Before, this would cause the image to fail to load until opening it with the Zoom which requested the raw image URL.  Now, I've added error handlers for images to fallback automatically/gracefully:
 
 [Desired Resolution and Format] -> [Desired Resolution] -> [Raw URL at default resolution] -> [Static Placeholder Image]
 
@@ -92,10 +113,40 @@ Did I mention how stupid it is that Lemmy federates the proxied URL for images i
 
 ---
 
-### New Features
+### Optimizing Browser Settings
+When using "click to play" on media posts (the default setting), the "autoplay" flag is implicitly set on the embed to prevent you from having to click multiple "play" buttons.  However, any player besides YouTube (e.g. Invidious, Piped, PeerTube, etc) requires you to click the video again after it switches from thumbnail to embed.  This is annoying, and YouTube only seems to get a pass in Chrome/ium because Google says so.
 
-#### Initial Support for 0.19.4+ API Functions
-Tesseract is still designed for 0.19.3 as its baseline.  However, I updated the JS client to the latest one for 0.19.7 since it's backwards compatible.  While I don't have all the newer features built-in yet, I do have some that become available when the API level supports it. This also means I can start working on new user-facing features for the later API versions.  The mod/admin features will have to wait until my instance is updated so I can be able to test those.
+To remedy this:
+
+- In Firefox, this *mostly* works with the default settings and no settings changes are needed.  However, you can set the site permissions when a media tries to play (can't seem to get to that setting otherwise?) and change autoplay to "Allow audio and video" if needed.
+- In Chrome(ium):  In the Tesseract tab, go into "Site Settings" and change Sound from "Automatic (Default)" to "Allow".  This is very counter-intuitive, but it does address the problem.
+
+
+
+### New Features
+#### Initial Support for Loops Videos
+This has been a feature request since Loops first went live, and I finally came up with a satisfactory way to integrate Loops media.  The media itself is easy to integrate.  The problem is that the metadata returned for a Loops video link does not include the video URL, and there's no way to derive the video URL from the available metadata.  In some cases, I can use the thumbnail image and massage that into a working video link, but more often than not, the thumbnail URL was to a pict-rs cached image rather than the value returned from Loops.
+
+Right now, the Loops support is very "beta" but functioning well.  There are a few limitations:
+- It can break at any time if Loops decides to go user-hostile and block non-browser requests via Cloudflare or something. Tesseract does a server-side lookup to basically scrape the video URL and then caches that for re-use.
+- It can also break if Loops decides to crack down on "hotlinking" the videos.
+- It only works with the main `loops.video` domain. For now, this is fine since Loops hasn't released its stack for self-hosting yet.   Like Piped/Invidious, I'm basically going to have to have a list of Loops instances to detect.  While this is great for decentralization, it's a huge pain in the ass when you want to make a nice client to integrate with them all.
+- Loops videos are not "eligible" to always shows as embeds and must use click to play.  This was a choice on my end to avoid hammering Loops with requests for videos that may or may not be watched.  The lookup to get the video URL is only invoked when you "click to play" from the post thumbnail image.
+
+- I've reached out to the Loops team to see if they would add the `oc:video` tag to the page metadata so the embed video URL can be obtained properly without such hacks.  If they ever do add that, then the integration *should* work cleanly like with PeerTube and without the clunky requirement to have a list of known Loops instances and then scraping the video URL from those.
+
+
+
+#### Alt Text Now Supported
+If the connected Lemmy instance is on API 0.19.5 or higher, the post form will now have an "alt text" field if the URL points to an image or video (uploaded or remote URL).  If the URL is not an image or direct video, or the API is below 0.19.5, the alt text field will not show up.
+
+
+#### Under the Hood Highlights
+- **Storage Compression**:  When data gets stored to sessionStorage, it's compressed first.  This has yielded quite a bit of savings and is a workaround for the 5 MB per-key limit on local and session storage in the browser.  5 MB sounds like a lot when it's all text data, but since there's a lot of redundancy in the data returned from the API (e.g. two posts to the same community will each have a full copy of the community details, sidebar info, etc), it fills up fast when you're taking snapshots of the current state (which his how Tesseract keeps your position in the infinite scroll feeds).  In the future, I plan to move to IndexedDB which does not have this limitiation and comes with additional benefits. The current plan is to use PouchDB as the wrapper library which opens the door to syncing with a Couch DB add-on to Tesseract's server component and allowing state to be maintained across devices :)
+
+- **More Caching**:  For data that doesn't change often, such as site and community info, the loaders have been updated to first see if there is a cached record for that data.  If so, it will be used to fulfill the API call.  If not, it's requested from the server as before and cached until needed.  Currently, site (local and remote) and communitiy details are cached.  I'm looking into other places data can be cached, perhaps with a shorter validity period.
+
+- **Initial Support for 0.19.4+ API Functions**:  Tesseract is still designed for 0.19.3 as its baseline.  However, I updated the JS client to the latest one for 0.19.7 since it's backwards compatible.  While I don't have all the newer features built-in yet, I do have some that become available when the API level supports it. 
 
 #### Preview Community and User Feeds in Modals
 You can now view a user's or a community's feeds in their respective modals when clicking a user or community link.
@@ -103,6 +154,7 @@ You can now view a user's or a community's feeds in their respective modals when
 The preview has also been added to the moderation modal.  However, in the moderation modal, it limits the feed to just the user and community relevant to the item that initiated the mod modal.  e.g.  if you click the mod button for a post/comment in the FoodPorn community by user  Bob, the only submissions that will be shown are Bob's submissions to FoodPorn.  This should help with performing mod actions as you can check for patterns of rule-violating behavior without having to leave the mod tool.
 
 Another use case is previewing new communities when you click on a pill-button link.  e.g.  if someone comments about a cool community and uses the `!community@instance.xyz` format (as they should), you can click on it which will resolve it automatically.  From there, you can click "Browse Community..." to see what kinds of posts it has before commiting to subscribing (okay, that's a very tiny commitment, lol, but you get my point).
+
 
 
 #### New Feed Capabilities
@@ -129,6 +181,19 @@ The feeds were re-written as components to be more modular and consistent.  Most
 - Instance names in the site cards are now clickable. Eventually they will open an instance modal with nice options (similar to user and community modals), but for now, it just goes to `/site/{instance}` to view the instance details in a nice page (rather than a cramped sidebar).
 - Clicking "Home" in the sidebar will take you back to your previous scroll position.
 
+#### Moved More Menus Out of the Sub-Navbar
+I still like the UI element, but too many of the options got moved into dropdown menus in the sub-navbar.  Based on feedback, that seems to have sacrificed function for form.  In this release, I've moved many of the selectors closer to the elements they manage.  
+
+- Community Browser instance selector, sort, and type menus have been moved above the community list.
+- The sort and type selector menus in user profiles have been moved into the feed component itself.
+- In the Inbox, the subnavbar elements have been removed completely, and there is a sidebar to the left of the inbox (similar to an email inbox)
+- In the Moderation/Reports area, the subnavbar selector has been removed; like the Inbox, there's now a sidebar with the relevant filtering options.
+
+
+- The main feed still has them in the subnav bar, though, since there's plenty of room on the left-hand side.
+
+![](https://y.yarn.co/b483d800-7bfb-4e59-a438-21a73ac1be55_text.gif)
+
 ---
 
 ### Removed Features :(
@@ -136,7 +201,9 @@ The feeds were re-written as components to be more modular and consistent.  Most
 #### Browsing Favorites / Groups as a Feed
 This capability was always experimental.  The initial implementation wasn't great, but it worked well enough, and I had a plan to improve it.  Unfortunately, before I could put that into motion, the Lemmy devs, in their infinite "knows better than everyone else" wisdom, removed the post ranking metrics from the API.  This meant I could no longer do any kind of sorting beyond score and date.  
 
-So, since then (0.19.0 or thereabouts), the custom feeds feature has remained in place, cripped, and begging for death.  In 1.4.21, I finally decided to put it out of its misery.
+So, since then (0.19.0 or thereabouts), the custom feeds feature has remained in place, crippled, and begging for death.  In 1.4.21, I finally decided to put it out of its misery.
+
+Community groups and favorites are still available, but they're only used for organizing communities now.  Favorites give you quick access to your most-visted communities, and groups are still useful to keep tabs on your subscribed communities.
 
 I do have a plan to resurrect the feature, but it's going to require backend support.  I have a partial Tesseract API server, but I've not worked on it in a good while.  Even still, if I do dust that off and go that route, custom feeds will only work for the "default" instance Tesseract is deployed to and only if the admin runs the API service for it.  Not sure how practical that will be, but since it's something I would want to offer on my own instance, I may still work toward it, though at a low priority.
 
@@ -155,18 +222,18 @@ I changed the way the timestamps on posts/comments, etc update.  Prior to this r
 - Tweaked the 'subscribe' buttons
 - Added a dedicated button to go directly to the `/c/{community}` page for each entry
 - Clicking the community name will open the community modal for additional options
-- The instance is now route based rather than URL param.  e.g.  `/communities/{instance}`
-- Your home instance now has a "home" icon in the instance dropdown
+- The selected instance is now route-based rather than URL param or internal state variable.  e.g.  `/communities/{instance}`
+- Your home instance now has a "home" icon indicator in the instance dropdown
 
 #### User Profile Pages (including local profile)
 - Uses the new, component-based feed rather than the bespoke one used previously.
 - User banner, stats, "about" info, and moderates list is now above the feed rather than in the sidebar (except local profile; that's still to the side except on mobile)
-- Sidebar is now populated with the home instance details for the user (banner, icon, name, stats, admins, site description, legal, etc). Non-local profiles o nly.
+- "Moderates" list is no longer a separate accordion. That list has been moved into the "About Me" section (similar to user profile modals)
+- Sidebar is now populated with the home instance details for the user (banner, icon, name, stats, admins, site description, legal, etc). Non-local profiles only.
 - Sidebar site info is now cached in the browser's session storage to reduce network traffic and load on remote servers
 - Better state preservation when navigating in/out.  Right now, the snapshot validity is 5 minutes for user profiles versus 15 minutes for the main feed and communities. 
 - Integrated search. No longer just a shortcut to the `/search` page with the user pre-set.  
 - The sort options and type (posts/comment/all) menus have been moved from the sub-navbar to above the feed.
-- Added card background to section menu	of local profile
 - Lots of under the hood changes, none should be visible except what's listed :)
 
 #### New Inbox
@@ -191,11 +258,16 @@ I changed the way the timestamps on posts/comments, etc update.  Prior to this r
 
 
 ### Known Quirks
-- Switching accounts will reload the feed before any of your blocks and filters are applied.  To work around, refresh the feed or the browser after switching accounts.  I'm trying to find a graceful way to handle this.
-
 - Changing any of the infinite scroll options (or switching between infinite and manual pagination) requires any existing feed snapshots to be cleared.  If you switch options from the quick settings menu, it will automatically refresh the browser as a workaround hack.  If you switch them from the main settings page, you'll need to manually refresh the feed or the browser to clear them.  Again, I have a way to deal with this, but I'm not certain it's the most graceful (though it's more graceful than force-refreshing the browser lol).
 
+#### Twitch Videos (Not Possible)
+I also had a feature request to support Twitch embeds.  It seemed possible (they provide the video embed player URL in the link metadata), but I can't make them embeddable because Twitch cockblocks embedding except from the "big" social media sites.  So, no Twitch video embeds for Lemmy, but not for lack of trying.
 
+```
+Refused to frame 'https://player.twitch.tv/' because an ancestor violates the following Content Security Policy directive: 
+
+"frame-ancestors https://reddit.com https://www.reddit.com https://old.reddit.com https://new.reddit.com https://www.redditmedia.com https://twitter.com https://cards-frame.twitter.com https://tweetdeck.twitter.com https://discordapp.com https://discord.com https://embedly.com https://cdn.embedly.com https://facebook.com https://www.facebook.com https://vk.com https://x.com".
+```
 
 
 

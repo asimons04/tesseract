@@ -23,6 +23,8 @@ If you want to run Tesseract and are still on an 0.18.x instace, you will need t
 | 1.4.0             | 0.19.0-2          | Yes           | Some features, such as post/comment vote views, will be present but broken as those API calls are not present until 0.19.3
 | 1.4.0 - 1.4.x     | 0.19.3+           | Yes           | 0.19.3 is the current development target and recommended minimum server version. I have not tested directly against 0.19.4+, but I do not see any breaking changes in the API which should prevent it from working as expected. That said, none of the 0.19.4+ features have been implemented yet.
 
+
+
 #### Sublinks
 Will be added once Sublinks is released.
 
@@ -30,6 +32,7 @@ Will be added once Sublinks is released.
 The following features are unique to Tesseract:
 
 ### Full Media Support in Feed and Posts 
+  - Loops (new in 1.4.21)
   - Spotify
   - YouTube/Invidious/Piped
   - Soundcloud
@@ -39,8 +42,7 @@ The following features are unique to Tesseract:
   - [Song Link](https://odesli.co/)
   - Streamable, Imgur, and any source that provides an embed video URL in the metadata now render inline.  
   - Peertube.  PT support is kind of cool because you can already follow PeerTube channels in Lemmy. With the addition of support for their embeds, this makes following your favorite creator even easier. Upvotes/downvotes to a Peertube post will federate out to thumbs-up/thumbs-down on PT's side, and comments will at least federate to PT.
-  - Any embeddable content that provides a video link in the `embed_video` metadata will also embed.
-
+  
 ### Community Browser / Enhanced Discovery
   - Browse the communties of other instances and seamlessly load and subscribe to them.  No more of that obnoxious copy/paste, search, wait, search again, subscribe hokey-pokey dance.
   - Post and comment menus let you browse the communities of the originating instance
@@ -140,41 +142,6 @@ Instance admins can host Tesseract on a subdomain or even replace Lemmy-UI with 
 Tesseract is maintained by someone who is simultaneously a Lemmy user, administrator, and moderator.  Each of those roles requires different considerations, and Tesseract is being built to accommodate them all.
 
 
-
-## Supported Media
-For Youtube (and Invidious/Piped), Spotify, Bandcamp, and Soundcloud, you don't need to use any special embed links; just the regular URL from your browser.  Tesseract will take care of generating the embed URLs based on your preferences.  It will also rewrite a YT video to Invidious, Invidious to Youtube, or any combo based on the original video URL and your preferred YT frontend setting and preferred instance.
-
-- Odysee videos
-
-- Direct video links (e.g .webm, mp4, etc) will embed a player in the feed/post. Right now, these are not toggleable as most do not have thumbnails and the bare links are ugly AF; they're treated basically like fancy image posts.  However, they only downoad enough to show the first few frames, which is acceptable from a performance/bandwidth perspective.
-
-- YouTube and all known 
-[Invidious](https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest) and 
-[Piped](https://github.com/TeamPiped/Piped/wiki/Instances) 
-links are detected as "Youtube-like" embeddable videos.  These will embed using the user's preferred YouTube frontend which can be configured in settings. Currently, YouTube and Invidious are supported frontends, and the Invidious instance used can be chosen from your settings.  You can even define custom Invididious and Piped instances.
-
-- Vimeo videos are supported with their native URLs (e.g. vimeo.com/{videoID})
-
-- Soundcloud track links will be detected and a player embedded. Playlists don't seem to be supported on Soundcloud's end, so unfortunately, only track links can be embedded.
-
-- Spotify tracks, albums, and playlists will embed a player right in the feed or post.
-  - (Optional) To enable full track playback rather than previews, you will need to either allow 3rd party cookies for the Tesseract domain or whitelist cookies for `open.spotify.com`. This is to allow the Spotify iframe to detect your login.
-    - On mobile browsers, Spotify will only allow track previews regardless of login state so don't bother allowing 3rd party cookies.
-    - With the push to end 3rd party cookies (which is ultimately a good thing since advertisers can't be trusted), playing full tracks may no longer be possible due to not being able to associate the iframe player with your logged-in account.
-
-
-
-- Bandcamp tracks and albums.  
-
-- Peertube embeds
-
-- TikTok is not currently supported. I don't have TikTok, and no one has asked for it, so I'm content not supporting that unless there's demand and someone is able to provide me some sample links (I think TT does have an embed API, so at least limited support possible).
-
-
-
-
-
-
 ## Public Hosted Demo Instance
 An open, public demo instance is available at [https://tesseract.dubvee.org](https://tesseract.dubvee.org). Feel free to try it out with your favorite Lemmy instance.  
 
@@ -184,6 +151,7 @@ Ideally, you would either host it yourself and point it to your home Lemmy insta
 ## Self-Hosting
 Tesseract is designed to be self hosted.  You can even run it from localhost if you want and connect to any Lemmy instance out there. (Note that image uploads can't work from localhost due to the CORS handler, but everything else will)
 
+---
 
 ### Deploying the Image
 Replace `example.com` in the line below with the base URL of your instance.  This example exposes the container's port on `8080` but you can/should change that to whatever port you need or have free on your host.  
@@ -198,10 +166,6 @@ The base image is `ghcr.io/asimons04/tesseract`.  Tags are used to specify the v
 If you want to run a specific version, they are tagged as `v{version}`  where `{version}` corresponds to the [release branch](https://github.com/asimons04/tesseract/releases).
 
 
-
-
-
-
 `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com ghcr.io/asimons04/tesseract:latest`
 
 ### Building From the Repo
@@ -210,12 +174,97 @@ If you want to run a specific version, they are tagged as `v{version}`  where `{
 3. `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com tesseract:latest`
 
 
+### Example docker-compose.yml
+Below is an example `docker-compose.yml` deployment file.  The only required environment variable is the `PUBLIC_INSTANCE`.  Set any other config variables as desired to override the defaults.
+
+**See Docs for Environment Variables and Explanations**:
+- [Environment Variables](./docs/EnvironmentVariables)
+- [Environment Options](./docs/EnvironmentOptions)
+- [Media Proxying and Caching](./docs/MediaProxy.md)
+
+```yaml
+services:
+  tesseract:
+    image: ghcr.io/asimons04/tesseract:v1.4.21
+    environment:
+      # The domain of Tesseract's 'default' instance. This is the only required config variable
+      - PUBLIC_INSTANCE_URL=lemmy.world
+      
+      # By default, Tesseract locks itself to the configured instance. To allow users to add accounts from other instances, set this to false.
+      - PUBLIC_LOCK_TO_INSTANCE=false
+      
+      # Feed, feed sort, and comment sort settings
+      - PUBLIC_DEFAULT_FEED=All
+      - PUBLIC_DEFAULT_FEED_SORT=Scaled
+      - PUBLIC_DEFAULT_COMMENT_SORT=Top
+
+      # Default to Dark Theme instead of "System"
+      - PUBLIC_THEME=dark
+
+      # Media Proxying
+      # Enable the media proxying module and make it available for use.  It is disabled by default.
+      - PUBLIC_ENABLE_MEDIA_PROXY=true
+      
+      # List of domains that should not be proxied (content reasons, because they won't work with the proxy, etc)
+      - PUBLIC_MEDIA_PROXY_BLACKLIST=mintboard.org,iili.io,img.shields.io
+      - PUBLIC_ENABLE_MEDIA_PROXY_LOCAL=true
+      
+      # Pre-set the "Use media proxy" setting for all users.  If set to false (default), users will need to go into Settings->Media to enable image proxying.
+      - PUBLIC_ENABLE_USER_MEDIA_PROXY=true
+
+      # Media Caching; disabled by default. Enabled and configured here.
+      - PUBLIC_ENABLE_MEDIA_CACHE=true
+      - PUBLIC_ENABLE_MEDIA_CACHE_LOCAL=true
+      - PUBLIC_MEDIA_CACHE_DURATION=4320
+      - PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS=true
+      - PUBLIC_MEDIA_CACHE_MAX_SIZE=500
+      - PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL=5
+      - PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP=true
+      
+      # List of Invidious/Piped domains which should be used for detection. See docs/CustomYoutubeFrontends.md for more in fo.
+      - |-
+        PUBLIC_CUSTOM_INVIDIOUS=
+          i.devol.it,
+          piped.adminforge.de
+      
+      # List of instances that will be pre-populated into the instance selector on the community explorer page. The default instance is included by default and does not need to be listed here.
+      - |-
+        PUBLIC_FEATURED_INSTANCES=
+          lemmy.world,
+          mander.xyz,
+          programming.dev,
+          lemm.ee,
+          lemmy.ca,
+          lemmy.cafe,
+          literature.cafe,
+          sh.itjust.works,
+          lemmy.blahaj.zone,
+          slrpnk.net,
+          startrek.website,
+          beehaw.org,
+          sopuli.xyz,
+          lemmy.zip
+    
+    # Tesseract uses /app/cache inside the container to persist lookups and for the media cache. This will work without a volume, but anything cached will not persist after the container is restarted.
+    
+    # Note:  The host directory must be owned by UID/GID 1000.
+    volumes:
+      - ./cache:/app/cache
+    
+    # Bind to localhost:8081 instead of the container's default port of 3000
+    ports:
+      - 127.0.0.1:8081:3000
+    restart: "always"
+
+```
+
+
 ### Reverse Proxy Configuration
 **Running Tesseract Alongside Lemmy-UI**
 
 Use this example config to get you started if you want to run Tesseract alongside Lemmy-UI (e.g. under a subdomain).  Adjust the `server_name`, SSL cert paths, and `proxy_pass` upstreams with values applicable to your deployment.
 
-```
+```nginx
 server {
   listen 80;
   server_name tesseract.example.com;
@@ -259,94 +308,6 @@ server {
 If you want to run Tesseract in place of Lemmy-UI, just replace the proxy pass that goes to your current Lemmy-UI with the IP/port of Tesseract.  Be sure to keep the conditionals that separate the ActivityPub ld+json out to the API's container.
 
 
-## Configuring
-The following environment variables can be set to override the default settings.  Note that all environment variables must be prefixed with `PUBLIC_` to be picked up by SvelteKit.
-
-
-| Variable                        | Values              | Default Value                          |
-| ------------------------------- | ------------------- | -------------------------------------- |
-| PUBLIC_INSTANCE_URL             | URL                 | `lemmy.world`                          |
-| PUBLIC_LOCK_TO_INSTANCE         | `bool`              | `true` if `PUBLIC_INSTANCE_URL` is set |
-| PUBLIC_THEME                    | system\|dark\|light | system                                 |
-| PUBLIC_MARK_READ_POSTS          | `bool`              | true                                   |
-| PUBLIC_SHOW_COMPACT_POSTS       | `bool`              | false                                  |
-| PUBLIC_DEFAULT_FEED_SORT        | `SortType`          | Active                                 |
-| PUBLIC_DEFAULT_FEED             | `ListingType`       | Local                                  |
-| PUBLIC_DEFAULT_COMMENT_SORT     | `CommentSortType`   | Hot                                    |
-| PUBLIC_HIDE_DELETED             | `bool`              | true                                   |
-| PUBLIC_HIDE_REMOVED             | `bool`              | false                                  |
-| PUBLIC_DISPLAY_NAMES            | `bool`              | true                                   |
-| PUBLIC_NSFW_BLUR                | `bool`              | true                                   |
-| PUBLIC_OPEN_LINKS_NEW_TAB       | `bool`              | false                                  |
-| PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED | `bool`            | true                                   |
-| PUBLIC_ENABLE_EMBEDDED_MEDIA_POST | `bool`            | true                                   |
-| PUBLIC_YOUTUBE_FRONTEND         | `YouTube`\|`Invidious` | YouTube                             |
-| PUBLIC_CUSTOM_INVIDIOUS         | Comma-separated string | ''                                  |
-| PUBLIC_CUSTOM_PIPED             | Comma-separated string | ''                                  |
-| PUBLIC_ENABLE_USER_MEDIA_PROXY  | `bool`              | false                                  |
-| PUBLIC_ENABLE_MBFC_BADGES       | `bool`              | true                                   |
-| PUBLIC_STRETCH_CARD_BANNERS     | `bool`              | false                                  |
-| PUBLIC_MATCH_XPOST_TITLE        | `bool`              | true                                   |
-| PUBLIC_FEATURED_INSTANCES       | Comma-separated string | ''                                  |
-
-See [environment options](docs/EnvironmentOptions.md) for descripions of each.
-
-### Configuration Options for Media Proxying and Caching
-Descriptions of the config options and what they do are covered in the [Media Proxy Cache](docs/MediaProxy.md) module documentation.
-
-Variable                            | Value                 | Default                            |
----                                 | ---                   | ---                                |
-PUBLIC_ENABLE_MEDIA_PROXY           | `bool`                | false                              |
-PUBLIC_MEDIA_PROXY_LEMMY_ONLY       | `bool`                | false                              |
-PUBLIC_MEDIA_PROXY_BLACKLIST        | String                | ''
-PUBLIC_ENABLE_MEDIA_PROXY_LOCAL     | `bool`                | true                               |
-PUBLIC_ENABLE_MEDIA_CACHE           | `bool`                | true                               |
-PUBLIC_MEDIA_CACHE_DURATION         | Integer (minutes)     | 720                                |
-PUBLIC_MEDIA_CACHE_MAX_SIZE         | Integer (MB)          | 1000                               |
-PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL | Integer (minutes)   | 5                                  |
-PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP  | `bool`              | true                               |
-PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS   | `bool`                | true                               |
-
-
-
-The values for `SortType`, `ListingType`, and `CommentSortType` are defined by the lemmy-js-client library.  All of the values are case-sensitive and must match as they are defined in the type definitions of the [lemmy-js-client](https://github.com/LemmyNet/lemmy-js-client)
-
-#### Listing Type
-https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/ListingType.ts
-
-- All
-- Local
-- Subscribed
-- Moderator View (Don't set as default)
-
-#### Sort Type
-https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/SortType.ts
-
-- Active
-- Hot
-- New
-- Old
-- TopDay
-- TopWeek
-- TopMonth
-- TopAll
-- MostComments
-- NewComments
-- TopHour
-- TopSixHour
-- TopTwelveHour (Not implemented in Tesseract)
-- TopThreeMonths (Not implemented in Tesseract)
-- TopSixMonths (Not implemented in Tesseract)
-- TopNineMonths (Not implemented in Tesseract)
-- TopYear (Not implemented in Tesseract)
-
-#### Comment Sort Type
-https://github.com/LemmyNet/lemmy-js-client/blob/main/src/types/CommentSortType.ts
-- Hot
-- Top
-- New
-- Old (not implemented in Tesseract)
-- Controversial (not implemented in Tesseract)
 
 
 ## Support

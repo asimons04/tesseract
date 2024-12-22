@@ -163,7 +163,7 @@ PUBLIC_CUSTOM_INVIDIOUS=invid.example.com, iv.foo.com, iv.bar.net
 
 --- 
 
-### PUBLIC_CUSTOM_PIPED
+### PUBLIC_CUSTOM_PIPED (Deprecated)
 A comma-delimited list of custom Piped domains to use as possible frontends (selectable in user options) or to detect Piped videos in posts.
 
 **Example Value**:  Can be a single, comma-delimited string or multi-line YAML.  The two examples below are functionally identical.
@@ -218,13 +218,13 @@ Whether to stretch the background banner images on the site, community, and user
 ---
 
 ### PUBLIC_MATCH_XPOST_TITLE
-Whether to match crossposts in the feed by title as well as by URL.  
+Whether to match crossposts in the feed by title as well as by URL.  Reduces clutter by matching text-only posts by title and treating them as crossposts in the feed.
 
-Note:  Some communities require that posts be titled a specific way.  This can cause undesirable roll-ups.  For that reason, it's recommended to leave the default option disabled and allow the user to set this themselves.
+Posts with the same title and different links will *not* be matched.  This is to allow posts in communities that require specific titles or ones that use the same title for multiple posts to not errorneously roll up. 
 
 **Valid Values**:  `true`, `false`
 
-**Default**: `false`
+**Default**: `true`
 
 ---
 ### PUBLIC_FEATURED_INSTANCES
