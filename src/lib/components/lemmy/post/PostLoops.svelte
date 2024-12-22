@@ -1,15 +1,12 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import type { PostType, PostDisplayType } from './helpers.js'
+    import type { PostDisplayType } from './helpers.js'
 
-    import { isVideo } from './helpers.js'
-    import { imageProxyURL } from '$lib/image-proxy'
     import { userSettings } from '$lib/settings'
 
     import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte'
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
-    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from './PostImage.svelte'
     import PostEmbedDescription from './PostEmbedDescription.svelte';
     
@@ -31,7 +28,7 @@
         try {
             const response = await fetch(`/tesseract/api/loops/lookup?loops_url=${post.post.url}`)
             const result = await response.json()
-            if (result?.video_url) return imageProxyURL(result.video_url)
+            if (result?.video_url) return result.video_url
         }
         catch { return undefined }
     }
