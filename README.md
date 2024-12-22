@@ -153,7 +153,62 @@ Tesseract is designed to be self hosted.  You can even run it from localhost if 
 
 ---
 
-### Deploying the Image
+## Deploying the Image
+
+### Cache Directory (Optional but Recommended)
+Tesseract caches certain things to avoid redundant network fetches when possible.  Without a cache mount to the host, this caching will still work by writing to the ephemeral writable layer in the image, but it will not persist after the container is restarted.
+
+Currently, two types of data are cached:
+1) [Proxied media](./docs/MediaProxy.md) (proxying and caching must both be enabled before this will be used)
+1) Caching lookups for Loops (it maintains a key/value index of "Loop URL" -> "Loop Embed Video URL")
+
+If you want/expect those caches to persist after a container restart, you will need to mount a volume to `/app/cache` inside the container.
+
+You can do this with as either a bind mount or a Docker volume.  If you opt for a bind mount, the folder will need to be owned by UID:GID `1000:1000` 
+
+#### Using a Bind Mount for the Cache Mount
+Assumes the host folder `cache` is in the same deploy directory as the `docker-compose.yml` file.
+
+**Shell Commands**
+
+```bash
+user@host:/opt/tesseract$ mkdir cache
+user@host:/opt/tesseract$ chown 1000:1000 cache
+
+```
+
+**Docker Compose Snippet**
+
+```yaml
+services:
+  tesseract:
+    ...
+    volumes:
+      - ./cache:/app/cache
+```
+
+#### Using a Docker Volume for Cache Mount
+While I prefer bind mounts, Docker volumes are easier since you don't have to worry about UID/GID ownership and permissions.  They also make the storage configuration more portable.
+
+This assumes a basic Docker volume managed by Compose.  If you want to do more advanced storage drivers/options, that is outside the scope of this document.  
+
+**See also**:
+- [Docker-Compose Volumes](https://docs.docker.com/reference/compose-file/volumes/#driver)
+- [Docker Volume Reference](https://docs.docker.com/engine/storage/volumes/)
+
+**Docker Compose Snippet**
+
+```yaml
+volumes:
+  tesseract-cache:
+services:
+  tesseract:
+    ...
+    volumes:
+      - tesseract-cache:/app/cache
+```
+
+
 
 ### Tags Used
 The base image is `ghcr.io/asimons04/tesseract`.  Tags are used to specify the version.
@@ -162,8 +217,11 @@ The base image is `ghcr.io/asimons04/tesseract`.  Tags are used to specify the v
 
 If you want to run a specific version, they are tagged as `v{version}`  where `{version}` corresponds to the [release branch](https://github.com/asimons04/tesseract/releases).
 
-
-`docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com ghcr.io/asimons04/tesseract:latest`
+Assuming you're running Tesseract at `/opt/tesseract/`
+1) `cd /opt/tesseract`
+1) `mkdir cache`
+1) `chown 1000:1000 cache`
+1) `docker run -p 8080:3000 -d -e PUBLIC_INSTANCE_URL=example.com -v $(pwd)/cache:/app/cache ghcr.io/asimons04/tesseract:latest`
 
 ### Building From the Repo
 1. Clone the repo from a release branch
@@ -172,88 +230,15 @@ If you want to run a specific version, they are tagged as `v{version}`  where `{
 
 
 ### Example docker-compose.yml
-Below is an example `docker-compose.yml` deployment file.  The only required environment variable is the `PUBLIC_INSTANCE`.  Set any other config variables as desired to override the defaults.
+In the docs folder is an example `docker-compose.yml` deployment file.  The only required environment variable is the `PUBLIC_INSTANCE`.  Set any other config variables as desired to override the defaults.
 
 **See Docs for Environment Variables and Explanations**:
+- [docker-compose.yml](./docs/docker-compose.yml)
 - [Environment Variables](./docs/EnvironmentVariables)
 - [Environment Options](./docs/EnvironmentOptions)
 - [Media Proxying and Caching](./docs/MediaProxy.md)
 
-```yaml
-services:
-  tesseract:
-    image: ghcr.io/asimons04/tesseract:v1.4.21
-    environment:
-      # The domain of Tesseract's 'default' instance. This is the only required config variable
-      - PUBLIC_INSTANCE_URL=lemmy.world
-      
-      # By default, Tesseract locks itself to the configured instance. To allow users to add accounts from other instances, set this to false.
-      - PUBLIC_LOCK_TO_INSTANCE=false
-      
-      # Feed, feed sort, and comment sort settings
-      - PUBLIC_DEFAULT_FEED=All
-      - PUBLIC_DEFAULT_FEED_SORT=Scaled
-      - PUBLIC_DEFAULT_COMMENT_SORT=Top
 
-      # Default to Dark Theme instead of "System"
-      - PUBLIC_THEME=dark
-
-      # Media Proxying
-      # Enable the media proxying module and make it available for use.  It is disabled by default.
-      - PUBLIC_ENABLE_MEDIA_PROXY=true
-      
-      # List of domains that should not be proxied (content reasons, because they won't work with the proxy, etc)
-      - PUBLIC_MEDIA_PROXY_BLACKLIST=mintboard.org,iili.io,img.shields.io
-      - PUBLIC_ENABLE_MEDIA_PROXY_LOCAL=true
-      
-      # Pre-set the "Use media proxy" setting for all users.  If set to false (default), users will need to go into Settings->Media to enable image proxying.
-      - PUBLIC_ENABLE_USER_MEDIA_PROXY=true
-
-      # Media Caching; disabled by default. Enabled and configured here.
-      - PUBLIC_ENABLE_MEDIA_CACHE=true
-      - PUBLIC_ENABLE_MEDIA_CACHE_LOCAL=true
-      - PUBLIC_MEDIA_CACHE_DURATION=4320
-      - PUBLIC_MEDIA_CACHE_KEEP_HOT_ITEMS=true
-      - PUBLIC_MEDIA_CACHE_MAX_SIZE=500
-      - PUBLIC_MEDIA_CACHE_HOUSEKEEP_INTERVAL=5
-      - PUBLIC_MEDIA_CACHE_HOUSEKEEP_STARTUP=true
-      
-      # List of Invidious/Piped domains which should be used for detection. See docs/CustomYoutubeFrontends.md for more in fo.
-      - |-
-        PUBLIC_CUSTOM_INVIDIOUS=
-          i.devol.it,
-          piped.adminforge.de
-      
-      # List of instances that will be pre-populated into the instance selector on the community explorer page. The default instance is included by default and does not need to be listed here.
-      - |-
-        PUBLIC_FEATURED_INSTANCES=
-          lemmy.world,
-          mander.xyz,
-          programming.dev,
-          lemm.ee,
-          lemmy.ca,
-          lemmy.cafe,
-          literature.cafe,
-          sh.itjust.works,
-          lemmy.blahaj.zone,
-          slrpnk.net,
-          startrek.website,
-          beehaw.org,
-          sopuli.xyz,
-          lemmy.zip
-    
-    # Tesseract uses /app/cache inside the container to persist lookups and for the media cache. This will work without a volume, but anything cached will not persist after the container is restarted.
-    
-    # Note:  The host directory must be owned by UID/GID 1000.
-    volumes:
-      - ./cache:/app/cache
-    
-    # Bind to localhost:8081 instead of the container's default port of 3000
-    ports:
-      - 127.0.0.1:8081:3000
-    restart: "always"
-
-```
 
 
 ### Reverse Proxy Configuration
