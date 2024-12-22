@@ -21,7 +21,20 @@ If you want to run Tesseract and are still on an 0.18.x instace, you will need t
 | 1.3.x             | 0.18.x            | Yes           | 1.3.x is the maintenance series for 1.3.0. It will be limited to bugfixes. No features are likely to be backported from 1.4.0
 | 1.4.0             | 0.18.x            | No            | This release drops 0.18.x support.  Can still browse but cannot login or perform any action which requires authentication. Browsing is also limited to just the first page as the old, offset-based pagination is no longer used, and 0.18.x does not support page cursors.
 | 1.4.0             | 0.19.0-2          | Yes           | Some features, such as post/comment vote views, will be present but broken as those API calls are not present until 0.19.3
-| 1.4.0 - 1.4.x     | 0.19.3+           | Yes           | 0.19.3 is the current development target and recommended minimum server version. I have not tested directly against 0.19.4+, but I do not see any breaking changes in the API which should prevent it from working as expected. That said, none of the 0.19.4+ features have been implemented yet.
+| 1.4.0 - 1.4.20     | 0.19.3+           | Yes           | 0.19.3 is the current development target and recommended minimum server version. I have not tested directly against 0.19.4+, but I do not see any breaking changes in the API which should prevent it from working as expected. That said, none of the 0.19.4+ features have been implemented yet.
+| 1.4.21+            | 0.19.3+           | Yes           | 0.19.3 is still the current development target.  Some newer API functions are incorporated.
+
+As of 1.4.21, the infrastructure exists so that newer API functions can be added while maintaining compatibility with earlier releases (back to 0.19.3 which is the lowest-supported version).  
+
+Currently, the following > 0.19.3 API features are supported:
+- Providing and utilizing alt text for image and direct video posts (0.19.5+)
+  - APIs < 0.19.5 will continue to use the post title in place of alt text on images and 0.19.5+ will fall back to the post name if no alt text is provided.
+- Hiding posts (0.19.4+)
+- Toggling "Show hidden posts" in the feed (0.19.4+)
+- Toggiing "Show read posts" in the feed (0.19.6+)
+- Togging "Show NSFW posts" in the feed (0.19.6+)
+
+The options will be ignored and UI elements hidden if the currently-connected instance does not support the features.
 
 
 
