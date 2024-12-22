@@ -11,6 +11,7 @@ RUN mkdir /app
 RUN chown node:node /app
 WORKDIR /app
 USER node
+RUN mkdir -p /app/cache/loops
 EXPOSE 3000
 COPY package.json ./
 COPY src/lib/MBFC/data/data.json /app/src/lib/MBFC/data/data.json
