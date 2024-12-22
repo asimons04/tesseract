@@ -279,7 +279,7 @@
         bind:this={postContainer}
         transition:fade
     >
-        <PostIsInViewport bind:postContainer threshold={.75} delay={1000} on:inViewport={(e) => {
+        <PostIsInViewport bind:postContainer threshold={.4} delay={1000} on:inViewport={(e) => {
                 inViewport = e.detail
                 setTimeout(() => markPostAsRead(), 1500)
             }}
