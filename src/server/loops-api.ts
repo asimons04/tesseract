@@ -21,6 +21,7 @@ catch {
     }
 }
 
+/** Loads the JSON file containing the on-disk lookup cache */
 async function load() {
     try {
         
@@ -33,21 +34,26 @@ async function load() {
     catch (err) {console.log("Failed to load cache file", err)}
 }
 
+/** Saves the current cache object to a JSON file on disk */
 async function save() {
     try {
-        console.log("Saving", cache)
         await writeFile(cacheFile, JSON.stringify(cache))
     }
     catch (err) {console.log("Failed to save cache file", err)}
 }
 
+/** Lookup the video source URL for a given Loops video link
+ * @param loopsURL The Loops page link for the video
+*/
 export async function getVideoURL(loopsURL:string) {
+    // Load the latest cache
     await load()
-    
+
+    // If video URL is found in the cache, return that
     let video_url = cache[loopsURL]
-    
     if (video_url) return video_url
 
+    // If video URL not found in cache, fetch the page, scrape for the video-src, and cache the successful response
     try {
         const response = await fetch(loopsURL)
         const body = await response.text()
@@ -55,9 +61,13 @@ export async function getVideoURL(loopsURL:string) {
         
         if (matches) {
             let video_url = matches[0].split('=')[1].replaceAll('"', '')
-            cache[loopsURL] = video_url
-            await save()
-            return video_url
+            
+            if (video_url?.startsWith('http') && video_url.endsWith('.mp4')) {
+                cache[loopsURL] = video_url
+                await save()
+                return video_url
+            }
+            return undefined
         }
     }
     catch (err) {
