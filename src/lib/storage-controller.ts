@@ -1,4 +1,7 @@
 import { Buffer } from 'buffer'
+import { get } from 'svelte/store'
+import { instance } from '$lib/instance'
+
 import type { GetCommunityResponse, GetSiteResponse } from 'lemmy-js-client'
 
 export interface StorageControllerOptions {
@@ -29,9 +32,25 @@ export class StorageController {
     }
 
     get keys() {
-        return this._type == 'session'
+        const keys = this._type == 'session'
             ? Object.keys(sessionStorage)
             : Object.keys(localStorage)
+        
+        // Ignore load-bearing localStorage keys
+        const ignoreKeys = ['settings', 'profileData', 'seenUntil', 'theme']
+        
+        ignoreKeys.forEach((specialKey) => {
+            const index = keys.indexOf(specialKey)
+            if (index >=0) {
+                keys.splice(index, 1)
+            }
+        })
+
+        return keys
+    }
+
+    get now() {
+        return Math.round(new Date().getTime() /1000)
     }
 
     /** Compresses an object and returns a base64 representation of the compressed string */
@@ -72,8 +91,7 @@ export class StorageController {
     expired (timestamp?:number): boolean {
         if (!timestamp || this._ttl < 0) return false
 
-        const now = Math.round(new Date().getTime() /1000)
-        if (now - timestamp > this._ttl) return true
+        if (this.now - timestamp > this._ttl) return true
         return false
         
     }
@@ -84,8 +102,8 @@ export class StorageController {
     }
 
     // Alias for store
-    async put (key:string, data: any) {
-        return await this.store(key, data)
+    async put (key:string, data: any, ttl:number = this._ttl) {
+        return await this.store(key, data, ttl)
     }
 
     async retrieve (key:string): Promise<any> {
@@ -118,7 +136,7 @@ export class StorageController {
         }
     }
     
-    async store (key:string, data:any) {
+    async store (key:string, data:any, ttl:number = this._ttl) {
         if (!key || !data) return
         
         try {
@@ -134,7 +152,8 @@ export class StorageController {
                 compressed_size: compressedDataLength,
                 compress_ratio: (dataLength / compressedDataLength).toFixed(2),
                 payload: payloadData,
-                timestamp: Math.round(new Date().getTime() /1000)
+                timestamp: this.now,
+                ttl: ttl
             } as StorageControllerData
             
             this._type == 'session'
@@ -207,4 +226,62 @@ export class StringCompression {
     b64ToBuffer (b64:string): Uint8Array {
         return new Uint8Array(Buffer.from(b64, 'base64'))
     }
+}
+
+
+
+
+export class StorageCache {
+    storage: StorageController
+
+    constructor(opts?:StorageControllerOptions) {
+        this.storage = new StorageController(opts)
+    }
+
+    async flush(type: 'all'|'site'|'community' = 'all') {
+        
+        if (type == 'all') {
+            this.storage.keys.forEach((key) => {
+                this.storage.remove(key)
+            })
+        }
+        
+        if (type == 'site') {
+            this.storage.keys.forEach((key) => {
+                if (key.startsWith('getSite')) this.storage.remove(key)
+            })
+        }
+
+        if (type == 'community') {
+            this.storage.keys.forEach((key) => {
+                if (key.startsWith('getCommunity')) this.storage.remove(key)
+            })
+        }
+    }
+
+    async getCommunityResponse(community_name:string) {
+        const storageKey = `getCommunity_${get(instance)}:${community_name}`
+        return await this.storage.get(storageKey)
+    }
+
+    async putCommunityResponse(community:GetCommunityResponse) {
+        const storageKey = `getCommunity_${get(instance)}:${community.community_view.community.name}@${new URL(community.community_view.community.actor_id).hostname}`
+        await this.storage.put(storageKey, community)
+    }
+
+
+    async getSiteResponse(domain:string) {
+        const storageKey = `getSite:${domain}`
+        return await this.storage.get(storageKey)
+    }
+    
+    async putSiteResponse(site:GetSiteResponse) {
+        const storageKey = `getSite:${new URL(site.site_view.site.actor_id).hostname}`
+        await this.storage.put(storageKey, site)
+    }
+
+
+
+
+
 }
