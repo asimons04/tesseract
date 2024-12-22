@@ -7,20 +7,19 @@ All major/minor changes between releases will be documented here.
     - They currently both reset when you navigate away and back
     - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
 
-1) On post form, add button/step to search for the URL you're posting on the community's home instance to check for duplicates
-    - Will help you to know if you're posting a duplicate you may not be able to see (posted by someone you've blocked, posted by someone from an instance yours doesn't federate with, etc)
-
 1) Add language selector in profile settings
     - Add language 
 
+1) Add filter option for domains
+    - Include presets (Reddit, Facebook, Twitter) 
+
+1) Look into making a grid view.
 
 1) Power Mod Tools #1: Ban/Unban from all communities I moderate
-- Input user to be banned as well as a reason and optional expiry
-- Get list of communities current user moderates
-- Loop over community list, call banCommunity, and provide the given user, reason, and optional expiry
-- UI:  Show communtiy list and add a "check" icon to each as the API calls are processed
-
-
+    - Input user to be banned as well as a reason and optional expiry
+    - Get list of communities current user moderates
+    - Loop over community list, call banCommunity, and provide the given user, reason, and optional expiry
+    - UI:  Show communtiy list and add a "check" icon to each as the API calls are processed
 
 1) Power Mod Tools #2:  Command palette
 ```
@@ -43,31 +42,6 @@ removeAdmin {username}
 
 
 ```
-
-
-## 1.4.21
-
-### To Do:
-
-#### Snapshot Management
-- Standardize snapshot naming convention
-- Write function to flush snapshots
-    - Flush all snapshots when switching betweeen infinite scroll and manual pagination
-    - Flush all snapshots when changing any infinite scroll parameters
-- Add user setting to customize snapshot validity
-- Move compressed snapshots into a data structure
-```
-snapshot {
-    created: number     //  Unix timestamp representing when the snapshot was created
-    data: string        //  Base64 encoded compressed data payload
-    size: number        //  Length, in bytes, of the uncompressed data
-}
-```
-
-
-#### Features (to do)
-Add filter option for domains
-- Include presets (Reddit, Facebook, Twitter) 
 
 ## 1.4.21
 
@@ -93,6 +67,7 @@ Most of the work in this release has been re-writing core components, getting ri
 
 - Markdown inside of code blocks is no longer pre-processed.  This should fix quirks when viewing code snippets and some of the includes get incorrectly turned into hashtags.  It also let me simplify some of the regex patterns since they no longer have to account for code blocks with look aheads/behinds.
 
+- Linking to a community on another instance (e.g. if you want to show the community on that instance rather than just linking to the community) no longer turns into a community action badge.  
 
 
 - Bugfixes for bugs introduced during the rewrites have been omitted, but a lot of time was spent tracking those down and squashing them.
@@ -197,6 +172,43 @@ I still like the UI element, but too many of the options got moved into dropdown
 ---
 
 ### Removed Features :(
+
+#### Only Specific Forms of User and Community Links are Turned into Action Badges
+There's so many wild and inconsistent ways people reference communities and users.  I originally tried to cover them all, but there were too many edge cases, overlaps, and times it's not desirable to do so  that it became impractical.  
+
+Now, only three forms of user/community links will be turned into action badges; the rest will remain unmodified links or plain text.
+
+**Valid Community Link Examples**:
+ - `https://instance.xyz/c/community`
+ - `!community@instance.xyz`
+ - `[Text](https://instance.xyz/c/community)`
+
+ **Valid User Link Examples**:
+ - `https://instance.xyz/u/user`
+ - `@user@instance.xyz`
+ - `[Text](https://instance.xyz/u/user)`
+
+
+**No Longer Valid / Won't Be Badge-ified**:
+- `/c/community`
+- `/c/community@instance.xyz`
+- `/u/user`
+- `/u/user@instance.xyz`
+- `https://instance.xyz/c/community@instance.xyz`
+
+The `https://instance.xyz/c/community@instance.xyz` format was removed because sometimes it is useful to link to a community on another instance to see differences due to federation, moderation, etc.  In those cases, changing it to a local link is not desirable.  The rest were removed because they were proving problematic to support with all the different ways people make user/community links.
+
+
+
+
+
+
+
+
+As of this release, only the formats in the valid lists above will be matched and turned into action badges (load the modal for info about the community/user).  Other formats, or ones that are already linked, won't be touched.   
+
+**Note that the `!` and `@` formats *do not* need to be manually linked in most Lemmy clients.**
+
 
 #### Browsing Favorites / Groups as a Feed
 This capability was always experimental.  The initial implementation wasn't great, but it worked well enough, and I had a plan to improve it.  Unfortunately, before I could put that into motion, the Lemmy devs, in their infinite "knows better than everyone else" wisdom, removed the post ranking metrics from the API.  This meant I could no longer do any kind of sorting beyond score and date.  
