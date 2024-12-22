@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import type { PostType, PostDisplayType } from './helpers.js'
+    import type { PostDisplayType } from './helpers.js'
 
     import { isAudio } from './helpers.js'
     import { imageProxyURL } from '$lib/image-proxy'
@@ -8,7 +8,6 @@
 
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
-    import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import PostImage from './PostImage.svelte';
     
     export let post: PostView 
