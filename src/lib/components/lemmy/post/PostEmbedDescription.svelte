@@ -39,7 +39,7 @@
             
     <div class="flex flex-row w-full items-start gap-1">
         {#if showThumbnail && thumbnail_url}
-            <button class="flex flex-none  w-[64px] h-[64px] sm:w-[96px] sm:h-[96px] md:w-[128px] md:h-[128px] rounded-lg shadow-lg bg-white/80" 
+            <button class="flex flex-none  w-[64px] h-[128px] sm:w-[96px] sm:h-[128px] md:w-[128px] md:h-[128px] rounded-lg shadow-lg bg-white/80" 
                 style="background-image: url('{imageProxyURL(thumbnail_url, 256, 'webp')}'); 
                     background-size: cover; 
                     background-position: center center;
