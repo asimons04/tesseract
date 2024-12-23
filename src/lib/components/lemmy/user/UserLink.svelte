@@ -30,14 +30,16 @@
     export let admin:boolean = false
     export let href:boolean = false
     export let distinguishAdminsMods:boolean = true
-    //export let shortenDisplayName:boolean = false
     export let ring:boolean = false
     export let community_banned:boolean = false
     export let blocked: boolean = false
     export let inline: boolean = true
     export let noClick: boolean = false
+    export let noEmojis:boolean = false
+
     const dispatcher = createEventDispatcher()
-    
+    const emojiRegex = /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g
+
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
         return `/u/${user.name}@${domain}`
@@ -78,7 +80,13 @@
         >
             
             <span class="font-bold text-left  truncate ">
-                {useDisplayNames ?? $userSettings.displayNames ? user.display_name?.split('@')[0] || user.name : user.name}
+                {
+                    useDisplayNames ?? $userSettings.displayNames 
+                        ? noEmojis
+                            ? user.display_name?.split('@')[0]?.replaceAll(emojiRegex, '') || user.name 
+                            : user.display_name?.split('@')[0] || user.name 
+                        : user.name
+                }
             </span>
             
             
