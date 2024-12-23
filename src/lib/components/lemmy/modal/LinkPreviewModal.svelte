@@ -63,7 +63,6 @@
 
     let loading = false
     let data: GetSiteMetadataResponse|undefined = undefined
-    let postContainer:HTMLDivElement
     let post: PostView | undefined  = undefined
     let postType: PostType
     let displayType='post' as PostDisplayType    
@@ -188,7 +187,7 @@
 
     {#if post && !loading && !fetchError && !iframeView}
 
-        <div bind:this={postContainer} class="flex flex-col gap-2 w-full min-h-[250px]" transition:slide>    
+        <div class="flex flex-col gap-2 w-full min-h-[250px]" transition:slide>    
 
             <!--- Title --->
             <div class="flex flex-row justify-between w-full">
@@ -196,7 +195,7 @@
                     <h1 class="!text-base !font-bold">{data.metadata.title}</h1>
                 {/if}
             </div>
-            <PostMediaRenderers bind:post bind:postContainer bind:displayType bind:postType bind:autoplay bind:loop />
+            <PostMediaRenderers bind:post bind:inViewport={open} bind:displayType bind:postType bind:autoplay bind:loop />
         </div>
     {/if}
 
