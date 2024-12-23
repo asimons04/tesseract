@@ -215,7 +215,7 @@ As of this release, only the formats in the valid lists above will be matched an
 
 
 #### Browsing Favorites / Groups as a Feed
-This capability was always experimental.  The initial implementation wasn't great, but it worked well enough, and I had a plan to improve it.  Unfortunately, before I could put that into motion, the Lemmy devs, in their infinite "knows better than everyone else" wisdom, removed the post ranking metrics from the API.  This meant I could no longer do any kind of sorting beyond score and date.  
+This capability was always experimental.  The initial implementation wasn't great, but it worked well enough, and I had a plan to improve it.  Unfortunately, before I could put that into motion, the Lemmy devs, in their infinite "knows better than everyone else / if Lemmy UI doesn't use it, no one should" wisdom, removed the post ranking metrics from the API.  This meant I could no longer do any kind of sorting beyond score and date.  
 
 So, since then (0.19.0 or thereabouts), the custom feeds feature has remained in place, crippled, and begging for death.  In 1.4.21, I finally decided to put it out of its misery.
 
