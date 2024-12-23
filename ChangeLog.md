@@ -11,11 +11,13 @@ All major/minor changes between releases will be documented here.
     - Add language 
 
 1) Add filter option for domains
-    - Include presets (Reddit, Facebook, Twitter) 
+    - Include presets (Reddit, Facebook, Twitter)
+    - User settings to add custom domains
 
 1) Look into making a grid view.
+    - May need to make this separate from the main feed as initial tests with just CSS have not panned out.
 
-1) Power Mod Tools #1: Ban/Unban from all communities I moderate
+1) Power Mod Tools #1: Ban/Unban from all communities you moderate
     - Input user to be banned as well as a reason and optional expiry
     - Get list of communities current user moderates
     - Loop over community list, call banCommunity, and provide the given user, reason, and optional expiry
@@ -46,7 +48,7 @@ removeAdmin {username}
 ## 1.4.21
 
 ### Overview
-This release could *probably* be considered 1.5.0 rather than a 1.4.x point release, but I'm going to wait until I raise the minimum supported API level before bumping the minor version.  Currently, I do have support for 0.19.4+ features, but they're limited to a few new filtering options in the feeds.  I've also added the capability to automatically enable/disable features that require different API versions, so I'll likely be adding some more 0.19.4+ user-facing features in the coming releases.  The newer admin/mod features, if any, will need to wait until my own instance is updated past 0.19.3 since I will be unable to test those (I can test the user-level stuff against a different instnace with one of my alt accounts there).  
+This release could *probably* be considered 1.5.0 rather than a 1.4.x point release, but I'm going to wait until I raise the minimum supported API level before bumping the minor version.  Currently, I do have support for 0.19.4+ features, but they're limited to a few minor things here and there (see [readme](README.md) for specifics).  I've also added the capability to automatically enable/disable features that require different API versions, so I'll likely be adding some more 0.19.4+ user-facing features in the coming releases.  The newer admin/mod features, if any, will need to wait until my own instance is updated past 0.19.3 since I will be unable to test those (I can test the user-level stuff against a different instnace with one of my alt accounts there).  
 
 Most of the work in this release has been re-writing core components, getting rid of some legacy stuff, and stanardizing any redundant sections with shared components.  All of this is to make the upcoming task of porting to either Svelte 5  or React easier (haven't decided which yet; I'm annoyed that Svelte has so many breaking changes. We also use React at work which is more stable in the long term).
 
@@ -64,6 +66,7 @@ Most of the work in this release has been re-writing core components, getting ri
 - Memory optimization hacks; good lord Svelte is a hoarder and refuses to let go of shit.  This is a huge reason why I'm probably going to port Tesseract to React instead of going to Svelte 5. Even if the memory leaks are fixed in Svelte 5, they basically turned it into React anyway, so might as well use that.
 
 - Fix bug where overlap in hashtags (e.g. #Photography and #Photo) would mangle the longer tag.
+
 
 - Markdown inside of code blocks is no longer pre-processed.  This should fix quirks when viewing code snippets and some of the includes get incorrectly turned into hashtags.  It also let me simplify some of the regex patterns since they no longer have to account for code blocks with look aheads/behinds.
 
@@ -88,13 +91,14 @@ Did I mention how stupid it is that Lemmy federates the proxied URL for images i
 
 ---
 
-### Optimizing Browser Settings
-When using "click to play" on media posts (the default setting), the "autoplay" flag is implicitly set on the embed to prevent you from having to click multiple "play" buttons.  However, any player besides YouTube (e.g. Invidious, Piped, PeerTube, etc) requires you to click the video again after it switches from thumbnail to embed.  This is annoying, and YouTube only seems to get a pass in Chrome/ium because Google says so.
+### Guide: Optimizing Browser Settings for Tesseract
+When using "click to play" on media posts (the default setting), the "autoplay" flag is implicitly set on the embed to prevent you from having to click multiple "play" buttons.  However, any player besides YouTube (e.g. Invidious, Piped, PeerTube, etc) requires you to click the video *again* after it switches from thumbnail to embed.  This is annoying, and YouTube only seems to get a pass in Chrome/ium because Google says so.
 
 To remedy this:
 
 - In Firefox, this *mostly* works with the default settings and no settings changes are needed.  However, you can set the site permissions when a media tries to play (can't seem to get to that setting otherwise?) and change autoplay to "Allow audio and video" if needed.
 - In Chrome(ium):  In the Tesseract tab, go into "Site Settings" and change Sound from "Automatic (Default)" to "Allow".  This is very counter-intuitive, but it does address the problem.
+- If running as a Chrome(ium) PWA, the app permission settings will be at: `[Three Dots Menu] -> App Info -> Settings -> More Settings and Permissions`
 
 
 
