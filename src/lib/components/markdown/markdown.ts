@@ -41,7 +41,6 @@ export function findUserCommunityLinks(source: string) {
     let users = source.matchAll(userRE)
     
     for (let user of users) {
-        console.log(user)
         if (user.groups?.username && user.groups?.instance) {
             let replacementText = `[@${user.groups.username}@${user.groups.instance}](/u/${user.groups.username}@${user.groups.instance})`
             let find = new RegExp(user[0] + '(?!.*`|.*\])', "gi")
@@ -100,7 +99,6 @@ export const photonify = (link: string) => {
     if (regexes.community.test(link)) {
         const match = link.match(regexes.community)
         if (!match) return
-        console.log(`/c/${match?.[2]}@${match?.[1]}`)
         return `/c/${match?.[2]}@${match?.[1]}`
     }
 
