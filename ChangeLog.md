@@ -61,7 +61,7 @@ Most of the work in this release has been re-writing core components, getting ri
 
 - When switching instances or loading the site info for another instance into the site sidebar, the taglines would sometimes get stuck on the previous instance's values.
 
-- Images would fail to render if alt text had a `@user@instance.xyz` or `!community@instance.xyz` in the alt text since it would trigger the pre-processor to convert them into user/community links.
+- Images would fail to render if `@user@instance.xyz` or `!community@instance.xyz` were in the alt text since it would trigger the pre-processor to convert them into user/community links.
 
 - Memory optimization hacks; good lord Svelte is a hoarder and refuses to let go of shit.  This is a huge reason why I'm probably going to port Tesseract to React instead of going to Svelte 5. Even if the memory leaks are fixed in Svelte 5, they basically turned it into React anyway, so might as well use that.
 
@@ -92,7 +92,7 @@ Did I mention how stupid it is that Lemmy federates the proxied URL for images i
 ---
 
 ### Guide: Optimizing Browser Settings for Tesseract
-When using "click to play" on media posts (the default setting), the "autoplay" flag is implicitly set on the embed to prevent you from having to click multiple "play" buttons.  However, any player besides YouTube (e.g. Invidious, Piped, PeerTube, etc) requires you to click the video *again* after it switches from thumbnail to embed.  This is annoying, and YouTube only seems to get a pass in Chrome/ium because Google says so.
+When using "click to play" on media posts (the default setting), the "autoplay" flag is implicitly set on the embed to prevent you from having to click multiple "play" buttons.  However, any player besides YouTube (e.g. Invidious, Piped, PeerTube, etc) requires you to click the video *again* after it switches from thumbnail to embed.  This is annoying, and YouTube only seems to get a default pass in Chrome/ium because Google says so.
 
 To remedy this:
 
