@@ -46,10 +46,10 @@
     export let scrollTo:number = -1
     export let inCommunity: boolean = false
     export let inProfile: boolean = false
+    export let inViewport = false
 
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement | null
-    let inViewport = false
     let postType = getPostType(post)
     let lastClickedPost = -1
     
