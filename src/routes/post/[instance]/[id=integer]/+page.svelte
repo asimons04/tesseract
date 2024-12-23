@@ -145,6 +145,8 @@
                 displayType="post" 
                 actions={true} 
                 {expandCompact}
+                autoplay={$userSettings.embeddedMedia.autoplay}
+                inViewport={true}
                 on:reply={() => {
                     showCommentForm = !showCommentForm
                     
@@ -155,7 +157,7 @@
                         commentForm?.focus()
                     }, 250);
                 }}
-                autoplay={$userSettings.embeddedMedia.autoplay}
+                
                 
             
             />      
