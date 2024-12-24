@@ -65,7 +65,7 @@
     <!---Div to blur background. --->  
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <div class="overflow-hidden fixed top-0 left-0 w-screen h-screen z-[99] 
-            flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal cursor-default
+            flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-1 md:p-4 whitespace-normal cursor-default
         "
         role="button" tabindex="0"
         bind:this={modalBackground}
