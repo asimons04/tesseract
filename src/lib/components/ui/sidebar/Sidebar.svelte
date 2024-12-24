@@ -60,7 +60,7 @@
 </script>
 
 <nav
-    class="hidden sm:flex flex-col pl-4 pr-4 overflow-auto sticky top-16 bottom-0
+    class="hidden sm:flex flex-col px-2 overflow-auto sticky top-16 bottom-0
         gap-1 max-h-[calc(100svh-4rem)] w-full bg-slate-100 dark:bg-black z-50
         {$userSettings.uiState.expandSidebar
             ? `max-w-[25%] lg:max-w-[20%] xl:max-w-[18%] min-w-[20rem]`
