@@ -50,7 +50,7 @@
 
 <MainContentArea>
 
-    <div class="flex w-full" style="height: calc(100vh - 8rem);">
+    <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
         <FeedContainer>
             <PostFeed actions type="All"
                 bind:community_name={$page.params.community_name}  

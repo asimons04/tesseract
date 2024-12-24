@@ -94,7 +94,7 @@
 
 <MainContentArea>
 
-    <div class="flex w-full" style="height: calc(100vh - 8rem);">
+    <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
         <FeedContainer>
             
             <PostFeed actions bind:controller={feedController} bind:sort bind:type >
