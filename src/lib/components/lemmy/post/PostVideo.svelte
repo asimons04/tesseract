@@ -44,7 +44,6 @@
     $:  if (!inViewport) {
             if (video) {
                 video.pause() 
-                video.remove()
             }
             clickToPlayClicked = false
         }
