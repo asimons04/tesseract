@@ -31,6 +31,7 @@
         UserGroup,
         XCircle,
         ArrowPath,
+        Folder,
     } from 'svelte-hero-icons'
     import { goto } from "$app/navigation";
 
@@ -155,7 +156,7 @@
             {#if $userSettings.uiState.expandSidebar}
                 <SidebarButton title="Groups" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='groups'}>
                     <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                        <Icon src={UserGroup} mini size="18" title="Groups" />
+                        <Icon src={Folder} mini size="18" title="Groups" />
                         <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Groups</span>
                     </span>
                 </SidebarButton>

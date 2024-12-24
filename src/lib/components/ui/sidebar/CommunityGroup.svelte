@@ -53,7 +53,7 @@
         <div class="border border-transparent bg-transparent hover:bg-slate-200 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none
             flex flex-row w-full px-2 gap-1 items-center rounded-md {open ? '!bg-slate-200 dark:!bg-zinc-800' : ''}"
         >
-            <SidebarButton class="w-full" title="{open ? 'Collapse' : 'Expand'} {group.name}" on:click={() => open = !open}>
+            <SidebarButton class="w-full {open ? '' : 'opacity-80'}" title="{open ? 'Collapse' : 'Expand'} {group.name}" on:click={() => open = !open}>
                 <Icon src={open ? FolderOpen : Folder} mini size="16"/>
                 <span class="font-bold">{group.name}</span>
             </SidebarButton>

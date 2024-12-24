@@ -42,7 +42,8 @@
 >
     <div class="flex flex-row gap-2 w-full items-center">
         <span style="width: {expanded ? `calc(100% - 50px - ${avatarSize}px)` : `${avatarSize}px`}">
-            <CommunityLink {community}
+            <CommunityLink class="!w-fit"
+                {community}
                 boldCommunityName={true} 
                 avatar={true}
                 avatarBackground={true}
