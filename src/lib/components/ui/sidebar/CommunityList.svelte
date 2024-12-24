@@ -92,5 +92,5 @@
         {/each}
     </div>
 {:else}
-    <Placeholder title="No Subscriptions" description="You have no subscriptions"/>
+    <Placeholder title="No Subscriptions" description="You have no subscriptions" class="mx-auto w-[75%]"/>
 {/if}
