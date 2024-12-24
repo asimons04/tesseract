@@ -5,6 +5,7 @@
     import { onDestroy } from 'svelte'
     import { userSettings } from '$lib/settings'
     
+    import Avatar from '../Avatar.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
 
@@ -12,8 +13,6 @@
         Icon,
         Star
     } from 'svelte-hero-icons'
-    
-    
 
     export let community:Community
     export let hidden:boolean = false
@@ -21,7 +20,8 @@
     export let showFavoriteButton: boolean = true
 
     let favorite = false
-    $: community, favorite = isFavorite(community)
+    $:  community, favorite = isFavorite(community)
+    $:  avatarSize = expanded ? 28 : 20
 
     let button: any
 
@@ -36,33 +36,44 @@
     bind:this={button}
     class="!text-xs hover:bg-slate-200 w-full h-max {expanded ? '' : '!p-1.5'}"
     color="tertiary"
-    alignment="left"
+    alignment="{expanded ? 'left' : 'center'}"
     href="/c/{community.name}@{new URL(community.actor_id).hostname}"
     title="{community.title.replace('&amp;', '&')}@{new URL(community.actor_id).hostname}"
 >
-    <CommunityLink {community} class="!w-fit"
-        boldCommunityName={true} 
-        avatarSize={expanded ? 28 : 20} 
-        avatar 
-        avatarBackground
-        maxNameLength={30} 
-        inline={false} 
-        showInstance={$userSettings.uiState.showInstancesSidebarCommunityList}
-        bind:name={expanded}
-        href={!expanded}
-    />
+    <div class="flex flex-row gap-2 w-full items-center">
+        <span style="width: {expanded ? `calc(100% - 50px - ${avatarSize}px)` : `${avatarSize}px`}">
+            <CommunityLink {community}
+                boldCommunityName={true} 
+                avatar={true}
+                avatarBackground={true}
+                avatarSize={avatarSize}
+                maxNameLength={30} 
+                inline={false} 
+                showInstance={$userSettings.uiState.showInstancesSidebarCommunityList}
+                bind:name={expanded}
+                href={!expanded}
+            />
+        </span>
+
+        <!---Favorites Button--->
+        {#if expanded && showFavoriteButton}
+            <Button color="tertiary" title="{favorite ? 'Un-Favorite' : 'Add Favorite'}" 
+                icon={Star} iconSize={24}
+                class="ml-auto hover:scale-125 {favorite ? '!text-amber-500' : ''}"
+                on:click={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    addFavorite(community, !favorite)
+                }}
+            />
+        {/if}
+
+    </div>
     
-    <!---Favorites Button--->
-    {#if expanded && showFavoriteButton}
-        <span class="ml-auto" />
-        <Button color="tertiary" title="{favorite ? 'Un-Favorite' : 'Add Favorite'}" on:click={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            addFavorite(community, !favorite)
-        }}>
-            <Icon src={Star} width={24} mini class="hover:scale-125 {favorite ? 'text-amber-500' : ''}"/>
-        </Button>
-    {/if}
+        
+        
+        
+    
 
 
 
