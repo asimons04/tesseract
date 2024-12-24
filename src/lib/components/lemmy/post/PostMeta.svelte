@@ -8,7 +8,7 @@
     import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    import { postType as getPostType, isImage, isVideo, scrollToTop } from './helpers.js'
+    import { postType as getPostType, isImage, isVideo } from './helpers.js'
     import { subscribe } from '../community/helpers.js'
     import { userSettings } from '$lib/settings'
 
@@ -193,20 +193,19 @@
 
 
             <!---Post Action Buttons--->
-            {#if actions}
-                <div class="flex flex-row items-start gap-2 ml-auto">
-                    
-                    <!--Expand/Collapse Post--->
-                    {#if postType != 'text' }
-                        <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
-                            icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
-                            iconSize={16}
-                            on:click={() => {  
-                                expandCompact = !expandCompact; 
-                            }}
-                        />
-                    {/if}
-                    
+            <div class="flex flex-row items-start gap-2 ml-auto">
+                <!--Expand/Collapse Post--->
+                {#if postType != 'text'&& (postType == 'dailymotion' || post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
+                    <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
+                        icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
+                        iconSize={16}
+                        on:click={() => {  
+                            expandCompact = !expandCompact; 
+                        }}
+                    />
+                {/if}
+
+                {#if actions}
                     <!---Moderation--->
                     {#if actions && $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
                         <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
@@ -217,8 +216,9 @@
                     
                     <!---Post Actions--->
                     <PostActionsMenu bind:post on:edit/>
-                </div>
-            {/if}
+                {/if}
+            </div>
+            
         </div>
     </div>
 
