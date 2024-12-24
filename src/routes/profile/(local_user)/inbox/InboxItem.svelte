@@ -207,7 +207,7 @@
                                 {item.post.name}
                             </a>
                             
-                            <Comment postId={item.post.id} node={{ children: [], comment_view: item, depth: 1 }} replying={false} class="!p-0" />
+                            <Comment elevation={-1} postId={item.post.id} node={{ children: [], comment_view: item, depth: 1 }} replying={false} class="!p-0" />
                         {/if}
 
                         <!---Direct Messages--->

@@ -227,15 +227,18 @@
                 
 
                 {#if item.link || item.content}
-                    <span class="flex flex-nowrap gap-1 overflow-hidden">
-                        <strong>Item:</strong>
-                        {#if item.link && item.content}
-                            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links} title={item.content}> {item.content.substring(0, 250)} </Link>
-                        {:else if item.content}
-                            <span title="{item.content}">{item.content.substring(0,250)}</span>
-                        {:else if item.link}
-                            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
-                        {/if}
+                    <span class="flex flex-row gap-1">
+                        <span class="text-xs font-bold w-24 lg:w-fit">Item:</span>
+
+                        <span class="flex flex-nowrap w-full gap-1 overflow-hidden">
+                            {#if item.link && item.content}
+                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links} title={item.content}> {item.content.substring(0, 250)} </Link>
+                            {:else if item.content}
+                                <span title="{item.content}">{item.content.substring(0,250)}</span>
+                            {:else if item.link}
+                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
+                            {/if}
+                        </span>
                     </span>
                 {/if}
             </span>

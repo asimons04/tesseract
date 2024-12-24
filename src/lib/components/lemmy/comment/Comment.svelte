@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, PurgeCommentEvent, RemoveCommentEvent } from '$lib/ui/events'
-    import type { CommentNodeI } from './comments'
+    import { getDepthFromComment, type CommentNodeI } from './comments'
     import type { UploadImageResponse } from 'lemmy-js-client';
     
     import {
@@ -34,6 +34,7 @@
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
+    import Card from '$lib/components/ui/Card.svelte';
     
     
     export let node: CommentNodeI
@@ -41,25 +42,21 @@
     export let actions: boolean = true
     export let open = true
     export let replying = false
-    
+    export let elevation: -1|0|1|2 = getCardElevation(node)
     
     let imageUploads              = [] as UploadImageResponse[]
     let editing                   = false
     let newComment                = node.comment_view.comment.content
-    let distinguishedClassSummary = 'border-l border-r rounded-t-md border-t border-green-500/50 bg-green-500/5 p-1'
-    let distinguishedClassContent = 'shadow-md border-l border-r rounded-b-md border-b border-green-500/50 bg-green-500/5 p-1'
-
-    let jumpToCommentClassSummary = `border-l border-r rounded-t-md border-t border-amber-200/50 bg-amber-500/5 p-1`
-    let jumpToCommentClassContent = 'shadow-md border-l border-r rounded-b-md border-b border-amber-500/50 bg-amber-500/5 p-1'
     let jumpToComment             = false
     let commentContainer: HTMLDivElement
-
+    
     let op = node.comment_view.post.creator_id == node.comment_view.creator.id
 
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
         if (isThreadComment(node.comment_view.comment.id)) {
             jumpToComment = true
+            color = 'warning'
             await scrollToTop(commentContainer)
         }
                     
@@ -84,6 +81,8 @@
     function handleRemoveComment(e: RemoveCommentEvent) {
         if (node.comment_view.comment.id == e.detail.comment_id) {
             node.comment_view.comment.removed = e.detail.removed
+            if (e.detail.removed) color = 'error'
+            else color = getCardColor(node)
         }
     }   
 
@@ -99,6 +98,7 @@
         if (node.comment_view.comment.id == e.detail.comment_id) {
             node.comment_view.comment.distinguished = e.detail.distinguished
             node = node
+            color = 'success'
         }
     }
 
@@ -110,6 +110,23 @@
             $profile?.user?.local_user_view.person.id != node.comment_view.creator.id
     ) ? false : open
 
+    function getCardElevation(node: CommentNodeI): 0|1|2 {
+        let depth = getDepthFromComment(node.comment_view.comment)
+        if (!depth) return 1
+        return (depth % 2 == 0) ? 1 : 0
+    }
+
+    function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' {
+        let color: 'default' | 'warning' | 'error' | 'success' = 'default'
+        
+        if (node.comment_view.comment.distinguished) return 'success'
+        if (jumpToComment) return 'warning'
+        if (node.comment_view.comment.removed) return 'error'
+
+        return color
+    }
+
+    let color: 'default' | 'warning' | 'error' | 'success' = getCardColor(node)
 </script>
 
 <svelte:window 
@@ -154,119 +171,110 @@
     </Modal>
 {/if}
 
-<div bind:this={commentContainer} class="py-2 {$$props.class}" id="#{node.comment_view.comment.id.toString()}" transition:slide>
-    <details bind:open class="flex flex-col gap-0">
-        <summary class="
-            {jumpToComment ? jumpToCommentClassSummary : ''}
-            {jumpToComment && !open ? 'border-b rounded-b-md' : ''}
-            {node.comment_view.comment.distinguished ? distinguishedClassSummary : ''} 
-            {node.comment_view.comment.distinguished && !open ? 'border-b rounded-b-md': ''} 
-            flex flex-col md:flex-row flex-wrap w-full cursor-pointer gap-2 group text-xs 
-            {jumpToComment
-                ? 'hover:bg-amber-500/20'
-                : node.comment_view.comment.distinguished
-                    ? 'hover:bg-green-500/20'
-                    : 'hover:bg-slate-100 hover:dark:bg-zinc-800 hover:dark:border-zinc-700'
-            }
-             hover:rounded-lg
-        ">
-            <span class:font-bold={op} class="flex flex-row flex-wrap gap-1 items-start w-full">
-                <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} community_banned={node.comment_view.creator_banned_from_community}/>
-                
-                {#if op}
-                    <span class="text-sky-500">OP</span>
-                {/if}
-                
-                {#if !open}
-                    <span class="flex items-center gap-0.5 mr-1 mb-auto text-slate-600 dark:text-zinc-400">
-                        <Icon src={ArrowUp} mini size="14" title="Score" />
-                        {node.comment_view.counts.score}
-                    </span>
-                {/if}
+<Card elevation={elevation} cardColor={color} class="pl-1">
 
-                <!---If updated, only show edited time on mobile--->
-                <span class="{node.comment_view.comment.updated ? 'hidden sm:flex' : 'flex'} flex-row items-center whitespace-nowrap text-slate-600 dark:text-zinc-400">
-                    <RelativeDate date={node.comment_view.comment.published}/>
+    <div bind:this={commentContainer} class="py-1 {$$props.class}" id="#{node.comment_view.comment.id.toString()}" transition:slide>
+        <details bind:open class="flex flex-col gap-0">
+            
+            <summary class="
+                flex flex-col md:flex-row flex-wrap w-full cursor-pointer gap-2 group text-xs 
+                hover:bg-slate-300 hover:dark:bg-zinc-800 hover:dark:border-zinc-700
+                hover:rounded-lg overflow-hidden
+            ">
+                <span class:font-bold={op} class="flex flex-row gap-1 items-center w-full">
+                    <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} community_banned={node.comment_view.creator_banned_from_community}/>
+
+                    <!---Badges, published/edited date, expand/collapse button--->
+                    <span class="flex flex-row items-center gap-2 ml-auto w-full">
+
+                        <span class="ml-auto" />
+
+                        {#if op}
+                            <span class="text-sky-500">OP</span>
+                        {/if}
+                        
+                        {#if !open}
+                            <span class="flex items-center gap-0.5 mr-1 text-slate-600 dark:text-zinc-400">
+                                <Icon src={ArrowUp} mini size="14" title="Score" />
+                                {node.comment_view.counts.score}
+                            </span>
+                        {/if}
+
+                        <!---If updated, only show edited time on mobile--->
+                        <span class="{node.comment_view.comment.updated ? 'hidden sm:flex' : 'flex'} flex-row items-center whitespace-nowrap text-slate-600 dark:text-zinc-400">
+                            <RelativeDate date={node.comment_view.comment.published}/>
+                        </span>
+
+                        {#if node.comment_view.comment.updated}
+                            <span class="flex flex-row whitespace-nowrap items-center gap-1 ml-1 text-slate-600 dark:text-zinc-400">
+                                <Icon src={Pencil} solid size="12" title="Edited" />
+                                <RelativeDate date={node.comment_view.comment.updated}/>
+                            </span>
+                        {/if}
+
+                        {#if node.comment_view.comment.deleted} 
+                            <Icon src={Trash} solid size="12" title="Deleted" class="text-red-600 dark:text-red-500 mt-1"/>
+                        {/if}
+
+                        {#if node.comment_view.comment.removed}
+                            <Icon src={HandRaised} solid size="12" title="Removed" class="text-red-600 dark:text-red-500 mt-1"/>
+                        {/if}
+
+                        {#if node.comment_view.saved}
+                            <Icon src={Bookmark} solid size="12" title="Saved" class="text-yellow-600 dark:text-yellow-500 mt-1" />
+                        {/if}
+
+                        {#if !open && node.children.length > 0}
+                            <span class="hidden md:flex text-xs opacity-50">+{node.children.length} More</span>
+                        {/if}
+
+                        <Button color="tertiary" size="sm" icon={open ? Minus : Plus} iconSize={16} on:click={() => open = !open}/>
+                    </span>
                 </span>
+            </summary>
 
-                {#if node.comment_view.comment.updated}
-                    <span class="flex flex-row whitespace-nowrap items-center gap-1 ml-1 text-slate-600 dark:text-zinc-400">
-                        <Icon src={Pencil} solid size="12" title="Edited" />
-                        <RelativeDate date={node.comment_view.comment.updated}/>
-                    </span>
-                {/if}
-
-                {#if node.comment_view.comment.deleted} 
-                    <Icon src={Trash} solid size="12" title="Deleted" class="text-red-600 dark:text-red-500 mt-1"/>
-                {/if}
-
-                {#if node.comment_view.comment.removed}
-                    <Icon src={HandRaised} solid size="12" title="Removed" class="text-red-600 dark:text-red-500 mt-1"/>
-                {/if}
-
-                {#if node.comment_view.saved}
-                    <Icon src={Bookmark} solid size="12" title="Saved" class="text-yellow-600 dark:text-yellow-500 mt-1" />
-                {/if}
-
-                <Button color="ghost" size="sm"
-                    class="ml-auto translate-x-1 opacity-0 group-hover:translate-x-0 items-center
-                    group-hover:opacity-100 text-xs !transition-all
-                    pointer-events-none border-none
-                    text-slate-600 dark:text-zinc-400
-                    "
-                >
-                    <Icon src={open ? Minus : Plus} width={16} height={16} mini />
-                    {#if !open && node.children.length > 0}
-                        <span class="text-xs opacity-50">+{node.children.length}</span>
-                    {/if}
-                </Button>
-            </span>
-        </summary>
-
-        <div class="
-            {jumpToComment ? jumpToCommentClassContent : ''}
-            {node.comment_view.comment.distinguished ? distinguishedClassContent : ''} flex flex-col gap-1"
-        >
-            
-            <div class="max-w-full mt-0.5 break-words text-sm">
-                <Markdown source={
-                    !amModOfAny($profile?.user) && (node.comment_view.comment.removed || node.comment_view.comment.deleted)
-                        ? node.comment_view.comment.deleted ? '*Deleted by creator*' : '*Removed by mod*'
-                        : node.comment_view.comment.content
-                    } />
+            <div class="flex flex-col gap-1">
+                
+                <div class="max-w-full mt-0.5 break-words text-sm">
+                    <Markdown source={
+                        !amModOfAny($profile?.user) && (node.comment_view.comment.removed || node.comment_view.comment.deleted)
+                            ? node.comment_view.comment.deleted ? '*Deleted by creator*' : '*Removed by mod*'
+                            : node.comment_view.comment.content
+                        } />
+                </div>
+                
+                
+                <div class="flex flex-row gap-2 items-center">
+                    <CommentActions
+                        {actions}
+                        bind:comment={node.comment_view}
+                        bind:replying
+                        on:edit={() => (editing = true)}
+                    />
+                </div>
+                
             </div>
-            
-            
-            <div class="flex flex-row gap-2 items-center">
-                <CommentActions
-                    {actions}
-                    bind:comment={node.comment_view}
-                    bind:replying
-                    on:edit={() => (editing = true)}
-                />
+            {#if replying}
+                <div class="max-w-full my-2">
+                    <h1 class="font-bold text-sm mb-2">Reply</h1>
+                    <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
+                        on:comment={(e) => {
+                            node.children = [
+                                {
+                                    children: [],
+                                    comment_view: e.detail.comment_view,
+                                    depth: node.depth + 1,
+                                },
+                                ...node.children,
+                            ]
+                            replying = false
+                        }}
+                    />
+                </div>
+            {/if}
+            <div class="bg-transparent dark:bg-transparent">
+                <slot />
             </div>
-            
-        </div>
-        {#if replying}
-            <div class="max-w-full my-2">
-                <h1 class="font-bold text-sm mb-2">Reply</h1>
-                <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
-                    on:comment={(e) => {
-                        node.children = [
-                            {
-                                children: [],
-                                comment_view: e.detail.comment_view,
-                                depth: node.depth + 1,
-                            },
-                            ...node.children,
-                        ]
-                        replying = false
-                    }}
-                />
-            </div>
-        {/if}
-        <div class="bg-transparent dark:bg-transparent">
-            <slot />
-        </div>
-    </details>
-</div>
+        </details>
+    </div>
+</Card>

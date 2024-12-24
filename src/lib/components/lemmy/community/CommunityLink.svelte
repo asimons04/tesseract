@@ -4,7 +4,6 @@
     import { communityProfileModal } from '../moderation/moderation'
     import { createEventDispatcher } from 'svelte'
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
-    import { goto } from '$app/navigation'
     import { shortenCommunityName } from '$lib/components/lemmy/community/helpers'
     import { userSettings } from '$lib/settings.js'
     
@@ -15,13 +14,13 @@
     export let community: Community
     export let avatar: boolean = false
     export let name: boolean = true
-    export let avatarSize: number = 24
+    export let avatarSize: number = avatar ? 24 : 0
     export let avatarBackground: boolean = false
-    export let showInstance: boolean | undefined = undefined
+    export let showInstance: boolean = $userSettings.uiState.showInstances
     export let href: boolean = false
     export let heading:boolean = false
     export let boldCommunityName:boolean = true;
-    export let useDisplayNames:boolean|undefined = undefined 
+    export let useDisplayNames:boolean = $userSettings.displayNames 
     export let noClick:boolean = false
     export let maxNameLength: number = 45
     export let inline: boolean = true
@@ -43,7 +42,12 @@
     }
 </script>
 
-<a href="{linkFromCommunity(community)}" class="items-center flex flex-row gap-2 {noClick ? 'pointer-events-none' : ''} hover:underline {heading ? 'font-bold text-2xl' : ''} w-full {$$props.class}" 
+<a href="{linkFromCommunity(community)}" 
+    class="items-center flex flex-row gap-2 hover:underline w-full
+        {noClick ? 'pointer-events-none' : ''}  
+        {heading ? 'font-bold text-2xl' : ''}  
+        {$$props.class}
+    " 
     title={fixLemmyEncodings(community.title)}
     on:click={loadCommunityProfileModal}
 >
@@ -52,17 +56,23 @@
     {/if}
 
     {#if name}
-        <span class="flex flex-wrap text-left {inline ? 'items-center flex-row gap-0' : 'flex-col gap-0'} {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} {boldCommunityName ? 'font-bold' : 'font-normal'}"
-            style="width:calc(100% - {avatarSize}px);"
+        <span class="flex text-left 
+            {inline ? 'items-center flex-row gap-0 truncate' : 'flex-col gap-0'} 
+            {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} 
+            {boldCommunityName ? 'font-bold' : 'font-normal'}
+        "
+            style="width:calc(100% - {avatarSize+2}px - 0.5rem);"
         >
+            <span class="font-bold opacity-80 text-left  truncate ">
+                { useDisplayNames
+                    ? shortenCommunityName(community.title, maxNameLength)
+                    : `c/${community.name}`
+                }
+            </span>
+            
 
-            {useDisplayNames ?? $userSettings.displayNames 
-                ? shortenCommunityName(community.title, maxNameLength)
-                : `c/${community.name}`
-            }
-
-            {#if showInstance != undefined ? showInstance : $userSettings.uiState.showInstances}    
-                <span class="opacity-70 font-normal normal-case">
+            {#if showInstance}    
+                <span class="opacity-70 font-normal normal-case truncate">
                     {inline ? '@' : ''}{new URL(community.actor_id).hostname}
                 </span>
             {/if}

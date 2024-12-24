@@ -25,7 +25,7 @@
     
 
     export let nodes: CommentNodeI[]
-    export let isParent: boolean
+    export let isParent: boolean = true
     export let post: Post
     export let moderators: Array<CommunityModeratorView>
 
@@ -58,7 +58,7 @@
             }
 
             const tree = buildCommentsTree(newComments.comments, parent.depth)
-
+                
             // 0.18.2 -> 0.18.3 broke this
             // so i'm adding this check
             const treeParent = tree.find(
@@ -84,6 +84,7 @@
                     })
                 }
             }
+            
         } catch (error) {
             console.error(error)
             toast({
@@ -92,16 +93,19 @@
             })
         }
     }
-</script>
 
-<ul in:fly={{ opacity: 0, y: -4 }}
-    class={
+    /**
+    {
         isParent
             ? 'divide-y dark:divide-zinc-800 divide-slate-200'
             : 'pl-2 border-l-2 border-slate-200 dark:border-zinc-800 my-1'
     }
->
-    {#each nodes as node (node.comment_view.comment.id)}
+    */
+     
+</script>
+
+<div class="flex flex-col gap-2 {isParent ? '' : 'pl-1 pt-1'}" in:fly={{ opacity: 0, y: -4 }} >
+    {#each nodes as node, idx (node.comment_view.comment.id)}
         <!--- Comment filtering  --->
         {#if    !(
                     // Optionally hide comments from new accounts (and any replies)
@@ -126,12 +130,13 @@
                             disabled={node.loading}
                             size="sm"
                             color="tertiary"
+                            icon={ChevronDown}
+                            iconSize={16}
                             on:click={() => {
                                 node.loading = true
                                 fetchChildren(node).then(() => (node.loading = false))
                             }}
                         >
-                            <Icon src={ChevronDown} width={16} mini slot="icon" />
                             {node.comment_view.counts.child_count} more
                         </Button>
                     </div>
@@ -140,4 +145,4 @@
         {/if}
 
     {/each}
-</ul>
+</div>

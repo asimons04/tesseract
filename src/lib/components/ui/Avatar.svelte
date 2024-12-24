@@ -23,8 +23,6 @@
     export let fadeIn: boolean = true
 </script>
 
-<!--<div class="{circle ? 'rounded-full' : ''} {background ? 'bg-white/50' : ''} mx-auto " style="width: {width}px; height: {width}px;">-->
-<!--<div style={`min-width: ${Math.round(width * 0.75)}px; max-width: ${width+2}px;`}>-->
 <div style="width: {width+2}px;">
     <div class="{circle ? 'rounded-full' : ''} {rounded ? 'rounded-xl' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
         {#if url}
@@ -45,7 +43,7 @@
                     {ring ? 'ring-2 ring-sky-700' : ''}  
                     {$$props.class}
                 "  
-                style="width: {width}px;"
+                style="width: {width+2}px;"
             >
                 {#if community}
                     {@html createAvatar(initials, {

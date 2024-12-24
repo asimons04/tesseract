@@ -52,7 +52,7 @@
 
 </script>
 
-<div class="flex flex-row items-center gap-0 cursor-pointer border border-slate-300 dark:border-zinc-800 items-center text-sm gap-0 rounded-lg">
+<div class="flex flex-row items-center gap-0 cursor-pointer border border-slate-300 dark:border-zinc-700 items-center text-sm gap-0 rounded-lg">
     <Button disabled={!$profile?.user || !onHomeInstance} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
         class="{comment.my_vote == 1 ? voteColor() : ''} !gap-0.5"
         on:click={async () => {

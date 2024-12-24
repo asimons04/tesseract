@@ -146,10 +146,11 @@
 {/if}
 
 {#if showVotes.votes}
-    <div bind:this={showVotes.scrollArea} class="flex flex-col overflow-y-scroll max-h-[500px] divide-y divide-slate-200 dark:divide-zinc-500 px-4">
+    <div bind:this={showVotes.scrollArea} class="flex flex-col overflow-y-scroll max-h-[500px] divide-y divide-slate-200 dark:divide-zinc-500 px-1 md:px-4">
         {#each showVotes.votes as vote}
             <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
-                <span class="flex w-full">
+                
+                <span class="flex w-[calc(100%-24px-0.5rem)]">
                     <UserLink bind:user={vote.creator} avatar avatarSize={24} ring />
                 </span>
                 

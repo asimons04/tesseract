@@ -8,8 +8,8 @@ export enum Color {
   'secondary' = 'hover:bg-black/10 hover:dark:bg-white/10 text-black dark:text-white fill-black dark:fill-white',
   'danger' = 'border border-red-500 bg-red-500 text-white hover:text-red-500 hover:bg-transparent',
   'dangerSecondary' = 'hover:bg-red-500 text-red-500 hover:text-white',
-  'border' = 'border border-slate-200 dark:border-zinc-700 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 hover:dark:bg-zinc-700',
-  'borderDark' = 'border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 hover:dark:bg-zinc-800',
+  'border' = 'border border-slate-200 dark:border-zinc-700 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-300 hover:dark:bg-zinc-700',
+  'borderDark' = 'border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-300 hover:dark:bg-zinc-800',
 }
 
 // Button colors
@@ -25,10 +25,10 @@ export const buttonColor = {
         hover:dark:text-inherit border-none`,
 
     tertiary:
-      'border border-transparent bg-transparent hover:bg-slate-200 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none',
+      'border border-transparent bg-transparent hover:bg-slate-300 hover:dark:bg-zinc-700 dark:text-zinc-200  border-none disabled:border-none',
     
     "tertiary-border":
-      'border border-slate-300 dark:border-zinc-800 rounded-lg bg-transparent hover:bg-slate-200 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none',
+      'border border-slate-300 dark:border-zinc-700 rounded-lg bg-transparent hover:bg-slate-300 hover:dark:bg-zinc-700 dark:text-zinc-200  disabled:border-none',
 
     "tertiary-border-bottom":
         'border-b border-slate-300 dark:border-zinc-800 bg-transparent hover:bg-slate-100 hover:dark:bg-zinc-700 dark:text-zinc-200',
@@ -61,11 +61,11 @@ export const buttonColor = {
         hover:dark:text-inherit`,
 
     elevated: `bg-slate-100 dark:bg-zinc-800 border border-slate-200
-        dark:border-zinc-700 hover:bg-slate-200 hover:dark:bg-zinc-700 hover:border-slate-300
+        dark:border-zinc-700 hover:bg-slate-300 hover:dark:bg-zinc-700 hover:border-slate-300
         hover:dark:border-zinc-600`,
 
     elevatedLow: `bg-slate-100 dark:bg-zinc-900 border border-slate-200
-        dark:border-zinc-800 hover:bg-slate-200 hover:dark:bg-zinc-800 hover:border-slate-300
+        dark:border-zinc-800 hover:bg-slate-300 hover:dark:bg-zinc-800 hover:border-slate-300
         hover:dark:border-zinc-700`,
 
     

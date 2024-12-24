@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { StandardReport } from "$routes/moderation-old/components/helpers"
+    import type { StandardReport } from "./helpers"
     
     import { createEventDispatcher } from "svelte"
     import { fade } from "svelte/transition"
@@ -102,14 +102,21 @@
         <div class="flex flex-col w-full gap-2 lg:flex-row lg:justify-between lg:items-center">
             
             <span class="flex flex-col w-full lg:w-1/2 gap-2">
-                <span class="flex flex-row gap-1 text-xs w-full">
-                    <span class="font-bold">Report from: </span>
-                    <UserLink user={report.reporter} avatar avatarSize={16}/>
+                
+                <span class="flex flex-row gap-1 text-xs">
+                    <span class="font-bold w-[100px]">Report from: </span>
+                    
+                    <span class="w-[calc(100%-100px)]">
+                        <UserLink user={report.reporter} avatar avatarSize={16}/>
+                    </span>
                 </span>
 
-                <span class="flex flex-row gap-1 text-xs w-full">
-                    <span class="font-bold">Report against: </span>
-                    <UserLink user={report.reportee} avatar avatarSize={16}/>
+                <span class="flex flex-row gap-1 text-xs w-[calc(100%-100px)]">
+                    <span class="font-bold w-[100px]">Report against: </span>
+                    
+                    <span class="w-[calc(100%-100px)]">
+                        <UserLink user={report.reportee} avatar avatarSize={16}/>
+                    </span>
                 </span>
             </span>
             
@@ -118,15 +125,19 @@
                 
                 {#if report.community}
                 <span class="flex flex-row gap-1 text-xs w-full ">
-                    <span class="font-bold">Community: </span>
-                    <CommunityLink community={report.community} avatar avatarSize={16}/>
+                    <span class="font-bold w-[100px]">Community: </span>
+                    <span class="w-[calc(100%-100px)]">
+                        <CommunityLink community={report.community} avatar avatarSize={16}/>
+                    </span>
                 </span>
                 {/if}
 
                 <span class="flex flex-row gap-1 text-xs w-full">
-                    <span class="font-bold">Resolved by: </span>
+                    <span class="font-bold w-[100px]">Resolved by: </span>
                     {#if report.resolver}
-                        <UserLink user={report.resolver} avatar avatarSize={16}/>
+                        <span class="w-[calc(100%-100px)]">    
+                            <UserLink user={report.resolver} avatar avatarSize={16}/>
+                        </span>
                     {:else}
                         ---
                     {/if}

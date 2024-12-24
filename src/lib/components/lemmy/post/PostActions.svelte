@@ -1,23 +1,23 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import type { PostDisplayType } from './helpers.js'
+    import type { PostDisplayType } from './helpers'
 
-    import { userSettings } from '$lib/settings.js'
-    
 
-    
+    import { userSettings } from '$lib/settings'
+        
     // Post Action Bar Components
     import CommentCountButton   from './PostActions/CommentCountButton.svelte'
     import PostReplyButton      from './PostActions/PostReplyButton.svelte'
     import PostVote             from './PostActions/PostVote.svelte'
+
    
     export let post: PostView
     export let displayType: PostDisplayType
     export let actions: boolean = true
-
+    
 </script>
 
-<div  class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full gap-1 sm:gap-4 items-center mt-auto">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full gap-1 sm:gap-4 items-center mt-auto">
 
     <!--- Post Vote Buttons--->
     <PostVote bind:post />
@@ -31,8 +31,9 @@
 
         <!---Reply Button that enables the comment form--->
         <PostReplyButton displayType={displayType} on:reply bind:post/>
-    
+
         <!--- Spacer --->
         <div class="ml-auto" />
+
     {/if}
 </div>

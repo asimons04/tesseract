@@ -46,11 +46,11 @@
 <Card class="flex flex-col w-full p-2 gap-1 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >
     
     <!--- If post is NSFW, only show the metadata + title and overlay the rest--->
-    {#if post.post.nsfw && displayType=='feed'}
+    {#if post.post.nsfw && displayType=='feed' && $userSettings.nsfwBlur}
         <div class="flex flex-col gap-1 items-end w-full">
             <PostMeta bind:post bind:expandCompact {actions} showTitle={true} {collapseBadges} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
             <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} text="[Reveal NSFW Post]"/>
-            <PostActions  bind:post  {displayType} on:reply />
+            <PostActions  bind:post {displayType} on:reply />
         </div>
     {:else}
         
@@ -70,7 +70,7 @@
                         <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
 
                         <div class="mt-2" />
-                        <PostActions  bind:post  {displayType} on:reply />
+                        <PostActions  bind:post {displayType} on:reply />
                     </div>
                     <CompactPostThumbnail bind:post bind:expandCompact bind:displayType/>
                 </div>
@@ -87,7 +87,7 @@
                         <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                         
                         <div class="mt-2" />
-                        <PostActions  bind:post  {displayType} on:reply />
+                        <PostActions  bind:post {displayType} on:reply />
                     </div>
                     <CompactPostThumbnail bind:post bind:expandCompact bind:displayType {showThumbnail} float />
                 </div>
@@ -103,7 +103,7 @@
             {/if}
             <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
             <div class="mt-2" />
-            <PostActions  bind:post  {displayType} on:reply />
+            <PostActions  bind:post {displayType} on:reply />
         {/if}
     {/if}
 </Card>

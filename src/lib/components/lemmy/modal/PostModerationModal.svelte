@@ -528,8 +528,13 @@
             
             <Card class="p-2 w-full">
                 <div class="flex flex-row gap-2 justify-between w-full items-center text-xs sm:text-sm overflow-hidden">
-                    <CommunityLink community={item.community} avatar inline={false} avatarSize={48} />
-                    <UserLink user={item.creator} avatar inline={false} avatarSize={48} community_banned={item.creator_banned_from_community} mod={item.creator_is_moderator} admin={item.creator_is_admin} />
+                    <span class="w-1/2">
+                        <CommunityLink community={item.community} avatar inline={false} avatarSize={48} />
+                    </span>
+
+                    <span class="w-1/2">
+                        <UserLink user={item.creator} avatar inline={false} avatarSize={48} community_banned={item.creator_banned_from_community} mod={item.creator_is_moderator} admin={item.creator_is_admin} />
+                    </span>
                 </div>
             </Card>
 

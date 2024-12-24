@@ -17,7 +17,6 @@
     import { getPostTitleWithoutFlairs, sleep } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
     import { goto } from '$app/navigation'
-    import { lastSeenPost } from '$lib/components/lemmy/post/helpers'
     import { onMount } from 'svelte';
     import { userSettings } from '$lib/settings'
      
@@ -135,7 +134,7 @@
         </div>
        
         <div class="list-none">
-            <Comment postId={comment.post.id} replying={false} {actions} {collapseBadges} node={{ children: [], comment_view: comment, depth: 1 }} />
+            <Comment elevation={-1} postId={comment.post.id} replying={false} {actions} {collapseBadges} node={{ children: [], comment_view: comment, depth: 1 }} />
         </div>
     </Card>
 </div>

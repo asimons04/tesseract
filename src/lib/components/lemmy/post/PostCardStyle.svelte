@@ -27,16 +27,16 @@
     export let inCommunity:boolean = false
     export let inProfile: boolean = false
     export let inViewport: boolean = false
-
+    
     // Determine post type based on its attributes
     let postType: PostType
     $: post, postType = identifyPostType(post)
-
+    
 </script>
 
 
 
-<Card class="flex flex-col w-full p-2 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} ">
+<Card class="flex flex-col w-full p-2 gap-1 {displayType == 'post' ? 'min-h-[230px]' : ''} " >
     <PostMeta bind:post bind:expandCompact moderators={moderators} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
 
     <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType}>    
