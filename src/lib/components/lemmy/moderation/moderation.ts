@@ -1,3 +1,4 @@
+import type{ CommunityGroup } from '$lib/auth'
 import type { SubmissionView } from '$lib/lemmy/contentview.js'
 import type { 
     CommentView,
@@ -20,6 +21,16 @@ export type PostModerationModalPanels = 'none' | 'banning' | 'communityInfo' | '
 
 
 interface Modals {
+    addCommunityToGroup: {
+        open: boolean,
+        community: Community | undefined
+    },
+
+    editCommunityGroup: {
+        open: boolean,
+        group: CommunityGroup | undefined
+    }
+
     debug: {
         open: boolean,
         object: any
@@ -99,6 +110,16 @@ interface Modals {
 }
 
 export let modals = writable<Modals>({
+    addCommunityToGroup: {
+        open: false,
+        community: undefined
+    },
+
+    editCommunityGroup: {
+        open: false,
+        group: undefined
+    },
+
     debug: {
         open: false,
         object: {},
@@ -176,6 +197,30 @@ export let modals = writable<Modals>({
     }
 })
 
+// Launches the modal to add the provided community to a group
+export function addCommunityToGroup(community: Community) {
+    modals.update((m) => ({
+        ...m,
+        addCommunityToGroup: {
+            open: true,
+            community: community
+        }
+
+    }))
+}
+
+// Launches the modal to edit the provided community group
+export function editCommunityGroup(group: CommunityGroup) {
+    modals.update((m) => ({
+        ...m,
+        editCommunityGroup: {
+            open: true,
+            group: group
+        }
+    }))
+}
+
+// Launches the debug object viewer modal for the provided object
 export function debugModal(object: any) {
     modals.update((m) => ({
         ...m,

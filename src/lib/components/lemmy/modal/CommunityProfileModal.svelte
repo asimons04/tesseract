@@ -13,7 +13,7 @@
     
     import { StorageController } from '$lib/storage-controller'
 
-    import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
+    import { addCommunityToGroup, amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { expoIn } from "svelte/easing"
     import { fullCommunityName } from "$lib/util"
@@ -26,7 +26,6 @@
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
 
-    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
     import Button from "$lib/components/input/Button.svelte"
     import Card from "$lib/components/ui/Card.svelte"
@@ -333,7 +332,7 @@
                 <!---Add to Group--->
                 <Button color="tertiary" icon={Folder} iconSize={20} size="square-lg"
                     title="Add/Remove to Group"
-                    on:click={(e) => { communityGroupModal = true }}
+                    on:click={(e) => { addCommunityToGroup(communityDetails.community_view.community) }}
                 />
                 
             {/if}
@@ -348,7 +347,6 @@
     {/if}
 
     {#if !loading && communityDetails?.community_view}
-        <AddCommunityGroup bind:open={communityGroupModal} community={communityDetails.community_view.community} />
 
         <!---Ban/Unban Tool--->
         {#if action == 'banning'}

@@ -1,12 +1,13 @@
 <script lang="ts">
     import type { CommunityGroup } from '$lib/auth'
+    
+    import { editCommunityGroup } from '$lib/components/lemmy/moderation/moderation'
     import { removeGroup } from '$lib/favorites'
     import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts';
 
     import Button from '$lib/components/input/Button.svelte'
     import CommunityList from '$lib/components/ui/sidebar/CommunityList.svelte'
-    import EditCommunityGroup from '$lib/components/util/EditCommunityGroup.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
     import SidebarButton from '$lib/components/ui/sidebar/SidebarButton.svelte'
@@ -39,13 +40,8 @@
     }
     
     let open:boolean = false;
-    let editCommunityGroup:boolean = false;
-
 </script>
 
-{#if editCommunityGroup}
-    <EditCommunityGroup bind:open={editCommunityGroup} bind:group={group} />
-{/if}
 
 {#if group && expanded && (showEmptyGroups || group.communities?.length > 0)}
     <div class="flex flex-col gap-1">    
@@ -70,9 +66,14 @@
 
                 <Menu alignment="bottom-right" itemsClass="h-8 md:h-8" containerClass="!max-h-[90vh] max-w-[18rem]">
                     
-                    <Button color="tertiary" slot="button" let:toggleOpen on:click={toggleOpen} title="Group Options">
-                        <Icon src={Bars3} mini size="16" slot="icon" />
-                    </Button>
+                    <Button color="tertiary" slot="button" let:toggleOpen title="Group Options" 
+                        icon={Bars3} iconSize={16}
+                        on:click={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            toggleOpen()
+                        }}
+                    />
                     
                     <!---Group Name Header--->
                     <span class="px-4 py-1 my-1 text-xs text-slate-600 dark:text-zinc-400">
@@ -80,14 +81,24 @@
                     </span>
             
 
-                    <!---Create Post --->
-                    <MenuButton title="Edit Group" on:click={()=> editCommunityGroup = !editCommunityGroup}>
+                    <!---Edit Group --->
+                    <MenuButton title="Edit Group" on:click={(e)=> {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            editCommunityGroup(group)
+                        }}
+                    >
                         <Icon src={PencilSquare} mini size="16" />
                         Edit Group
                     </MenuButton>
 
                     <!---Delete Post --->
-                    <MenuButton title="Delete Group" on:click={() => deleteGroup()}>
+                    <MenuButton title="Delete Group" on:click={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            deleteGroup()
+                        }}
+                    >
                         <Icon src={Trash} mini size="16"/>
                         Delete Group
                     </MenuButton>

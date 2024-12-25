@@ -1,9 +1,11 @@
 <script lang="ts">
     import { modals } from '$lib/components/lemmy/moderation/moderation.js'
     
+    import AddCommunityGroup from '$lib/components/lemmy/modal/AddCommunityGroup.svelte'
     import BanModal from '$lib/components/lemmy/moderation/BanModal.svelte'
     import CommunityProfileModal from '$lib/components/lemmy/modal/CommunityProfileModal.svelte'
     import DebugObject from '$lib/components/util/debug/DebugObject.svelte'
+    import EditCommunityGroup from '$lib/components/lemmy/modal/EditCommunityGroup.svelte'
     import FederationStateModal from '$lib/components/lemmy/modal/FederationStateModal.svelte'
     import Fediseer from '$lib/fediseer/Fediseer.svelte'
     import LinkPreviewModal from '$lib/components/lemmy/modal/LinkPreviewModal.svelte'
@@ -75,6 +77,16 @@
 <!--- User Profile Modal (should be after so it's "above" other modals that would pop up a user profile (e.g. vote view)--->
 {#if $modals.user.open}
     <UserProfileModal  bind:open={$modals.user.open} user={$modals.user.user} mod={$modals.user.mod} />
+{/if}
+
+<!--- Add community to Group Modal--->
+{#if $modals.addCommunityToGroup.open && $modals.addCommunityToGroup.community}
+    <AddCommunityGroup bind:open={$modals.addCommunityToGroup.open} community={$modals.addCommunityToGroup.community} />
+{/if}
+
+<!---Edit Community Group--->
+{#if $modals.editCommunityGroup.open && $modals.editCommunityGroup.group}
+    <EditCommunityGroup bind:open={$modals.editCommunityGroup.open} group={$modals.editCommunityGroup.group} />
 {/if}
 
 <!---Ban User Modal--->
