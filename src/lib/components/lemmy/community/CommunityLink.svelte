@@ -48,7 +48,7 @@
         {heading ? 'font-bold text-2xl' : ''}  
         {$$props.class}
     " 
-    title={fixLemmyEncodings(community.title)}
+    title="{fixLemmyEncodings(community.title)}@{new URL(community.actor_id).hostname}"
     on:click={loadCommunityProfileModal}
 >
     {#if avatar}

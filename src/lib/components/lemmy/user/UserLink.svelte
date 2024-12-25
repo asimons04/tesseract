@@ -24,7 +24,7 @@
     export let avatar: boolean = false
     export let avatarSize: number = avatar ? 24 : 0
     export let badges: boolean = true
-    export let showInstance: boolean = $userSettings.uiState.showInstances 
+    export let showInstance: boolean | undefined = undefined
     export let useDisplayNames:boolean|undefined = undefined    
     export let mod:boolean = false                  // Set the user-is-mod indicator
     export let admin:boolean = false                // Set the user-is-admin indicator
@@ -85,6 +85,7 @@
         {noClick ? 'pointer-events-none' : ''} 
         {$$props.class}
     " 
+    title="{displayName}@{new URL(user.actor_id).hostname}"
     
 >
     <span class="flex flex-row w-full gap-1 items-center w-fit">
@@ -153,8 +154,8 @@
             <span class="font-bold opacity-80 text-left  truncate ">
                 {displayName}
                 
-                <span class="{inline ? '-ml-1' : 'flex flex-col'} opacity-70  font-normal truncate {showInstance ? '' : 'ml-0'}">
-                    {#if showInstance }    
+                <span class="{inline ? '-ml-1' : 'flex flex-col'} opacity-70  font-normal truncate {showInstance ?? $userSettings.uiState.showInstances ? '' : 'ml-0'}">
+                    {#if showInstance ?? $userSettings.uiState.showInstances }    
                         {inline ? '@' : ''}{new URL(user.actor_id).hostname}
                     {/if}
                 </span>
