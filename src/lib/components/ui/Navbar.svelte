@@ -63,7 +63,7 @@
 
 <nav class="flex flex-row gap-2 items-center sticky top-0 bg-slate-100/80 dark:bg-black/80 backdrop-blur-3xl w-full z-50 mx-auto px-4 py-2  box-border h-16">
     
-    <div class="hidden sm:flex -ml-1 mr-4">
+    <div class="hidden sm:flex">
     <Button
         alignment="left"
         on:click={() =>
@@ -72,6 +72,7 @@
         color="tertiary"
         aria-label="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
         title="{$userSettings.uiState.expandSidebar ? 'Collapse': 'Expand'} Sidebar"
+        class="-ml-2"
     >
         <Icon src={ChevronDoubleLeft} mini size="16" class="transition-transform {$userSettings.uiState.expandSidebar ? '' : 'rotate-180'}"/>
     </Button>
