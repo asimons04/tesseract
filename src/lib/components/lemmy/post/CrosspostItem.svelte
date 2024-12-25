@@ -32,69 +32,63 @@
     const getTextSize = () => `text-xs md:${textSize}`
 
 </script>
-
-<div class="flex flex-row gap-2 items-center w-full">
     
+<a class="flex flex-col gap-1 items-start w-full
+        hover:dark:bg-zinc-800 hover:bg-slate-200
+        py-1 px-1 sm:px-2
+        {getTextSize()}
+        {noClick ? 'pointer-events-none' : ''}
+    " 
+    id="{crosspost.post.id.toString()}"
+    href="/post/{instance}/{crosspost.post.id}" title="{crosspost.post.name}"
+    target={newTab ? '_blank' : undefined}
+>
     
-    <a class="flex flex-col gap-1 items-start w-full
-            hover:dark:bg-zinc-800 hover:bg-slate-200
-            py-1 px-2 
-            {getTextSize()}
-            {noClick ? 'pointer-events-none' : ''}
-        " 
-        id="{crosspost.post.id.toString()}"
-        href="/post/{instance}/{crosspost.post.id}" title="{crosspost.post.name}"
-        target={newTab ? '_blank' : undefined}
-    >
+    <div class="flex flex-col w-full gap-1">
+        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize}/>
         
-        <div class="flex flex-col w-full gap-1">
-            {#if showTitle}
-                <span class="font-bold truncate">{crosspost.post.name}</span>
-            {/if}
+        {#if showTitle}
+            <span class="font-bold truncate">{crosspost.post.name}</span>
+        {/if}
 
-            <div class="flex flex-row w-full items-center">
-                
-                <div class="flex flex-col gap-1">
-                    <CommunityLink community={crosspost.community} avatar avatarSize={iconSize}/>
-                    {#if showUser}
-                        <span class="hidden lg:block">by <UserLink user={crosspost.creator} avatar={false} /></span>
-                    {/if}
-                </div>
+        {#if showUser}
+            <span class="flex flex-row opacity-80">
+                by <UserLink user={crosspost.creator} avatar={false} />
+            </span>
+        {/if}
+    </div>
 
-                <div class="ml-auto"/>
-                
-                <div class="flex flex-row min-w-fit gap-1 ml-auto {getTextSize()}">
-                    <span class="hidden md:flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
-                        
-                        <RelativeDate date={crosspost.post.published} />
-                        {#if crosspost.post.updated}
-                            <span class="flex flex-row items-center gap-1 ml-1">•
-                                <Icon src={Pencil} solid size="12" title="Edited" />
-                                <RelativeDate date={crosspost.post.updated}/>
-                            </span>
-                        {/if}
-                    </span>
+    <div class="flex flex-row gap-2 items-center w-full">
+        {#if voteButtons}
+            <PostVote bind:post={crosspost} small/>
+        {/if}
+    
+        <div class="flex flex-row min-w-fit gap-1 {voteButtons ? 'ml-auto' : ''} {getTextSize()}">
             
-                    {#if $userSettings.uiState.showScores && !voteButtons}
-                    <span class="flex flex-row gap-2 font-normal items-center">
-                        <Icon src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown} mini width={iconSize} height={iconSize}/>
-                        <FormattedNumber number={crosspost.counts.score} />
+            <span class="hidden md:flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
+                
+                <RelativeDate date={crosspost.post.published} />
+                
+                {#if crosspost.post.updated}
+                    <span class="flex flex-row items-center gap-1 ml-1">•
+                        <Icon src={Pencil} solid size="12" title="Edited" />
+                        <RelativeDate date={crosspost.post.updated}/>
                     </span>
-                    {/if}
-
-                    <span class="flex flex-row gap-2 font-normal items-center" >
-                        <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
-                        <FormattedNumber number={crosspost.counts.comments} />
-                    </span>
-                    
-                </div>
-            </div>
+                {/if}
+            </span>
+    
+            {#if $userSettings.uiState.showScores && !voteButtons}
+            <span class="flex flex-row gap-1 font-normal items-center">
+                <Icon src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown} mini width={iconSize} height={iconSize}/>
+                <FormattedNumber number={crosspost.counts.score} />
+            </span>
+            {/if}
+    
+            <span class="flex flex-row gap-1 font-normal items-center" >
+                <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
+                <FormattedNumber number={crosspost.counts.comments} />
+            </span>
+            
         </div>
-    </a>
-    
-    
-
-    {#if voteButtons}
-        <PostVote bind:post={crosspost} small/>
-    {/if}
-</div>
+    </div>
+</a>
