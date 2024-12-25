@@ -26,6 +26,7 @@
     let pTypes = {
         image:          $userSettings.uiState.hybridViewAsCardTypes.includes('image'),
         video:          $userSettings.uiState.hybridViewAsCardTypes.includes('video'),
+        loops:          $userSettings.uiState.hybridViewAsCardTypes.includes('loops'),
         dailymotion:    $userSettings.uiState.hybridViewAsCardTypes.includes('dailymotion'),
         youtube:        $userSettings.uiState.hybridViewAsCardTypes.includes('youtube'),
         spotify:        $userSettings.uiState.hybridViewAsCardTypes.includes('spotify'),
@@ -89,24 +90,16 @@
             {#if showAdvanced}
                 <div class="pl-4 flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
 
-                    <SettingToggle bind:value={pTypes.dailymotion} title="DailyMotion Posts" icon={Film} small
-                        on:change={(e) => updateTypes('dailymotion', e.detail) }
-                    />
-
-                    <SettingToggle bind:value={pTypes.youtube} title="YouTube Posts" icon={Film} small
-                        on:change={(e) => updateTypes('youtube', e.detail) }
-                    />
-
-                    <SettingToggle bind:value={pTypes.spotify} title="Spotify Posts" icon={SpeakerWave} small
-                        on:change={(e) => updateTypes('spotify', e.detail) }
-                    />
-
                     <SettingToggle bind:value={pTypes.bandcamp} title="Bandcamp Posts" icon={SpeakerWave} small
                         on:change={(e) => updateTypes('bandcamp', e.detail) }
                     />
 
-                    <SettingToggle bind:value={pTypes.vimeo} title="Vimeo Posts" icon={Film} small
-                        on:change={(e) => updateTypes('vimeo', e.detail) }
+                    <SettingToggle bind:value={pTypes.dailymotion} title="DailyMotion Posts" icon={Film} small
+                        on:change={(e) => updateTypes('dailymotion', e.detail) }
+                    />
+
+                    <SettingToggle bind:value={pTypes.loops} title="Loops Posts" icon={Film} small
+                        on:change={(e) => updateTypes('loops', e.detail) }
                     />
 
                     <SettingToggle bind:value={pTypes.odysee} title="Odysee Posts" icon={Film} small
@@ -123,6 +116,18 @@
 
                     <SettingToggle bind:value={pTypes.soundcloud} title="SoundCloud Posts" icon={Film} small
                         on:change={(e) => updateTypes('soundcloud', e.detail) }
+                    />
+
+                    <SettingToggle bind:value={pTypes.spotify} title="Spotify Posts" icon={SpeakerWave} small
+                        on:change={(e) => updateTypes('spotify', e.detail) }
+                    />
+
+                    <SettingToggle bind:value={pTypes.vimeo} title="Vimeo Posts" icon={Film} small
+                        on:change={(e) => updateTypes('vimeo', e.detail) }
+                    />
+
+                    <SettingToggle bind:value={pTypes.youtube} title="YouTube-like Posts" icon={Film} small
+                        on:change={(e) => updateTypes('youtube', e.detail) }
                     />
                 </div>
             {/if}
