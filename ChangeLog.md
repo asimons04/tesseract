@@ -45,6 +45,47 @@ removeAdmin {username}
 
 ```
 
+1) Support "universal" links.  The post and comment ones will basically work like the user/community where it resolves them and then links to them.  If unauthenticated, go to the remote one (at least for posts; not sure if comments will work that way without auth).
+    - `#<post_id>@instance.xyz` (need to update hashtag regex to ignore numeric tags)
+    - `@<user>@instance.xyz` (already implemented)
+    - `!<community>@instance.xyz` (already implemented)
+    - `~<comment_id>@instance.xyz`
+
+
+
+## 1.4.22
+
+### To Do:
+
+
+### Bugfixes
+- Videos are no longer destroyed, just paused, when scrolling out of viewport
+- Better truncating of user/community links 
+
+- Better width bounding to go with the truncation fixes 
+- Previewing a community in a modal while on the `/c/{community}` page of another community would override the modal's settings and show the community from the page route.
+- Fixed Community Menu (from top navbar) overflowing in Firefox
+- Added Loops to the hybrid view configuration panel to allow them to optionally always render as cards
+- Title on `/site` page was still set to "Legal". 
+- Add missing tooltips on user and community links
+- Text was not flowing around the thumbnail image in compact view
+
+
+### Tweaks
+- Comments
+  - Comments now use a card effect with alternating shades depending on the depth
+  - Changed/standardized how the comment coloring is performed (jumped-to comment, distinguished, removed, etc)
+- Community Groups
+  - Added the community groups to the Community Menu in the top navbar
+  - Updated the community group management components
+- Sidebar
+  - Decreaxed x-axis padding in the sidebar
+- Misc UI
+  - Updated several areas to work better with the updated community/user links
+  - Reversing the action bar direction no longer reverses the vote button ordering (i.e. upvote stays on the left, downvote on the right)
+  - Tweaked crosspost item component
+
+
 ## 1.4.21
 
 ### Overview
