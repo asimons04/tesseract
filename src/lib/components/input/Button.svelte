@@ -78,24 +78,21 @@
     >
         <div class="flex {inline ? 'flex-row' : 'flex-col'} items-center gap-1.5 h-full {buttonAlignment[alignment]}">
             {#if loading}
-                <Spinner
-                    width={loaderWidth
-                        ? loaderWidth
-                        : size == 'lg'
-                            ? 20
-                            : size == 'md'
-                                ? 18
-                                : size == 'sm'
-                                    ? 16
-                                    : 16
+                <Spinner width={loaderWidth
+                    ? loaderWidth
+                    : size == 'lg'
+                        ? 20
+                        : size == 'md'
+                            ? 18
+                            : size == 'sm'
+                                ? 16
+                                : 16
                     }
                 />
             {:else if $$slots.icon}
                 <slot name="icon" />
             {:else if icon}
-                
                 <Icon src={icon} width={iconSize} mini class="{iconClass}"/>
-                
             {/if}
             <slot />
         </div>
