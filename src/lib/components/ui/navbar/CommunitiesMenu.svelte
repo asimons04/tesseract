@@ -157,7 +157,7 @@
                     <CommunityList 
                         expanded={true}  hidden={false}
                         items={$profile?.groups[getGroupIndex('Favorites')]?.communities}
-                        class="max-h-[79vh] overflow-y-auto"
+                        class="max-h-[60vh] overflow-y-auto"
                     />
                 {:else}
                     <Placeholder title="No Favorites" description="Your favorites list is empty." class="mx-auto w-[75%]"/>
@@ -174,7 +174,7 @@
                         : $profile.user.follows.map((i) => i.community)
                     }
                     filter={communityFilterTerm}
-                    class="max-h-[79vh] overflow-y-auto"
+                    class="max-h-[60vh] overflow-y-auto"
                 />
 
             {/if}
@@ -182,7 +182,7 @@
             <!---Community Groups--->
             {#if selected=='groups'}
                 
-                <div class="flex flex-col gap-1 max-h-[79vh] overflow-y-auto">
+                <div class="flex flex-col gap-1 max-h-[60vh] overflow-y-auto">
                     {#if $profile?.groups && $profile?.groups?.length > 0}
                         {#each $profile.groups.sort(sortGroups) as group}
                             <CommunityGroupItem group={group} showEmptyGroups={true}/>
