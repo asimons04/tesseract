@@ -48,6 +48,7 @@
         Cog6Tooth,
         Eye,
         EyeSlash,
+        Folder,
         InformationCircle,
         Newspaper,
         NoSymbol,
@@ -330,7 +331,7 @@
                 />
 
                 <!---Add to Group--->
-                <Button color="tertiary" icon={UserGroup} iconSize={20} size="square-lg"
+                <Button color="tertiary" icon={Folder} iconSize={20} size="square-lg"
                     title="Add/Remove to Group"
                     on:click={(e) => { communityGroupModal = true }}
                 />
