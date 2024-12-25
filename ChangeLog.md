@@ -55,13 +55,9 @@ removeAdmin {username}
 
 ## 1.4.22
 
-### To Do:
-
-
 ### Bugfixes
 - Videos are no longer destroyed, just paused, when scrolling out of viewport
 - Better truncating of user/community links 
-
 - Better width bounding to go with the truncation fixes 
 - Previewing a community in a modal while on the `/c/{community}` page of another community would override the modal's settings and show the community from the page route.
 - Fixed Community Menu (from top navbar) overflowing in Firefox
