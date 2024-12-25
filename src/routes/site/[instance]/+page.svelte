@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-    <title>{data.site.site_view.site.name} | Legal</title>
+    <title>{data.site.site_view.site.name} | About</title>
 </svelte:head>
 
 <SubNavbar home back toggleMargins toggleCommunitySidebar scrollButtons/>
