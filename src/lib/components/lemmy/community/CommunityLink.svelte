@@ -25,6 +25,9 @@
     export let maxNameLength: number = 45
     export let inline: boolean = true
     
+    $:  $userSettings.uiState.showInstances, showInstance = $userSettings.uiState.showInstances
+    $:  $userSettings.displayNames, useDisplayNames = $userSettings.displayNames
+    
     const dispatcher = createEventDispatcher()
 
     function linkFromCommunity(community: Community) {
