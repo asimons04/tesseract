@@ -65,7 +65,7 @@
     export let actions: boolean                     = false
     export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
     export let feedName: string                     = 'default'
-    
+    export let inModal:boolean                      = false // Prevents changing community from URL param
 
     $:  debugMode = $userSettings.debugInfo
 
@@ -508,7 +508,7 @@
     // React to community changing in the URL route (/c/community -> /c/community2)
     function changeCommunity(name:string) {
         // Don't do anything if the current community name is the same as the old one.
-        if (controller.busy || controller.community_name == name) return
+        if (inModal || controller.busy || controller.community_name == name) return
         if (debugMode) console.log(moduleName, ": Responding to community change:", controller.community_name, "->", name)
         controller.community_name = name
     }

@@ -433,7 +433,7 @@
                 </div>
 
                 <div class="flex flex-col gap-2 w-full {$userSettings.uiState.infiniteScroll ? 'max-h-[70vh]' : 'max-h-[60vh]'} overflow-y-scroll" >
-                    <PostFeed bind:controller={feedController} actions={false} 
+                    <PostFeed bind:controller={feedController} inModal={true} actions={false} 
                         community_name={`${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`} 
                     />
                 </div>
