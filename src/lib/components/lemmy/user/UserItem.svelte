@@ -23,10 +23,11 @@
             <Avatar width={64} url={user.person.avatar} alt={user.person.actor_id} />
         </div>
 
-        <div class="flex flex-col gap-2">
-            <span class="break-words max-w-full w-max text-base font-bold text-sky-500 dark:text-sky-400 hover:underline" >
+        <div class="flex flex-col w-[calc(100%-64px-0.5rem)] gap-2">
+            <span class="break-words w-full text-base font-bold text-sky-500 dark:text-sky-400 hover:underline" >
                 <UserLink avatar={false} user={user.person} />
             </span>
+            
             <!---Cake day and post/comment counts--->
             <div class="flex flex-row gap-8 items-center">
                 <div class="flex flex-row gap-1 items-center" title="Account Created Date">
