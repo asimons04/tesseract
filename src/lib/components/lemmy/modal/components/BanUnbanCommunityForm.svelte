@@ -135,7 +135,11 @@
 </div>
 
 <div class="flex flex-row w-full">
-    <Button loading={banning} disabled={banning} color={ban ? 'danger' : 'primary'} size="lg" class="w-full flex-shrink-0" on:click={banUnbanUser}>
+    <Button loading={banning} disabled={banning} color={ban ? 'danger' : 'primary'} size="lg" class="w-full flex-shrink-0" on:click={() => {
+            banning = true
+            banUnbanUser().then(() => banning = false)
+        }}
+    >
         <Icon slot="icon" src={Trash} mini size="16" />
         {ban ? 'Ban' : 'Unban'} User
     </Button>
