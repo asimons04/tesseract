@@ -3,12 +3,10 @@
     import type{ CommunityGroup } from '$lib/auth'
 
     import { onMount } from 'svelte'
-    import { profile } from '$lib/auth'
     import { toast } from '$lib/components/ui/toasts/toasts';
 
 
     import {
-        getGroupIndex,
         removeGroup,
         sortCommunities,
         updateGroup
@@ -24,12 +22,11 @@
     import TextInput from '$lib/components/input/TextInput.svelte'
 
     import { 
-        Icon, 
         ArrowUpTray,
         ArrowUturnDown,
-        UserGroup,
+        Folder,
         Trash,
-        XCircle
+        XCircle,
     } from 'svelte-hero-icons'
     
 
@@ -129,7 +126,7 @@
 </script>
 
 {#if formData && open}
-    <Modal bind:open={open} icon={UserGroup} preventCloseOnClickOut title="Edit Group: {group.name}"  width="max-w-4xl">
+    <Modal bind:open={open} icon={Folder} preventCloseOnClickOut title="Edit Group: {group.name}"  height="h-full" width="max-w-4xl">
         <div class="flex flex-col h-full gap-2 pr-2">
             
             <TextInput bind:value={formData.name} readonly={group.name == 'Favorites'} label="Group Name" class="{group.name == 'Favorites' ? 'hidden' : ''}"/>
@@ -148,41 +145,37 @@
                 }}
             />
             
-            <div class="flex flex-col gap-1 w-full">
+            <div class="flex flex-col gap-2 w-full">
                 {#if formData.communities.length > 0}
                     <span class="text-sm font-bold">Members</span>
                     <span class="text-xs font-normal">The following communities are members of this group:</span>
                     
-                    <div class="flex flex-col gap-2 md:ml-[20%] pr-4 max-h-[40vh] overflow-y-scroll" >
+                    <div class="flex flex-col gap-2 md:ml-[20%] pr-4" >
                         {#each formData.communities as community}
-                            <div class="w-full rounded-md bg-slate-200 dark:bg-zinc-700 flex flex-row gap-2 items-center">
+                            
+                            <div class="flex flex-row gap-2 w-full rounded-md bg-slate-200 dark:bg-zinc-700 items-center px-2 text-sm">
                                 
-                                <div class="ml-2 text-sm">
-                                    <CommunityLink avatar={true} avatarSize={18} community={community} />
-                                    <!--<p class="pl-4 py-2 text-sm font-bold">{community.title || community.name}</p>-->
+                                <div class="w-[calc(100%-35px-0.5rem)]">
+                                    <CommunityLink avatar={true} avatarSize={18} noClick community={community} />
                                 </div>
 
-                                <div class="mx-auto"/>
-                                
-                                <Button
-                                    color="ghost"
-                                    class="mr-4 border-none"
-                                    on:click={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        removeMember(community);
-                                    }}
-                                >
-                                    
-                                    <Icon src={XCircle} mini width={22}/>
-                                </Button>
+                                <div class="ml-auto w-[35px]">
+                                    <Button color="ghost" class="border-none" icon={XCircle} width={22}
+                                        on:click={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            removeMember(community);
+                                        }}
+                                    />
+                                </div>
+
                             </div>
                         {/each}
                     </div>
                 {:else}
                     <Placeholder
-                        icon={UserGroup}
-                        title="No Groups"
+                        icon={Folder}
+                        title="No Communities"
                         description="This group is empty."
                     />
                 {/if}
