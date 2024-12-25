@@ -1,30 +1,30 @@
 <script lang="ts">
-    import type { CommunityView } from "lemmy-js-client";
+    import type { CommunityView } from "lemmy-js-client"
     
     import { addSubscription } from '$lib/lemmy/user.js'
+    import { hrColors } from "$lib/ui/colors"
     import { profile } from '$lib/auth'
     
-    import Avatar from "$lib/components/ui/Avatar.svelte";
-    import Badge from "$lib/components/ui/Badge.svelte";
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
-    import CommunityLink from "$lib/components/lemmy/community/CommunityLink.svelte";
-    import Button from "$lib/components/input/Button.svelte";
-    import Markdown from "$lib/components/markdown/Markdown.svelte";
-    import RelativeDate from "$lib/components/util/RelativeDate.svelte";
-    import Subscribe from "$lib/components/lemmy/community/Subscribe.svelte";
+    import Avatar from "$lib/components/ui/Avatar.svelte"
+    import Badge from "$lib/components/ui/Badge.svelte"
+    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
+    import CommunityLink from "$lib/components/lemmy/community/CommunityLink.svelte"
+    import Button from "$lib/components/input/Button.svelte"
+    import Markdown from "$lib/components/markdown/Markdown.svelte"
+    import RelativeDate from "$lib/components/util/RelativeDate.svelte"
+    import Subscribe from "$lib/components/lemmy/community/Subscribe.svelte"
 
     import {
         Icon,
         CalendarDays,
         ChatBubbleOvalLeftEllipsis,
         LockClosed,
-        Minus,
         PencilSquare,
         Rss,
         UserGroup,
         ArrowTopRightOnSquare,
     } from 'svelte-hero-icons'
-    import { hrColors } from "$lib/ui/colors";
+    
    
     
     export let community: CommunityView
@@ -43,18 +43,18 @@
 </script>
 
 <div class="flex flex-row gap-2 w-full items-start">
-    <CollapseButton bottomBorder={false} class="!my-0 w-full">
+    
+    <CollapseButton bottomBorder={false} class="!my-0 w-[calc(100%-60px)] lg:w-[calc(100%-120px)]">
         <Avatar width={48} alt={community.community.actor_id} url={community.community.icon ?? undefined} community={true} slot="icon"/>
         
         <div class="flex flex-row gap-2 items-center w-full justify-between" slot="title">
             
             <!--- Avatar + Community Name + !name@instance --->
             <div class="flex flex-col gap-0 w-full" >
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <!-- svelte-ignore a11y-no-static-element-interactions -->
-                <span class="break-words  text-base font-bold text-sky-400 hover:underline" on:click|stopPropagation>
+
+                <button class="break-words  text-base font-bold text-sky-400 hover:underline" on:click|stopPropagation>
                     <CommunityLink showInstance={false} avatar={false} useDisplayNames community={community.community} />
-                </span>
+                </button>
                 
                 <span class="flex flex-col gap-2 lg:flex-row lg:justify-between w-full">
                     <span class="flex flex-row flex-wrap opacity-80 text-xs">
@@ -140,7 +140,7 @@
             />
         </div>
 
-        <Subscribe bind:community let:subscribe let:subscribing class="mr-4">
+        <Subscribe bind:community let:subscribe let:subscribing>
             <Button
                 disabled={subscribing || !$profile?.jwt}
                 loading={subscribing}
