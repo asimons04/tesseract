@@ -24,25 +24,27 @@
     export let avatar: boolean = false
     export let avatarSize: number = avatar ? 24 : 0
     export let badges: boolean = true
-    export let showInstance: boolean|undefined = undefined 
-    export let useDisplayNames:boolean|undefined = undefined 
-    export let mod:boolean = false
-    export let admin:boolean = false
-    export let href:boolean = false
-    export let distinguishAdminsMods:boolean = true
-    export let ring:boolean = false
-    export let community_banned:boolean = false
-    export let blocked: boolean = false
-    export let inline: boolean = true
-    export let noClick: boolean = false
-    export let noEmojis:boolean = false
-    export let uPrefix: boolean = false
+    export let showInstance: boolean = $userSettings.uiState.showInstances 
+    export let useDisplayNames:boolean|undefined = undefined    
+    export let mod:boolean = false                  // Set the user-is-mod indicator
+    export let admin:boolean = false                // Set the user-is-admin indicator
+    export let href:boolean = false                 // Control default behavior of the link. Href=true is a normal link the profile, false will load the profile modal
+    export let distinguishAdminsMods:boolean = true // Whether to badge mods/admins 
+    export let ring:boolean = false                 // Add a ring effect around the avatar
+    export let community_banned:boolean = false     // Set the banned from community indicator
+    export let blocked: boolean = false             // Set the blocked indicator
+    
+    export let inline: boolean = true               // Single line or multi-line formats
+    export let noClick: boolean = false             // Prevent clicking on any element / display only
+    export let noEmojis:boolean = false             // Strip emojis from the display name
+    export let uPrefix: boolean = false             // Prefix the username with 'u/'
 
     const dispatcher = createEventDispatcher()
     
     let displayName: string = user.name
 
     $:  user.id, $userSettings.displayNames, displayName = generateDisplayName(user)
+    $:  $userSettings.uiState.showInstances, showInstance = $userSettings.uiState.showInstances 
 
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
@@ -151,8 +153,8 @@
             <span class="font-bold opacity-80 text-left  truncate ">
                 {displayName}
                 
-                <span class="{inline ? '-ml-1' : 'flex flex-col'} opacity-70  font-normal truncate">
-                    {#if showInstance ?? $userSettings.uiState.showInstances}    
+                <span class="{inline ? '-ml-1' : 'flex flex-col'} opacity-70  font-normal truncate {showInstance ? '' : 'ml-0'}">
+                    {#if showInstance }    
                         {inline ? '@' : ''}{new URL(user.actor_id).hostname}
                     {/if}
                 </span>
