@@ -40,7 +40,7 @@
 
 
 <MainContentArea>
-    <div class="flex w-full" style="height: calc(100vh - 8rem);">
+    <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
         <FeedContainer>
 
             <UserSubmissionFeed bind:controller={feedController} bind:person_name={$page.params.name}  actions >
