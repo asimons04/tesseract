@@ -5,7 +5,7 @@
     import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
 
-    import EditCommunityGroup from '$lib/components/util/EditCommunityGroup.svelte'
+    import EditCommunityGroup from '$lib/components/lemmy/modal/EditCommunityGroup.svelte'
     import Pageination from '$lib/components/ui/Pageination.svelte'
     import Placeholder from '$lib/components/ui/Placeholder.svelte'
     import PostFeed from '$lib/components/lemmy/post/PostFeed.svelte'
@@ -19,7 +19,6 @@
     } from 'svelte-hero-icons'
     import Button from '$lib/components/input/Button.svelte';
     import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
 
 
     export let data

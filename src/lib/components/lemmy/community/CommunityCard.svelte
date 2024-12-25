@@ -1,8 +1,6 @@
 <script lang="ts">
     import type { CommunityView, CommunityModeratorView } from 'lemmy-js-client'
     
-    import { isFavorite } from '$lib/favorites'
-
     import { addSubscription } from '$lib/lemmy/user.js'
     import { amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { communityProfileModal } from '../moderation/moderation'
@@ -12,7 +10,6 @@
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
-    import AddCommunityGroup from '$lib/components/util/AddCommunityGroup.svelte'
     import Button from '$lib/components/input/Button.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import CommunityCardSmall from './CommunityCardSmall.svelte';
@@ -36,8 +33,7 @@
     export let community_view: CommunityView 
     export let moderators: Array<CommunityModeratorView> = []
     
-    let groupAddModal:boolean = false
-    
+   
     let loading = {
         subscribing: false,
     }
@@ -67,11 +63,6 @@
 </script>
 
 {#if community_view}
-    <!---Modal to Add Community to a Group--->
-    <div class="z-20">
-        <AddCommunityGroup bind:open={groupAddModal} community={community_view.community} />
-    </div>
-
     <!--- Hideable div to contain the main part of the community sidebar --->
     <StickyCard class="{$$props.class}" >
         
