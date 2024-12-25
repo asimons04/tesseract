@@ -41,8 +41,9 @@
     title="{community.title.replace('&amp;', '&')}@{new URL(community.actor_id).hostname}"
 >
     <div class="flex flex-row gap-2 w-full items-center">
-        <span style="width: {expanded ? `calc(100% - 50px - ${avatarSize}px)` : `${avatarSize}px`}">
-            <CommunityLink class="!w-fit"
+        
+        <span style="width: {expanded ? `calc(100% - 58px)` : `${avatarSize}px`}">
+            <CommunityLink
                 {community}
                 boldCommunityName={true} 
                 avatar={true}
