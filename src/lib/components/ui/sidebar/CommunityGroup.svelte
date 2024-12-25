@@ -41,10 +41,10 @@
 
 
 {#if group && expanded && (showEmptyGroups || group.communities?.length > 0)}
-    <div class="flex flex-col px-2 gap-1">    
+    <div class="flex flex-col px-2 gap-0">    
         
         <div class="flex flex-row w-full gap-1 items-center rounded-md {open ? '!bg-slate-200 dark:!bg-zinc-800' : ''}">
-            <SidebarButton class="w-[calc(100%-96px)] {open ? '' : 'opacity-80'}" 
+            <SidebarButton class="w-[calc(100%-96px)] {open ? 'mb-[6px]' : 'opacity-80'}" 
                 title="{open ? 'Collapse' : 'Expand'} {group.name}" 
                 icon={open ? FolderOpen : Folder}
                 iconSize={16}
@@ -58,7 +58,7 @@
             </SidebarButton>
 
             <span class="ml-auto"/>
-
+            <!--Edit/Delete Buttons--->
             <span class="{expanded ? 'flex' : 'hidden'} flex-row gap-2 items-center">
                 <!---Edit Group --->
                 <Button title="Edit Group" 
@@ -84,7 +84,7 @@
         </div>
         
         {#if open}
-            <div class="flex flex-col gap-2 pl-1 pr-2" transition:slide>
+            <div class="flex flex-col gap-2 pl-1 pr-2 {open ? '!bg-slate-200 dark:!bg-zinc-800 -mt-[4px] rounded-bl-md rounded-br-md' : ''}" transition:slide>
                 <CommunityList {expanded} items={group.communities} group={group.name} 
                     placeholderTitle="Empty Group" 
                     placeholderDescription="There are no communities in this group"
