@@ -10,6 +10,8 @@
     export let hidden: boolean = false
     export let filter: string | undefined = undefined
     export let showFavoriteButton: boolean= true
+    export let placeholderTitle = "No Subscriptions"
+    export let placeholderDescription="You have no subscriptions"
 
     let filteredItems = objectCopy(items) as Community[]
 
@@ -92,5 +94,5 @@
         {/each}
     </div>
 {:else}
-    <Placeholder title="No Subscriptions" description="You have no subscriptions" class="mx-auto w-[75%]"/>
+    <Placeholder title={placeholderTitle} description={placeholderDescription} class="mx-auto w-[75%]"/>
 {/if}
