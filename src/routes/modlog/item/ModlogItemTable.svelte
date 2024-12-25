@@ -1,8 +1,8 @@
 <script lang="ts">
     import type {Filters, ModLog} from '../+page.js'
-    import type { Person, Post } from 'lemmy-js-client'
+    import type { Post } from 'lemmy-js-client'
 
-    import { amMod, amModOfAny, ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { amMod, ban, isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation';
     import { page } from '$app/stores'
@@ -44,7 +44,7 @@
     let locking         = false
     let removing        = false
     let removingComment = false
-
+    
     async function lock(item: Post, lock: boolean) {
         if (!$profile?.jwt) return !lock
         locking = true
@@ -148,7 +148,7 @@
                     <Icon src={filter.community.set ? MinusCircle : PlusCircle} mini width={24} />
                 </button>
 
-                <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community} inline={false}/>
+                <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community} inline={true}/>
             </span>
         {/if}
     </div>
@@ -173,7 +173,7 @@
                     <Icon src={filter.moderator.set ? MinusCircle : PlusCircle} mini width={24} />
                 </button>
 
-                <UserLink showInstance={true} avatar={false} avatarSize={20} user={item.moderator} inline={false}/>
+                <UserLink showInstance={true} avatar={false} avatarSize={20} user={item.moderator} inline={true}/>
             </span>
             {/if}
         </div>
@@ -199,7 +199,7 @@
             </button>
 
             
-            <UserLink avatar={false} showInstance={true} user={item.moderatee} inline={false}/>
+            <UserLink avatar={false} showInstance={true} user={item.moderatee} inline={true}/>
         </span>
         {/if}
 
