@@ -79,17 +79,18 @@
             {:else}
                 <PostMeta bind:post bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
                 <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
-                    <div class="flex flex-col w-[calc(100%-132px)] gap-1">
+                    <div class="flex flex-col w-full gap-1">
                         <PostTitle bind:post />
                         {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
-                            <PostBody bind:post {displayType} bind:expandPreviewText class="my-1" />
+                            <PostBody bind:post {displayType} bind:expandPreviewText class="my-1" >
+                                <CompactPostThumbnail bind:post bind:expandCompact bind:displayType {showThumbnail} float slot="thumbnail"/>
+                            </PostBody>
                         {/if}
                         <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                         
                         <div class="mt-2" />
                         <PostActions  bind:post {displayType} on:reply />
                     </div>
-                    <CompactPostThumbnail bind:post bind:expandCompact bind:displayType {showThumbnail} float />
                 </div>
             {/if}
 

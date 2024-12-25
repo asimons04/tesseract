@@ -15,7 +15,9 @@
 </script>
 
 {#if showThumbnail}
-    <div class="{float ? 'float-right' : ''}  w-[128px] h-[128px] mx-auto mb-auto overflow-hidden">
+    <div class="w-[128px] h-[128px] mx-auto mb-auto overflow-hidden" 
+        style={float ? 'float: right; margin-left: 0.5rem; margin-bottom: 0.5rem;' : ''}
+    >
         
         <!--- Expand the post in place when clicking thumbnail--->
         <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 
@@ -25,8 +27,7 @@
         >
 
             {#if post.post.thumbnail_url || isImage(post.post.url)}
-                <img
-                    src="{
+                <img src="{
                         post.post.url?.endsWith('.gif')
                             ? imageProxyURL(post.post.url)
                             : post.post.embed_video_url?.endsWith('.gif')
