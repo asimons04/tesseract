@@ -16,17 +16,14 @@
     export let name: boolean = true
     export let avatarSize: number = avatar ? 24 : 0
     export let avatarBackground: boolean = false
-    export let showInstance: boolean = $userSettings.uiState.showInstances
+    export let showInstance: boolean | undefined = undefined
     export let href: boolean = false
     export let heading:boolean = false
     export let boldCommunityName:boolean = true;
-    export let useDisplayNames:boolean = $userSettings.displayNames 
+    export let useDisplayNames:boolean | undefined = undefined
     export let noClick:boolean = false
     export let maxNameLength: number = 45
     export let inline: boolean = true
-    
-    $:  $userSettings.uiState.showInstances, showInstance = $userSettings.uiState.showInstances
-    $:  $userSettings.displayNames, useDisplayNames = $userSettings.displayNames
     
     const dispatcher = createEventDispatcher()
 
@@ -67,14 +64,14 @@
             style="width:calc(100% - {avatarSize+2}px - 0.5rem);"
         >
             <span class="font-bold opacity-80 text-left  truncate ">
-                { useDisplayNames
+                { useDisplayNames ?? $userSettings.displayNames
                     ? shortenCommunityName(community.title, maxNameLength)
                     : `c/${community.name}`
                 }
             </span>
             
 
-            {#if showInstance}    
+            {#if  showInstance ?? $userSettings.uiState.showInstances}    
                 <span class="opacity-70 font-normal normal-case truncate">
                     {inline ? '@' : ''}{new URL(community.actor_id).hostname}
                 </span>
