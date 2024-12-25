@@ -45,7 +45,7 @@
         
         <ProfileMenuBar />
 
-        <div class="flex w-full" style="height: calc(100vh - 11.6rem);">
+        <div class="flex w-full" style="height: calc(100vh - 12rem);">
             <FeedContainer>
 
                 <UserSubmissionFeed bind:controller={feedController} bind:person_id={$profile.user.local_user_view.person.id} snapshotValidity={5} actions >
