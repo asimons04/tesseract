@@ -53,7 +53,12 @@
         <div class="border border-transparent bg-transparent hover:bg-slate-200 hover:dark:bg-zinc-800 dark:text-zinc-200  border-none disabled:border-none
             flex flex-row w-full px-2 gap-1 items-center rounded-md {open ? '!bg-slate-200 dark:!bg-zinc-800' : ''}"
         >
-            <SidebarButton class="w-full {open ? '' : 'opacity-80'}" title="{open ? 'Collapse' : 'Expand'} {group.name}" on:click={() => open = !open}>
+            <SidebarButton class="w-full {open ? '' : 'opacity-80'}" title="{open ? 'Collapse' : 'Expand'} {group.name}" on:click={ (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    open = !open
+                }}
+            >
                 <Icon src={open ? FolderOpen : Folder} mini size="16"/>
                 <span class="font-bold">{group.name}</span>
             </SidebarButton>
@@ -99,7 +104,10 @@
         
         {#if open}
             <div class="flex flex-col gap-2 pl-1 pr-2" transition:slide>
-                <CommunityList {expanded} items={group.communities} group={group.name}/>
+                <CommunityList {expanded} items={group.communities} group={group.name} 
+                    placeholderTitle="Empty Group" 
+                    placeholderDescription="There are no communities in this group"
+                />
             </div>
         {/if}
     </div>

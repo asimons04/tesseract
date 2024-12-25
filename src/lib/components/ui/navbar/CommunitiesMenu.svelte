@@ -160,7 +160,7 @@
                     class="max-h-[79vh] overflow-y-auto"
                 />
             {:else}
-                <Placeholder title="No Favorites" description="Your favorites list is empty."/>
+                <Placeholder title="No Favorites" description="Your favorites list is empty." class="mx-auto w-[75%]"/>
             {/if}
                 
         {/if}
@@ -181,21 +181,14 @@
 
         <!---Community Groups--->
         {#if selected=='groups'}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <div class="flex flex-col gap-1 max-h-[79vh] overflow-y-auto" on:click={(
-                //@ts-ignore
-                e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                }}
-            >
+            
+            <div class="flex flex-col gap-1 max-h-[79vh] overflow-y-auto">
                 {#if $profile?.groups && $profile?.groups?.length > 0}
                     {#each $profile.groups.sort(sortGroups) as group}
-                        <CommunityGroupItem group={group} />
+                        <CommunityGroupItem group={group} showEmptyGroups={true}/>
                     {/each}
                 {:else}
-                    <Placeholder size="22" icon={UserGroup} title="No Groups" description="Your favoritie and grouped communities will appear here." />
+                    <Placeholder title="No Groups" description="Your favoritie and grouped communities will appear here." class="mx-auto w-[75%]"/>
                 {/if}
             </div>
         {/if}
