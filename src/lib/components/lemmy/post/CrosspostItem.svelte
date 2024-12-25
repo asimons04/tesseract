@@ -33,7 +33,7 @@
 
 </script>
     
-<a class="flex flex-col gap-1 items-start w-full
+<a class="flex flex-col gap-2 items-start w-full
         hover:dark:bg-zinc-800 hover:bg-slate-200
         py-1 px-1 sm:px-2
         {getTextSize()}
@@ -59,13 +59,15 @@
     </div>
 
     <div class="flex flex-row gap-2 items-center w-full">
-        {#if voteButtons}
-            <PostVote bind:post={crosspost} small/>
-        {/if}
+        <button on:click|preventDefault|stopPropagation>
+            {#if voteButtons}
+                <PostVote bind:post={crosspost} small/>
+            {/if}
+        </button>
     
         <div class="flex flex-row min-w-fit gap-1 {voteButtons ? 'ml-auto' : ''} {getTextSize()}">
             
-            <span class="hidden md:flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
+            <span class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
                 
                 <RelativeDate date={crosspost.post.published} />
                 
