@@ -68,7 +68,53 @@ const TWITTER = [
 
 ]
 
-
+// Very non-comprehensive list of domains that host disposable/temporary/throwaway email aliases. Basically just the low-hanging fruit to aid in decision making.
+export const THROWAWAY_EMAIL_DOMAINS = [
+    'azuretechtalk.net',
+    'barplane.com',
+    'chansd.com',
+    'cyclelove.cc',
+    'guerrillamail.biz',
+    'guerrillamail.com',
+    'guerrillamail.de',
+    'guerrillamail.info',
+    'guerrillamail.net',
+    'guerrillamail.org',
+    'guerrillamailblock.com',
+    'grr.la',
+    'hthlm.com',
+    'logsmarter.net',
+    'mozmail.com',
+    'nbmbb.com',
+    'pokemail.net',
+    'polkaroad.net',
+    'poplk.com',
+    'proton.me',
+    'sharklasers.com',
+    'spam4.me',
+    'teleg.eu',
+    'thetechnext.net',
+    'ytnhy.com'
+]
+/** Returns true if the provided email address belongs to a known throwaway email provider
+ * @param email 
+*/
+export function isThrowawayEmail(email?:string): boolean {
+    if (!email) return false
+    try {
+        const domain = email.split('@')[1]
+        if (!domain) return false
+    
+        // Lazy way to see if the email is a subdomain under mozmail
+        if (email.includes('.mozmail.com')) return true
+    
+        return THROWAWAY_EMAIL_DOMAINS.includes(domain)
+    }
+    // Err on the side of caution and return false (non-throwaway) on error
+    catch (err) {
+        return false
+    }
+}
 
 
 export function validateURL(testURL?:string): URLValidateResponse {
