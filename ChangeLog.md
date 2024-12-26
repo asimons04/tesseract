@@ -51,7 +51,49 @@ removeAdmin {username}
     - `!<community>@instance.xyz` (already implemented)
     - `~<comment_id>@instance.xyz`
 
+## 1.4.23
+This is a minor feature release.  Nothing new for regular users, but some new capabilities for admins.
 
+### Bugfixes
+None discovered since 1.4.22 :)
+
+
+### New Features
+#### Tweaked Admin Area
+Got rid of the sub-navbar menus to select which admin section is active.  Now uses a button bar like is used in the user profiles.
+
+
+#### New Registration Application Manager
+What started off as simply adding a text field to the registration applications so the deny reason could be recorded turned into just flat-out re-writing the whole registration application manager.
+
+It makes me sad that I think this is a cool feature update and very few people will actually see it or know it exists lol.
+
+**Changes include**:
+
+- More compact/dense as it now uses the inbox / report form factor (expandable accordions)
+- Much needed visual / design overhaul
+- Can now specify the reason when denying an application
+- There's a button which will let you search for alts of the same username. Very useful if you want to see if they're instance hopping and want to check if they're a good fit for your instance.  Also useful to see if someone is spinning up lots of alts rapidly (e.g. spammers).
+- A colored badge on each entry indicates the application's status:
+  - Pending action (Grey)
+  - Approved (Green)
+  - Denied (Red)
+- Option to create a modlog entry when approving/denying the application.  Disabled by default, accessible via button and/or toggle.
+  - Denying an application creates a "ban user" event using the deny text as the reason. This is useful in case denial emails are still not being sent out and the user wants to check their application status.
+  - Approving an application will intelligently unban a user if they're banned (i.e. from a mistaken denial).  
+  - Approving an application with a modlog entry will be a user un-ban (even if they're not banned, it'll still log it)
+  - Approve unban message is `Registration application approved.`
+  - Deny ban message is `Registration application denied: ${REASON_YOU_SUPPLIED}`
+
+- More information about the applicant:
+  - Signup email address
+  - Whether the email address has been verified
+  - Whether the signup email address is to a known disposable/temporary email provider
+
+### Other UI Tweaks
+- Crosspost items have less padding and rounded borders now
+
+---
 
 ## 1.4.22
 
