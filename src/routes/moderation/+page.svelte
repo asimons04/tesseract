@@ -238,7 +238,7 @@
         </Card>
 
         <div class="flex flex-col gap-2 h-full {showSidebar ? 'w-full lg:w-[calc(100%-200px-1rem)]' : 'w-full lg:w-[calc(100%-55px-1rem)]'}">
-            {#if data.reports?.length > 0}
+            {#if data.reports && data.reports?.length > 0}
                 
                     
                 <div class="flex flex-col gap-1 w-full max-h-full">
@@ -257,10 +257,9 @@
             {/if}
                 
                 
-            {#if data.reports.length > 0 || (data.reports.length < 1 && data.page > 1)}
+            {#if data.reports && (data.reports.length > 0 || (data.reports.length < 1 && data.page > 1))}
                 <div class="mt-auto px-2">
-                    <Pageination
-                        page={data.page}
+                    <Pageination page={data.page}
                         on:change={(p) => searchParam($page.url, 'page', p.detail.toString())}
                     />
                 </div>
