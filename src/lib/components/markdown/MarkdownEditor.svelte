@@ -27,9 +27,11 @@
     
     
 
-    export let images: boolean = true
+    
     export let value: string = ''
     export let label: string | undefined = undefined
+    export let images: boolean = true
+    export let emojis: boolean = true
     export let previewButton: boolean = false
     export let disabled: boolean = false
     export let rows: number = 4
@@ -122,15 +124,17 @@
                     <!---Formatting Buttons--->
                     <span class="flex flex-row gap-1.5 items-center overflow-x-scroll  ">
                         <!--Emoji Picker Button-->
-                        <Button
-                            on:click={() => emojiPickerOpen = !emojiPickerOpen}
-                            title="Emojis"
-                            size="square-md"
-                        >
-                            <span class="font-bold">
-                                <Icon src={FaceSmile} mini size="16"/>
-                            </span>
-                        </Button>
+                        {#if emojis}
+                            <Button
+                                on:click={() => emojiPickerOpen = !emojiPickerOpen}
+                                title="Emojis"
+                                size="square-md"
+                            >
+                                <span class="font-bold">
+                                    <Icon src={FaceSmile} mini size="16"/>
+                                </span>
+                            </Button>
+                        {/if}
 
                         {#if images}
                             <Button
