@@ -37,6 +37,7 @@
     export let rows: number = 4
     export let previewing:boolean = false;
     export let id:string = '';
+    export let placeholder: string = ''
     
     // Bind this to an outside value if need to persist between create/destroy of this component
     export let imageUploads = [] as UploadImageResponse[]
@@ -258,6 +259,7 @@
                 <!--Actual text area-->
                 <TextArea
                     class="border-0 rounded-none h-full focus-within:border-none resize-none"
+                    {placeholder}
                     bind:value
                     bind:item={textArea}
                     allowImagePasting={images}
