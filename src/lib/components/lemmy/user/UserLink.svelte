@@ -44,7 +44,7 @@
     let displayName: string = user.name
 
     $:  user.id, $userSettings.displayNames, displayName = generateDisplayName(user)
-    $:  $userSettings.uiState.showInstances, showInstance = $userSettings.uiState.showInstances 
+    //$:  $userSettings.uiState.showInstances, showInstance = $userSettings.uiState.showInstances 
 
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
