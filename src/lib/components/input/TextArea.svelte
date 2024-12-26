@@ -37,7 +37,9 @@
     <textarea
         bind:value
         bind:this={item}
-        on:input={(e) => dispatcher('input', e)}
+        on:input={(
+            //@ts-ignore
+            e) => dispatcher('input', e)}
         on:keydown
         on:paste={(e) => {
             if (allowImagePasting) {
