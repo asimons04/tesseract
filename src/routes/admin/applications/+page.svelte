@@ -37,7 +37,7 @@
     <div bind:this={inbox} class="flex flex-col lg:flex-row gap-2 lg:gap-4 h-full w-full">
         
         <!---Sticky Inbox Menu--->
-        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 w-fit mx-auto {showSidebar ? 'lg:w-[200px]' : 'lg:w-[50px]'} lg:sticky lg:top-[8rem]">
+        <Card class="flex flex-row lg:flex-col h-fit p-1 lg:p-0 gap-2 w-fit mx-auto {showSidebar ? 'lg:w-[200px]' : 'lg:w-[50px]'} lg:sticky lg:top-[12rem]">
             
             <!---Side Menu Heading--->
             <span class="hidden lg:flex w-full flex-col gap-1">

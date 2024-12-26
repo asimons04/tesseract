@@ -69,6 +69,7 @@
         Window,
         PencilSquare,
     } from 'svelte-hero-icons'
+    import { dividerColors } from '$lib/ui/colors.js';
     
 
     export let data: PageData;
@@ -431,7 +432,7 @@
                             Configure the primary attributes of your site.
                         </span>
                         
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                        <div class="flex flex-col divide-y {dividerColors} gap-4 w-full">
 
                             <!---Site Name--->
                             <div class="flex flex-col md:flex-row w-full gap-2 py-2">
@@ -572,7 +573,7 @@
                             <p>Configure your instance logo and banner images.</p>
                         </span>
                         
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                        <div class="flex flex-col divide-y {dividerColors} gap-4 w-full">
 
                             <!---Logo--->
                             <div class="flex flex-col w-full gap-2 py-2">
@@ -718,7 +719,7 @@
                             Configure the requirements for the signup process.
                         </span>
                         
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                        <div class="flex flex-col divide-y {dividerColors} gap-4 w-full">
                             
                             {#if 
                                 formData.registration_mode == 'Open' &&
@@ -885,7 +886,7 @@
                             Enable or disable federation and control what instances to federate with.
                         </span>
                         
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                        <div class="flex flex-col divide-y {dividerColors} gap-4 w-full">
 
                             <!---Federation Enabled--->
                             <div class="flex flex-row w-full gap-2 py-2">
@@ -1113,7 +1114,7 @@
                             </p>
                         </span>
                         
-                        <div class="flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                        <div class="flex flex-col divide-y {dividerColors} gap-4 w-full">
 
                             <!---Posts--->
                             <div class="flex flex-col md:flex-row w-full gap-2 py-2">
