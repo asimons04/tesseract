@@ -129,15 +129,15 @@
             {#if data.applications && data.applications.length > 0}
                 <div class="flex flex-col gap-1 w-full max-h-full">
                     {#each data.applications as application (application.registration_application.id)}
-                        <Application {application} />
+                        <Application bind:application />
                     {/each}
                 </div>
 
-                {#if data.applications.length >= 40}
-                    <div class="mt-auto">
-                        <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
-                    </div>
-                {/if}
+                
+                <div class="mt-auto">
+                    <Pageination page={data.page} on:change={(p) => searchParam($page.url, 'page', p.detail.toString())} />
+                </div>
+                
 
             {:else}
                 <div class="my-auto">

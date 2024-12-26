@@ -10,10 +10,11 @@ export async function load({ data, fetch, url }) {
 
     const page = Number(url.searchParams.get('page')) || 1
     const unreadOnly = (url.searchParams.get('unreadOnly') || 'true') == 'true'
-
+    const limit = 50
+    
     const res = await getClient().listRegistrationApplications({
         page: page,
-        limit: 50,
+        limit: limit,
         unread_only: unreadOnly,
     })
 
@@ -21,5 +22,6 @@ export async function load({ data, fetch, url }) {
         unreadOnly: unreadOnly,
         page: page,
         applications: res.registration_applications,
+        limit: limit
     }
 }
