@@ -33,7 +33,7 @@
 
 </script>
     
-<a class="flex flex-col gap-2 items-start w-full
+<a class="flex flex-col gap-2 items-start w-full rounded-lg
         hover:dark:bg-zinc-800 hover:bg-slate-200
         py-1 px-1 sm:px-2
         {getTextSize()}
@@ -45,7 +45,7 @@
 >
     
     <div class="flex flex-col w-full gap-1">
-        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize}/>
+        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} showInstance={true}/>
         
         {#if showTitle}
             <span class="font-bold truncate">{crosspost.post.name}</span>
