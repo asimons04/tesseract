@@ -389,7 +389,7 @@
         uploadingImage = false
     }}
 />
-<Card class="flex flex-col p-4">
+<Card class="flex flex-col w-full h-full p-4">
     <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full {previewing ? '' : 'pb-6'}">
         
         <div class="flex flex-row justify-between">
