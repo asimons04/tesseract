@@ -126,8 +126,8 @@
 </script>
 
 {#if formData && open}
-    <Modal bind:open={open} icon={Folder} preventCloseOnClickOut title="Edit Group: {group.name}"  height="h-full" width="max-w-4xl">
-        <div class="flex flex-col h-full gap-2 pr-2">
+    <Modal bind:open={open} icon={Folder} preventCloseOnClickOut title="Edit Group: {group.name}"  height="min-h-[60vh] max-h-full" width="max-w-4xl">
+        <div class="flex flex-col min-h-[60vh] max-h-full gap-2 pr-2">
             
             <TextInput bind:value={formData.name} readonly={group.name == 'Favorites'} label="Group Name" class="{group.name == 'Favorites' ? 'hidden' : ''}"/>
             
@@ -150,7 +150,7 @@
                     <span class="text-sm font-bold">Members</span>
                     <span class="text-xs font-normal">The following communities are members of this group:</span>
                     
-                    <div class="flex flex-col gap-2 md:ml-[20%] pr-4" >
+                    <div class="flex flex-col gap-2 md:ml-[20%] pr-4 max-h-[40vh] overflow-y-auto" >
                         {#each formData.communities as community}
                             
                             <div class="flex flex-row gap-2 w-full rounded-md bg-slate-200 dark:bg-zinc-700 items-center px-2 text-sm">
@@ -181,18 +181,19 @@
                 {/if}
             </div>
 
-            <span class="mt-auto"/>
-            <span class="flex flex-row gap-4 w-full p-2">
-                <Button size="lg" color="danger"  class="w-full" icon={Trash} disabled={group.name == 'Favorites'}
-                    on:click={() => deleteGroup()} 
-                >
-                    Delete
-                </Button>
-                <Button size="lg" color="primary" class="w-full" icon={ArrowUturnDown} on:click={reset} disabled={!modified} >Reset</Button>
-                <Button size="lg" color="primary" class="w-full" icon={ArrowUpTray} on:click={submit} disabled={!modified}>Save</Button>
-            </span>
+            
+            
         </div>
-
+        
+        <span class="flex flex-row gap-4 w-full p-2" slot="buttons">
+            <Button size="lg" color="danger"  class="w-full" icon={Trash} disabled={group.name == 'Favorites'}
+                on:click={() => deleteGroup()} 
+            >
+                Delete
+            </Button>
+            <Button size="lg" color="primary" class="w-full" icon={ArrowUturnDown} on:click={reset} disabled={!modified} >Reset</Button>
+            <Button size="lg" color="primary" class="w-full" icon={ArrowUpTray} on:click={submit} disabled={!modified}>Save</Button>
+        </span>
     
     </Modal>
 {/if}
