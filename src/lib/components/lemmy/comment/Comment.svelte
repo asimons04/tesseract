@@ -240,7 +240,9 @@
                         !amModOfAny($profile?.user) && (node.comment_view.comment.removed || node.comment_view.comment.deleted)
                             ? node.comment_view.comment.deleted ? '*Deleted by creator*' : '*Removed by mod*'
                             : node.comment_view.comment.content
-                        } />
+                        } 
+                        class="px-1"
+                    />
                 </div>
                 
                 
