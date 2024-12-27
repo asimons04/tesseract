@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { GetPersonDetailsResponse, Person } from "lemmy-js-client"
-
+    import type { UserSubmissionFeedController } from '$lib/components/lemmy/feed/helpers'
+    
     import { dispatchWindowEvent, type BanUserEvent } from '$lib/ui/events'
 
     import { expoIn } from "svelte/easing"
@@ -39,13 +40,13 @@
         User,
         UserCircle,
         Window as WindowIcon,
+        ChevronDoubleDown,
+        ChevronDoubleUp,
     } from "svelte-hero-icons";
     
     import Card from "$lib/components/ui/Card.svelte";
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
-    //import UserSubmissionFeed from "./components/UserSubmissionFeed.svelte";
     import UserSubmissionFeed from '$lib/components/lemmy/feed/UserSubmissionFeed.svelte'
-    import MultiSelect from "$lib/components/input/MultiSelect.svelte";
     
     
     export let user:Person | undefined
@@ -58,10 +59,10 @@
     let blocking = false
     let mostRecentItem: string|undefined = undefined
     let userBlocked = false
-    let submissionType: 'all' | 'posts' | 'comments' = 'all'
     let aboutMe = false
     let originalUser = user
-    
+    let userFeedControler: UserSubmissionFeedController
+
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
@@ -202,14 +203,15 @@
     
     <!---Loading Spinner--->
     {#if loading}
-        <span class="flex mx-auto my-auto">
-            <Spinner width={24}/>
+        <span class="flex">
+            <Spinner width={24} class="mx-auto my-auto"/>
         </span>
     {/if}
     
+
+    <!---Panels--->
     {#if !loading && personDetails}
-    
-    
+
         <!---Ban User--->
         {#if action == 'banning'}
             <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
@@ -338,11 +340,16 @@
                         <span class="text-lg">
                             History
                         </span>
+
+                        <span class="flex flex-row gap-2 ml-auto">
+                            <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()} />
+                            <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} on:click={()=> userFeedControler.scrollTop()} />
+                        </span>
                     </div>
                 </div>
                 
                 <div class="flex flex-col w-full max-h-[70vh]">
-                    <UserSubmissionFeed person_name="{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}" />
+                    <UserSubmissionFeed bind:controller={userFeedControler} person_name="{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}" />
                 </div>
             </div>    
         
