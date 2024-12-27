@@ -16,10 +16,8 @@
         Icon,
         CheckBadge, 
         CheckCircle,
-        ClipboardDocumentCheck,
         ExclamationCircle,
         ExclamationTriangle,
-        Fire,
         Flag,
         QuestionMarkCircle,
         ShieldExclamation,
@@ -79,7 +77,7 @@
     </Badge>
 
 
-    <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check" width="max-w-4xl">
+    <Modal bind:open={open} icon={CheckBadge} title="Media Bias Fact Check" height="min-h-[60vh] max-h-full" width="max-w-4xl">
         <div class="flex flex-col gap-4 w-full">
             <h2 class="flex flex-row items-center justify-between w-full">
                 <span class="font-bold text-lg">{results.name}</span>
