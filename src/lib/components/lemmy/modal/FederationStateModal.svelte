@@ -24,18 +24,12 @@
         ArrowRight,
         Calendar,
         Check,
-        CloudArrowDown,
         Eye,
         HandThumbDown,
         ExclamationTriangle, 
         NoSymbol,
         ServerStack, 
     } from 'svelte-hero-icons';
-    
-    
-    
-    
-    
     
     export let open = false
     export let domain:string
