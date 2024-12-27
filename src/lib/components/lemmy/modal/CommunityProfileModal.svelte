@@ -341,8 +341,8 @@
     </div>
 
     {#if loading}
-        <span class="flex mx-auto my-auto">
-            <Spinner width={24}/>
+        <span class="flex">
+            <Spinner width={24} class="mx-auto my-auto"/>
         </span>
     {/if}
 
@@ -564,13 +564,15 @@
                         }}
                     />
                 </div>
-        
-                <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal editing={false}
-                    on:submit={(e) => {
-                        goto(`/post/${e.detail.post.id}`)
-                        open = false
-                    }}
-                />
+                
+                <div class="flex w-full max-h-[70vh] overflow-y-scroll">
+                    <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal editing={false}
+                        on:submit={(e) => {
+                            goto(`/post/${e.detail.post.id}`)
+                            open = false
+                        }}
+                    />
+                </div>
             </div>
         {/if}
 
