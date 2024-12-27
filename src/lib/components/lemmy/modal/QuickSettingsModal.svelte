@@ -13,11 +13,9 @@
     import SettingToggle from "../../ui/settings/SettingToggle.svelte"
 
     import { 
-        Icon, 
         ArrowDown,
         ArrowsRightLeft,
         ArrowTopRightOnSquare, 
-        Bars3,
         BarsArrowDown, 
         Cog6Tooth,
         Film,
