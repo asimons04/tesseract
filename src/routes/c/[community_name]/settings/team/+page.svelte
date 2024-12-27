@@ -152,9 +152,9 @@
         <div class="divide-y divide-slate-200 dark:divide-zinc-500 flex flex-col">
             {#each data.community.moderators as moderator, i (moderator.moderator.id)}
                 <div class="py-4 flex items-center gap-2 justify-between" animate:flip={{ duration: 300 }} >
-                    <div class="flex gap-2 items-center">
+                    <div class="flex gap-2 w-full items-center">
                         <Avatar width={28} url={moderator.moderator.avatar} alt={moderator.moderator.name} />
-                        <div class="flex flex-col gap-0">
+                        <div class="flex flex-col gap-0 w-[calc(100%-30px-0.5rem)]">
 
                             <div class="flex flex-row items-center">
                                 <UserLink user={moderator.moderator} showInstance={false} />
