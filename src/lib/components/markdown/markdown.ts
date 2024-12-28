@@ -21,7 +21,8 @@ export function filterAnnoyingCCLicenseOnComments(source:string) {
 export function hashtagsToMDLinks(source:string) {
     if (!$userSettings.linkifyHashtags) return source
     
-    const hashtagRE = /(?<!\[.*|http.*|`.*|[A-Za-zÀ-ÿ!\?\$])#[A-Za-zÀ-ÿ!\?\$]+(?!`)/gi
+    //const hashtagRE = /(?<!\[.*|http.*|`.*|[A-Za-zÀ-ÿ!\?\$])#[A-Za-zÀ-ÿ!\?\$]+(?!`)/gi
+    const hashtagRE = /^#[A-Za-zÀ-ÿ!\?\$]+$/gi
     let hashtags = source.matchAll(hashtagRE)
     
     for (let tag of hashtags) {
@@ -39,7 +40,11 @@ export function findUserCommunityLinks(source: string) {
     // Find @user@instance.xyz and turn into localized links
     const userRE = /(?<!\w|`|\/|\[|\()@((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!.*`|.*\]|\))/gi
     let users = source.matchAll(userRE)
-    
+
+    // Find '!community@instance.xyz'and turn into localized links
+    const communityRE = /(?<!\w|`|\/|\[|\()!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!.*`|.*\]|\))/gi
+    let communities = source.matchAll(communityRE)
+
     for (let user of users) {
         if (user.groups?.username && user.groups?.instance) {
             let replacementText = `[@${user.groups.username}@${user.groups.instance}](/u/${user.groups.username}@${user.groups.instance})`
@@ -48,9 +53,8 @@ export function findUserCommunityLinks(source: string) {
         }
     }
 
-    // Find '!community@instance.xyz'and turn into localized links
-    const communityRE = /(?<!\w|`|\/|\[|\()!((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))(?!.*`|.*\]|\))/gi
-    let communities = source.matchAll(communityRE)
+    
+
     for (let community of communities) {
         if (community.groups?.community && community.groups?.instance) {
             let replacementText = `[!${community.groups.community}@${community.groups.instance}](/c/${community.groups.community}@${community.groups.instance})`

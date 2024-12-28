@@ -17,10 +17,11 @@
     import { userSettings } from '$lib/settings'
     
     import MarkdownCode from './renderers/MarkdownCode.svelte'
-    import MarkdownCodeSpan from './renderers/MarkdownCodeSpan.svelte';
+    import MarkdownCodeSpan from './renderers/MarkdownCodeSpan.svelte'
     import MarkdownImage from './renderers/MarkdownImage.svelte'
-    import MarkdownLink from './renderers/MarkdownLink.svelte';
-    import MarkdownSpoiler from './renderers/MarkdownSpoiler.svelte';
+    import MarkdownLink from './renderers/MarkdownLink.svelte'
+    import MarkdownSpoiler from './renderers/MarkdownSpoiler.svelte'
+    import MarkdownTable from './renderers/MarkdownTable.svelte'
     
     export let source: string = ''
     export let inline: boolean = false
@@ -49,24 +50,65 @@
         gfm: !noLink
     })
     
+    // Pre-process the markdown text to detect user/community links, hashtags, etc
     function preProcess(text:string) {
+        
+        // Initialize guardrail flags
         let inCodeBlock = false
+        let inCodeSpan = false
+        let inImage = true
+        
+        // Fix stupid ampersand encodings
         let temp = text.replaceAll('&amp;', '&') + '\n'
 
+        // Break the text into lines and parse each line individually
         let lines = temp.split('\n')
-        
         for (let i=0; i < lines.length; i++) {
             
             let line = lines[i]
            
+            // Check if inside a code block
             if (!inCodeBlock && line.startsWith('```'))     inCodeBlock = true
             else if (inCodeBlock && line.startsWith('```')) inCodeBlock = false
 
+            // If not inside a code block, pre-process the line
             if (!inCodeBlock) {
-                line = fixLemmyEncodings(line)
-                if (!noUserCommunityLink) line = findUserCommunityLinks(line)
-                if (!noHashtags) line = hashtagsToMDLinks(line)
-                if ($userSettings.uiState.filterAnnoyingCCLicense) line = filterAnnoyingCCLicenseOnComments(line)
+                
+                // Reset the word-level guardrails
+                inCodeSpan = false
+                inImage = false
+
+                // Split the line into words and process each word individually
+                let words = line.split(' ')
+                for (let j=0; j < words.length; j++) {
+                    
+                    let word = words[j]
+                    
+                    // Check if word is part of a code span
+                    if (!inCodeSpan && word.startsWith('`'))    inCodeSpan = true
+                    else if (inCodeSpan && word.endsWith('`'))  inCodeSpan = false
+                    
+                    // Check if word is beginning/end of an image or link
+                    if (!inImage && word.startsWith('!\['))         inImage = true
+                    else if (inImage && word.match(/.*\]\(.*\)/i))  inImage = false
+
+                    // Check if word is just an image without alt text (which comes through as one word
+                    if (word.match(/^!\[\](.*)$/i))     inImage = true
+
+
+
+                    // If not inside a code span, process each word
+                    if (!inCodeSpan && !inImage) {
+                        word = fixLemmyEncodings(word)
+                        if (!noUserCommunityLink) word = findUserCommunityLinks(word)
+                        if (!noHashtags) word = hashtagsToMDLinks(word)
+                        if ($userSettings.uiState.filterAnnoyingCCLicense) word = filterAnnoyingCCLicenseOnComments(word)
+
+                        words[j] = word
+                    }
+                }
+                line = words.join(' ')
+               
             }
 
             lines[i] = line
@@ -112,6 +154,7 @@
                     image: MarkdownImage,
                     link: MarkdownLink,
                     spoiler: MarkdownSpoiler,
+                    table: MarkdownTable,
                 
                 }}
 
