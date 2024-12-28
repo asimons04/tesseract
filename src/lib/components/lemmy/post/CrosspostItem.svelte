@@ -58,39 +58,41 @@
         {/if}
     </div>
 
-    <div class="flex flex-row gap-2 items-center w-full">
-        <button on:click|preventDefault|stopPropagation>
-            {#if voteButtons}
+    <div class="flex flex-row gap-2 items-center justify-between w-full">
+        
+        <!---Vote Buttons for the XPost Item--->
+        {#if voteButtons}
+            <button on:click|preventDefault|stopPropagation>
                 <PostVote bind:post={crosspost} small/>
-            {/if}
-        </button>
-    
-        <div class="flex flex-row min-w-fit gap-1 {voteButtons ? 'ml-auto' : ''} {getTextSize()}">
-            
-            <span class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
-                
-                <RelativeDate date={crosspost.post.published} />
-                
-                {#if crosspost.post.updated}
-                    <span class="flex flex-row items-center gap-1 ml-1">•
-                        <Icon src={Pencil} solid size="12" title="Edited" />
-                        <RelativeDate date={crosspost.post.updated}/>
-                    </span>
-                {/if}
-            </span>
-    
-            {#if $userSettings.uiState.showScores && !voteButtons}
+            </button>
+        {/if}
+        
+        {#if $userSettings.uiState.showScores && !voteButtons}
             <span class="flex flex-row gap-1 font-normal items-center">
                 <Icon src={crosspost.counts.score > 0 ? ArrowUp : ArrowDown} mini width={iconSize} height={iconSize}/>
                 <FormattedNumber number={crosspost.counts.score} />
             </span>
-            {/if}
+        {/if}
     
-            <span class="flex flex-row gap-1 font-normal items-center" >
-                <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
-                <FormattedNumber number={crosspost.counts.comments} />
-            </span>
+        <!---Comment Counts--->
+        <span class="flex flex-row gap-1 font-normal items-center" >
+            <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
+            <FormattedNumber number={crosspost.counts.comments} />
+        </span>
+
+        <!---Published and Edited Date--->
+        <span class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
             
-        </div>
+            <RelativeDate date={crosspost.post.published} />
+            
+            <!---Edited Date (hidden on mobile)--->
+            {#if crosspost.post.updated}
+                <span class="hidden md:flex flex-row items-center gap-1 ml-1">•
+                    <Icon src={Pencil} solid size="12" title="Edited" />
+                    <RelativeDate date={crosspost.post.updated}/>
+                </span>
+            {/if}
+        </span>
+
     </div>
 </a>
