@@ -67,7 +67,7 @@
 </script>
 
 <Modal bind:open icon={Photo} title="Upload {purpose}" width="max-w-lg" preventCloseOnClickOut on:close={() => cancel()}>
-    <form class="flex flex-col gap-4" >
+    <form class="flex flex-col gap-4 p-2" >
         
         <FileInput image bind:files={image} accept="image/jpeg,image/png,image/webp"/>
         

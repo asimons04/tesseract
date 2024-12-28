@@ -16,7 +16,7 @@
     export let icon:IconSource = undefined;
 
     export let fullHeight:boolean = false
-    export let height:string = 'max-h-[90vh]'
+    export let height:string = 'h-auto max-h-[90vh]'
     export let width:string = 'min-w-[50%]'
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
@@ -72,8 +72,7 @@
         transition:fade={{ duration: 200 }}
         on:keydown={(
             //@ts-ignore
-            e
-        ) => {
+            e) => {
             if (e.key == 'Escape' || e.key == 'GoBack' || e.key == 'BrowserBack') {
                 e.preventDefault()
                 e.stopPropagation();
@@ -83,10 +82,7 @@
         }}
         on:click={(
             //@ts-ignore
-            e
-        ) => {
-            //e.preventDefault()
-            //e.stopPropagation();
+            e) => {
             if (!modalElement.contains(e.target) && !preventCloseOnClickOut) {
                 dispatcher('close')
                 open = false
@@ -94,8 +90,7 @@
 		}}
         on:wheel={(
             //@ts-ignore
-            e
-        ) => {
+            e) => {
             if (!modalElement.contains(e.target)) {
                 e.preventDefault()
                 e.stopPropagation()
@@ -103,19 +98,19 @@
         }}
     >
   
-        <div transition:scale={{ start: 0.5, easing: expoOut }}
-            class="overflow-y-auto rounded-xl max-w-full box-border w-full {fullHeight ? 'h-[90vh]' : height} {$$props.class}"
+        <div class="flex w-full h-full" transition:scale={{ start: 0.5, easing: expoOut }} >
             
-        >
-            <div class="w-full dark:!bg-zinc-950 rounded-xl {width} box-border mx-auto {fullHeight ? 'h-[90vh]' : height}">
+            <div class="flex my-auto dark:!bg-zinc-950 rounded-xl w-full min-w-[min(100%,450px)] {width} {height} box-border mx-auto ">
+
                 <div bind:this={modalElement} tabindex="-1" role="dialog"
-                    class="flex flex-col gap-4 p-3 rounded-xl overflow-none  w-full 
+                    class="flex flex-col gap-4 p-3 rounded-xl overflow-none 
+                        {height} w-full    
                         bg-white dark:bg-zinc-950 
                         border border-slate-200 dark:border-zinc-800 
-                        {fullHeight ? 'h-[90vh]' : height}
                         {action ? 'border-b-0 rounded-b-none' : ''}
                     "
                 >
+                    <!---Modal Dialog Title Bar--->
                     <div class="flex flex-row max-w-full">
                         <h1 class="flex flex-row items-center font-bold text-xl gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
                             {#if icon} 
@@ -149,19 +144,16 @@
                         </span>
                     </div>
                     
-                    <div class="flex flex-col overflow-y-auto pr-2 w-full h-full"
+                    <div class="flex flex-col pr-2 overflow-hidden w-full h-full"
                         use:swipe={{
                             touchAction: 'pan-y',
                             minSwipeDistance: 120
                         }}  on:swipe={onSwipe}
                     >
-                        {#if card}
-                            <Card class="flex flex-col p-4 overflow-y-auto overflow-x-hidden h-full">
-                                <slot />
-                            </Card>
-                        {:else}
+                        <!---Slot to hold the modal's content--->
+                        <Card elevation={card ? 1 : -1} class="overflow-y-auto {card ? 'flex flex-col p-4' : ''} {height}">
                             <slot />
-                        {/if}
+                        </Card>
 
                         <div class="mt-4" />
                         
