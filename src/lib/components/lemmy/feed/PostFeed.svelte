@@ -541,8 +541,8 @@
             for (let i:number=0; i < posts.posts.length; i++) {
                 
                 if (posts.posts[i].community.id == e.detail.community_id) {
-                    // Setting the community to hidden will hide the post; there's no key for `community_blocked`
-                    posts.posts[i].community.hidden = e.detail.blocked
+                    // Setting the community to hidden will hide the post; there's no key for `community_blocked`, so set creator_blocked to trigger the post to disappear
+                    posts.posts[i].creator_blocked = e.detail.blocked
                 }
             }
             posts = posts
@@ -794,7 +794,6 @@
         {#each posts.posts as post, idx (post.post.id)}
             {#if 
                 !post.creator_blocked && 
-                !post.community.hidden &&
                 !(post.hidden && $userSettings.hidePosts.hidden )&&
                 !($userSettings.hidePosts.deleted && post.post.deleted) && 
                 !($userSettings.hidePosts.removed && post.post.removed) &&
