@@ -15,7 +15,7 @@
     export let title:string = '';
     export let icon:IconSource = undefined;
 
-    export let height:string = 'h-auto max-h-[90vh]'
+    export let height:string = 'h-auto max-h-[95vh]'
     export let width:string = 'min-w-[50%]'
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
