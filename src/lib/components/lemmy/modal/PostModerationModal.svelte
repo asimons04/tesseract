@@ -7,25 +7,24 @@
 
     import { amMod, isAdmin, type PostModerationModalPanels } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
-    import { expoIn } from 'svelte/easing'
     import { getClient } from '$lib/lemmy'
     import { isCommentView } from '$lib/lemmy/item'
     import { onMount } from 'svelte'
     import { profile } from '$lib/auth'
-    import { shortenCommunityName } from '../community/helpers'
-    import { slide } from 'svelte/transition'
     import { toast } from '$lib/components/ui/toasts/toasts'
 
-
-
-    import Avatar from '$lib/components/ui/Avatar.svelte'
     import BanUserForm from './components/BanUserForm.svelte'
     import Button from "$lib/components/input/Button.svelte"
     import Card from '$lib/components/ui/Card.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import EmbeddableModlog from './components/EmbeddableModlog.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
+    
     import Modal from "$lib/components/ui/modal/Modal.svelte"
+    import ModalPanel from './components/ModalPanel.svelte'
+    import ModalPanelHeading from './components/ModalPanelHeading.svelte'
+    import ModalScrollArea from './components/ModalScrollArea.svelte'
+
     import RemoveItemForm from './components/RemoveItemForm.svelte'
     import ReportItemForm from './components/ReportItemForm.svelte'
     import SendDMForm from "./components/SendDMForm.svelte"
@@ -34,7 +33,6 @@
     import VoteViewer from './components/VoteViewer.svelte'
 
     import { 
-        ArrowLeft,
         ArrowPath,
         ChevronDoubleDown,
         ChevronDoubleUp,
@@ -53,6 +51,8 @@
         Trash,
         Window as WindowIcon
     } from "svelte-hero-icons"
+    
+    
     
     
     export let open: boolean = false
@@ -282,213 +282,106 @@
 
     <!---User Submissions in the Community--->
     {#if action == 'userSubmissions'}
-        <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>     
+        <ModalPanel>
+            <ModalPanelHeading title="User's Submissions" on:click={() => returnMainMenu()}>
+                <span class="flex flex-row gap-2" slot="actions">
+                    <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()} />
+                    <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} on:click={()=> userFeedControler.scrollTop()} />
+                    <Button size="md" color="tertiary" icon={ArrowPath} iconSize={20} on:click={()=> userFeedControler.refresh(true)} />
+                </span>
+            </ModalPanelHeading>
             
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        returnMainMenu() 
-                    }}
-                />
-
-                <div class="flex flex-row w-full items-center justify-between">
-                    <span class="text-lg">
-                        Posts/Comments
-                    </span>
-
-                    <span class="flex flex-row gap-2 ml-auto">
-                        <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()} />
-                        <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} on:click={()=> userFeedControler.scrollTop()} />
-                        <Button size="md" color="tertiary" icon={ArrowPath} iconSize={20} on:click={()=> userFeedControler.refresh(true)} />
-                    </span>
-                </div>
-            </div>
-            
-            <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
+            <ModalScrollArea card={false}>
                 <UserSubmissionFeed person_name="{item.creator.name}@{new URL(item.creator.actor_id).hostname}" community_id={item.community.id}
                     bind:controller={userFeedControler}
                 />
-            </div>
-        </div>
+            </ModalScrollArea>
+        </ModalPanel>
     {/if}
 
     <!---Report the Submission--->
     {#if action == 'reporting'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
-                
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={()=> returnMainMenu()}  
-                />
-                <span class="text-lg">
-                    Reporting
-                    {isCommentView(item) ? 'Comment' : 'Post'}
-                </span>
-            </div>
-            
+        <ModalPanel>
+            <ModalPanelHeading title="Reporting {isCommentView(item) ? 'Comment' : 'Post'}" on:click={() => returnMainMenu()} />
 
             <!---Remove/Purge/Restore Form--->
-            <Card class="flex flex-col p-4">    
+            <ModalScrollArea>
                 <ReportItemForm bind:item on:reported={() => returnMainMenu() }/>
-            </Card>
-        </div>
+            </ModalScrollArea>
+        </ModalPanel>
     {/if}
 
     <!---Remove/Restore/Purge Content--->
     {#if action == 'removing'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
-            
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={()=> returnMainMenu()}  
-                />
-                <span class="text-lg">
-                    { remove.purge  ? 'Purging'  : removed ? 'Restoring' : 'Removing' } 
-                    {isCommentView(item) ? 'Comment' : 'Post'}
-                </span>
-            </div>
-            
+        <ModalPanel>
+            <ModalPanelHeading on:click={() => returnMainMenu()} 
+                title="{ remove.purge  ? 'Purging'  : removed ? 'Restoring' : 'Removing' } {isCommentView(item) ? 'Comment' : 'Post'}"    
+            />
 
             <!---Remove/Purge/Restore Form--->
-            <Card class="flex flex-col p-4">
+            <ModalScrollArea>
                 <RemoveItemForm bind:item bind:removed bind:purged purge={remove.purge} on:finish={() => returnMainMenu()}/>
-            </Card>
+            </ModalScrollArea>
             
-        </div>
+        </ModalPanel>
     
     {/if}
 
     <!---Ban/Unban--->
     {#if action == 'banning'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-            
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        returnMainMenu() 
-                    }}
-                />
-                <span class="text-lg">
-                    {(banCommunity ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'} User From {banCommunity ? 'Community' : 'Instance'}
-                </span>
-            </div>
+        <ModalPanel>
+            <ModalPanelHeading on:click={() => returnMainMenu()} 
+                title="{(banCommunity ? item.creator_banned_from_community : item.creator.banned) ? 'Unban' : 'Ban'} User From {banCommunity ? 'Community' : 'Instance'}"
+            />
 
             <!---Ban/Unban Instance/Community Form--->
-            <Card class="flex flex-col p-4">
+            <ModalScrollArea>
                 <BanUserForm bind:person={item.creator} bind:creator_banned_from_community={item.creator_banned_from_community} bind:community={banCommunity}
                     on:ban={() => returnMainMenu()}
                 />
-            </Card>
-        </div>
+            </ModalScrollArea>
+        </ModalPanel>
     {/if}
     
     <!---Vote Viewer--->
     {#if action == 'showVotes'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-                
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        returnMainMenu() 
-                    }}
-                />
-                <span class="text-lg">
-                    {isCommentView(item) ? 'Comment' : 'Post'} Votes
-                </span>
-            </div>
+        <ModalPanel>
+            <ModalPanelHeading on:click={() => returnMainMenu()} title="{isCommentView(item) ? 'Comment' : 'Post'} Votes" />
 
             <!---Ban/Unban Instance/Community Form--->
-            <Card class="flex flex-col p-4">
+            <ModalScrollArea>
                 <VoteViewer {item} />
-            </Card>
-        </div>
+            </ModalScrollArea>
+        </ModalPanel>
     {/if}
 
     <!---Community Details--->
     {#if action == 'communityInfo'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-                
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        returnMainMenu() 
-                    }}
-                />
-                <span class="text-lg">
-                    Community Info
-                </span>
-            </div>
-
-            <!--- Community Icon, Name, and Instance Header--->
-            <div class="flex flex-col gap-2">
-                <span class="flex flex-row gap-4 items-center font-bold text-center">
-                    <Avatar width={64} community={true} alt={item.community.name} url={item.community.icon} />
-                    
-                    <span class="flex flex-col items-start gap-0">
-                        <span class="text-2xl capitalize truncate">
-                            {shortenCommunityName(item.community.title, 40) ?? item.community.name}
-                        </span>
-                        
-                        <span class="text-slate-500 dark:text-zinc-500 text-xl font-normal">
-                            {new URL(item.community.actor_id).hostname}
-                        </span>
-                    </span>
-                </span>
-            </div>
-
-            <!---Ban/Unban Instance/Community Form--->
-            <Card class="flex flex-col p-4 gap-4 max-h-[50vh] overflow-y-auto">
-                <!---Community Details Markdown--->
+        <ModalPanel>
+            <ModalPanelHeading on:click={() => returnMainMenu()} title="Community Info" />
+            
+            <!---Community Details Markdown--->
+            <ModalScrollArea>
                 <Markdown source={item.community.description ?? 'No community description was provided.'} />
-            </Card>
-        </div>
+            </ModalScrollArea>
+        </ModalPanel>
     {/if}
     
     <!---Modlog--->
     {#if action == 'modlog'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-    
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        returnMainMenu() 
-                    }}
-                />
-                <div class="flex flex-row w-full justify-between">
-                    <span class="text-lg">
-                        Modlog
-                    </span>
-
-                    <span class="flex flex-row gap-1">
-                        <Button size="sm" color="tertiary-border" class="h-8"
-                            icon={Newspaper}
-                            on:click={() => {
-                                modlogCommunityOnly = !modlogCommunityOnly
-
-                            }}
-                        >
-                            {modlogCommunityOnly ? 'All' : 'Community'}
-                        </Button>
-                    </span>
-                </div>
-            </div>
+        <ModalPanel>
+            <ModalPanelHeading on:click={() => returnMainMenu()} title="Modlog">
+                <span class="flex flex-row gap-1" slot="actions">
+                    <Button size="sm" color="tertiary-border" class="h-8"
+                        icon={Newspaper}
+                        on:click={() => {
+                            modlogCommunityOnly = !modlogCommunityOnly
+                        }}
+                    >
+                        {modlogCommunityOnly ? 'All' : 'Community'}
+                    </Button>
+                </span>
+            </ModalPanelHeading>
 
             <span class="text-sm font-normal" style="width:calc(100% - 120px);">
                 {
@@ -504,41 +397,27 @@
                 <EmbeddableModlog moderatee={item.creator}  headingRowClass="mt-[-30px]"/>
             {/if}
 
-        </div>
+        </ModalPanel>
 
     {/if}
 
     <!---Message--->
     {#if action == 'messaging'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-                    
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    disabled={item.creator.banned}
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        returnMainMenu() 
-                    }}
-                />
-                <div class="flex flex-row w-full justify-between">
-                    <span class="text-lg">
-                        Send Direct Message
-                    </span>
-                </div>
-            </div>
-            <Card class="flex flex-col p-4">
+        <ModalPanel>
+            <ModalPanelHeading on:click={() => returnMainMenu()} title="Send Direct Message" />   
+
+            <ModalScrollArea>
                 <SendDMForm person={item.creator} on:sendMessage={() => returnMainMenu() }/>
-            </Card>
-        </div>
+            </ModalScrollArea>
+        </ModalPanel>
     {/if}
 
 
     <!---Default/Moderation Action List--->
     {#if action == 'none'}
-        <div class="flex flex-col gap-2 mt-0 w-full items-center" transition:slide={{easing:expoIn}}>
+        <ModalPanel>
             
+            <!---Community and User Indicators/Links--->
             <Card class="p-2 w-full">
                 <div class="flex flex-row gap-2 justify-between w-full items-center text-xs sm:text-sm overflow-hidden">
                     <span class="w-1/2">
@@ -551,9 +430,10 @@
                 </div>
             </Card>
 
-            
+            <!--Main Menu Buttons--->            
             <div class="flex flex-col gap-2 px-8 mt-0 w-full items-center">
-                <!---Community Info--->
+                
+                <!---Community Details--->
                 <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full" 
                     on:click={() => {
                         modalWidth = panelWidths['communityInfo']
@@ -677,7 +557,7 @@
                     </Button>
                 {/if}
             </div>
-        </div>
+        </ModalPanel>
     {/if}
 
 </Modal>

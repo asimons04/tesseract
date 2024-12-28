@@ -27,16 +27,20 @@
 
     import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
     import Button from "$lib/components/input/Button.svelte"
-    import Card from "$lib/components/ui/Card.svelte"
-    import CommunityCardSmall from "$lib/components/lemmy/community/CommunityCardSmall.svelte";
-    import PostFeed from "../feed/PostFeed.svelte";
-    import EmbeddableModlog from "./components/EmbeddableModlog.svelte";
-    import Markdown from "$lib/components/markdown/Markdown.svelte";
-    import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte";
+    import CommunityCardSmall from "$lib/components/lemmy/community/CommunityCardSmall.svelte"
+    import PostFeed from "../feed/PostFeed.svelte"
+    import EmbeddableModlog from "./components/EmbeddableModlog.svelte"
+    import Markdown from "$lib/components/markdown/Markdown.svelte"
+    import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte"
+    
     import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import PostForm from "../post/PostForm.svelte";
+    import ModalPanel from './components/ModalPanel.svelte'
+    import ModalPanelHeading from './components/ModalPanelHeading.svelte'
+    import ModalScrollArea from "./components/ModalScrollArea.svelte"
+
+    import PostForm from "../post/PostForm.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
-    import UserLink from "../user/UserLink.svelte";
+    import UserLink from "../user/UserLink.svelte"
     
     import { 
         ArrowLeft,
@@ -60,6 +64,7 @@
         UserGroup,
         Window as WindowIcon
     } from "svelte-hero-icons";
+    
     
     
     export let community: Community | undefined
@@ -353,38 +358,21 @@
 
         <!---Ban/Unban Tool--->
         {#if action == 'banning'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
-                    
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={()=> returnMainMenu()}  
-                    />
-                    <span class="text-lg">
-                        Ban/Unban User From Community
-                    </span>
-                </div>
+            <ModalPanel>
+                <ModalPanelHeading title="Ban/Unban User From Community" on:click={()=> returnMainMenu()} />
                 
-                <Card class="flex flex-col p-4 gap-4">
+                <ModalScrollArea>
                     <BanUnbanCommunityForm community={communityDetails.community_view.community} on:ban={() => returnMainMenu() }/>
-                </Card>
-            </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         {#if action == 'blocking'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
-                        
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={()=> returnMainMenu()}  
-                    />
-                    <span class="text-lg">
-                        {communityBlocked ? 'Unblock' : 'Block'} Community
-                    </span>
-                </div>
+            
+            <ModalPanel>
+                <ModalPanelHeading title="{communityBlocked ? 'Unblock' : 'Block'} Community" on:click={()=> returnMainMenu()} />
                 
-                <Card class="flex flex-col p-4 gap-4">
+                <ModalScrollArea>
                     <span class="text-sm font-normal">
                         <span class="font-bold">Confirm</span>:
                         Are you sure you want to {communityBlocked ? 'unblock' : 'block'}
@@ -401,24 +389,14 @@
                     </Button>
 
 
-                </Card>
-            </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         {#if action == 'browsing'}
-            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>
-                        
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={()=> returnMainMenu()}  
-                    />
-                    <span class="text-lg">
-                        Browse
-                    </span>
-
-
-                    <span class="flex flex-row gap-2 ml-auto">
+            <ModalPanel>
+               <ModalPanelHeading title="Browse Community" on:click={()=> returnMainMenu()} >
+                    <span class="flex flex-row gap-2" slot="actions">
                         <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} title="Scroll to Bottom" on:click={()=> feedController.scrollBottom()} />
                         <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} title="Scroll to Top" on:click={()=> feedController.scrollTop()} />
                         <Button size="md" color="tertiary" icon={ArrowPath} title="Refresh" iconSize={20} on:click={() => feedController.refresh(true) } />
@@ -429,31 +407,22 @@
                             }}
                         />
                     </span>
-                </div>
+               </ModalPanelHeading>
                 
-                <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
+                <ModalScrollArea card={false}>
                     <PostFeed bind:controller={feedController} inModal={true} actions={false} 
                         community_name={`${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`} 
                     />
-                </div>
-            </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
         
         <!---Community Details Panel--->
         {#if action == 'communityDetails'}
-            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>
-                    
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={()=> returnMainMenu()}  
-                    />
-                    <span class="text-lg">
-                        Community Details
-                    </span>
-                </div>
+            <ModalPanel>
+                <ModalPanelHeading title="Community Details" on:click={()=> returnMainMenu()} /> 
 
-                <Card class="flex flex-col gap-2 p-2 w-full max-h-full overflow-y-scroll">
+                <ModalScrollArea>
                     <!---Community details/sidebar info--->
                     <Markdown source={communityDetails.community_view.community.description ?? '*No community details were provided.*'}/>
 
@@ -466,26 +435,18 @@
                             {/each}
                         </span>
                     {/if}
-                </Card>
-            </div>
+                </ModalScrollArea>
+
+            </ModalPanel>
         {/if}
 
         <!---Remove Community Panel--->
         {#if action == 'removing'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
-                
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={()=> returnMainMenu()}  
-                    />
-                    <span class="text-lg">
-                        {communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community
-                    </span>
-                </div>
+            <ModalPanel>
+                <ModalPanelHeading title="{communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community" on:click={()=> returnMainMenu()}  />
                 
                 <!---Remove/Purge/Restore Form--->
-                <Card class="flex flex-col p-4 max-h-[50vh] overflow-y-auto">
+                <ModalScrollArea>
                     <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove.remove}>
                         <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={remove.reason}>
                             <Button 
@@ -502,26 +463,17 @@
                             </Button>
                         </MarkdownEditor>
                     </form>
-                </Card>
-            </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         <!---Hiding Community--->
         {#if action == 'hiding'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
-                    
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={()=> returnMainMenu()}  
-                    />
-                    <span class="text-lg">
-                        {communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community
-                    </span>
-                </div>
+            <ModalPanel>
+                <ModalPanelHeading title="{communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community"  on:click={()=> returnMainMenu()} /> 
                 
                 <!---Remove/Purge/Restore Form--->
-                <Card class="flex flex-col p-4 max-h-[50vh] overflow-y-auto">
+                <ModalScrollArea>
                     <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={hide.hide}>
                         <MarkdownEditor rows={6} previewButton images={false} label="Reason" placeholder="Optional" bind:value={hide.reason}>
                             <Button 
@@ -538,66 +490,43 @@
                             </Button>
                         </MarkdownEditor>
                     </form>
-                </Card>
-            </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         <!---Create Post Form--->
         {#if action == 'createPost'}
-            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>
-                        
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={()=> returnMainMenu()}  
-                    />
-                    <span class="text-lg truncate">
-                        Create Post in {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}
+            <ModalPanel>
+                <ModalPanelHeading on:click={()=> returnMainMenu()}
+                    title="Create Post in {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}"
+                >
+                    <span slot="actions">
+                        <Button size="square-lg" color="tertiary-border" icon={ArrowTopRightOnSquare} iconSize={24}
+                            on:click={() => { 
+                                createPost(communityDetails.community_view.community) 
+                                open=false
+                            }}
+                        />
                     </span>
-                    
-                    <span class="ml-auto"/>
-                    
-                    <Button size="square-lg" color="tertiary-border" icon={ArrowTopRightOnSquare} iconSize={24}
-                        on:click={() => { 
-                            createPost(communityDetails.community_view.community) 
-                            open=false
-                        }}
-                    />
-                </div>
+                </ModalPanelHeading>
 
-                <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
+                <ModalScrollArea card={false}>
                     <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal editing={false}
                         on:submit={(e) => {
                             goto(`/post/${e.detail.post.id}`)
                             open = false
                         }}
                     />
-                </div>
-            </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         <!---User's Modlog History--->
         {#if action == 'modlog'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-        
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={(e)=> {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            returnMainMenu() 
-                        }}
-                    />
-                    <div class="flex flex-row w-full justify-between">
-                        <span class="text-lg">
-                            Modlog
-                        </span>
-                    </div>
-                </div>
-                
+            <ModalPanel>
+                <ModalPanelHeading on:click={()=>returnMainMenu()} title="Modlog" />
                 <EmbeddableModlog community={communityDetails.community_view.community} headingRowClass="mt-[-50px]" on:gotoFullModlog={() => open = false }/>    
-            </div>
+            </ModalPanel>
         
         {/if}
 
