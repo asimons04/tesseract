@@ -74,8 +74,6 @@
         'showVotes': 'max-w-xl',
         'userSubmissions': 'max-w-4xl',
     } 
-    let defaultHeight = 'h-auto max-h-[90vh]'
-    let modalHeight = defaultHeight
 
     let locking = false
     let pinning = false
@@ -104,7 +102,6 @@
     function returnMainMenu() {
         action = 'none'
         modalWidth = defaultWidth
-        modalHeight = defaultHeight
     }
 
     // Lock and Unlock the Post
@@ -228,7 +225,7 @@
     on:clickIntoPost={() => open = false }
 />
 
-<Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth} height={modalHeight}>
+<Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth} >
     
     <!---Toggle Actions for the Modal Title Bar--->
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
@@ -458,7 +455,6 @@
                 <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                     on:click={() => {
                         action = 'userSubmissions'
-                        modalHeight = 'max-h-[95vh]'
                         modalWidth = panelWidths['userSubmissions']
                     }}
                 >

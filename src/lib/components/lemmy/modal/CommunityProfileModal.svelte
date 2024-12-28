@@ -99,7 +99,6 @@
     let defaultWidth = 'max-w-xl'
     let defaultHeight = 'h-auto max-h-[90vh]'
     let modalWidth = defaultWidth
-    let modalHeight = defaultWidth
     
     // Reactive hack (rather than just monitoring community directly) since updating the modal store changes the community (though back to its original value)
     // and causes the loader to re-run needlessly.
@@ -287,7 +286,6 @@
     // Returns the modal to the main menu
     function returnMainMenu() {
         modalWidth = defaultWidth
-        modalHeight = defaultHeight
         action = 'none'
     }
     
@@ -295,7 +293,7 @@
 
 <svelte:window on:clickIntoPost={() => open = false } />
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth} height={modalHeight}
+<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
     capitalizeTitle={true}
     title={
         shortenCommunityName(communityDetails?.community_view?.community?.title, 35) ?? 
@@ -558,8 +556,6 @@
                             on:click={()=> {
                                 action='communityDetails'
                                 modalWidth='max-w-4xl'
-                                modalHeight = 'max-h-[95vh]'
-                                
                             }}
                         >
                             Community Details...
@@ -571,7 +567,6 @@
                             on:click={()=> {
                                 action = 'browsing'
                                 modalWidth = 'max-w-4xl'
-                                modalHeight = 'max-h-[95vh]'
                             }}
                         >
                             Browse Community...
@@ -589,7 +584,6 @@
                             on:click={()=> {
                                 action='createPost'
                                 modalWidth = 'max-w-5xl'
-                                modalHeight = 'max-h-[95vh]'
                             }}
                         >
                             Create Post...

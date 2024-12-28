@@ -20,7 +20,12 @@
     import CommunityLink from "../community/CommunityLink.svelte";
     import EmbeddableModlog from "./components/EmbeddableModlog.svelte"
     import Markdown from "$lib/components/markdown/Markdown.svelte";
+    
     import Modal from "$lib/components/ui/modal/Modal.svelte"
+    import ModalPanel from './components/ModalPanel.svelte'
+    import ModalPanelHeading from './components/ModalPanelHeading.svelte'
+    import ModalScrollArea from './components/ModalScrollArea.svelte'
+
     import SendDMForm from "./components/SendDMForm.svelte";
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     import UserCardSmall from "../user/UserCardSmall.svelte";
@@ -66,9 +71,6 @@
 
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
-    let defaultHeight = 'h-auto max-h-[90vh]'
-    let modalHeight = defaultHeight
-    
 
     $:  if (originalUser != user) {
         originalUser = user
@@ -143,14 +145,13 @@
     function returnMainMenu() {
         action = 'none'
         modalWidth = defaultWidth
-        modalHeight= defaultHeight
     }
   
 </script>
 
 <svelte:window on:banUser={handleBanUser} on:clickIntoPost={()=> open = false} />
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth} height={modalHeight}
+<Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth}
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
 >
 
@@ -215,154 +216,79 @@
     <!---Panels--->
     {#if !loading && personDetails}
 
-        <!---Ban User--->
+        <!---Ban/Unban User--->
         {#if action == 'banning'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-                    
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={(e)=> {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            returnMainMenu() 
-                        }}
-                    />
-                    <div class="flex flex-row w-full justify-between">
-                        <span class="text-lg">
-                            Ban User
-                        </span>
-                    </div>
-                </div>
-                <Card class="flex flex-col p-4">
+            <ModalPanel>
+                <ModalPanelHeading title="{personDetails.person_view.person.banned ? 'Unban' : 'Ban'} User" on:click={()=>returnMainMenu()} />
+
+                <ModalScrollArea>
                     <BanUserForm bind:person={personDetails.person_view.person} on:ban={() => returnMainMenu() }/>
-                </Card>
+                </ModalScrollArea>
                 
-            </div>
+            </ModalPanel>
         {/if}
 
-        <!---DM and Ban Modals Inside This Modal--->
+        <!---Send Direct Message--->
         {#if action == 'messaging'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
+            <ModalPanel>                
+                <ModalPanelHeading title="Send Direct Message" on:click={()=>returnMainMenu()} />
                 
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={(e)=> {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            returnMainMenu() 
-                        }}
-                    />
-                    <div class="flex flex-row w-full justify-between">
-                        <span class="text-lg">
-                            Send Direct Message
-                        </span>
-                    </div>
-                </div>
-                <Card class="flex flex-col p-4">
+                <ModalScrollArea>
                     <SendDMForm person={personDetails.person_view.person} on:sendMessage={() => returnMainMenu() }/>
-                </Card>
-            </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         
         <!---User Bio--->
         {#if action == 'userDetails'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-                
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center">
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        returnMainMenu() 
-                    }}
-                />
-                <div class="flex flex-row w-full justify-between">
-                    <span class="text-lg">
-                        User Details
-                    </span>
-                </div>
-            </div>
-            
-            <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
-        </div>
+            <ModalPanel>
+                <ModalPanelHeading title="User Details" on:click={()=>returnMainMenu()} />
+                <ModalScrollArea>
+                    <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
 
-            <!---Communities This User Moderates--->
-            {#if personDetails.moderates.length > 0}
-                <span class="font-bold text-base my-2">Moderates:</span>
+                    <!---Communities This User Moderates--->
+                    {#if personDetails.moderates.length > 0}
+                        <span class="font-bold text-base my-2">Moderates:</span>
 
-                {#each personDetails.moderates as community, idx }
-                    <CommunityLink community={community.community} avatar on:click={() => open = false }/>
-                {/each}
-            {/if}
+                        {#each personDetails.moderates as community, idx }
+                            <CommunityLink community={community.community} avatar on:click={() => open = false }/>
+                        {/each}
+                    {/if}
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         <!---User's Modlog History--->
         {#if action == 'modlog'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
-        
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={(e)=> {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            returnMainMenu() 
-                        }}
-                    />
-                    <div class="flex flex-row w-full justify-between">
-                        <span class="text-lg">
-                            Modlog
-                        </span>
-                    </div>
-                </div>
-                
-                <EmbeddableModlog moderatee={personDetails.person_view.person} headingRowClass="mt-[-50px]" on:gotoFullModlog={() => open = false }/>    
-            </div>
-        
+            <ModalPanel>
+                <ModalPanelHeading title="User Modlog History" on:click={()=>returnMainMenu()} />
+                    <ModalScrollArea card={false}>
+                        <EmbeddableModlog moderatee={personDetails.person_view.person} headingRowClass="mt-[-50px]" on:gotoFullModlog={() => open = false }/>    
+                    </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         <!---User's Submission Feed--->
         {#if action == 'submissions'}
-            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>     
-            
-                <!---Section Header--->
-                <div class="flex flex-row gap-4 items-center">
-                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back" 
-                        on:click={(e)=> {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            returnMainMenu() 
-                        }}
-                    />
-                    
-                    <div class="flex flex-row w-full items-center justify-between">
-                        <span class="text-lg">
-                            History
-                        </span>
-
-                        <span class="flex flex-row gap-2 ml-auto">
-                            <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()} />
-                            <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} on:click={()=> userFeedControler.scrollTop()} />
-                            <Button size="md" color="tertiary" icon={ArrowPath} iconSize={20} on:click={()=> userFeedControler.refresh(true)} />
-
-                        </span>
-                    </div>
-                </div>
+            <ModalPanel>
+                <ModalPanelHeading title="Posts/Comments" on:click={()=>returnMainMenu()} >
+                    <span class="flex flex-row gap-2" slot="actions">
+                        <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()}  title="Scroll to Bottom" />
+                        <Button size="md" color="tertiary" icon={ChevronDoubleUp}   iconSize={20} on:click={()=> userFeedControler.scrollTop()}     title="Scroll to Top"/>
+                        <Button size="md" color="tertiary" icon={ArrowPath}         iconSize={20} on:click={()=> userFeedControler.refresh(true)}   title="Refresh"/>
+                    </span>
+                </ModalPanelHeading>
                 
-                <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
+                <ModalScrollArea card={false}>
                     <UserSubmissionFeed bind:controller={userFeedControler} person_name="{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}" />
-                </div>
-            </div>    
-        
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
         <!---Main Menu--->
         {#if action == 'none'}
-            <div class="flex flex-col gap-2 w-full" transition:slide={{easing:expoIn}}>
+            <ModalPanel>
                 <!--- User Card and Action Buttons--->
                 <UserCardSmall person_view={personDetails.person_view} blocked={userBlocked} mod={mod} {mostRecentItem} href 
                     on:clickUserLink={() => open = false }
@@ -420,10 +346,8 @@
                         <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                             on:click={() => {
                                 if (!personDetails) return
-                                action = 'submissions'
                                 modalWidth = "max-w-4xl"
-                                modalHeight = 'max-h-[95vh]'
-                                
+                                action = 'submissions'
                             }}
                         >
                             View History...
@@ -434,8 +358,9 @@
                         <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
                             on:click={() => {
                                 if (!personDetails) return
-                                modalWidth = "max-w-3xl"
                                 action = 'modlog'
+                                modalWidth = "max-w-4xl"
+                                
                             }}
                         >
                             Modlog History...
@@ -446,8 +371,8 @@
                             {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
                                 <Button color="tertiary-border" icon={Envelope} iconSize={20} alignment="left" class="w-full" disabled={personDetails.person_view.person.banned}
                                     on:click={() => {
-                                        modalWidth="max-w-3xl"
                                         action='messaging'
+                                        modalWidth="max-w-4xl"
                                     }}
                                 >
                                     Send Message...
@@ -501,10 +426,8 @@
                         {#if isAdmin($profile?.user) && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
                             <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
                                 on:click={() => {
-                                    //open = false
-                                    //ban(personDetails.person_view.person.banned, personDetails.person_view.person)
-                                    modalWidth = 'max-w-3xl'
                                     action = 'banning'
+                                    modalWidth = 'max-w-3xl'
                                 }}
                             >
                                 {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}...
@@ -515,11 +438,9 @@
 
                     </div>
                 {/if}
-            </div>
+            </ModalPanel>
         
         {/if}
-
-            
 
     {/if}
 </Modal>
