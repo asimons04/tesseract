@@ -21,11 +21,25 @@
     let person: Person | undefined = undefined
     let community: Community | undefined = undefined
     let hashtagRE = /^#[A-Za-z0-9À-ÿ]+/i
-    
-    $: token, token.href = photonify(token.href) ?? token.href
-    $: token, token.text = token.text.startsWith('\\#') ? token.text.replace('\\#', '#') : token.text
-    $: token, person = generatePerson(token.href)
-    $: token, community = generateCommunity(token.href)
+    let communityRE = /!(?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i
+    let userRE = /@(?<user>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i
+
+    $: token, preProcess()
+
+    /** Pre-processes the identified links for special handling.  Note the ordering is important.
+     * 1) Detect stupid/invalid links where the href value is a user/community short link and not an actual hyperlink
+     * 2) Run the "photonify" matcher/replacer to localize user, community, post, and comment links.
+     * 3) Fix some weird Mastodon hashtag thing where sometimes they are prefixed with a \
+     * 4) Populate a Person class object if the link's href starts with /u/ and contains a user and instance
+     * 5) Populate a Community class object if the link's href starts with a /c/ and contains a community name and instance.
+    */
+    function preProcess() {
+        preProcessStupidCommunityUserLinkFormats()
+        token.href  = photonify(token.href) ?? token.href
+        token.text  = token.text.startsWith('\\#') ? token.text.replace('\\#', '#') : token.text
+        person      = generatePerson(token.href)
+        community   = generateCommunity(token.href)
+    }
 
     function generatePerson(text:string) {
         if (!text.startsWith('/u/')) return
@@ -50,6 +64,31 @@
         community.actor_id = actor_id
         community.name = name
         return community
+    }
+
+    // Function to catch when someone stupidly links a community with the !community@instance as the hyperlink
+    // e.g.  [!community@instance.xyz](!instance.xyz) and [@user@instance.xyz](@user@instance.xyz) Like, who the fuck does this??
+    function preProcessStupidCommunityUserLinkFormats() {
+        try {
+            // [Whatever](!instance.xyz) -> /c/community@instance.xyz
+            let match = token.href.match(communityRE)
+            if (match) {
+                token.text = token.href = `/c/${match[1]}@${match[2]}`
+                return
+            }
+
+            // [Whatever](@user@instance.xyz) -> /u/user@instance.xyz
+            match = token.href.match(userRE)
+            if (match) {
+                token.text = token.href = `/u/${match[1]}@${match[2]}`
+                return
+            }
+        }
+        catch (err) {
+            console.log(err)
+            return
+        }
+
     }
 </script>
 
