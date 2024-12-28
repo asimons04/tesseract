@@ -1,10 +1,9 @@
 <script lang="ts">
 
     import type { CommentView, Community, PostView } from 'lemmy-js-client'
-    import type { 
-        PurgeCommentEvent,
-        PurgePostEvent
-    } from '$lib/ui/events'
+
+    import type {  PurgeCommentEvent, PurgePostEvent } from '$lib/ui/events'
+    import type { UserSubmissionFeedController } from '$lib/components/lemmy/feed/helpers'
 
     import { amMod, isAdmin, type PostModerationModalPanels } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
@@ -36,6 +35,9 @@
 
     import { 
         ArrowLeft,
+        ArrowPath,
+        ChevronDoubleDown,
+        ChevronDoubleUp,
         Envelope,
         Fire,
         Flag,
@@ -70,9 +72,10 @@
         'removing': 'max-w-3xl',
         'reporting': 'max-w-3xl',
         'showVotes': 'max-w-xl',
-        'userSubmissions': 'max-w-3xl',
+        'userSubmissions': 'max-w-4xl',
     } 
-
+    let defaultHeight = 'h-auto max-h-[90vh]'
+    let modalHeight = defaultHeight
 
     let locking = false
     let pinning = false
@@ -80,6 +83,7 @@
     let purged  = false
     let banCommunity: Community | undefined = item.community
     let modlogCommunityOnly = true
+    let userFeedControler: UserSubmissionFeedController
 
     // Make the Post/Comment item reactive
     $: item
@@ -98,8 +102,9 @@
 
     // Returns the modal to the main menu
     function returnMainMenu() {
-        modalWidth = defaultWidth
         action = 'none'
+        modalWidth = defaultWidth
+        modalHeight = defaultHeight
     }
 
     // Lock and Unlock the Post
@@ -223,7 +228,7 @@
     on:clickIntoPost={() => open = false }
 />
 
-<Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth}>
+<Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth} height={modalHeight}>
     
     <!---Toggle Actions for the Modal Title Bar--->
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
@@ -277,7 +282,7 @@
 
     <!---User Submissions in the Community--->
     {#if action == 'userSubmissions'}
-        <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
+        <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>     
             
             <!---Section Header--->
             <div class="flex flex-row gap-4 items-center">
@@ -293,11 +298,19 @@
                     <span class="text-lg">
                         Posts/Comments
                     </span>
+
+                    <span class="flex flex-row gap-2 ml-auto">
+                        <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()} />
+                        <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} on:click={()=> userFeedControler.scrollTop()} />
+                        <Button size="md" color="tertiary" icon={ArrowPath} iconSize={20} on:click={()=> userFeedControler.refresh(true)} />
+                    </span>
                 </div>
             </div>
             
-            <div class="flex flex-col w-full max-h-[70vh]">
-                <UserSubmissionFeed person_name="{item.creator.name}@{new URL(item.creator.actor_id).hostname}" community_id={item.community.id}/>
+            <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
+                <UserSubmissionFeed person_name="{item.creator.name}@{new URL(item.creator.actor_id).hostname}" community_id={item.community.id}
+                    bind:controller={userFeedControler}
+                />
             </div>
         </div>
     {/if}
@@ -564,8 +577,9 @@
                 <!---View Submissions--->
                 <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                     on:click={() => {
-                        modalWidth = panelWidths['userSubmissions']
                         action = 'userSubmissions'
+                        modalHeight = 'max-h-[95vh]'
+                        modalWidth = panelWidths['userSubmissions']
                     }}
                 >
                     Submissions in Community...

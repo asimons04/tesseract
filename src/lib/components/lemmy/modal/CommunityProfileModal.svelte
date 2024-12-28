@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Community, GetCommunityResponse, SortType } from "lemmy-js-client"
+    import type { Community, GetCommunityResponse } from "lemmy-js-client"
     import type { FeedController } from '../feed/helpers'
     
     import {addFavorite, isFavorite } from '$lib/favorites'
@@ -24,7 +24,6 @@
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
-    import { userSettings } from '$lib/settings'
 
     import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
     import Button from "$lib/components/input/Button.svelte"
@@ -44,6 +43,8 @@
         ArrowPath,
         ArrowTopRightOnSquare,
         Check,
+        ChevronDoubleDown,
+        ChevronDoubleUp,
         Cog6Tooth,
         Eye,
         EyeSlash,
@@ -75,7 +76,6 @@
     let subscribing = false
 
     let communityDetails: GetCommunityResponse
-    let communityGroupModal = false
     let communityDetailsOpen = false
     let feedController: FeedController
     let action: 
@@ -92,7 +92,9 @@
 
 
     let defaultWidth = 'max-w-xl'
+    let defaultHeight = 'h-auto max-h-[90vh]'
     let modalWidth = defaultWidth
+    let modalHeight = defaultWidth
     
     // Reactive hack (rather than just monitoring community directly) since updating the modal store changes the community (though back to its original value)
     // and causes the loader to re-run needlessly.
@@ -280,6 +282,7 @@
     // Returns the modal to the main menu
     function returnMainMenu() {
         modalWidth = defaultWidth
+        modalHeight = defaultHeight
         action = 'none'
     }
     
@@ -287,7 +290,7 @@
 
 <svelte:window on:clickIntoPost={() => open = false } />
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
+<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth} height={modalHeight}
     capitalizeTitle={true}
     title={
         shortenCommunityName(communityDetails?.community_view?.community?.title, 35) ?? 
@@ -403,7 +406,7 @@
         {/if}
 
         {#if action == 'browsing'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
+            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>
                         
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -414,23 +417,21 @@
                         Browse
                     </span>
 
-                    <span class="ml-auto" />
 
-                    <Button size="square-md" color="tertiary-border" icon={ArrowPath} title="Refresh" iconSize={24}
-                        on:click={() => {
-                            feedController.refresh(true)
-                        }}
-                    />
-                    
-                    <Button size="square-md" color="tertiary-border" icon={ArrowTopRightOnSquare} title="Go to Community" iconSize={24}
-                        on:click={ () => {
-                            goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
-                            open = false
-                        }}
-                    />
+                    <span class="flex flex-row gap-2 ml-auto">
+                        <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} title="Scroll to Bottom" on:click={()=> feedController.scrollBottom()} />
+                        <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} title="Scroll to Top" on:click={()=> feedController.scrollTop()} />
+                        <Button size="md" color="tertiary" icon={ArrowPath} title="Refresh" iconSize={20} on:click={() => feedController.refresh(true) } />
+                        <Button size="md" color="tertiary" icon={ArrowTopRightOnSquare} title="Go to Community" iconSize={20}
+                            on:click={ () => {
+                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
+                                open = false
+                            }}
+                        />
+                    </span>
                 </div>
-
-                <div class="flex flex-col gap-2 w-full {$userSettings.uiState.infiniteScroll ? 'max-h-[70vh]' : 'max-h-[60vh]'} overflow-y-scroll" >
+                
+                <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
                     <PostFeed bind:controller={feedController} inModal={true} actions={false} 
                         community_name={`${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`} 
                     />
@@ -440,7 +441,7 @@
         
         <!---Community Details Panel--->
         {#if action == 'communityDetails'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
+            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>
                     
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -451,9 +452,8 @@
                         Community Details
                     </span>
                 </div>
-                
 
-                <Card class="flex flex-col p-4 max-h-[45vh] overflow-y-auto">
+                <Card class="flex flex-col gap-2 p-2 w-full max-h-full overflow-y-scroll">
                     <!---Community details/sidebar info--->
                     <Markdown source={communityDetails.community_view.community.description ?? '*No community details were provided.*'}/>
 
@@ -544,7 +544,7 @@
 
         <!---Create Post Form--->
         {#if action == 'createPost'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>
+            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>
                         
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -564,8 +564,8 @@
                         }}
                     />
                 </div>
-                
-                <div class="flex w-full max-h-[70vh] overflow-y-scroll">
+
+                <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
                     <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal editing={false}
                         on:submit={(e) => {
                             goto(`/post/${e.detail.post.id}`)
@@ -627,8 +627,10 @@
                         <!--- Community Details/Info--->
                         <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full"
                             on:click={()=> {
-                                modalWidth='max-w-3xl'
                                 action='communityDetails'
+                                modalWidth='max-w-4xl'
+                                modalHeight = 'max-h-[95vh]'
+                                
                             }}
                         >
                             Community Details...
@@ -638,8 +640,9 @@
                         <!---Browse Community's Posts in the  Modal--->
                         <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                             on:click={()=> {
-                                modalWidth = 'max-w-3xl'
                                 action = 'browsing'
+                                modalWidth = 'max-w-4xl'
+                                modalHeight = 'max-h-[95vh]'
                             }}
                         >
                             Browse Community...
@@ -655,8 +658,9 @@
                                 communityDetails.community_view.community.removed
                             }
                             on:click={()=> {
-                                modalWidth = 'max-w-4xl'
                                 action='createPost'
+                                modalWidth = 'max-w-5xl'
+                                modalHeight = 'max-h-[95vh]'
                             }}
                         >
                             Create Post...
@@ -742,8 +746,6 @@
                 
             </div>
         {/if}
-
-        <span class="mt-2" />
 
     {/if}
 

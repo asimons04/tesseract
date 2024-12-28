@@ -160,7 +160,7 @@
     }
 </script>
 
-<Modal bind:open icon={LinkIcon} width="max-w-3xl" title={'Preview'} allowMaximize>
+<Modal bind:open icon={LinkIcon} height="max-h-full" width="max-w-3xl" title={'Preview'} allowMaximize>
 
     <!---Show link/mbfc while loading.  If Metadata fails to fetch, sill show the URL and MBFC (if available)--->
     {#if !iframeView && (loading || fetchError)}
@@ -187,7 +187,7 @@
 
     {#if post && !loading && !fetchError && !iframeView}
 
-        <div class="flex flex-col gap-2 w-full min-h-[250px]" transition:slide>    
+        <div class="flex flex-col gap-2 w-full" transition:slide>    
 
             <!--- Title --->
             <div class="flex flex-row justify-between w-full">

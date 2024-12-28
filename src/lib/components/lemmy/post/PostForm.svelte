@@ -389,7 +389,8 @@
         uploadingImage = false
     }}
 />
-<Card class="flex flex-col w-full h-full p-4">
+
+<Card elevation={inModal ? 1 : -1} class="p-2">
     <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full {previewing ? '' : 'pb-6'}">
         
         <div class="flex flex-row justify-between">
@@ -416,7 +417,7 @@
                         await deleteImageUpload(bodyImages[i])
                     }
                     bodyImages = bodyImages = []
-                   
+                    
                     data = objectCopy(default_data)
                     data = data
                     resetting = false
@@ -481,34 +482,36 @@
                         pastingImage = false
                     }}
                 />
-                        
-                <!---Fetch metadata from URL to populate title and append description to body--->
-                <Button color="tertiary-border" size="square-form" 
-                    icon={CloudArrowDown} iconSize={18}
-                    loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || uploadResponse} title="Fetch title and description"
-                    on:click={() => (getWebsiteMetadata())}
-                />
-
-                <!---Search for any crossposts to that URL--->
-                <Button color="tertiary-border" size="square-form" 
-                    icon={MagnifyingGlass} iconSize={18}
-                    loading={searching} disabled={!data.url || searching || fetchingMetadata || uploadResponse} title="Search for Existing Posts"
-                    on:click={() => (searchForPostByURL())}
-                    hidden={editing}
-                />
                 
+                <div class="flex flex-row items-center gap-2 ml-auto items-end">
+                    <!---Fetch metadata from URL to populate title and append description to body--->
+                    <Button color="tertiary-border" size="square-form" 
+                        icon={CloudArrowDown} iconSize={18}
+                        loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || uploadResponse} title="Fetch title and description"
+                        on:click={() => (getWebsiteMetadata())}
+                    />
 
-                <!---Upload an Image--->
-                <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
-                    loading={uploadingImage||pastingImage} disabled={uploadingImage|| data.url || pastingImage} title="Upload an image"
-                    on:click={() => (uploadingImage = !uploadingImage)}
-                />
+                    <!---Search for any crossposts to that URL--->
+                    <Button color="tertiary-border" size="square-form" 
+                        icon={MagnifyingGlass} iconSize={18}
+                        loading={searching} disabled={!data.url || searching || fetchingMetadata || uploadResponse} title="Search for Existing Posts"
+                        on:click={() => (searchForPostByURL())}
+                        hidden={editing}
+                    />
+                    
 
-                <!---Image Upload Delete Button--->
-                <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage={deletePostImage} iconSize={18} on:delete={(e) => {
-                        if (e.detail) data.url = '' 
-                    }}
-                />
+                    <!---Upload an Image--->
+                    <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
+                        loading={uploadingImage||pastingImage} disabled={uploadingImage|| data.url || pastingImage} title="Upload an image"
+                        on:click={() => (uploadingImage = !uploadingImage)}
+                    />
+
+                    <!---Image Upload Delete Button--->
+                    <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage={deletePostImage} iconSize={18} on:delete={(e) => {
+                            if (e.detail) data.url = '' 
+                        }}
+                    />
+                </div>
             </div>
 
             {#if minAPIVersion("0.19.5") && (isImage(data.url) || isVideo(data.url))}

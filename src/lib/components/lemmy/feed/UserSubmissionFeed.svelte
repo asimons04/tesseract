@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-    import type { CommentView, GetPersonDetailsResponse, Person, PostView } from "lemmy-js-client"
+    import type { CommentView, GetPersonDetailsResponse, PostView } from "lemmy-js-client"
     import type { ChangeProfileEvent, LastClickedPostEvent } from "$lib/ui/events"
     import type { UserSubmissionFeedController, UserSubmissionFeedControllerLoadOptions } from '$lib/components/lemmy/feed/helpers'
 
@@ -14,24 +14,20 @@
     import { profile } from '$lib/auth'
     import { getItemPublished, isCommentView, isPostView } from "$lib/lemmy/item"
     import { onDestroy, onMount } from "svelte";
-    import { page as pageStore} from "$app/stores"
     import { StorageController } from "$lib/storage-controller"
     import { userSettings } from "$lib/settings";
 
     import Button from "$lib/components/input/Button.svelte"
     import CommentItem from "$lib/components/lemmy/comment/CommentItem.svelte"
-    import MultiSelect from "$lib/components/input/MultiSelect.svelte";
     import Post from "$lib/components/lemmy/post/Post.svelte"
     import Placeholder from "$lib/components/ui/Placeholder.svelte"
     import Pageination from "$lib/components/ui/Pageination.svelte"
     import RelativeDate from "$lib/components/util/RelativeDate.svelte"
-    import SiteSearch from "$lib/components/ui/subnavbar/SiteSearch.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
     import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, ExclamationTriangle, Icon, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons";
     import TextInput from "$lib/components/input/TextInput.svelte";
     import SelectMenu from "$lib/components/input/SelectMenu.svelte";
-    import { sleep } from "../post/helpers";
     
     export let person_id: number | undefined = undefined
     export let person_name: string | undefined = undefined
@@ -240,6 +236,7 @@
                     page: page,
                     creator_id: user?.person_view.person.id,
                     sort: sort,
+                    community_id: community_id,
                     q: searchTerm
                 })
                 
@@ -533,6 +530,9 @@
                 <div class="flex flex-row w-full items-center justify-between">
                     <span class="text-lg">
                         Search Results
+                        {#if community_id}
+                            in Community
+                        {/if}
                     </span>
                 </div>
             </div>
@@ -559,8 +559,6 @@
 
     {/if}
     
-    <div class="mt-4" />
-
     <Pageination bind:page class="px-4 mb-4" on:change={(e) => {
         page = e.detail
         if (panel == 'search')      controller.search({loadSnapshot: false})

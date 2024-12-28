@@ -695,7 +695,7 @@
 />
 
 
-<div bind:this={controller.scrollContainer}  class="flex flex-col w-full gap-4 md:pr-2 overflow-x-hidden overflow-y-scroll h-full {$$props.class}" style={$$props.style}>
+<div bind:this={controller.scrollContainer}  class="flex flex-col w-full gap-4 md:pr-2 overflow-x-hidden  h-full {$$props.class}" style={$$props.style}>
     <slot name="banner" />
 
     <!---Note the last refresh time if using infinite scroll--->
