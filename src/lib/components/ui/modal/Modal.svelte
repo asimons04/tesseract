@@ -15,7 +15,6 @@
     export let title:string = '';
     export let icon:IconSource = undefined;
 
-    export let fullHeight:boolean = false
     export let height:string = 'h-auto max-h-[90vh]'
     export let width:string = 'min-w-[50%]'
     export let maximized:boolean = false
@@ -26,18 +25,21 @@
 
     let modalElement:any
     let originalWidth = width
+    let originalHeight = height
+
     let modalBackground:HTMLDivElement
 
     function maximize() {
         if (maximized) {
             width = originalWidth
+            height = originalHeight
             width = width
-            fullHeight = false
+            height = height
             maximized = false
         }
         else {
-            width = "lg:max-w-[75%]"
-            fullHeight = true
+            width = "w-[95vw]"
+            height = 'h-[95vh]'
             maximized = true
         }
     }
@@ -112,7 +114,7 @@
                 >
                     <!---Modal Dialog Title Bar--->
                     <div class="flex flex-row max-w-full">
-                        <h1 class="flex flex-row items-center font-bold text-xl gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
+                        <h1 class="flex flex-row items-center font-bold text-lg gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
                             {#if icon} 
                                 <Icon src={icon} mini width={28}/>
                             {/if}
@@ -144,28 +146,32 @@
                         </span>
                     </div>
                     
-                    <div class="flex flex-col pr-2 overflow-hidden w-full h-full"
+                    <div class="flex flex-col overflow-hidden w-full h-full"
                         use:swipe={{
                             touchAction: 'pan-y',
                             minSwipeDistance: 120
                         }}  on:swipe={onSwipe}
                     >
                         <!---Slot to hold the modal's content--->
-                        <Card elevation={card ? 1 : -1} class="overflow-y-auto {card ? 'flex flex-col p-4' : ''} {height}">
+                        <Card elevation={card ? 1 : -1} class="flex flex-col overflow-y-auto {card ? 'p-2' : ''} {height}">
                             <slot />
                         </Card>
 
-                        <div class="mt-4" />
-                        
-                        <div class="flex flex-col w-full mt-auto">
-                            <slot name="buttons" />
-                        </div>
+
+                        {#if $$slots.buttons}
+                            <div class="mt-4" />
+                            
+                            <div class="flex flex-col w-full mt-auto">
+                                <slot name="buttons" />
+                            </div>
+                        {/if}
+
                     </div>
 
                 </div>
                 
                 {#if action}
-                <div class="border-x border-b bg-slate-100 dark:bg-zinc-950 dark:border-zinc-800 p-3 py-2 flex justify-end rounded-b-xl">
+                <div class="mt-4 border-x border-b bg-slate-100 dark:bg-zinc-950 dark:border-zinc-800 p-3 py-2 flex justify-end rounded-b-xl">
                     <slot name="action">
                         <Button on:click={(e) => dispatcher('action', e)} color="primary" size="lg">
                             {action}
