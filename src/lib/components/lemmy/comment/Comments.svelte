@@ -104,7 +104,7 @@
      
 </script>
 
-<div class="flex flex-col gap-2 {isParent ? '' : 'pl-1 pt-1'}" in:fly={{ opacity: 0, y: -4 }} >
+<div class="flex flex-col gap-4 {isParent ? '' : 'pl-1 pt-2'}" in:fly={{ opacity: 0, y: -4 }} >
     {#each nodes as node, idx (node.comment_view.comment.id)}
         <!--- Comment filtering  --->
         {#if    !(
