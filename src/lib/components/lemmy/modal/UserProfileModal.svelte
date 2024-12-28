@@ -42,6 +42,7 @@
         Window as WindowIcon,
         ChevronDoubleDown,
         ChevronDoubleUp,
+        ArrowPath,
     } from "svelte-hero-icons";
     
     import Card from "$lib/components/ui/Card.svelte";
@@ -65,7 +66,8 @@
 
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
-
+    let defaultHeight = 'h-auto max-h-[90vh]'
+    let modalHeight = defaultHeight
     
 
     $:  if (originalUser != user) {
@@ -139,15 +141,16 @@
 
     // Returns the modal to the main menu
     function returnMainMenu() {
-        modalWidth = defaultWidth
         action = 'none'
+        modalWidth = defaultWidth
+        modalHeight= defaultHeight
     }
   
 </script>
 
 <svelte:window on:banUser={handleBanUser} on:clickIntoPost={()=> open = false} />
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth}
+<Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth} height={modalHeight}
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
 >
 
@@ -324,7 +327,7 @@
 
         <!---User's Submission Feed--->
         {#if action == 'submissions'}
-            <div class="flex flex-col gap-4 mt-0 w-full" transition:slide={{easing:expoIn}}>     
+            <div class="flex flex-col gap-4 mt-0 w-full h-full" transition:slide={{easing:expoIn}}>     
             
                 <!---Section Header--->
                 <div class="flex flex-row gap-4 items-center">
@@ -344,11 +347,13 @@
                         <span class="flex flex-row gap-2 ml-auto">
                             <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()} />
                             <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} on:click={()=> userFeedControler.scrollTop()} />
+                            <Button size="md" color="tertiary" icon={ArrowPath} iconSize={20} on:click={()=> userFeedControler.refresh(true)} />
+
                         </span>
                     </div>
                 </div>
                 
-                <div class="flex flex-col w-full max-h-[70vh]">
+                <div class="flex flex-col gap-2 w-full max-h-full overflow-y-scroll">
                     <UserSubmissionFeed bind:controller={userFeedControler} person_name="{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}" />
                 </div>
             </div>    
@@ -415,8 +420,10 @@
                         <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
                             on:click={() => {
                                 if (!personDetails) return
-                                modalWidth = "max-w-3xl"
                                 action = 'submissions'
+                                modalWidth = "max-w-4xl"
+                                modalHeight = 'max-h-[95vh]'
+                                
                             }}
                         >
                             View History...
