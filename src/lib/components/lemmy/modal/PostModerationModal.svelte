@@ -8,6 +8,7 @@
     import { amMod, isAdmin, type PostModerationModalPanels } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { getClient } from '$lib/lemmy'
+    import { goto } from '$app/navigation'
     import { isCommentView } from '$lib/lemmy/item'
     import { onMount } from 'svelte'
     import { profile } from '$lib/auth'
@@ -34,6 +35,7 @@
 
     import { 
         ArrowPath,
+        ArrowTopRightOnSquare,
         ChevronDoubleDown,
         ChevronDoubleUp,
         Envelope,
@@ -51,8 +53,6 @@
         Trash,
         Window as WindowIcon
     } from "svelte-hero-icons"
-    
-    
     
     
     export let open: boolean = false
@@ -282,9 +282,21 @@
         <ModalPanel>
             <ModalPanelHeading title="User's Submissions" on:click={() => returnMainMenu()}>
                 <span class="flex flex-row gap-2" slot="actions">
-                    <Button size="md" color="tertiary" icon={ChevronDoubleDown} iconSize={20} on:click={()=> userFeedControler.scrollBottom()} />
-                    <Button size="md" color="tertiary" icon={ChevronDoubleUp} iconSize={20} on:click={()=> userFeedControler.scrollTop()} />
-                    <Button size="md" color="tertiary" icon={ArrowPath} iconSize={20} on:click={()=> userFeedControler.refresh(true)} />
+                    <Button size="md" color="tertiary" icon={ChevronDoubleDown}     iconSize={20} title="Scroll to Bottom"  on:click={()=> userFeedControler.scrollBottom()} />
+                    <Button size="md" color="tertiary" icon={ChevronDoubleUp}       iconSize={20} title="Scroll to Top"     on:click={()=> userFeedControler.scrollTop()} />
+                    <Button size="md" color="tertiary" icon={ArrowPath}             iconSize={20} title="Refresh"           on:click={()=> userFeedControler.refresh(true)} />
+                    <Button size="md" color="tertiary" icon={ArrowTopRightOnSquare} iconSize={20} title="Go to Profile"     on:click={()=> {
+                            // If viewing own account go to /profile/user otherwise, goto /u/{user}@{instance}
+                            if ($profile?.user?.local_user_view.person.id == item.creator.id) {
+                                goto('/profile/user')
+                                open = false
+                            }
+                            else {    
+                                goto(`/u/${item.creator.name}@${new URL(item.creator.actor_id).host}`)
+                                open = false
+                            }
+                        }} 
+                    />
                 </span>
             </ModalPanelHeading>
             
