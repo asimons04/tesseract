@@ -30,13 +30,12 @@
     export let hideBadges = false
     export let noClick = false
     export let content: boolean = false     // Show the comment content (only used for moderation UI purposes)
-
-    let inCommunity:boolean = false
-    let inProfile:boolean = false
+    export let inProfile: boolean = false
+    
     let subscribing:boolean = false
 
-    $: inCommunity = ($page.url.pathname.startsWith("/c/"))
-    $: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
+    //$: inCommunity = ($page.url.pathname.startsWith("/c/"))
+    //$: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
     $: subscribed = comment.subscribed == 'Subscribed' || comment.subscribed == 'Pending'
 
 </script>
@@ -47,42 +46,39 @@
     <div class="flex flex-col gap-1">
 
         <span class="flex flex-row gap-2 text-sm items-center {noClick ? 'pointer-events-none' : ''}">
-            <!---Show user's avatar if viewing posts in a community--->
-            {#if comment.community && !inCommunity}
                 
-                <span class="flex flex-col items-end gap-1">    
-                    <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} community={true}/>
-                
-                    {#if $profile?.user}
-                        <!---Overlay small subscribe/unsubscribe button on avatar--->
-                        <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
-                            on:click={async () => {
-                                subscribing = true
-                                let result = await subscribe(comment.community, subscribed)
-                                
-                                if (result) comment.subscribed = 'Subscribed'
-                                else comment.subscribed = 'NotSubscribed'
-
-                                subscribing=false
-                        }}>
-                            
-                            {#if subscribing}
-                                <Spinner width={16} />
-                            {:else}
-                                <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
-                            {/if}
-                        </button>
-                    {/if}
-                </span>
+            <span class="flex flex-col items-end gap-1">    
+                <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} community={true}/>
             
-            {:else if inCommunity && comment.creator}
-                <Avatar url={comment.creator.avatar} width={avatarSize} alt={comment.creator.actor_id} />
-            {/if}
+                {#if $profile?.user}
+                    <!---Overlay small subscribe/unsubscribe button on avatar--->
+                    <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
+                        on:click={async () => {
+                            subscribing = true
+                            let result = await subscribe(comment.community, subscribed)
+                            
+                            if (result) comment.subscribed = 'Subscribed'
+                            else comment.subscribed = 'NotSubscribed'
+
+                            subscribing=false
+                    }}>
+                        
+                        {#if subscribing}
+                            <Spinner width={16} />
+                        {:else}
+                            <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
+                        {/if}
+                    </button>
+                {/if}
+            </span>
+            
+
+
 
             <div class="flex flex-col w-full text-xs">
-                {#if !inCommunity && comment.community}
-                    <CommunityLink community={comment.community} {avatarSize} />
-                {/if}
+                
+                <CommunityLink community={comment.community} {avatarSize} />
+                
                 
                 <span class="text-slate-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:gap-1 flex-wrap">
                     {#if !inProfile && comment.creator}

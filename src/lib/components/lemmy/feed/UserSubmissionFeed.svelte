@@ -493,9 +493,9 @@
 
                 {#each submissions as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
                     {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                        <CommentItem comment={item} {actions} scrollTo={last_item}/>
+                        <CommentItem comment={item} {actions} scrollTo={last_item} inProfile={false}/>
                     {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                        <Post post={item} {actions} inProfile scrollTo={last_item} />
+                        <Post post={item} {actions} inProfile={false} scrollTo={last_item} />
                     {/if}
                 {/each}
                 
@@ -541,9 +541,9 @@
             {#if searchResults.length > 0 }
                 {#each searchResults as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
                     {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                        <CommentItem comment={item} {actions} scrollTo={last_item}/>
+                        <CommentItem comment={item} {actions} scrollTo={last_item} inProfile={false} />
                     {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                        <Post post={item} {actions} inProfile scrollTo={last_item} />
+                        <Post post={item} {actions} inProfile={false} scrollTo={last_item} />
                     {/if}
                 {/each}
             {:else}

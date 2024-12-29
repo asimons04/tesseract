@@ -35,6 +35,7 @@
     export let actions:boolean = true
     export let collapseBadges:boolean = false;
     export let scrollTo:number = -1
+    export let inProfile:boolean = false
 
     let commentContainer:HTMLDivElement
     let lastClickedPost = -1
@@ -73,7 +74,7 @@
     <Card class="flex flex-col p-2 flex-1 gap-1">
         
         <div class="flex flex-row justify-between gap-1 items-center">
-            <CommentMeta bind:comment noClick={!actions}/>
+            <CommentMeta bind:comment bind:inProfile noClick={!actions}/>
             
             <Button
                 color="tertiary-border"
