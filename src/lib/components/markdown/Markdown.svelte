@@ -52,6 +52,7 @@
     
     // Pre-process the markdown text to detect user/community links, hashtags, etc
     function preProcess(text:string) {
+        if (!text) return
         
         // Initialize guardrail flags
         let inCodeBlock = false
