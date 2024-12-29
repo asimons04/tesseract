@@ -65,7 +65,11 @@
     function handleBanUser(e: BanUserEvent) {
         if (node.comment_view.creator.id == e.detail.person_id) {
             node.comment_view.creator.banned = e.detail.banned
-            if (e.detail.remove_content) node.comment_view.comment.removed = true
+            
+            if (e.detail.remove_content) {
+                node.comment_view.comment.removed = true
+                color = 'error'
+            }
         }
         node = node
     }
@@ -73,7 +77,11 @@
     function handleBanCommunity(e: BanCommunityEvent) {
         if (node.comment_view.creator.id == e.detail.person_id) {
             node.comment_view.creator_banned_from_community = e.detail.banned
-            if (e.detail.remove_content) node.comment_view.comment.removed = true
+            
+            if (e.detail.remove_content) {
+                node.comment_view.comment.removed = true
+                color = 'error'
+            }
         }
         node = node
     }
@@ -81,6 +89,7 @@
     function handleRemoveComment(e: RemoveCommentEvent) {
         if (node.comment_view.comment.id == e.detail.comment_id) {
             node.comment_view.comment.removed = e.detail.removed
+            
             if (e.detail.removed) color = 'error'
             else color = getCardColor(node)
         }
