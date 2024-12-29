@@ -51,6 +51,60 @@ removeAdmin {username}
     - `!<community>@instance.xyz` (already implemented)
     - `~<comment_id>@instance.xyz`
 
+## 1.4.24
+
+### New: Documentation for Mod Tools
+I'm (slowly) getting documentation / screenshots written up now that the basic UI paradigm has stabilized.   Until now, only the server config/deployment is thoroughly written-up.
+
+The first area of documentation for the frontend is for the mod tooling.
+
+**See**:  [Documentation - Mod Tools](./docs/ModTools.md)
+
+### Misc Bugfixes
+- Comment image backgrounds were the same color as the alternate card color in light mode. Set the image background a shade darker
+
+- Fixed bounding in Community Settings -> Team user items 
+
+- Hidden communities were being filtered out; the documentation/description is vague, but hiding a community seems to hide it when non-admins list/search communities and prevent it from showing up in `/all` but users already subscribed or those going to it directly should still be able to see it.
+
+- Tables now scroll horizontally instead of overflowing outside the page bounds
+
+- Stupid invalid user/community link formats break the UI when clicked (e.g. `[anything](!community@instance.xyz)` and/or `[anything](@user@instance.xyz)`).  Even though "thEy WoRk iN lEmMy Ui !1!1!!!" they're not valid hyperlinks and should not be used. 
+
+- Rendering of user/community links stopped if there were more than one in the same line of text.
+
+#### Bugfix + Enhancement: More Markdown Pre-Processor Optimizations
+In the previous release, I started breaking the markdown up into smaller pieces and processing it line by line.  This worked much better than trying to grok it all as one big blob and allowed me to simplify my regex patterns significantly.
+
+In this release, I've gone one more step and am breaking the lines apart and processing text word-by-word.  This extra granularity has allowed me to further simplify regex patterns and address a few shortcomings such as missing a render when two user/community links were on the same line.
+
+The main benefit here, aside from better and more consistent rendering, is that it has greatly reduced my reliance on regex look-behinds which are not widely supported.
+
+
+
+
+
+### Tweaks and Enhancements
+#### Modals
+Could probably call this release "Modal Mania" because of all the work they've seen.
+
+The modals were already horizontally responsive, and I wanted to make them veritically responsive as well.  They already kind-of were, but it was inconsistent in places. This required a significant refactor / overhaul of the main modal component which underpins all of the different modals. 
+
+Refactored most of the system modals to take advantage of the changes.  
+
+
+#### Misc
+- When browsing a community or user's submissions in their respective modals, the modal is now taller and has scroll to top/bottom buttons for convenience.
+- When searching a user's submissions from the moderation modal, the search is now scoped to the community relevant to the mod modal.
+
+
+
+
+---
+
+
+
+
 ## 1.4.23
 This is a minor feature release.  Nothing new for regular users, but some new capabilities for admins.
 
