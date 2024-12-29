@@ -1,3 +1,4 @@
+<!---This component is deprecated as of 1.4.21--->
 <script lang="ts">
     import type { 
         BanCommunityEvent, 
