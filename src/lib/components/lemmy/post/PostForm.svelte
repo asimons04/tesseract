@@ -390,7 +390,7 @@
     }}
 />
 
-<Card elevation={inModal ? 1 : -1} class="p-2">
+<Card class="p-2">
     <form on:submit|preventDefault={submit} class="flex flex-col gap-4 h-full {previewing ? '' : 'pb-6'}">
         
         <div class="flex flex-row justify-between">
