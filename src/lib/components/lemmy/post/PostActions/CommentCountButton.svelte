@@ -4,17 +4,13 @@
 
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { getInstance } from '$lib/lemmy'
+    import { goto } from '$app/navigation'
     import { userSettings } from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     
-    import {
-    ChatBubbleLeftRight,
-        ChatBubbleOvalLeftEllipsis
-    } from 'svelte-hero-icons'
-    import { goto } from '$app/navigation';
-    
+    import { ChatBubbleLeftRight } from 'svelte-hero-icons'
 
     export let displayType:PostDisplayType
     export let post:PostView
