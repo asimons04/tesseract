@@ -58,7 +58,7 @@
         {/if}
     </div>
 
-    <div class="flex flex-row gap-2 items-center justify-between w-full">
+    <div class="flex flex-row gap-4 items-center w-full">
         
         <!---Vote Buttons for the XPost Item--->
         {#if voteButtons}
@@ -78,7 +78,7 @@
         <CommentCountButton bind:post={crosspost} displayType="feed" />
         
         <!---Published and Edited Date--->
-        <span class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
+        <span class="flex flex-row gap-1 ml-auto items-center text-slate-600 dark:text-zinc-400">
             
             <RelativeDate date={crosspost.post.published} />
             
