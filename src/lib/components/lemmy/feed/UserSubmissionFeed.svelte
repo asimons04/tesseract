@@ -23,11 +23,13 @@
     import Placeholder from "$lib/components/ui/Placeholder.svelte"
     import Pageination from "$lib/components/ui/Pageination.svelte"
     import RelativeDate from "$lib/components/util/RelativeDate.svelte"
+    import SelectMenu from "$lib/components/input/SelectMenu.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
+    import TextInput from "$lib/components/input/TextInput.svelte"
+
+    import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, ExclamationTriangle, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons"
     
-    import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, ExclamationTriangle, Icon, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons";
-    import TextInput from "$lib/components/input/TextInput.svelte";
-    import SelectMenu from "$lib/components/input/SelectMenu.svelte";
+    
     
     export let person_id: number | undefined = undefined
     export let person_name: string | undefined = undefined
@@ -37,9 +39,7 @@
     export let actions: boolean = false
     export let limit:number = $userSettings.uiState.postsPerPage ?? 10
     export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
-
-
-    $:  debugMode = $userSettings.debugInfo
+    export let inProfile = true
 
     let page = 1
     let loading = false
@@ -60,13 +60,13 @@
     let panel: 'submissions' | 'search' = 'submissions'
 
     onMount(async () => {
-        if (debugMode) console.log(moduleName, ": Mounting component")
+        if ($userSettings.debugInfo) console.log(moduleName, ": Mounting component")
         loading = true
         controller.load({loadSnapshot: true})
     })
     
     onDestroy(() => {
-        if (debugMode) console.log(moduleName, ": Component destroyed; saving data")
+        if ($userSettings.debugInfo) console.log(moduleName, ": Component destroyed; saving data")
         controller.takeSnapshot().then( () => {
             controller.reset() 
             scrollContainer?.remove()
@@ -88,24 +88,24 @@
         },
 
         clearSnapshot: function() {
-            if (debugMode) console.log(moduleName, ": Clearing snapshot:", this.storageKey)
+            if ($userSettings.debugInfo) console.log(moduleName, ": Clearing snapshot:", this.storageKey)
             this.storage.remove(this.storageKey)
             return
         },
 
         load: async function(opts?:any):Promise<void> {
             try {
-                if (debugMode) console.log(moduleName, ": Loader running")
+                if ($userSettings.debugInfo) console.log(moduleName, ": Loader running")
                 loading = true;
 
                 if (opts?.loadSnapshot && await this.loadSnapshot()) {
-                    if (debugMode) console.log(moduleName, ": Loading data from snapshot:", this.storageKey)
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Loading data from snapshot:", this.storageKey)
                     this.loadedFromSnapshot = true
                     loading = false
                     return
                 }
                 
-                if (debugMode) console.log(moduleName, ": Loading data from API.")
+                if ($userSettings.debugInfo) console.log(moduleName, ": Loading data from API.")
                 
                 user = await getClient().getPersonDetails({
                     limit: limit,
@@ -153,7 +153,7 @@
 
                 // Check age of snapshot; discard if older than 30 minutes (currently hardcoded)
                 if (now - pageSnapshot.last_refreshed > (snapshotValidity * 60)) {
-                    if (debugMode) console.log(moduleName, ": Snapshot is expired. Removing.")
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Snapshot is expired. Removing.")
                     this.storage.remove(this.storageKey)
                     return false
                 }
@@ -217,17 +217,17 @@
 
         search: async function(opts?:UserSubmissionFeedControllerLoadOptions) {
             try {
-                if (debugMode) console.log(moduleName, ": Searching...")
+                if ($userSettings.debugInfo) console.log(moduleName, ": Searching...")
                 loading = true;
 
                 if (opts?.loadSnapshot && await this.loadSnapshot()) {
-                    if (debugMode) console.log(moduleName, ": Loading search data from snapshot:", this.storageKey)
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Loading search data from snapshot:", this.storageKey)
                     this.loadedFromSnapshot = true
                     loading = false
                     return
                 }
                 
-                if (debugMode) console.log(moduleName, ": Searching via the API.")
+                if ($userSettings.debugInfo) console.log(moduleName, ": Searching via the API.")
                 
                 const results = await getClient().search({
                     listing_type: 'All',
@@ -266,7 +266,7 @@
         },
 
         takeSnapshot: async function() {
-            if (debugMode) console.log(moduleName, ": Taking snapshot: ", this.storageKey)
+            if ($userSettings.debugInfo) console.log(moduleName, ": Taking snapshot: ", this.storageKey)
             await this.storage.store(this.storageKey, this.data)
         },
 
@@ -310,7 +310,7 @@
 
         set person_id(id:number|undefined) {
             if (!loading && id && id != old.person_id) {
-                if (debugMode) console.log(moduleName, ": Person id changed.", old.person_id, id)
+                if ($userSettings.debugInfo) console.log(moduleName, ": Person id changed.", old.person_id, id)
                 old.person_id = id
                 this.refresh()
             }
@@ -322,7 +322,7 @@
 
         set person_name(name:string|undefined) {
             if (!loading && name && name != old.person_name) {
-                if (debugMode) console.log(moduleName, ": Person name changed.", old.person_name, name)
+                if ($userSettings.debugInfo) console.log(moduleName, ": Person name changed.", old.person_name, name)
                 old.person_name = name
                 this.refresh()
             }
@@ -348,14 +348,14 @@
 
     const handlers = {
         ChangeProfileEvent(e:ChangeProfileEvent) {
-            if (debugMode) console.log(moduleName, ": Responding to profile change")
+            if ($userSettings.debugInfo) console.log(moduleName, ": Responding to profile change")
 
             controller.reset()
             controller.load({loadSnapshot: true})
         },
         
         LastClickedPostEvent(e:LastClickedPostEvent) {
-            if (debugMode) console.log(moduleName, ": Setting 'last_item' to ", e.detail.post_id)
+            if ($userSettings.debugInfo) console.log(moduleName, ": Setting 'last_item' to ", e.detail.post_id)
             last_item = e.detail.post_id
         }
     }
@@ -366,7 +366,7 @@
     on:lastClickedPost={handlers.LastClickedPostEvent}
     on:changeProfile={handlers.ChangeProfileEvent}
     on:beforeunload={() => {
-        if (debugMode) console.log(moduleName, ": Page refresh requested; flushing snapshot")
+        if ($userSettings.debugInfo) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()
     }}
 />
@@ -388,7 +388,7 @@
             <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
                 loading={loading} disabled={loading}
                 on:click={() => {
-                    if (debugMode) console.log(moduleName, ": Refresh button clicked")
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
                     controller.refresh(true) 
                 }}
             >
@@ -409,7 +409,7 @@
             alignment="bottom-left"
             on:select={(e) => {
                 if (loading) return
-                if (debugMode) console.log(moduleName, ": Sort selected.", e.detail)
+                if ($userSettings.debugInfo) console.log(moduleName, ": Sort selected.", e.detail)
                 submissions = submissions = []
                 last_item = -1
                 //@ts-ignore
@@ -430,7 +430,7 @@
             alignment="bottom-right"
             on:select={(e) => {
                 if (loading) return
-                if (debugMode) console.log(moduleName, ": Type selected.", e.detail)
+                if ($userSettings.debugInfo) console.log(moduleName, ": Type selected.", e.detail)
 
                 last_item = -1
                 //@ts-ignore
@@ -469,7 +469,7 @@
     
 
     
-    
+    <!---Loading Indicator--->
     {#if loading}
         <span class="flex flex-row w-full h-full items-center" transition:fade>        
             <span class="mx-auto my-auto">
@@ -478,6 +478,7 @@
         </span>
     {/if}
     
+    <!---Load Error Indicator--->
     {#if loadError}
         <span class="flex flex-row w-full h-full items-center" transition:fade>        
             <span class="mx-auto my-auto">
@@ -486,17 +487,22 @@
         </span>
     {/if}
 
+    <!---Modal Contents after Successful Load--->
     {#if !loading && !loadError}   
+        
         <!---User Posts/Comments--->
         {#if panel == 'submissions'}
             {#if submissions?.length > 0 }
 
                 {#each submissions as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
+                    
                     {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                        <CommentItem comment={item} {actions} scrollTo={last_item} inProfile={false}/>
+                        <CommentItem comment={item} {actions} scrollTo={last_item} {inProfile}/>
+                    
                     {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                        <Post post={item} {actions} inProfile={false} scrollTo={last_item} />
+                        <Post post={item} {actions} {inProfile} scrollTo={last_item} />
                     {/if}
+
                 {/each}
                 
                 
@@ -540,11 +546,14 @@
             
             {#if searchResults.length > 0 }
                 {#each searchResults as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
+                    
                     {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                        <CommentItem comment={item} {actions} scrollTo={last_item} inProfile={false} />
+                        <CommentItem comment={item} {actions} scrollTo={last_item} {inProfile} />
+                    
                     {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                        <Post post={item} {actions} inProfile={false} scrollTo={last_item} />
+                        <Post post={item} {actions} {inProfile} scrollTo={last_item} />
                     {/if}
+                    
                 {/each}
             {:else}
                 <div class="mt-2 w-full h-full flex flex-col gap-5 mx-auto">
