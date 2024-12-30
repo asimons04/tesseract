@@ -146,7 +146,6 @@
                 actions={true} 
                 {expandCompact}
                 autoplay={$userSettings.embeddedMedia.autoplay}
-                inViewport={true}
                 on:reply={() => {
                     showCommentForm = !showCommentForm
                     
