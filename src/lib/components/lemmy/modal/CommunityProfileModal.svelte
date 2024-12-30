@@ -97,8 +97,10 @@
 
 
     let defaultWidth = 'max-w-xl'
-    let defaultHeight = 'h-auto max-h-[90vh]'
     let modalWidth = defaultWidth
+
+    let communityLookupName: string     // Set by loadDetails()
+    let storageKey: string              // set by loadDetails()
     
     // Reactive hack (rather than just monitoring community directly) since updating the modal store changes the community (though back to its original value)
     // and causes the loader to re-run needlessly.
@@ -125,8 +127,9 @@
         
         communityDetailsOpen = false
         loading = true
-        const communityLookupName = `${community.name}@${new URL(community.actor_id).hostname}`
-        const storageKey = `getCommunity_${$instance}:${communityLookupName}`
+        
+        communityLookupName = `${community.name}@${new URL(community.actor_id).hostname}`
+        storageKey = `getCommunity_${$instance}:${communityLookupName}`
         
         try {
             communityDetails = await storage.get(storageKey)
@@ -228,6 +231,9 @@
                     removed: communityDetails.community_view.community.removed
                 })
                 
+                // Update the cached community details with the new state
+                await storage.put(storageKey, communityDetails)
+
                 remove.reset()
                 returnMainMenu()
 
@@ -265,6 +271,9 @@
                     community_id: communityDetails.community_view.community.id,
                     hidden: communityDetails.community_view.community.hidden
                 })
+
+                // Update the cached community details with the new state
+                await storage.put(storageKey, communityDetails)
 
                 hide.reset()
                 returnMainMenu()
@@ -659,7 +668,7 @@
                                     action="hiding"
                                 }}
                             >
-                                {communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community...
+                                {communityDetails.community_view.community.hidden ? 'Un-Hide' : 'Hide'} Community...
                             </Button>
 
                         {/if}
