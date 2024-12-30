@@ -14,9 +14,9 @@
         Icon,
         ArrowUp,
         ArrowDown,
-        ChatBubbleOvalLeftEllipsis,
         Pencil
     } from 'svelte-hero-icons'
+    import CommentCountButton from './PostActions/CommentCountButton.svelte';
     
 
     export let crosspost:PostView;                      // PostView object to render
@@ -75,11 +75,8 @@
         {/if}
     
         <!---Comment Counts--->
-        <span class="flex flex-row gap-1 font-normal items-center" >
-            <Icon src={ChatBubbleOvalLeftEllipsis} mini width={iconSize} height={iconSize}/>
-            <FormattedNumber number={crosspost.counts.comments} />
-        </span>
-
+        <CommentCountButton bind:post={crosspost} displayType="feed" />
+        
         <!---Published and Edited Date--->
         <span class="flex flex-row gap-1 items-center text-slate-600 dark:text-zinc-400">
             
