@@ -34,29 +34,32 @@
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     import { onDestroy, onMount } from 'svelte';
 
-    export let post: PostView | null
-    export let actions: boolean = true
-    export let autoplay:boolean = false;
-    export let displayType: PostDisplayType = "feed"
-    export let forceCompact:boolean = false;
-    export let disablePostLinks:boolean = false
-    export let collapseBadges:boolean = false;
-    export let expandCompact: boolean = computeExpandCompact()
+    export let post: PostView                                           // The Post to display
+    export let actions: boolean             = true                      // Set to false to disable action buttons (except expand)
+    export let autoplay:boolean             = false                     // Whether the media should override the auto play setting
+    export let displayType: PostDisplayType = "feed"                    // Whether to render the post for the 'feed' or 'post'
+    export let forceCompact:boolean         = false                     // Force the post to render in compact view
+    export let disablePostLinks:boolean     = false                     // Force the post to be read only by adding 'pointer-events-none'                        
+    export let collapseBadges:boolean       = false                     // Largely deprecated, hide badge text and use only icons (only applicable now for NSFW)
+    export let expandCompact: boolean       = computeExpandCompact()    // Not sure if needs exported now? Controls expanding/collapsing a compact post to/from card view
 
-    export let scrollTo:number = -1
-    export let inCommunity: boolean = false
-    export let inProfile: boolean = false
-    export let inViewport = false
-
+    export let scrollTo:number              = -1                        // The feed can pass a post id (e.g. last seen post) and if the current post's ID matches, it will scroll itself into view
+    export let inCommunity: boolean         = false                     // If true, the community avatar and name will be hidden and only show the poster's info/avatar
+    export let inProfile: boolean           = false                     // If true, the poster's info/avatar will be hidden and only show that of the community
+    
+    let inViewport = false                                              // No longer need to export?
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement | null
     let postType = getPostType(post)
     let lastClickedPost = -1
+
+    $:  post.post.id, onPostChange()
     
-    $:  debugMode = $userSettings.debugInfo
-    $:  post?.post.id, postType = getPostType(post)
-    $:  post?.post.id, applyDummyThumbnail()
-    
+    function onPostChange() {
+        postType = getPostType(post)
+        applyDummyThumbnail()
+    }
+
     function applyDummyThumbnail() {
         if (!post || post?.post?.thumbnail_url) return
         
@@ -199,7 +202,7 @@
 
     async function scrollIntoView(smooth:boolean = false) {
         if (scrollTo == post?.post.id && post?.post.id > 0 && postContainer?.scrollIntoView) {
-            if (debugMode) console.log(moduleName, ": Scrolling post " , post.post.id, "into view via param")
+            if ($userSettings.debugInfo) console.log(moduleName, ": Scrolling post " , post.post.id, "into view via param")
             await sleep(50)
             postContainer.scrollIntoView({
                 behavior: smooth ? 'smooth' : 'instant',
@@ -241,8 +244,6 @@
     
     onDestroy(() => {
         postContainer?.remove()
-        //post = null
-        //postContainer = null
     })
 </script>
 
@@ -269,44 +270,44 @@
 
 
 
-{#if post}
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-    <div class="relative" 
-        id={post.post.id.toString()} 
-        on:mouseover={() => announceLastClickedPost(post) } 
-        on:touchstart={() => announceLastClickedPost(post) } 
-        bind:this={postContainer}
-        transition:fade
-    >
-        <PostIsInViewport bind:postContainer threshold={.4} delay={1000} on:inViewport={(e) => {
-                inViewport = e.detail
-                setTimeout(() => markPostAsRead(), 1500)
-            }}
+
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<div class="relative" 
+    id={post.post.id.toString()} 
+    on:mouseover={() => announceLastClickedPost(post) } 
+    on:touchstart={() => announceLastClickedPost(post) } 
+    bind:this={postContainer}
+    transition:fade
+>
+    <PostIsInViewport bind:postContainer threshold={.4} delay={1000} on:inViewport={(e) => {
+            inViewport = e.detail
+            setTimeout(() => markPostAsRead(), 1500)
+        }}
+    />
+
+    <!--- Compact Posts --->
+    {#if  (forceCompact || !expandCompact) }
+        <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
+            bind:post 
+            bind:expandCompact 
+            bind:expandPreviewText  
+            on:reply
         />
 
-        <!--- Compact Posts --->
-        {#if  (forceCompact || !expandCompact) }
-            <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
-                bind:post 
-                bind:expandCompact 
-                bind:expandPreviewText  
-                on:reply
-            />
 
+    <!--- Card Posts --->
+    {:else}
+        <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
+            bind:post 
+            bind:expandCompact 
+            bind:expandPreviewText  
+            bind:inViewport
+            on:reply
+        />
+    {/if}
+</div>
 
-        <!--- Card Posts --->
-        {:else}
-            <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
-                bind:post 
-                bind:expandCompact 
-                bind:expandPreviewText  
-                bind:inViewport
-                on:reply
-            />
-        {/if}
-    </div>
-{/if}
 
 
 
