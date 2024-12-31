@@ -53,7 +53,15 @@ removeAdmin {username}
 
 ## 1.4.25
 ### Bugs to Fix
+
+
+
+## Bugfixes
 - When viewing a user's submissions in the profile modal from a `/c/community` page, the post meta is hiding the community and treating `inCommunity` as true.
+- Removed code to switch between community icon and user avatars in CommentMeta component since that's actually useless since you can't browse just comments in a community.
+- Comment card colors were not reactively updating when user was banned with content removal from site/community
+- When removing/hiding a community, the local cache of the community details was not updated to reflect that; had to open the app in a new tab to get a new session in order to fetch it again.  The cache now updates on block/unblock/hide/unhide.
+
 
 
 ---
