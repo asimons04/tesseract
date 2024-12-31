@@ -216,12 +216,10 @@
             </MenuButton>
         {/if}
 
-        {#if $userSettings.debugInfo}
-            <MenuButton title="Debug Info" color="info" on:click={() => debugModal(post) }>
-                <Icon src={BugAnt} width={16} mini />
-                Debug Info...
-            </MenuButton>
-        {/if}
+        <MenuButton title="Debug Info" color="info" on:click={() => debugModal(post) }>
+            <Icon src={BugAnt} width={16} mini />
+            Debug Info...
+        </MenuButton>
 
     {/if}
 
