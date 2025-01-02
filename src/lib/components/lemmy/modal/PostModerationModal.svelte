@@ -5,7 +5,7 @@
     import type {  PurgeCommentEvent, PurgePostEvent } from '$lib/ui/events'
     import type { UserSubmissionFeedController } from '$lib/components/lemmy/feed/helpers'
 
-    import { amMod, isAdmin, type PostModerationModalPanels } from '../moderation/moderation'
+    import { amMod, amModOfAny, isAdmin, type PostModerationModalPanels } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation'
@@ -14,6 +14,7 @@
     import { profile } from '$lib/auth'
     import { toast } from '$lib/components/ui/toasts/toasts'
 
+    import BanUnbanCommunityForm from './components/BanUnbanCommunityForm.svelte'
     import BanUserForm from './components/BanUserForm.svelte'
     import Button from "$lib/components/input/Button.svelte"
     import Card from '$lib/components/ui/Card.svelte'
@@ -48,11 +49,13 @@
         Megaphone,
         Newspaper,
         NoSymbol,
+        Scale,
         ShieldExclamation, 
         Sparkles, 
         Trash,
         Window as WindowIcon
     } from "svelte-hero-icons"
+    
     
     
     export let open: boolean = false
@@ -66,6 +69,7 @@
     let panelWidths = {
         'none': 'max-w-xl',
         'banning': 'max-w-3xl',
+        'communityBanning': 'max-w-3xl',
         'communityInfo': 'max-w-3xl',
         'messaging': 'max-w-3xl',
         'modlog': 'max-w-4xl',
@@ -275,7 +279,16 @@
         </div>
     </div>
 
-
+    <!---Ban User from All Communities--->
+    {#if action == 'communityBanning'}
+        <ModalPanel>
+            <ModalPanelHeading title="Ban/Unban From All My Communities" on:click={() => returnMainMenu()} />
+                <ModalScrollArea>
+                    <BanUnbanCommunityForm user={item.creator} />
+                </ModalScrollArea>
+            
+        </ModalPanel>
+    {/if}
 
     <!---User Submissions in the Community--->
     {#if action == 'userSubmissions'}
@@ -548,7 +561,20 @@
                             action = 'banning'
                         }}
                     >
-                        {item.creator_banned_from_community ? 'Unban' : 'Ban'} Community...
+                        {item.creator_banned_from_community ? 'Unban' : 'Ban'} From This Community...
+                    </Button>
+                {/if}
+
+                <!---Ban User From All Communities--->
+                {#if item.creator.id != $profile?.user?.local_user_view.person.id && amModOfAny($profile?.user)}
+                    <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth = panelWidths['communityBanning']
+                            banCommunity = undefined
+                            action = 'communityBanning'
+                        }}
+                    >
+                        Ban/Unban All My Communities...
                     </Button>
                 {/if}
                 
@@ -561,7 +587,7 @@
                             action = 'banning'
                         }}
                     >
-                        {item.creator.banned ? 'Unban' : 'Ban'} Instance...
+                        {item.creator.banned ? 'Unban' : 'Ban'} From Instance...
                     </Button>
                 {/if}
             </div>

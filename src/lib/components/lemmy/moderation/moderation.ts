@@ -17,7 +17,17 @@ import {
 import { writable } from 'svelte/store'
 
 
-export type PostModerationModalPanels = 'none' | 'banning' | 'communityInfo' | 'modlog' | 'messaging' | 'showVotes' | 'removing' | 'reporting' | 'userSubmissions'
+export type PostModerationModalPanels = 
+    'none' | 
+    'banning' | 
+    'communityBanning' |
+    'communityInfo' | 
+    'modlog' | 
+    'messaging' | 
+    'showVotes' | 
+    'removing' | 
+    'reporting' | 
+    'userSubmissions'
 
 
 interface Modals {

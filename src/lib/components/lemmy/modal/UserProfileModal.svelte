@@ -8,31 +8,33 @@
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
     import { instance } from "$lib/instance"
-    import { isAdmin } from '$lib/components/lemmy/moderation/moderation'
+    import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { isBlocked, blockUser } from '$lib/lemmy/user'
     import { onMount } from "svelte"
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
     
+    import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
     import BanUserForm from "./components/BanUserForm.svelte"
     import Button from "$lib/components/input/Button.svelte"
-    import CommunityLink from "../community/CommunityLink.svelte";
+    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
+    import CommunityLink from "../community/CommunityLink.svelte"
     import EmbeddableModlog from "./components/EmbeddableModlog.svelte"
-    import Markdown from "$lib/components/markdown/Markdown.svelte";
+    import Markdown from "$lib/components/markdown/Markdown.svelte"
     
     import Modal from "$lib/components/ui/modal/Modal.svelte"
     import ModalPanel from './components/ModalPanel.svelte'
     import ModalPanelHeading from './components/ModalPanelHeading.svelte'
     import ModalScrollArea from './components/ModalScrollArea.svelte'
 
-    import SendDMForm from "./components/SendDMForm.svelte";
+    import SendDMForm from "./components/SendDMForm.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
-    import UserCardSmall from "../user/UserCardSmall.svelte";
+    import UserCardSmall from "../user/UserCardSmall.svelte"
+    import UserSubmissionFeed from '$lib/components/lemmy/feed/UserSubmissionFeed.svelte'
 
     import { 
         ArrowTopRightOnSquare,
-        ArrowLeft, 
         Envelope,
         Hashtag,
         Home,
@@ -48,17 +50,13 @@
         ChevronDoubleDown,
         ChevronDoubleUp,
         ArrowPath,
+        Scale,
     } from "svelte-hero-icons";
-    
-    import Card from "$lib/components/ui/Card.svelte";
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte";
-    import UserSubmissionFeed from '$lib/components/lemmy/feed/UserSubmissionFeed.svelte'
-    
     
     export let user:Person | undefined
     export let open: boolean = false
     export let mod: boolean = false
-    export let action: 'none' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions'  = 'none'
+    export let action: 'none' | 'communityBanning' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions'  = 'none'
     
     let loading = false
     let personDetails: GetPersonDetailsResponse
@@ -228,6 +226,17 @@
             </ModalPanel>
         {/if}
 
+        <!---Ban User from All Communities--->
+        {#if action == 'communityBanning'}
+            <ModalPanel>
+                <ModalPanelHeading title="Ban/Unban From All My Communities" on:click={() => returnMainMenu()} />
+                    <ModalScrollArea>
+                        <BanUnbanCommunityForm user={personDetails.person_view.person} />
+                    </ModalScrollArea>
+                
+            </ModalPanel>
+        {/if}
+
         <!---Send Direct Message--->
         {#if action == 'messaging'}
             <ModalPanel>                
@@ -309,8 +318,7 @@
                 </CollapseButton>
 
                 {#if !aboutMe}
-                    <span class="mt-2"/>
-                    
+                   
                     <!--- Action Buttons for this User--->
                     <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide={{easing:expoIn}}>
                         
@@ -422,6 +430,18 @@
                             </Button>
                         {/if}
                         
+                        <!---Ban User From All Communities--->
+                        {#if $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id && amModOfAny($profile?.user)}
+                        <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                action = 'communityBanning'
+                                modalWidth = 'max-w-3xl'
+                            }}
+                        >
+                            Ban/Unban All My Communities...
+                        </Button>
+                        {/if}
+
                         <!---Ban User--->
                         {#if isAdmin($profile?.user) && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
                             <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 

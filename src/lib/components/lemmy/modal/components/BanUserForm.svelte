@@ -14,7 +14,7 @@
     import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
     import SettingDateInput from "$lib/components/ui/settings/SettingDateInput.svelte"
     
-    import { CalendarDays, Trash } from "svelte-hero-icons"
+    import { CalendarDays, HandRaised, Trash } from "svelte-hero-icons"
     
     
 
@@ -27,8 +27,7 @@
     let expiry = ''
     let loading = false
     let removeContent = false
- 
-
+    let ban_all_remote_communities = false
 
 
 
@@ -37,9 +36,8 @@
     
     
         loading = true
-        let bannedInstance = person.banned
-        let bannedCommunity = creator_banned_from_community
-    
+        
+            
         try {
             let date: number | undefined
             // Validate ban expiry date
@@ -63,14 +61,13 @@
                     expires: date ? Math.floor(date / 1000) : undefined,
                 })
 
-                bannedCommunity = response?.banned
                 creator_banned_from_community = response?.banned
 
                 // Dispatch global event so other components can react
                 dispatchWindowEvent('banCommunity', {
                     person_id: person.id,
                     community_id: community.id,
-                    banned: bannedCommunity,
+                    banned: creator_banned_from_community,
                     remove_content: removeContent
                 })
 
@@ -88,22 +85,46 @@
                     expires: date ? Math.floor(date / 1000) : undefined,
                 })
 
-                bannedInstance = response?.person_view.person.banned
-                person.banned = bannedInstance
+                person.banned = response?.person_view.person.banned
 
                 // Dispatch global event so other components can react
                 dispatchWindowEvent('banUser', {
                     person_id: person.id,
-                    banned: bannedInstance,
+                    banned: person.banned,
                     remove_content: removeContent
                 })
+
+                // Ban from all non-local communities if option selected
+                if (ban_all_remote_communities && $profile.user.moderates?.length > 0) {
+                    
+                    $profile.user.moderates.forEach(async (c) => {
+                        if (c.community.instance_id != $profile.user?.local_user_view.person.instance_id) {
+                            await getClient().banFromCommunity({
+                                community_id: c.community.id,
+                                ban: person.banned,
+                                reason: reason,
+                                person_id: person.id,
+                                remove_data: removeContent,
+                                expires: date ? Math.floor(date / 1000) : undefined,
+                            })
+
+                            dispatchWindowEvent('banCommunity', {
+                                person_id: person.id,
+                                banned: person.banned,
+                                community_id: c.community.id,
+                                remove_content: removeContent
+                            })
+                        }
+                    })
+
+                }
 
             }
             
             dispatcher('ban')
 
             toast({
-                content: `Successfully ${ (community ? bannedCommunity : bannedInstance ) ? 'banned' : 'unbanned'}  ${person.name}@${new URL(person.actor_id).hostname} ${community ? 'from the community' : 'from the instance'}.`,
+                content: `Successfully ${ (community ? creator_banned_from_community : person.banned ) ? 'banned' : 'unbanned'}  ${person.name}@${new URL(person.actor_id).hostname} ${community ? 'from the community' : 'from the instance'}.`,
                 type: 'success',
                 title: 'Success'
             })
@@ -158,13 +179,20 @@
             {(community ? creator_banned_from_community : person.banned) ? 'Unban' : 'Ban'}
         </Button>
     </MarkdownEditor>
-
-    {#if !(community ? creator_banned_from_community : person.banned)}
-        <SettingToggleContainer>
+    
+    <SettingToggleContainer>
+        
+        <SettingToggle bind:value={ban_all_remote_communities} icon={HandRaised} condition={!community} title="{person.banned ? 'Unban' : 'Ban'} All Remote Communities"
+            description="{person.banned ? 'Unban' : 'Ban'} this user from all remote communities I moderate."
+        />
+        
+        {#if !(community ? creator_banned_from_community : person.banned)}
             <SettingToggle bind:value={removeContent} icon={Trash} title="Remove Content" description="Remove all of this user's content when banning." />
             <SettingDateInput bind:value={expiry} icon={CalendarDays} title="Ban Expires" description="To effect a temporary ban, enter a date for the ban to expire. Leave blank for a permanent ban." />
-        </SettingToggleContainer>
-    {/if}
+        {/if}
+    
+    </SettingToggleContainer>
+
 
     
 </form>
