@@ -15,7 +15,7 @@
 {#if href}
     <a {href}
         id={id}
-        class="{highlight ? 'text-sky-700 dark:text-sky-500' : ''} text-left hover:underline max-w-full 
+        class="break-words {highlight ? 'text-sky-700 dark:text-sky-500' : ''} text-left hover:underline max-w-full 
             {nowrap ? 'whitespace-nowrap overflow-hidden truncate text-xs' : ''}
             {$$props.class}
         "

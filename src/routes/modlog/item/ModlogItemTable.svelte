@@ -209,7 +209,7 @@
 
     <!---Details--->
     <div class="flex flex-row gap-1 px-1 text-xs w-full {$profile?.user ? 'lg:w-[40%]' : 'lg:w-[60%]'}">
-        <div class="flex flex-col gap-2 text-xs w-[90%]">
+        <div class="flex flex-col gap-2 text-xs w-full">
             <ModlogAction action={item.actionName} expires={item.expires} />
 
             <span class="text-xs">
@@ -222,7 +222,7 @@
                 
                 {#if item.reason}
                 <span class="flex flex-nowrap gap-1 items-start">
-                    <Markdown noPreview={true} source={item.reason} />
+                    <Markdown noPreview={true} source={item.reason} class="w-full" />
                 </span>
                 {/if}
                 
