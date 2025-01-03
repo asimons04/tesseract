@@ -17,11 +17,6 @@ All major/minor changes between releases will be documented here.
 1) Look into making a grid view.
     - May need to make this separate from the main feed as initial tests with just CSS have not panned out.
 
-1) Power Mod Tools #1: Ban/Unban from all communities you moderate
-    - Input user to be banned as well as a reason and optional expiry
-    - Get list of communities current user moderates
-    - Loop over community list, call banCommunity, and provide the given user, reason, and optional expiry
-    - UI:  Show communtiy list and add a "check" icon to each as the API calls are processed
 
 1) Power Mod Tools #2:  Command palette
 ```
@@ -51,12 +46,49 @@ removeAdmin {username}
     - `!<community>@instance.xyz` (already implemented)
     - `~<comment_id>@instance.xyz`
 
+## 1.4.26
+
+### Bugfixes
+- Add `/report` route that redirects to `/moderation` so the email links from the API work correctly.
+- Add moderation button to crosspost items
+- Long links in the modlog were not wrapping when reflowing to mobile
+- Pause markdown videos/audio when leaving viewport instead of destroying (same as how post videos are now handled).
+
+
+### New Features
+
+#### Support for Video Uploads
+Less a "new feature" and more a bugfix for a feature I didn't realize already existed and mostly worked lol.  
+
+The file upload handler sets the supported MIME types, but it has no way to enforce them (it's more a suggestion to the browser).  A user reported that they forced a video upload, and it worked, but was buggy.  This was a surprise since I'd never actually tested or even thought about supporting video uploads. 
+
+So I patched up the upload handler to support `video/mp4` and `video/webm` formats.  The previewer will only show the first frame as if it were a static image, but it will no longer glitch out.  It will also automatically disable and hide the "Pre-convert to webp" options if a video is detected.
+
+I'm not sure how useful this will be since most instances limit upload file sizes or disallow videos, but if you're on a supported instance, hey, you can do videos now.  
+
+
+#### Moderation
+Added support for issuing bulk community bans/unbans.  Highly useful if a known troll is roaming about and you want to quickly ban them from all of the communities you moderate.  It works a little differently depending on where it's invoked and whether you're a moderator and/or an admin.
+
+In all cases, the expiration date, reason, and whether to remove content applies to all communities (e.g. the API is called for the same user with the same options and loops through the list of communities you moderate).
+
+**User Profile Modal and Moderation Modal**:  
+- New option in the user profile modal to ban/unban that user from all of your moderated communities. [Mods + Admins]
+
+- New option in the "Ban User [From instance]..." form to "Ban All Remote Communities".  Will issue community bans for all *remote* communities you may be moderating in addition to the instance ban for your home instance. The "remote" filter is to avoid spamming the modlog in case you're an admin of a large instance (technically you moderate all local communities you're subscribed to)  [Admins Only]
+
+
+**Community Profile Modal**:  
+- The "Ban/Unban" option has been extended to allow optionally banning/unbanning the supplied user from all the communities you moderate. [Mods + Admins]
+
+
+
+---
+
 ## 1.4.25
-### Bugs to Fix
 
 
-
-## Bugfixes
+### Bugfixes
 - When viewing a user's submissions in the profile modal from a `/c/community` page, the post meta is hiding the community and treating `inCommunity` as true.
 - Removed code to switch between community icon and user avatars in CommentMeta component since that's actually useless since you can't browse just comments in a community.
 - Comment card colors were not reactively updating when user was banned with content removal from site/community
