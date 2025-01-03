@@ -89,6 +89,16 @@
         
             <!---Comment Counts--->
             <CommentCountButton bind:post={crosspost} displayType="feed" />
+
+             <!---Moderation--->
+             {#if !noClick && onHomeInstance && (amMod($profile?.user, crosspost.community) || isAdmin($profile?.user))}
+                <Button color="tertiary-border" size="sm" title="Moderation" icon={ShieldCheck} iconSize={20} on:click={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        postModerationModal(crosspost) 
+                    }}
+                />
+            {/if}
             
             <!---Published and Edited Date--->
             <span class="flex flex-row gap-1 ml-auto items-center text-slate-600 dark:text-zinc-400">
@@ -103,15 +113,7 @@
                     </span>
                 {/if}
 
-                <!---Moderation--->
-                {#if !noClick && onHomeInstance && (amMod($profile?.user, crosspost.community) || isAdmin($profile?.user))}
-                    <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            postModerationModal(crosspost) 
-                        }}
-                    />
-                {/if}
+               
             </span>
 
         </div>
