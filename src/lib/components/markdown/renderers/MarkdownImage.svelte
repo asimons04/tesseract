@@ -22,6 +22,16 @@
     let inViewport = false
     let container:HTMLDivElement
     let loop = $userSettings.embeddedMedia.loop
+
+    let video: HTMLVideoElement
+    let audio: HTMLAudioElement
+
+    $: inViewport, pauseMedia()
+
+    function pauseMedia() {
+        if (audio && !inViewport) audio.pause()
+        if (video && !inViewport) video.pause()
+    }
 </script>
 
 <PostIsInViewport bind:postContainer={container} bind:inViewport />
@@ -38,8 +48,8 @@
             
                 
             <!--- Audio--->
-            {#if isAudio(token.href) && inViewport}
-                <audio controls preload="auto">
+            {#if isAudio(token.href) }
+                <audio bind:this={audio} controls preload="auto">
                     <source src={imageProxyURL(token.href)} type="{
                         new URL(token.href).pathname.endsWith('mp3')
                             ? 'audio/mpeg'
@@ -57,9 +67,9 @@
                 </audio>
             
             <!---Direct Video--->
-            {:else if isVideo(token.href) && inViewport}
+            {:else if isVideo(token.href)}
                 <!-- svelte-ignore a11y-media-has-caption -->
-                <video class="rounded-xl max-w-full max-h-[65vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
+                <video bind:this={video} class="rounded-xl max-w-full max-h-[65vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
                     <source src="{imageProxyURL(token.href)}" 
                         type="{
                             new URL(token.href).pathname.endsWith('mp4') || new URL(token.href).pathname.endsWith('m4v')
