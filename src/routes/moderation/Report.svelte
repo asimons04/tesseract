@@ -254,6 +254,15 @@
                             {report.creator_banned_from_community ? 'Unban' : 'Ban'} From Community...
                         </Button>
 
+                        <!---Ban/Unban User From All My Communities--->
+                        <Button color="tertiary-border" icon={NoSymbol} alignment="left" class="w-full" on:click={() => {
+                            if (report.type == 'post' && report.post_view)          postModerationModal(report.post_view, 'communityBanning')
+                            if (report.type == 'comment' && report.comment_view)    postModerationModal(report.comment_view, 'communityBanning')
+                            }}
+                        >
+                            Ban/Unban From All My Communities...
+                        </Button>
+
                         
                     {/if}
                 </div>
