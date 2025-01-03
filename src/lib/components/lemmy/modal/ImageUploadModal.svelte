@@ -22,7 +22,7 @@
     export let image: FileList | null = null
     export let altText: string = ''
     export let useAltText = true
-    export let purpose:string = 'Image'
+    export let purpose:string = 'Media'
 
     let loading = false
     let uploadResponse:UploadImageResponse | undefined = undefined
@@ -47,6 +47,7 @@
             // Reset the preview image and alt text
             image = null
             altText = ''
+            isVideo = false
         
         } catch (err) {
             toast({
@@ -63,14 +64,17 @@
         image = null
         loading = false
         open = false
+        isVideo = false
     }
 
     $: image, disableWebpConvert(image)
+    let isVideo = false
 
     function disableWebpConvert(f:FileList | null) {
         if (!f) return
         if (f[0].type?.split('/')[0] == 'video') {
             $userSettings.convertUploadsToWebp = false
+            isVideo = true
         }
     }
 </script>
@@ -84,6 +88,7 @@
             <TextInput bind:value={altText} type="text" label="Alt Text" placeholder="Briefly describe the image"/>
         {/if}
 
+        {#if !isVideo}
         <SettingToggleContainer>
             <SettingToggle icon={Photo} title="Pre-process Image to WebP" bind:value={$userSettings.convertUploadsToWebp}
                 description="Convert the image to webP prior to uploading. Will reduce bandwidth and save work on the instance server. 
@@ -96,6 +101,7 @@
                 description="What quality level to use when converting the image to webP. Lower gives a smaller file, higher gives better quality."
             />
         </SettingToggleContainer>
+        {/if}
     </form>
 
     <div class="flex flex-row gap-4 mt-4 items-center justify-between" slot="buttons">
