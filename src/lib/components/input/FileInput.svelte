@@ -14,7 +14,7 @@
 
   $: if (files) {
     previewURL = URL.createObjectURL(files[0])
-    fileType = files[0].type?.split('/')[0]
+    fileType = files[0].type?.split('/')[0].trim() || 'image'
   }
 
   
@@ -50,24 +50,22 @@
     >
         {#if (image && files) || preview && previewURL}
 
-            {#if preview}
-                {#if fileType == 'image'}
+            {#if preview && fileType == 'image'}
                     <img src={previewURL} class="w-full max-w-sm h-full rounded-lg" alt="Upload preview"
                         on:load={() => {
                             if (previewURL) URL.revokeObjectURL(previewURL)
                         }}
                         
                     />
-                {/if}
 
-                {#if fileType == 'video'}
+            {:else if preview && fileType == 'video'}
                     <!-- svelte-ignore a11y-media-has-caption -->
                     <video preload="metadata"  src={previewURL} class="w-full max-w-sm h-full rounded-lg"
                         on:load={() => {
                             if (previewURL) URL.revokeObjectURL(previewURL)
                         }}
                     />
-                {/if}
+
             {:else}
                 <Icon src={CheckCircle} class="opacity-50" size="36" />
                 <p class="text-sm opacity-50">File attached!</p>
