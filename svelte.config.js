@@ -30,7 +30,7 @@ const config = {
                 'form-action':  ['self'],
                 'base-uri':     ['self'],
                 'frame-src':    ['*'],
-                'media-src':    ['*', 'data:'],
+                'media-src':    ['*', 'data:', 'blob:'],
                 'object-src':   ['none'],
             },
             mode: 'nonce'

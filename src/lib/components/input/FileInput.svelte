@@ -10,11 +10,14 @@
   export let preview:boolean = true;
 
   let dragover = false
+  let fileType:string = 'image'
 
   $: if (files) {
     previewURL = URL.createObjectURL(files[0])
+    fileType = files[0].type?.split('/')[0]
   }
 
+  
   function onDrop(event:any) {
     files = event.dataTransfer?.files
   }
@@ -48,12 +51,23 @@
         {#if (image && files) || preview && previewURL}
 
             {#if preview}
-                <img src={previewURL} class="w-full max-w-sm h-full rounded-lg" alt="Profile avatar"
-                    on:load={() => {
-                        if (previewURL) URL.revokeObjectURL(previewURL)
-                    }}
-                    
-                />
+                {#if fileType == 'image'}
+                    <img src={previewURL} class="w-full max-w-sm h-full rounded-lg" alt="Upload preview"
+                        on:load={() => {
+                            if (previewURL) URL.revokeObjectURL(previewURL)
+                        }}
+                        
+                    />
+                {/if}
+
+                {#if fileType == 'video'}
+                    <!-- svelte-ignore a11y-media-has-caption -->
+                    <video preload="metadata"  src={previewURL} class="w-full max-w-sm h-full rounded-lg"
+                        on:load={() => {
+                            if (previewURL) URL.revokeObjectURL(previewURL)
+                        }}
+                    />
+                {/if}
             {:else}
                 <Icon src={CheckCircle} class="opacity-50" size="36" />
                 <p class="text-sm opacity-50">File attached!</p>

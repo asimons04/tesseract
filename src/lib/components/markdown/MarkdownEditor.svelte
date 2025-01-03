@@ -310,11 +310,14 @@
                     {#if upload}
                         <ImageUploadPreviewDeleteButton uploadResponse={upload} previewSize={64}
                             on:insert={(e) => {
-                                if (e.detail?.url) {
-                                    $userSettings.proxyMedia.useForImageUploads
-                                        ? wrapSelection(`![](${imageProxyURL(e.detail.url)})`, '')
-                                        : wrapSelection(`![](${e.detail.url})`, '')
+                                try {
+                                    if (e.detail?.url) {
+                                        $userSettings.proxyMedia.useForImageUploads
+                                            ? wrapSelection(`![](${imageProxyURL(e.detail.url)})`, '')
+                                            : wrapSelection(`![](${e.detail.url})`, '')
+                                    }
                                 }
+                                catch {}
                             }}
                             
                             on:delete={(e) => {
