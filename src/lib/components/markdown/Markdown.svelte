@@ -61,6 +61,7 @@
         
         // Fix stupid ampersand encodings
         let temp = text.replaceAll('&amp;', '&') + '\n'
+        if ($userSettings.uiState.filterAnnoyingCCLicense) temp = filterAnnoyingCCLicenseOnComments(temp)
 
         // Break the text into lines and parse each line individually
         let lines = temp.split('\n')
@@ -103,7 +104,6 @@
                         word = fixLemmyEncodings(word)
                         if (!noUserCommunityLink) word = findUserCommunityLinks(word)
                         if (!noHashtags) word = hashtagsToMDLinks(word)
-                        if ($userSettings.uiState.filterAnnoyingCCLicense) word = filterAnnoyingCCLicenseOnComments(word)
 
                         words[j] = word
                     }
