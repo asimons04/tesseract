@@ -77,12 +77,15 @@ interface Settings {
         pollRate: number                                                // How often to check for new notifications from the API
         // how often to check in the background
         notifRate: number                                               // Unsure. Inherited from Photon, but I belive it's vestigial and can be removed.
+        expandInboxItemsByDefault: boolean                              // If enabled, inbox items will be expanded by default
     }
     displayNames: boolean                                               // Enable to show user/community display names. Disable to use their system names.
     nsfwBlur: boolean                                                   // Enable to blur NSFW posts
     tagNSFWCommunities: boolean                                         // No longer used; need to remove
     moderation: {
         removalReasonPreset: string                                     // The preset template for moderation replies
+        applicationRejectionPreset: string                              // Preset template for rejected applications
+        expandReportsByDefault: boolean                                 // If enabled, reports will be expanded by default
     },
     openInNewTab: {
         links: boolean,                                                 // Enable to open external links in a new tab
@@ -153,10 +156,13 @@ export const defaultSettings: Settings = {
         enabled:    false,
         pollRate:   60 * 1000,
         notifRate:  10 * 60 * 1000,
+        expandInboxItemsByDefault: false,
     },
     
     moderation: {
         removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
+        expandReportsByDefault: false,
+        applicationRejectionPreset: '',
 
     },
     font: 'font-roboto',
