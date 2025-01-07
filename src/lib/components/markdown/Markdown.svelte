@@ -12,7 +12,7 @@
         findUserCommunityLinks,
         hashtagsToMDLinks
     } from './markdown'
-    
+
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { marked } from 'marked';
     import { userSettings } from '$lib/settings'
@@ -34,7 +34,24 @@
 
     let mdText:string
     
+    /*
+        Tokenizer overrides.  Currently just used to avoid the automatic linking behavior for email addresses.
+        Returns undefined if `noLink` is set to true to stop rendering, returns false otherwise to fallback to the default tokenizer
+    */
+    const tokenizer = {
+        autolink(src: string): undefined | false {
+            if (noLink) return undefined
+            else return false
+        },
+
+        url(src:string): undefined | false {
+            if (noLink) return undefined
+            else return false
+        }
+    }
+
     marked.use({
+        tokenizer: tokenizer,
         extensions: [
             extensions.containerExtension((params: TokenExtractionParameters) => {
                 if (params.type === 'spoiler') {
@@ -48,8 +65,8 @@
                 return null
             })
         ],
-        gfm: !noLink
     })
+
     
     // Pre-process the markdown text to detect user/community links, hashtags, etc
     function preProcess(text:string) {
