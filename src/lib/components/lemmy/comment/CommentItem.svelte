@@ -74,7 +74,7 @@
     <Card class="flex flex-col p-2 flex-1 gap-1">
         
         <div class="flex flex-row justify-between gap-1 items-center">
-            <CommentMeta bind:comment bind:inProfile noClick={!actions}/>
+            <CommentMeta bind:comment bind:inProfile noClick={!actions} />
             
             <Button
                 color="tertiary-border"
@@ -107,7 +107,7 @@
                     }} 
                 class="text-sm font-bold text-left"
             >
-                <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink noHashtags/>
+                <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink  noHashtags noLink />
             </a> 
             
             <div class="flex flex-row gap-1 items-center">

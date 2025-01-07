@@ -146,7 +146,7 @@
 
         {#if content}
             <span class="flex max-h-[15vh] overflow-y-scroll text-xs font-normal">
-                <Markdown source={comment.comment.content} />
+                <Markdown source={comment.comment.content} noUserCommunityLink  noHashtags noLink />
             </span> 
         {/if}
     </div>

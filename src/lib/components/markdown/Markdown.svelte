@@ -12,6 +12,7 @@
         findUserCommunityLinks,
         hashtagsToMDLinks
     } from './markdown'
+    
     import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { marked } from 'marked';
     import { userSettings } from '$lib/settings'
