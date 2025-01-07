@@ -33,25 +33,21 @@
     export let noImages: boolean = false
 
     let mdText:string
-    
-    /*
-        Tokenizer overrides.  Currently just used to avoid the automatic linking behavior for email addresses.
-        Returns undefined if `noLink` is set to true to stop rendering, returns false otherwise to fallback to the default tokenizer
-    */
-    const tokenizer = {
-        autolink(src: string): undefined | false {
-            if (noLink) return undefined
-            else return false
+
+    const noLinktokenizer = {
+        autolink(src: string): undefined  {
+            return undefined
         },
 
-        url(src:string): undefined | false {
-            if (noLink) return undefined
-            else return false
+        url(src:string): undefined {
+            return undefined
         }
     }
 
     marked.use({
-        tokenizer: tokenizer,
+        tokenizer: noLink
+            ? noLinktokenizer
+            : undefined,
         extensions: [
             extensions.containerExtension((params: TokenExtractionParameters) => {
                 if (params.type === 'spoiler') {
