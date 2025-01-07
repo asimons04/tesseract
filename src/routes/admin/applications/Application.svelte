@@ -7,6 +7,7 @@
     import { isThrowawayEmail } from '$lib/blacklists'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
 
     import Badge from '$lib/components/ui/Badge.svelte'
     import Button from '$lib/components/input/Button.svelte'
@@ -36,13 +37,9 @@
     let applicationDate = new Date(application.registration_application.published)
     
     let action: 'none' | 'approve' | 'deny' = 'none'
-    let open: boolean = false
     let approving = false
     let denyReason:string
     let createModlogEntry = false
-    
-    
-    
     
 
     async function review(approve: boolean) {
@@ -103,7 +100,7 @@
 
 <div class="flex flex-row w-full" transition:fade>
     
-    <CollapseButton bind:expanded={open} icon={ClipboardIcon} bold={!application.admin} truncate={true} class="w-full">        
+    <CollapseButton expanded={$userSettings.moderation.expandApplicationsByDefault} icon={ClipboardIcon} bold={!application.admin} truncate={true} class="w-full">        
         
         <!---Title Component of Collapse Button--->
         <div class="flex flex-row gap-2 items-start w-full" slot="title" title="{application.creator.name}">
@@ -130,263 +127,261 @@
             
         </div>
         
-        <!---Body of Card; don't render if not open--->
-        {#if open}
-            <Card class="p-4 flex flex-col gap-2 text-sm">
+        <Card class="p-4 flex flex-col gap-2 text-sm">
+            
+            <!---New User Metadata--->
+            <SectionTitle>Application Details</SectionTitle>
+            <div class="flex flex-col w-full pl-2 gap-2 lg:flex-row lg:justify-between lg:items-center">
                 
-                <!---New User Metadata--->
-                <SectionTitle>Application Details</SectionTitle>
-                <div class="flex flex-col w-full pl-2 gap-2 lg:flex-row lg:justify-between lg:items-center">
+                <!---Left Column (datetime, username, app status)--->
+                <span class="flex flex-col w-full lg:w-1/2 gap-2">
                     
-                    <!---Left Column (datetime, username, app status)--->
-                    <span class="flex flex-col w-full lg:w-1/2 gap-2">
+
+                    <!---Application Timestamp--->
+                    <span class="flex flex-row gap-1 w-full text-xs items-end">
+                        <span class="font-bold w-[130px]">Date/Time: </span>
                         
-
-                        <!---Application Timestamp--->
-                        <span class="flex flex-row gap-1 w-full text-xs items-end">
-                            <span class="font-bold w-[130px]">Date/Time: </span>
+                        <span class="flex flex-row gap-1 w-[calc(100%-130px)]">
                             
-                            <span class="flex flex-row gap-1 w-[calc(100%-130px)]">
-                                
-                                <time datetime={applicationDate.toLocaleString()}>
-                                    {applicationDate.toLocaleDateString()} {applicationDate.toLocaleTimeString()}
-                                </time>
-                                
-                                (<RelativeDate date={application.registration_application.published} />)
-                            </span>
-                        </span>
-
-                        <!--New User Username--->
-                        <span class="flex flex-row gap-1 w-full text-xs items-end">
-                            <span class="font-bold w-[130px]">Username: </span>
+                            <time datetime={applicationDate.toLocaleString()}>
+                                {applicationDate.toLocaleDateString()} {applicationDate.toLocaleTimeString()}
+                            </time>
                             
-                            <span class="w-[calc(100%-130px)]">
-                                <UserLink user={application.creator} avatar={false} showInstance={false} class="-ml-1" />
-                            </span>
+                            (<RelativeDate date={application.registration_application.published} />)
                         </span>
+                    </span>
 
-                        <!---Application State--->
-                        <span class="flex flex-row gap-1 text-xs w-full items-end">
-                            <span class="font-bold w-[130px]">Status: </span>
-                            <span class="capitalize w-[calc(100%-130px)]">
-                                {applicationState}
-                            </span>
-                        </span>
-
-
-
+                    <!--New User Username--->
+                    <span class="flex flex-row gap-1 w-full text-xs items-end">
+                        <span class="font-bold w-[130px]">Username: </span>
                         
+                        <span class="w-[calc(100%-130px)]">
+                            <UserLink user={application.creator} avatar={false} showInstance={false} class="-ml-1" />
+                        </span>
+                    </span>
+
+                    <!---Application State--->
+                    <span class="flex flex-row gap-1 text-xs w-full items-end">
+                        <span class="font-bold w-[130px]">Status: </span>
+                        <span class="capitalize w-[calc(100%-130px)]">
+                            {applicationState}
+                        </span>
+                    </span>
+
+
+
+                    
+                </span>
+                
+                <!---Right Column (signup email, email verified, throwaway email indicator)--->
+                <span class="flex flex-col w-full lg:w-1/2 gap-2">
+                    
+                    <!--New User Email-->
+                    <span class="flex flex-row gap-1 text-xs w-full items-end">
+                        <span class="font-bold w-[130px]">Signup Email: </span>
+                        
+                        <span class="w-[calc(100%-130px)]">
+                            {application.creator_local_user?.email ?? '<None>'}
+                        </span>
+                    </span>
+
+                    <!--Email Verified-->
+                    <span class="flex flex-row gap-1 text-xs w-full items-end">
+                        <span class="font-bold w-[130px]">Email Verified: </span>
+                        
+                        <span class="w-[calc(100%-130px)]">
+                            
+                            <!---If email was given, indicate whether it has been verified--->
+                            {#if application.creator_local_user?.email}
+                                { application.creator_local_user.email_verified ? 'Yes' : 'No' }    
+                            {:else}
+                                N/A
+                            {/if}
+                        </span>
                     </span>
                     
-                    <!---Right Column (signup email, email verified, throwaway email indicator)--->
-                    <span class="flex flex-col w-full lg:w-1/2 gap-2">
-                        
-                        <!--New User Email-->
-                        <span class="flex flex-row gap-1 text-xs w-full items-end">
-                            <span class="font-bold w-[130px]">Signup Email: </span>
-                            
-                            <span class="w-[calc(100%-130px)]">
-                                {application.creator_local_user?.email ?? '<None>'}
-                            </span>
+                    
+                    <!---User Used a Throwaway Email Service-->
+                    <span class="flex flex-row gap-1 text-xs w-full items-end">
+                        <span class="font-bold w-[130px]">Throwaway Email: </span>
+                        <span class="w-[calc(100%-130px)]">
+                            {#if application.creator_local_user?.email}
+                                { isThrowawayEmail(application.creator_local_user.email) ? 'Yes' : 'No' }    
+                            {:else}
+                                N/A
+                            {/if}
                         </span>
-
-                        <!--Email Verified-->
-                        <span class="flex flex-row gap-1 text-xs w-full items-end">
-                            <span class="font-bold w-[130px]">Email Verified: </span>
-                            
-                            <span class="w-[calc(100%-130px)]">
-                                
-                                <!---If email was given, indicate whether it has been verified--->
-                                {#if application.creator_local_user?.email}
-                                    { application.creator_local_user.email_verified ? 'Yes' : 'No' }    
-                                {:else}
-                                    N/A
-                                {/if}
-                            </span>
-                        </span>
-                        
-                        
-                        <!---User Used a Throwaway Email Service-->
-                        <span class="flex flex-row gap-1 text-xs w-full items-end">
-                            <span class="font-bold w-[130px]">Throwaway Email: </span>
-                            <span class="w-[calc(100%-130px)]">
-                                {#if application.creator_local_user?.email}
-                                    { isThrowawayEmail(application.creator_local_user.email) ? 'Yes' : 'No' }    
-                                {:else}
-                                    N/A
-                                {/if}
-                            </span>
-                        </span>
-                        
                     </span>
-                </div>
+                    
+                </span>
+            </div>
 
-                <hr class="{hrColors}" />
+            <hr class="{hrColors}" />
+            
+            <!---Application Response--->
+            <span>
+                <SectionTitle>Application Response</SectionTitle>
+                <p class="pl-2">{application.registration_application.answer}</p>
+            </span>
+
+            <hr class="{hrColors}" />
+
+            
+            <div class="flex flex-col w-full pl-2 gap-2 lg:flex-row lg:justify-between lg:items-center">
                 
-                <!---Application Response--->
-                <span>
-                    <SectionTitle>Application Response</SectionTitle>
-                    <p class="pl-2">{application.registration_application.answer}</p>
+                <!---Left Column: Approving/Denying Admin and Deny Reason (if available)--->
+                <span class="flex flex-col w-full h-full lg:w-1/3 gap-2">
+                    <!---Admin Who Approved/Denied the Application--->
+                    {#if application.admin}
+                    <span>
+                        <SectionTitle>
+                            {application.creator_local_user.accepted_application ? 'Approved' : 'Denied'} by
+                        </SectionTitle>
+                        <UserLink avatar={false} user={application.admin} showInstance={false} class="pl-2"/>
+                    </span>
+                    {/if}
+
+                    <!---Deny Reason--->
+                    {#if !application.creator_local_user.accepted_application && application.registration_application.deny_reason}
+                    <span>    
+                        <SectionTitle>Application Denial Reason</SectionTitle>
+                        <p class="pl-2">{application.registration_application.deny_reason}</p>
+                    </span>
+                    {/if}
                 </span>
 
-                <hr class="{hrColors}" />
 
+                <!---Right Column: Action Menu--->
+                <span class="flex flex-col w-full lg:w-2/3 gap-2">
+                    <hr class="lg:hidden {hrColors}" />
                 
-                <div class="flex flex-col w-full pl-2 gap-2 lg:flex-row lg:justify-between lg:items-center">
-                    
-                    <!---Left Column: Approving/Denying Admin and Deny Reason (if available)--->
-                    <span class="flex flex-col w-full h-full lg:w-1/3 gap-2">
-                        <!---Admin Who Approved/Denied the Application--->
-                        {#if application.admin}
-                        <span>
-                            <SectionTitle>
-                                {application.creator_local_user.accepted_application ? 'Approved' : 'Denied'} by
-                            </SectionTitle>
-                            <UserLink avatar={false} user={application.admin} showInstance={false} class="pl-2"/>
-                        </span>
-                        {/if}
+                    {#if action == 'none'}
+                        <div class="flex flex-col gap-2 w-full" transition:slide>
+                            
+                            <SectionTitle>Application Actions</SectionTitle>
+                            
+                            <span class="flex flex-col gap-2 w-full px-8">
+                                <!---Search for Alts, Copy Lemmyverse and Actor ID Links--->
+                                <Button color="tertiary-border" icon={MagnifyingGlass} alignment="left" class="w-full" title="Search for alt accounts of this user"
+                                    on:click={() => {
+                                        window.open(`/search?type=Users&q=${application.creator.name}`)
+                                    }}
+                                >
+                                    Search for Alts
+                                </Button>
 
-                        <!---Deny Reason--->
-                        {#if !application.creator_local_user.accepted_application && application.registration_application.deny_reason}
-                        <span>    
-                            <SectionTitle>Application Denial Reason</SectionTitle>
-                            <p class="pl-2">{application.registration_application.deny_reason}</p>
-                        </span>
-                        {/if}
-                    </span>
-
-
-                    <!---Right Column: Action Menu--->
-                    <span class="flex flex-col w-full lg:w-2/3 gap-2">
-                        <hr class="lg:hidden {hrColors}" />
-                    
-                        {#if action == 'none'}
-                            <div class="flex flex-col gap-2 w-full" transition:slide>
+                                <!--Open the Approve Panel--->
+                                <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" title="Approve" on:click={() => { action = 'approve' }} >
+                                    Approve...
+                                </Button>
                                 
-                                <SectionTitle>Application Actions</SectionTitle>
+                                <!---Open the Deny Panel--->
+                                <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" title="Deny" on:click={() => { action = 'deny' }}>
+                                    Deny...
+                                </Button>
+
                                 
-                                <span class="flex flex-col gap-2 w-full px-8">
-                                    <!---Search for Alts, Copy Lemmyverse and Actor ID Links--->
-                                    <Button color="tertiary-border" icon={MagnifyingGlass} alignment="left" class="w-full" title="Search for alt accounts of this user"
-                                        on:click={() => {
-                                            window.open(`/search?type=Users&q=${application.creator.name}`)
-                                        }}
-                                    >
-                                        Search for Alts
-                                    </Button>
+                            </span>
+                        </div>
 
-                                    <!--Open the Approve Panel--->
-                                    <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" title="Approve" on:click={() => { action = 'approve' }} >
-                                        Approve...
-                                    </Button>
-                                    
-                                    <!---Open the Deny Panel--->
-                                    <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" title="Deny" on:click={() => { action = 'deny' }}>
-                                        Deny...
-                                    </Button>
+                    {/if}
 
-                                    
-                                </span>
-                            </div>
+                    <!---Approve Confirmation--->
+                    {#if action == 'approve'}
+                        <div class="flex flex-col gap-2 w-full" transition:slide>
+                            <SectionTitle>Approve Application</SectionTitle>
+                            
+                            <span class="w-full text-sm p-2">
+                                Are you sure you want to approve this registration application?
+                            </span>
 
-                        {/if}
-
-                        <!---Approve Confirmation--->
-                        {#if action == 'approve'}
-                            <div class="flex flex-col gap-2 w-full" transition:slide>
-                                <SectionTitle>Approve Application</SectionTitle>
+                            <span class="flex flex-col gap-2 w-full px-8">
+                                <!---Return to Main Menu--->
+                                <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" on:click={() => { action = 'none' }} 
+                                    title="Return to main menu"    
+                                >
+                                    Cancel
+                                </Button>
                                 
-                                <span class="w-full text-sm p-2">
-                                    Are you sure you want to approve this registration application?
-                                </span>
+                                <!---Approve The Application--->
+                                <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
+                                    title="Approve the application"
+                                    loading={approving}
+                                    disabled={approving}    
+                                    on:click={() => { 
+                                        approving = true
+                                        review(true).then(() => {
+                                            approving = false
+                                            action = 'none'
+                                        })
+                                        
+                                    }}
+                                >
+                                    Approve
+                                </Button>
 
-                                <span class="flex flex-col gap-2 w-full px-8">
+                                <!---Approve and Create an Entry in the Modlog (unban event with preset 'reason')--->
+                                <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
+                                    title="Aprove the application and create a modlog entry along with it"
+                                    loading={approving}
+                                    disabled={approving}    
+                                    on:click={() => { 
+                                        approving = true
+                                        createModlogEntry = true
+                                        
+                                        review(true).then(() => {
+                                            approving = false
+                                            action = 'none'
+                                        })
+                                        
+                                    }}
+                                >
+                                    Approve + Modlog Entry
+                                </Button>
+                            </span>
+                        </div>
+                    {/if}
+
+                    <!---Deny Application Form--->
+                    {#if action == 'deny' }
+                        <div class="flex flex-col gap-2 w-full" transition:slide>
+                            <SectionTitle>Deny Application</SectionTitle>
+                            
+                            <SettingToggle bind:value={createModlogEntry} icon={Newspaper} title="Create Modlog Entry"
+                                description="When denying, also ban this user from the instance and use the deny reason in the modlog entry."
+                            />
+
+                            <MarkdownEditor bind:value={denyReason} images={false} emojis={false} previewButton rows={3} placeholder="Reason for denying the application...">
+                                
+                                <!---Pass the action buttons into the markdown editor's action panel--->
+                                <div class="flex flex-row items-center gap-2 ml-auto" slot="actions">
                                     <!---Return to Main Menu--->
-                                    <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" on:click={() => { action = 'none' }} 
-                                        title="Return to main menu"    
-                                    >
+                                    <Button color="primary" size="lg" icon={XMark} title="Return to Main Menu" on:click={() => action = 'none'}>
                                         Cancel
                                     </Button>
-                                    
-                                    <!---Approve The Application--->
-                                    <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
-                                        title="Approve the application"
+
+                                    <!---Perform Application Denial--->
+                                    <Button color="danger" size="lg" icon={Trash} 
+                                        title="Deny the application"
                                         loading={approving}
-                                        disabled={approving}    
-                                        on:click={() => { 
-                                            approving = true
-                                            review(true).then(() => {
+                                        disabled={approving}
+                                        on:click={ () => {
+                                            review(false).then(() => {
                                                 approving = false
                                                 action = 'none'
                                             })
-                                            
                                         }}
                                     >
-                                        Approve
+                                        Deny
                                     </Button>
+                                </div>
+                            </MarkdownEditor>
+                        </div>
+                    {/if}
+                </span>
+            </div>
 
-                                    <!---Approve and Create an Entry in the Modlog (unban event with preset 'reason')--->
-                                    <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
-                                        title="Aprove the application and create a modlog entry along with it"
-                                        loading={approving}
-                                        disabled={approving}    
-                                        on:click={() => { 
-                                            approving = true
-                                            createModlogEntry = true
-                                            
-                                            review(true).then(() => {
-                                                approving = false
-                                                action = 'none'
-                                            })
-                                            
-                                        }}
-                                    >
-                                        Approve + Modlog Entry
-                                    </Button>
-                                </span>
-                            </div>
-                        {/if}
+        </Card>
 
-                        <!---Deny Application Form--->
-                        {#if action == 'deny' }
-                            <div class="flex flex-col gap-2 w-full" transition:slide>
-                                <SectionTitle>Deny Application</SectionTitle>
-                                
-                                <SettingToggle bind:value={createModlogEntry} icon={Newspaper} title="Create Modlog Entry"
-                                    description="When denying, also ban this user from the instance and use the deny reason in the modlog entry."
-                                />
-
-                                <MarkdownEditor bind:value={denyReason} images={false} emojis={false} previewButton rows={3} placeholder="Reason for denying the application...">
-                                    
-                                    <!---Pass the action buttons into the markdown editor's action panel--->
-                                    <div class="flex flex-row items-center gap-2 ml-auto" slot="actions">
-                                        <!---Return to Main Menu--->
-                                        <Button color="primary" size="lg" icon={XMark} title="Return to Main Menu" on:click={() => action = 'none'}>
-                                            Cancel
-                                        </Button>
-
-                                        <!---Perform Application Denial--->
-                                        <Button color="danger" size="lg" icon={Trash} 
-                                            title="Deny the application"
-                                            loading={approving}
-                                            disabled={approving}
-                                            on:click={ () => {
-                                                review(false).then(() => {
-                                                    approving = false
-                                                    action = 'none'
-                                                })
-                                            }}
-                                        >
-                                            Deny
-                                        </Button>
-                                    </div>
-                                </MarkdownEditor>
-                            </div>
-                        {/if}
-                    </span>
-                </div>
-
-            </Card>
-        {/if}
     </CollapseButton>
 </div>

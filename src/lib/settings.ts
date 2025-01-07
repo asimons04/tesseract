@@ -78,6 +78,7 @@ interface Settings {
         // how often to check in the background
         notifRate: number                                               // Unsure. Inherited from Photon, but I belive it's vestigial and can be removed.
         expandInboxItemsByDefault: boolean                              // If enabled, inbox items will be expanded by default
+        inboxItemsPerPage: number                                       // How many inbox items to retrieve per page
     }
     displayNames: boolean                                               // Enable to show user/community display names. Disable to use their system names.
     nsfwBlur: boolean                                                   // Enable to blur NSFW posts
@@ -86,6 +87,8 @@ interface Settings {
         removalReasonPreset: string                                     // The preset template for moderation replies
         applicationRejectionPreset: string                              // Preset template for rejected applications
         expandReportsByDefault: boolean                                 // If enabled, reports will be expanded by default
+        expandApplicationsByDefault: boolean                            // If enabled, registration applications will be expanded by default
+        reportsPerPage: number                                          // How many reports to load per page
     },
     openInNewTab: {
         links: boolean,                                                 // Enable to open external links in a new tab
@@ -157,12 +160,15 @@ export const defaultSettings: Settings = {
         pollRate:   60 * 1000,
         notifRate:  10 * 60 * 1000,
         expandInboxItemsByDefault: false,
+        inboxItemsPerPage: 20,
     },
     
     moderation: {
         removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
         expandReportsByDefault: false,
+        expandApplicationsByDefault: false,
         applicationRejectionPreset: '',
+        reportsPerPage: 20,
 
     },
     font: 'font-roboto',

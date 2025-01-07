@@ -7,7 +7,8 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { searchParam } from '$lib/util.js'
-    
+    import { userSettings } from '$lib/settings'
+
     import Card from '$lib/components/ui/Card.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import InboxItem from './InboxItem.svelte'
@@ -22,6 +23,8 @@
     import {
         AtSymbol,
         Backward,
+        BarsArrowDown,
+        BarsArrowUp,
         ChatBubbleLeft,
         ChatBubbleLeftRight,
         Check,
@@ -176,6 +179,18 @@
                     <span class="hidden {showSidebar ? 'lg:flex' : ''}">
                         Mark All as Read
                     </span>
+            </SidebarButton>
+
+            <!---Collapse/Expand All--->
+            <SidebarButton class="{showSidebar ? '' : 'mx-auto'}"
+                title="{$userSettings.notifications.expandInboxItemsByDefault ? 'Collapse' : 'Expand'} All"
+                on:click={() => { $userSettings.notifications.expandInboxItemsByDefault = !$userSettings.notifications.expandInboxItemsByDefault}}
+            >
+                <Icon src={$userSettings.notifications.expandInboxItemsByDefault ? BarsArrowUp : BarsArrowDown} width={18} mini/>
+                <span class="hidden {showSidebar ? 'lg:flex' : ''}">
+                    {$userSettings.notifications.expandInboxItemsByDefault ? 'Collapse' : 'Expand'} All
+                </span>
+
             </SidebarButton>
 
             <!---Pagination--->

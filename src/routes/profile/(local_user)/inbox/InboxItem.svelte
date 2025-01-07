@@ -15,6 +15,7 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings } from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
@@ -184,7 +185,7 @@
             </Button>
         </span>
         
-        <CollapseButton bind:icon={icon} bold={!read} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px]">
+        <CollapseButton expanded={$userSettings.notifications.expandInboxItemsByDefault} bind:icon={icon} bold={!read} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px]">
                 <!---Title Component of Collapse Button--->
                 <div class="flex flex-row gap-2 items-start" slot="title" title="{subject}">
                     <span class="opacity-70">

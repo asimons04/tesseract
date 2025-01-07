@@ -2,7 +2,7 @@
     import type { MyUserInfo } from 'lemmy-js-client'
 
     import { defaultSettings, userSettings, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
-    import { amModOfAny } from '$lib/components/lemmy/moderation/moderation'
+    import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { fixLemmyEncodings, postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
     import { getClient} from '$lib/lemmy.js'
     import { onMount } from 'svelte';
@@ -80,6 +80,7 @@
         UserGroup,
         ShieldCheck,
         Inbox,
+        ClipboardDocumentList,
     } from 'svelte-hero-icons'
     
 
@@ -453,6 +454,17 @@
             description="If enabled, the inbox will default to unread messages. Disable to default to all messages."
         />
 
+        <!--Expand Inbox Items by Default--->
+        <SettingToggle icon={Inbox} title="Expand Inbox Items by Default" bind:value={$userSettings.notifications.expandInboxItemsByDefault}
+            description="Expand all inbox items by default."
+        />
+
+        <!---Inbox Items Per Page--->
+        <SettingMultiSelect icon={Inbox} title="Inbox Items Per Page" bind:selected={$userSettings.notifications.inboxItemsPerPage}
+            description="How many inbox items should be retrieved per page"
+            options={[10, 20, 30, 40, 50]}
+        />
+
         <!---Enable Debug Buttons--->
         <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
             description="Show debug buttons in the UI to see post/comment and other raw data. Also enables debug messages in the browser console."
@@ -690,6 +702,25 @@
         <SettingToggle icon={ShieldCheck} title="Show Mod Button" bind:value={$userSettings.uiState.dedicatedModButton}
             description="Show a dedicated 'Moderation' button on posts. If disabled, the Moderation tools will be available in the post actions menu."
         />
+
+        
+        <!---Expand Registration Applications by Default--->
+        <SettingToggle icon={ClipboardDocumentList} bind:value={$userSettings.moderation.expandApplicationsByDefault} condition={isAdmin($profile?.user)}
+            title="Expand Applications by Default" description="Expand all registration applications by default."
+        />
+
+        <!---Expand Reports by Default--->
+        <SettingToggle icon={ClipboardDocumentList} title="Expand Reports by Default" bind:value={$userSettings.moderation.expandReportsByDefault}
+            description="Expand all moderation reports by default."
+        />
+
+        <!---Report Items Per Page--->
+        <SettingMultiSelect icon={Inbox} title="Report Items Per Page" bind:selected={$userSettings.moderation.reportsPerPage}
+            description="How many reports should be retrieved per page"
+            options={[10, 20, 30, 40, 50]}
+        />
+
+
         
         <div class="flexrow font-normal pt-2 text-xs">
             <div class="flexcol flexcol-33">

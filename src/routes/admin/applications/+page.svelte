@@ -2,7 +2,7 @@
     import { hrColors } from '$lib/ui/colors'
     import { page } from '$app/stores'
     import { searchParam } from '$lib/util.js'
-    
+    import { userSettings } from '$lib/settings'
 
     import Application from './Application.svelte'
     import Card from '$lib/components/ui/Card.svelte'
@@ -19,7 +19,12 @@
         ClipboardDocument,
         ClipboardDocumentCheck, 
         Forward, 
-        Icon 
+        Icon, 
+        BarsArrowUp,
+
+        BarsArrowDown
+
+
     } from 'svelte-hero-icons'
 
     export let data
@@ -79,6 +84,18 @@
                 <span class="{showSidebar ? 'flex' : 'hidden'}">
                     All
                 </span>
+            </SidebarButton>
+
+            <!---Collapse/Expand All--->
+            <SidebarButton class="{showSidebar ? '' : 'mx-auto'}"
+                title="{$userSettings.moderation.expandApplicationsByDefault ? 'Collapse' : 'Expand'} All"
+                on:click={() => { $userSettings.moderation.expandApplicationsByDefault = !$userSettings.moderation.expandApplicationsByDefault}}
+            >
+                <Icon src={$userSettings.moderation.expandApplicationsByDefault ? BarsArrowUp : BarsArrowDown} width={18} mini/>
+                <span class="hidden {showSidebar ? 'lg:flex' : ''}">
+                    {$userSettings.moderation.expandApplicationsByDefault ? 'Collapse' : 'Expand'} All
+                </span>
+
             </SidebarButton>
 
 

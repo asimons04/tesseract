@@ -6,6 +6,7 @@ import { getItemPublished } from '$lib/lemmy/item.js'
 import { get } from 'svelte/store'
 import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
 import { profile } from '$lib/auth'
+import { userSettings } from '$lib/settings'
 
 type ReportFilter = 'all' | 'posts' | 'comments' | 'messages' | 'unread'
 
@@ -23,7 +24,7 @@ export async function load({ url, fetch }) {
     const client = getClient()
 
     const params = {
-        limit: 20,
+        limit: get(userSettings).moderation.reportsPerPage ?? 20,
         page: page,
         unresolved_only: filter == 'unread',
     }

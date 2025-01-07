@@ -23,7 +23,7 @@ export async function load({ url }:LoadParams) {
         : get(userSettings)?.uiState.inboxDefaultUnread
 
     const params = {
-        limit: 50,
+        limit: get(userSettings).notifications.inboxItemsPerPage ?? 20,
         page: page,
         unread_only: unreadOnly,
     }

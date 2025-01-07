@@ -5,7 +5,8 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
-    
+    import { userSettings } from '$lib/settings'
+
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
@@ -19,6 +20,8 @@
 
     import { 
         Backward,
+        BarsArrowDown,
+        BarsArrowUp,
         ChatBubbleLeftEllipsis,
         ChatBubbleLeftRight,
         ChevronDoubleLeft,
@@ -118,52 +121,17 @@
                 </span>
             </SidebarButton>
 
-            <!---Post Reports
-            <SidebarButton title="Replies" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.filter == 'posts' ? '!text-sky-700 dark:!text-sky-500' : ''}"
-                on:click={() => {
-                    $page.url.searchParams.set('filter', 'posts')
-                    $page.url.searchParams.delete('community_id')
-                    searchParam($page.url, 'page', '1')
-                }}
+            <!---Collapse/Expand All--->
+            <SidebarButton class="{showSidebar ? '' : 'mx-auto'}"
+                title="{$userSettings.moderation.expandReportsByDefault ? 'Collapse' : 'Expand'} All"
+                on:click={() => { $userSettings.moderation.expandReportsByDefault = !$userSettings.moderation.expandReportsByDefault}}
             >
-                <Icon src={Photo} width={18} mini/>
+                <Icon src={$userSettings.moderation.expandReportsByDefault ? BarsArrowUp : BarsArrowDown} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
-                    Posts
+                    {$userSettings.moderation.expandReportsByDefault ? 'Collapse' : 'Expand'} All
                 </span>
-                
+
             </SidebarButton>
-            --->
-    
-            <!---Comment Reports
-            <SidebarButton title="Replies" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.filter == 'comments' ? '!text-sky-700 dark:!text-sky-500' : ''}"
-                on:click={() => {
-                    $page.url.searchParams.set('filter', 'comments')
-                    $page.url.searchParams.delete('community_id')
-                    searchParam($page.url, 'page', '1')
-                }}
-            >
-                <Icon src={ChatBubbleLeftEllipsis} width={18} mini/>
-                <span class="hidden {showSidebar ? 'lg:flex' : ''}">
-                    Comments
-                </span>
-                
-            </SidebarButton>
-            --->
-    
-            <!---Direct Message Reports
-            <SidebarButton title="Direct Messages" expanded={showSidebar} class="{showSidebar ? '' : 'mx-auto'} {data.filter == 'messages' ? '!text-sky-700 dark:!text-sky-500' : ''}"
-                on:click={() => {
-                    $page.url.searchParams.set('filter', 'messages')
-                    $page.url.searchParams.delete('community_id')
-                    searchParam($page.url, 'page', '1')
-                }}
-            >
-                <Icon src={ChatBubbleLeftRight} width={18} mini/>
-                <span class="hidden {showSidebar ? 'lg:flex' : ''}">
-                    Direct Messages
-                </span>
-            </SidebarButton>
-            --->
 
             <!---Community Selector--->
             {#if showSidebar && moderates.length > 0}
