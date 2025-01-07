@@ -41,10 +41,40 @@ removeAdmin {username}
 ```
 
 1) Support "universal" links.  The post and comment ones will basically work like the user/community where it resolves them and then links to them.  If unauthenticated, go to the remote one (at least for posts; not sure if comments will work that way without auth).
-    - `#<post_id>@instance.xyz` (need to update hashtag regex to ignore numeric tags)
     - `@<user>@instance.xyz` (already implemented)
     - `!<community>@instance.xyz` (already implemented)
+    - `#<post_id>@instance.xyz` (need to update hashtag regex to ignore numeric tags)
     - `~<comment_id>@instance.xyz`
+
+
+## 1.4.27
+### Bugfixes
+- The 'Filter Annoying CC Licenses on Comments' wasn't working since the markdown pre-processor re-write. 
+- Post titles are not longer linkified.  This includes unwanted `mailto:user/community@instance.xyz` email links when the titles contain `!community@instance.xyz` or `@user@instance.xyz`.
+
+
+
+### New Features
+
+#### Misc
+- Added "RemovePaywalls.com" as an option in the archive link selector
+
+#### Inbox
+- Can now set an option to expand inbox items by default. `Settings -> General -> Expand Inbox Items by Default`
+- Can now configure how many inbox items are retrieved per page.  `Settings -> General -> Inbox Items Per Page`
+- New inbox sidebar button to expand/collapse all
+
+#### Reports
+- Can now set an option to expand all report items by default.  `Settings -> Moderation -> Expand Reports by Default`
+- Can now configure how many report items are retrieved per page.  `Settings -> Moderation -> Report Items Per Page`
+- New sidebar button to expand/collapse all reports
+
+#### Registration Applications
+- Can now set an option to expand all registration applications by default.  `Settings -> Moderation -> Expand Applications by Default`
+- New sidebar button to expand/collapse all applications
+
+
+---
 
 ## 1.4.26
 
