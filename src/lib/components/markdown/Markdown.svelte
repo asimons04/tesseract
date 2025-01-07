@@ -1,4 +1,6 @@
 <script lang="ts">
+    // Marked.js Docs: https://marked.js.org/using_pro
+    // Tokenizer Code:  https://github.com/markedjs/marked/blob/master/src/Tokenizer.ts#L559
     
     
     import Markdown, {
