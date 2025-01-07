@@ -51,7 +51,7 @@ removeAdmin {username}
 ### Bugfixes
 - The 'Filter Annoying CC Licenses on Comments' wasn't working since the markdown pre-processor re-write. 
 - Post titles are not longer linkified.  This includes unwanted `mailto:user/community@instance.xyz` email links when the titles contain `!community@instance.xyz` or `@user@instance.xyz`.
-
+- Dynamically import separate CSS themes for HighlightJS depending on app theme.  Unfortunately, this is not reactive to changing the app theme without refreshing the page. 
 
 
 ### New Features
