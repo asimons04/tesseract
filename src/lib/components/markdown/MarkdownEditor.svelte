@@ -301,7 +301,8 @@
                         {#if pickingUser}
                             <PersonAutocomplete containerStyle="max-height: {(rows)*25}px !important" 
                                 on:select={(e) => {
-                                    wrapSelection(`@${e.detail.name}@${new URL(e.detail.actor_id).hostname}`, '')
+                                    wrapSelection(` @${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
+                                    pickingUser = false
 
                                 }}
                             />
@@ -311,7 +312,8 @@
                         {#if pickingCommunity}
                             <CommunityAutocomplete containerStyle="max-height: {(rows)*25}px !important"
                                 on:select={(e) => {
-                                    wrapSelection(`!${e.detail.name}@${new URL(e.detail.actor_id).hostname}`, '')
+                                    wrapSelection(` !${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
+                                    pickingCommunity = false
                                 }}
                             />
                         {/if}
