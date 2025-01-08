@@ -325,6 +325,7 @@
     let open = {
         profile: false,
         general: false,
+        inbox: false,
         feed: false,
         posts: false,
         media: false,
@@ -449,21 +450,7 @@
         />
         {/if}
 
-        <!---Inbox Default to Unread--->
-        <SettingToggle icon={Inbox} title="Inbox Defaults to Unread"  condition={$profile?.user ? true : false} bind:value={$userSettings.uiState.inboxDefaultUnread}
-            description="If enabled, the inbox will default to unread messages. Disable to default to all messages."
-        />
-
-        <!--Expand Inbox Items by Default--->
-        <SettingToggle icon={Inbox} title="Expand Inbox Items by Default" bind:value={$userSettings.notifications.expandInboxItemsByDefault}
-            description="Expand all inbox items by default."
-        />
-
-        <!---Inbox Items Per Page--->
-        <SettingMultiSelect icon={Inbox} title="Inbox Items Per Page" bind:selected={$userSettings.notifications.inboxItemsPerPage}
-            description="How many inbox items should be retrieved per page"
-            options={[10, 20, 30, 40, 50]}
-        />
+        
 
         <!---Enable Debug Buttons--->
         <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
@@ -502,6 +489,29 @@
             </Button>
         </div>
     </SettingsCollapseSection>
+
+
+    <!---Inbox and Notifications Settings--->
+    <SettingsCollapseSection bind:expanded={open.inbox} icon={Inbox} title="Inbox and Notifications">
+        
+        <!---Inbox Default to Unread--->
+        <SettingToggle icon={Inbox} title="Inbox Defaults to Unread"  condition={$profile?.user ? true : false} bind:value={$userSettings.uiState.inboxDefaultUnread}
+            description="If enabled, the inbox will default to unread messages. Disable to default to all messages."
+        />
+
+        <!--Expand Inbox Items by Default--->
+        <SettingToggle icon={Inbox} title="Expand Inbox Items by Default" bind:value={$userSettings.notifications.expandInboxItemsByDefault}
+            description="Expand all inbox items by default."
+        />
+
+        <!---Inbox Items Per Page--->
+        <SettingMultiSelect icon={Inbox} title="Inbox Items Per Page" bind:selected={$userSettings.notifications.inboxItemsPerPage}
+            description="How many inbox items should be retrieved per page"
+            options={[10, 20, 30, 40, 50]}
+        />
+    </SettingsCollapseSection>
+
+    
 
     <!---Feed Options--->
     <SettingsCollapseSection bind:expanded={open.feed} icon={QueueList} title="Feed">
