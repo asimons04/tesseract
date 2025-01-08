@@ -1,7 +1,8 @@
 <script lang="ts">
     import { lookup } from '$lib/MBFC/client'
-    import { isYouTube, removeURLParams } from "../helpers"
+    import { hrColors } from '$lib/ui/colors';
     import { linkPreviewModal } from "$lib/components/lemmy/moderation/moderation";
+    import { removeURLParams } from "../helpers"
     import { toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings'
 
@@ -18,7 +19,7 @@
         Link as LinkIcon,
         Share,
     } from 'svelte-hero-icons'
-    import Link from '$lib/components/input/Link.svelte';
+   
 
     export let url:string | undefined
     export let postType:string = 'link'
@@ -102,20 +103,26 @@
 
         <!---Piped/Invidious Providers for 'youtube' Post Types--->
         {#if postType == 'youtube'}
-            {#if $userSettings.embeddedMedia.customInvidious}
-                <MenuButton color="info" title="Invidious" link href={updateYTHostname(url, $userSettings.embeddedMedia.customInvidious)} newtab={$userSettings.openInNewTab.links}>
-                    Invidious/Piped
-                </MenuButton>
-            {/if}
-
-            <MenuButton color="info" title="Invidious" link href={updateYTHostname(url, 'youtube.com')} newtab={$userSettings.openInNewTab.links}>
-                YouTube
-            </MenuButton>
+            <div class="flex flex-col max-h-[20vh] overflow-y-scroll">
+                <!---Show Canonical Youtube Button in case Some Jerk Linked to some Shady/Unreliable/Dead Invid/Piped instance--->
+                <MenuButton color="info" title="YouTube" link href={updateYTHostname(url, 'youtube.com')} newtab={$userSettings.openInNewTab.links}>
+                    YouTube
+                </MenuButton>    
+                
+                <!---Add any user-defined custom Piped/Invidious Instances to the List--->                
+                {#if $userSettings.embeddedMedia.userDefinedInvidious.length > 0}
+                    {#each $userSettings.embeddedMedia.userDefinedInvidious as invInstance}
+                        <MenuButton color="info" title="{invInstance}" link href={updateYTHostname(url, invInstance)} newtab={$userSettings.openInNewTab.links}>
+                            {invInstance}
+                        </MenuButton>
+                    {/each}
+                {/if}
+            </div>
         {/if}
 
 
         {#if ['link', 'thumbLink', 'youtube'].includes(postType) }
-            <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+            <hr class="{hrColors}} my-2 mx-auto" />
         {/if}
         
         <MenuButton title="Share" color="success"
