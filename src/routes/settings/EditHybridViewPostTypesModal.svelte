@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostType } from '$lib/components/lemmy/post/helpers'
-    
+    import { dividerColors } from '$lib/ui/colors'
     import { userSettings } from '$lib/settings'
     
     import Modal from "$lib/components/ui/modal/Modal.svelte"
@@ -88,7 +88,7 @@
             description="Enable/disable dynamic card view based on embedded media type."
         >
             {#if showAdvanced}
-                <div class="pl-4 flex flex-col divide-y border-slate-400/75 dark:border-zinc-400/75 gap-4 w-full">
+                <div class="pl-4 flex flex-col divide-y {dividerColors} gap-4 w-full">
 
                     <SettingToggle bind:value={pTypes.bandcamp} title="Bandcamp Posts" icon={SpeakerWave} small
                         on:change={(e) => updateTypes('bandcamp', e.detail) }
