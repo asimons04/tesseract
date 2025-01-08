@@ -334,6 +334,23 @@
         } 
     }
 
+    // Allow the reset form function to be exported to the parent
+    export const resetForm = async function() {
+        
+        // Reset the crosspost search
+        resetSearch()
+        
+        if (uploadResponse) deletePostImage()
+        for (let i=0; i < bodyImages.length; i++) {
+            await deleteImageUpload(bodyImages[i])
+        }
+        bodyImages = bodyImages = []
+        
+        data = objectCopy(default_data)
+        data = data
+        resetting = false
+    }
+
     function resetSearch() {
         URLSearchResults = []
         showSearch = false
@@ -419,20 +436,9 @@
             
             <!--- Reset Form --->
             <Button  loading={resetting} disabled={previewing||resetting} color="tertiary-border" title="{editingPost ? 'Undo' : 'Reset'}"
-                on:click={async () => {
+                on:click={() => {
                     resetting = true
-                    // Reset the crosspost search
-                    resetSearch()
-                    
-                    if (uploadResponse) deletePostImage()
-                    for (let i=0; i < bodyImages.length; i++) {
-                        await deleteImageUpload(bodyImages[i])
-                    }
-                    bodyImages = bodyImages = []
-                    
-                    data = objectCopy(default_data)
-                    data = data
-                    resetting = false
+                    resetForm().then(() => resetting = false)
                 }}
             >
                 <Icon src={ArrowUturnDown} mini size="16"/>
