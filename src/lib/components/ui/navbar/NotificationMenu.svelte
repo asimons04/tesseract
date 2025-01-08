@@ -125,6 +125,7 @@
     }
 
     function handleSystemTimer(e:SystemTimerEvent) {
+        if (!$profile?.user) return
         if ( (e.detail.timestamp - lastTick) > $userSettings.notifications.pollRate) {
             lastTick = e.detail.timestamp
             polling = true
