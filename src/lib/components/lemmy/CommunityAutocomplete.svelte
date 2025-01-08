@@ -16,6 +16,7 @@
     export let items: Community[] = []
     export let label:string = ''
     export let containerClass:string = ''
+    export let containerStyle: string = ''
     export let showHiddenRemoved:boolean = false
 
     let page: number = 0
@@ -99,6 +100,8 @@
 
     <SearchInput
         containerClass="{containerClass}"
+        containerStyle="{containerStyle}"
+        placeholder="Search for Community"
         bind:options={items}
         bind:infiniteScrollState
         bind:query={q}

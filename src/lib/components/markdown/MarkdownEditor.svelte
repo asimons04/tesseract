@@ -7,10 +7,12 @@
     import { userSettings } from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte'
+    import CommunityAutocomplete from '../lemmy/CommunityAutocomplete.svelte'
     import EmojiPicker from './EmojiPicker.svelte'
-    import ImageUploadModal from '../lemmy/modal/ImageUploadModal.svelte';
-    import ImageUploadPreviewDeleteButton from '../uploads/ImageUploadPreviewDeleteButton.svelte';
+    import ImageUploadModal from '../lemmy/modal/ImageUploadModal.svelte'
+    import ImageUploadPreviewDeleteButton from '../uploads/ImageUploadPreviewDeleteButton.svelte'
     import MultiSelect from '$lib/components/input/MultiSelect.svelte'
+    import PersonAutocomplete from '../lemmy/PersonAutocomplete.svelte'
     import TextArea from '$lib/components/input/TextArea.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
 
@@ -22,7 +24,11 @@
         Link,
         ListBullet,
         Photo,
+        User,
+        UserGroup,
     } from 'svelte-hero-icons'
+    
+    
     
     
     
@@ -50,6 +56,9 @@
 
     let pasteImage: FileList | null
     let processingPastedImage = false
+
+    let pickingUser:  boolean = false
+    let pickingCommunity: boolean = false
 
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
@@ -121,9 +130,10 @@
         {:else}
             <div class="flex flex-col px-1">
                 <!--Toolbar-->
-                <div class="[&>*]:flex-shrink-0 flex flex-col lg:flex-row h-fit p-1.5 gap-4 mb-2 {$$props.disabled ? 'opacity-60 pointer-events-none' : ''}">
+                <div class="flex flex-col lg:flex-row h-fit p-1.5 gap-4 mb-2 {$$props.disabled ? 'opacity-60 pointer-events-none' : ''}">
+                    
                     <!---Formatting Buttons--->
-                    <span class="flex flex-row gap-1.5 items-center overflow-x-scroll  ">
+                    <span class="flex flex-row flex-wrap gap-1.5 items-center">
                         <!--Emoji Picker Button-->
                         {#if emojis}
                             <Button
@@ -137,6 +147,7 @@
                             </Button>
                         {/if}
 
+                        <!---Image Upload Button--->
                         {#if images}
                             <Button
                                 on:click={() => (uploadingImage = !uploadingImage)}
@@ -150,6 +161,32 @@
                                 {/if}
                             </Button>
                         {/if}
+
+                        <!---User Picker Button--->
+                        <Button
+                            on:click={() => {
+                                pickingCommunity = false
+                                pickingUser = !pickingUser
+                            }}
+                            title="Find User"
+                            size="square-md"
+                            icon={User}
+                            iconSize={16}
+                        />
+
+                        <!---Community Picker Button--->
+                        <Button
+                            on:click={() => {
+                                pickingUser = false
+                                pickingCommunity = !pickingCommunity
+                            }}
+                            title="Find Community"
+                            size="square-md"
+                            icon={UserGroup}
+                            iconSize={16}
+                        />
+                            
+                        
                     
                         <Button
                             on:click={() => wrapSelection('**', '**')}
@@ -255,6 +292,32 @@
 
                 <!---Emoji Picker Panel--->
                 <EmojiPicker bind:value bind:textArea {rows} bind:open={emojiPickerOpen} navButtons={true}/>
+
+                <!---User and Community Pickers--->
+                {#if pickingUser || pickingCommunity}
+                    <div class="flex flex-col gap-1 w-full my-1">
+                        
+                        <!---User--->
+                        {#if pickingUser}
+                            <PersonAutocomplete containerStyle="max-height: {(rows)*25}px !important" 
+                                on:select={(e) => {
+                                    wrapSelection(`@${e.detail.name}@${new URL(e.detail.actor_id).hostname}`, '')
+
+                                }}
+                            />
+                        {/if}
+                        
+                        <!---Community--->
+                        {#if pickingCommunity}
+                            <CommunityAutocomplete containerStyle="max-height: {(rows)*25}px !important"
+                                on:select={(e) => {
+                                    wrapSelection(`!${e.detail.name}@${new URL(e.detail.actor_id).hostname}`, '')
+                                }}
+                            />
+                        {/if}
+                    </div>
+                {/if}
+                
 
                 <!--Actual text area-->
                 <TextArea

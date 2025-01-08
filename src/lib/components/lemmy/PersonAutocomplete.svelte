@@ -14,6 +14,7 @@
     export let items: Person[] = []
     export let label:string = ''
     export let containerClass:string = ''
+    export let containerStyle: string = ''
 
     let page: number = 0
     let limit: number = 50
@@ -89,6 +90,8 @@
 
     <SearchInput
         containerClass="{containerClass}"
+        containerStyle="{containerStyle}"
+        placeholder="Search for User"
         bind:options={items}
         bind:infiniteScrollState
         bind:query={q}
@@ -97,7 +100,10 @@
         debounceTime={600}
         extractName={(u) => u.name}
         extractSelected={(u) => {
-            if (u) dispatcher('select', u)
+            if (u) {
+                dispatcher('select', u)
+                q = ''
+            }
         }}
 
         let:extractName
