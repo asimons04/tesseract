@@ -164,7 +164,7 @@ export const defaultSettings: Settings = {
     },
     
     moderation: {
-        removalReasonPreset: `Your submission in *"{{post}}"* was removed for {{reason}}.`,
+        removalReasonPreset: `Your submission **"{{post}}"** in {{community}} was removed because: {{reason}}.`,
         expandReportsByDefault: false,
         expandApplicationsByDefault: false,
         applicationRejectionPreset: '',
