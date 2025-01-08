@@ -74,9 +74,7 @@ interface Settings {
     }
     notifications: {
         enabled: boolean                                                // Technically used to enable/disable notifications, but it's hardcoded to true
-        pollRate: number                                                // How often to check for new notifications from the API
-        // how often to check in the background
-        notifRate: number                                               // Unsure. Inherited from Photon, but I belive it's vestigial and can be removed.
+        pollRate: number                                                // How often to check, in seconds, for new notifications from the API
         expandInboxItemsByDefault: boolean                              // If enabled, inbox items will be expanded by default
         inboxItemsPerPage: number                                       // How many inbox items to retrieve per page
     }
@@ -154,11 +152,10 @@ interface Settings {
 
 // Default settings
 export const defaultSettings: Settings = {
-    version: 14,
+    version: 15,
     notifications: {
         enabled:    false,
-        pollRate:   60 * 1000,
-        notifRate:  10 * 60 * 1000,
+        pollRate:   60,
         expandInboxItemsByDefault: false,
         inboxItemsPerPage: 20,
     },
@@ -301,8 +298,6 @@ export const FEATURED_INSTANCES = strToArray(env.PUBLIC_FEATURED_INSTANCES)
 // Define Invidious and Piped instances to determine if embedded media is a Youtube et al video.
 // Invidious Instance List:  https://docs.invidious.io/instances/#list-of-public-invidious-instances-sorted-from-oldest-to-newest
 // Piped Instance List: https://github.com/TeamPiped/Piped/wiki/Instances
-// Note:    The Invidious instances are used to both detect if a post URL is a video AND to populate the dropdown for which Invidious instance to use.
-//          The Piped list is only used for detection of Piped video links; Piped is too slow to use as an embedded player.
 
 export const YTFrontends = {
     invidious: [
@@ -534,6 +529,14 @@ export function migrateSettings(old:any) {
             try { delete old.uiState.autoUpdateDates}
             catch {}
             old.version = 14
+        }
+
+        if (old.version == 14) {
+            old.notifications.pollRate = defaultSettings.notifications.pollRate
+            try { delete old.notifications.notifRate}
+            catch {}
+            
+            old.version = 15
         }
     }
     catch (err) {
