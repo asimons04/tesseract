@@ -176,9 +176,9 @@
 
     // Abuse the fuck out of the Lemmy API by storing our settings in the theme field
     const saveToLemmy = async function():Promise<void> {
-        data.saving = true;
         if (!$profile) return
 
+        data.saving = true
         try {
             let oldSettings = {}
 
@@ -229,9 +229,9 @@
 
     // Load the settings from the Lemmy profile's `theme` field
     const loadFromLemmy = async function():Promise<void> {
-        data.saving = true;
-        if (!$profile) return
         
+        if (!$profile) return
+        data.saving = true
         try {
             const res = await getClient().getSite()
             let mySettings
