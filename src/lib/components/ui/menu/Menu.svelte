@@ -10,11 +10,12 @@
     export let itemsClass = ''
     export let absolute = false
     export let alignment: Alignment = 'bottom-left'
+    export const toggleOpen = () => ( open = !open)
 
     let element: any
     let menu: HTMLMenuElement
 
-    export const toggleOpen = () => ( open = !open)
+    
   
     function getOriginClass(origin: Alignment) {
         switch (origin) {
@@ -81,6 +82,7 @@
                 min-w-[255px] max-w-[90vw] max-h-[79svh]
                 {$$props.containerClass}
             "
+            style="{$$props.containerStyle}"
         >
 
             
