@@ -17,6 +17,7 @@
     export let extractSelected: (item: T | null) => any
     export let extractName: (item: T) => string
     export let containerClass:string = ''
+    export let containerStyle:string = ''
     export let infiniteScrollState:InfiniteScrollStateVars = {
         exhausted: false,
         loading: false
@@ -61,6 +62,7 @@
         <Menu bind:open
             alignment="bottom-left"
             containerClass="!max-h-[50vh] {containerClass}"
+            containerStyle={containerStyle}
             let:menu
         >
             
