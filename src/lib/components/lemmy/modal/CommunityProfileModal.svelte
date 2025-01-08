@@ -95,7 +95,7 @@
         'removing'           
     = 'none'
 
-
+    let postInProgress: boolean | undefined = undefined         
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
@@ -504,8 +504,13 @@
         <!---Create Post Form--->
         {#if action == 'createPost'}
             <ModalPanel>
-                <ModalPanelHeading on:click={()=> returnMainMenu()}
-                    title="Create Post in {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}"
+                <ModalPanelHeading title="Create Post in {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}"
+                    on:click={()=> {
+                        // If post has any data set, confirm before returning to main menu
+                        if (!postInProgress) returnMainMenu()
+                        else if (confirm("You have a post in progress. Are you sure you want to lose it?")) returnMainMenu()
+                        
+                    }}
                 >
                     <span slot="actions">
                         <Button size="square-lg" color="tertiary-border" icon={ArrowTopRightOnSquare} iconSize={24}
@@ -518,10 +523,14 @@
                 </ModalPanelHeading>
 
                 <ModalScrollArea card={false}>
-                    <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal editing={false}
+                    <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal={true} editing={false} 
                         on:submit={(e) => {
-                            goto(`/post/${e.detail.post.id}`)
+                            if (e?.detail?.post.id) goto(`/post/${e.detail.post.id}`)
                             open = false
+                        }}
+
+                        on:state={(e) => {
+                            postInProgress = e?.detail?.workInProgress
                         }}
                     />
                 </ModalScrollArea>

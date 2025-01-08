@@ -74,6 +74,7 @@
     export let textEditorRows:number = 10
     export let inModal = false
     export let editing: boolean = false
+    
 
     let postContainer: HTMLDivElement
 
@@ -91,6 +92,7 @@
         embed_title: editingPost?.post.embed_title
     }
 
+    // 
     let data = objectCopy(default_data)
     
     // Holds the data from the upload response for use in the form
@@ -107,18 +109,21 @@
 
     let pastingImage     = false
     let uploadingImage   = false
-    let previewing       = false
+    
     let fetchingMetadata = false
     let previewPost: PostView | undefined
     let resetting        = false
     
-    
+    let previewing:boolean      = false
     let searching        = false
     let showSearch       = false
     let URLSearchResults = [] as PostView[]
     let oldCommunity:Community
 
-    const dispatcher = createEventDispatcher<{ submit: PostView }>()
+    const dispatcher = createEventDispatcher<{ 
+        submit?: PostView 
+        state?: { workInProgress?: boolean}
+    }>()
 
     // If community is provided, set the data object's community key to that
     $: if (community) data.community = community
@@ -129,6 +134,13 @@
 
     // Reset URL search results when the community changes
     $:  data.community, rerunSearch()
+
+    // Set a flag a parent component can bind to to determine if there is a work-in-progress post
+    $: data.name, data.body, data.url, data.alt_text, setInProgressFlag()
+    function setInProgressFlag() {
+        if (data.name || data.body || data.url || data.alt_text) dispatcher('state', {workInProgress: true})
+        else dispatcher('state', {workInProgress: false})
+    }
 
     async function submit() {
         if (!data.name || !$profile?.jwt) return
@@ -398,7 +410,7 @@
             <Button  loading={fetchingMetadata} disabled={(!data || !data.community)} color="tertiary-border" title="{previewing ? 'Edit' : 'Preview'}"
                 on:click={ async () => {
                     previewPost = await generatePostPreview()
-                    if (previewPost) previewing = !previewing;
+                    if (previewPost) previewing = !previewing
                 }}
             >
                 <Icon src={previewing ? PencilSquare : Eye} mini size="16"/>                
