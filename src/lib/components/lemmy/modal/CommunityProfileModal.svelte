@@ -95,7 +95,9 @@
         'removing'           
     = 'none'
 
-    let postInProgress: boolean | undefined = undefined         
+    let postInProgress: boolean | undefined = undefined
+    let resetPostForm: () => Promise<void>
+
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
 
@@ -508,7 +510,9 @@
                     on:click={()=> {
                         // If post has any data set, confirm before returning to main menu
                         if (!postInProgress) returnMainMenu()
-                        else if (confirm("You have a post in progress. Are you sure you want to lose it?")) returnMainMenu()
+                        else if (confirm("You have a post in progress. Are you sure you want to lose it?")) {
+                            resetPostForm().then(() => returnMainMenu())
+                        }
                         
                     }}
                 >
@@ -524,6 +528,7 @@
 
                 <ModalScrollArea card={false}>
                     <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal={true} editing={false} 
+                        bind:resetForm={resetPostForm}
                         on:submit={(e) => {
                             if (e?.detail?.post.id) goto(`/post/${e.detail.post.id}`)
                             open = false
