@@ -4,7 +4,8 @@
     import { getClient } from '$lib/lemmy'
     import { getInbox } from '$lib/lemmy/inbox.js'
     import { profile } from '$lib/auth'
-    
+    import { userSettings } from '$lib/settings'
+
     import Button from '$lib/components/input/Button.svelte'
     import Menu from '$lib/components/ui/menu/Menu.svelte'
     import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
@@ -124,7 +125,7 @@
     }
 
     function handleSystemTimer(e:SystemTimerEvent) {
-        if ( (e.detail.timestamp - lastTick) > 60) {
+        if ( (e.detail.timestamp - lastTick) > $userSettings.notifications.pollRate) {
             lastTick = e.detail.timestamp
             polling = true
             pollNotifications().then(() => polling = false)

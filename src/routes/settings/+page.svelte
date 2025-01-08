@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { MyUserInfo } from 'lemmy-js-client'
-
+    
     import { defaultSettings, userSettings, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
     import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { fixLemmyEncodings, postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
     import { getClient} from '$lib/lemmy.js'
     import { onMount } from 'svelte';
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { saveProfile } from '$lib/favorites'
     import { site } from '$lib/lemmy.js'
@@ -82,6 +82,7 @@
         Inbox,
         ClipboardDocumentList,
     } from 'svelte-hero-icons'
+    
     
 
     let data = {
@@ -333,13 +334,14 @@
         filters: false,
         import: false,
         hybridPostEditorModal: false
-    }
+    } as { [key:string]: boolean }
 
-    let profileData: MyUserInfo | undefined = undefined
-    onMount(async () => {
-        profileData = (await getClient().getSite()).my_user
+    onMount(() => {
+        const section= $page.url.searchParams.get('section')
+        if (section && Object.keys(open).includes(section)) {
+            open[section] = true
+        }
     })
-
 </script>
 
 <svelte:head>
@@ -492,15 +494,21 @@
 
 
     <!---Inbox and Notifications Settings--->
-    <SettingsCollapseSection bind:expanded={open.inbox} icon={Inbox} title="Inbox and Notifications">
-        
+    
+    <SettingsCollapseSection bind:expanded={open.inbox} icon={Inbox} title="Inbox and Notifications" condition={$profile?.user ? true : false}>
+        <SettingMultiSelect icon={Clock} title="Notification Poll Frequency" description="How often, in seconds, to poll for new notifications"
+            bind:selected={$userSettings.notifications.pollRate}
+            options={[30, 60, 90, 120, 150, 180, 300]}
+        />
+
+
         <!---Inbox Default to Unread--->
-        <SettingToggle icon={Inbox} title="Inbox Defaults to Unread"  condition={$profile?.user ? true : false} bind:value={$userSettings.uiState.inboxDefaultUnread}
+        <SettingToggle icon={EnvelopeOpen} title="Inbox Defaults to Unread"  condition={$profile?.user ? true : false} bind:value={$userSettings.uiState.inboxDefaultUnread}
             description="If enabled, the inbox will default to unread messages. Disable to default to all messages."
         />
 
         <!--Expand Inbox Items by Default--->
-        <SettingToggle icon={Inbox} title="Expand Inbox Items by Default" bind:value={$userSettings.notifications.expandInboxItemsByDefault}
+        <SettingToggle icon={BarsArrowDown} title="Expand Inbox Items by Default" bind:value={$userSettings.notifications.expandInboxItemsByDefault}
             description="Expand all inbox items by default."
         />
 
@@ -511,7 +519,8 @@
         />
     </SettingsCollapseSection>
 
-    
+
+
 
     <!---Feed Options--->
     <SettingsCollapseSection bind:expanded={open.feed} icon={QueueList} title="Feed">
@@ -606,7 +615,7 @@
     </SettingsCollapseSection>
 
     <!---Posts Options--->
-    <SettingsCollapseSection bind:expanded={open.posts} icon={Window} title="Posts">
+    <SettingsCollapseSection bind:expanded={open.posts} icon={Window} title="Posts and Comments">
         <!---Comment Sort Order--->
         <SettingMultiSelect title="Comment Sort Direction" icon={ChartBar} description="Choose the default sorting method for comments."
             options={['Hot', 'Top', 'New']}
