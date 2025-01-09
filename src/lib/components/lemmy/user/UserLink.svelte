@@ -93,56 +93,55 @@
             <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
         {/if}
 
-        <span class="flex w-full gap-0 {inline ? 'items-center flex-row' : 'items-start flex-col'}  gap-0" 
-            class:ml-0.5={avatar} 
+        <span class="flex w-full {inline ? 'items-center flex-row' : 'items-start flex-col'}  gap-0" 
             style="width:calc(100% - {avatar ? avatarSize+2 : 0}px - 0.5rem);"
         >
              <!---User Badges--->
-             <span class="flex flex-row mr-1 gap-1 items-center">
+            <span class="flex flex-row items-center">
                     
                 {#if badges && distinguishAdminsMods && admin}
-                    <div class="text-red-500" title="Admin">
+                    <div class="text-red-500 mr-1" title="Admin">
                         <ShieldIcon width={12} filled />
                     </div>
                 {/if}
                 
                 {#if badges && distinguishAdminsMods && mod}
-                    <div class="text-green-500" title="Moderator">
+                    <div class="text-green-500 mr-1" title="Moderator">
                         <ShieldIcon width={12} filled />
                     </div>
                 {/if}
 
                 {#if badges && community_banned}
-                    <div class="text-green-500" title="Banned from Community">
+                    <div class="text-green-500 mr-1" title="Banned from Community">
                         <Icon src={NoSymbol} mini size="12" />
                     </div>
                 {/if}
 
                 {#if badges && user.banned}
-                    <div class="text-red-500" title="Banned">
+                    <div class="text-red-500 mr-1" title="Banned">
                         <Icon src={NoSymbol} mini size="12" />
                     </div>
                 {/if}
 
                 {#if badges && blocked}
-                    <div class="text-red-500" title="Blocked">
+                    <div class="text-red-500 mr-1" title="Blocked">
                         <Icon src={EyeSlash} mini size="12" />
                     </div>
                 {/if}
 
         
                 {#if badges && user.bot_account}
-                    <div class="text-blue-500 font-bold" title="Bot">BOT</div>
+                    <div class="text-blue-500 font-bold mr-1" title="Bot">BOT</div>
                 {/if}
 
                 {#if badges && user.deleted}
-                    <div class="text-red-500" title="Deleted">
+                    <div class="text-red-500 mr-1" title="Deleted">
                         <Icon src={Trash} mini size="12" />
                     </div>
                 {/if}
 
                 {#if badges && user.published && isNewAccount(user.published)}
-                    <Badge label="New Account: {user.published}"  color="gray">
+                    <Badge label="New Account: {user.published}"  color="gray" class="mr-1">
                         <Icon src={Cake} mini size="{inline ? '16' : '12'}"/>
                         {#if inline}
                             <RelativeDate date={user.published} class="hidden md:flex"/>
