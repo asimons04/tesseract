@@ -80,9 +80,14 @@
         const startPos = textArea.selectionStart
         const endPos = textArea.selectionEnd
 
-        const substring = textArea.value.substring(startPos, endPos)
-        let newText = `${start}${substring}${end}`
-        value = replaceTextAtIndices(value, startPos, endPos, newText )
+        if (value) {
+            const substring = value.substring(startPos, endPos)
+            let newText = `${start}${substring}${end}`
+            value = replaceTextAtIndices(value, startPos, endPos, newText )
+        }
+        else { 
+            value = start + end
+        }
 
         textArea.focus()
         if (setCursor > 0) {
