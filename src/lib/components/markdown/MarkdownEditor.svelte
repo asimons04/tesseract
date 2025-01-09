@@ -26,6 +26,7 @@
         ListBullet,
         NumberedList,
         Photo,
+        QuestionMarkCircle,
         Strikethrough,
         TableCells,
         User,
@@ -34,6 +35,7 @@
     import { sleep } from '../lemmy/post/helpers';
     import Menu from '../ui/menu/Menu.svelte';
     import MenuButton from '../ui/menu/MenuButton.svelte';
+    import Modal from '../ui/modal/Modal.svelte';
     
     
     export let value: string = ''
@@ -55,6 +57,8 @@
     let emojiPickerOpen:boolean = false
     let minRows = rows
     let imageAltText: string
+
+    let formattingHelpModal:boolean = false
 
     let pasteImage: FileList | null
     let processingPastedImage = false
@@ -117,10 +121,11 @@
         Enter: () => dispatcher('confirm', value),
     }
 
-    
+     
     
 </script>
 
+<!---Image Upload Modal--->
 {#if uploadingImage && images}
     <ImageUploadModal bind:open={uploadingImage} bind:image={pasteImage} bind:altText={imageAltText} on:upload={(e) => {
             if (e.detail?.url) {
@@ -135,6 +140,155 @@
     />
 {/if}
 
+
+<!--Formatting Help Modal-->
+{#if formattingHelpModal}
+    <Modal bind:open={formattingHelpModal} icon={QuestionMarkCircle} title="Formatting Help" width="max-w-3xl xl:max-w-full">
+        <div class="flex flex-col gap-0 xl:gap-2 xl:flex-row w-full">
+            <!---Column 1--->
+            <div class="w-full xl:w-1/2">
+        
+                <table class="w-full overflow-x-auto">
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Bold:</td>
+                        <td>
+                            <pre class="w-full">**text**</pre>
+                        </td>
+                    </tr>
+                
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Italic:</td>
+                        <td><pre class="w-full">*text*</pre></td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Link:</td>
+                        <td><pre class="w-full">[Link Text](Link URL)</pre></td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Image</td>
+                        <td>
+                            <pre class="w-full">![Alt Text](Source URL)</pre>
+                            Note:  Also works for direct video and audio (e.g. <code>.mp3</code> / <code>.mp4</code>)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Headings:</td>
+                        <td>
+                            <pre class="w-full">
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+                            </pre>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Strikethrough:</td>
+                        <td><pre class="w-full">~~Text~~</pre></td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Block Quote:</td>
+                        <td><pre class="w-full">> Text</pre></td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Bullet List:</td>
+                        <td>
+                            <pre class="w-full">
+- Item 1
+- Item 2
+- Item 3
+                            </pre>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Numbered List:</td>
+                        <td>
+                            <pre class="w-full">
+1) Item 1
+1) Item 2
+1) Item 3
+                            </pre>
+                        </td>
+                    </tr>
+
+                    
+                    
+                </table>
+            </div>
+
+            <!---Column 2--->
+            <div class="w-full xl:w-1/2">
+                <table class="w-full overflow-x-auto">
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Code Span:</td>
+                        <td><pre class="w-full">`Text`</pre></td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Code Block:</td>
+                        <td>
+                            <pre class="w-full">
+```language
+#include &lt;stdio.h&gt;
+int main() &lbrace;
+  return 1
+&rbrace;
+```
+                            </pre>
+                            Note:  The <code>language</code> value is optional and is only used for syntax highlighting.
+                            Can be either omitted or any one of Github's supported language codes. Must be in lowercase.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Table</td>
+                        <td>
+                            <pre class="w-full">
+| Heading | Heading |
+| --- | --- |
+| Column | Column |
+                            </pre>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Spoiler</td>
+                        <td>
+                            <pre class="w-full">
+::: spoiler Title
+Spoiler Content
+:::
+                            </pre>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">User Links:</td>
+                        <td>
+                            <pre class="w-full">@username@instance.xyz</pre>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Community Links</td>
+                        <td>
+                            <pre class="w-full">!community@instance.xyz</pre>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </Modal>
+{/if}
+
+<!---Markdown Editor--->
 <div class="flex flex-col w-full">
     {#if label}
         <div class="block my-1 font-bold text-sm">{label}</div>
@@ -345,6 +499,13 @@
                             on:click={() => {
                                 const cursorPos = textArea.selectionStart
                                 wrapSelection('\n::: spoiler Title\n', '\n:::', cursorPos+19)
+                            }}
+                        />
+
+                        <!---Help--->
+                        <Button title="Formatting Help" size="square-md" icon={QuestionMarkCircle} iconSize={16}
+                            on:click={() => {
+                                formattingHelpModal = true
                             }}
                         />
                     </span>
