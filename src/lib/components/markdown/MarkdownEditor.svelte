@@ -27,10 +27,13 @@
         NumberedList,
         Photo,
         Strikethrough,
+        TableCells,
         User,
         UserGroup,
     } from 'svelte-hero-icons'
     import { sleep } from '../lemmy/post/helpers';
+    import Menu from '../ui/menu/Menu.svelte';
+    import MenuButton from '../ui/menu/MenuButton.svelte';
     
     
     export let value: string = ''
@@ -93,6 +96,10 @@
         }
     }
 
+    function createCodeBlock(language:string,) {
+        const cursorPos = textArea.selectionStart
+        wrapSelection('\n```' + language + '\n\n\n' , '```', cursorPos + language.length + 5)
+    }
     const shortcuts = {
         KeyB: () => wrapSelection('**', '**'),
         KeyE: () => {emojiPickerOpen = !emojiPickerOpen},
@@ -142,54 +149,43 @@
                     <span class="flex flex-row flex-wrap gap-1.5 items-center">
                         <!--Emoji Picker Button-->
                         {#if emojis}
-                            <Button
-                                on:click={() => emojiPickerOpen = !emojiPickerOpen}
-                                title="Emojis"
-                                size="square-md"
-                            >
-                                <span class="font-bold">
-                                    <Icon src={FaceSmile} mini size="16"/>
-                                </span>
-                            </Button>
+                            <Button title="Emojis" size="square-md" icon={FaceSmile} iconSize={16}
+                                on:click={() => {
+                                    pickingCommunity = false
+                                    pickingUser = false
+                                    emojiPickerOpen = !emojiPickerOpen
+                                }}
+                                
+                            />
                         {/if}
 
                         <!---Image Upload Button--->
                         {#if images}
-                            <Button
+                            <Button title="Image" size="square-md" icon={Photo} iconSize={16}
                                 on:click={() => (uploadingImage = !uploadingImage)}
-                                title="Image"
-                                size="square-md"
+                                
                                 loading={processingPastedImage}
                                 disabled={processingPastedImage}
-                            >
-                                {#if !processingPastedImage}
-                                    <Icon src={Photo} size="16" mini />
-                                {/if}
-                            </Button>
+                            />
                         {/if}
 
                         <!---User Picker Button--->
-                        <Button
+                        <Button title="Insert User Link" size="square-md" icon={User} iconSize={16}
                             on:click={() => {
                                 pickingCommunity = false
+                                emojiPickerOpen = false
                                 pickingUser = !pickingUser
                             }}
-                            title="Find User"
-                            size="square-md"
-                            icon={User}
-                            iconSize={16}
+
                         />
 
                         <!---Community Picker Button--->
-                        <Button
+                        <Button title="Insert Community Link" size="square-md" icon={UserGroup} iconSize={16}
                             on:click={() => {
                                 pickingUser = false
+                                emojiPickerOpen = false
                                 pickingCommunity = !pickingCommunity
                             }}
-                            title="Find Community"
-                            size="square-md"
-                            icon={UserGroup}
-                            iconSize={16}
                         />
                             
                         
@@ -203,7 +199,6 @@
                         <!---Italic--->
                         <Button title="Italic" size="square-md"
                             on:click={() => wrapSelection('*', '*')}
-
                         >
                             <span class="italic font-bold">I</span>
                         </Button>
@@ -214,11 +209,28 @@
                         />
                     
                         <!---Heading--->
-                        <Button title="Header" size="square-md"
-                            on:click={() => wrapSelection('\n# ', '')}
-                        >
-                            <span class="italic font-bold font-serif">H</span>
-                        </Button>
+                        <Menu containerClass="!min-w-[75px] !max-w-[80px] overflow-auto" alignment="bottom-left">
+                            <Button title="Header" size="square-md" slot="button" let:toggleOpen on:click={toggleOpen}>
+                                <span class="italic font-bold font-serif">H</span>
+                            </Button>
+                            
+                            <MenuButton on:click={() => wrapSelection('\n# ', '')}>
+                                <span class="italic font-bold font-serif">H1</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => wrapSelection('\n## ', '')}>
+                                <span class="italic font-bold font-serif">H2</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => wrapSelection('\n### ', '')}>
+                                <span class="italic font-bold font-serif">H3</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => wrapSelection('\n#### ', '')}>
+                                <span class="italic font-bold font-serif">H4</span>
+                            </MenuButton>
+
+                        </Menu>
 
                         <!---Strikethrough--->
                         <Button title="Strikethrough" size="square-md" icon={Strikethrough} iconSize={16}
@@ -236,7 +248,7 @@
                         <Button title="List" size="square-md" icon={ListBullet} iconSize={16}
                             on:click={() => {
                                 const cursorPos = textArea.selectionStart
-                                wrapSelection('- \n- \n- ', '', cursorPos+2)
+                                wrapSelection('\n- \n- \n- ', '', cursorPos+3)
                             }}
                             
                         />
@@ -245,7 +257,7 @@
                         <Button title="Numbered List" size="square-md" icon={NumberedList} iconSize={16}
                             on:click={() => {
                                 const cursorPos = textArea.selectionStart
-                                wrapSelection('1) \n1) \n1) ', '', cursorPos+3)
+                                wrapSelection('\n1) \n1) \n1) ', '', cursorPos+4)
                             }}
                             
                         />
@@ -256,10 +268,69 @@
                         />
 
                         <!---Code Block--->
+                        <Menu containerClass="!min-w-fit overflow-auto" containerStyle="max-height: {(rows)*25}px !important" alignment="bottom-center">
+                            <Button title="Code Block" size="square-md" slot="button" icon={CodeBracket} iconSize={16} let:toggleOpen on:click={toggleOpen}/>
+
+                            <MenuButton on:click={() => createCodeBlock('')}>
+                                <span class="text-sm">Plaintext</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('bash')}>
+                                <span class="text-sm">Bash</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('c')}>
+                                <span class="text-sm">C</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('c++')}>
+                                <span class="text-sm">C++</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('go')}>
+                                <span class="text-sm">Go</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('java')}>
+                                <span class="text-sm">Java</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('javascript')}>
+                                <span class="text-sm">Javascript</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('python')}>
+                                <span class="text-sm">Python</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('rust')}>
+                                <span class="text-sm">Rust</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('sh')}>
+                                <span class="text-sm">Shell</span>
+                            </MenuButton>
+
+                            <MenuButton on:click={() => createCodeBlock('typescript')}>
+                                <span class="text-sm">TypeScript</span>
+                            </MenuButton>
+
+                        </Menu>
+                        
+                        <!---
                         <Button title="Code Block" size="square-md" icon={CodeBracket} iconSize={16}
                             on:click={() => {
                                 const cursorPos = textArea.selectionStart
-                                wrapSelection('```\n\n\n', '```', cursorPos+4)
+                                wrapSelection('\n```\n\n\n', '```', cursorPos+5)
+                            }}
+                        />
+                        --->
+                        
+                        <!---Table--->
+                        <Button title="Table" size="square-md" icon={TableCells} iconSize={16}
+                            on:click={() => {
+                                const cursorPos = textArea.selectionStart
+                                wrapSelection('\n| Heading | Heading |\n| --- | --- |\n| Column | Column |','', cursorPos + 39)
                             }}
                         />
 
@@ -267,7 +338,7 @@
                         <Button title="Spoiler" size="square-md" icon={ExclamationTriangle} iconSize={16}
                             on:click={() => {
                                 const cursorPos = textArea.selectionStart
-                                wrapSelection('::: spoiler Title\n', '\n:::', cursorPos+18)
+                                wrapSelection('\n::: spoiler Title\n', '\n:::', cursorPos+19)
                             }}
                         />
                     </span>
@@ -315,7 +386,7 @@
                                 </div>
 
                                 <div class="w-[calc(100%-24px)]">
-                                    <PersonAutocomplete containerClass="max-w-full" containerStyle="max-height: {(rows)*25}px !important" 
+                                    <PersonAutocomplete focused containerClass="max-w-full" containerStyle="max-height: {(rows)*25}px !important" 
                                         on:select={(e) => {
                                             wrapSelection(`@${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
                                             pickingUser = false
@@ -334,7 +405,7 @@
                                 </div>
 
                                 <div class="w-[calc(100%-24px)]">    
-                                    <CommunityAutocomplete containerClass="max-w-full" containerStyle="max-height: {(rows)*25}px !important"
+                                    <CommunityAutocomplete focused containerClass="max-w-full" containerStyle="max-height: {(rows)*25}px !important"
                                         on:select={(e) => {
                                             wrapSelection(`!${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
                                             pickingCommunity = false
