@@ -47,6 +47,74 @@ removeAdmin {username}
     - `~<comment_id>@instance.xyz`
 
 
+# 1.4.28
+
+## Bugfixes
+- [Bug] Default moderation template had a missing piece (community) and didn't really make sense.
+- [Bug] Don't poll notifications from Notification system time handler if no active profile. The poll function didn't actually run, but no reason to call it if no profile
+- [Bug/Annoyance] When highlighting text in the markdown editor and using the toolbar buttons (e.g. highlight a word and click "bold"), the text area would annoyingly scroll to the bottom.  No longer does it do that.
+
+
+## Minor Changes
+- [Settings] Moved inbox/notification related settings to new section in `/settings` page.
+- [Notifications] Notification poll interval is now configurable
+- [Infrastructure] Removed unused settings key for notificaiton rate
+- [Infrastructure] Can now specify `section` URL param on `/settings` page to open the specific panel (useful for linking to a settings section; yet to be implemented elsewhere)
+
+
+### Vote Viewer Now Available to Mods
+If connected to an instance running API 0.19.4 or higher, the vote viewer is now available to mods for items in their communities.  I had always planned for it to be, but I wasn't aware that had been implemented in the API already.  Apparently it's been available to mods at the API-level since 0.19.4 (thanks @Blaze@feddit.org for pointing that out).
+
+For those unaware, the vote viewer is accessible from the Moderation Modal -> View Votes... button.
+
+
+### Posts
+#### All User Defined Invidious/Piped Instances Available
+The link menu / alternate source selector for YouTube-like videos now lists all user-defined Piped/Invidious instances instead of a single, static link to the currently-selected instance. 
+
+### Community Profile Modals
+#### Post Drafts Less Likely to be Accidentally Lost
+When creating a post in the community profile modal, the "Return to Home" back arrow will now prompt you for confirmation if there is anything in the post form. Helps prevent accidental loss of post draft via mis-click.
+
+#### Upload Cleanup
+When clicking the "return to home" button from the "Create Post" panel, the `resetForm` function from the post form will be called which will take care of cleaning up any uploaded media that would otherwise be abandoned.
+
+
+### Markdown Editor
+#### Added new buttons to the toolbar
+- Insert User Link
+- Insert Community Link
+- Table
+- Code Block
+- Formatting Help
+
+The "Insert User/Community Link" buttons will let you search for a user and/or community and insert links to them in the body at the current cursor position.  The inserted links are in the `@user@instance.xyz` / `!community@instance.xyz` format.
+
+The "Table" button will create a markdown table template.
+
+The Code Block button is a menu which will let you select the lanaguage (or plaintext/other).
+
+The Formatting Help button will load a modal with a markdown cheatsheet.
+
+#### Toolbar Now Reflows
+The markdown editor toolbar (with the formatting, emoji, image, etc) buttons will now reflow on mobile/small width screens rather than scroll horizontally.
+
+
+
+#### Various Tweaks to Markdown Editor
+
+1) Heading button is now a menu; can select headings 1 through 4
+1) Fixed bug where highlighting text and using the toolbar buttons would always scroll it to the bottom
+1) Numbered and bullet lists now give you three entries
+1) On spoiler, code block, and lists, the cursor now goes to inside the block or in position for the first list item (respectively)
+1) Highlighting text and clicking the "Link" button will now automatically put the text into the link label. For example, if you highlight the text "Home" and clicked link:
+    - Old behavior:  `Home` -> `[Label](url)Home`
+    - New behavior:  `Home` -> `[Home](url)`
+
+
+---
+
+
 ## 1.4.27
 ### Bugfixes
 - The 'Filter Annoying CC Licenses on Comments' wasn't working since the markdown pre-processor re-write. 
