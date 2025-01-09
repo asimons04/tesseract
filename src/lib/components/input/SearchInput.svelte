@@ -18,6 +18,7 @@
     export let extractName: (item: T) => string
     export let containerClass:string = ''
     export let containerStyle:string = ''
+    export let focused: boolean = false
     export let infiniteScrollState:InfiniteScrollStateVars = {
         exhausted: false,
         loading: false
@@ -47,10 +48,7 @@
 </script>
 
 <div class="relative">
-    <TextInput
-        type="search"
-        bind:value={query}
-        on:keyup={() => {
+    <TextInput {focused} type="search" bind:value={query} on:keyup={() => {
             extractSelected(null)
             doSearch()
         }}

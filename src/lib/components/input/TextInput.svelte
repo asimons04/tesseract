@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, onMount } from 'svelte'
     import { Eye, EyeSlash } from 'svelte-hero-icons';
     
     import Button from './Button.svelte';
@@ -15,6 +15,7 @@
     export let readonly:boolean = false
     export let autocomplete:string = 'off'
     export let name:string = 'textInput'
+    export let focused:boolean = false
 
     function typeAction(node: Node) {
         // @ts-ignore
@@ -41,6 +42,9 @@
     const onChange  = (e:CustomEvent) => dispatcher('change', e)
     const onPaste   = (e:CustomEvent) => dispatcher('paste', e)
 
+    onMount(() => {
+        if (focused) element.focus()
+    })
 </script>
 
 <label class="flex flex-col items-center {$$props.class}">

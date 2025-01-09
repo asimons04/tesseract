@@ -18,6 +18,7 @@
     export let containerClass:string = ''
     export let containerStyle: string = ''
     export let showHiddenRemoved:boolean = false
+    export let focused: boolean = false
 
     let page: number = 0
     let limit: number = 50
@@ -102,6 +103,7 @@
         containerClass="{containerClass}"
         containerStyle="{containerStyle}"
         placeholder="Search for Community"
+        {focused}
         bind:options={items}
         bind:infiniteScrollState
         bind:query={q}
