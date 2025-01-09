@@ -101,10 +101,12 @@
         }
     }
 
-    function createCodeBlock(language:string,) {
+    // Creates a code block with the specified language and sets the cursor inside the block
+    function createCodeBlock(language:string) {
         const cursorPos = textArea.selectionStart
-        wrapSelection('\n```' + language + '\n\n\n' , '```', cursorPos + language.length + 5)
+        wrapSelection('\n```' + language + '\n' , '\n```', cursorPos + language.length + 5)
     }
+
     const shortcuts = {
         KeyB: () => wrapSelection('**', '**'),
         KeyE: () => {emojiPickerOpen = !emojiPickerOpen},
@@ -167,10 +169,9 @@
                         <!---Image Upload Button--->
                         {#if images}
                             <Button title="Image" size="square-md" icon={Photo} iconSize={16}
-                                on:click={() => (uploadingImage = !uploadingImage)}
-                                
                                 loading={processingPastedImage}
-                                disabled={processingPastedImage}
+                                disabled={processingPastedImage}    
+                                on:click={() => (uploadingImage = !uploadingImage)}
                             />
                         {/if}
 
