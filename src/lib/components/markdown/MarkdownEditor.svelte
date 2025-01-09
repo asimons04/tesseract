@@ -18,21 +18,20 @@
 
     import {
         CodeBracket,
+        CodeBracketSquare,
         ExclamationTriangle,
         FaceSmile,
         Icon,
         Link,
         ListBullet,
+        NumberedList,
         Photo,
+        Strikethrough,
         User,
         UserGroup,
     } from 'svelte-hero-icons'
+    import { sleep } from '../lemmy/post/helpers';
     
-    
-    
-    
-    
-
     
     export let value: string = ''
     export let label: string | undefined = undefined
@@ -58,7 +57,10 @@
     let processingPastedImage = false
 
     let pickingUser:  boolean = false
+    let pickingUserQuery: string = ''
+
     let pickingCommunity: boolean = false
+    let pickingCommunityQuery: string = ''
 
     const dispatcher = createEventDispatcher<{ confirm: string }>()
 
@@ -66,25 +68,29 @@
         return str.substring(0, startIndex) + replacement + str.substring(endIndex)
     }
 
-    function wrapSelection(start: string, end: string) {
+    function moveCursorTo(pos:number) {
+        textArea.selectionStart = pos
+        textArea.selectionEnd = pos
+    }
+
+    function wrapSelection(start: string, end: string, setCursor:number = -1) {
         const startPos = textArea.selectionStart
         const endPos = textArea.selectionEnd
 
         const substring = textArea.value.substring(startPos, endPos)
         let newText = `${start}${substring}${end}`
-
-        textArea.value = replaceTextAtIndices(
-            textArea.value,
-            startPos,
-            endPos,
-            newText
-        )
+        value = replaceTextAtIndices(value, startPos, endPos, newText )
 
         textArea.focus()
-        textArea.selectionStart = startPos + start.length
-        textArea.selectionEnd = endPos + start.length
-
-        value = textArea.value
+        if (setCursor > 0) {
+            sleep(10).then(() => moveCursorTo(setCursor))
+        }
+        else {
+            sleep(10).then(()=> {
+                textArea.selectionStart = startPos + start.length
+                textArea.selectionEnd = endPos + start.length
+            })
+        }
     }
 
     const shortcuts = {
@@ -187,79 +193,83 @@
                         />
                             
                         
-                    
-                        <Button
+                        <!---Bold--->
+                        <Button title="Bold" size="square-md"
                             on:click={() => wrapSelection('**', '**')}
-                            title="Bold"
-                            size="square-md"
                         >
                             <span class="font-bold">B</span>
                         </Button>
 
-                        <Button
+                        <!---Italic--->
+                        <Button title="Italic" size="square-md"
                             on:click={() => wrapSelection('*', '*')}
-                            title="Italic"
-                            size="square-md"
+
                         >
                             <span class="italic font-bold">I</span>
                         </Button>
                     
-                        <Button
-                            on:click={() => wrapSelection('[label](url)', '')}
-                            title="Link"
-                            size="square-md"
-                        >
-                            <Icon src={Link} mini size="16" />
-                        </Button>
+                        <!---Link--->
+                        <Button title="Link" size="square-md" icon={Link} iconSize={16}
+                            on:click={() => wrapSelection('[', '](url)')}
+                        />
                     
-                        <Button
+                        <!---Heading--->
+                        <Button title="Header" size="square-md"
                             on:click={() => wrapSelection('\n# ', '')}
-                            title="Header"
-                            size="square-md"
                         >
                             <span class="italic font-bold font-serif">H</span>
                         </Button>
 
-                        <Button
+                        <!---Strikethrough--->
+                        <Button title="Strikethrough" size="square-md" icon={Strikethrough} iconSize={16}
                             on:click={() => wrapSelection('~~', '~~')}
-                            title="Strikethrough"
-                            size="square-md"
-                        >
-                            <span class="line-through font-bold">S</span>
-                        </Button>
+                        />
 
-                        <Button
+                        <!--- Quote --->
+                        <Button title="Quote" size="square-md"
                             on:click={() => wrapSelection('\n> ', '')}
-                            title="Quote"
-                            size="square-md"
                         >
                             <span class="font-bold font-serif">"</span>
                         </Button>
 
-                        <Button
-                            on:click={() => wrapSelection('\n- ', '')}
-                            title="List"
-                            size="square-md"
-                        >
-                            <Icon src={ListBullet} mini size="16" />
-                        </Button>
+                        <!---Bullet List--->
+                        <Button title="List" size="square-md" icon={ListBullet} iconSize={16}
+                            on:click={() => {
+                                const cursorPos = textArea.selectionStart
+                                wrapSelection('- \n- \n- ', '', cursorPos+2)
+                            }}
+                            
+                        />
 
-                        <Button
-                            on:click={() => wrapSelection('`', '`')}
-                            title="Code"
-                            size="square-md"
-                        >
-                            <Icon src={CodeBracket} mini size="16" />
-                        </Button>
+                        <!---Numbered List--->
+                        <Button title="Numbered List" size="square-md" icon={NumberedList} iconSize={16}
+                            on:click={() => {
+                                const cursorPos = textArea.selectionStart
+                                wrapSelection('1) \n1) \n1) ', '', cursorPos+3)
+                            }}
+                            
+                        />
 
-                        <Button
-                            on:click={() =>
-                            wrapSelection('::: spoiler Spoiler Title\n', '\n:::')}
-                            title="Spoiler"
-                            size="square-md"
-                        >
-                            <Icon src={ExclamationTriangle} mini size="16" />
-                        </Button>
+                        <!---Code Span--->
+                        <Button title="Code Span" size="square-md" icon={CodeBracketSquare} iconSize={16}
+                            on:click={() => wrapSelection('`', '`')} 
+                        />
+
+                        <!---Code Block--->
+                        <Button title="Code Block" size="square-md" icon={CodeBracket} iconSize={16}
+                            on:click={() => {
+                                const cursorPos = textArea.selectionStart
+                                wrapSelection('```\n\n\n', '```', cursorPos+4)
+                            }}
+                        />
+
+                        <!---Spoiler--->
+                        <Button title="Spoiler" size="square-md" icon={ExclamationTriangle} iconSize={16}
+                            on:click={() => {
+                                const cursorPos = textArea.selectionStart
+                                wrapSelection('::: spoiler Title\n', '\n:::', cursorPos+18)
+                            }}
+                        />
                     </span>
 
                     <!---Markdown editor resize slider--->
@@ -299,23 +309,39 @@
                         
                         <!---User--->
                         {#if pickingUser}
-                            <PersonAutocomplete containerStyle="max-height: {(rows)*25}px !important" 
-                                on:select={(e) => {
-                                    wrapSelection(`@${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
-                                    pickingUser = false
+                            <div class="flex flex-row gap-1 items-center w-full">
+                                <div class="w-[20px]">
+                                    <Icon src={User} mini width={18} />
+                                </div>
 
-                                }}
-                            />
+                                <div class="w-[calc(100%-24px)]">
+                                    <PersonAutocomplete containerClass="max-w-full" containerStyle="max-height: {(rows)*25}px !important" 
+                                        on:select={(e) => {
+                                            wrapSelection(`@${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
+                                            pickingUser = false
+
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         {/if}
                         
                         <!---Community--->
                         {#if pickingCommunity}
-                            <CommunityAutocomplete containerStyle="max-height: {(rows)*25}px !important"
-                                on:select={(e) => {
-                                    wrapSelection(`!${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
-                                    pickingCommunity = false
-                                }}
-                            />
+                            <div class="flex flex-row gap-1 items-center w-full">
+                                <div class="w-[20px]">
+                                    <Icon src={UserGroup} mini width={18} />
+                                </div>
+
+                                <div class="w-[calc(100%-24px)]">    
+                                    <CommunityAutocomplete containerClass="max-w-full" containerStyle="max-height: {(rows)*25}px !important"
+                                        on:select={(e) => {
+                                            wrapSelection(`!${e.detail.name}@${new URL(e.detail.actor_id).hostname} `, '')
+                                            pickingCommunity = false
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         {/if}
                     </div>
                 {/if}
@@ -351,6 +377,8 @@
 
                     on:keydown={(e) => {
                         if (disabled) return
+                        
+                        // Handle shortcut keys
                         if (e.ctrlKey || e.metaKey) {
                             // @ts-ignore
                             let shortcut = shortcuts[e.code]
