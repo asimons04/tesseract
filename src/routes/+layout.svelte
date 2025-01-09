@@ -10,7 +10,7 @@
     // @ts-ignore
     import { pwaInfo } from 'virtual:pwa-info'
     import PwaReload from '$lib/PwaReload.svelte'
-    
+    import { site } from '$lib/lemmy'
     import { userSettings } from '$lib/settings.js'
 
 
@@ -55,6 +55,7 @@
 
 <svelte:head>
     <meta name="theme-color" content={inDarkTheme() ? '#020202' : '#f1f6f9'} />
+    <link rel="icon" href="{$site?.site_view.site.icon ?? '/img/favicon.png'}">
     {@html webManifest}
 </svelte:head>
 
