@@ -224,8 +224,8 @@
                                     
                                     <span class="flex flex-row gap-2">
                                         <!---Report PM--->
-                                        <Button class="text-red-500" color="tertiary-border" size="square-md" on:click={() => {reporting=true} } >
-                                            <Icon slot="icon" src={Flag} mini size="16" />
+                                        <Button color="tertiary-border" size="square-md" on:click={() => {reporting=true} } >
+                                            <Icon slot="icon" src={Flag} mini size="16" class="text-red-500" />
                                         </Button>
                                     </span>
                                 </div>
