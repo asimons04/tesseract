@@ -7,7 +7,7 @@
 
     import { amMod, amModOfAny, isAdmin, type PostModerationModalPanels } from '../moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events';
-    import { getClient } from '$lib/lemmy'
+    import { getClient, minAPIVersion } from '$lib/lemmy'
     import { goto } from '$app/navigation'
     import { isCommentView } from '$lib/lemmy/item'
     import { onMount } from 'svelte'
@@ -488,7 +488,7 @@
 
 
                 <!---Vote Viewer--->
-                {#if !purged && isAdmin($profile?.user)}
+                {#if !purged && ( isAdmin($profile?.user) || (minAPIVersion("0.19.4") && amMod($profile?.user, item.community)) )  }
                     <Button color="tertiary-border" icon={HandThumbUp} iconSize={20} alignment="left" class="w-full" 
                         on:click={() => {
                             modalWidth = panelWidths['showVotes']
