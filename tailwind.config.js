@@ -19,7 +19,7 @@ export default {
             sm: '0.9rem',
             base: '1.0rem',
             lg: '1.1rem',
-            xl: '1.2rem',
+            xl: '1.3rem',
             '2xl': '1.5rem',
             '3xl': '1.875rem',
             '4xl': '2.25rem',
