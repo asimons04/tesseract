@@ -1,36 +1,44 @@
 <script lang="ts">
     import type { PrivateMessageView } from 'lemmy-js-client'
 
-    import { profile } from '$lib/auth'
+    import { hrColors } from '$lib/ui/colors';
 
-    import Markdown from '$lib/components/markdown/Markdown.svelte';
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte';
-
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     export let item: PrivateMessageView
     export let read: boolean = false
 </script>
 
-<div class="flex flex-row items-center">
-    <div class="text-sm max-w-[80ch] whitespace-nowrap text-ellipsis overflow-hidden flex flex-row items-center gap-1 {read ? 'opacity-80' : ''}">
-        <span class="font-bold flex items-center">
-            {#if item.creator.id == $profile?.user?.local_user_view.person.id}
-                You
-            {:else}
-                <UserLink avatar user={item.creator} />
-            {/if}
+
+<!---Message Header--->
+<div class="flex flex-col text-sm w-full truncate  items-center gap-1 {read ? 'opacity-80' : ''}">
+    
+    <div class="flex flex-row w-full gap-4 items-center">
+        <span class="w-[5ch] font-bold">From:</span>
+        <span class="w-full">
+            <UserLink avatar={false} user={item.creator} class="-ml-1" />
         </span>
-        <span>messaged</span>
-        <span class="font-bold flex items-center">
-            {#if item.recipient.id == $profile?.user?.local_user_view.person.id}
-                You
-            {:else}
-                <UserLink avatar user={item.recipient} />
-            {/if}
+    </div>
+
+    <div class="flex flex-row w-full gap-4 items-center">
+        <span class="w-[5ch] font-bold">To:</span>
+        <span class="w-full">
+                <UserLink avatar={false} user={item.recipient} class="-ml-1" />
+        </span>
+    </div>
+
+    <div class="flex flex-row w-full gap-4 items-center">
+        <span class="w-[5ch] font-bold">Date:</span>
+        <span class="w-full">
+            {new Date(item.private_message.published).toLocaleString()}
         </span>
     </div>
 </div>
 
+<hr class="{hrColors}" />
+
+<!---Message Body--->
 <p class="text-sm py-2">
     <Markdown source={item.private_message.content} />
 </p>
