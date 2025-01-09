@@ -17,14 +17,14 @@
     <div class="flex flex-row w-full gap-4 items-center">
         <span class="w-[5ch] font-bold">From:</span>
         <span class="w-full">
-            <UserLink avatar={false} user={item.creator} class="-ml-1" />
+            <UserLink avatar={false} user={item.creator} />
         </span>
     </div>
 
     <div class="flex flex-row w-full gap-4 items-center">
         <span class="w-[5ch] font-bold">To:</span>
         <span class="w-full">
-                <UserLink avatar={false} user={item.recipient} class="-ml-1" />
+                <UserLink avatar={false} user={item.recipient} />
         </span>
     </div>
 
