@@ -510,7 +510,7 @@
                     on:click={()=> {
                         // If post has any data set, confirm before returning to main menu
                         if (!postInProgress) returnMainMenu()
-                        else if (confirm("You have a post in progress. Are you sure you want to lose it?")) {
+                        else if (confirm("You have a post in progress. Are you sure you want to cancel?")) {
                             resetPostForm().then(() => returnMainMenu())
                         }
                         
