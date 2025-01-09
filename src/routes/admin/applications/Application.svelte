@@ -348,7 +348,7 @@
                             <SectionTitle>Deny Application</SectionTitle>
                             
                             <SettingToggle bind:value={createModlogEntry} icon={Newspaper} title="Create Modlog Entry"
-                                description="When denying, also ban this user from the instance and use the deny reason in the modlog entry."
+                                description="When denying, also ban this user from the instance and use the deny reason in the modlog entry. Note that this may cause issues with re-use of this username. Use with caution."
                             />
 
                             <MarkdownEditor bind:value={denyReason} images={false} emojis={false} previewButton rows={3} placeholder="Reason for denying the application...">
