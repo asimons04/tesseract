@@ -248,7 +248,7 @@ int main() &lbrace;
                     </tr>
 
                     <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Table</td>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Table:</td>
                         <td>
                             <pre class="w-full">
 | Heading | Heading |
@@ -259,7 +259,7 @@ int main() &lbrace;
                     </tr>
 
                     <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Spoiler</td>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Spoiler:</td>
                         <td>
                             <pre class="w-full">
 ::: spoiler Title
@@ -277,7 +277,7 @@ Spoiler Content
                     </tr>
 
                     <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Community Links</td>
+                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Community Links:</td>
                         <td>
                             <pre class="w-full">!community@instance.xyz</pre>
                         </td>
