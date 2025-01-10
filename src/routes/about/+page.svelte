@@ -24,6 +24,7 @@ life of its own.
 
 ### Full Media Support in Feed and Posts
 - YouTube/Invidious/Piped
+- Loops
 - Soundcloud
 - Bandcamp
 - Spotify Tracks, Albums, and Playlists
@@ -42,10 +43,8 @@ Post and comment menus let you browse the communities of the originating instanc
 there.
 
 ### Community Favorites and Grouping
-Communities can be favorited, added to arbitrary user-defined groups, or both.  Currently, groups are only useful on desktop since they're accessed via 
-the sidebar which is not yet accessible on mobile.  
+Communities can be favorited, added to arbitrary user-defined groups, or both.  Useful if you have a lot of community subscriptions and want to organize them for quick access.
 
-Your favorites or any of your community groups can also be combined into a custom, pseudo feed, though the implementation is still in its early phases.
 
 ### Image/Media Proxying and Caching
 Privacy conscious users have long requested media be proxied through Lemmy.  The Lemmy devs finally implemented that in 0.19.4, but they did it in a very stupid
@@ -81,11 +80,11 @@ The MBFC results are also integrated into the reporting and moderation tools.
 - Most images in the UI are zoomable, including images in posts and comments, user avatars, and community/site icons.
 - Multiple account and multiple instance support.
 - Optimized for desktop and mobile. All desktop features are available in mobile.
-- A more "new" Reddit-like look and feel
+- A more "new" Reddit-like look and feel (well, old "new" Reddit ca. 2022-2023)
 - Code syntax highlighting.
 - Full admin tools to manage your Lemmy instance
 - Extensive configuration options
-- Enhanced Modlog and Moderation Tools beyond what Lemmy-UI offers
+- Enhanced Modlog and Moderation Tools far beyond what Lemmy-UI offers
 
 --- 
 
