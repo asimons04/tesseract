@@ -94,6 +94,7 @@ export const THROWAWAY_EMAIL_DOMAINS = [
     'spam4.me',
     'teleg.eu',
     'thetechnext.net',
+    'vuket.org',
     'ytnhy.com'
 ]
 /** Returns true if the provided email address belongs to a known throwaway email provider
