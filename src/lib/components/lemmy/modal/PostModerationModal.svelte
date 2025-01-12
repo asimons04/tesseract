@@ -438,159 +438,160 @@
     <!---Default/Moderation Action List--->
     {#if action == 'none'}
         <ModalPanel>
-            
-            <!---Community and User Indicators/Links--->
-            <Card class="p-2 w-full">
-                <div class="flex flex-row gap-2 justify-between w-full items-center text-xs sm:text-sm overflow-hidden">
-                    <span class="w-1/2">
-                        <CommunityLink community={item.community} avatar inline={false} avatarSize={48} />
-                    </span>
+            <ModalScrollArea card={false}>
+                <!---Community and User Indicators/Links--->
+                <Card class="p-2 w-full">
+                    <div class="flex flex-row gap-2 justify-between w-full items-center text-xs sm:text-sm overflow-hidden">
+                        <span class="w-1/2">
+                            <CommunityLink community={item.community} avatar inline={false} avatarSize={48} />
+                        </span>
 
-                    <span class="ml-auto">
-                        <UserLink user={item.creator} avatar inline={false} avatarSize={48} community_banned={item.creator_banned_from_community} mod={item.creator_is_moderator} admin={item.creator_is_admin} />
-                    </span>
+                        <span class="ml-auto">
+                            <UserLink user={item.creator} avatar inline={false} avatarSize={48} community_banned={item.creator_banned_from_community} mod={item.creator_is_moderator} admin={item.creator_is_admin} />
+                        </span>
+                    </div>
+                </Card>
+
+                <!--Main Menu Buttons--->            
+                <div class="flex flex-col gap-2 px-8 mt-0 w-full items-center">
+                    
+                    <!---Community Details--->
+                    <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth = panelWidths['communityInfo']
+                            action = 'communityInfo' 
+                        }}
+                    >
+                        Community Details...
+                    </Button>
+
+
+                    <!---Creator's Modlog History--->
+                    <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
+                        on:click={() => {
+                            modalWidth = panelWidths['modlog']
+                            action = 'modlog'
+                        }}
+                    >
+                        Creator's Modlog History...
+                    </Button>
+
+                    <!---View Submissions--->
+                    <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
+                        on:click={() => {
+                            action = 'userSubmissions'
+                            modalWidth = panelWidths['userSubmissions']
+                        }}
+                    >
+                        Submissions in Community...
+                    </Button>
+
+
+                    <!---Vote Viewer--->
+                    {#if !purged && ( isAdmin($profile?.user) || (minAPIVersion("0.19.4") && amMod($profile?.user, item.community)) )  }
+                        <Button color="tertiary-border" icon={HandThumbUp} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                modalWidth = panelWidths['showVotes']
+                                action = 'showVotes'
+                            }}
+                        >
+                            View Votes...
+                        </Button>
+                    {/if}
+
+                    <!---Report Item Button (Only useful for local admins)--->
+                    {#if !purged && !removed && $profile?.user && isAdmin($profile?.user)}
+                        <Button color="tertiary-border" icon={Flag} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                modalWidth = panelWidths['reporting']
+                                action = 'reporting'
+                            }}
+                        >
+                            Report {isCommentView(item) ? 'Comment' : 'Post'}...
+                        </Button>
+                    {/if}
+                    
+
+                    <!---Send Message Creator--->
+                    <Button color="tertiary-border" icon={Envelope} iconSize={20} alignment="left" class="w-full" 
+                        on:click={() => {
+                            modalWidth = panelWidths['messaging']
+                            action = 'messaging'
+                        }}
+                        >
+                        Send Message to Creator...
+                    </Button>
+
+
+                    <!---Remove/Restore Item--->
+                    {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
+                        <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                modalWidth = panelWidths['removing']
+                                remove.purge = false
+                                action = 'removing'
+                            }}
+                        >
+                            {removed ? 'Restore' : 'Remove'} {isCommentView(item) ? 'Comment' : 'Post'}...
+                        </Button>
+                    {/if}
+
+                    
+                    
+
+                    <!---Purge Item--->
+                    {#if !purged && isAdmin($profile?.user) }
+                        <Button color="tertiary-border" icon={Fire} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                modalWidth = panelWidths['removing']
+                                remove.purge = true
+                                action = 'removing'
+                            }}
+                        >
+                            Purge {isCommentView(item) ? 'Comment' : 'Post'}...
+                        </Button>
+                    {/if}
+
+                    <!---Ban User (Community) --->
+                    {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
+                        <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                modalWidth = panelWidths['banning']
+                                banCommunity = item.community
+                                action = 'banning'
+                            }}
+                        >
+                            {item.creator_banned_from_community ? 'Unban' : 'Ban'} From This Community...
+                        </Button>
+                    {/if}
+
+                    <!---Ban User From All Communities--->
+                    {#if item.creator.id != $profile?.user?.local_user_view.person.id && amModOfAny($profile?.user)}
+                        <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                modalWidth = panelWidths['communityBanning']
+                                banCommunity = undefined
+                                action = 'communityBanning'
+                            }}
+                        >
+                            Ban/Unban All My Communities...
+                        </Button>
+                    {/if}
+                    
+                    <!---Ban User (Instance) --->
+                    {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
+                        <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
+                            on:click={() => {
+                                modalWidth = panelWidths['banning']
+                                banCommunity = undefined
+                                action = 'banning'
+                            }}
+                        >
+                            {item.creator.banned ? 'Unban' : 'Ban'} From Instance...
+                        </Button>
+                    {/if}
                 </div>
-            </Card>
-
-            <!--Main Menu Buttons--->            
-            <div class="flex flex-col gap-2 px-8 mt-0 w-full items-center">
-                
-                <!---Community Details--->
-                <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full" 
-                    on:click={() => {
-                        modalWidth = panelWidths['communityInfo']
-                        action = 'communityInfo' 
-                    }}
-                >
-                    Community Details...
-                </Button>
-
-
-                <!---Creator's Modlog History--->
-                <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
-                    on:click={() => {
-                        modalWidth = panelWidths['modlog']
-                        action = 'modlog'
-                    }}
-                >
-                    Creator's Modlog History...
-                </Button>
-
-                <!---View Submissions--->
-                <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
-                    on:click={() => {
-                        action = 'userSubmissions'
-                        modalWidth = panelWidths['userSubmissions']
-                    }}
-                >
-                    Submissions in Community...
-                </Button>
-
-
-                <!---Vote Viewer--->
-                {#if !purged && ( isAdmin($profile?.user) || (minAPIVersion("0.19.4") && amMod($profile?.user, item.community)) )  }
-                    <Button color="tertiary-border" icon={HandThumbUp} iconSize={20} alignment="left" class="w-full" 
-                        on:click={() => {
-                            modalWidth = panelWidths['showVotes']
-                            action = 'showVotes'
-                        }}
-                    >
-                        View Votes...
-                    </Button>
-                {/if}
-
-                <!---Report Item Button (Only useful for local admins)--->
-                {#if !purged && !removed && $profile?.user && isAdmin($profile?.user)}
-                    <Button color="tertiary-border" icon={Flag} iconSize={20} alignment="left" class="w-full" 
-                        on:click={() => {
-                            modalWidth = panelWidths['reporting']
-                            action = 'reporting'
-                        }}
-                    >
-                        Report {isCommentView(item) ? 'Comment' : 'Post'}...
-                    </Button>
-                {/if}
-                
-
-                <!---Send Message Creator--->
-                <Button color="tertiary-border" icon={Envelope} iconSize={20} alignment="left" class="w-full" 
-                    on:click={() => {
-                        modalWidth = panelWidths['messaging']
-                        action = 'messaging'
-                    }}
-                    >
-                    Send Message to Creator...
-                </Button>
-
-
-                <!---Remove/Restore Item--->
-                {#if !purged && (amMod($profile?.user, item.community) || isAdmin($profile?.user) )}
-                    <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" 
-                        on:click={() => {
-                            modalWidth = panelWidths['removing']
-                            remove.purge = false
-                            action = 'removing'
-                        }}
-                    >
-                        {removed ? 'Restore' : 'Remove'} {isCommentView(item) ? 'Comment' : 'Post'}...
-                    </Button>
-                {/if}
-
-                
-                
-
-                <!---Purge Item--->
-                {#if !purged && isAdmin($profile?.user) }
-                    <Button color="tertiary-border" icon={Fire} iconSize={20} alignment="left" class="w-full" 
-                        on:click={() => {
-                            modalWidth = panelWidths['removing']
-                            remove.purge = true
-                            action = 'removing'
-                        }}
-                    >
-                        Purge {isCommentView(item) ? 'Comment' : 'Post'}...
-                    </Button>
-                {/if}
-
-                <!---Ban User (Community) --->
-                {#if item.creator.id != $profile?.user?.local_user_view.person.id && (amMod($profile?.user, item.community) || isAdmin($profile?.user))}
-                    <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
-                        on:click={() => {
-                            modalWidth = panelWidths['banning']
-                            banCommunity = item.community
-                            action = 'banning'
-                        }}
-                    >
-                        {item.creator_banned_from_community ? 'Unban' : 'Ban'} From This Community...
-                    </Button>
-                {/if}
-
-                <!---Ban User From All Communities--->
-                {#if item.creator.id != $profile?.user?.local_user_view.person.id && amModOfAny($profile?.user)}
-                    <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full" 
-                        on:click={() => {
-                            modalWidth = panelWidths['communityBanning']
-                            banCommunity = undefined
-                            action = 'communityBanning'
-                        }}
-                    >
-                        Ban/Unban All My Communities...
-                    </Button>
-                {/if}
-                
-                <!---Ban User (Instance) --->
-                {#if item.creator.id != $profile?.user?.local_user_view.person.id && isAdmin($profile?.user) }
-                    <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
-                        on:click={() => {
-                            modalWidth = panelWidths['banning']
-                            banCommunity = undefined
-                            action = 'banning'
-                        }}
-                    >
-                        {item.creator.banned ? 'Unban' : 'Ban'} From Instance...
-                    </Button>
-                {/if}
-            </div>
+            </ModalScrollArea>
         </ModalPanel>
     {/if}
 

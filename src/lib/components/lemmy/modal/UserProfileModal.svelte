@@ -298,166 +298,166 @@
         <!---Main Menu--->
         {#if action == 'none'}
             <ModalPanel>
-                <!--- User Card and Action Buttons--->
-                <UserCardSmall person_view={personDetails.person_view} blocked={userBlocked} mod={mod} {mostRecentItem} href 
-                    on:clickUserLink={() => open = false }
-                />
+                <ModalScrollArea card={false}>
+                    <!--- User Card and Action Buttons--->
+                    <UserCardSmall person_view={personDetails.person_view} blocked={userBlocked} mod={mod} {mostRecentItem} href 
+                        on:clickUserLink={() => open = false }
+                    />
 
-                <!---About Me--->
-                <CollapseButton bind:expanded={aboutMe} icon={InformationCircle} title="About Me" innerClass="max-h-[45vh] overflow-y-scroll">
-                    <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
+                    <!---About Me--->
+                    <CollapseButton bind:expanded={aboutMe} icon={InformationCircle} title="About Me" innerClass="max-h-[45vh] overflow-y-scroll">
+                        <Markdown source={personDetails.person_view.person.bio ?? '*User has not provided a bio.*'} />
 
-                    <!---Communities This User Moderates--->
-                    {#if personDetails.moderates.length > 0}
-                        <span class="font-bold text-base my-2">Moderates:</span>
+                        <!---Communities This User Moderates--->
+                        {#if personDetails.moderates.length > 0}
+                            <span class="font-bold text-base my-2">Moderates:</span>
 
-                        {#each personDetails.moderates as community, idx }
-                            <CommunityLink community={community.community} avatar on:click={() => open = false }/>
-                        {/each}
-                    {/if}
-                </CollapseButton>
+                            {#each personDetails.moderates as community, idx }
+                                <CommunityLink community={community.community} avatar on:click={() => open = false }/>
+                            {/each}
+                        {/if}
+                    </CollapseButton>
 
-                {#if !aboutMe}
+                    {#if !aboutMe}
                    
-                    <!--- Action Buttons for this User--->
-                    <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide={{easing:expoIn}}>
+                        <!--- Action Buttons for this User--->
+                        <div class="flex flex-col gap-2 mt-0 px-4 w-full items-center" transition:slide={{easing:expoIn}}>
                         
-                        <!---View User's Profile--->
-                        <div class="flex flex-row gap-2 items-center w-full">
-                            <Button color="tertiary-border" icon={User} iconSize={20} alignment="left" class="w-full"
-                                on:click={()=> {
-                                    if (!personDetails) return
+                            <!---View User's Profile--->
+                            <div class="flex flex-row gap-2 items-center w-full">
+                                <Button color="tertiary-border" icon={User} iconSize={20} alignment="left" class="w-full"
+                                    on:click={()=> {
+                                        if (!personDetails) return
 
-                                    // If viewing own account go to /profile/user otherwise, goto /u/{user}@{instance}
-                                    if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
-                                        goto ('/profile/user')
-                                        open = false
-                                    }
-                                    else {    
-                                        goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
-                                        open = false
-                                    }
-                                }}
-                            >
-                                Go to Profile
-                            </Button>
-
-                            <!---View on Home Instance (if not same instance as current)--->
-                            {#if $instance != new URL(personDetails.person_view.person.actor_id).hostname}
-                                <Button color="tertiary-border" icon={Home} iconSize={20} size="square-md" title="View on User's Home Instance"
-                                    href="{personDetails.person_view.person.actor_id}" newtab={true}
-                                />
-                            {/if}
-                        </div>
-
-                        <!---View Submissions--->
-                        <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
-                            on:click={() => {
-                                if (!personDetails) return
-                                modalWidth = "max-w-4xl"
-                                action = 'submissions'
-                            }}
-                        >
-                            View History...
-                        </Button>
-            
-
-                        <!---See User's Modlog History--->
-                        <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
-                            on:click={() => {
-                                if (!personDetails) return
-                                action = 'modlog'
-                                modalWidth = "max-w-4xl"
-                                
-                            }}
-                        >
-                            Modlog History...
-                        </Button>
-                        
-                        <div class="flex flex-row gap-2 items-center w-full">
-                            <!---Send Direct Message--->
-                            {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-                                <Button color="tertiary-border" icon={Envelope} iconSize={20} alignment="left" class="w-full" disabled={personDetails.person_view.person.banned}
-                                    on:click={() => {
-                                        action='messaging'
-                                        modalWidth="max-w-4xl"
+                                        // If viewing own account go to /profile/user otherwise, goto /u/{user}@{instance}
+                                        if ($profile?.user?.local_user_view.person.id == personDetails.person_view.person.id) {
+                                            goto ('/profile/user')
+                                            open = false
+                                        }
+                                        else {    
+                                            goto(`/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                                            open = false
+                                        }
                                     }}
                                 >
-                                    Send Message...
+                                    Go to Profile
                                 </Button>
 
-                                <!---Message in Matrix--->
-                                {#if personDetails.person_view.person.matrix_user_id && !personDetails.person_view.person.banned}
-                                    <Button color="tertiary-border" icon={Hashtag} iconSize={20} size="square-md" link title="Message on Matrix"
-                                        href="https://matrix.to/#/{personDetails.person_view.person.matrix_user_id}" newtab={true}
+                                <!---View on Home Instance (if not same instance as current)--->
+                                {#if $instance != new URL(personDetails.person_view.person.actor_id).hostname}
+                                    <Button color="tertiary-border" icon={Home} iconSize={20} size="square-md" title="View on User's Home Instance"
+                                        href="{personDetails.person_view.person.actor_id}" newtab={true}
                                     />
                                 {/if}
-                            {/if}
-                        </div>
+                            </div>
 
-                        
-
-                        
-                        <!---Search for Alts, Copy Lemmyverse and Actor ID Links--->
-                        <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} iconSize={20} alignment="left"
-                            on:click={() => {
-                                if (!personDetails) return
-                                goto(`/search?type=Users&q=${personDetails.person_view.person.name}`, {invalidateAll: true})
-                                open=false
-                            }}
-                        >
-                            Search for Alts
-                        </Button>
-                        
-                        
-                        <!---Block User--->
-                        {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-                            <Button color="tertiary-border" class="w-full" icon={NoSymbol} iconSize={20} alignment="left" loading={blocking} disabled={blocking}
-                                on:click={async () => {
-                                    if (personDetails?.person_view.person) {
-                                        blocking = true
-                                        userBlocked = await blockUser(personDetails.person_view.person.id, true, !userBlocked)
-                                        
-                                        dispatchWindowEvent('blockUser', { 
-                                            person_id: personDetails.person_view.person.id,
-                                            blocked: userBlocked
-                                        })
-                                        blocking = false
-                                    }
+                            <!---View Submissions--->
+                            <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
+                                on:click={() => {
+                                    if (!personDetails) return
+                                    modalWidth = "max-w-4xl"
+                                    action = 'submissions'
                                 }}
                             >
-                                {userBlocked ? 'Unblock' : 'Block'} User
+                                View History...
                             </Button>
-                        {/if}
-                        
-                        <!---Ban User From All Communities--->
-                        {#if $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id && amModOfAny($profile?.user)}
-                        <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full" 
-                            on:click={() => {
-                                action = 'communityBanning'
-                                modalWidth = 'max-w-3xl'
-                            }}
-                        >
-                            Ban/Unban All My Communities...
-                        </Button>
-                        {/if}
+                
 
-                        <!---Ban User--->
-                        {#if isAdmin($profile?.user) && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
-                            <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
+                            <!---See User's Modlog History--->
+                            <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
                                 on:click={() => {
-                                    action = 'banning'
+                                    if (!personDetails) return
+                                    action = 'modlog'
+                                    modalWidth = "max-w-4xl"
+                                    
+                                }}
+                            >
+                                Modlog History...
+                            </Button>
+                        
+                            <div class="flex flex-row gap-2 items-center w-full">
+                                <!---Send Direct Message--->
+                                {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                                    <Button color="tertiary-border" icon={Envelope} iconSize={20} alignment="left" class="w-full" disabled={personDetails.person_view.person.banned}
+                                        on:click={() => {
+                                            action='messaging'
+                                            modalWidth="max-w-4xl"
+                                        }}
+                                    >
+                                        Send Message...
+                                    </Button>
+
+                                    <!---Message in Matrix--->
+                                    {#if personDetails.person_view.person.matrix_user_id && !personDetails.person_view.person.banned}
+                                        <Button color="tertiary-border" icon={Hashtag} iconSize={20} size="square-md" link title="Message on Matrix"
+                                            href="https://matrix.to/#/{personDetails.person_view.person.matrix_user_id}" newtab={true}
+                                        />
+                                    {/if}
+                                {/if}
+                            </div>
+
+                        
+
+                        
+                            <!---Search for Alts, Copy Lemmyverse and Actor ID Links--->
+                            <Button color="tertiary-border" class="w-full" icon={MagnifyingGlass} iconSize={20} alignment="left"
+                                on:click={() => {
+                                    if (!personDetails) return
+                                    goto(`/search?type=Users&q=${personDetails.person_view.person.name}`, {invalidateAll: true})
+                                    open=false
+                                }}
+                            >
+                                Search for Alts
+                            </Button>
+                        
+                        
+                            <!---Block User--->
+                            {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                                <Button color="tertiary-border" class="w-full" icon={NoSymbol} iconSize={20} alignment="left" loading={blocking} disabled={blocking}
+                                    on:click={async () => {
+                                        if (personDetails?.person_view.person) {
+                                            blocking = true
+                                            userBlocked = await blockUser(personDetails.person_view.person.id, true, !userBlocked)
+                                            
+                                            dispatchWindowEvent('blockUser', { 
+                                                person_id: personDetails.person_view.person.id,
+                                                blocked: userBlocked
+                                            })
+                                            blocking = false
+                                        }
+                                    }}
+                                >
+                                    {userBlocked ? 'Unblock' : 'Block'} User
+                                </Button>
+                            {/if}
+                        
+                            <!---Ban User From All Communities--->
+                            {#if $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id && amModOfAny($profile?.user)}
+                            <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full" 
+                                on:click={() => {
+                                    action = 'communityBanning'
                                     modalWidth = 'max-w-3xl'
                                 }}
                             >
-                                {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}...
+                                Ban/Unban All My Communities...
                             </Button>
-                        {/if}
+                            {/if}
 
-                        
+                            <!---Ban User--->
+                            {#if isAdmin($profile?.user) && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                                <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" 
+                                    on:click={() => {
+                                        action = 'banning'
+                                        modalWidth = 'max-w-3xl'
+                                    }}
+                                >
+                                    {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}...
+                                </Button>
+                            {/if}
 
-                    </div>
-                {/if}
+                        </div>
+                    {/if}
+                </ModalScrollArea>
             </ModalPanel>
         
         {/if}

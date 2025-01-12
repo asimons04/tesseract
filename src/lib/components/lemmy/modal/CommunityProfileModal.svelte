@@ -361,9 +361,9 @@
         <span class="flex">
             <Spinner width={24} class="mx-auto my-auto"/>
         </span>
-    {/if}
+    
 
-    {#if !loading && communityDetails?.community_view}
+    {:else if communityDetails?.community_view}
 
         <!---Ban/Unban Tool--->
         {#if action == 'banning'}
@@ -506,7 +506,7 @@
         <!---Create Post Form--->
         {#if action == 'createPost'}
             <ModalPanel>
-                <ModalPanelHeading title="Create Post in {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}"
+                <ModalPanelHeading title="Create Post"
                     on:click={()=> {
                         // If post has any data set, confirm before returning to main menu
                         if (!postInProgress) returnMainMenu()
@@ -553,144 +553,145 @@
 
         <!---Main Menu--->
         {#if action == 'none'}
-            <div class="flex flex-col gap-2 w-full" transition:slide={{easing:expoIn}}>
-                <!---Community Card--->
-                <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false } />
+            <ModalPanel>
+                <ModalScrollArea card={false}>
+                    <!---Community Card--->
+                    <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false } />
 
-                <span class="mt-2" />
+                    <span class="mt-2" />
 
-                <!--- Action Buttons for this Community--->
-                <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" >
-                    
-                    {#if !communityBlocked}
+                    <!--- Action Buttons for this Community--->
+                    <div class="flex flex-col gap-2 mt-0 px-8 w-full items-center" >
+                        
+                        {#if !communityBlocked}
 
-                        <!---Go to Community--->
-                        <Button color="tertiary-border" icon={UserGroup} iconSize={20} alignment="left" class="w-full"
-                            on:click={()=> {
-                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
-                                open = false
-                            }}
-                        >
-                            Go to Community
-                        </Button> 
-
-                        <!--- Community Details/Info--->
-                        <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full"
-                            on:click={()=> {
-                                action='communityDetails'
-                                modalWidth='max-w-4xl'
-                            }}
-                        >
-                            Community Details...
-                        </Button>
-
-                           
-                        <!---Browse Community's Posts in the  Modal--->
-                        <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
-                            on:click={()=> {
-                                action = 'browsing'
-                                modalWidth = 'max-w-4xl'
-                            }}
-                        >
-                            Browse Community...
-                        </Button>
-                    {/if}
-                    
-
-                    <!---Create Post--->
-                    {#if $profile?.user && !communityBlocked}
-                        <Button color="tertiary-border" icon={PencilSquare} iconSize={20} alignment="left" class="w-full"
-                            disabled={
-                                (communityDetails.community_view.community.posting_restricted_to_mods && !amMod($profile.user, communityDetails.community_view.community)) ||
-                                communityDetails.community_view.community.removed
-                            }
-                            on:click={()=> {
-                                action='createPost'
-                                modalWidth = 'max-w-5xl'
-                            }}
-                        >
-                            Create Post...
-                        </Button>
-                    {/if}
-
-                    <!---Community Modlog--->
-                    <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
-                        on:click={()=> {
-                            modalWidth = 'max-w-3xl'
-                            action='modlog'
-                        }}
-                    >
-                        Community Modlog...
-                    </Button>
-                    
-
-                    <!---Options that Required Authenticated User--->
-                    {#if $profile?.user}
-
-                        <!---Community Settings (if mod or local admin of a local community)--->
-                        {#if $profile?.user && amMod($profile.user, communityDetails.community_view.community)}
-                            <Button color="tertiary-border" icon={Cog6Tooth} iconSize={20} alignment="left" class="w-full"
-                                on:click={ () => {
-                                    goto(`/c/${fullCommunityName(communityDetails.community_view.community.name, communityDetails.community_view.community.actor_id)}/settings`)
+                            <!---Go to Community--->
+                            <Button color="tertiary-border" icon={UserGroup} iconSize={20} alignment="left" class="w-full"
+                                on:click={()=> {
+                                    goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
                                     open = false
                                 }}
                             >
-                                Community Settings
-                        </Button>
-                        {/if} 
+                                Go to Community
+                            </Button> 
 
-                        <!---Ban User Tool--->
-                        {#if $profile?.user && (amMod($profile.user, communityDetails.community_view.community) || isAdmin($profile.user) )}
-                            <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full"
-                                on:click={ () => {
-                                    modalWidth = 'max-w-3xl'
-                                    action = 'banning'
-                                }}
-                            >
-                                Ban/Unban User...
-                        </Button>
-                        {/if} 
-
-                        <!---Block Community--->
-                        <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" loading={blocking}
-                            title="{communityBlocked ? 'Unblock' : 'Block'} Community"
-                            on:click={async ()=> {
-                                action = 'blocking'
-                            }}
-                        >
-                            {communityBlocked ? 'Unblock' : 'Block'} Community...
-                        </Button>
-
-                        <!---Admin-Only Options--->
-                        {#if isAdmin($profile.user) }
-                            <!---Remove Community--->
-                            <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" loading={remove.removing} 
-                                title="{communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community"
+                            <!--- Community Details/Info--->
+                            <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full"
                                 on:click={()=> {
-                                    modalWidth="max-w-2xl"
-                                    action='removing'
+                                    action='communityDetails'
+                                    modalWidth='max-w-4xl'
                                 }}
                             >
-                                {communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community...
+                                Community Details...
                             </Button>
 
-                            <!---Hide Community--->
-                            <Button color="tertiary-border" icon={EyeSlash} iconSize={20} alignment="left" class="w-full" loading={hide.hiding} 
-                                title="{communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community"
-                                on:click={() => {
-                                    modalWidth="max-w-2xl"
-                                    action="hiding"
+                            
+                            <!---Browse Community's Posts in the  Modal--->
+                            <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
+                                on:click={()=> {
+                                    action = 'browsing'
+                                    modalWidth = 'max-w-4xl'
                                 }}
                             >
-                                {communityDetails.community_view.community.hidden ? 'Un-Hide' : 'Hide'} Community...
+                                Browse Community...
                             </Button>
+                        {/if}
+                        
 
+                        <!---Create Post--->
+                        {#if $profile?.user && !communityBlocked}
+                            <Button color="tertiary-border" icon={PencilSquare} iconSize={20} alignment="left" class="w-full"
+                                disabled={
+                                    (communityDetails.community_view.community.posting_restricted_to_mods && !amMod($profile.user, communityDetails.community_view.community)) ||
+                                    communityDetails.community_view.community.removed
+                                }
+                                on:click={()=> {
+                                    action='createPost'
+                                    modalWidth = 'max-w-5xl'
+                                }}
+                            >
+                                Create Post...
+                            </Button>
                         {/if}
 
-                    {/if}
-                </div>
-                
-            </div>
+                        <!---Community Modlog--->
+                        <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
+                            on:click={()=> {
+                                modalWidth = 'max-w-3xl'
+                                action='modlog'
+                            }}
+                        >
+                            Community Modlog...
+                        </Button>
+                        
+
+                        <!---Options that Required Authenticated User--->
+                        {#if $profile?.user}
+
+                            <!---Community Settings (if mod or local admin of a local community)--->
+                            {#if $profile?.user && amMod($profile.user, communityDetails.community_view.community)}
+                                <Button color="tertiary-border" icon={Cog6Tooth} iconSize={20} alignment="left" class="w-full"
+                                    on:click={ () => {
+                                        goto(`/c/${fullCommunityName(communityDetails.community_view.community.name, communityDetails.community_view.community.actor_id)}/settings`)
+                                        open = false
+                                    }}
+                                >
+                                    Community Settings
+                            </Button>
+                            {/if} 
+
+                            <!---Ban User Tool--->
+                            {#if $profile?.user && (amMod($profile.user, communityDetails.community_view.community) || isAdmin($profile.user) )}
+                                <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full"
+                                    on:click={ () => {
+                                        modalWidth = 'max-w-3xl'
+                                        action = 'banning'
+                                    }}
+                                >
+                                    Ban/Unban User...
+                            </Button>
+                            {/if} 
+
+                            <!---Block Community--->
+                            <Button color="tertiary-border" icon={NoSymbol} iconSize={20} alignment="left" class="w-full" loading={blocking}
+                                title="{communityBlocked ? 'Unblock' : 'Block'} Community"
+                                on:click={async ()=> {
+                                    action = 'blocking'
+                                }}
+                            >
+                                {communityBlocked ? 'Unblock' : 'Block'} Community...
+                            </Button>
+
+                            <!---Admin-Only Options--->
+                            {#if isAdmin($profile.user) }
+                                <!---Remove Community--->
+                                <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" loading={remove.removing} 
+                                    title="{communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community"
+                                    on:click={()=> {
+                                        modalWidth="max-w-2xl"
+                                        action='removing'
+                                    }}
+                                >
+                                    {communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community...
+                                </Button>
+
+                                <!---Hide Community--->
+                                <Button color="tertiary-border" icon={EyeSlash} iconSize={20} alignment="left" class="w-full" loading={hide.hiding} 
+                                    title="{communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community"
+                                    on:click={() => {
+                                        modalWidth="max-w-2xl"
+                                        action="hiding"
+                                    }}
+                                >
+                                    {communityDetails.community_view.community.hidden ? 'Un-Hide' : 'Hide'} Community...
+                                </Button>
+
+                            {/if}
+
+                        {/if}
+                    </div>
+                </ModalScrollArea>
+            </ModalPanel>
         {/if}
 
     {/if}
