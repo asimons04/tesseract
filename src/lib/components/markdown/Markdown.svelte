@@ -96,6 +96,8 @@
                 inCodeSpan = false
                 inImage = false
 
+                line = line.trim()
+
                 // Split the line into words and process each word individually
                 let words = line.split(' ')
                 for (let j=0; j < words.length; j++) {
@@ -113,16 +115,24 @@
                     // Check if word is just an image without alt text (which comes through as one word
                     if (word.match(/^!\[\](.*)$/i))     inImage = true
 
+                    // If word starts with escape slash, don't process it as markdown (just spruce up the encodings and remove the slash for display)
+                    if (word.startsWith('\\')) {
+                        word = fixLemmyEncodings(word)
+                        word = word.substring(1, word.length)
+                        words[j] = word
+                    }
 
-
-                    // If not inside a code span, process each word
-                    if (!inCodeSpan && !inImage) {
+                    // If word isn't escaped, not inside a code span, image, process each word
+                    else if (!inCodeSpan && !inImage) {
                         word = fixLemmyEncodings(word)
                         if (!noUserCommunityLink) word = findUserCommunityLinks(word)
                         if (!noHashtags) word = hashtagsToMDLinks(word)
 
                         words[j] = word
                     }
+                    
+                    // Account for single "word" code-spans
+                    if (inCodeSpan && word.endsWith('`'))  inCodeSpan = false
                 }
                 line = words.join(' ')
                
