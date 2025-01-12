@@ -68,7 +68,7 @@
     >     
         <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>   
-            <Link href={post.post.url} newtab={$userSettings.openInNewTab.links}  title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+            <Link href={post.post.url} newtab={true}  title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
         </span>
     </PostEmbedDescription>
     
@@ -89,7 +89,7 @@
     >     
         <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>   
-            <Link href={post.post.url} newtab={$userSettings.openInNewTab.links}  title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+            <Link href={post.post.url} newtab={true}  title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
         </span>
     </PostEmbedDescription>
     <PostImage bind:post={post} displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> clickToPlayClicked=true}/>
@@ -108,7 +108,7 @@
     >     
         <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>   
-            <Link href={post.post.url} newtab={$userSettings.openInNewTab.links}  title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+            <Link href={post.post.url} newtab={true}  title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
         </span>
     </PostEmbedDescription>
 {/if}

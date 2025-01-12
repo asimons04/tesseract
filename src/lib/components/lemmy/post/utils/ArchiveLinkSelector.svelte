@@ -63,23 +63,23 @@
         {#if ['link', 'thumbLink'].includes(postType)}
             
 
-            <MenuButton color="info" link href="https://archive.ph/{removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Archive Today">
+            <MenuButton color="info" link href="https://archive.ph/{removeURLParams(url)}" newtab={true} title="Archive Today">
                 Archive Today
             </MenuButton>
 
-            <MenuButton color="info" link href="https://ghostarchive.org/search?term={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Ghost Archive">
+            <MenuButton color="info" link href="https://ghostarchive.org/search?term={removeURLParams(url)}" newtab={true} title="Ghost Archive">
                 Ghost Archive
             </MenuButton>
 
-            <MenuButton color="info" link href="https://12ft.io/proxy?q={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="12ft IO">
+            <MenuButton color="info" link href="https://12ft.io/proxy?q={removeURLParams(url)}" newtab={true} title="12ft IO">
                 12ft.io
             </MenuButton>
 
-            <MenuButton color="info" link href="https://www.removepaywall.com/search?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Remove Paywalls">
+            <MenuButton color="info" link href="https://www.removepaywall.com/search?url={removeURLParams(url)}" newtab={true} title="Remove Paywalls">
                 RemovePaywall.com
             </MenuButton>
 
-            <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="Ground News">
+            <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={true} title="Ground News">
                 Ground News
             </MenuButton>
             
@@ -91,12 +91,12 @@
             <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />           
             
             {#if MBFCResults?.url}
-                <MenuButton color="info" link href={MBFCResults.url} newtab={$userSettings.openInNewTab.links} title="Media Bias Fact Check">
+                <MenuButton color="info" link href={MBFCResults.url} newtab={true} title="Media Bias Fact Check">
                     Media Bias Fact Check
                 </MenuButton>
             {/if}
             
-            <MenuButton color="info" link href="https://spinscore.io/?url={removeURLParams(url)}" newtab={$userSettings.openInNewTab.links} title="SpinScore.io">
+            <MenuButton color="info" link href="https://spinscore.io/?url={removeURLParams(url)}" newtab={true} title="SpinScore.io">
                 SpinScore.io
             </MenuButton>
         {/if}
@@ -105,14 +105,14 @@
         {#if postType == 'youtube'}
             <div class="flex flex-col max-h-[20vh] overflow-y-scroll">
                 <!---Show Canonical Youtube Button in case Some Jerk Linked to some Shady/Unreliable/Dead Invid/Piped instance--->
-                <MenuButton color="info" title="YouTube" link href={updateYTHostname(url, 'youtube.com')} newtab={$userSettings.openInNewTab.links}>
+                <MenuButton color="info" title="YouTube" link href={updateYTHostname(url, 'youtube.com')} newtab={true}>
                     YouTube
                 </MenuButton>    
                 
                 <!---Add any user-defined custom Piped/Invidious Instances to the List--->                
                 {#if $userSettings.embeddedMedia.userDefinedInvidious.length > 0}
                     {#each $userSettings.embeddedMedia.userDefinedInvidious as invInstance}
-                        <MenuButton color="info" title="{invInstance}" link href={updateYTHostname(url, invInstance)} newtab={$userSettings.openInNewTab.links}>
+                        <MenuButton color="info" title="{invInstance}" link href={updateYTHostname(url, invInstance)} newtab={true}>
                             {invInstance}
                         </MenuButton>
                     {/each}

@@ -41,9 +41,6 @@
         <SectionTitle class="mt-2">Moderator</SectionTitle>
         <span class="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
             <UserLink showInstance={true} avatar user={item.moderator} />
-            {#if !item.moderator.admin}
-                <ShieldIcon filled width={16} />
-            {/if}
         </span>
     {/if}
   
@@ -56,13 +53,13 @@
         <SectionTitle class="mt-2">Item</SectionTitle>
 
         {#if item.link && item.content}
-            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}>
+            <Link href={item.link} highlight newtab={true}>
                 {item.content}
             </Link>
         {:else if item.content}
             <p>{item.content}</p>
         {:else if item.link}
-            <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
+            <Link href={item.link} highlight newtab={true}/>
         {/if}
     {/if}
   

@@ -127,9 +127,7 @@
                     </Button>
 
                     <Button color="info" size="sm" icon={ArrowTopRightOnSquare} iconSize={16} on:click={() => { 
-                            $userSettings.openInNewTab.links
-                                ? window.open(data.post.post_view.post.ap_id)
-                                : window.location.href = data.post.post_view.post.ap_id
+                            window.open(data.post.post_view.post.ap_id)
                         }}
                     >
                         <span class="text-xs">View on {new URL(data.post.post_view.post.ap_id).hostname}</span>

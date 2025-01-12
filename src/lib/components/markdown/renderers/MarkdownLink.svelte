@@ -118,7 +118,7 @@
     <Badge color="yellow" rightJustify={false} inline={true} on:click={(e) => {
         e.preventDefault()
         e.stopPropagation()
-        $userSettings.openInNewTab.links
+        true
             ? window.open(token.href)
             : window.location.href=token.href
     }}>
@@ -135,7 +135,7 @@
             $userSettings.uiState.linkPreviews &&
             !(options?.custom?.noPreview ?? false)
         } 
-        newtab={$userSettings.openInNewTab.links}
+        newtab={true}
     >
         <slot/>
     </Link>

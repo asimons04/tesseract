@@ -384,10 +384,11 @@
             bind:selected={$userSettings.uiState.defaultCommunityDropdownPanel}
         />
         
-        <!---Open in New Tab--->
+        <!---Open in New Tab
         <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links}
             description="Open external links in a new tab."
         />
+        --->
 
         <!---Use Display Names--->
         <SettingToggle icon={Identification} title="Use Display Names" bind:value={$userSettings.displayNames}

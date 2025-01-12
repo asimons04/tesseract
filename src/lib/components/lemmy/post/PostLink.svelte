@@ -34,7 +34,7 @@
             >
                 <span class="flex flex-row  my-auto w-full gap-2 mb-1">
                     <ArchiveLinkSelector url={post.post?.url} {postType}/>
-                    <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                    <Link class="text-xs" href={post.post?.url} newtab={true} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
                     <MBFC post={post} rightJustify={true}/>
                 </span>
             </PostEmbedDescription>
@@ -47,7 +47,7 @@
         <PostEmbedDescription bind:title={post.post.embed_title} bind:description={post.post.embed_description} card url={post.post.url}>
             <span class="flex flex-row w-full gap-2 px-1">
                 <ArchiveLinkSelector url={post.post?.url} {postType} />
-                <Link class="text-xs" href={post.post?.url} newtab={$userSettings.openInNewTab.links} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                <Link class="text-xs" href={post.post?.url} newtab={true} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
                 <MBFC post={post} rightJustify={true}/>
             </span>
         </PostEmbedDescription>

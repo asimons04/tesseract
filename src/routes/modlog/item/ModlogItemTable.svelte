@@ -233,11 +233,11 @@
 
                         <span class="flex flex-nowrap w-full gap-1 overflow-hidden">
                             {#if item.link && item.content}
-                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links} title={item.content}> {item.content.substring(0, 250)} </Link>
+                                <Link href={item.link} highlight newtab={true} title={item.content}> {item.content.substring(0, 250)} </Link>
                             {:else if item.content}
                                 <span title="{item.content}">{item.content.substring(0,250)}</span>
                             {:else if item.link}
-                                <Link href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
+                                <Link href={item.link} highlight newtab={true}/>
                             {/if}
                         </span>
                     </span>

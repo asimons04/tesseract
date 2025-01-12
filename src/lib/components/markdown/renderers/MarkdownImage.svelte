@@ -102,7 +102,7 @@
         href={token.href} 
         title={token.text && token.text.trim() != '' ? token.text : token.href} 
         text={token.text && token.text.trim() != '' ? token.text : token.href}  
-        newtab={$userSettings.openInNewTab.links} 
+        newtab={true} 
     />
 {/if}
   

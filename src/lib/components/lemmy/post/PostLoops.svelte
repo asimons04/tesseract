@@ -69,7 +69,7 @@
     > 
         <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='video' />    
-            <Link  href={post.post.url} title={post.post.url} newtab={$userSettings.openInNewTab.links}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
+            <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
         </span>
 </PostEmbedDescription>
 

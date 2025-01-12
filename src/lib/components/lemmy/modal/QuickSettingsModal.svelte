@@ -99,7 +99,7 @@
                 />
                 
                 <!---Open in New Tab--->
-                <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links} small={true} />
+                <SettingToggle icon={ArrowTopRightOnSquare} title="Open Posts in New Tab" bind:value={$userSettings.openInNewTab.posts} small={true} />
 
                 
                 <!---Use Link Preview Modals--->

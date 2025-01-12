@@ -68,7 +68,7 @@
         <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='youtube' />    
 
-            <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={$userSettings.openInNewTab.links} highlight nowrap 
+            <Link domainOnly={!$userSettings.uiState.showFullURL} newtab={true} highlight nowrap 
                 bind:href={post.post.url}
             />
             
@@ -96,7 +96,7 @@
             
             <Link highlight nowrap 
                 domainOnly={!$userSettings.uiState.showFullURL} 
-                newtab={$userSettings.openInNewTab.links} 
+                newtab={true} 
                 bind:href={post.post.url}
             />
         </span>

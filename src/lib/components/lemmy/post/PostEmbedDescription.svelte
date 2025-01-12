@@ -62,7 +62,7 @@
 
             {#if description && description.length > minLength}
                 {#if title}
-                    <Link class="text-sm font-bold md:px-4" href={url} newtab={$userSettings.openInNewTab.links} {title}>
+                    <Link class="text-sm font-bold md:px-4" href={url} newtab={true} {title}>
                         {title}
                     </Link>
                 {/if}

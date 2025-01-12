@@ -97,7 +97,7 @@
     >     
         <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} postType='spotify' /> 
-            <Link bind:href={post.post.url} newtab={$userSettings.openInNewTab.links} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
+            <Link bind:href={post.post.url} newtab={true} title={post.post.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap />
         </span>
     </PostEmbedDescription>
     
@@ -140,7 +140,7 @@
                 bind:href={post.post.url}
                 domainOnly={!$userSettings.uiState.showFullURL}
                 title={post.post.name}
-                newtab={$userSettings.openInNewTab.links}
+                newtab={true}
                 highlight nowrap
             />
         </span>

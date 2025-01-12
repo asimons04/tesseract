@@ -339,7 +339,7 @@
               <!-- svelte-ignore missing-declaration -->
                 <span class="mr-auto">v{__VERSION__}</span>
                 <span class="ml-auto">
-                    <Link href="https://github.com/asimons04/Tesseract/" title="Tesseract on Github" newtab={$userSettings.openInNewTab.links}>GitHub</Link>
+                    <Link href="https://github.com/asimons04/Tesseract/" title="Tesseract on Github" newtab={true}>GitHub</Link>
                 </span>
             </div>
         </li>

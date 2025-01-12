@@ -246,7 +246,7 @@
         
         
 
-        <Button color="primary" size="lg" icon={ArrowTopRightOnSquare} iconSize={20} href={url} newtab={$userSettings.openInNewTab.links}
+        <Button color="primary" size="lg" icon={ArrowTopRightOnSquare} iconSize={20} href={url} newtab={true}
             on:click={() => open = false }
         >
             Go

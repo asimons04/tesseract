@@ -183,11 +183,11 @@
                     <li class="flex flex-nowrap gap-1 overflow-hidden">
                         <strong>Item:</strong>
                         {#if item.link && item.content}
-                            <Link bind:href={item.link} highlight newtab={$userSettings.openInNewTab.links}>{item.content}</Link>
+                            <Link bind:href={item.link} highlight newtab={true}>{item.content}</Link>
                         {:else if item.content}
                             {item.content}
                         {:else if item.link}
-                            <Link bind:href={item.link} highlight newtab={$userSettings.openInNewTab.links}/>
+                            <Link bind:href={item.link} highlight newtab={true}/>
                         {/if}
                     </li>
                 {/if}
