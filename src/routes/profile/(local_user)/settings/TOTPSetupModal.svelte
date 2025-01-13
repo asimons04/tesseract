@@ -71,7 +71,7 @@
             toast({
                 type: 'error',
                 title: 'Error',
-                content: `API call failed when ${enabled ? 'enabling' : 'disabling'} TOTP: ${parseAPIError(err)}`
+                content: `API call failed when ${enabled ? 'enabling' : 'disabling'} TOTP: ${parseAPIError(err)?.error}`
             })
         }
         finally {
