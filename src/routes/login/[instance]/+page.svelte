@@ -86,7 +86,7 @@
                 case 'registration_denied':
                     registrationDeniedModal.title="Registration Denied"
                     registrationDeniedModal.reason = error.message ?? 'None provided.'
-                    registrationDeniedModal.details = `Your registration application to <span class="font-bold opacity-80">${data.site_view.site.name}</span> is was denied.`
+                    registrationDeniedModal.details = `Your registration application to <span class="font-bold opacity-80">${data.site_view.site.name}</span> was denied.`
                     registrationDeniedModal.open = true
                     break
 
