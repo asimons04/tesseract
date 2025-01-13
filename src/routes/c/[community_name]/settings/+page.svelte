@@ -132,6 +132,7 @@
     <SettingToggleContainer>
         {#if isTopMod($profile?.user, data.community) || isAdmin($profile?.user)}
         
+            <!---Delete Community--->
             <SettingButton 
                 icon={Trash} 
                 color={data.community.community_view.community.deleted ? 'success' : 'danger'}
