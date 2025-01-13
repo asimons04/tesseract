@@ -32,20 +32,25 @@
         if (audio && !inViewport) audio.pause()
         if (video && !inViewport) video.pause()
     }
+
+    const mimeTypes = {
+        'mov': 'video/mp4',
+        'mp4' : 'video/mp4',
+        'm4v' : 'video/mp4',
+        'webm' : 'video/webm',
+    }
+
+    let isEmoji = token.title ? true : false
 </script>
 
 <PostIsInViewport bind:postContainer={container} bind:inViewport />
 
 {#if !options.custom.noImages && $userSettings.inlineImages}
 
-    <div bind:this={container} class="overflow-hidden  relative bg-slate-300 dark:bg-zinc-800 m-1 rounded-2xl w-full lg:w-[60%] p-1">
+    <div bind:this={container} class="overflow-hidden {isEmoji ? 'inline-flex' : 'relative bg-slate-300 dark:bg-zinc-800 m-1 rounded-2xl w-full lg:w-[60%] p-1'}">
         <div class="ml-auto mr-auto max-w-full">
             
-            <!---Show Text as a Title--->
-            {#if token.title && $userSettings.uiState.showAltText}
-                <p class="font-bold text-center text-sm">{fixLemmyEncodings(token.title)}</p>
-            {/if}
-            
+           
                 
             <!--- Audio--->
             {#if isAudio(token.href) }
@@ -85,13 +90,15 @@
             
             <!---Image--->
             {:else}
-                <!---<img src={imageProxyURL(token.href)} title={token.title} alt={token.text} loading="lazy" class="mx-auto rounded-xl" />--->
-                <ZoomableImage url={token.href} altText={token.text} class="mx-auto rounded-xl"/>
+                {#if isEmoji}
+                    <ZoomableImage url={token.href} altText={token.text} class="w-[48px] h-[48px] mx-1 mt-1"/>
+                {:else}
+                    <ZoomableImage url={token.href} altText={token.text} class="mx-auto rounded-xl"/>
+                {/if}
             {/if}
 
             <!---Show Alt Text as Caption--->
-            {#if token.text && $userSettings.uiState.showAltText}
-                <!---<p class="pt-2 text-xs">{fixLemmyEncodings(token.text)}</p>--->
+            {#if !isEmoji && token.text && $userSettings.uiState.showAltText}
                 <p class="background-blur-3xl bg-white/50 dark:bg-black/50 rounded-xl p-2 mt-2 text-xs text-center">{fixLemmyEncodings(token.text)}</p>
             {/if}
         </div>
