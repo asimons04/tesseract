@@ -35,7 +35,8 @@
     let registrationDeniedModal = {
         open: false,
         title: '',
-        reason: ''
+        details: '',
+        reason: '',
     }
 
     let formData = {
@@ -85,6 +86,61 @@
                 case 'registration_denied':
                     registrationDeniedModal.title="Registration Denied"
                     registrationDeniedModal.reason = error.message ?? 'None provided.'
+                    registrationDeniedModal.details = `Your registration application to <span class="font-bold opacity-80">${data.site_view.site.name}</span> is was denied.`
+                    registrationDeniedModal.open = true
+                    break
+
+                case 'registration_application_is_pending':
+                    registrationDeniedModal.title="Registraion Application Pending"
+                    registrationDeniedModal.details = `Your registration application to <span class="font-bold opacity-80">${data.site_view.site.name}</span> is still pending.`
+                    registrationDeniedModal.reason = `
+                        Your registration application is still pending approval by the ${data.site_view.site.name} team.
+
+                        When approved, you should receive a confirmation email.  At that point, you can log in.
+
+                        If the application is denied, unfortunately, Lemmy does not currently send a rejection email. The only way
+                        to determine if the application was denied is to try to log in later. If it was dened, a pop up
+                        message, simiar to this one, with the deny reason will appear.
+                    `
+                    registrationDeniedModal.open = true
+                    break
+
+                case 'site_ban':
+                    registrationDeniedModal.title="Banned"
+                    registrationDeniedModal.details = `You are currently banned from <span class="font-bold opacity-80">${data.site_view.site.name}</span>`
+                    registrationDeniedModal.reason = `Please check the [modlog](/modlog) for more details`
+                    
+                    // Try to lookup the user in the modlog and set the reason based on that.
+                    try {
+                        let getUser = await getClient().getPersonDetails({
+                            username: formData.username.trim() + '@' + new URL(data.site_view.site.actor_id).hostname
+                        })
+
+                        let modlog = await getClient().getModlog({
+                            other_person_id: getUser.person_view.person.id,
+                            type_: 'ModBan'
+                        })
+
+                        if (modlog.banned.length > 0) {
+                            let ban = modlog.banned[0].mod_ban
+                            registrationDeniedModal.title = `${ban.expires ? 'Temporarily' : 'Permanently'} Banned`
+                            registrationDeniedModal.details = `You are ${ban.expires ? 'temporarily' : 'permanently'} banned from <span class="font-bold opacity-80">${data.site_view.site.name}</span>.`
+                            registrationDeniedModal.reason = `
+                            ${ban.reason}
+
+                            ${ban.expires ? `**Until**: ${new Date(ban.expires).toLocaleString()}` : ``}
+
+                            ---
+
+                            [More Details...](/modlog?other_person_id=${getUser.person_view.person.id})
+                            `
+
+                        }
+
+                    }
+                    catch {}
+                
+                    
                     registrationDeniedModal.open = true
                     break
                 
@@ -128,9 +184,7 @@
         <div class="flex flex-col gap-1 w-full">
             <SectionTitle>Login Error</SectionTitle>
             <span class="pl-2">
-                Your registration application to 
-                <span class="font-bold opacity-80">{data.site_view.site.name}</span>
-                was denied.
+                {@html registrationDeniedModal.details}
             </span>
         </div>
         
