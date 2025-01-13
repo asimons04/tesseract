@@ -25,6 +25,7 @@
         Icon,
         MagnifyingGlass,
         Newspaper,
+        PencilSquare,
         Trash,
         XMark 
     } from 'svelte-hero-icons'
@@ -356,13 +357,23 @@
                                 
                                 <!---Pass the action buttons into the markdown editor's action panel--->
                                 <div class="flex flex-row items-center gap-2 ml-auto" slot="actions">
+                                    
                                     <!---Return to Main Menu--->
-                                    <Button color="primary" size="lg" icon={XMark} title="Return to Main Menu" on:click={() => action = 'none'}>
+                                    <Button color="primary" size="md" icon={XMark} title="Return to Main Menu" on:click={() => action = 'none'}>
                                         Cancel
                                     </Button>
 
+                                    <!---Insert the Template from Moderation Settings--->
+                                    <Button color="primary" size="md" icon={PencilSquare} 
+                                        title="Insert the application denial template configured in Moderation Settings"
+                                        on:click={() => denyReason = $userSettings.moderation.applicationRejectionPreset }
+                                        disabled={$userSettings.moderation.applicationRejectionPreset ? false : true }
+                                    >
+                                        Template
+                                    </Button>
+
                                     <!---Perform Application Denial--->
-                                    <Button color="danger" size="lg" icon={Trash} 
+                                    <Button color="danger" size="md" icon={Trash} 
                                         title="Deny the application"
                                         loading={approving}
                                         disabled={approving}

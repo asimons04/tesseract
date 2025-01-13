@@ -767,10 +767,26 @@
                 </ul>
             </div>
 
-            <div class="flexcol flexcol-66">
+            <div class="flexcol flexcol-66 pt-1">
                 <MarkdownEditor bind:value={$userSettings.moderation.removalReasonPreset} images={false} previewButton />
             </div>
         </div>
+
+        {#if isAdmin($profile?.user)}
+            <div class="flexrow font-normal pt-2 text-xs">
+                <div class="flexcol flexcol-33">
+                    <span class="font-bold">Registration Application Deny Template</span>
+                    <p class="font-normal">A template that can be one-click entered into the registration application deny field.</p>
+
+                </div>
+
+                <div class="flexcol flexcol-66 pt-1">
+                    <MarkdownEditor bind:value={$userSettings.moderation.applicationRejectionPreset} images={false} previewButton />
+                </div>
+            </div>
+        {/if}
+
+
     </SettingsCollapseSection>
 
     <!---Filtering Options--->
