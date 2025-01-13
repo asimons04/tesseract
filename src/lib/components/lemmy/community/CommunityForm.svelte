@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CommunityView, SubscribedType, UploadImageResponse } from 'lemmy-js-client';
+    import type { CommunityView, GetCommunityResponse, SubscribedType, UploadImageResponse } from 'lemmy-js-client';
     
     import { addSubscription } from '$lib/lemmy/user.js'
     import { createFakeCommunityView } from '../post/helpers'
@@ -8,6 +8,7 @@
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
+    import { StorageController } from '$lib/storage-controller'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
     
@@ -26,6 +27,8 @@
         ExclamationTriangle, 
         HandRaised,
     } from 'svelte-hero-icons'
+    import { Store } from 'emoji-mart';
+    
     
     
     /** The community ID to edit. */
@@ -50,6 +53,13 @@
         postsLockedToModerators: false,
         submitting: false,
     }
+
+    const storage = new StorageController({
+        type: 'session',
+        ttl: 15,
+        useCompression: true   
+    })
+
 
     async function submit() {
         if (!$profile?.jwt) return
@@ -88,6 +98,18 @@
 
             goto($page.url, {invalidateAll: true})
 
+            // If editing a community, update the stored details
+            if (edit) {
+                const storageKey = `getCommunity_${$instance}:${res.community_view.community.name}@${new URL(res.community_view.community.actor_id).hostname}`
+                let getCommunityResponse: GetCommunityResponse | undefined = await storage.get(storageKey)
+                if (getCommunityResponse) {
+                    getCommunityResponse.community_view = res.community_view
+                    await storage.put(storageKey, getCommunityResponse)
+                }
+
+            }
+
+            // If creating a community, add the community to the local list of communities they're moderating
             if (!edit) {
                 if ($profile.user) {
                     $profile.user = {
