@@ -21,26 +21,29 @@
 
     let inViewport = false
     let container:HTMLDivElement
+    let media: HTMLVideoElement | HTMLAudioElement
     let loop = $userSettings.embeddedMedia.loop
 
-    let video: HTMLVideoElement
-    let audio: HTMLAudioElement
+    // In Lemmy-land, the markdown "title" attribute is used to denote a custom emoji and is typically the short code for it.
+    let isEmoji = token.title ? true : false
 
     $: inViewport, pauseMedia()
 
     function pauseMedia() {
-        if (audio && !inViewport) audio.pause()
-        if (video && !inViewport) video.pause()
+        if (media && !inViewport) media.pause()
     }
 
-    const mimeTypes = {
-        'mov': 'video/mp4',
-        'mp4' : 'video/mp4',
-        'm4v' : 'video/mp4',
-        'webm' : 'video/webm',
-    }
+    function getMimeType(url:string) {
+        if (new URL(url).pathname.endsWith('mp4') || new URL(url).pathname.endsWith('m4v') || new URL(url).pathname.endsWith('mov')) return 'video/mp4'
+        if (new URL(url).pathname.endsWith('webm')) return 'video/webm'
+        if (new URL(url).pathname.endsWith('mp3')) return 'audio/mpeg'
+        if (new URL(url).pathname.endsWith('aac')) return 'audio/aac'
+        if (new URL(url).pathname.endsWith('oga')) return 'audio/ogg'
+        if (new URL(url).pathname.endsWith('opus')) return 'audio/opus'
 
-    let isEmoji = token.title ? true : false
+        return undefined
+    }
+    
 </script>
 
 <PostIsInViewport bind:postContainer={container} bind:inViewport />
@@ -54,38 +57,15 @@
                 
             <!--- Audio--->
             {#if isAudio(token.href) }
-                <audio bind:this={audio} controls preload="auto">
-                    <source src={imageProxyURL(token.href)} type="{
-                        new URL(token.href).pathname.endsWith('mp3')
-                            ? 'audio/mpeg'
-                            : new URL(token.href).pathname.endsWith('aac')
-                                ? 'audio/aac'
-                                : new URL(token.href).pathname.endsWith('oga')
-                                    ? 'audio/ogg'
-                                    : new URL(token.href).pathname.endsWith('opus')
-                                        ? 'audio/opus'
-                                        : undefined
-
-                        }
-                    " 
-                />
+                <audio bind:this={media} controls preload="auto">
+                    <source src={imageProxyURL(token.href)} type="{getMimeType(token.href)}" />
                 </audio>
             
             <!---Direct Video--->
             {:else if isVideo(token.href)}
                 <!-- svelte-ignore a11y-media-has-caption -->
-                <video bind:this={video} class="rounded-xl max-w-full max-h-[65vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
-                    <source src="{imageProxyURL(token.href)}" 
-                        type="{
-                            new URL(token.href).pathname.endsWith('mp4') || new URL(token.href).pathname.endsWith('m4v')
-                                ? 'video/mp4' 
-                                : new URL(token.href).pathname.endsWith('webm') 
-                                    ? "video/webm" 
-                                    : new URL(token.href).pathname.endsWith('mov') 
-                                        ? "video/mp4"
-                                        : ''
-                        }"
-                    />
+                <video bind:this={media} class="rounded-xl max-w-full max-h-[65vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
+                    <source src="{imageProxyURL(token.href)}" type="{getMimeType(token.href)}" />
                 </video>    
             
             <!---Image--->
