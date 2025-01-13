@@ -99,7 +99,7 @@
                         When approved, you should receive a confirmation email.  At that point, you can log in.
 
                         If the application is denied, unfortunately, Lemmy does not currently send a rejection email. The only way
-                        to determine if the application was denied is to try to log in later. If it was dened, a pop up
+                        to determine if the application was denied is to try to log in later. If it was denied, a pop up
                         message, simiar to this one, with the deny reason will appear.
                     `
                     registrationDeniedModal.open = true
