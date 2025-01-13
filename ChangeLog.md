@@ -47,6 +47,61 @@ removeAdmin {username}
     - `~<comment_id>@instance.xyz`
 
 
+
+
+# 1.4.29
+
+## Bugfixes
+- Tweaked font sizing a bit so that H3/H4 heading differences are more pronounced.
+
+- Added meta header to instruct Dark Reader to ignore the app.  It's got automatic and manual toggle for dark mode (system preference or manual toggle), and DR doesn't render it correctly when it's enabled.
+
+- Code spans inline with ! and @ community/user links cause the user/community links to not render
+
+- Opening outside links in the same tab and returning back was causing lifecycle issues
+    - Outside links now always open in new tab, "open links in new tab" option has been removed (open posts is new tab is still available though).
+
+- Collapsing/Expanding the sidebars no longer collapse/expand inbox/report/application items to the default state
+
+- Add route at `/registration_applications` to redirect to `/admin/applications` so the link in the "{User} has applied to join {instance}" emails from the API work if Tesseract is replacing Lemmy-UI.
+
+- When updating community info/settings, any cached `getCommunity` response is updated.
+
+- Custom emojis are no longer treated the same as regular markdown images.  Now display inline at 64x64 px.
+
+## New Features/Enhancements
+
+### Favicon Uses the Instances's Icon
+Favicon uses the instance's site icon rather than the static Tesseract logo.  Automatically changes if you switch instances and falls back to the Tesseract logo if no site icon is available.
+
+
+### Login Error Message Handling
+Now has cleaner error messages if there is an error during login:
+- Invalid username/password
+- Invalid / expired / missing TOTP token
+
+### Registration Application Deny Reason Now Shown During Login
+If a user whose registration application was denied attempts to log in, instead of a generic toast error message, a modal will pop up informing them that their application was denied along with the reason provided.
+
+The reason is rendered as markdown, so if you include links for appeals, follow-ups, etc, those will be actionable.
+
+### Registration Pending Indicator During Login
+If a user tries to log in while their registration application is pending, instead of a small toast error, a modal will pop up with a more detailed and user-friendly explanation.
+
+### Banned Indicator During Login
+If someone has been banned from the instance, instead of a generic login failed toast, a modal will pop up with a more detailed explanation.
+
+The modal will also try to fetch that user's details from the modlog to display whether the ban is temporary or permanent, the reason, and, if temporary, the expiration date.
+
+
+
+### Admins Can Now Set Application Rejection Preset Reason
+In Settings -> Moderation, admins will see a new section called "Registration Application Deny Template".  This allows you to pre-set a reason for registration application denials that can be one-clicked into the deny reason on the Applications page.
+
+
+
+---
+
 # 1.4.28
 
 ## Bugfixes
