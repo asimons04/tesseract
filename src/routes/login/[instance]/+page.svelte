@@ -91,7 +91,7 @@
                     break
 
                 case 'registration_application_is_pending':
-                    registrationDeniedModal.title="Registraion Application Pending"
+                    registrationDeniedModal.title="Registration Application Pending"
                     registrationDeniedModal.details = `Your registration application to <span class="font-bold opacity-80">${data.site_view.site.name}</span> is still pending.`
                     registrationDeniedModal.reason = `
                         Your registration application is still pending approval by the ${data.site_view.site.name} team.
