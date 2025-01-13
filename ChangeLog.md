@@ -47,7 +47,12 @@ removeAdmin {username}
     - `~<comment_id>@instance.xyz`
 
 
+# 1.4.30
 
+## Bugs to Fix
+- Trim function in pre-processor breaks nested list items
+
+---
 
 # 1.4.29
 
