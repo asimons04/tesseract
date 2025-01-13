@@ -110,13 +110,11 @@ export let sortOptionNames:string[] = [
 export function parseAPIError(err:any) {
     let errMsg:string
     try { 
-        let parsed = JSON.parse(err.body.message)
-        errMsg = parsed.error
+        return JSON.parse(err.body.message)
     }
     catch {
-        errMsg = ''
+        return undefined
     }
-    return errMsg
 }
 
 
