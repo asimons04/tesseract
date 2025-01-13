@@ -79,6 +79,7 @@ Favicon uses the instance's site icon rather than the static Tesseract logo.  Au
 Now has cleaner error messages if there is an error during login:
 - Invalid username/password
 - Invalid / expired / missing TOTP token
+- Modals with additional info for non-standard login errors (registration pending/denied, banned)
 
 ### Registration Application Deny Reason Now Shown During Login
 If a user whose registration application was denied attempts to log in, instead of a generic toast error message, a modal will pop up informing them that their application was denied along with the reason provided.
