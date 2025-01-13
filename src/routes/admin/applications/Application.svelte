@@ -324,7 +324,7 @@
                                 <!---Approve and Create an Entry in the Modlog (unban event with preset 'reason')--->
                                 <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
                                     title="Aprove the application and create a modlog entry along with it"
-                                    loading={approving}
+                                    loading={approving && createModlogEntry}
                                     disabled={approving}    
                                     on:click={() => { 
                                         approving = true
@@ -332,6 +332,7 @@
                                         
                                         review(true).then(() => {
                                             approving = false
+                                            createModlogEntry = false
                                             action = 'none'
                                         })
                                         
