@@ -14,6 +14,7 @@ export type TesseractEvent =
     'changeProfile'     |
     'clickIntoPost'     |
     'distinguishComment'|
+    'expandAll'         |
     'featurePost'       |
     'hideCommunity'     |
     'hidePost'          |
@@ -110,6 +111,11 @@ export interface DistinguishCommentEvent extends CustomEvent {
     }
 }
 
+export interface ExpandAllInboxItemEvent extends CustomEvent {
+    detail: {
+        expanded: boolean
+    }
+}
 
 // Feature a post (community or instance)
 export interface FeaturePostEvent extends CustomEvent {

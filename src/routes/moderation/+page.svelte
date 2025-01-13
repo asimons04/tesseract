@@ -1,13 +1,14 @@
 <script lang="ts">
     import type { CommunityModeratorView } from 'lemmy-js-client'
     
+    import { dispatchWindowEvent } from '$lib/ui/events'
+    import { goto } from '$app/navigation'
     import { hrColors } from '$lib/ui/colors'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
     import { userSettings } from '$lib/settings'
 
-    import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
@@ -22,8 +23,6 @@
         Backward,
         BarsArrowDown,
         BarsArrowUp,
-        ChatBubbleLeftEllipsis,
-        ChatBubbleLeftRight,
         ChevronDoubleLeft,
         ChevronDoubleRight,
         Clipboard,
@@ -32,12 +31,9 @@
         Forward,
         Icon,
         Inbox, 
-        Photo,
-
-        UserGroup
-
     } from 'svelte-hero-icons'
-    import { goto } from '$app/navigation';
+    
+    
     
     
     
@@ -124,7 +120,10 @@
             <!---Collapse/Expand All--->
             <SidebarButton class="{showSidebar ? '' : 'mx-auto'}"
                 title="{$userSettings.moderation.expandReportsByDefault ? 'Collapse' : 'Expand'} All"
-                on:click={() => { $userSettings.moderation.expandReportsByDefault = !$userSettings.moderation.expandReportsByDefault}}
+                on:click={() => { 
+                    $userSettings.moderation.expandReportsByDefault = !$userSettings.moderation.expandReportsByDefault
+                    dispatchWindowEvent('expandAll', {expanded: $userSettings.moderation.expandReportsByDefault})
+                }}
             >
                 <Icon src={$userSettings.moderation.expandReportsByDefault ? BarsArrowUp : BarsArrowDown} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">

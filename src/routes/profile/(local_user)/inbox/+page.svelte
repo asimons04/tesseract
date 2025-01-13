@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type { InboxFeedType } from './+page'
-
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { getClient } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { hrColors } from '$lib/ui/colors'
@@ -36,6 +35,7 @@
         Inbox,
         Window as WindowIcon,
     } from 'svelte-hero-icons'
+    
     
     
     export let data
@@ -184,7 +184,10 @@
             <!---Collapse/Expand All--->
             <SidebarButton class="{showSidebar ? '' : 'mx-auto'}"
                 title="{$userSettings.notifications.expandInboxItemsByDefault ? 'Collapse' : 'Expand'} All"
-                on:click={() => { $userSettings.notifications.expandInboxItemsByDefault = !$userSettings.notifications.expandInboxItemsByDefault}}
+                on:click={() => { 
+                    $userSettings.notifications.expandInboxItemsByDefault = !$userSettings.notifications.expandInboxItemsByDefault
+                    dispatchWindowEvent('expandAll', {expanded: $userSettings.notifications.expandInboxItemsByDefault})
+                }}
             >
                 <Icon src={$userSettings.notifications.expandInboxItemsByDefault ? BarsArrowUp : BarsArrowDown} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { ExpandAllInboxItemEvent } from '$lib/ui/events'
     import type { InboxFeedType } from './+page'
     import type {
         CommentReplyView,
@@ -42,6 +43,7 @@
     
     
     
+    
     export let item: CommentReplyView | PersonMentionView | PrivateMessageView
     export let type: InboxFeedType = 'all'
 
@@ -52,7 +54,8 @@
     }
     
     $: read = isRead(item)
-
+    
+    let expanded = $userSettings.notifications.expandInboxItemsByDefault
     let replying = false
     let reply = ''
     let loading = false
@@ -171,10 +174,14 @@
         }
     }
         
-        
+    function handleExpandAll(e:ExpandAllInboxItemEvent) {
+        expanded = e.detail.expanded
+    }
 
 
 </script>
+
+<svelte:window on:expandAll={handleExpandAll} />
 
 {#if type == 'all' || type == itemType || (type == 'unread' && !read)}
     <span class="flex flex-row w-full" transition:fade>
@@ -185,7 +192,7 @@
             </Button>
         </span>
         
-        <CollapseButton expanded={$userSettings.notifications.expandInboxItemsByDefault} bind:icon={icon} bold={!read} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px]">
+        <CollapseButton bind:expanded bind:icon={icon} bold={!read} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px]">
                 <!---Title Component of Collapse Button--->
                 <div class="flex flex-row gap-2 items-start" slot="title" title="{subject}">
                     <span class="opacity-70">

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { ExpandAllInboxItemEvent } from '$lib/ui/events'
     import type { RegistrationApplicationView } from 'lemmy-js-client'
 
     import { fade, slide } from 'svelte/transition'
@@ -13,6 +14,7 @@
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte'
     import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
+    import Markdown from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
     import RelativeDate from "$lib/components/util/RelativeDate.svelte"
     import SectionTitle from '$lib/components/ui/SectionTitle.svelte'
@@ -30,10 +32,9 @@
         XMark 
     } from 'svelte-hero-icons'
     
-
-
     export let application: RegistrationApplicationView
-    
+
+    let expanded = $userSettings.moderation.expandApplicationsByDefault
     let applicationState = getApplicationState()
     let applicationDate = new Date(application.registration_application.published)
     
@@ -97,11 +98,17 @@
             ? 'approved'
             : 'denied'
     }
+
+    function handleExpandAll(e:ExpandAllInboxItemEvent) {
+        expanded = e.detail.expanded
+    }
 </script>
+
+<svelte:window on:expandAll={handleExpandAll} />
 
 <div class="flex flex-row w-full" transition:fade>
     
-    <CollapseButton expanded={$userSettings.moderation.expandApplicationsByDefault} icon={ClipboardIcon} bold={!application.admin} truncate={true} class="w-full">        
+    <CollapseButton bind:expanded icon={ClipboardIcon} bold={!application.admin} truncate={true} class="w-full">        
         
         <!---Title Component of Collapse Button--->
         <div class="flex flex-row gap-2 items-start w-full" slot="title" title="{application.creator.name}">
@@ -230,8 +237,8 @@
             
             <div class="flex flex-col w-full pl-2 gap-2 lg:flex-row lg:justify-between lg:items-center">
                 
-                <!---Left Column: Approving/Denying Admin and Deny Reason (if available)--->
-                <span class="flex flex-col w-full h-full lg:w-1/3 gap-2">
+                <!---Left Column: Approving/Denying Admin --->
+                <span class="flex flex-col h-full w-full {!application.creator_local_user.accepted_application ? 'lg:w-1/3' : ''} gap-2">
                     <!---Admin Who Approved/Denied the Application--->
                     {#if application.admin}
                     <span>
@@ -242,157 +249,166 @@
                     </span>
                     {/if}
 
-                    <!---Deny Reason--->
-                    {#if !application.creator_local_user.accepted_application && application.registration_application.deny_reason}
-                    <span>    
-                        <SectionTitle>Application Denial Reason</SectionTitle>
-                        <p class="pl-2">{application.registration_application.deny_reason}</p>
+                    
+                </span>
+
+
+                <!---Right Column: Deny Reason--->
+                {#if !application.creator_local_user.accepted_application}
+                    <span class="flex flex-col w-full lg:w-2/3 gap-2">
+                        <hr class="lg:hidden {hrColors}" />
+                        <!---Deny Reason--->
+                        
+                        <span>    
+                            <SectionTitle>Application Denial Reason</SectionTitle>
+                            <Markdown class="pl-2" source={application.registration_application.deny_reason ?? '---'} />
+                        </span>
                     </span>
-                    {/if}
-                </span>
-
-
-                <!---Right Column: Action Menu--->
-                <span class="flex flex-col w-full lg:w-2/3 gap-2">
-                    <hr class="lg:hidden {hrColors}" />
-                
-                    {#if action == 'none'}
-                        <div class="flex flex-col gap-2 w-full" transition:slide>
-                            
-                            <SectionTitle>Application Actions</SectionTitle>
-                            
-                            <span class="flex flex-col gap-2 w-full px-8">
-                                <!---Search for Alts, Copy Lemmyverse and Actor ID Links--->
-                                <Button color="tertiary-border" icon={MagnifyingGlass} alignment="left" class="w-full" title="Search for alt accounts of this user"
-                                    on:click={() => {
-                                        window.open(`/search?type=Users&q=${application.creator.name}`)
-                                    }}
-                                >
-                                    Search for Alts
-                                </Button>
-
-                                <!--Open the Approve Panel--->
-                                <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" title="Approve" on:click={() => { action = 'approve' }} >
-                                    Approve...
-                                </Button>
-                                
-                                <!---Open the Deny Panel--->
-                                <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" title="Deny" on:click={() => { action = 'deny' }}>
-                                    Deny...
-                                </Button>
-
-                                
-                            </span>
-                        </div>
-
-                    {/if}
-
-                    <!---Approve Confirmation--->
-                    {#if action == 'approve'}
-                        <div class="flex flex-col gap-2 w-full" transition:slide>
-                            <SectionTitle>Approve Application</SectionTitle>
-                            
-                            <span class="w-full text-sm p-2">
-                                Are you sure you want to approve this registration application?
-                            </span>
-
-                            <span class="flex flex-col gap-2 w-full px-8">
-                                <!---Return to Main Menu--->
-                                <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" on:click={() => { action = 'none' }} 
-                                    title="Return to main menu"    
-                                >
-                                    Cancel
-                                </Button>
-                                
-                                <!---Approve The Application--->
-                                <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
-                                    title="Approve the application"
-                                    loading={approving}
-                                    disabled={approving}    
-                                    on:click={() => { 
-                                        approving = true
-                                        review(true).then(() => {
-                                            approving = false
-                                            action = 'none'
-                                        })
-                                        
-                                    }}
-                                >
-                                    Approve
-                                </Button>
-
-                                <!---Approve and Create an Entry in the Modlog (unban event with preset 'reason')--->
-                                <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
-                                    title="Aprove the application and create a modlog entry along with it"
-                                    loading={approving && createModlogEntry}
-                                    disabled={approving}    
-                                    on:click={() => { 
-                                        approving = true
-                                        createModlogEntry = true
-                                        
-                                        review(true).then(() => {
-                                            approving = false
-                                            createModlogEntry = false
-                                            action = 'none'
-                                        })
-                                        
-                                    }}
-                                >
-                                    Approve + Modlog Entry
-                                </Button>
-                            </span>
-                        </div>
-                    {/if}
-
-                    <!---Deny Application Form--->
-                    {#if action == 'deny' }
-                        <div class="flex flex-col gap-2 w-full" transition:slide>
-                            <SectionTitle>Deny Application</SectionTitle>
-                            
-                            <SettingToggle bind:value={createModlogEntry} icon={Newspaper} title="Create Modlog Entry"
-                                description="When denying, also ban this user from the instance and use the deny reason in the modlog entry. 
-                                Note that this may cause issues with re-use of this username. Use with caution."
-                            />
-
-                            <MarkdownEditor bind:value={denyReason} images={false} emojis={false} previewButton rows={3} placeholder="Reason for denying the application...">
-                                
-                                <!---Pass the action buttons into the markdown editor's action panel--->
-                                <div class="flex flex-row items-center gap-2 ml-auto" slot="actions">
-                                    
-                                    <!---Return to Main Menu--->
-                                    <Button color="primary" size="md" icon={XMark} title="Return to Main Menu" on:click={() => action = 'none'}>
-                                        Cancel
-                                    </Button>
-
-                                    <!---Insert the Template from Moderation Settings--->
-                                    <Button color="primary" size="md" icon={PencilSquare} 
-                                        title="Insert the application denial template configured in Moderation Settings"
-                                        on:click={() => denyReason = $userSettings.moderation.applicationRejectionPreset }
-                                        disabled={$userSettings.moderation.applicationRejectionPreset ? false : true }
-                                    >
-                                        Template
-                                    </Button>
-
-                                    <!---Perform Application Denial--->
-                                    <Button color="danger" size="md" icon={Trash} 
-                                        title="Deny the application"
-                                        loading={approving}
-                                        disabled={approving}
-                                        on:click={ () => {
-                                            review(false).then(() => {
-                                                approving = false
-                                                action = 'none'
-                                            })
-                                        }}
-                                    >
-                                        Deny
-                                    </Button>
-                                </div>
-                            </MarkdownEditor>
-                        </div>
-                    {/if}
-                </span>
+                {/if}
             </div>
+
+            <hr class="{hrColors}" />
+
+            <!---Action Menu--->
+            <div class="flex flex-col w-full gap-2">
+                {#if action == 'none'}
+                    <div class="flex flex-col gap-2 w-full" transition:slide>
+                        
+                        <SectionTitle>Application Actions</SectionTitle>
+                        
+                        <span class="flex flex-col gap-2 w-full lg:max-w-sm px-8">
+                            <!---Search for Alts, Copy Lemmyverse and Actor ID Links--->
+                            <Button color="tertiary-border" icon={MagnifyingGlass} alignment="left" class="w-full" title="Search for alt accounts of this user"
+                                on:click={() => {
+                                    window.open(`/search?type=Users&q=${application.creator.name}`)
+                                }}
+                            >
+                                Search for Alts
+                            </Button>
+
+                            <!--Open the Approve Panel--->
+                            <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" title="Approve" on:click={() => { action = 'approve' }} >
+                                Approve...
+                            </Button>
+                            
+                            <!---Open the Deny Panel--->
+                            <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" title="Deny" on:click={() => { action = 'deny' }}>
+                                Deny...
+                            </Button>
+
+                            
+                        </span>
+                    </div>
+
+                {/if}
+
+                <!---Approve Confirmation--->
+                {#if action == 'approve'}
+                    <div class="flex flex-col gap-2 w-full" transition:slide>
+                        <SectionTitle>Approve Application</SectionTitle>
+                        
+                        <span class="w-full text-sm p-2">
+                            Are you sure you want to approve this registration application?
+                        </span>
+
+                        <span class="flex flex-col gap-2 w-full lg:max-w-sm px-8">
+                            <!---Return to Main Menu--->
+                            <Button color="tertiary-border" icon={XMark} alignment="left" class="w-full" on:click={() => { action = 'none' }} 
+                                title="Return to main menu"    
+                            >
+                                Cancel
+                            </Button>
+                            
+                            <!---Approve The Application--->
+                            <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
+                                title="Approve the application"
+                                loading={approving}
+                                disabled={approving}    
+                                on:click={() => { 
+                                    approving = true
+                                    review(true).then(() => {
+                                        approving = false
+                                        action = 'none'
+                                    })
+                                    
+                                }}
+                            >
+                                Approve
+                            </Button>
+
+                            <!---Approve and Create an Entry in the Modlog (unban event with preset 'reason')--->
+                            <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
+                                title="Aprove the application and create a modlog entry along with it"
+                                loading={approving && createModlogEntry}
+                                disabled={approving}    
+                                on:click={() => { 
+                                    approving = true
+                                    createModlogEntry = true
+                                    
+                                    review(true).then(() => {
+                                        approving = false
+                                        createModlogEntry = false
+                                        action = 'none'
+                                    })
+                                    
+                                }}
+                            >
+                                Approve + Modlog Entry
+                            </Button>
+                        </span>
+                    </div>
+                {/if}
+
+                <!---Deny Application Form--->
+                {#if action == 'deny' }
+                    <div class="flex flex-col gap-2 w-full" transition:slide>
+                        <SectionTitle>Deny Application</SectionTitle>
+                        
+                        <SettingToggle bind:value={createModlogEntry} icon={Newspaper} title="Create Modlog Entry"
+                            description="When denying, also ban this user from the instance and use the deny reason in the modlog entry. 
+                            Note that this may cause issues with re-use of this username. Use with caution."
+                        />
+
+                        <MarkdownEditor bind:value={denyReason} images={false} emojis={false} previewButton rows={3} placeholder="Reason for denying the application...">
+                            
+                            <!---Pass the action buttons into the markdown editor's action panel--->
+                            <div class="flex flex-row items-center gap-2 ml-auto" slot="actions">
+                                
+                                <!---Return to Main Menu--->
+                                <Button color="primary" size="md" icon={XMark} title="Return to Main Menu" on:click={() => action = 'none'}>
+                                    <span class="hidden md:block">Cancel</span>
+                                </Button>
+
+                                <!---Insert the Template from Moderation Settings--->
+                                <Button color="primary" size="md" icon={PencilSquare} 
+                                    title="Insert the application denial template configured in Moderation Settings"
+                                    on:click={() => denyReason = $userSettings.moderation.applicationRejectionPreset }
+                                    disabled={$userSettings.moderation.applicationRejectionPreset ? false : true }
+                                >
+                                    <span class="hidden md:block">Template</span>
+                                </Button>
+
+                                <!---Perform Application Denial--->
+                                <Button color="danger" size="md" icon={Trash} 
+                                    title="Deny the application"
+                                    loading={approving}
+                                    disabled={approving}
+                                    on:click={ () => {
+                                        review(false).then(() => {
+                                            approving = false
+                                            action = 'none'
+                                        })
+                                    }}
+                                >
+                                    <span class="hidden md:block">Deny</span>
+                                </Button>
+                            </div>
+                        </MarkdownEditor>
+                    </div>
+                {/if}
+
+            </div>
+
 
         </Card>
 

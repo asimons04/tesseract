@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { ExpandAllInboxItemEvent } from "$lib/ui/events"
     import type { StandardReport } from "./helpers"
     
     import { createEventDispatcher } from "svelte"
@@ -34,8 +35,11 @@
         User,
     } from "svelte-hero-icons"
     
+    
 
     export let report: StandardReport
+    
+    let expanded = $userSettings.moderation.expandReportsByDefault
     const dispatcher = createEventDispatcher()
        
     async function resolve() {
@@ -78,8 +82,13 @@
         dispatcher('resolveReport', { resolved: report.resolved})
         goto($page.url, {invalidateAll: true})
     }
+
+    function handleExpandAll(e:ExpandAllInboxItemEvent) {
+        expanded = e.detail.expanded
+    }
 </script>
 
+<svelte:window on:expandAll={handleExpandAll} />
 
 <div class="flex flex-row w-full" transition:fade>
         
@@ -89,7 +98,7 @@
         </Button>
     </span>
     
-    <CollapseButton expanded={$userSettings.moderation.expandReportsByDefault} icon={report.icon} bold={!report.resolved} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px] lg:ml-0" >
+    <CollapseButton bind:expanded icon={report.icon} bold={!report.resolved} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px] lg:ml-0" >
         
         <!---Title Component of Collapse Button--->
         <div class="flex flex-row gap-2 items-start" slot="title" title="{report.title}">

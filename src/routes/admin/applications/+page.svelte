@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { hrColors } from '$lib/ui/colors'
     import { page } from '$app/stores'
     import { searchParam } from '$lib/util.js'
@@ -16,16 +17,13 @@
         ChevronDoubleLeft, 
         ChevronDoubleRight, 
         Clipboard as ClipboardIcon,
-        ClipboardDocument,
         ClipboardDocumentCheck, 
         Forward, 
         Icon, 
         BarsArrowUp,
-
         BarsArrowDown
-
-
     } from 'svelte-hero-icons'
+    
 
     export let data
 
@@ -89,7 +87,10 @@
             <!---Collapse/Expand All--->
             <SidebarButton class="{showSidebar ? '' : 'mx-auto'}"
                 title="{$userSettings.moderation.expandApplicationsByDefault ? 'Collapse' : 'Expand'} All"
-                on:click={() => { $userSettings.moderation.expandApplicationsByDefault = !$userSettings.moderation.expandApplicationsByDefault}}
+                on:click={() => { 
+                    $userSettings.moderation.expandApplicationsByDefault = !$userSettings.moderation.expandApplicationsByDefault
+                    dispatchWindowEvent('expandAll', {expanded: $userSettings.moderation.expandApplicationsByDefault})
+                }}
             >
                 <Icon src={$userSettings.moderation.expandApplicationsByDefault ? BarsArrowUp : BarsArrowDown} width={18} mini/>
                 <span class="hidden {showSidebar ? 'lg:flex' : ''}">
