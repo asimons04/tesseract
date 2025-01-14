@@ -51,7 +51,7 @@ export async function handle({event, resolve }: {event:any, resolve:any}) {
     // e.g. For non-browsers, /post/12345 -> /tesseract/api/metadata/post/12345
     try {
         const UA = event.request.headers.get('user-agent')
-        if (!isBrowserUA(UA)) {
+        if (!isBrowserUA(UA) && !event.url.pathname.includes(api) && !event.url.pathname.includes('/image_proxy/')) {
             event.url.pathname = `/tesseract/api/metadata`+ event.url.pathname
         }
     }
