@@ -101,6 +101,7 @@ interface Settings {
         userDefinedInvidious: string[],                                 // An array of invidious/piped domains to use as alternate  Youtube Frontends
         autoplay: boolean                                               // Whether to autoplay media when clicking into a post.
         loop:boolean                                                    // Whether media should loop. Pretty much only works with direct videos (mp4, etc)
+        volume: number                                                  // State-based volume setting so it is remembered globally
     }
     linkifyHashtags: boolean                                            // Enable to extract hashtags and turn them into search links
     extractFlairsFromTitle: boolean,                                    // Enable to turn [bracketed text] in post titles into flairs
@@ -251,6 +252,7 @@ export const defaultSettings: Settings = {
         userDefinedInvidious:                                           [],
         autoplay:                                                       false,
         loop:                                                           true,
+        volume:                                                         1.0,
     },
     proxyMedia: {
         enabled:    toBool(env.PUBLIC_ENABLE_USER_MEDIA_PROXY)          ?? false,
