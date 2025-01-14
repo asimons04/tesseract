@@ -54,7 +54,9 @@ export class FSCache {
     
     
     createKey(value:string):string {
-        return createHash('sha256').update(value).digest('hex') + '.cache';        
+        //return createHash('sha256').update(value).digest('hex') + '.cache';        
+        let extension = value.split('.')?.pop()?.split('?')[0]
+        return createHash('sha256').update(value).digest('hex') + '.' + extension;
     }
     
     async evict(key:string):Promise<boolean> {
