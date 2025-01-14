@@ -75,7 +75,7 @@ export async function metadata_router(event:any) {
                 title: results.post_view.post.name,
                 url: results.post_view.post.url,
                 image: isImage(results.post_view.post.url) ? results.post_view.post.url : results.post_view.post.thumbnail_url,
-                description: results.post_view.post.body?.substring(0, 300),
+                description: results.post_view.post.body ?? results.post_view.post.embed_description,
                 video: isVideo(results.post_view.post.url) ? results.post_view.post.url : results.post_view.post.embed_video_url
             }
 
@@ -149,20 +149,10 @@ export async function metadata_router(event:any) {
 
     }
     catch (err) {
-        console.log(err)
-        let data = {
-            title: 'Failed to Fetch Metadata',
-            description: 'Failed to fetch the metadata for the provided resource'
-        }
-        return res.setHeader('Content-Type', "text/html").send(generateMetadataStub(data))
-
+        console.log("metadata-provider: ",err)
     }
 
-   
 
-
-
-    return res.error("Invalid API method requested").send()
-
+    // If nothing fails, don't return anything and fallback to the default Svelte handler
 }
 
