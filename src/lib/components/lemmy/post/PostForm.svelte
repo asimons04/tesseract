@@ -227,7 +227,7 @@
                 
                 if (metadata.metadata.description)      data.embed_description = metadata.metadata.description
                 if (metadata.metadata.image)            data.thumbnail_url = metadata.metadata.image
-                if (metadata.metadata.image)            data.thumbnail_url = metadata.metadata.image
+                if (metadata.metadata.title)            data.embed_title = metadata.metadata.title
                 if (metadata.metadata.embed_video_url)  data.embed_video_url = metadata.metadata.embed_video_url
             }
         }
