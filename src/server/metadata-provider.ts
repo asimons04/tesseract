@@ -74,7 +74,7 @@ export async function metadata_router(event:any) {
             const data = {
                 title: results.post_view.post.name,
                 url: results.post_view.post.url,
-                image: results.post_view.post.thumbnail_url,
+                image: isImage(results.post_view.post.url) ? results.post_view.post.url : results.post_view.post.thumbnail_url,
                 description: results.post_view.post.body?.substring(0, 300),
                 video: isVideo(results.post_view.post.url) ? results.post_view.post.url : results.post_view.post.embed_video_url
             }
