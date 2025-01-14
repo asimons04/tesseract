@@ -5,6 +5,7 @@ import {
 } from '$lib/settings'
 
 import { imageCache as cache } from '../hooks.server'
+import { isAudio, isImage, isVideo } from './helpers'
 
 // Web Request Handler
 export async function image_proxy(event:any) {
@@ -149,33 +150,6 @@ const fetchMedia = async function(imageUrl:URL|string, req:any): Promise<undefin
     }
     
     
-}
-
-// Check if the provided URL is an image
-
-function isImage  (url: string | undefined) {
-    if (!url) return false
-    return /\.(avif|jpeg|jpg|gif|apng|png|img|svg|bmp|webp)$/i.test(new URL(url).pathname.toLowerCase())
-}
-
-// Check if provided URL is a video
-function isVideo (inputUrl: string | undefined) {
-  if (!inputUrl) return false
-
-  const url = new URL(inputUrl).pathname.toLowerCase()
-
-  return url.endsWith('mp4') || url.endsWith('webm') || url.endsWith('mov') || url.endsWith('m4v') || url.endsWith('ogv')
-}
-
-export const isAudio = (inputUrl: string | undefined) => {
-    try {
-        if (!inputUrl) return false
-        const testURL = new URL(inputUrl)
-        return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
-    }
-    catch {
-        return false
-    }
 }
 
 
