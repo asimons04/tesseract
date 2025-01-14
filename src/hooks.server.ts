@@ -1,3 +1,5 @@
+import { isBrowserUA } from './server/helpers'
+
 // Router
 import { router } from './server/router.js'
 
@@ -6,6 +8,7 @@ import { fediseer_router }      from './lib/fediseer/server.js'
 import { image_proxy }          from './server/image-proxy.js'
 import { loops_router }         from './server/loops-api.js'
 import { mbfc_router }          from './lib/MBFC/server.js'
+import { metadata_router }      from './server/metadata-provider.js'
 import { proxy_pictrs_upload }  from './server/upload-image.js'
 
 
@@ -32,19 +35,35 @@ const routes = [
     {
         route: `${api}/loops*`,
         handler: loops_router
+    },
+    {
+        route: `${api}/metadata*`,
+        handler: metadata_router
     }
     
 ]
 
 // Svelte Handler
 export async function handle({event, resolve }: {event:any, resolve:any}) {
-    
+
+    // If a server-side UA makes a request, treat it as a request for metadata
+    // by re-writing the url path and prefixing it with the local metadata lookup endpoint
+    // e.g. For non-browsers, /post/12345 -> /tesseract/api/metadata/post/12345
+    try {
+        const UA = event.request.headers.get('user-agent')
+        if (!isBrowserUA(UA)) {
+            event.url.pathname = `/tesseract/api/metadata`+ event.url.pathname
+        }
+    }
+    catch {}
+
+
     // Send the defined server-side routes to their handlers 
     const routed =  await router(event, resolve, routes)
     if (routed) return routed
 
     // Other server hooks can go here
-
+    
 
     // Resolve the event if it hasn't already
     const response = await resolve(event)
