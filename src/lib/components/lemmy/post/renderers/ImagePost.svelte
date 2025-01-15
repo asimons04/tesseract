@@ -1,0 +1,134 @@
+<script lang="ts">
+    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import type { PostView } from 'lemmy-js-client'
+    
+    import { userSettings } from '$lib/settings.js'
+
+    import ArchiveLinkSelector from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
+    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
+    import Image from '$lib/components/lemmy/post/components/Image.svelte'
+    import Link from '$lib/components/input/Link.svelte'
+    
+    import PostActions from '$lib/components/lemmy/post/components/PostActions.svelte'
+    import PostBody from '$lib/components/lemmy/post/components/PostBody.svelte'
+    import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
+    import PostMeta from '$lib/components/lemmy/post/components/PostMeta.svelte'
+    import PostTitle from '$lib/components/lemmy/post/components/PostTitle.svelte'
+    
+    import CompactPostThumbnail from '../utils/CompactPostThumbnail.svelte';
+    
+
+    // Standard for all post types
+    export let post:PostView
+    export let actions: boolean = true
+    export let inCommunity = false
+    export let inProfile = false
+    export let displayType: PostDisplayType = 'feed'
+    export let collapseBadges = false
+    export let postType = 'image'
+    export let inViewport = true
+    export let compact: boolean = true
+
+    //Component-specific
+    export let zoomable:boolean = true
+    
+    let thumbnail_url:string
+    let url:string
+
+    // Finesse the url and thumbnail URL to accommodate GIFs (and not thumbnail webms ugh) or when the thumbnanil is a static image but the embed URL is a GIF (Imgur)
+    $:  post.post.id, post.post.url, post.post.embed_video_url, post.post.thumbnail_url, setup()
+    
+    function setup() {
+        url = post.post.url as string
+
+        // Get Imgur gifs to render without having to click through to the site.
+        if (!url?.endsWith('.gif')  && post?.post?.embed_video_url?.endsWith('.gif')) {
+            url = post.post.embed_video_url
+        }
+
+        // Hack to get GIFs to play in the feed.  Lemmy converts them to weird webm at best.
+        if (url?.endsWith('.gif')) {
+            thumbnail_url = url;
+        }
+        else {
+            thumbnail_url = (post.post.thumbnail_url as string ?? post.post.url as string)
+        }
+    }
+   
+</script>
+
+
+
+
+{#if compact}
+
+    <!---If there is no or a very short body text with the image, display it more compactly since the text won't have to flow around it--->
+    {#if !post?.post.body || post.post.body.length < 250}
+
+        <PostMeta {post} showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+
+            <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
+                <div class="flex flex-col w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)] gap-1">
+                    <PostTitle {post} />
+                    <PostBody {post} {displayType}  />
+                    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                    <PostActions  bind:post {displayType} on:reply class="mt-2" />
+                </div>
+
+                <CompactPostThumbnail {post} {displayType}
+                    showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                    on:toggleCompact={() => compact = !compact}
+                />
+            </div>
+    
+    <!---Separate out the components and let the post body flow around the thumbnail image--->
+    {:else}
+        <PostMeta {post} showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        
+        <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
+            <div class="flex flex-col w-full gap-1">
+                <PostTitle {post} />
+
+                <PostBody {post} {displayType} class="my-1" >
+                    <CompactPostThumbnail {post} {displayType} float slot="thumbnail" 
+                        showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true}
+                        on:toggleCompact={() => compact = !compact}
+                    />
+                </PostBody>
+
+                <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                
+                <div class="mt-2" />
+                <PostActions  bind:post {displayType} on:reply />
+            </div>
+        </div>
+    {/if}
+
+<!---Card View--->
+{:else}
+    <PostMeta {post} showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+
+    <PostEmbedDescription title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
+        <ArchiveLinkSelector url={post.post?.url} {postType} />    
+        <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
+    </PostEmbedDescription>
+
+    <Image url={thumbnail_url} {displayType} bind:nsfw={post.post.nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
+
+    <PostBody {post} {displayType}  />
+    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+    <PostActions  bind:post {displayType} on:reply class="mt-2"/>
+
+{/if}
+
+
+
+
+
+
+
+
+
+
+
+
