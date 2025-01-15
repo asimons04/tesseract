@@ -18,7 +18,8 @@
 
     import { ENABLE_MEDIA_PROXY } from '$lib/settings'
     import { createEventDispatcher } from 'svelte'
-    import { blobToFileList, deleteImageUpload, readImageFromClipboard } from '$lib/components/uploads/helpers';
+    import { blobToFileList, deleteImageUpload, readImageFromClipboard } from '$lib/components/uploads/helpers'
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { getClient, minAPIVersion } from '$lib/lemmy.js'
     import { imageProxyURL } from '$lib/image-proxy'
     import { isImage, isVideo } from './helpers'
@@ -121,7 +122,6 @@
     let oldCommunity:Community
 
     const dispatcher = createEventDispatcher<{ 
-        submit?: PostView 
         state?: { workInProgress?: boolean}
     }>()
 
@@ -174,7 +174,7 @@
                 })
 
                 if (!post) throw new Error('Failed to edit post')
-                dispatcher('submit', post.post_view)
+                dispatchWindowEvent('editPost', { post: post.post_view})
                 
             } 
             else {
@@ -188,8 +188,7 @@
                 })
 
                 if (!post) throw new Error('Failed to create post')
-
-                dispatcher('submit', post.post_view)
+                dispatchWindowEvent('editPost', { post: post.post_view})
             }
         } catch (err) {
             toast({ title: 'Error', content: err as any, type: 'error' })
