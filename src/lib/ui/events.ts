@@ -2,7 +2,7 @@
     src/app.d.ts under the svelteHTML HTML prop extensions to avoid IDE errors when adding the custom event listeners
 */
 
-import type { SortType } from "lemmy-js-client"
+import type { PostView, SortType } from "lemmy-js-client"
 
 export type TesseractEvent = 
     'banUser'           |
@@ -14,6 +14,8 @@ export type TesseractEvent =
     'changeProfile'     |
     'clickIntoPost'     |
     'distinguishComment'|
+    'editComment'       |
+    'editPost'          |
     'expandAll'         |
     'featurePost'       |
     'hideCommunity'     |
@@ -110,6 +112,14 @@ export interface DistinguishCommentEvent extends CustomEvent {
         distinguished: boolean
     }
 }
+
+// Fires when a post is edited
+export interface EditPostEvent extends CustomEvent {
+    detail: {
+        post: PostView
+    }
+}
+
 
 export interface ExpandAllInboxItemEvent extends CustomEvent {
     detail: {
