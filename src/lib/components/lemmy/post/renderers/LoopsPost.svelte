@@ -17,10 +17,7 @@
     import PostBody from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
     import PostMeta from '$lib/components/lemmy/post/components/PostMeta.svelte'
-    import VideoContainer from '$lib/components/lemmy/post/components/VideoContainer.svelte'
     import VideoPlayer from '$lib/components/lemmy/post//components/VideoPlayer.svelte'
-    
-    
     
     import PostActions from '../components/PostActions.svelte';
     
@@ -66,53 +63,42 @@
 
 </script>
 
-<!---Compact View--->
-{#if compact}
-    <PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+<!---Common for Compact and Card Views.  Compact view is only this, so no special if block for it--->
+<PostMeta {post} showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
-    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail={() => compact = false}
+{#key compact}
+    <PostEmbedDescription  on:clickThumbnail={() => compact = false}
+        title={post.post.embed_title}
         description={post.post.embed_description} 
         url={post.post.url}
         thumbnail_url={post.post.thumbnail_url}
+        showThumbnail={compact}
+        nsfw={post.post.nsfw}
+        compact={compact}
     > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
         <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
     </PostEmbedDescription>
-
-    <PostBody bind:post {displayType}  />
-    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-    <PostActions  bind:post {displayType} on:reply class="mt-2" />
+{/key}
 
 <!---Card View--->
-{:else}
-    <PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
-    
-    <PostEmbedDescription title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
-        <ArchiveLinkSelector url={post.post?.url} postType='video' />    
-        <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap class="text-xs" />
-    </PostEmbedDescription>
-
+{#if !compact}
     <!---Render as Video if Click to Play Has Been Clicked--->
     {#if source && clickToPlayClicked}
-        <VideoContainer>
-            <NSFWOverlay bind:nsfw={post.post.nsfw} displayType={displayType} />
-            <VideoPlayer {source} nsfw={post.post.nsfw} {displayType} {inViewport} autoplay={true}/>
-        </VideoContainer>
+        <VideoPlayer {source} {displayType} {inViewport} autoplay={true}/>
 
     <!---Render as a Click-to-Play Thumbnail--->
     {:else}
-        <Image url={post.post.thumbnail_url ?? '/img/loops.png'} clickToPlay bind:loading {displayType} zoomable={false} class="min-h-[300px]" 
+        <Image url={post.post.thumbnail_url ?? '/img/loops.png'} clickToPlay bind:loading {displayType} nsfw={post.post.nsfw} zoomable={false} class="min-h-[300px]" 
             on:click={(e)=> {
                 loading = true
                 clickToPlay() 
             }}
         />
     {/if}
-
-    <PostBody bind:post {displayType}  />
-    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-    <PostActions  bind:post {displayType} on:reply class="mt-2" />
-
-
 {/if}
+
+<PostBody {post} {displayType}  />
+<Crossposts {post} size="xs" class="mb-1 !pl-0"/>
+<PostActions {post} {displayType} on:reply class="mt-2" />
 

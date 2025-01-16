@@ -1,14 +1,14 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import type { PostDisplayType } from './helpers'
+    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers'
 
 
     import { userSettings } from '$lib/settings'
         
     // Post Action Bar Components
-    import CommentCountButton   from './PostActions/CommentCountButton.svelte'
-    import PostReplyButton      from './PostActions/PostReplyButton.svelte'
-    import PostVote             from './PostActions/PostVote.svelte'
+    import CommentCountButton   from '$lib/components/lemmy/post/PostActions/CommentCountButton.svelte'
+    import PostReplyButton      from '$lib/components/lemmy/post/PostActions/PostReplyButton.svelte'
+    import PostVote             from '$lib/components/lemmy/post/PostActions/PostVote.svelte'
 
    
     export let post: PostView
@@ -17,7 +17,7 @@
     
 </script>
 
-<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full gap-1 sm:gap-4 items-center mt-auto">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} w-full gap-1 sm:gap-4 items-center mt-auto {$$props.class}">
 
     <!--- Post Vote Buttons--->
     <PostVote bind:post />

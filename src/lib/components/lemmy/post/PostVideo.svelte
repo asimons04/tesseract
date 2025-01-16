@@ -10,6 +10,7 @@
     import Link from '$lib/components/input/Link.svelte'
     import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
     import PostImage from './PostImage.svelte';
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
     
     
     export let post: PostView 
@@ -57,11 +58,22 @@
 
 
 </script>
-
-<span class="flex flex-row w-full gap-2 px-1">
-    <ArchiveLinkSelector url={post.post?.url} postType='video' />    
-    <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
-</span>
+<PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+        url={post.post.url}
+        card={
+            (
+                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
+                (post.post.embed_description && displayType=='post') ||
+                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
+            ) ? true : false
+        } 
+    > 
+    <span class="flex flex-row w-full gap-2 px-1">
+        <ArchiveLinkSelector url={post.post?.url} postType='video' />    
+        <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
+    </span>
+</PostEmbedDescription>
 
 
 {#if source && (showAsEmbed || !post.post.thumbnail_url)}

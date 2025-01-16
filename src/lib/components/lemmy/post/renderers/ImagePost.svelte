@@ -5,6 +5,7 @@
     import { userSettings } from '$lib/settings.js'
 
     import ArchiveLinkSelector from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
+    import CompactPostThumbnail from '../components/CompactPostThumbnail.svelte';
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import Image from '$lib/components/lemmy/post/components/Image.svelte'
     import Link from '$lib/components/input/Link.svelte'
@@ -15,8 +16,7 @@
     import PostMeta from '$lib/components/lemmy/post/components/PostMeta.svelte'
     import PostTitle from '$lib/components/lemmy/post/components/PostTitle.svelte'
     
-    import CompactPostThumbnail from '../utils/CompactPostThumbnail.svelte';
-    
+        
 
     // Standard for all post types
     export let post:PostView
@@ -55,6 +55,7 @@
         }
     }
    
+    $: showEmbedDescription = (post.post.embed_title && post.post.embed_description)
 </script>
 
 
@@ -68,17 +69,41 @@
         <PostMeta {post} showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
-                <div class="flex flex-col w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)] gap-1">
+                <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'} ">
+                    
                     <PostTitle {post} />
-                    <PostBody {post} {displayType}  />
-                    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-                    <PostActions  bind:post {displayType} on:reply class="mt-2" />
-                </div>
+                    
+                    <!---Mostly used if Posting a Link to Another Lemmy Post--->
+                    {#if showEmbedDescription}
+                        
+                        <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail={() => compact = false}
+                            description={post.post.embed_description} 
+                            url={post.post.url}
+                            {compact}
 
-                <CompactPostThumbnail {post} {displayType}
-                    showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                    on:toggleCompact={() => compact = !compact}
-                />
+                        > 
+                            <ArchiveLinkSelector url={post.post?.url} {postType} />    
+                            <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
+
+                            <CompactPostThumbnail slot="thumbnail" {post} {displayType}
+                                showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                                on:toggleCompact={() => compact = !compact}
+                            />
+                        </PostEmbedDescription>
+                    {/if}
+                    
+                    <PostBody {post} {displayType}  />
+                    <Crossposts {post} size="xs" class="mb-1 !pl-0"/>
+                    <PostActions {post} {displayType} on:reply class="mt-2" />
+                </div>
+                
+                <!---If the Embed Description is Shown, the thumbnail will go there--->
+                {#if !showEmbedDescription}
+                    <CompactPostThumbnail {post} {displayType}
+                        showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                        on:toggleCompact={() => compact = !compact}
+                    />
+                {/if}
             </div>
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
@@ -96,10 +121,10 @@
                     />
                 </PostBody>
 
-                <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                <Crossposts {post} size="xs" class="mb-1 !pl-0"/>
                 
                 <div class="mt-2" />
-                <PostActions  bind:post {displayType} on:reply />
+                <PostActions  {post} {displayType} on:reply />
             </div>
         </div>
     {/if}
@@ -108,16 +133,16 @@
 {:else}
     <PostMeta {post} showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
-    <PostEmbedDescription title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
+    <PostEmbedDescription title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} {compact} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
         <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
     </PostEmbedDescription>
 
-    <Image url={thumbnail_url} {displayType} bind:nsfw={post.post.nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
+    <Image url={thumbnail_url} {displayType} nsfw={post.post.nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
 
     <PostBody {post} {displayType}  />
-    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-    <PostActions  bind:post {displayType} on:reply class="mt-2"/>
+    <Crossposts {post} size="xs" class="mb-1 !pl-0"/>
+    <PostActions {post} {displayType} on:reply class="mt-2"/>
 
 {/if}
 

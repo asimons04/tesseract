@@ -10,7 +10,7 @@
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
-    import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
+    import PostActions from '$lib/components/lemmy/post/components/PostActions.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
     import PostMediaRenderers from './PostMediaRenderers.svelte'

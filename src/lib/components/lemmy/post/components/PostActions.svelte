@@ -25,12 +25,12 @@
     {#if actions}
         <!--- Comment Count and Link to Post--->
         {#if displayType == 'feed'}
-            <CommentCountButton bind:post displayType={displayType} />
+            <CommentCountButton {post} {displayType} />
         {/if}
         
 
         <!---Reply Button that enables the comment form--->
-        <PostReplyButton displayType={displayType} on:reply bind:post/>
+        <PostReplyButton {displayType} on:reply {post}/>
 
         <!--- Spacer --->
         <div class="ml-auto" />

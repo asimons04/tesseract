@@ -9,12 +9,15 @@
     import Card from '$lib/components/ui/Card.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import NSFWOverlay from './utils/NSFWOverlay.svelte'
-    import PostActions from '$lib/components/lemmy/post/PostActions.svelte'
+    import PostActions from '$lib/components/lemmy/post/components/PostActions.svelte'
     import PostBody from '$lib/components/lemmy/post/PostBody.svelte'
     import PostMeta from '$lib/components/lemmy/post/PostMeta.svelte'
     import PostLink from './PostLink.svelte';
     import PostTitle from './PostTitle.svelte';
     import CompactPostThumbnail from './utils/CompactPostThumbnail.svelte';
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
+    import Link from '$lib/components/input/Link.svelte';
     
 
     export let post: PostView
@@ -62,10 +65,21 @@
             <!---Posts that have only a direct video or image and a body less than 250 characters--->
             {#if imageOnly}
                 
-                <PostMeta bind:post bind:expandCompact showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
+                <PostMeta bind:post bind:expandCompact showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} on:edit={postEditConfirmation}/>
                 <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
-                    <div class="flex flex-col w-[calc(100%-132px)] gap-1">
-                        <PostTitle bind:post />
+                    <div class="flex flex-col w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)] gap-1">
+                        <!--<PostTitle bind:post />-->
+                        <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+                            description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+                            url={post.post.url}
+                            card={true} 
+                        > 
+                            <span class="flex flex-row w-full gap-2 px-1">
+                                <ArchiveLinkSelector url={post.post?.url} {postType} />    
+                                <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
+                            </span>
+                        </PostEmbedDescription>
+                        
                         <PostBody bind:post {displayType} bind:expandPreviewText />
                         <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
 
@@ -82,6 +96,17 @@
                     <div class="flex flex-col w-full gap-1">
                         <PostTitle bind:post />
                         {#if (displayType == 'feed' && $userSettings.uiState.postBodyPreviewLength >= 0) || displayType=='post'}
+                            <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+                                description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+                                url={post.post.url}
+                                card={true} 
+                            > 
+                                <span class="flex flex-row w-full gap-2 px-1">
+                                    <ArchiveLinkSelector url={post.post?.url} {postType} />    
+                                    <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
+                                </span>
+                            </PostEmbedDescription>
+
                             <PostBody bind:post {displayType} bind:expandPreviewText class="my-1" >
                                 <CompactPostThumbnail bind:post bind:expandCompact bind:displayType {showThumbnail} float slot="thumbnail"/>
                             </PostBody>

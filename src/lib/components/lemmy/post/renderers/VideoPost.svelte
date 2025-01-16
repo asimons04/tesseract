@@ -52,6 +52,7 @@
 
     onMount(() => setup())
 
+    $: showEmbedDescription = (post.post.embed_title && post.post.embed_description)
 </script>
 
 
@@ -65,17 +66,38 @@
         <PostMeta bind:post showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
-                <div class="flex flex-col w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)] gap-1">
+                <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'}">
                     <PostTitle {post} />
+                    
+                    <!---Mostly used if Posting a Link to Another Lemmy Post--->
+                    {#if showEmbedDescription}
+                        <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
+                            description={post.post.embed_description} 
+                            url={post.post.url}
+
+                        > 
+                            <ArchiveLinkSelector url={post.post?.url} {postType} />    
+                            <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
+
+                            <CompactPostThumbnail slot="thumbnail" {post} {displayType}
+                                showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                                on:toggleCompact={() => compact = !compact}
+                            />
+                        </PostEmbedDescription>
+                    {/if}
+
                     <PostBody bind:post {displayType}  />
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                     <PostActions  bind:post {displayType} on:reply class="mt-2" />
                 </div>
-
-                <CompactPostThumbnail bind:post bind:displayType 
-                    showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                    on:toggleCompact={() => compact = !compact}
-                />
+                
+                <!---If the Embed Description is Shown, the thumbnail will go there--->
+                {#if !showEmbedDescription}
+                    <CompactPostThumbnail bind:post bind:displayType 
+                        showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                        on:toggleCompact={() => compact = !compact}
+                    />
+                {/if}
             </div>
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
@@ -105,7 +127,7 @@
 {:else}
     <PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
-    <PostEmbedDescription title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
+    <PostEmbedDescription {compact} title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
         <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
     </PostEmbedDescription>
@@ -113,11 +135,11 @@
 
     <!---Render as Video if Click to Play Has Been Clicked--->
     {#if clickToPlayClicked}
-        <VideoPlayer {source} nsfw={post.post.nsfw} {displayType} {inViewport} autoplay={true}/>
+        <VideoPlayer {source} {displayType} {inViewport} autoplay={true}/>
 
     <!---Render as a Click-to-Play Thumbnail--->
     {:else}
-        <Image url={post.post.thumbnail_url ?? source ?? '/img/loops.png'} clickToPlay {displayType} zoomable={false} class="min-h-[300px]" 
+        <Image url={post.post.thumbnail_url ?? source ?? '/img/loops.png'} clickToPlay {displayType} nsfw={post.post.nsfw} zoomable={false} class="min-h-[300px]" 
             on:click={(e)=> clickToPlayClicked = true }
         />
     {/if}

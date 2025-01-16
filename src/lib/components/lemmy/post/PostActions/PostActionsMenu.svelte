@@ -51,22 +51,13 @@
 </script>
 
 {#if $profile?.user?.local_user_view.person.id == post.creator.id && editing}
-    <PostEditorModal bind:open={editing} bind:post on:edit/>
+    <PostEditorModal bind:open={editing} {post}/>
 {/if}
 
 <Menu containerClass="overflow-auto" alignment="bottom-right">
     <Button slot="button" aria-label="Post actions" let:toggleOpen on:click={toggleOpen} size="square-md" title="Post actions" color="tertiary" >
         <Icon slot="icon" src={icon} width={menuIconSize} mini />
     </Button>
-
-    <!---Post Actions 
-    <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1">
-        Post
-        <span class="ml-auto"/>
-        <Icon slot="icon" src={Window} width={16} mini />
-    </li>
-    <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
-    --->
 
     <!---Edit if owned by self--->
     {#if $profile?.user?.local_user_view.person.id == post.creator.id}

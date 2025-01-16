@@ -22,6 +22,7 @@
     } from 'svelte-hero-icons'
 
     import { profile } from '$lib/auth.js'
+    import { dispatchWindowEvent } from '$lib/ui/events';
 
 
     export let post:    PostView
@@ -48,11 +49,13 @@
                 }).then(() => {post.read = true})
             }
             
-            return (await getClient().likePost({
+            let updatedPost =  (await getClient().likePost({
                     post_id: post.post.id,
                     score: vote,
                 })
-                ).post_view.counts
+                ).post_view
+            dispatchWindowEvent('editPost', {post: updatedPost})
+            return updatedPost.counts
         }
         catch (err) {
             toast({
@@ -67,7 +70,6 @@
 
 
 <div class="flex flex-row border border-slate-300 dark:border-zinc-700 items-center text-sm gap-0 rounded-lg">
-    <!--size="{small ? 'sm' : 'md'}"-->
     <Button
         disabled={!$profile?.user || !onHomeInstance}
         aria-label="Upvote"
@@ -77,8 +79,9 @@
         alignment="center"
         size="sm"
         on:click={async () => {
-            post.counts = await vote(post.my_vote == 1 ? 0 : 1)
-            post.my_vote = post.my_vote == 1 ? 0 : 1
+            vote(post.my_vote == 1 ? 0 : 1)
+            //post.counts = await vote(post.my_vote == 1 ? 0 : 1)
+            //post.my_vote = post.my_vote == 1 ? 0 : 1
         }}
 
 
@@ -104,8 +107,9 @@
             size="sm"
             color="tertiary"
             on:click={async () => {
-                post.counts = await vote(post.my_vote == -1 ? 0 : -1)
-                post.my_vote = post.my_vote == -1 ? 0 : -1
+                vote(post.my_vote == -1 ? 0 : -1)
+                //post.counts = await vote(post.my_vote == -1 ? 0 : -1)
+                //post.my_vote = post.my_vote == -1 ? 0 : -1
             }}
 
         >

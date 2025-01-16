@@ -48,7 +48,7 @@
 >
     <div class="divide-y gap-2 divide-slate-300 dark:divide-zinc-700 flex flex-col max-h-[10rem] overflow-y-scroll">
         {#each post.cross_posts as crosspost}
-            <CrosspostItem crosspost={crosspost} textSize={textSize} iconSize={iconSize} />
+            <CrosspostItem {crosspost} {textSize} {iconSize} />
         {/each}
     </div>
 </CollapseButton>

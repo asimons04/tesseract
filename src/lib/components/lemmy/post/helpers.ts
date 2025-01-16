@@ -105,6 +105,22 @@ export const isVideo = (inputUrl: string | undefined) => {
     }
 }
 
+
+export const getMIMEType = (url:string):string =>{
+    try {
+        let extension = url.split('/').pop()?.split('?')[0]?.split('.').pop()
+        
+        if (!extension) return 'video/mp4'
+        if (['mp4', 'm4v', 'mov'].includes(extension)) return 'video/mp4'
+        if (['webm'].includes(extension)) return 'video/webm'
+
+        return 'video/mp4'
+    }
+    catch{
+        return 'video/mp4'
+    }
+}
+
 /** Unproxies Lemmy's godawfully stupid method of image proxying */
 export const unproxyImage = (inputURL:string) => {
     //Blech!  https://slrpnk.net/api/v3/image_proxy?url=https%3A%2F%2Fimgs.xkcd.com%2Fcomics%2Fearth_temperature_timeline_2x.png

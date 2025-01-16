@@ -70,7 +70,7 @@
                     : ''
                 }
             ">
-                <Markdown bind:source {inline} noImages>
+                <Markdown bind:source {inline} noImages={!expandPreviewText}>
                     <span slot="thumbnail">
                         <slot name="thumbnail"/>
                     </span>

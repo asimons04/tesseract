@@ -1,9 +1,11 @@
 <script lang="ts">
+    import type { PostView } from 'lemmy-js-client'
+
     import { lookup } from '$lib/MBFC/client'
     import { hrColors } from '$lib/ui/colors';
     import { linkPreviewModal } from "$lib/components/lemmy/moderation/moderation";
-    import { removeURLParams } from "../helpers"
-    import { toast } from '$lib/components/ui/toasts/toasts'
+    import { isAudio, isImage, isVideo, removeURLParams } from "../helpers"
+    import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings'
 
     import Button from "$lib/components/input/Button.svelte";
@@ -14,15 +16,68 @@
         CheckBadge,
         ChevronDown, 
         ChevronUp, 
+        CloudArrowDown, 
         Eye, 
         Icon, 
         Link as LinkIcon,
         Share,
     } from 'svelte-hero-icons'
+    
+    
    
 
     export let url:string | undefined
     export let postType:string = 'link'
+    export let post: PostView | undefined = undefined
+    
+    async function download(url:string) {
+        let toastID: number
+        try {
+            toastID = toast({
+                title: 'Downloading',
+                type: 'success',
+                content: `Downloading ${url}`,
+                duration: 999999
+            })
+
+            let filename = url.split('/').pop()?.split('?')[0] ?? 'download'
+            let response = await fetch(url, {
+                headers: new Headers({
+                    'Origin': location.origin
+                }),
+                mode: 'cors'
+            })
+            let blob = await response.blob()
+            let blobURL = URL.createObjectURL(blob)
+            
+            let a = document.createElement('a');
+            a.download = filename;
+            a.href = blobURL;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            removeToast(toastID)
+            toast({
+                title: 'Download Complete',
+                type: 'success',
+                content: `The download has completed.`
+            })
+            
+        }
+        catch {
+            toast({
+                title: 'Download Failed',
+                type: 'error',
+                content: `${url} failed to download.`
+            })
+        }
+        
+
+    
+
+    }
+
 
     function updateYTHostname(original_url:string, new_hostname:string) {
         try {
@@ -142,16 +197,39 @@
             Copy Link
         </MenuButton>
         
-        <!--{#if !(url.startsWith('/'))}-->
+        <!---Preview--->
+        <MenuButton title="Preview" color="info"
+            on:click={(e) => {
+                linkPreviewModal(url)
+            }}
+        >
+            <Icon src={Eye} width={16} mini />
+            Preview
+        </MenuButton>
+
+        <!---Download Image--->
+        {#if isImage(url) || isVideo(url) || isAudio(url)}
             <MenuButton title="Preview" color="info"
-                on:click={(e) => {
-                    linkPreviewModal(url)
+                on:click={async (e) => {
+                    await download(url)
                 }}
             >
-                <Icon src={Eye} width={16} mini />
-                Preview
+                <Icon src={CloudArrowDown} width={16} mini />
+                Download Media
             </MenuButton>
-        <!--{/if}-->
+        {/if}
+
+        {#if isVideo(post?.post?.embed_video_url) || isAudio(post?.post?.embed_video_url) || isImage(post?.post?.embed_video_url) }
+            <MenuButton title="Preview" color="info"
+                on:click={async (e) => {
+                    await download(url)
+                }}
+            >
+                <Icon src={CloudArrowDown} width={16} mini />
+                Download Media
+        </MenuButton>
+        {/if}
+        
         
 
     </Menu>

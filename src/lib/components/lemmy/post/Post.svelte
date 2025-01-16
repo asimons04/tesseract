@@ -10,6 +10,7 @@
         type BlockCommunityEvent, 
         type BlockInstanceEvent, 
         type BlockUserEvent, 
+        type EditPostEvent,
         type FeaturePostEvent,
         type HideCommunityEvent,
         type LastClickedPostEvent,
@@ -29,10 +30,22 @@
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
 
+    import Card from '$lib/components/ui/Card.svelte'
+
     import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
     import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
+    
+    
+    // New Post Renderers
+    import ImagePost    from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
+    import LinkPost     from '$lib/components/lemmy/post/renderers/LinkPost.svelte'
+    import LoopsPost    from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
+    import VideoPost    from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
+    import YouTubePost  from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
+    
     import { onDestroy, onMount } from 'svelte';
+    
 
     export let post: PostView                                           // The Post to display
     export let actions: boolean             = true                      // Set to false to disable action buttons (except expand)
@@ -94,110 +107,137 @@
         
     }
 
-    function handleBanInstance(e:BanUserEvent) {
-        if (post?.creator.id == e.detail.person_id) {
-            post.creator.banned = e.detail.banned
-            if (e.detail.remove_content) post.post.removed = true
-            post = post
-        }
-    }
+    const handlers = {
 
-    function handleBanCommunity(e:BanCommunityEvent) {
-        if (post?.creator.id == e.detail.person_id && post.community.id == e.detail.community_id) {
-            post.creator_banned_from_community = e.detail.banned
-            if (e.detail.remove_content) post.post.removed = true
-            post = post
-        }
-    }
+        BanUserEvent: function (e:BanUserEvent) {
+            if (post?.creator.id == e.detail.person_id) {
+                post.creator.banned = e.detail.banned
+                if (e.detail.remove_content) post.post.removed = true
+                post = post
+            }
+        },
 
-    function handleUserBlock(e:BlockUserEvent) {
-        if (post?.creator.id == e.detail.person_id) {
-            post.creator_blocked = e.detail.blocked
+        BanCommunityEvent: function (e:BanCommunityEvent) {
+            if (post?.creator.id == e.detail.person_id && post.community.id == e.detail.community_id) {
+                post.creator_banned_from_community = e.detail.banned
+                if (e.detail.remove_content) post.post.removed = true
+                post = post
+            }
+        },
 
-            post = post
-        }
-    }
+        BlockCommunityEvent: function (e:BlockCommunityEvent) {
+            if (post?.community.id == e.detail.community_id) {
+                post.community.hidden = e.detail.blocked
+                post = post
+            }
+        },
 
-    function handleLockPost(e:LockPostEvent) {
-        if (post?.post.id == e.detail.post_id) {
-            post.post.locked = e.detail.locked
-            post = post
-        }
-    }
+        BlockInstanceEvent: function (e:BlockInstanceEvent) {
+            if (post?.creator.instance_id == e.detail.instance_id || post?.community.instance_id == e.detail.instance_id) {
+                post.creator_blocked = e.detail.blocked
+                post = post
+            }
+        },
 
-    function handleFeaturePost(e:FeaturePostEvent) {
-        if (post?.post.id == e.detail.post_id) {
-            if (e.detail.community_id) post.post.featured_community = e.detail.featured
-            else post.post.featured_local = e.detail.featured
-            post = post
-        }
-    }
+        BlockUserEvent: function (e:BlockUserEvent) {
+            if (post?.creator.id == e.detail.person_id) {
+                post.creator_blocked = e.detail.blocked
 
-    function handleCommunityBlock(e:BlockCommunityEvent) {
-        if (post?.community.id == e.detail.community_id) {
-            post.community.hidden = e.detail.blocked
-            post = post
-        }
-    }
+                post = post
+            }
+        },
 
-    function handleInstanceBlock(e:BlockInstanceEvent) {
-        if (post?.creator.instance_id == e.detail.instance_id || post?.community.instance_id == e.detail.instance_id) {
-            post.creator_blocked = e.detail.blocked
-            post = post
-        }
-    }
+        CompactViewChange: function() {
+            expandCompact = computeExpandCompact()
+        },
 
-    function handleSubscribeUnsubscribe(e:SubscribeEvent) {
-        if (post?.community.id == e.detail.community_id) {
+        EditPostEvent: function (e:EditPostEvent) {
+            if (post?.post.id == e.detail.post.post.id) {
+                post = {
+                    ...e.detail.post,
+                    //@ts-ignore
+                    cross_posts: [...post.cross_posts],
+                    //@ts-ignore
+                    mbfc: {...post.mbfc}
+                }
+            }
+        },
+
+        FeaturePostEvent: function (e:FeaturePostEvent) {
+            if (post?.post.id == e.detail.post_id) {
+                if (e.detail.community_id) post.post.featured_community = e.detail.featured
+                else post.post.featured_local = e.detail.featured
+                post = post
+            }
+        },
+
+        HideCommunityEvent: function (e:HideCommunityEvent) {
+            if (post?.community.id == e.detail.community_id) {
+                post.community.hidden = e.detail.hidden
+                post = post
+            }
+        },
+
+        LastClickedPostEvent: function (e:LastClickedPostEvent) {
+            lastClickedPost = e.detail.post_id
+        },
+
+        LockPostEvent: function (e:LockPostEvent) {
+            if (post?.post.id == e.detail.post_id) {
+                post.post.locked = e.detail.locked
+                post = post
+            }
+        },
+
+        PurgePostEvent: function (e:PurgePostEvent) {
+            if (post?.post.id == e.detail.post_id) {
+                post.post.removed = e.detail.purged
+                post.post.name = '*Purged*'
+                post.post.body = ''
+                post.post.url = ''
+                post.post.thumbnail_url = ''
+                post.post.embed_description = ''
+                post.post.embed_title = ''
+                post.post.featured_community = false
+                post.post.featured_local = false
+            }
+        },
+
+        RefreshFeed: function() {
+            expandCompact = computeExpandCompact()
+        },
+
+        RemoveCommunityEvent: function (e:RemoveCommunityEvent) {
+            if (post?.community.id == e.detail.community_id) {
+                post.community.removed = e.detail.removed
+                post = post
+            }
+        },
+
+        RemovePostEvent: function (e:RemovePostEvent) {
+            if (post?.post.id == e.detail.post_id) {
+                post.post.removed = e.detail.removed
+                post = post
+            }
+        },
+
+        ScrollPostIntoView: function (e:LastClickedPostEvent) {
+            scrollTo = e.detail.post_id
+            scrollIntoView(true)
+        },
+
+        SubscribeEvent: function (e:SubscribeEvent) {
+            if (post?.community.id == e.detail.community_id) {
                 post.subscribed = e.detail.subscribed
                     ? 'Subscribed'
                     : 'NotSubscribed'
-            post = post
-        }
+                post = post
+            }
+        },
     }
 
-    function handleRemovePost(e:RemovePostEvent) {
-        if (post?.post.id == e.detail.post_id) {
-            post.post.removed = e.detail.removed
-            post = post
-        }
-    }
 
-    function handlePurgePost(e:PurgePostEvent) {
-        if (post?.post.id == e.detail.post_id) {
-            post.post.removed = e.detail.purged
-            post.post.name = '*Purged*'
-            post.post.body = ''
-            post.post.url = ''
-            post.post.thumbnail_url = ''
-            post.post.embed_description = ''
-            post.post.embed_title = ''
-            post.post.featured_community = false
-            post.post.featured_local = false
-        }
-    }
-   
-   function handleHideCommunity(e:HideCommunityEvent) {
-        if (post?.community.id == e.detail.community_id) {
-            post.community.hidden = e.detail.hidden
-            post = post
-        }
-    }
 
-    function handleRemoveCommunity(e:RemoveCommunityEvent) {
-        if (post?.community.id == e.detail.community_id) {
-            post.community.removed = e.detail.removed
-            post = post
-        }
-    }
-
-    function handleRefreshFeed() {
-        expandCompact = computeExpandCompact()
-    }
-
-    function handleCompactViewChange() {
-        expandCompact = computeExpandCompact()
-    }
 
 
     async function scrollIntoView(smooth:boolean = false) {
@@ -231,40 +271,37 @@
         dispatchWindowEvent('lastClickedPost', {post_id: post.post.id})
     }
 
-    function handleLastClickedPostEvent(e:LastClickedPostEvent) {
-        lastClickedPost = e.detail.post_id
-    }
+    
 
-    function handleScrollPostIntoView(e:LastClickedPostEvent) {
-        scrollTo = e.detail.post_id
-        scrollIntoView(true)
-    }
+    
 
     onMount(async () => await scrollIntoView() )
     
     onDestroy(() => {
         postContainer?.remove()
     })
+
 </script>
 
 
 <svelte:window 
-    on:banUser={handleBanInstance}
-    on:banCommunity={handleBanCommunity}
-    on:blockUser={handleUserBlock} 
-    on:blockCommunity={handleCommunityBlock} 
-    on:blockInstance={handleInstanceBlock}
-    on:changeCompactView={handleCompactViewChange}
-    on:featurePost={handleFeaturePost}
-    on:hideCommunity={handleHideCommunity}
-    on:lockPost={handleLockPost}
-    on:subscribe={handleSubscribeUnsubscribe}
-    on:refreshFeed={handleRefreshFeed}
-    on:removeCommunity={handleRemoveCommunity}
-    on:removePost={handleRemovePost}
-    on:purgePost={handlePurgePost}
-    on:lastClickedPost={handleLastClickedPostEvent}
-    on:scrollPostIntoView={handleScrollPostIntoView}
+    on:banUser              ={handlers.BanUserEvent}
+    on:banCommunity         ={handlers.BanCommunityEvent}
+    on:blockUser            ={handlers.BlockUserEvent} 
+    on:blockCommunity       ={handlers.BlockCommunityEvent} 
+    on:blockInstance        ={handlers.BlockInstanceEvent}
+    on:changeCompactView    ={handlers.CompactViewChange}
+    on:editPost             ={handlers.EditPostEvent}
+    on:featurePost          ={handlers.FeaturePostEvent}
+    on:hideCommunity        ={handlers.HideCommunityEvent}
+    on:lockPost             ={handlers.LockPostEvent}
+    on:subscribe            ={handlers.SubscribeEvent}
+    on:refreshFeed          ={handlers.RefreshFeed}
+    on:removeCommunity      ={handlers.RemoveCommunityEvent}
+    on:removePost           ={handlers.RemovePostEvent}
+    on:purgePost            ={handlers.PurgePostEvent}
+    on:lastClickedPost      ={handlers.LastClickedPostEvent}
+    on:scrollPostIntoView   ={handlers.ScrollPostIntoView}
 />
 
 
@@ -286,8 +323,31 @@
         }}
     />
 
+    {#if ['image', 'link', 'loops', 'thumbLink', 'video', 'youtube'].includes(postType)}
+    <Card class="flex flex-col w-full p-2 gap-1 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >    
+        
+        {#if postType == 'image'}    
+            <ImagePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+
+        {:else if postType == 'loops'}
+            <LoopsPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
+        {:else if postType == 'video'}
+            <VideoPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
+        {:else if postType == 'youtube'}
+            <YouTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
+        {:else if ['link', 'thumbLink'].includes(postType)}
+            <LinkPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        {/if}
+    
+    </Card>
+
+
+
     <!--- Compact Posts --->
-    {#if  (forceCompact || !expandCompact) }
+    {:else if  (forceCompact || !expandCompact) }
         <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
             bind:post 
             bind:expandCompact 

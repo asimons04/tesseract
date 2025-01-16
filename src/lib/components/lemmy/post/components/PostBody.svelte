@@ -51,7 +51,7 @@
 </script> 
 
 
-{#if source}
+{#if source && $userSettings.uiState.postBodyPreviewLength >=0 }
     <div class="flex flex-col text-sm gap-1 p-1 rounded-md {displayType == 'feed' && expandPreviewText ? 'max-h-[50vh] overflow-y-auto' : ''} {$$props.class}">    
         {#if displayType == 'post' }
             <Markdown bind:source {inline}>

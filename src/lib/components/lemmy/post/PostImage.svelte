@@ -7,6 +7,10 @@
     import ImageContainer from './utils/ImageContainer.svelte'
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte'
     import ClickToPlayOverlay from './utils/ClickToPlayOverlay.svelte';
+    import PostEmbedDescription from './PostEmbedDescription.svelte';
+    import { userSettings } from '$lib/settings.js';
+    import ArchiveLinkSelector from './utils/ArchiveLinkSelector.svelte';
+    import Link from '$lib/components/input/Link.svelte';
 
     export let post:PostView 
     export let displayType: PostDisplayType
@@ -42,6 +46,16 @@
     }
    
 </script>
+<PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
+    description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
+    url={post.post.url}
+    card={true} 
+> 
+    <span class="flex flex-row w-full gap-2 px-1">
+        <ArchiveLinkSelector url={post.post?.url} postType='image' />    
+        <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  />
+    </span>
+</PostEmbedDescription>
 
 <ImageContainer>
     {#if clickToPlay}

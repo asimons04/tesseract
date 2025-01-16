@@ -17,7 +17,7 @@
     export let alt_text: string |undefined = post?.post.alt_text
     export let nsfw: boolean = post?.post.nsfw ?? false
 
-    let thumbnail_url: string | undefined = undefined
+    let thumbnail_url: string | undefined = getThumbnailURL()
     const heightWidthClass = "w-[64px] h-[128px] sm:w-[96px] md:w-[128px]"
     const dispatcher = createEventDispatcher()
 
@@ -27,9 +27,9 @@
         if (post?.post.url?.endsWith('.gif')) return post.post.url
         if (post?.post.embed_video_url?.endsWith('.gif')) return post.post.embed_video_url
         if (post?.post.thumbnail_url) return post.post.thumbnail_url
-
         if (isVideo(post?.post.url)) return post!.post.url
         if (isVideo(post?.post.embed_video_url)) return post!.post.embed_video_url
+        if (isImage(post?.post.url)) return post!.post.url
         if (url) return url
         return undefined
     }
@@ -39,14 +39,11 @@
         if (new URL(url).pathname.endsWith('webm') ) return 'video/webm'
         return 'video/mp4'
     }
-    
 
 </script>
 
 {#if showThumbnail}
-    <div class="{heightWidthClass} mx-auto mb-auto overflow-hidden" 
-        style={float ? 'float: right; margin-left: 0.5rem; margin-bottom: 0.5rem;' : ''}
-    >
+    <div class="{heightWidthClass} mx-auto mb-auto overflow-hidden" style={float ? 'float: right; margin-left: 0.5rem; margin-bottom: 0.5rem;' : ''} >
         
         <!--- Expand the post in place when clicking thumbnail--->
         <button class="cursor-pointer" title="{expandCompact ? 'Collapse' : 'Expand'}" 

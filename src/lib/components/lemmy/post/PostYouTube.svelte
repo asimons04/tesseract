@@ -80,27 +80,6 @@
 
 <!---IF embeds disabled, show as an image with link + alternate source selector menu--->
 {:else if post.post.thumbnail_url}
-    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail
-        description={$userSettings.uiState.hideCompactThumbnails && displayType=='feed' ? undefined : post.post.embed_description} 
-        url={post.post.url}
-        card={
-            (
-                (post.post.embed_description && !$userSettings.uiState.hideCompactThumbnails) || 
-                (post.post.embed_description && displayType=='post') ||
-                (post.post.thumbnail_url && !$userSettings.uiState.hideCompactThumbnails)
-            ) ? true : false
-        } 
-    >     
-        <span class="flex flex-row w-full gap-2 px-1">
-            <ArchiveLinkSelector url={post.post?.url} postType='youtube'/>    
-            
-            <Link highlight nowrap 
-                domainOnly={!$userSettings.uiState.showFullURL} 
-                newtab={true} 
-                bind:href={post.post.url}
-            />
-        </span>
-    </PostEmbedDescription>
 
     <PostImage bind:post displayType={displayType} clickToPlay={true} zoomable={false} class="min-h-[300px]" on:click={(e)=> {clickToPlay() }}/>
 

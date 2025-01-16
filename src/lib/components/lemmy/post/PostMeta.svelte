@@ -61,11 +61,13 @@
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
     let subscribed = false
-    
+
+    $: showExpandButton = postType != 'text' || (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )
     $: post
     $: post, userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: post, subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
     $: onHomeInstance   = ($page.params.instance ?? $instance)  == $instance
+    
 </script>
 
 <div class="flex flex-col gap-1 w-full {noClick ? 'pointer-events-none' : ''}">
@@ -73,7 +75,7 @@
     <div class="flex flex-row gap-1 w-full">
 
         <!---Community Name, User Name, Avatar, etc--->
-        <div class="flex flex-col gap-1 w-[calc(100%-150px)]">
+        <div class="flex flex-col gap-1 {showExpandButton ? 'w-[calc(100%-150px)]' : 'w-[calc(100%-120px)]'}">
 
             <span class="flex flex-row gap-2 text-sm items-start">
                 
@@ -112,7 +114,7 @@
                     </span>
                 {/if}
 
-                <div class="flex flex-col w-full text-xs">
+                <div class="flex flex-col w-full text-xs overflow-hidden">
                     {#if !inCommunity && post.community}
                         <CommunityLink bind:community={post.community} {avatarSize} noClick={!actions} />
                     {/if}
@@ -153,7 +155,7 @@
         </div>
 
         <!--Badges and Action Buttons Row--->
-        <div class="flex flex-col ml-auto gap-1 w-[150px]">
+        <div class="flex flex-col ml-auto gap-1 {showExpandButton ? 'w-[150px]' : 'w-[120px]'}">
                     
             <!--- Post Badges --->
             {#if !hideBadges}
@@ -195,7 +197,7 @@
             <!---Post Action Buttons--->
             <div class="flex flex-row items-start gap-2 ml-auto">
                 <!--Expand/Collapse Post--->
-                {#if postType != 'text'&& (postType == 'dailymotion' || post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )}
+                {#if showExpandButton}
                     <Button  color="tertiary" size="square-md" title="{expandCompact ? 'Collapse' : 'Expand'}" 
                         icon={expandCompact ? ArrowsPointingIn : ArrowsPointingOut}
                         iconSize={16}

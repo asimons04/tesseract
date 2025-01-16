@@ -24,6 +24,7 @@
         Pencil,
         ShieldCheck
     } from 'svelte-hero-icons'
+    import type { EditPostEvent } from '$lib/ui/events';
     
     
     
@@ -41,8 +42,24 @@
 
     const getTextSize = () => `text-xs md:${textSize}`
     $: onHomeInstance   = ($page.params.instance ?? $homeInstance)  == $homeInstance
+
+    const handlers= {
+        EditPostEvent: function (e:EditPostEvent) {
+            if (crosspost?.post.id == e.detail.post.post.id) {
+                crosspost = {
+                    ...e.detail.post,
+                    //@ts-ignore
+                    cross_posts: [...crosspost.cross_posts],
+                    //@ts-ignore
+                    mbfc: {...crosspost.mbfc}
+                }
+            }
+        },
+    }
+
 </script>
 
+<svelte:window on:editPost={handlers.EditPostEvent} />
 
 {#if !crosspost.post.removed}
     <a class="flex flex-col gap-2 items-start w-full rounded-lg
