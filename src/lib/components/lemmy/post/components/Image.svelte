@@ -27,7 +27,7 @@
     $:  blur = (nsfw && displayType == 'feed' && $userSettings.nsfwBlur)
 </script>
 
-<ImageContainer>
+<ImageContainer image_url={url}>
     <NSFWOverlay bind:nsfw {displayType} />
     
     <!---Click to Play Image--->
@@ -40,11 +40,11 @@
         
         {#if isImage(url)}
             <ZoomableImage {url} nsfw={blur} altText={alt_text} {zoomable} on:click={()=> dispatcher('click')}
-                class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(50vh,800px)] z-20 {$$props.class}"
+                class="relative ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(50vh,800px)] z-10 {$$props.class}"
             />
         {:else if isVideo(url)}
             <video playsinline muted=true preload="metadata" aria-label={alt_text} on:click={() => dispatcher('click')}
-                class="ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(50vh,800px)] z-20 {blur ? 'blur-2xl' : ''} {$$props.class}"
+                class="relative ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(50vh,800px)] z-10 {blur ? 'blur-2xl' : ''} {$$props.class}"
             >
                 <source src="{url}" type={getMIMEType(url)} />
             </video>
@@ -54,12 +54,12 @@
     {:else}
         {#if isImage(url)}
             <ZoomableImage {url} altText={alt_text} {zoomable} nsfw={blur}
-                class="ml-auto mr-auto object-contain rounded-md min-h-[min(40vh,800px)] {displayType=='feed' ? 'max-h-[min(50vh,800px)]' : ''} z-30 {$$props.class}"
+                class="relative ml-auto mr-auto object-contain rounded-md min-h-[min(40vh,800px)] {displayType=='feed' ? 'max-h-[min(50vh,800px)]' : ''} z-10 {$$props.class}"
             />
 
         {:else if isVideo(url)}
             <video playsinline muted=true preload="metadata" aria-label={alt_text}
-                class="ml-auto mr-auto object-contain rounded-md min-h-[min(40vh,800px)] {displayType=='feed' ? 'max-h-[min(50vh,800px)]' : ''} z-30 
+                class="relative ml-auto mr-auto object-contain rounded-md min-h-[min(40vh,800px)] {displayType=='feed' ? 'max-h-[min(50vh,800px)]' : ''} z-10 
                     {blur ? 'blur-2xl' : ''} 
                     {$$props.class}
                 "
