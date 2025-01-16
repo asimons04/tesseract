@@ -79,16 +79,14 @@
                         <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail={() => compact = false}
                             description={post.post.embed_description} 
                             url={post.post.url}
+                            showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                            thumbnail_urls={[post.post.embed_video_url, post.post.thumbnail_url, post.post.url]}
+                            nsfw={post.post.nsfw}
                             {compact}
-
                         > 
                             <ArchiveLinkSelector url={post.post?.url} {postType} />    
                             <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
 
-                            <CompactPostThumbnail slot="thumbnail" {post} {displayType}
-                                showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                                on:toggleCompact={() => compact = !compact}
-                            />
                         </PostEmbedDescription>
                     {/if}
                     

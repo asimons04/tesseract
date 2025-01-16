@@ -156,9 +156,9 @@
                 post = {
                     ...e.detail.post,
                     //@ts-ignore
-                    cross_posts: [...post.cross_posts],
+                    cross_posts: post.cross_posts ? [...post.cross_posts] : undefined,
                     //@ts-ignore
-                    mbfc: {...post.mbfc}
+                    mbfc: post.mbfc ? {...post.mbfc} : undefined
                 }
             }
         },
@@ -324,7 +324,7 @@
     />
 
     {#if ['image', 'link', 'loops', 'thumbLink', 'video', 'youtube'].includes(postType)}
-    <Card class="flex flex-col w-full p-2 gap-1 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >    
+    <Card class="flex flex-col w-full p-2 gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >    
         
         {#if postType == 'image'}    
             <ImagePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />

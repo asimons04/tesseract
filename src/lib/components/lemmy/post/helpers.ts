@@ -106,6 +106,36 @@ export const isVideo = (inputUrl: string | undefined) => {
 }
 
 
+
+
+export function getOptimalThumbnailURL(opts: {post?:PostView, url?:string, urls?:(string|undefined)[]}) {
+    console.log("Received call to getOptimalThumbnailURL", opts)
+    
+    if (opts?.url) return opts?.url
+
+    if (opts.urls && opts.urls?.length > 0) {
+        for (let i=0; i< opts.urls.length; i++) {
+            console.log("Processng url array item", i, opts.urls[i])
+            if (opts.urls[i] && opts.urls[i]?.endsWith('.gif')) return opts.urls[i]
+            if (isVideo(opts.urls[i])) return opts.urls[i]
+            if (isImage(opts.urls[i])) return opts.urls[i]
+        }
+        // If none are 'best' return the first one
+        return opts.urls[0]
+    }
+
+
+    if (opts?.post?.post.url?.endsWith('.gif')) return opts?.post.post.url
+    if (opts?.post?.post.embed_video_url?.endsWith('.gif')) return opts?.post.post.embed_video_url
+    if (opts?.post?.post.thumbnail_url) return opts?.post.post.thumbnail_url
+    if (isVideo(opts?.post?.post.url)) return opts?.post!.post.url
+    if (isVideo(opts?.post?.post.embed_video_url)) return opts?.post!.post.embed_video_url
+    if (isImage(opts?.post?.post.url)) return opts?.post!.post.url
+    
+    return undefined
+}
+
+
 export const getMIMEType = (url:string):string =>{
     try {
         let extension = url.split('/').pop()?.split('?')[0]?.split('.').pop()

@@ -140,7 +140,8 @@
         {#if onHomeInstance}
         <MenuButton title="{post.saved ? 'Unsave' : 'Save'} Post" color="warning"
             on:click={async () => {
-                if ($profile?.jwt) post.saved = await save(post, !post.saved)
+                //if ($profile?.jwt) post.saved = await save(post, !post.saved)
+                if ($profile?.jwt) save(post, !post.saved)
             }}
         >
             <Icon src={post.saved ? BookmarkSlash : Bookmark} width={16} mini />

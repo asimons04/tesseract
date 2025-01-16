@@ -2,7 +2,7 @@
     import type { PostView } from "lemmy-js-client"
     
     import { createEventDispatcher } from "svelte"
-    import { isImage, isVideo, type PostDisplayType } from "../helpers"
+    import { getMIMEType, getOptimalThumbnailURL, isImage, isVideo, type PostDisplayType } from "../helpers"
     import { imageProxyURL } from "$lib/image-proxy"
     import { userSettings } from "$lib/settings"
     
@@ -10,6 +10,7 @@
 
     export let post: PostView | undefined = undefined
     export let url: string | undefined = undefined
+    export let urls: (string|undefined)[] | undefined = undefined
     export let expandCompact:boolean = false
     export let displayType: PostDisplayType = 'feed'
     export let showThumbnail: boolean = true
@@ -17,28 +18,15 @@
     export let alt_text: string |undefined = post?.post.alt_text
     export let nsfw: boolean = post?.post.nsfw ?? false
 
-    let thumbnail_url: string | undefined = getThumbnailURL()
-    const heightWidthClass = "w-[64px] h-[128px] sm:w-[96px] md:w-[128px]"
+    let thumbnail_url: string | undefined = getOptimalThumbnailURL({post:post, url:url, urls:urls})
+    let retryCount = 1
+    let img: HTMLImageElement
+    let resolution = 256
+    let placeholder = '/img/placeholder.png'
+    const heightWidthClass = "flex flex-shrink-0 w-[64px] h-[128px] sm:w-[96px] md:w-[128px]"
     const dispatcher = createEventDispatcher()
 
-    $: post?.post.url, post?.post.thumbnail_url, post?.post.embed_video_url, url, thumbnail_url = getThumbnailURL()
-
-    function getThumbnailURL(): string | undefined {
-        if (post?.post.url?.endsWith('.gif')) return post.post.url
-        if (post?.post.embed_video_url?.endsWith('.gif')) return post.post.embed_video_url
-        if (post?.post.thumbnail_url) return post.post.thumbnail_url
-        if (isVideo(post?.post.url)) return post!.post.url
-        if (isVideo(post?.post.embed_video_url)) return post!.post.embed_video_url
-        if (isImage(post?.post.url)) return post!.post.url
-        if (url) return url
-        return undefined
-    }
-
-    function getMIMEType(url:string) {
-        if (new URL(url).pathname.endsWith('mp4') || new URL(url).pathname.endsWith('m4v') || new URL(url).pathname.endsWith('mov') ) return 'video/mp4'
-        if (new URL(url).pathname.endsWith('webm') ) return 'video/webm'
-        return 'video/mp4'
-    }
+    $: post?.post.url, post?.post.thumbnail_url, post?.post.embed_video_url, url, expandCompact, thumbnail_url = getOptimalThumbnailURL({post:post, url:url, urls:urls})
 
 </script>
 
@@ -54,15 +42,43 @@
         >
 
             {#if thumbnail_url && isImage(thumbnail_url)}
-                <img src="{
+                <img bind:this={img} 
+                    src="{
                         thumbnail_url.endsWith('.gif')
                             ? imageProxyURL(thumbnail_url)
-                            : imageProxyURL(thumbnail_url, 256, 'webp')
+                            : imageProxyURL(thumbnail_url, resolution, 'webp')
                     }"
                     loading="lazy"
                     alt={alt_text}
                     class="object-cover bg-slate-100 rounded-md {heightWidthClass}  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg"
                     class:blur-lg={(nsfw && $userSettings.nsfwBlur)}
+                    on:error={() => {
+                        // If the image errors, try the proxy URL without format, then without resolution, and finally fallback to either original URL or use a placeholder.
+                        switch (retryCount) {
+                            case 1:
+                                img.src = (imageProxyURL(thumbnail_url, resolution, undefined) ?? ($userSettings.proxyMedia.fallback ? thumbnail_url ?? placeholder : '/img/placeholder.png'))
+                                retryCount++
+                                break
+            
+                            case 2:
+                                img.src = imageProxyURL(thumbnail_url) ?? ($userSettings.proxyMedia.fallback ? thumbnail_url ?? placeholder : '/img/placeholder.png')
+                                retryCount++
+                                break
+                             
+                            case 3:
+                                img.src = $userSettings.proxyMedia.fallback ? thumbnail_url ?? placeholder : '/img/placeholder.png'
+                                retryCount++
+                                break
+            
+                            default:
+                                console.log("ZoomableImage.svelte : Max retries to fetch image failed; using placeholder")
+                                img.src = '/img/placeholder.png'
+                                retryCount++
+                                break
+            
+                        }
+                        
+                    }}
                 />
             
             {:else if thumbnail_url && isVideo(thumbnail_url)}

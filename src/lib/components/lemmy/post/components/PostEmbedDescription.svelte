@@ -28,24 +28,24 @@
     let expandPreviewText = false
     let expandDetails = compact
 
-
+    $:  thumbnail = (showThumbnail && (thumbnail_url || getOptimalThumbnailURL({urls:thumbnail_urls})) && expandDetails)
 </script>
 
 
 
 <div class="flex flex-col w-full items-start gap-1 { card ?  cardClass : ''} {expandPreviewText ? '' : 'max-h-[150px]'} {$$props.class}">    
             
-    <div class="flex flex-row w-full items-start gap-2">
+    <div class="flex flex-row w-full items-start gap-1">
         
        
-        {#if showThumbnail && (thumbnail_url || getOptimalThumbnailURL({urls:thumbnail_urls})) && expandDetails}
+        {#if thumbnail}
             <CompactPostThumbnail url={thumbnail_url} urls={thumbnail_urls} {nsfw} on:toggleCompact={() => dispatcher('clickThumbnail')} />
         {/if}
 
         
-        <details bind:open={expandDetails} class="flex flex-col gap-1 {showThumbnail && thumbnail_url && expandDetails ? 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)] md:w-[calc(100%-132px)]' : 'w-full'}">
+        <details bind:open={expandDetails} class="flex flex-col gap-1 {thumbnail ? 'w-[calc(100%-72px)] sm:w-[calc(100%-104px)] md:w-[calc(100%-136px)]' : 'w-full'}">
             
-            <summary class="flex flex-row w-full p-1 rounded-lg {title || description ? 'cursor-pointer  hover:bg-slate-300 hover:dark:bg-zinc-700' : ''} ">
+            <summary class="flex flex-row w-full p-1 rounded-lg {title || description || (showThumbnail && thumbnail_url) ? 'cursor-pointer  hover:bg-slate-300 hover:dark:bg-zinc-700' : ''} ">
                 
                 <span class="flex flex-row w-[calc(100%-30px)] gap-1 md:gap-2">
                     <!---Slot for the Archive link selector, post url, and MBFC badge--->    
@@ -53,28 +53,28 @@
                 </span>
                 
                 <!---Expand/Collapse Indicator--->
-                {#if title || description}
+                {#if title || description || thumbnail}
                     <span class="ml-auto">
                         <Icon src={expandDetails ? ChevronUp : ChevronDown} width={14} mini />
                     </span>
                 {/if}
             </summary>
 
-            <div class="flex flex-col w-full gap-2 px-2">
+            <div class="flex flex-col w-full gap-2 px-2 md:px-4 mt-1">
                 {#if title}
-                    <Link class="text-sm font-bold md:px-4 mt-1" nowrap={!expandPreviewText} href={url} newtab={true} {title}>
+                    <Link class="text-sm font-bold" nowrap={!expandPreviewText} href={url} newtab={true} {title}>
                         {title}
                     </Link>
                 {/if}
                 
                 {#if description}
                     <Markdown bind:source={description} noImages noHashtags 
-                        class="md:px-4 text-slate-700 dark:text-zinc-400 text-xs
+                        class="text-slate-700 dark:text-zinc-400 text-xs
                             {expandPreviewText ? 'max-h-[20vh] overflow-y-scroll' : 'max-h-[30px] overflow-hidden'}
                         "
                     />
                     
-                    <Button color="tertiary" size="square-sm" class="sticky bottom-0 left-0  text-xs font-bold !py-0 w-full "
+                    <Button color="tertiary" size="square-sm" class="sticky bottom-0 left-0 mb-1 text-xs font-bold !py-0 w-full "
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
                         on:click={() => { expandPreviewText = !expandPreviewText }}
                     >

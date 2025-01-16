@@ -26,7 +26,7 @@
 
 <VideoContainer>
     
-    <video bind:this={video} class="rounded-2xl w-full {displayType=='feed' ? 'max-h-[60vh]' : 'max-h-[65vh]'} mx-auto" 
+    <video bind:this={video} class="rounded-2xl z-10 w-full {displayType=='feed' ? 'max-h-[60vh]' : 'max-h-[65vh]'} mx-auto" 
         controls playsinline {muted} {autoplay}  {loop}
         aria-label={alt_text}
     >
