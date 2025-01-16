@@ -54,7 +54,7 @@
     title="{fixLemmyEncodings(post.post.name)}"
 >
 
-    <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1 {(isPostView(post) && !post.read) || !$userSettings.markReadPosts ? 'font-bold' : ''}">
+    <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1 font-bold {(isPostView(post) && post.read && $userSettings.markReadPosts) ? 'opacity-90' : ''}">
         <Markdown source={postName} noUserCommunityLink  noHashtags noLink/>
         
         {#if flairs}
@@ -65,7 +65,6 @@
                         e.preventDefault()
                         e.stopPropagation()
                         goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
-                        //dispatchWindowEvent('clickIntoPost')
                     }}
                 >
                     {flair}
