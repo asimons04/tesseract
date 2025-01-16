@@ -806,7 +806,7 @@
                     && (!amMod($profile?.user, post.community))
                 )
             }
-                <Post {post} scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
+                <Post bind:post scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
             {/if}
         {/each}
     {/if}
