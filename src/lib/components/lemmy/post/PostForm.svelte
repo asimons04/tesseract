@@ -122,6 +122,7 @@
     let oldCommunity:Community
 
     const dispatcher = createEventDispatcher<{ 
+        submit?: PostView
         state?: { workInProgress?: boolean}
     }>()
 
@@ -175,7 +176,7 @@
 
                 if (!post) throw new Error('Failed to edit post')
                 dispatchWindowEvent('editPost', { post: post.post_view})
-                
+                dispatcher('submit', post.post_view)                
             } 
             else {
                 const post = await getClient().createPost({
@@ -189,6 +190,7 @@
 
                 if (!post) throw new Error('Failed to create post')
                 dispatchWindowEvent('editPost', { post: post.post_view})
+                dispatcher('submit', post.post_view)
             }
         } catch (err) {
             toast({ title: 'Error', content: err as any, type: 'error' })
