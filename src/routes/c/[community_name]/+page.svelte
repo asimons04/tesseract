@@ -32,26 +32,27 @@
     {/if}
 </svelte:head>
 
+{#if data?.community}
+    <SubNavbar home back quickSettings toggleMargins toggleCommunitySidebar compactSwitch
+        sortMenu sortPreventDefault bind:selectedSortOption={selectedSort} 
+        on:navChangeSort={(e) => {
+            if (e?.detail && feedController.sort != e.detail) {
+                feedController.sort = e.detail
+            }
+        }}
+        scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }
+        refreshButton refreshPreventDefault on:navRefresh={()=> feedController.refresh(true) } 
+    >
+        <div class="hidden lg:flex" slot="center">
+            <SiteSearch placeholder="Search {data.community.community_view.community.name}" community_id={data.community.community_view.community.id} />
+        </div>
+    </SubNavbar>
 
-<SubNavbar home back quickSettings toggleMargins toggleCommunitySidebar compactSwitch
-    sortMenu sortPreventDefault bind:selectedSortOption={selectedSort} 
-     on:navChangeSort={(e) => {
-        if (e?.detail && feedController.sort != e.detail) {
-            feedController.sort = e.detail
-        }
-    }}
-    scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }
-    refreshButton refreshPreventDefault on:navRefresh={()=> feedController.refresh(true) } 
->
-    <div class="hidden lg:flex" slot="center">
-        <SiteSearch placeholder="Search {data.community.community_view.community.name}" community_id={data.community.community_view.community.id} />
-    </div>
-</SubNavbar>
 
-<MainContentArea>
+    <MainContentArea>
 
-    <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
-        <FeedContainer>
+        <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
+            
             <PostFeed actions type="All"
                 bind:community_name={$page.params.community_name}  
                 bind:controller={feedController} 
@@ -62,9 +63,10 @@
                     <CommunityCardSmall community_view={data.community.community_view}/>
                 </div>
             </PostFeed>
-        </FeedContainer>
-    </div>
-    
-    <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
-    
-</MainContentArea>
+            
+        </div>
+        
+        <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
+        
+    </MainContentArea>
+{/if}

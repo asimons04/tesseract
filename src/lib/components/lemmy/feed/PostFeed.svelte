@@ -662,7 +662,9 @@
 
     onDestroy(() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Component destroyed; saving data")
-        controller.takeSnapshot()
+        controller.takeSnapshot().then(() => {
+            controller.reset()
+        })
     })
 </script>
 
@@ -706,7 +708,7 @@
     <!---Note the last refresh time if using infinite scroll--->
     {#if $userSettings.uiState.infiniteScroll || (!$userSettings.uiState.infiniteScroll && controller.page == 1)}
         
-        <div class="flex flex-col w-full items-start border-b dark:border-zinc-700">
+        <div class="flex flex-col w-full items-start border-b dark:border-zinc-700 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
             <div class="flex flex-row w-full items-end justify-between">
                 
                 <div class="flex flex-col gap-1 text-xs opacity-80">
@@ -818,7 +820,7 @@
                     && (!amMod($profile?.user, post.community))
                 )
             }
-                <Post {post} scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
+                <Post {post} scrollTo={controller.last_clicked_post} inCommunity={(community_id || community_name) ? true : false}  {inModal} {actions} />
             {/if}
         {/each}
     {/if}

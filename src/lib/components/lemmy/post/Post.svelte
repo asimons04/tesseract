@@ -43,6 +43,7 @@
     import LoopsPost    from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
     import PeerTubePost from '$lib/components/lemmy/post/renderers/PeerTubePost.svelte'
     import SpotifyPost  from '$lib/components/lemmy/post/renderers/SpotifyPost.svelte'
+    import TextPost     from '$lib/components/lemmy/post/renderers/TextPost.svelte'
     import VideoPost    from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
     import YouTubePost  from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
     import VimeoPost    from '$lib/components/lemmy/post/renderers/VimeoPost.svelte'
@@ -63,7 +64,8 @@
     export let scrollTo:number              = -1                        // The feed can pass a post id (e.g. last seen post) and if the current post's ID matches, it will scroll itself into view
     export let inCommunity: boolean         = false                     // If true, the community avatar and name will be hidden and only show the poster's info/avatar
     export let inProfile: boolean           = false                     // If true, the poster's info/avatar will be hidden and only show that of the community
-    
+    export let inModal: boolean             = false
+
     let inViewport = false                                              // No longer need to export?
     let expandPreviewText:boolean
     let postContainer: HTMLDivElement | null
@@ -111,6 +113,7 @@
         
     }
 
+    // Event Handlers
     const handlers = {
 
         BanUserEvent: function (e:BanUserEvent) {
@@ -326,9 +329,17 @@
             setTimeout(() => markPostAsRead(), 1500)
         }}
     />
+    <!--'sm:w-full md:w-[90%] lg:w-[90%] xl:w-[75%] 2xl:w-[75%]' -->
 
-    {#if ['image', 'link', 'loops', 'peertube', 'spotify', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
-    <Card class="flex flex-col w-full p-2 gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >    
+    {#if ['image', 'link', 'loops', 'peertube', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
+    <Card class="flex flex-col p-2 gap-2 mx-auto
+            {disablePostLinks ? 'pointer-events-none list-none' : ''}
+            {   ($userSettings.uiState.feedMargins && !inModal && displayType=='feed') 
+                    ? 'max-w-3xl'
+                    : 'w-full'
+            }
+        " 
+    >    
         
         {#if postType == 'image'}    
             <ImagePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
@@ -356,6 +367,9 @@
         
         {:else if ['link', 'thumbLink'].includes(postType)}
             <LinkPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+
+        {:else if postType == 'text'}
+            <TextPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         {/if}
     
     </Card>

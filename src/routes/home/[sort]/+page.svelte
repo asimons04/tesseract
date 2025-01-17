@@ -14,7 +14,6 @@
     import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
     import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte'
     import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte'
     import PostFeed from '$lib/components/lemmy/feed/PostFeed.svelte'
     import SiteCardSmall from '$lib/components/lemmy/SiteCardSmall.svelte'
     import TaglinesCard from '$lib/components/lemmy/TaglinesCard.svelte'
@@ -95,22 +94,18 @@
 <MainContentArea>
 
     <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
-        <FeedContainer>
-            
-            <PostFeed actions bind:controller={feedController} bind:sort bind:type >
+        <PostFeed actions bind:controller={feedController} bind:sort bind:type >
 
-                <!---Add the Site Banner to the top of the feed below 'xl' width--->
-                <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px]" slot="banner">    
-                    <SiteCardSmall site={data.site.site_view} version={data.site.version}/>
+            <!---Add the Site Banner to the top of the feed below 'xl' width--->
+            <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px]" slot="banner">    
+                <SiteCardSmall site={data.site.site_view} version={data.site.version}/>
 
-                    {#if data.site.taglines && data.site.taglines.length > 0}
-                        <TaglinesCard taglines={data.site.taglines} interval={10}/>
-                    {/if}
-                </div>
+                {#if data.site.taglines && data.site.taglines.length > 0}
+                    <TaglinesCard taglines={data.site.taglines} interval={10}/>
+                {/if}
+            </div>
 
-            </PostFeed>
-            
-        </FeedContainer>
+        </PostFeed>
     </div>
 
     <!---Show the site card on the right side--->
