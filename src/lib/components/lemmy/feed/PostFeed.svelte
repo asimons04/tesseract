@@ -59,7 +59,7 @@
     export let type: ListingType                    = $userSettings.defaultSort.feed ?? 'All'
     export let sort: SortType                       = $userSettings.defaultSort.sort ?? 'New'
     export let actions: boolean                     = false
-    export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
+    export let snapshotValidity:number              = $userSettings.feedSnapshotValidity ?? 15    //Number of minutes snapshots are valid
     export let feedName: string                     = 'default'
     export let inModal:boolean                      = false // Prevents changing community from URL param
 

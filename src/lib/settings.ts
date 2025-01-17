@@ -57,6 +57,7 @@ interface Settings {
         feed: ListingType
         comments: CommentSortType
     }
+    feedSnapshotValidity: number                                        // Number, in minutes, the feed snapshots are valid
     markReadOnScroll: boolean
     hidePosts: {
         deleted: boolean
@@ -219,6 +220,7 @@ export const defaultSettings: Settings = {
         comments:   env.PUBLIC_DEFAULT_COMMENT_SORT as CommentSortType  ??  'Hot'
     },
     markReadOnScroll:                                                   false,
+    feedSnapshotValidity:                                               15,
     hidePosts: {
         hidden:                                                         true,
         read:                                                           false,

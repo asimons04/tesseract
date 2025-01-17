@@ -570,6 +570,17 @@
             bind:selected={$userSettings.uiState.postBodyPreviewLength}
         />
 
+        <!---Feed Snapshot Validity--->
+        <SettingMultiSelect title="Feed Snapshot Validity" icon={Clock} description="How long the feed snapshot should be considered valid since
+            its last refresh. Longer durations are useful if you're scrolling through/into a lot of posts and want to get back to the same spot if you
+            scroll for longeer than the default 15 minutes."
+            optionNames={['5 Min', '10 Min', '15 Min', '20 Min', '25 Min', '30 Min', '45 Min', '1 Hour', '2 Hours', '3 Hours', '4 Hours']}
+            options={    [5, 10, 15, 20, 25, 30, 45, 60, 120, 180, 240]}
+            bind:selected={$userSettings.feedSnapshotValidity}
+        />
+
+
+
         <!---Infinite Scroll--->
         <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll}
             description="Use infinite scrolling instead of manual pagination."
