@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { PostView } from 'lemmy-js-client'
+    import type { PostView }        from 'lemmy-js-client'
     import type { PostDisplayType } from '$lib/components/lemmy/post/helpers'
     
-    import { dispatchWindowEvent } from '$lib/ui/events'
-    import { userSettings } from '$lib/settings'
+    import { dispatchWindowEvent }  from '$lib/ui/events'
+    import { userSettings }         from '$lib/settings'
 
-    import Button from '$lib/components/input/Button.svelte'
+    import Button   from '$lib/components/input/Button.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
 
     import { 
@@ -93,7 +93,8 @@
             expandPreviewText = !expandPreviewText
 
             // Scroll top of post to top on close
-            if (!expandPreviewText) dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
+            //if (!expandPreviewText) dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
+            dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
         }}
     />
         
