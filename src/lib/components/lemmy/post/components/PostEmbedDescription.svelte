@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PostDisplayType } from "../helpers"
+    import type { ChangeViewEvent } from '$lib/ui/events'
     
     import { createEventDispatcher } from "svelte"
     import { getOptimalThumbnailURL } from "../helpers"
@@ -26,14 +26,26 @@
     const cardClass =  "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50"
 
     let expandPreviewText = false
-    let expandDetails = compact
+    let expandDetails = $userSettings.uiState.view == 'ultra-compact' ? false : compact
 
     $:  thumbnail = (showThumbnail && (thumbnail_url || getOptimalThumbnailURL({urls:thumbnail_urls})) && expandDetails)
+
+    const handlers = {
+        ChangeViewEvent: function (e:ChangeViewEvent) {
+            if (e.detail.view == 'ultra-compact') {
+                expandDetails = false
+            }
+            else {
+                expandDetails = true
+            }
+        }
+    }
 </script>
 
+<svelte:window on:changeView={handlers.ChangeViewEvent} />
 
 
-<div class="flex flex-col w-full items-start gap-1 { card ?  cardClass : ''} {expandPreviewText ? '' : 'max-h-[150px]'} {$$props.class}">    
+<div class="flex flex-col w-full items-start gap-1 { card ?  cardClass : ''} {expandPreviewText ? '' : 'max-h-[130px]'} {$$props.class}">    
             
     <div class="flex flex-row w-full items-start gap-1">
         
@@ -53,14 +65,14 @@
                 </span>
                 
                 <!---Expand/Collapse Indicator--->
-                {#if title || description || thumbnail}
+                {#if title || description || thumbnail_url}
                     <span class="ml-auto">
                         <Icon src={expandDetails ? ChevronUp : ChevronDown} width={14} mini />
                     </span>
                 {/if}
             </summary>
 
-            <div class="flex flex-col w-full gap-2 px-2 md:px-4 mt-1">
+            <div class="flex flex-col w-full gap-2 px-2 md:px-4 my-1">
                 {#if title}
                     <Link class="text-sm font-bold" nowrap={!expandPreviewText} href={url} newtab={true} {title}>
                         {title}
@@ -70,7 +82,7 @@
                 {#if description}
                     <Markdown bind:source={description} noImages noHashtags 
                         class="text-slate-700 dark:text-zinc-400 text-xs
-                            {expandPreviewText ? 'max-h-[20vh] overflow-y-scroll' : 'max-h-[30px] overflow-hidden'}
+                            {expandPreviewText ? 'max-h-[20vh] overflow-y-scroll' : 'max-h-[20px] overflow-hidden'}
                         "
                     />
                     
