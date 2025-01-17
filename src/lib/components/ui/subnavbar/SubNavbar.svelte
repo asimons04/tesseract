@@ -43,6 +43,7 @@
         Cog6Tooth,
     } from 'svelte-hero-icons'
     import { profile } from '$lib/auth';
+    import { dispatchWindowEvent } from '$lib/ui/events';
 
     export let iconSize:number = 28
 
@@ -197,7 +198,10 @@
                     icon={Window}
                     iconSize={18}
                     showSelectedLabel={false}
-                    on:select={selectViewType}
+                    on:select={(e) => {
+                        dispatchWindowEvent('changeView', {view: e.detail})
+                        selectViewType(e)
+                    }}
                 />
             {/if}
 
