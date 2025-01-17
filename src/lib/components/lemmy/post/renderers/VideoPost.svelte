@@ -6,21 +6,21 @@
     import { userSettings } from '$lib/settings.js'
 
     import ArchiveLinkSelector from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
+    import CompactPostThumbnail from '../utils/CompactPostThumbnail.svelte'
     import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
     import Image from '$lib/components/lemmy/post/components/Image.svelte'
     import Link from '$lib/components/input/Link.svelte'
-    import NSFWOverlay from '$lib/components/lemmy/post/components/NSFWOverlay.svelte'
-
-    import VideoContainer from '../components/VideoContainer.svelte'
-    import VideoPlayer from '../components/VideoPlayer.svelte'
+    
+    
 
     import PostActions from '$lib/components/lemmy/post/components/PostActions.svelte'
     import PostBody from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
     import PostMeta from '$lib/components/lemmy/post/components/PostMeta.svelte'
     import PostTitle from '$lib/components/lemmy/post/components/PostTitle.svelte'
+    import VideoPlayer from '$lib/components/players/VideoPlayer.svelte'
     
-    import CompactPostThumbnail from '../utils/CompactPostThumbnail.svelte';
+    
     import { imageProxyURL } from '$lib/image-proxy';
     import { onMount } from 'svelte';
     

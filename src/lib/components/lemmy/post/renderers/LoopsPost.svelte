@@ -1,28 +1,19 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import { isImage, type PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
 
     import { userSettings } from '$lib/settings'
 
-    import ArchiveLinkSelector from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    import NSFWOverlay from '$lib/components/lemmy/post/utils/NSFWOverlay.svelte'
-    
-    
-    
-    
-
     // New Components
-    import Image from '$lib/components/lemmy/post/components/Image.svelte'
-    import PostBody from '$lib/components/lemmy/post/components/PostBody.svelte'
-    import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
-    import PostMeta from '$lib/components/lemmy/post/components/PostMeta.svelte'
-    import VideoPlayer from '$lib/components/lemmy/post//components/VideoPlayer.svelte'
+    import ArchiveLinkSelector      from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
+    import Crossposts               from '../Crossposts.svelte'
+    import Link                     from '$lib/components/input/Link.svelte'
+    import LoopsPlayer              from '$lib/components/players/LoopsPlayer.svelte'
+    import PostActions              from '../components/PostActions.svelte'
+    import PostBody                 from '$lib/components/lemmy/post/components/PostBody.svelte'
+    import PostEmbedDescription     from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
+    import PostMeta                 from '$lib/components/lemmy/post/components/PostMeta.svelte'
     
-    import PostActions from '../components/PostActions.svelte';
-    
-    import Crossposts from '../Crossposts.svelte';
-
 
     // Standard for all post types
     export let post:PostView
@@ -35,31 +26,9 @@
     export let inViewport = true
     export let compact: boolean = true
 
-
-    let clickToPlayClicked = false
-    let source: string | undefined = undefined
-    let loading = false
-
-    async function getEmbedVideoURL() {
-        try {
-            const response = await fetch(`/tesseract/api/loops/lookup?loops_url=${post.post.url}`)
-            const result = await response.json()
-            if (result?.video_url) { return result.video_url }
-        }
-        catch { return undefined }
-    }
-    
-    async function clickToPlay() {
-        getEmbedVideoURL().then((video_url) => {
-            source = video_url
-            loading = false
-            if (source) clickToPlayClicked = true
-            else loading = false
-        })
-    }
-
-    // Return to thumbnail if collapsed into compact view
-    $:  if (compact) clickToPlayClicked = false
+    $:  thumbnail_url = (post.post.thumbnail_url && isImage(post.post.thumbnail_url)) 
+            ? post.post.thumbnail_url 
+            : undefined
 
 </script>
 
@@ -71,7 +40,7 @@
         title={post.post.embed_title}
         description={post.post.embed_description} 
         url={post.post.url}
-        thumbnail_url={post.post.thumbnail_url}
+        thumbnail_url={thumbnail_url}
         showThumbnail={compact}
         nsfw={post.post.nsfw}
         compact={compact}
@@ -82,20 +51,11 @@
 {/key}
 
 <!---Card View--->
-{#if !compact}
-    <!---Render as Video if Click to Play Has Been Clicked--->
-    {#if source && clickToPlayClicked}
-        <VideoPlayer {source} {displayType} {inViewport} autoplay={true}/>
-
-    <!---Render as a Click-to-Play Thumbnail--->
-    {:else}
-        <Image url={post.post.thumbnail_url ?? '/img/loops.png'} clickToPlay bind:loading {displayType} nsfw={post.post.nsfw} zoomable={false} class="min-h-[300px]" 
-            on:click={(e)=> {
-                loading = true
-                clickToPlay() 
-            }}
-        />
-    {/if}
+{#if !compact && post.post.url}
+    <LoopsPlayer {displayType}  {inViewport}    {compact}
+        url={post.post.url}     thumbnail_url={thumbnail_url}   nsfw={post.post.nsfw} 
+        alt_text={post.post.alt_text ?? post.post.name}    
+     />
 {/if}
 
 <PostBody {post} {displayType}  />
