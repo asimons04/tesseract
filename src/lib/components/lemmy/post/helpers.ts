@@ -73,7 +73,7 @@ export const isImage = (url: string | undefined) => {
     try {
         if (!url) return false
         const testURL = new URL(unproxyImage(url))
-        return /\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)$/i.test(testURL.pathname)
+        return /\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)$/i.test(testURL.href)
     }
     catch {
         return false
@@ -85,7 +85,7 @@ export const isAudio = (url: string | undefined) => {
     try {
         if (!url) return false
         const testURL = new URL(unproxyImage(url))
-        return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
+        return /\.(mp3|oga|opus|aac)$/i.test(testURL.href)
     }
     catch {
         return false
@@ -109,13 +109,11 @@ export const isVideo = (inputUrl: string | undefined) => {
 
 
 export function getOptimalThumbnailURL(opts: {post?:PostView, url?:string, urls?:(string|undefined)[]}) {
-    console.log("Received call to getOptimalThumbnailURL", opts)
     
     if (opts?.url) return opts?.url
 
     if (opts.urls && opts.urls?.length > 0) {
         for (let i=0; i< opts.urls.length; i++) {
-            console.log("Processng url array item", i, opts.urls[i])
             if (opts.urls[i] && opts.urls[i]?.endsWith('.gif')) return opts.urls[i]
             if (isVideo(opts.urls[i])) return opts.urls[i]
             if (isImage(opts.urls[i])) return opts.urls[i]
@@ -160,10 +158,17 @@ export const unproxyImage = (inputURL:string) => {
         inputURL = window.origin + inputURL
     try {
         const testURL = new URL(inputURL)
-        return (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
-            ? decodeURI(testURL.searchParams.get('url') as string)
+        
+        /*
+        const unproxiedURL =  (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
+            ? decodeURIComponent(testURL.searchParams.get('url') as string)
             : inputURL
-    }
+        */
+       
+        const unproxiedURL = decodeURIComponent(testURL.href.replace(testURL.origin + testURL.pathname + '?url=', ''))
+        console.log(unproxiedURL)
+        return unproxiedURL
+    }   
     catch {
         return inputURL
     }
