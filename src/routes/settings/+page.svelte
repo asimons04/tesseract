@@ -694,7 +694,16 @@
             textInputPlaceholder="inv.example.com"
             title="Define Custom YouTube Frontends"
             description="Specify here any custom Piped/Invidious intances you wish to use.  These will be used for both detection of Invidious links in posts
-            as well as selectable preferred instances for YT-like posts. Enter only the domain."
+                as well as selectable preferred instances for YT-like posts. Enter only the domain."
+            processInputFunc={(
+                //@ts-ignore
+                str) => {
+                    if (!str) return undefined
+
+                    const hostOnly = str.replace(/https?:\/\//i,'').split('/')[0]
+                    if (hostOnly.split('.').length < 2) return undefined
+                    return hostOnly
+            }}
         />
 
         <!--- Image Proxying --->
