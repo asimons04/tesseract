@@ -41,9 +41,13 @@
     import ImagePost    from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
     import LinkPost     from '$lib/components/lemmy/post/renderers/LinkPost.svelte'
     import LoopsPost    from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
+    import PeerTubePost from '$lib/components/lemmy/post/renderers/PeerTubePost.svelte'
+    import SpotifyPost  from '$lib/components/lemmy/post/renderers/SpotifyPost.svelte'
     import VideoPost    from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
     import YouTubePost  from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
-    
+    import VimeoPost    from '$lib/components/lemmy/post/renderers/VimeoPost.svelte'
+
+
     import { onDestroy, onMount } from 'svelte';
     
 
@@ -323,7 +327,7 @@
         }}
     />
 
-    {#if ['image', 'link', 'loops', 'thumbLink', 'video', 'youtube'].includes(postType)}
+    {#if ['image', 'link', 'loops', 'peertube', 'spotify', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
     <Card class="flex flex-col w-full p-2 gap-2 {disablePostLinks ? 'pointer-events-none list-none' : ''}" >    
         
         {#if postType == 'image'}    
@@ -331,12 +335,24 @@
 
         {:else if postType == 'loops'}
             <LoopsPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+
+        {:else if postType == 'peertube'}
+            <PeerTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
+        {:else if postType == 'spotify'}
+            <SpotifyPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'video'}
             <VideoPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'youtube'}
             <YouTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
+        
+        
+        {:else if postType == 'vimeo'}
+            <VimeoPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
         
         {:else if ['link', 'thumbLink'].includes(postType)}
             <LinkPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
@@ -345,6 +361,7 @@
     </Card>
 
 
+    <!---Legacy Renderers (fallback if not in list above)--->
 
     <!--- Compact Posts --->
     {:else if  (forceCompact || !expandCompact) }
