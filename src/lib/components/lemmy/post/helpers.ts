@@ -73,7 +73,9 @@ export const isImage = (url: string | undefined) => {
     try {
         if (!url) return false
         const testURL = new URL(unproxyImage(url))
-        return /\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)$/i.test(testURL.href)
+        if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)$/i.test(testURL.href)) return true
+        if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)\??/i.test(testURL.href)) return true
+        return false
     }
     catch {
         return false
@@ -158,18 +160,17 @@ export const unproxyImage = (inputURL:string) => {
         inputURL = window.origin + inputURL
     try {
         const testURL = new URL(inputURL)
+        // If not a stupid Lemmy proxy URL, return the original
+        if ( !(testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) ) return inputURL
         
-        /*
-        const unproxiedURL =  (testURL.pathname == '/api/v3/image_proxy' && testURL.searchParams.get('url')) 
-            ? decodeURIComponent(testURL.searchParams.get('url') as string)
-            : inputURL
-        */
-       
-        const unproxiedURL = decodeURIComponent(testURL.href.replace(testURL.origin + testURL.pathname + '?url=', ''))
-        console.log(unproxiedURL)
-        return unproxiedURL
+        // Extract the proxied URL; return the original if there's no URL
+        const proxiedURL = testURL.searchParams.get('url')
+        if (!proxiedURL) return inputURL
+        
+        // Convert the extracted proxied URL to a URL object and return its href property
+        return new URL(proxiedURL).href
     }   
-    catch {
+    catch (err) {
         return inputURL
     }
 }
@@ -177,10 +178,7 @@ export const unproxyImage = (inputURL:string) => {
 // Checks if the post's URL is for a video Tesseract is capable of embedding
 export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
     if (!url) return false
-    return (
-        isInvidious(url) ||
-        isYouTube(url)
-    )
+    return ( isInvidious(url) || isYouTube(url) )
 }
 
 // Check if URL is a peerTube embed

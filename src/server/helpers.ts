@@ -1,6 +1,8 @@
 export function isImage  (url: string | undefined) {
     if (!url) return false
-    return /\.(avif|jpeg|jpg|gif|apng|png|img|svg|bmp|webp)$/i.test(new URL(url).pathname.toLowerCase())
+    if (/\.(avif|jpeg|jpg|gif|apng|png|img|svg|bmp|webp)$/i.test(new URL(url).href)) return true
+    if (/\.(avif|jpeg|jpg|gif|apng|png|img|svg|bmp|webp)\??/i.test(new URL(url).href)) return true
+
 }
 
 // Check if provided URL is a video
@@ -16,7 +18,7 @@ export const isAudio = (inputUrl: string | undefined) => {
     try {
         if (!inputUrl) return false
         const testURL = new URL(inputUrl)
-        return /\.(mp3|oga|opus|aac)$/i.test(testURL.pathname)
+        return /\.(mp3|oga|opus|aac)$/i.test(testURL.href)
     }
     catch {
         return false
