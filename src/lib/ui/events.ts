@@ -2,6 +2,7 @@
     src/app.d.ts under the svelteHTML HTML prop extensions to avoid IDE errors when adding the custom event listeners
 */
 
+import type { PostViewType } from "$lib/settings"
 import type { PostView, SortType } from "lemmy-js-client"
 
 export type TesseractEvent = 
@@ -12,6 +13,7 @@ export type TesseractEvent =
     'blockInstance'     |
     'changeCompactView' |
     'changeProfile'     |
+    'changeView'        |
     'clickIntoPost'     |
     'distinguishComment'|
     'editComment'       |
@@ -95,6 +97,12 @@ export interface BlockUserEvent extends CustomEvent {
 export interface ChangeProfileEvent extends CustomEvent {
     detail: {
         pid: number
+    }
+}
+
+export interface ChangeViewEvent extends CustomEvent {
+    detail: {
+        view: PostViewType
     }
 }
 
