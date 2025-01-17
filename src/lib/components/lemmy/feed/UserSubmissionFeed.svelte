@@ -67,10 +67,7 @@
     
     onDestroy(() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Component destroyed; saving data")
-        controller.takeSnapshot().then( () => {
-            controller.reset() 
-            scrollContainer?.remove()
-        })
+        controller.takeSnapshot()
     })
 
     $:  person_id,      controller.person_id = person_id
