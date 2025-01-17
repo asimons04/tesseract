@@ -15,19 +15,21 @@
         XCircle
     } from 'svelte-hero-icons'
     
-    export let list:string[]                        // Array of strings to manage (should be bound from parent in most cases)
-    export let title:string = ''                    // Title of the setting
-    export let description:string = ''              // Text description of the setting
-    export let icon:IconSource = PlusCircle         // Icon used for the setting entry
-    export let condition:boolean = true             // Boolean condition to show/hide the component
-    export let textInputPlaceholder:string = ''     // Placeholder for text input field
-    export let filterable:boolean = false           // Show the filter input to allow searching of the list
+    export let list:string[]                                  // Array of strings to manage (should be bound from parent in most cases)
+    export let title:string                 = ''              // Title of the setting
+    export let description:string           = ''              // Text description of the setting
+    export let icon:IconSource              = PlusCircle      // Icon used for the setting entry
+    export let condition:boolean            = true            // Boolean condition to show/hide the component
+    export let textInputPlaceholder:string  = ''              // Placeholder for text input field
+    export let filterable:boolean           = false           // Show the filter input to allow searching of the list
+    export let processInputFunc: Function   = (str:string|undefined) => {return str}
 
-    export let showPlaceholder:boolean = true               // Show empty list placeholder
-    export let placeholderText:string = ''                  // Text to show in the empty placeholder
-    export let placeholderIcon:IconSource = ArchiveBoxXMark // Icon to use for the empty placeholder
-    export let placeholderTitle:string = 'No Items'         // Title for the empty placeholder
-    export let reverseLayout: boolean = false               // Put the list on the left and the input on the right
+
+    export let showPlaceholder:boolean      = true              // Show empty list placeholder
+    export let placeholderText:string       = ''                // Text to show in the empty placeholder
+    export let placeholderIcon:IconSource   = ArchiveBoxXMark   // Icon to use for the empty placeholder
+    export let placeholderTitle:string      = 'No Items'        // Title for the empty placeholder
+    export let reverseLayout: boolean       = false             // Put the list on the left and the input on the right
 
     let input_text:string
     let filter_input_text:string
@@ -43,8 +45,11 @@
     * @param add    `true` (default) to add the input string to the array, `false` to remove it
     */
     const updateArray = function(input:string, arr:string[], add=true) {
+        // Process the input based on a passed-in function.  Useful for cleaning up input to a desired format.
+        input = processInputFunc(input)
+
         if (!input) return arr
-        
+
         input = input.trim()
 
         // Don't add a duplicate or empty item
@@ -53,6 +58,7 @@
         let items = input.split(',')
 
         if (add) {
+
             items.forEach((item) => {
                 if (item && !arr.includes(item)) {
                     arr.push(item.trim())
