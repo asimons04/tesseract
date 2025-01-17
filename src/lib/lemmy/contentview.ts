@@ -58,12 +58,13 @@ export async function save(item: ContentView | SubmissionView, save: boolean): P
     if (isSubmissionView(item)) item = contentView(item)
 
     if (item.type == 'post') {
-        return (
-            await getClient().savePost({
-                post_id: item.id,
-                save: save,
-            })
-        ).post_view.saved
+        
+        let updatedItem = await getClient().savePost({
+            post_id: item.id,
+            save: save,
+        })
+        dispatchWindowEvent('editPost', {post: updatedItem.post_view})
+        return updatedItem.post_view.saved
     } 
     else if (item.type == 'comment') {
         return (
@@ -80,12 +81,13 @@ export async function deleteItem(item: ContentView | SubmissionView, deleted: bo
     if (isSubmissionView(item)) item = contentView(item)
 
     if (item.type == 'post') {
-        return (
-            await getClient().deletePost({
+        let updatedItem =  await getClient().deletePost({
                 post_id: item.id,
                 deleted: deleted,
             })
-        ).post_view.post.deleted
+        dispatchWindowEvent('editPost', {post: updatedItem.post_view})
+        
+        return updatedItem.post_view.post.deleted
     } 
     else if (item.type == 'comment') {
         return (
