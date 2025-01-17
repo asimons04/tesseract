@@ -10,6 +10,7 @@
         BlockInstanceEvent, 
         BlockUserEvent, 
         ChangeProfileEvent, 
+        EditPostEvent, 
         HideCommunityEvent, 
         HidePostEvent, 
         LastClickedPostEvent, 
@@ -569,6 +570,21 @@
                 .then(() => controller.load({loadSnapshot: true, append:false}))
         },
 
+        EditPostEvent: function (e:EditPostEvent) {
+            for (let i:number = 0; i < posts.posts.length; i++) {
+                if (posts.posts[i].post.id == e.detail.post.post.id) {
+                    posts.posts[i] = {
+                        ...e.detail.post,
+                        //@ts-ignore
+                        cross_posts: posts.posts[i].cross_posts ? [...posts.posts[i].cross_posts] : undefined,
+                        //@ts-ignore
+                        mbfc: posts.posts[i].mbfc ? {...posts.posts[i].mbfc} : undefined
+                    }
+                }
+            }
+            posts = posts
+        },
+
         HideCommunityEvent(e:HideCommunityEvent) {
             for (let i:number=0; i < posts.posts.length; i++) {
                 if (posts.posts[i].community.id == e.detail.community_id) {
@@ -646,12 +662,7 @@
 
     onDestroy(() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Component destroyed; saving data")
-        controller.takeSnapshot().then( () => {
-            controller.reset() 
-            controller.scrollContainer?.remove()
-            //@ts-ignore
-            controller.scrollContainer = null
-        })
+        controller.takeSnapshot()
     })
 </script>
 
@@ -663,6 +674,7 @@
     on:blockCommunity={handlers.BlockCommunityEvent} 
     on:blockInstance={handlers.BlockInstanceEvent}
     on:changeProfile={handlers.ChangeProfileEvent}
+    on:editPost={handlers.EditPostEvent}
     on:hideCommunity={handlers.HideCommunityEvent}
     on:hidePost={handlers.HidePostEvent}
     on:lastClickedPost={handlers.LastClickedPostEvent}
@@ -806,7 +818,7 @@
                     && (!amMod($profile?.user, post.community))
                 )
             }
-                <Post bind:post scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
+                <Post {post} scrollTo={controller.last_clicked_post}  {actions} inCommunity={(community_id || community_name) ? true : false} />
             {/if}
         {/each}
     {/if}
