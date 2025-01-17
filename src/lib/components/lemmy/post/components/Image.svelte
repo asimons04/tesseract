@@ -5,12 +5,12 @@
 
     import { createEventDispatcher } from 'svelte'
     import { getMIMEType, isImage, isVideo } from '../helpers'
-    import { userSettings } from '$lib/settings'
+    import { userSettings }     from '$lib/settings'
 
-    import ClickToPlayOverlay from './ClickToPlayOverlay.svelte'
-    import ImageContainer from './ImageContainer.svelte'
-    import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte'
-    import NSFWOverlay from './NSFWOverlay.svelte'
+    import ClickToPlayOverlay   from './ClickToPlayOverlay.svelte'
+    import ImageContainer       from './ImageContainer.svelte'
+    import ZoomableImage        from '$lib/components/ui/ZoomableImage.svelte'
+    import NSFWOverlay          from './NSFWOverlay.svelte'
     
 
 
