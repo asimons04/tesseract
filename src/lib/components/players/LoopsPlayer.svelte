@@ -40,7 +40,7 @@
 </script>
 
 {#if videoURL && clickToPlayClicked}
-    <VideoPlayer source={videoURL} {displayType} {inViewport} {alt_text} autoplay/>
+    <VideoPlayer source={videoURL} thumbnail={thumbnail_url} {displayType} {inViewport} {alt_text} autoplay/>
 
 <!---Render as a Click-to-Play Thumbnail--->
 {:else}
