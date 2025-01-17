@@ -32,7 +32,9 @@
         Language,
         BugAnt,
         ChevronDoubleDown,
+        FaceSmile,
     } from "svelte-hero-icons"
+    import { dispatchWindowEvent } from '$lib/ui/events';
 
 
     export let open: boolean = false
@@ -72,7 +74,10 @@
             <SettingMultiSelect title="Post Style" icon={QueueList} small
                 options={postViewTypes.options}
                 optionNames={postViewTypes.optionNames}
-                on:select={selectViewType}
+                on:select={(e) => {
+                    dispatchWindowEvent('changeView', {view: e.detail})
+                    selectViewType(e)
+                }}
                 bind:selected={$userSettings.uiState.view}
             >
                 {#if $userSettings.uiState.view == 'hybrid'}
@@ -142,11 +147,12 @@
                 <!---Match Crosspost on Title--->
                 <SettingToggle title="Match Crossposts on Title" icon={BarsArrowDown} bind:value={$userSettings.uiState.matchCrossPostOnTitle} small={true}/>
 
-                <!---Enable Embeds in Feed--->
-                <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed} small={true}/>
+                <!---Large Emojis--->
+                <SettingToggle title="Large Custom Emojis" icon={FaceSmile}  bind:value={$userSettings.uiState.largeEmojis} small={true} />
+        
 
-                <!---Enable Embeds in Posts--->
-                <SettingToggle title="Enable Embeds in Posts" icon={Film} bind:value={$userSettings.embeddedMedia.post} small={true}/>
+                <!---Blur NSFW Images--->
+                <SettingToggle title="Blur NSFW Images" icon={EyeSlash} bind:value={$userSettings.nsfwBlur} small={true} />
 
                 <!---Enable Hashtags--->
                 <SettingToggle title="Enable Hashtags" icon={Hashtag} bind:value={$userSettings.linkifyHashtags} small={true} />

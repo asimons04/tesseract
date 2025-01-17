@@ -106,6 +106,7 @@ interface Settings {
     linkifyHashtags: boolean                                            // Enable to extract hashtags and turn them into search links
     extractFlairsFromTitle: boolean,                                    // Enable to turn [bracketed text] in post titles into flairs
     uiState: {
+        largeEmojis: boolean                                            // Render the custom emoji's comically large like Lemmy UI
         inboxDefaultUnread: boolean                                     // If true, the inbox will default to uread messages.
         disableDownvotes: boolean                                       // Enable to disable downvotes and hide downvote counts.
         linkPreviews: boolean,                                          // Enable to preview markdown links in modals. Disable to go directly to the link target
@@ -177,6 +178,7 @@ export const defaultSettings: Settings = {
     linkifyHashtags: true,
     extractFlairsFromTitle:                                             true,
     uiState: {
+        largeEmojis:                                                    false,
         inboxDefaultUnread:                                             true,
         disableDownvotes:                                               false,
         linkPreviews:                                                   true,

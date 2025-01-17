@@ -81,6 +81,7 @@
         ShieldCheck,
         Inbox,
         ClipboardDocumentList,
+        FaceSmile,
     } from 'svelte-hero-icons'
     
     
@@ -615,7 +616,7 @@
         />
     </SettingsCollapseSection>
 
-    <!---Posts Options--->
+    <!---Posts and Comments Options--->
     <SettingsCollapseSection bind:expanded={open.posts} icon={Window} title="Posts and Comments">
         <!---Comment Sort Order--->
         <SettingMultiSelect title="Comment Sort Direction" icon={ChartBar} description="Choose the default sorting method for comments."
@@ -626,6 +627,11 @@
         <!---Inline Images--->
         <SettingToggle title="Inline Images" icon={Photo} description="Enable inline images in posts and comments. If disabled, inline images will be shown as a link."
             bind:value={$userSettings.inlineImages}
+        />
+
+        <!---Large Emojis--->
+        <SettingToggle title="Large Custom Emojis" icon={FaceSmile} description="By default, custom emojis are rendered 'emoji-sized'. Enable this to double their size."
+            bind:value={$userSettings.uiState.largeEmojis}
         />
 
         <!---Code Syntax Highlighting--->
@@ -658,16 +664,6 @@
 
     <!---Media Options--->
     <SettingsCollapseSection bind:expanded={open.media} icon={Gif} title="Media">
-        <!--- Enable Embedded Content In Feed--->
-        <SettingToggle title="Enable Embeds in Feed" icon={Film} bind:value={$userSettings.embeddedMedia.feed}
-            description="Enable embedded content in the feed. When disabled, a click-to-play thumbnail will be shown instead."
-        />
-
-        <!--- Enable Embedded Content In Posts--->
-        <SettingToggle title="Enable Embeds in Posts" icon={Film} bind:value={$userSettings.embeddedMedia.post}
-            description="Enable embedded content in the posts. When disabled, a click-to-play thumbnail will be shown instead."
-        />
-
         <!--- Enable Autoplay--->
         <SettingToggle title="Autoplay" icon={Play} bind:value={$userSettings.embeddedMedia.autoplay}
             description="Autoplay supported content when opening posts."
