@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ChangeViewEvent } from '$lib/ui/events'
     
-    import { createEventDispatcher } from "svelte"
+    import { createEventDispatcher, onMount } from "svelte"
     import { getOptimalThumbnailURL } from "../helpers"
     import { userSettings } from '$lib/settings'
 
@@ -25,10 +25,23 @@
     const dispatcher = createEventDispatcher()
     const cardClass =  "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50"
 
+    
+
     let expandPreviewText = false
     let expandDetails = $userSettings.uiState.view == 'ultra-compact' ? false : compact
 
-    $:  thumbnail = (showThumbnail && (thumbnail_url || getOptimalThumbnailURL({urls:thumbnail_urls})) && expandDetails)
+    $:  thumbnail_available = (showThumbnail && (thumbnail_url || getOptimalThumbnailURL({urls:thumbnail_urls})) && expandDetails)
+    $:  title, description, hideCFBullshit()
+    
+    function hideCFBullshit() {
+        const cfRegex = /^just a moment|px\-captcha|attention.*cloudflare/gi
+        if (title?.match(cfRegex) || description?.match(cfRegex)) {
+            title = ''
+            description = ''
+        }
+        if (!thumbnail_available) expandDetails = false
+    }
+
 
     const handlers = {
         ChangeViewEvent: function (e:ChangeViewEvent) {
@@ -40,6 +53,8 @@
             }
         }
     }
+
+    
 </script>
 
 <svelte:window on:changeView={handlers.ChangeViewEvent} />
@@ -50,12 +65,12 @@
     <div class="flex flex-row w-full items-start gap-1">
         
        
-        {#if thumbnail}
+        {#if thumbnail_available}
             <CompactPostThumbnail url={thumbnail_url} urls={thumbnail_urls} {nsfw} on:toggleCompact={() => dispatcher('clickThumbnail')} />
         {/if}
 
         
-        <details bind:open={expandDetails} class="flex flex-col gap-1 {thumbnail ? 'w-[calc(100%-72px)] sm:w-[calc(100%-104px)] md:w-[calc(100%-136px)]' : 'w-full'}">
+        <details bind:open={expandDetails} class="flex flex-col gap-1 {thumbnail_available ? 'w-[calc(100%-72px)] sm:w-[calc(100%-104px)] md:w-[calc(100%-136px)]' : 'w-full'}">
             
             <summary class="flex flex-row w-full p-1 rounded-lg {title || description || (showThumbnail && thumbnail_url) ? 'cursor-pointer  hover:bg-slate-300 hover:dark:bg-zinc-700' : ''} ">
                 
