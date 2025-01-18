@@ -96,7 +96,10 @@
                 inCodeSpan = false
                 inImage = false
 
-                line = line.trim()
+                // Don't trim lines that are intentionally indented for nested list items
+                // But trim any other since marked.js will treat two spaces before text as a code span which we do not want.
+                if (!line.match(/^\s+[-|\*|0-9\)].*/i)) line = line.trim()
+
 
                 // Split the line into words and process each word individually
                 let words = line.split(' ')
