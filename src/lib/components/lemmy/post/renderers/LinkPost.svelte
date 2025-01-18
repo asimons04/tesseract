@@ -27,7 +27,7 @@
     export let compact: boolean = true
 </script>
 
-<PostMeta {post} showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+<PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
 {#if compact && post.post.url}
     
@@ -44,7 +44,7 @@
             <div class="flex flex-row w-full items-center mb-1 gap-2">
                 <ArchiveLinkSelector url={post.post?.url} {postType}/>
                 <Link class="text-xs" href={post.post?.url} newtab={true} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-                <MBFC post={post} rightJustify={true}/>
+                <MBFC bind:post rightJustify={true}/>
             </div>
 
         </PostEmbedDescription>
@@ -57,7 +57,7 @@
         <span class="flex flex-row w-full gap-2 px-1">
             <ArchiveLinkSelector url={post.post?.url} {postType} />
             <Link class="text-xs" href={post.post?.url} newtab={true} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
-            <MBFC post={post} rightJustify={true}/>
+            <MBFC bind:post rightJustify={true}/>
         </span>
     </PostEmbedDescription>
 {/if}
@@ -68,6 +68,6 @@
 
 
 
-<PostBody {post} {displayType}  />
-<Crossposts {post} size="xs" class="mb-1 !pl-0"/>
-<PostActions {post} {displayType} on:reply class="mt-2" />
+<PostBody bind:post {displayType}  />
+<Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+<PostActions bind:post {displayType} on:reply class="mt-2" />

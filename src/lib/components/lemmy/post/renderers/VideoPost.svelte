@@ -67,7 +67,7 @@
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                 <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'}">
-                    <PostTitle {post} />
+                    <PostTitle bind:post />
                     
                     <!---Mostly used if Posting a Link to Another Lemmy Post--->
                     {#if showEmbedDescription}
@@ -75,7 +75,7 @@
                             description={post.post.embed_description} 
                             url={post.post.url}
                             showThumbnail={($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                            thumbnail_urls={[post.post.embed_video_url, post.post.thumbnail_url, post.post.url]}
+                            thumbnail_urls={[post.post.thumbnail_url, post.post.url, post.post.embed_video_url]}
                         > 
                             <ArchiveLinkSelector url={post.post?.url} {postType} />    
                             <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
@@ -106,7 +106,7 @@
                 <PostTitle bind:post />
 
                 <PostBody bind:post {displayType} class="my-1" >
-                    <CompactPostThumbnail {post} {displayType} float slot="thumbnail" 
+                    <CompactPostThumbnail bind:post {displayType} float slot="thumbnail" 
                         showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true}
                         on:toggleCompact={() => compact = !compact}
                     />

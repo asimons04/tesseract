@@ -6,7 +6,7 @@
 
     // New Components
     import ArchiveLinkSelector      from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
-    import Crossposts               from '../Crossposts.svelte'
+    import Crossposts               from '$lib/components/lemmy/post/components/Crossposts.svelte'
     import Link                     from '$lib/components/input/Link.svelte'
     import LoopsPlayer              from '$lib/components/players/LoopsPlayer.svelte'
     import PostActions              from '../components/PostActions.svelte'
@@ -33,7 +33,7 @@
 </script>
 
 <!---Common for Compact and Card Views.  Compact view is only this, so no special if block for it--->
-<PostMeta {post} showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+<PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
 {#key compact}
     <PostEmbedDescription  on:clickThumbnail={() => compact = false}
@@ -58,7 +58,7 @@
      />
 {/if}
 
-<PostBody {post} {displayType}  />
-<Crossposts {post} size="xs" class="mb-1 !pl-0"/>
-<PostActions {post} {displayType} on:reply class="mt-2" />
+<PostBody bind:post {displayType}  />
+<Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+<PostActions bind:post {displayType} on:reply class="mt-2" />
 

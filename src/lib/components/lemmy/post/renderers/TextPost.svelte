@@ -19,7 +19,7 @@
     export let compact: boolean = true
 </script>
 
-<PostMeta {post} showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
-<PostBody {post} {displayType}  />
-<Crossposts {post} size="xs" class="mb-1 !pl-0"/>
-<PostActions {post} {displayType} on:reply class="mt-2" />
+<PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+<PostBody bind:post {displayType}  />
+<Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+<PostActions bind:post {displayType} on:reply class="mt-2" />
