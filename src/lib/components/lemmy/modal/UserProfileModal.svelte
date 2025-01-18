@@ -290,7 +290,7 @@
                 </ModalPanelHeading>
                 
                 <ModalScrollArea card={false}>
-                    <UserSubmissionFeed bind:controller={userFeedControler} person_name="{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}" />
+                    <UserSubmissionFeed bind:controller={userFeedControler} person_name="{personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}" inModal={true} />
                 </ModalScrollArea>
             </ModalPanel>
         {/if}

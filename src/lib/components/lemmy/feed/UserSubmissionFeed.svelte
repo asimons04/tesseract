@@ -31,15 +31,16 @@
     
     
     
-    export let person_id: number | undefined = undefined
-    export let person_name: string | undefined = undefined
-    export let community_id: number | undefined = undefined
-    export let type: 'all' | 'posts' | 'comments' = 'all'
-    export let sort: 'New' | 'TopAll' | 'Old' = 'New'
-    export let actions: boolean = false
-    export let limit:number = $userSettings.uiState.postsPerPage ?? 10
+    export let person_id: number | undefined        = undefined
+    export let person_name: string | undefined      = undefined
+    export let community_id: number | undefined     = undefined
+    export let type: 'all' | 'posts' | 'comments'   = 'all'
+    export let sort: 'New' | 'TopAll' | 'Old'       = 'New'
+    export let actions: boolean                     = false
+    export let limit:number                         = $userSettings.uiState.postsPerPage ?? 10
     export let snapshotValidity:number              = 15    //Number of minutes snapshots are valid
-    export let inProfile = true
+    export let inProfile                            = true
+    export let inModal: boolean                     = false
 
     let page = 1
     let loading = false
@@ -373,96 +374,98 @@
     
     <slot name="banner" {user} />
     
-    <!---Last Refreshed Indicator and Refresh Button--->
-    {#if page == 1 && panel == 'submissions'}
-        <div class="flex flex-row w-full items-end justify-between mb-1" transition:fade>
-            <div class="flex flex-col gap-1 text-xs opacity-80">
-                <span>
-                    Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
-                </span>
+    <!---Last Refreshed Indicator, Refresh Button, type and sort selectors, and search controls--->
+    <div class="flex flex-col w-full items-start gap-2 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
+        <!---Last Refreshed Indicator and Refresh Button--->
+        {#if page == 1 && panel == 'submissions'}
+            <div class="flex flex-row w-full items-end justify-between mb-1" transition:fade>
+                <div class="flex flex-col gap-1 text-xs opacity-80">
+                    <span>
+                        Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
+                    </span>
+                </div>
+
+                <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
+                    loading={loading} disabled={loading}
+                    on:click={() => {
+                        if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
+                        controller.refresh(true) 
+                    }}
+                >
+                    Refresh
+                </Button>
             </div>
-
-            <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
-                loading={loading} disabled={loading}
-                on:click={() => {
-                    if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
-                    controller.refresh(true) 
-                }}
-            >
-                Refresh
-            </Button>
-        </div>
-    {/if}
-    
-    <!---Sort, Type, and User Search Bars--->
-    <div class="flex flex-row w-full items-center justify-between" transition:fade>
-        <!---Sort--->
-        <SelectMenu 
-            title="Sort"
-            icon={BarsArrowDown}
-            options={['New', 'TopAll', 'Old']} 
-            optionNames={['New', 'Top', 'Old']}
-            selected={sort}
-            alignment="bottom-left"
-            on:select={(e) => {
-                if (loading) return
-                if ($userSettings.debugInfo) console.log(moduleName, ": Sort selected.", e.detail)
-                submissions = submissions = []
-                last_item = -1
-                //@ts-ignore
-                sort = e.detail
-                page = 1
-                if (panel == 'submissions') controller.load({loadSnapshot: false})
-                if (panel == 'search') controller.search({loadSnapshot: false})
-            }}
-        />
-
-        <!---Item Type--->
-        <SelectMenu
-            title="Submission Type"
-            icon={Bars3}
-            options={['all', 'posts', 'comments']}
-            optionNames={['All', 'Posts', 'Comments']}
-            selected={type}
-            alignment="bottom-right"
-            on:select={(e) => {
-                if (loading) return
-                if ($userSettings.debugInfo) console.log(moduleName, ": Type selected.", e.detail)
-
-                last_item = -1
-                //@ts-ignore
-                type = e.detail
-                if (panel == 'search') controller.search({loadSnapshot: false})
-
-            }}
-        />
-    </div>
-
-    <!---Search Form--->
-    {#if user}
-        <form class="flex flex-row gap-2 items-center w-full" on:submit|preventDefault={() => {
-                if (searchTerm) {
-                    last_item =  -1
-                    page = 1
-                    panel = 'search'
-                    controller.search({loadSnapshot: false})
-                }
-            }}
-        >    
-            <TextInput type="search" name="search_input" placeholder="Search {user.person_view.person.display_name ?? user.person_view.person.name}" bind:value={searchTerm} class="w-full"/>
-            <Button icon={MagnifyingGlass} iconSize={24} color="tertiary-border" title="Search" submit />
-            
-            {#if panel == 'search'}
-                <Button icon={XCircle} iconSize={24} color="tertiary-border" title="Reset" on:click={() => {
+        {/if}
+        
+        <!---Sort, Type, and User Search Bars--->
+        <div class="flex flex-row w-full items-center justify-between" transition:fade>
+            <!---Sort--->
+            <SelectMenu 
+                title="Sort"
+                icon={BarsArrowDown}
+                options={['New', 'TopAll', 'Old']} 
+                optionNames={['New', 'Top', 'Old']}
+                selected={sort}
+                alignment="bottom-left"
+                on:select={(e) => {
+                    if (loading) return
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Sort selected.", e.detail)
+                    submissions = submissions = []
                     last_item = -1
+                    //@ts-ignore
+                    sort = e.detail
                     page = 1
-                    searchTerm = ''
-                    searchResults = []
-                }}/>
-            {/if}
-        </form>
-    {/if}
+                    if (panel == 'submissions') controller.load({loadSnapshot: false})
+                    if (panel == 'search') controller.search({loadSnapshot: false})
+                }}
+            />
 
+            <!---Item Type--->
+            <SelectMenu
+                title="Submission Type"
+                icon={Bars3}
+                options={['all', 'posts', 'comments']}
+                optionNames={['All', 'Posts', 'Comments']}
+                selected={type}
+                alignment="bottom-right"
+                on:select={(e) => {
+                    if (loading) return
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Type selected.", e.detail)
+
+                    last_item = -1
+                    //@ts-ignore
+                    type = e.detail
+                    if (panel == 'search') controller.search({loadSnapshot: false})
+
+                }}
+            />
+        </div>
+
+        <!---Search Form--->
+        {#if user}
+            <form class="flex flex-row gap-2 items-center w-full" on:submit|preventDefault={() => {
+                    if (searchTerm) {
+                        last_item =  -1
+                        page = 1
+                        panel = 'search'
+                        controller.search({loadSnapshot: false})
+                    }
+                }}
+            >    
+                <TextInput type="search" name="search_input" placeholder="Search {user.person_view.person.display_name ?? user.person_view.person.name}" bind:value={searchTerm} class="w-full"/>
+                <Button icon={MagnifyingGlass} iconSize={24} color="tertiary-border" title="Search" submit />
+                
+                {#if panel == 'search'}
+                    <Button icon={XCircle} iconSize={24} color="tertiary-border" title="Reset" on:click={() => {
+                        last_item = -1
+                        page = 1
+                        searchTerm = ''
+                        searchResults = []
+                    }}/>
+                {/if}
+            </form>
+        {/if}
+    </div>
     
 
     
@@ -494,10 +497,10 @@
                 {#each submissions as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
                     
                     {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                        <CommentItem comment={item} {actions} scrollTo={last_item} {inProfile}/>
+                        <CommentItem comment={item} {actions} {inModal} {inProfile} scrollTo={last_item} />
                     
                     {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                        <Post post={item} {actions} {inProfile} scrollTo={last_item} />
+                        <Post post={item} {actions} {inProfile} {inModal} scrollTo={last_item} />
                     {/if}
 
                 {/each}
@@ -515,40 +518,42 @@
 
         <!---Inline Search Results--->
         {#if panel == 'search'}
-            <!---Section Header--->
-            <div class="flex flex-row gap-4 items-center" transition:fade>
-                <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back to Submissions" 
-                    on:click={(e)=> {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        searchTerm = ''
-                        searchResults =  []
-                        last_item = -1
-                        page = 1
-                        panel = 'submissions'
-                        controller.load({loadSnapshot: false})
-                    }}
-                />
-                
-                <div class="flex flex-row w-full items-center justify-between">
-                    <span class="text-lg">
-                        Search Results
-                        {#if community_id}
-                            in Community
-                        {/if}
-                    </span>
+            <div class="flex flex-col w-full items-start gap-2 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
+                <!---Section Header--->
+                <div class="flex flex-row gap-4 w-full items-center" transition:fade>
+                    <Button size="square-md" color="tertiary-border" icon={ArrowLeft} title="Back to Submissions" 
+                        on:click={(e)=> {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            searchTerm = ''
+                            searchResults =  []
+                            last_item = -1
+                            page = 1
+                            panel = 'submissions'
+                            controller.load({loadSnapshot: false})
+                        }}
+                    />
+                    
+                    <div class="flex flex-row w-full items-center justify-between">
+                        <span class="text-lg">
+                            Search Results
+                            {#if community_id}
+                                in Community
+                            {/if}
+                        </span>
+                    </div>
                 </div>
+                <hr class="{hrColors}" />
             </div>
-            <hr class="{hrColors}" />
             
             {#if searchResults.length > 0 }
                 {#each searchResults as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
                     
                     {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                        <CommentItem comment={item} {actions} scrollTo={last_item} {inProfile} />
+                        <CommentItem bind:comment={item} {actions} {inModal} {inProfile} scrollTo={last_item}  />
                     
                     {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                        <Post post={item} {actions} {inProfile} scrollTo={last_item} />
+                        <Post bind:post={item} {actions} {inProfile} {inModal} scrollTo={last_item} />
                     {/if}
                     
                 {/each}

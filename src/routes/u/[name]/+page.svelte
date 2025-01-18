@@ -41,34 +41,32 @@
 
 <MainContentArea>
     <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
-        <FeedContainer>
 
-            <UserSubmissionFeed bind:controller={feedController} bind:person_name={$page.params.name}  actions >
-                
-                <div class="flex flex-col mx-auto w-full gap-2 max-w-[820px]" slot="banner" let:user>
-                    {#if user}
-                        
-                        <UserCardSmall person_view={user.person_view} />
-                        
-                        <!---Person Bio--->
-                        {#if user.person_view.person.bio || user.moderates?.length > 0}
-                            <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
-                                <Markdown source={user.person_view.person.bio ?? "*User has not provided a bio.*"} />
+        <UserSubmissionFeed bind:controller={feedController} bind:person_name={$page.params.name}  actions >
+            
+            <div class="flex flex-col mx-auto w-full gap-2 max-w-[820px]" slot="banner" let:user>
+                {#if user}
+                    
+                    <UserCardSmall person_view={user.person_view} />
+                    
+                    <!---Person Bio--->
+                    {#if user.person_view.person.bio || user.moderates?.length > 0}
+                        <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
+                            <Markdown source={user.person_view.person.bio ?? "*User has not provided a bio.*"} />
 
-                                <!---List of Communities Moderated--->
-                                {#if user.moderates?.length > 0}
-                                    <span class="text-sm font-bold">Moderates:</span>
-                                    {#each user.moderates as community}
-                                        <CommunityLink community={community.community} avatar class="p-1"/>
-                                    {/each}
-                                {/if}
-                            </CollapseButton>
-                        {/if}
+                            <!---List of Communities Moderated--->
+                            {#if user.moderates?.length > 0}
+                                <span class="text-sm font-bold">Moderates:</span>
+                                {#each user.moderates as community}
+                                    <CommunityLink community={community.community} avatar class="p-1"/>
+                                {/each}
+                            {/if}
+                        </CollapseButton>
                     {/if}
-                </div>
+                {/if}
+            </div>
 
-            </UserSubmissionFeed>
-        </FeedContainer>
+        </UserSubmissionFeed>
     </div>
 
     <SiteCard site={data.site.site_view} version={data.site.version} taglines={data.site.taglines} admins={data.site.admins} slot="right-panel"/>

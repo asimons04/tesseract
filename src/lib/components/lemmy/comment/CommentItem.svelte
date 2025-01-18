@@ -14,7 +14,7 @@
     
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { fade } from 'svelte/transition'
-    import { getPostTitleWithoutFlairs, sleep } from '$lib/components/lemmy/post/helpers'
+    import { getPostTitleWithoutFlairs, sleep, type PostDisplayType } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
     import { goto } from '$app/navigation'
     import { onMount } from 'svelte';
@@ -36,6 +36,7 @@
     export let collapseBadges:boolean = false;
     export let scrollTo:number = -1
     export let inProfile:boolean = false
+    export let inModal: boolean = false
 
     let commentContainer:HTMLDivElement
     let lastClickedPost = -1
@@ -71,7 +72,7 @@
     on:touchstart={() => announceLastClickedPost(comment) }
 
 >
-    <Card class="flex flex-col p-2 flex-1 gap-1">
+    <Card class="flex flex-col p-2 flex-1 gap-1 mx-auto {($userSettings.uiState.feedMargins && !inModal) ? 'max-w-3xl' : 'w-full'}">
         
         <div class="flex flex-row justify-between gap-1 items-center">
             <CommentMeta bind:comment bind:inProfile noClick={!actions} />

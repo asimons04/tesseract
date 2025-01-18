@@ -46,39 +46,37 @@
         <ProfileMenuBar />
 
         <div class="flex w-full" style="height: calc(100vh - 12rem);">
-            <FeedContainer>
 
-                <UserSubmissionFeed 
-                    bind:controller={feedController} 
-                    bind:person_id={$profile.user.local_user_view.person.id} 
-                    snapshotValidity={5} actions inProfile={true}
-                >
+            <UserSubmissionFeed 
+                bind:controller={feedController} 
+                bind:person_id={$profile.user.local_user_view.person.id} 
+                snapshotValidity={5} actions inProfile={true}
+            >
+                
+                <!---Add the User's Profile Card, About Me, and List of Communities they Moderate Above the Feed--->                    
+                <div class="flex 2xl:hidden flex-col mx-auto w-full gap-2 max-w-[820px]" slot="banner" let:user>
                     
-                    <!---Add the User's Profile Card, About Me, and List of Communities they Moderate Above the Feed--->                    
-                    <div class="flex 2xl:hidden flex-col mx-auto w-full gap-2 max-w-[820px]" slot="banner" let:user>
+                    {#if user}
+                        <UserCardSmall person_view={user.person_view} />
                         
-                        {#if user}
-                            <UserCardSmall person_view={user.person_view} />
-                            
-                            <!---Person Bio--->
-                            {#if user.person_view.person.bio}
-                                <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
-                                    <Markdown source={user.person_view.person.bio} />
+                        <!---Person Bio--->
+                        {#if user.person_view.person.bio}
+                            <CollapseButton icon={UserCircle} title="About Me" expanded={false}>
+                                <Markdown source={user.person_view.person.bio} />
 
-                                    <!---List of Communities Moderated--->
-                                    {#if user.moderates?.length > 0}
-                                        <span class="text-sm font-bold">Moderates:</span>
-                                        {#each user.moderates as community}
-                                            <CommunityLink community={community.community} avatar class="p-1"/>
-                                        {/each}
-                                    {/if}
-                                </CollapseButton>
-                            {/if}
+                                <!---List of Communities Moderated--->
+                                {#if user.moderates?.length > 0}
+                                    <span class="text-sm font-bold">Moderates:</span>
+                                    {#each user.moderates as community}
+                                        <CommunityLink community={community.community} avatar class="p-1"/>
+                                    {/each}
+                                {/if}
+                            </CollapseButton>
                         {/if}
-                    </div>
+                    {/if}
+                </div>
 
-                </UserSubmissionFeed>
-            </FeedContainer>
+            </UserSubmissionFeed>
         </div>
 
         <UserCard slot="right-panel" moderates={$profile.user.moderates} person={

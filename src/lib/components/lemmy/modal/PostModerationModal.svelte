@@ -125,6 +125,11 @@
             })
 
             item.post.locked = lock
+            dispatchWindowEvent('editPost', {
+                post: {
+                    ...item
+                }
+            })
 
             toast({
                 content: `Successfully ${lock ? 'locked' : 'unlocked' } that post.`,
@@ -315,7 +320,7 @@
             
             <ModalScrollArea card={false}>
                 <UserSubmissionFeed person_name="{item.creator.name}@{new URL(item.creator.actor_id).hostname}" community_id={item.community.id}
-                    bind:controller={userFeedControler}
+                    bind:controller={userFeedControler} inModal={true}
                 />
             </ModalScrollArea>
         </ModalPanel>
