@@ -21,7 +21,8 @@
         const rule = /^:::spoiler (?<title>.*)\n?/i
         const match = rule.exec(text)
         if (match && match.groups?.title) {
-            return match.groups.title
+            if (match.groups.title.trim() != '') return match.groups.title
+            return 'Spoiler'
         }
         return 'Spoiler'
     }
