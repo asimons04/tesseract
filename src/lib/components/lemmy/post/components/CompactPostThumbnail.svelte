@@ -49,6 +49,7 @@
                             : imageProxyURL(thumbnail_url, resolution, 'webp')
                     }"
                     loading="lazy"
+                    referrerpolicy="no-referrer"
                     alt={alt_text}
                     class="object-cover bg-slate-100 rounded-md {heightWidthClass}  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg"
                     class:blur-lg={(nsfw && $userSettings.nsfwBlur)}
