@@ -282,7 +282,11 @@
 
     
 
-    onMount(async () => await scrollIntoView() )
+    onMount(async () =>  {
+        await scrollIntoView() 
+
+    
+    })
     
     onDestroy(() => {
         postContainer?.remove()
