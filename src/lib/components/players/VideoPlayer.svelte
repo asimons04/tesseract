@@ -11,6 +11,7 @@
     export let muted: boolean = false
     export let loop: boolean = $userSettings.embeddedMedia.loop
     export let autoplay: boolean = false
+    export let volume: number = $userSettings.embeddedMedia.volume
     export let thumbnail:string = '/img/transparent.png'
 
     let video: HTMLVideoElement | undefined = undefined
@@ -23,6 +24,17 @@
     <video bind:this={video} class="relative rounded-2xl z-10 w-full {displayType=='feed' ? 'max-h-[60vh]' : 'max-h-[65vh]'} mx-auto" 
         controls playsinline {muted} {autoplay}  {loop}
         aria-label={alt_text}
+        on:loadstart={(
+            //@ts-ignore
+            e) => { 
+                e.srcElement.volume = volume
+        }}
+        on:volumechange={(
+            //@ts-ignore
+            e) => {
+                $userSettings.embeddedMedia.volume = e.srcElement.volume
+                console.log(e)
+            }}
     >
         <source src="{source}" type={getMIMEType(source)} />
     </video>
