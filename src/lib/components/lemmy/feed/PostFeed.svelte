@@ -570,6 +570,7 @@
                 .then(() => controller.load({loadSnapshot: true, append:false}))
         },
 
+        // Note:  Not currently used here due to the binding from the post component which handles this event.
         EditPostEvent: function (e:EditPostEvent) {
             for (let i:number = 0; i < posts.posts.length; i++) {
                 if (posts.posts[i].post.id == e.detail.post.post.id) {
@@ -664,40 +665,38 @@
         if ($userSettings.debugInfo) console.log(moduleName, ": Component destroyed; saving data")
         controller.takeSnapshot().then(() => {
             controller.reset()
+            controller.scrollContainer?.remove()
         })
     })
 </script>
 
 
 <svelte:window 
-    on:banUser={handlers.BanUserEvent}
-    on:banCommunity={handlers.BanCommunityEvent}
-    on:blockUser={handlers.BlockUserEvent} 
-    on:blockCommunity={handlers.BlockCommunityEvent} 
-    on:blockInstance={handlers.BlockInstanceEvent}
-    on:changeProfile={handlers.ChangeProfileEvent}
-    on:editPost={handlers.EditPostEvent}
-    on:hideCommunity={handlers.HideCommunityEvent}
-    on:hidePost={handlers.HidePostEvent}
-    on:lastClickedPost={handlers.LastClickedPostEvent}
-    on:removeCommunity={handlers.RemoveCommunityEvent}
-    on:removePost={handlers.RemovePostEvent}
+    on:banUser          = {handlers.BanUserEvent}
+    on:banCommunity     = {handlers.BanCommunityEvent}
+    on:blockUser        = {handlers.BlockUserEvent} 
+    on:blockCommunity   = {handlers.BlockCommunityEvent} 
+    on:blockInstance    = {handlers.BlockInstanceEvent}
+    on:changeProfile    = {handlers.ChangeProfileEvent}
+    on:hideCommunity    = {handlers.HideCommunityEvent}
+    on:hidePost         = {handlers.HidePostEvent}
+    on:lastClickedPost  = {handlers.LastClickedPostEvent}
+    on:removeCommunity  = {handlers.RemoveCommunityEvent}
+    on:removePost       = {handlers.RemovePostEvent}
     
-    on:refreshFeed={() => {
+    on:refreshFeed      = {() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Responding to refresh feed event.")
         controller.refreshing = true
         controller.refresh(true) 
     }}
 
-    on:setSortType={handlers.SetSortTypeEvent}
+    on:setSortType      = {handlers.SetSortTypeEvent}
 
-    on:beforeunload={() => {
+    on:beforeunload     = {() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()
         controller.reset()
         controller.scrollContainer?.remove()
-        
-        
     }}
 />
 
