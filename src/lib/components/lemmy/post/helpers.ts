@@ -117,8 +117,8 @@ export function getOptimalThumbnailURL(opts: {post?:PostView, url?:string, urls?
     if (opts.urls && opts.urls?.length > 0) {
         for (let i=0; i< opts.urls.length; i++) {
             if (opts.urls[i] && opts.urls[i]?.endsWith('.gif')) return opts.urls[i]
-            if (isVideo(opts.urls[i])) return opts.urls[i]
             if (isImage(opts.urls[i])) return opts.urls[i]
+            if (isVideo(opts.urls[i])) return opts.urls[i]
         }
         // If none are 'best' return the first one
         return opts.urls[0]
@@ -128,9 +128,11 @@ export function getOptimalThumbnailURL(opts: {post?:PostView, url?:string, urls?
     if (opts?.post?.post.url?.endsWith('.gif')) return opts?.post.post.url
     if (opts?.post?.post.embed_video_url?.endsWith('.gif')) return opts?.post.post.embed_video_url
     if (opts?.post?.post.thumbnail_url) return opts?.post.post.thumbnail_url
+    
+    if (isImage(opts?.post?.post.url)) return opts?.post!.post.url
     if (isVideo(opts?.post?.post.url)) return opts?.post!.post.url
     if (isVideo(opts?.post?.post.embed_video_url)) return opts?.post!.post.embed_video_url
-    if (isImage(opts?.post?.post.url)) return opts?.post!.post.url
+    
     
     return undefined
 }
@@ -182,7 +184,9 @@ export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
 }
 
 // Check if URL is a peerTube embed
-export const isPeertube = (embed_video_url:string): boolean => {
+export const isPeertube = (embed_video_url?:string): boolean => {
+    if (!embed_video_url) return false
+
     const regex = `\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
     const found = embed_video_url.match(regex)
     return found ? true : false
@@ -190,7 +194,9 @@ export const isPeertube = (embed_video_url:string): boolean => {
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
 // Invidious
-export const isInvidious = (url: string):boolean => {
+export const isInvidious = (url?: string):boolean => {
+    if (!url) return false
+    
     const frontends = [...YTFrontends.invidious, ...userSettings.embeddedMedia.userDefinedInvidious]
     for (let i=0; i<frontends.length; i++) {
         if (url.startsWith(`https://${frontends[i]}`)) {
@@ -201,7 +207,8 @@ export const isInvidious = (url: string):boolean => {
 }
 
 // YouTube
-export const isYouTube = (url:string):boolean => {
+export const isYouTube = (url?:string):boolean => {
+    if (!url) return false
     return (
         url.startsWith('https://youtu.be') || 
         url.startsWith('http://youtu.be') || 
@@ -245,7 +252,8 @@ export const isSpotify = (url: string | undefined):boolean => {
 }
 
 // SoundCloud
-export const isSoundCloud = (url:string):boolean => {
+export const isSoundCloud = (url?:string):boolean => {
+    if (!url) return false
     return (
         url.startsWith('https://m.soundcloud.com') || 
         url.startsWith('https://soundcloud.com') 
@@ -253,14 +261,16 @@ export const isSoundCloud = (url:string):boolean => {
 }
 
 // Odysee
-export const isOdysee = (url:string):boolean => {
+export const isOdysee = (url?:string):boolean => {
+    if (!url) return false
     return (
         url.startsWith('https://odysee.com') 
     )
 }
 
 // SongLink
-export const isSongLink = (url:string):boolean => {
+export const isSongLink = (url?:string):boolean => {
+    if (!url) return false
     return (
         url.startsWith('https://album.link') ||
         url.startsWith('https://song.link')
@@ -405,66 +415,60 @@ export const postType = (post: PostView | undefined | null): PostType => {
     
     if (!post) return 'text'
     
-    if ( 
-        (post.post.url && isImage(post.post.url) ) ||
-        (post.post.embed_video_url && isImage(post.post.embed_video_url))
-     ) {
-        return "image"
-    }
-
+    
+    // Audio
     if (isAudio(post.post.url) || isAudio(post.post.embed_video_url)) return 'audio'
 
-    if (
-        (post.post.url && isVideo(post.post.url)) || (post.post.embed_video_url && isVideo(post.post.embed_video_url))
-    ) {
-        return "video"
+    // Video
+    if (isVideo(post.post.url) || isVideo(post.post.embed_video_url)) return "video"
+    
+    // Image
+    if (isImage(post.post.url) || isImage(post.post.embed_video_url)) {
+        return "image"
     }
-
+    
+    // Youtube-like
     if (isYoutubeLikeVideo(post.post.url)) return "youtube"
     
+    // Spotify
     if (isSpotify(post.post.url)) return "spotify"
 
-    if (post.post.url && isVimeo(post.post.url)) {
-        return "vimeo"
-    }
+    // Vioeo
+    if (isVimeo(post.post.url)) return "vimeo"
     
-    if (post.post.url && isSoundCloud(post.post.url)) {
-        return "soundcloud"
-    }
-
+    // SoundCloud
+    if (isSoundCloud(post.post.url)) return "soundcloud"
+    
+    // BandCamp
     if (post.post.embed_video_url && post.post.embed_video_url.startsWith("https://bandcamp.com")) {
         return "bandcamp"
     }
 
-    if (post.post.url && isOdysee(post.post.url)) {
-        return "odysee"
-    }
-
-    if (post.post.url && isSongLink(post.post.url)) {
-        return "songlink"
-    }
+    // Odysee
+    if (isOdysee(post.post.url)) return "odysee"
+    
+    //SongLink
+    if (isSongLink(post.post.url)) return "songlink"
+    
 
     // Peertube
-    if (post.post.embed_video_url && isPeertube(post.post.embed_video_url)) {
-        return "peertube"
-    }
-
+    if (isPeertube(post.post.embed_video_url)) return "peertube"
+    
     // Loops Videos
     if (post.post.url?.startsWith('https://loops.video/v/')) return "loops"
 
+    // DailyMotion
     if (isDailymotion(post.post.url)) return 'dailymotion'
     
 
     // These need to be last since they're basically fallbacks
-    if (
-        post.post.url && !post.post.thumbnail_url) {
-        return "link"
-    }
+    
+    // Link post without thumbnail image
+    if ( post.post.url && !post.post.thumbnail_url) return "link"
+    
 
-    if (
-        post.post.thumbnail_url && post.post.url) {
-        return "thumbLink"
-    }
+    // Link post with thumbnail image
+    if ( post.post.thumbnail_url && post.post.url) return "thumbLink"
 
     // If no other type matches, render as a plain text
     return "text"
