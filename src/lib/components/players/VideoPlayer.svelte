@@ -33,7 +33,6 @@
             //@ts-ignore
             e) => {
                 $userSettings.embeddedMedia.volume = e.srcElement.volume
-                console.log(e)
             }}
     >
         <source src="{source}" type={getMIMEType(source)} />
