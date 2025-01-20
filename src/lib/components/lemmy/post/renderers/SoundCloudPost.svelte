@@ -12,7 +12,6 @@
     import PostBody             from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
     import PostMeta             from '$lib/components/lemmy/post/components/PostMeta.svelte'
-    import YouTubePlayer        from '$lib/components/players/YouTubePlayer.svelte'
     import SoundCloudPlayer from '$lib/components/players/SoundCloudPlayer.svelte';
 
     // Standard for all post types
