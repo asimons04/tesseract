@@ -68,4 +68,6 @@
             </video>
         {/if}
     {/if}
+
+    <slot />
 </ImageContainer>

@@ -19,7 +19,9 @@
                     <source src="{imageProxyURL(image_url, 256)}" />
                 </video>
             {/if}
-                <slot/>
+                <div class="flex flex-col gap-1 w-full">
+                    <slot/>
+                </div>
         </picture>
     </div>
 </div>
