@@ -5,20 +5,17 @@
     import { isVideo } from '$lib/components/lemmy/post/helpers.js'
     import { userSettings } from '$lib/settings.js'
 
-    import ArchiveLinkSelector from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
-    import CompactPostThumbnail from '../utils/CompactPostThumbnail.svelte'
-    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
-    import Image from '$lib/components/lemmy/post/components/Image.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    
-    
-
-    import PostActions from '$lib/components/lemmy/post/components/PostActions.svelte'
-    import PostBody from '$lib/components/lemmy/post/components/PostBody.svelte'
+    import ArchiveLinkSelector  from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
+    import CompactPostThumbnail from '$lib/components/lemmy/post/utils/CompactPostThumbnail.svelte'
+    import Crossposts           from '$lib/components/lemmy/post/Crossposts.svelte'
+    import Image                from '$lib/components/lemmy/post/components/Image.svelte'
+    import Link                 from '$lib/components/input/Link.svelte'
+    import PostActions          from '$lib/components/lemmy/post/components/PostActions.svelte'
+    import PostBody             from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
-    import PostMeta from '$lib/components/lemmy/post/components/PostMeta.svelte'
-    import PostTitle from '$lib/components/lemmy/post/components/PostTitle.svelte'
-    import VideoPlayer from '$lib/components/players/VideoPlayer.svelte'
+    import PostMeta             from '$lib/components/lemmy/post/components/PostMeta.svelte'
+    import PostTitle            from '$lib/components/lemmy/post/components/PostTitle.svelte'
+    import VideoPlayer          from '$lib/components/players/VideoPlayer.svelte'
     
     
     import { imageProxyURL } from '$lib/image-proxy';
@@ -51,8 +48,6 @@
     }
 
     onMount(() => setup())
-
-    $: showEmbedDescription = (post.post.embed_title && post.post.embed_description)
 </script>
 
 
@@ -66,35 +61,25 @@
         <PostMeta bind:post showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
-                <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'}">
+                <div class="flex flex-col gap-1 w-full">
                     <PostTitle bind:post />
-                    
-                    <!---Mostly used if Posting a Link to Another Lemmy Post--->
-                    {#if showEmbedDescription}
-                        <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
-                            description={post.post.embed_description} 
-                            url={post.post.url}
-                            showThumbnail={($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                            thumbnail_urls={[post.post.thumbnail_url, post.post.url, post.post.embed_video_url]}
-                        > 
-                            <ArchiveLinkSelector url={post.post?.url} {postType} />    
-                            <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
-                           
-                        </PostEmbedDescription>
-                    {/if}
+
+                    <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
+                        description={post.post.embed_description} 
+                        url={post.post.url}
+                        showThumbnail={($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                        thumbnail_urls={[post.post.thumbnail_url, post.post.url, post.post.embed_video_url]}
+                    > 
+                        <ArchiveLinkSelector url={post.post?.url} {postType} />    
+                        <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
+                        
+                    </PostEmbedDescription>
+
 
                     <PostBody bind:post {displayType}  />
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                     <PostActions  bind:post {displayType} on:reply class="mt-2" />
                 </div>
-                
-                <!---If the Embed Description is Shown, the thumbnail will go there--->
-                {#if !showEmbedDescription}
-                    <CompactPostThumbnail bind:post bind:displayType 
-                        showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                        on:toggleCompact={() => compact = !compact}
-                    />
-                {/if}
             </div>
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
