@@ -16,24 +16,22 @@
 
     let video: HTMLVideoElement | undefined = undefined
     
-    $:  if (!inViewport) if (video) video.pause()
+    $:  if (!inViewport && video) video.pause()
+    
+    function saveVolume(e:Event) {
+        if (video) $userSettings.embeddedMedia.volume = video.volume
+    }
+    function setVolume(e:Event) {
+        if (video) video.volume = volume
+    }
 </script>
 
 
 <ImageContainer image_url={thumbnail}>
-    <video bind:this={video} class="relative rounded-2xl z-10 w-full {displayType=='feed' ? 'max-h-[60vh]' : 'max-h-[65vh]'} mx-auto" 
-        controls playsinline {muted} {autoplay}  {loop}
-        aria-label={alt_text}
-        on:loadstart={(
-            //@ts-ignore
-            e) => { 
-                e.srcElement.volume = volume
-        }}
-        on:volumechange={(
-            //@ts-ignore
-            e) => {
-                $userSettings.embeddedMedia.volume = e.srcElement.volume
-            }}
+    <video bind:this={video} controls playsinline {muted} {autoplay}  {loop} aria-label={alt_text}
+        class="relative rounded-2xl z-10 w-full {displayType=='feed' ? 'max-h-[50vh]' : 'max-h-[65vh]'} mx-auto" 
+        on:loadstart={setVolume}
+        on:volumechange={saveVolume}
     >
         <source src="{source}" type={getMIMEType(source)} />
     </video>
