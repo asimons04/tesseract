@@ -7,7 +7,6 @@
     import PostDailymotion from '$lib/components/lemmy/post/PostDailymotion.svelte'
     import PostOdysee from '$lib/components/lemmy/post/PostOdysee.svelte'
     import PostSongLink from '$lib/components/lemmy/post/PostSongLink.svelte'
-    import PostSoundCloud from '$lib/components/lemmy/post/PostSoundCloud.svelte'
    
     export let post: PostView
     export let postType: PostType
@@ -29,13 +28,6 @@
 <!--- Bandcamp Embed --->
 {#if postType == "bandcamp"}
     <PostBandcamp bind:post bind:inViewport {displayType}/>
-{/if}
-
-
-
-<!--- Soundcloud Embed --->
-{#if postType == "soundcloud"}
-    <PostSoundCloud bind:post bind:inViewport {displayType} />
 {/if}
 
 

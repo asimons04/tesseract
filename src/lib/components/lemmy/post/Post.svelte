@@ -38,15 +38,16 @@
     
     
     // New Post Renderers
-    import ImagePost    from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
-    import LinkPost     from '$lib/components/lemmy/post/renderers/LinkPost.svelte'
-    import LoopsPost    from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
-    import PeerTubePost from '$lib/components/lemmy/post/renderers/PeerTubePost.svelte'
-    import SpotifyPost  from '$lib/components/lemmy/post/renderers/SpotifyPost.svelte'
-    import TextPost     from '$lib/components/lemmy/post/renderers/TextPost.svelte'
-    import VideoPost    from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
-    import YouTubePost  from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
-    import VimeoPost    from '$lib/components/lemmy/post/renderers/VimeoPost.svelte'
+    import ImagePost        from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
+    import LinkPost         from '$lib/components/lemmy/post/renderers/LinkPost.svelte'
+    import LoopsPost        from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
+    import PeerTubePost     from '$lib/components/lemmy/post/renderers/PeerTubePost.svelte'
+    import SoundCloudPost   from '$lib/components/lemmy/post/renderers/SoundCloudPost.svelte'
+    import SpotifyPost      from '$lib/components/lemmy/post/renderers/SpotifyPost.svelte'
+    import TextPost         from '$lib/components/lemmy/post/renderers/TextPost.svelte'
+    import VideoPost        from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
+    import YouTubePost      from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
+    import VimeoPost        from '$lib/components/lemmy/post/renderers/VimeoPost.svelte'
 
 
     import { onDestroy, onMount } from 'svelte';
@@ -333,47 +334,44 @@
             setTimeout(() => markPostAsRead(), 1500)
         }}
     />
-    <!--'sm:w-full md:w-[90%] lg:w-[90%] xl:w-[75%] 2xl:w-[75%]' -->
 
-    {#if ['image', 'link', 'loops', 'peertube', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
+    {#if ['image', 'link', 'loops', 'peertube', 'soundcloud', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
     <Card class="flex flex-col p-2 gap-2 mx-auto
             {disablePostLinks ? 'pointer-events-none list-none' : ''}
-            {   ($userSettings.uiState.feedMargins && !inModal && displayType=='feed') 
-                    ? 'max-w-3xl'
-                    : 'w-full'
-            }
+            {$userSettings.uiState.feedMargins && !inModal && displayType=='feed'  ? 'max-w-3xl' : 'w-full' }
         " 
     >    
         
         {#if postType == 'image'}    
             <ImagePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
+        {:else if ['link', 'thumbLink'].includes(postType)}
+            <LinkPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
         {:else if postType == 'loops'}
             <LoopsPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'peertube'}
             <PeerTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
-        
+
+        {:else if postType == 'soundcloud'}    
+            <SoundCloudPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+
         {:else if postType == 'spotify'}
             <SpotifyPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
+
+        {:else if postType == 'text'}
+            <TextPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+
         {:else if postType == 'video'}
             <VideoPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
-        
-        {:else if postType == 'youtube'}
-            <YouTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
-        
-        
         
         {:else if postType == 'vimeo'}
             <VimeoPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
-        
-        {:else if ['link', 'thumbLink'].includes(postType)}
-            <LinkPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
-
-        {:else if postType == 'text'}
-            <TextPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        {:else if postType == 'youtube'}
+            <YouTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         {/if}
     
     </Card>
