@@ -51,6 +51,7 @@
 
 
     import { onDestroy, onMount } from 'svelte';
+    import AudioPost from './renderers/AudioPost.svelte';
     
 
     export let post: PostView                                           // The Post to display
@@ -335,14 +336,16 @@
         }}
     />
 
-    {#if ['image', 'link', 'loops', 'peertube', 'soundcloud', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
+    {#if ['audio', 'image', 'link', 'loops', 'peertube', 'soundcloud', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
     <Card class="flex flex-col p-2 gap-2 mx-auto
             {disablePostLinks ? 'pointer-events-none list-none' : ''}
             {$userSettings.uiState.feedMargins && !inModal && displayType=='feed'  ? 'max-w-3xl' : 'w-full' }
         " 
     >    
+        {#if postType ==  'audio'}
+            <AudioPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
-        {#if postType == 'image'}    
+        {:else if postType == 'image'}    
             <ImagePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if ['link', 'thumbLink'].includes(postType)}
