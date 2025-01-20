@@ -38,6 +38,7 @@
     
     
     // New Post Renderers
+    import BandcampPost     from '$lib/components/lemmy/post/renderers/BandcampPost.svelte'
     import ImagePost        from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
     import LinkPost         from '$lib/components/lemmy/post/renderers/LinkPost.svelte'
     import LoopsPost        from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
@@ -336,7 +337,7 @@
         }}
     />
 
-    {#if ['audio', 'image', 'link', 'loops', 'peertube', 'soundcloud', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
+    {#if ['audio', 'bandcamp', 'image', 'link', 'loops', 'peertube', 'soundcloud', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
     <Card class="flex flex-col p-2 gap-2 mx-auto
             {disablePostLinks ? 'pointer-events-none list-none' : ''}
             {$userSettings.uiState.feedMargins && !inModal && displayType=='feed'  ? 'max-w-3xl' : 'w-full' }
@@ -344,6 +345,9 @@
     >    
         {#if postType ==  'audio'}
             <AudioPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+
+        {:else if postType == 'bandcamp'}
+            <BandcampPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'image'}    
             <ImagePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
