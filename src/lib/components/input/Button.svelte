@@ -49,14 +49,20 @@
     export let inline: boolean = true
       
     export let href: string | undefined = undefined
+    export let download: string | undefined = undefined
     export let newtab:boolean = false
 
+    let downloadFilename: string | undefined
+    if (download && href) {
+        downloadFilename = href.split('/').pop()?.split('?')[0]
+    }
 </script>
 
-{#if href}
+{#if href }
     <a
         on:click
         {href}
+        download="{(download && href) ? downloadFilename : undefined}"
         target="{newtab ? '_blank' : undefined}"
         {...$$restProps}
         title={title}
