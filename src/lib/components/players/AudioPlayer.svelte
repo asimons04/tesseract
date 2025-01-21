@@ -98,7 +98,7 @@
 
 </script>
 
-<ImageContainer image_url={placeholderIcon} blur={false} class="blur-sm !opacity-20 {thumbnail_url ? '' : 'blur-sm'}">
+<ImageContainer image_url={placeholderIcon} blur={false} class="blur-sm !opacity-20 invert dark:invert-0">
     
     <div class="flex flex-col relative z-10 min-h-[200px] w-full">
         <audio bind:this={audio} class="rounded-2xl my-auto mx-auto" preload="metadata"
@@ -125,7 +125,7 @@
                 <div class="flex flex-col gap-2 w-full p-2">
                     <!---Position Slider--->
                     <input bind:this={positionSlider} type="range" bind:value={player.currentTime} min={0} max={player.duration} on:change={player.adjustPosition}
-                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                        class="w-full h-2 bg-gray-400 dark:bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                     />
                     <!---Start, Current, End Time Labels--->
                     <div class="flex flex-row w-full text-xs opacity-90 items-center justify-between">
@@ -136,7 +136,7 @@
                 </div>
 
 
-                <div class="flex flex-row gap-2 items-center p-4">
+                <div class="flex flex-row gap-2 items-center p-2">
                     <ZoomableImage url={thumbnail_url ?? placeholderIcon} class="w-[96px] h-[96px]" alt='' />
                     
                     <div class="flex flex-col gap-4 w-[calc(100%-100px)]">
@@ -144,17 +144,21 @@
                         <div class="flex flex-col md:flex-row gap-2 items-center">
                             
                             <!---Control Buttons--->
-                            <div class="flex flex-row gap-2 w-full md:w-2/3 items-center">
+                            <div class="flex flex-row gap-2 w-full items-center">
                                 <Button size="square-md" color="secondary" class="h-[64px] w-[64px]" icon={player.paused ? Play: Pause} iconSize={36} on:click={() => player.paused ? player.play() : player.pause()} />
                                 <Button size="square-md" color="secondary" class="h-[64px] w-[64px] {player.loop ? '!text-amber-500' : ''}" icon={ArrowPathRoundedSquare} iconSize={36} on:click={() => player.loop = !player.loop} />
+                                
+                                <span class="ml-auto"/>
+                                
+                                <div class="flex flex-col gap-1">
+                                    <input bind:this={volumeSlider} type="range" bind:value={player.volume} min={0} max={1} step={0.1} class="h-[64px] mx-auto bg-gray-400 dark:bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" 
+                                        style="writing-mode: vertical-lr; direction: rtl; width: 16px"
+                                    />  
+                                    <Button size="square-sm" color="secondary" class="h-[32px] w-[32px] mx-auto" icon={player.muted ? SpeakerXMark: SpeakerWave} iconSize={24} on:click={()=> player.muted = !player.muted} />
+                                </div>
                             </div>
                             
-                            <!---Mute + Volume Control--->
-                            <div class="flex flex-row gap-2 w-full md:w-1/3 ml-auto items-center">
-                                <Button size="square-md" color="secondary" class="h-[48px] w-[48px]" icon={player.muted ? SpeakerXMark: SpeakerWave} iconSize={36} on:click={()=> player.muted = !player.muted} />
-                                <input bind:this={volumeSlider} type="range" bind:value={player.volume} min={0} max={1} step={0.1} class="w-[calc(100%-52px)] h-8 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-                            </div>
-                        </div>
+                         </div>
                         
                     </div>
                 </div>
