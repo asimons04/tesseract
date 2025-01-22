@@ -56,12 +56,13 @@
     {/if}
 
     {#if name}
+
         <span class="flex text-left 
             {inline ? 'items-center flex-row gap-0 truncate' : 'flex-col gap-0'} 
             {useDisplayNames ?? $userSettings.displayNames ? 'capitalize' : ''} 
             {boldCommunityName ? 'font-bold' : 'font-normal'}
         "
-            style="width:calc(100% - {avatarSize+2}px - 0.5rem);"
+            
         >
             <span class="font-bold opacity-80 text-left  truncate ">
                 { useDisplayNames ?? $userSettings.displayNames
