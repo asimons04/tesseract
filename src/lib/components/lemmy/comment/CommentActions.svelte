@@ -202,12 +202,11 @@
             {/if}
             
             <!---Debug Info Button--->
-            {#if $userSettings.debugInfo}
             <MenuButton color="info" title="Debug Info" on:click={() => debugModal(comment) } >
                 <Icon src={BugAnt} mini  width={16} />
                 Debug Info...
             </MenuButton>
-            {/if}
+            
 
             <!---Actions for the commentor's Instance if it is different from the current profile's--->
             {#if new URL(comment.creator.actor_id).hostname != $profile?.instance}
