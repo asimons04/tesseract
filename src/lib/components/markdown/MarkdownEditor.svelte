@@ -1,20 +1,25 @@
 <script lang="ts">
     import type { UploadImageResponse } from 'lemmy-js-client'
 
-    import { blobToFileList, readImageFromClipboard, readTextFromClipboard } from '../uploads/helpers';
-    import { createEventDispatcher } from 'svelte'
-    import { imageProxyURL } from '$lib/image-proxy'
-    import { userSettings } from '$lib/settings'
+    import { blobToFileList, readImageFromClipboard } from '../uploads/helpers';
+    import { createEventDispatcher }    from 'svelte'
+    import { imageProxyURL }            from '$lib/image-proxy'
+    import { sleep }                    from '$lib/components/lemmy/post/helpers';
+    import { userSettings }             from '$lib/settings'
     
-    import Button from '$lib/components/input/Button.svelte'
-    import CommunityAutocomplete from '../lemmy/CommunityAutocomplete.svelte'
-    import EmojiPicker from './EmojiPicker.svelte'
-    import ImageUploadModal from '../lemmy/modal/ImageUploadModal.svelte'
-    import ImageUploadPreviewDeleteButton from '../uploads/ImageUploadPreviewDeleteButton.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import PersonAutocomplete from '../lemmy/PersonAutocomplete.svelte'
-    import TextArea from '$lib/components/input/TextArea.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
+    import Button                           from '$lib/components/input/Button.svelte'
+    import CommunityAutocomplete            from '../lemmy/CommunityAutocomplete.svelte'
+    import EmojiPicker                      from './EmojiPicker.svelte'
+    import ImageUploadModal                 from '../lemmy/modal/ImageUploadModal.svelte'
+    import ImageUploadPreviewDeleteButton   from '../uploads/ImageUploadPreviewDeleteButton.svelte'
+    import Menu                             from '$lib/components/ui/menu/Menu.svelte';
+    import MenuButton                       from '$lib/components/ui/menu/MenuButton.svelte'
+    import Modal                            from '$lib/components/ui/modal/Modal.svelte'
+    import MultiSelect                      from '$lib/components/input/MultiSelect.svelte'
+    import PersonAutocomplete               from '../lemmy/PersonAutocomplete.svelte'
+    import Slider                           from '$lib/components/input/Slider.svelte'
+    import TextArea                         from '$lib/components/input/TextArea.svelte'
+    import Markdown                         from '$lib/components/markdown/Markdown.svelte'
 
     import {
         CodeBracket,
@@ -32,25 +37,20 @@
         User,
         UserGroup,
     } from 'svelte-hero-icons'
-    import { sleep } from '../lemmy/post/helpers';
-    import Menu from '../ui/menu/Menu.svelte';
-    import MenuButton from '../ui/menu/MenuButton.svelte';
-    import Modal from '../ui/modal/Modal.svelte';
     
-    
-    export let value: string = ''
-    export let label: string | undefined = undefined
-    export let images: boolean = true
-    export let emojis: boolean = true
-    export let previewButton: boolean = false
-    export let disabled: boolean = false
-    export let rows: number = 4
-    export let previewing:boolean = false;
-    export let id:string = '';
-    export let placeholder: string = ''
+    export let value: string                = ''
+    export let label: string | undefined    = undefined
+    export let images: boolean              = true
+    export let emojis: boolean              = true
+    export let previewButton: boolean       = false
+    export let disabled: boolean            = false
+    export let rows: number                 = 4
+    export let previewing:boolean           = false;
+    export let id:string                    = '';
+    export let placeholder: string          = ''
     
     // Bind this to an outside value if need to persist between create/destroy of this component
-    export let imageUploads = [] as UploadImageResponse[]
+    export let imageUploads                 = [] as UploadImageResponse[]
 
     let textArea: HTMLTextAreaElement
     let uploadingImage = false
@@ -477,15 +477,6 @@ Spoiler Content
 
                         </Menu>
                         
-                        <!---
-                        <Button title="Code Block" size="square-md" icon={CodeBracket} iconSize={16}
-                            on:click={() => {
-                                const cursorPos = textArea.selectionStart
-                                wrapSelection('\n```\n\n\n', '```', cursorPos+5)
-                            }}
-                        />
-                        --->
-                        
                         <!---Table--->
                         <Button title="Table" size="square-md" icon={TableCells} iconSize={16}
                             on:click={() => {
@@ -512,7 +503,7 @@ Spoiler Content
 
                     <!---Markdown editor resize slider--->
                     <span class="flex flex-row gap-1 w-full lg:w-fit lg:ml-auto items-center">
-                        <input type="range" bind:value={rows} min={minRows} max={minRows*3} class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                        <Slider bind:value={rows} min={minRows} max={minRows*3} />
                     </span>
                 
                     <!---
