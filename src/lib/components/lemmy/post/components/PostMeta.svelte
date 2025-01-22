@@ -9,7 +9,7 @@
     import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    import { postType as getPostType, isImage, isVideo } from '$lib/components/lemmy/post/helpers.js'
+    import { postType as getPostType, isImage, isVideo, type PostType } from '$lib/components/lemmy/post/helpers.js'
     import { subscribe } from '$lib/components/lemmy/community/helpers.js'
     import { userSettings } from '$lib/settings'
 
@@ -28,6 +28,7 @@
         ArrowsPointingIn,
         ArrowsPointingOut,
         Bookmark,
+        BugAnt,
         ExclamationCircle,
         EyeSlash,
         Icon,
@@ -44,7 +45,6 @@
     export let post: PostView  //| CommentReplyView | PersonMentionView             
     export let showTitle:boolean                = true;
     export let moderators: Array<CommunityModeratorView> = [];
-    export let collapseBadges:boolean           = false;
     export let hideBadges:boolean               = false;
     export let avatarSize:number                = 42;
     export let noClick:boolean                  = false;
@@ -52,18 +52,18 @@
     export let inCommunity:boolean              = false
     export let inProfile:boolean                = false
     export let compact:boolean                  = true
+    export let postType: PostType
 
-    let postType = getPostType(post)
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
-    let subscribed = false
-    let dispatcher = createEventDispatcher()
+    let subscribed              = false
+    let dispatcher              = createEventDispatcher()
 
     $: showExpandButton = postType != 'text' || (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )
     $: post
     $: post, userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: post, subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
-    $: onHomeInstance   = ($page.params.instance ?? $instance)  == $instance
+    $: onHomeInstance         = ($page.params.instance ?? $instance)  == $instance
     
 </script>
 
@@ -157,12 +157,6 @@
             <!--- Post Badges --->
             {#if !hideBadges}
                 <div class="flex flex-row ml-auto gap-2 items-end">
-                    {#if post.post.nsfw}
-                        <Badge label="NSFW" color="red" icon={ExclamationCircle} click={false}>
-                            <span class="hidden text-xs {collapseBadges ? 'hidden' : 'md:block'}">NSFW</span>
-                        </Badge>
-                    {/if}
-
                     {#if post.saved}
                         <Badge label="Saved" color="yellow" icon={Bookmark} click={false}/>
                     {/if}
@@ -221,6 +215,6 @@
 
 
     {#if showTitle}
-        <PostTitle {post} />
+        <PostTitle {post} {postType} />
     {/if}
 </div>

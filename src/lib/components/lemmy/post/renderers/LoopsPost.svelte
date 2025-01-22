@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-    import { isImage, type PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import { isImage, type PostDisplayType, type PostType } from '$lib/components/lemmy/post/helpers.js'
 
     import { userSettings } from '$lib/settings'
 
@@ -9,7 +9,7 @@
     import Crossposts               from '$lib/components/lemmy/post/components/Crossposts.svelte'
     import Link                     from '$lib/components/input/Link.svelte'
     import LoopsPlayer              from '$lib/components/players/LoopsPlayer.svelte'
-    import PostActions              from '../components/PostActions.svelte'
+    import PostActions              from '$lib/components/lemmy/post/components/PostActions.svelte'
     import PostBody                 from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription     from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
     import PostMeta                 from '$lib/components/lemmy/post/components/PostMeta.svelte'
@@ -17,14 +17,13 @@
 
     // Standard for all post types
     export let post:PostView
-    export let actions: boolean = true
-    export let inCommunity = false
-    export let inProfile = false
+    export let actions: boolean             = true
+    export let inCommunity                  = false
+    export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let collapseBadges = false
-    export let postType = 'image'
-    export let inViewport = true
-    export let compact: boolean = true
+    export let postType: PostType           = 'image'
+    export let inViewport                   = true
+    export let compact: boolean             = true
 
     $:  thumbnail_url = (post.post.thumbnail_url && isImage(post.post.thumbnail_url)) 
             ? post.post.thumbnail_url 
@@ -33,7 +32,7 @@
 </script>
 
 <!---Common for Compact and Card Views.  Compact view is only this, so no special if block for it--->
-<PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
 {#key compact}
     <PostEmbedDescription  on:clickThumbnail={() => compact = false}

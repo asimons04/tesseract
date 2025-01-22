@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import type { PostDisplayType, PostType } from '$lib/components/lemmy/post/helpers.js'
     import type { PostView } from 'lemmy-js-client'
 
     import { userSettings } from '$lib/settings.js'
@@ -12,18 +12,17 @@
     import PostBody             from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
     import PostMeta             from '$lib/components/lemmy/post/components/PostMeta.svelte'
-    import SoundCloudPlayer from '$lib/components/players/SoundCloudPlayer.svelte';
+    import SoundCloudPlayer     from '$lib/components/players/SoundCloudPlayer.svelte'
 
     // Standard for all post types
     export let post:PostView
-    export let actions: boolean = true
-    export let inCommunity = false
-    export let inProfile = false
+    export let actions: boolean             = true
+    export let inCommunity                  = false
+    export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let collapseBadges = false
-    export let postType = 'youtube'
-    export let inViewport = true
-    export let compact: boolean = true
+    export let postType: PostType           = 'youtube'
+    export let inViewport                   = true
+    export let compact: boolean             = true
     
 
     let clickToPlayClicked = false
@@ -39,7 +38,7 @@
 
 
 <!---Compact View and Common Header--->
-<PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 {#key compact}
     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
         description={post.post.embed_description} 

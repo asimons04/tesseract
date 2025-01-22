@@ -1,13 +1,16 @@
 <script lang="ts">
-    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import type { PostDisplayType, PostType } from '$lib/components/lemmy/post/helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
+    import { imageProxyURL } from '$lib/image-proxy'
     import { isAudio } from '$lib/components/lemmy/post/helpers.js'
+    import { onMount } from 'svelte'
     import { userSettings } from '$lib/settings.js'
 
     import ArchiveLinkSelector  from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
+    import AudioPlayer          from '$lib/components/players/AudioPlayer.svelte'
     import CompactPostThumbnail from '$lib/components/lemmy/post/utils/CompactPostThumbnail.svelte'
-    import Crossposts           from '$lib/components/lemmy/post/Crossposts.svelte'
+    import Crossposts           from '$lib/components/lemmy/post/components/Crossposts.svelte'
     import Image                from '$lib/components/lemmy/post/components/Image.svelte'
     import Link                 from '$lib/components/input/Link.svelte'
     import PostActions          from '$lib/components/lemmy/post/components/PostActions.svelte'
@@ -15,23 +18,16 @@
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
     import PostMeta             from '$lib/components/lemmy/post/components/PostMeta.svelte'
     import PostTitle            from '$lib/components/lemmy/post/components/PostTitle.svelte'
-    
-    
-    import { imageProxyURL } from '$lib/image-proxy';
-    import { onMount } from 'svelte';
-    import AudioPlayer from '$lib/components/players/AudioPlayer.svelte';
-    
 
     // Standard for all post types
     export let post:PostView
-    export let actions: boolean = true
-    export let inCommunity = false
-    export let inProfile = false
+    export let actions: boolean             = true
+    export let inCommunity                  = false
+    export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let collapseBadges = false
-    export let postType = 'video'
-    export let inViewport = true
-    export let compact: boolean = true
+    export let postType: PostType           = 'video'
+    export let inViewport                   = true
+    export let compact: boolean             = true
 
     let source: string = post.post.embed_video_url ?? post.post.url!
     let clickToPlayClicked = false
@@ -60,11 +56,11 @@
     <!---If there is no or a very short body text with the image, display it more compactly since the text won't have to flow around it--->
     {#if !post?.post.body || post.post.body.length < 250}
 
-        <PostMeta bind:post showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                 <div class="flex flex-col gap-1 w-full">
-                    <PostTitle bind:post />
+                    <PostTitle {postType} bind:post />
                     
                     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
                         description={post.post.embed_description} 
@@ -87,11 +83,11 @@
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
     {:else}
-        <PostMeta bind:post showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
-                <PostTitle bind:post />
+                <PostTitle {postType} bind:post />
 
                 <PostBody bind:post {displayType} class="my-1" >
                     <CompactPostThumbnail bind:post url={placeholderIcon} {displayType} float slot="thumbnail" 
@@ -110,7 +106,7 @@
 
 <!---Card View--->
 {:else}
-    <PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
     <PostEmbedDescription {compact} title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    

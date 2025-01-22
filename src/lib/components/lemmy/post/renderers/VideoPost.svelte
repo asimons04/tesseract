@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import type { PostDisplayType, PostType } from '$lib/components/lemmy/post/helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
     import { isVideo } from '$lib/components/lemmy/post/helpers.js'
@@ -7,7 +7,7 @@
 
     import ArchiveLinkSelector  from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
     import CompactPostThumbnail from '$lib/components/lemmy/post/utils/CompactPostThumbnail.svelte'
-    import Crossposts           from '$lib/components/lemmy/post/Crossposts.svelte'
+    import Crossposts           from '$lib/components/lemmy/post/components/Crossposts.svelte'
     import Image                from '$lib/components/lemmy/post/components/Image.svelte'
     import Link                 from '$lib/components/input/Link.svelte'
     import PostActions          from '$lib/components/lemmy/post/components/PostActions.svelte'
@@ -24,14 +24,13 @@
 
     // Standard for all post types
     export let post:PostView
-    export let actions: boolean = true
-    export let inCommunity = false
-    export let inProfile = false
+    export let actions: boolean             = true
+    export let inCommunity                  = false
+    export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let collapseBadges = false
-    export let postType = 'video'
-    export let inViewport = true
-    export let compact: boolean = true
+    export let postType: PostType           = 'video'
+    export let inViewport                   = true
+    export let compact: boolean             = true
 
     let source: string = post.post.embed_video_url ?? post.post.url!
     let clickToPlayClicked = false
@@ -58,11 +57,11 @@
     <!---If there is no or a very short body text with the image, display it more compactly since the text won't have to flow around it--->
     {#if !post?.post.body || post.post.body.length < 250}
 
-        <PostMeta bind:post showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                 <div class="flex flex-col gap-1 w-full">
-                    <PostTitle bind:post />
+                    <PostTitle bind:post {postType} />
 
                     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
                         description={post.post.embed_description} 
@@ -84,11 +83,11 @@
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
     {:else}
-        <PostMeta bind:post showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
-                <PostTitle bind:post />
+                <PostTitle bind:post {postType} />
 
                 <PostBody bind:post {displayType} class="my-1" >
                     <CompactPostThumbnail bind:post {displayType} float slot="thumbnail" 
@@ -107,7 +106,7 @@
 
 <!---Card View--->
 {:else}
-    <PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
     <PostEmbedDescription {compact} title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    

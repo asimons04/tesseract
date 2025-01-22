@@ -1,6 +1,7 @@
 <script lang="ts">
     import { 
         type PostDisplayType,
+        type PostType,
         isImage
     }                           from '$lib/components/lemmy/post/helpers.js'
     
@@ -25,8 +26,7 @@
     export let inCommunity                  = false
     export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let collapseBadges               = false
-    export let postType                     = 'vimeo'
+    export let postType:PostType            = 'vimeo'
     export let inViewport                   = true
     export let compact: boolean             = true
 
@@ -48,7 +48,7 @@
 
 
 <!---Compact View and Common Header--->
-<PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
 {#key compact }
     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}

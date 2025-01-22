@@ -1,6 +1,7 @@
 <script lang="ts">
     import { 
         type PostDisplayType,
+        type PostType,
         isImage
     }                           from '$lib/components/lemmy/post/helpers.js'
     
@@ -9,13 +10,13 @@
     import { userSettings }     from '$lib/settings.js'
     
     import ArchiveLinkSelector  from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
-    import Crossposts           from '../components/Crossposts.svelte'
-    import Image                from '../components/Image.svelte'
+    import Crossposts           from '$lib/components/lemmy/post/components/Crossposts.svelte'
+    import Image                from '$lib/components/lemmy/post/components/Image.svelte'
     import Link                 from '$lib/components/input/Link.svelte'
-    import PostActions          from '../components/PostActions.svelte'
-    import PostBody             from '../components/PostBody.svelte'
-    import PostEmbedDescription from '../components/PostEmbedDescription.svelte'
-    import PostMeta             from '../components/PostMeta.svelte'
+    import PostActions          from '$lib/components/lemmy/post/components/PostActions.svelte'
+    import PostBody             from '$lib/components/lemmy/post/components/PostBody.svelte'
+    import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
+    import PostMeta             from '$lib/components/lemmy/post/components/PostMeta.svelte'
     import PeerTubePlayer       from '$lib/components/players/PeerTubePlayer.svelte'
     
 
@@ -25,8 +26,7 @@
     export let inCommunity                  = false
     export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let collapseBadges               = false
-    export let postType                     = 'vimeo'
+    export let postType: PostType           = 'vimeo'
     export let inViewport                   = true
     export let compact: boolean             = true
 
@@ -48,7 +48,7 @@
 
 
 <!---Compact View and Common Header--->
-<PostMeta bind:post showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
 {#key compact }
     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}

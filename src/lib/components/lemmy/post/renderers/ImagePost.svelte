@@ -1,59 +1,41 @@
 <script lang="ts">
-    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers.js'
+    import { getOptimalThumbnailURL, type PostDisplayType, type PostType } from '$lib/components/lemmy/post/helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
     import { userSettings } from '$lib/settings.js'
 
-    import ArchiveLinkSelector from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
-    import CompactPostThumbnail from '../components/CompactPostThumbnail.svelte';
-    import Crossposts from '$lib/components/lemmy/post/Crossposts.svelte'
-    import Image from '$lib/components/lemmy/post/components/Image.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    
-    import PostActions from '$lib/components/lemmy/post/components/PostActions.svelte'
-    import PostBody from '$lib/components/lemmy/post/components/PostBody.svelte'
+    import ArchiveLinkSelector  from '$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte'
+    import CompactPostThumbnail from '$lib/components/lemmy/post/components/CompactPostThumbnail.svelte'
+    import Crossposts           from '$lib/components/lemmy/post/components/Crossposts.svelte'
+    import Image                from '$lib/components/lemmy/post/components/Image.svelte'
+    import Link                 from '$lib/components/input/Link.svelte'
+    import PostActions          from '$lib/components/lemmy/post/components/PostActions.svelte'
+    import PostBody             from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
-    import PostMeta from '$lib/components/lemmy/post/components/PostMeta.svelte'
-    import PostTitle from '$lib/components/lemmy/post/components/PostTitle.svelte'
+    import PostMeta             from '$lib/components/lemmy/post/components/PostMeta.svelte'
+    import PostTitle            from '$lib/components/lemmy/post/components/PostTitle.svelte'
     
         
 
     // Standard for all post types
     export let post:PostView
-    export let actions: boolean = true
-    export let inCommunity = false
-    export let inProfile = false
+    export let actions: boolean             = true
+    export let inCommunity                  = false
+    export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let collapseBadges = false
-    export let postType = 'image'
-    export let inViewport = true
-    export let compact: boolean = true
+    export let postType: PostType           = 'image'
+    export let inViewport                   = true
+    export let compact: boolean             = true
 
     //Component-specific
     export let zoomable:boolean = true
     
     let thumbnail_url:string
-    let url:string
+
 
     // Finesse the url and thumbnail URL to accommodate GIFs (and not thumbnail webms ugh) or when the thumbnanil is a static image but the embed URL is a GIF (Imgur)
-    $:  post.post.id, post.post.url, post.post.embed_video_url, post.post.thumbnail_url, setup()
-    
-    function setup() {
-        url = post.post.url as string
+    $:  post.post.url, post.post.embed_video_url, post.post.thumbnail_url, thumbnail_url = getOptimalThumbnailURL({post:post}) ?? '/img/placeholder.png'
 
-        // Get Imgur gifs to render without having to click through to the site.
-        if (!url?.endsWith('.gif')  && post?.post?.embed_video_url?.endsWith('.gif')) {
-            url = post.post.embed_video_url
-        }
-
-        // Hack to get GIFs to play in the feed.  Lemmy converts them to weird webm at best.
-        if (url?.endsWith('.gif')) {
-            thumbnail_url = url;
-        }
-        else {
-            thumbnail_url = (post.post.thumbnail_url as string ?? post.post.url as string)
-        }
-    }
    
     $: showEmbedDescription = (post.post.embed_title && post.post.embed_description)
 </script>
@@ -66,12 +48,12 @@
     <!---If there is no or a very short body text with the image, display it more compactly since the text won't have to flow around it--->
     {#if !post?.post.body || post.post.body.length < 250}
 
-        <PostMeta {post} showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                 <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'} ">
                     
-                    <PostTitle {post} />
+                    <PostTitle bind:post {postType} />
                     
                     <!---Mostly used if Posting a Link to Another Lemmy Post--->
                     {#if showEmbedDescription}
@@ -80,7 +62,7 @@
                             description={post.post.embed_description} 
                             url={post.post.url}
                             showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                            thumbnail_urls={[post.post.embed_video_url, post.post.thumbnail_url, post.post.url]}
+                            thumbnail_urls={[post.post.thumbnail_url, post.post.embed_video_url, post.post.url]}
                             nsfw={post.post.nsfw}
                             {compact}
                         > 
@@ -106,11 +88,11 @@
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
     {:else}
-        <PostMeta {post} showTitle={false} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
-                <PostTitle {post} />
+                <PostTitle bind:post {postType} />
 
                 <PostBody {post} {displayType} class="my-1" >
                     <CompactPostThumbnail {post} {displayType} float slot="thumbnail" 
@@ -129,7 +111,7 @@
 
 <!---Card View--->
 {:else}
-    <PostMeta {post} showTitle={true} {collapseBadges} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
 
     <PostEmbedDescription title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} {compact} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
