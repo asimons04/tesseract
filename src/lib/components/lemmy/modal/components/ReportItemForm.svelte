@@ -6,10 +6,12 @@
     import { profile } from '$lib/auth'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-    import Button from "$lib/components/input/Button.svelte"
-    import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte"
-    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
-    import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte"
+    import Button                   from "$lib/components/input/Button.svelte"
+    import Comment                  from '$lib/components/lemmy/comment/Comment.svelte'
+    import MarkdownEditor           from "$lib/components/markdown/MarkdownEditor.svelte"
+    import Post                     from '$lib/components/lemmy/post/Post.svelte'
+    import SettingToggle            from "$lib/components/ui/settings/SettingToggle.svelte"
+    import SettingToggleContainer   from "$lib/components/ui/settings/SettingToggleContainer.svelte"
     
     
     
@@ -22,9 +24,10 @@
     const isPost = (item: PostView | CommentView | PrivateMessageView) : item is PostView => ('post' in item && !('comment' in item))
     const isPrivateMessage = (item: PostView | CommentView | PrivateMessageView) : item is PrivateMessageView => 'private_message' in item
 
-    let loading = false
-    let confirm = false
-    const dispatcher = createEventDispatcher()
+    let loading         = false
+    let confirm         = false
+    let hideSubmission  = true
+    const dispatcher    = createEventDispatcher()
 
     async function report() {
         if (!item || !$profile?.jwt || reason == '') return
@@ -81,9 +84,26 @@
         
         <SettingToggleContainer>
             <SettingToggle bind:value={confirm} icon={ClipboardDocumentCheck} title="Confirm" description="I confirm that this report is being made in good faith" />
+            <SettingToggle bind:value={hideSubmission} icon={EyeSlash} title="Hide Submission" description="Hide the post/comment preview." />
         </SettingToggleContainer>
-
-        
     </div>
+
+    {#if !hideSubmission}
+        <div class="flex flex-col pointer-events-none list-none overflow-hidden">
+            {#if isComment(item)}
+                <Comment actions={false}
+                    node={{
+                        children: [],
+                        comment_view: item,
+                        depth: 1,
+                        loading: false,
+                    }}
+                    postId={item.post.id}
+                />
+            {:else if isPost(item)}
+                <Post actions={false} post={item} forceCompact={true}/>
+            {/if}
+        </div>
+    {/if}
 </form>
     

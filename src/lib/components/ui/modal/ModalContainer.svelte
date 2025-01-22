@@ -22,22 +22,16 @@
 
 <!--These weird await hacks are for lazy loading, better network performance-->
 
-{#if $modals.reporting.open}
-    <ReportModal
-      bind:open={$modals.reporting.open}
-      item={$modals.reporting.item}
-      reason={$modals.reporting.reason}
-    />
+
+<!---Report Item--->
+{#if $modals.reporting.open && $modals.reporting.item}
+    <ReportModal bind:open={$modals.reporting.open} item={$modals.reporting.item} reason={$modals.reporting.reason} />
 {/if}
 
-{#if $modals.removing.open}
-  
-    <RemoveModal
-      bind:open={$modals.removing.open}
-      item={$modals.removing.item}
-      purge={$modals.removing.purge}
-      reason={$modals.removing.reason}
-    />
+
+<!---Remove Item (Deprecated)--->
+{#if $modals.removing.open && $modals.removing.item}
+    <RemoveModal bind:open={$modals.removing.open} item={$modals.removing.item} purge={$modals.removing.purge} reason={$modals.removing.reason} />
   
 {/if}
 
@@ -89,18 +83,13 @@
     <EditCommunityGroup bind:open={$modals.editCommunityGroup.open} group={$modals.editCommunityGroup.group} />
 {/if}
 
-<!---Ban User Modal--->
-{#if $modals.banning.open}
-    <BanModal
-      bind:open={$modals.banning.open}
-      banned={$modals.banning.banned}
-      user={$modals.banning.user}
-      community={$modals.banning.community}
-    />
+<!---Ban User Modal (Deprecated)--->
+{#if $modals.banning.open && $modals.banning.user}
+    <BanModal bind:open={$modals.banning.open} banned={$modals.banning.banned} user={$modals.banning.user} community={$modals.banning.community} />
 {/if}
 
 
-
+<!---Link Preview Modal--->
 {#if $modals.linkPreview.open}
     <LinkPreviewModal bind:open={$modals.linkPreview.open} url={$modals.linkPreview.url} iframe={$modals.linkPreview.iframe}/>
 {/if}

@@ -13,23 +13,23 @@
     }
     import type { CommentView, PostView } from "lemmy-js-client"
     
-    import { amMod, isAdmin, removalTemplate } from "../../moderation/moderation"
-    import { createEventDispatcher } from "svelte"
-    import { dispatchWindowEvent } from "$lib/ui/events"
-    import { fullCommunityName } from "$lib/util"
-    import { getClient } from "$lib/lemmy"
-    import { isCommentView, isPostView } from "$lib/lemmy/item"
-    import { profile } from "$lib/auth"
-    import { toast } from "$lib/components/ui/toasts/toasts"
-    import { userSettings } from "$lib/settings"
+    import { amMod, isAdmin, removalTemplate }  from "$lib/components/lemmy/moderation/moderation"
+    import { createEventDispatcher }            from "svelte"
+    import { dispatchWindowEvent }              from "$lib/ui/events"
+    import { fullCommunityName }                from "$lib/util"
+    import { getClient }                        from "$lib/lemmy"
+    import { isCommentView, isPostView }        from "$lib/lemmy/item"
+    import { profile }                          from "$lib/auth"
+    import { toast }                            from "$lib/components/ui/toasts/toasts"
+    import { userSettings }                     from "$lib/settings"
 
-    import Button from "$lib/components/input/Button.svelte"
-    import CommentMeta from "$lib/components/lemmy/comment/CommentMeta.svelte"
-    import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte"
-    import PostMeta from "$lib/components/lemmy/post/PostMeta.svelte"
-    import SettingMultiSelect from "$lib/components/ui/settings/SettingMultiSelect.svelte"
-    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
-    import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte"
+    import Button                   from "$lib/components/input/Button.svelte"
+    import CommentMeta              from "$lib/components/lemmy/comment/CommentMeta.svelte"
+    import MarkdownEditor           from "$lib/components/markdown/MarkdownEditor.svelte"
+    import PostMeta                 from "$lib/components/lemmy/post/components/PostMeta.svelte"
+    import SettingMultiSelect       from "$lib/components/ui/settings/SettingMultiSelect.svelte"
+    import SettingToggle            from "$lib/components/ui/settings/SettingToggle.svelte"
+    import SettingToggleContainer   from "$lib/components/ui/settings/SettingToggleContainer.svelte"
     
     import { ChatBubbleLeft, ChatBubbleLeftRight, Fire, Trash } from "svelte-hero-icons"
     
@@ -226,7 +226,7 @@
 <form class="flex flex-col gap-4 list-none" on:submit|preventDefault={remove.remove}>
                     
     {#if !isCommentView(item)}
-        <PostMeta post={item} actions={false} expandCompact={false} noClick/>
+        <PostMeta post={item} actions={false} postType="link" noClick/>
     {:else}
         <CommentMeta comment={item} content noClick/>
     {/if}
