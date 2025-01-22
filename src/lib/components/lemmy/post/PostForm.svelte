@@ -633,6 +633,6 @@
 <!---Previewing Post--->
 {#if previewPost && previewing}
     <div class="mt-4 pb-3 w-full">
-        <PostPreview  post={previewPost}  actions={false}  displayType="post" previewing autoplay={false}  {inModal}/>
+        <PostPreview  post={previewPost}  actions={false}  displayType="post" previewing  {inModal}/>
     </div>
 {/if}
