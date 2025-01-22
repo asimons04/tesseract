@@ -35,7 +35,7 @@
     }}
 >
     <span class="text-xs opacity-80">    
-        <FormattedNumber number={post.counts.comments} /> 
+        <FormattedNumber number={post.counts.comments ?? 0} /> 
         <span class="hidden sm:inline">    
             {post.counts.comments == 1 ? 'comment' : 'comments'}
             
