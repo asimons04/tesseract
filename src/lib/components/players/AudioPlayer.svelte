@@ -2,20 +2,20 @@
     import { userSettings } from '$lib/settings'
 
     import ImageContainer from '$lib/components/lemmy/post/components/ImageContainer.svelte'
-    import { ArrowPathRoundedSquare, Pause, Play, SpeakerWave, SpeakerXMark } from 'svelte-hero-icons';
+    import { ArrowPathRoundedSquare, ChevronDoubleDown, ChevronDoubleUp, Clock, CloudArrowDown, Pause, Play, SpeakerWave, SpeakerXMark } from 'svelte-hero-icons';
     import Button from '../input/Button.svelte';
     import ZoomableImage from '../ui/ZoomableImage.svelte';
+    import Slider from '../input/Slider.svelte';
 
 
     let placeholderIcon                 = '/img/audio-wave-static.webp'
     let audio: HTMLAudioElement
-    let positionSlider: HTMLInputElement
-    let volumeSlider: HTMLInputElement
 
     export let url: string
     export let thumbnail_url: string | undefined
     export let autoplay: boolean        = false
     export let inViewport: boolean      = false
+    export let alt_text: string         = ''
 
     $:  if (!inViewport && audio) audio.pause()
     
@@ -23,7 +23,6 @@
     const player = {
         currentTime: 0,
         duration: 0,
-        playbackRate: 1,
         loaded: false,
         paused: true,
 
@@ -44,6 +43,14 @@
             audio.muted = val
         },
 
+        get playbackRate() {
+            return audio.playbackRate
+        },
+
+        set playbackRate(val:number) {
+            audio.playbackRate = val
+        },
+
         get volume() {
             return audio.volume
         },
@@ -61,8 +68,8 @@
             audio.play()
         },
 
-        adjustPosition: function (e:Event) {
-            audio.currentTime =  parseInt(positionSlider.value)
+        adjustPosition: function (e:CustomEvent) {
+            audio.currentTime = e.detail
         },
 
 
@@ -101,7 +108,7 @@
 <ImageContainer image_url={placeholderIcon} blur={false} class="blur-sm !opacity-20 invert dark:invert-0">
     
     <div class="flex flex-col relative z-10 min-h-[200px] w-full">
-        <audio bind:this={audio} class="rounded-2xl my-auto mx-auto" preload="metadata"
+        <audio bind:this={audio} class="rounded-2xl my-auto mx-auto" preload="metadata" aria-label={alt_text}
             playsinline  {autoplay} 
             on:loadedmetadata={player.onLoadStart}
             on:timeupdate={player.onTimeUpdate}
@@ -122,46 +129,46 @@
         {#if player.loaded}
             <div class="flex flex-col gap-1 my-auto w-full">
                 
-                <div class="flex flex-col gap-2 w-full p-2">
-                    <!---Position Slider--->
-                    <input bind:this={positionSlider} type="range" bind:value={player.currentTime} min={0} max={player.duration} on:change={player.adjustPosition}
-                        class="w-full h-2 bg-gray-400 dark:bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-                    />
-                    <!---Start, Current, End Time Labels--->
-                    <div class="flex flex-row w-full text-xs opacity-90 items-center justify-between">
-                        <span>0:00</span>
-                        <span>{player.toDuration(player.currentTime)}</span>
-                        <span>{player.toDuration(player.duration)}</span>
+                <div class="flex flex-row gap-2 items-center px-2">
+                    <ZoomableImage url={thumbnail_url ?? placeholderIcon} class="w-[96px] h-[96px] rounded-lg" alt={alt_text} />
+                
+                    <div class="flex flex-col gap-2 w-[calc(100%-100px)]">
+                        <!---Position Slider--->
+                        <Slider bind:value={player.currentTime} min={0} max={player.duration} step={1} on:change={player.adjustPosition} />
+
+                        <!---Start, Current, End Time Labels--->
+                        <div class="flex flex-row w-full text-xs opacity-90 items-center justify-between">
+                            <span>0:00</span>
+                            <span>{player.toDuration(player.currentTime)}</span>
+                            <span>{player.toDuration(player.duration)}</span>
+                        </div>
                     </div>
+
                 </div>
-
-
-                <div class="flex flex-row gap-2 items-center p-2">
-                    <ZoomableImage url={thumbnail_url ?? placeholderIcon} class="w-[96px] h-[96px]" alt='' />
                     
-                    <div class="flex flex-col gap-4 w-[calc(100%-100px)]">
-                        <!---Button Controls--->
-                        <div class="flex flex-col md:flex-row gap-2 items-center">
-                            
-                            <!---Control Buttons--->
-                            <div class="flex flex-row gap-2 w-full items-center">
-                                <Button size="square-md" color="secondary" class="h-[64px] w-[64px]" icon={player.paused ? Play: Pause} iconSize={36} on:click={() => player.paused ? player.play() : player.pause()} />
-                                <Button size="square-md" color="secondary" class="h-[64px] w-[64px] {player.loop ? '!text-amber-500' : ''}" icon={ArrowPathRoundedSquare} iconSize={36} on:click={() => player.loop = !player.loop} />
-                                
-                                <span class="ml-auto"/>
-                                
-                                <div class="flex flex-col gap-1">
-                                    <input bind:this={volumeSlider} type="range" bind:value={player.volume} min={0} max={1} step={0.1} class="h-[64px] mx-auto bg-gray-400 dark:bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" 
-                                        style="writing-mode: vertical-lr; direction: rtl; width: 16px"
-                                    />  
-                                    <Button size="square-sm" color="secondary" class="h-[32px] w-[32px] mx-auto" icon={player.muted ? SpeakerXMark: SpeakerWave} iconSize={24} on:click={()=> player.muted = !player.muted} />
-                                </div>
-                            </div>
-                            
-                         </div>
-                        
+                <!---Control Buttons--->
+                <div class="flex flex-row gap-2 w-full items-center">
+                    <Button title={player.paused ? 'Play' : 'Pause'} size="square-md" color="secondary" class="rounded-full h-[64px] w-[64px]" icon={player.paused ? Play: Pause} iconSize={36} on:click={() => player.paused ? player.play() : player.pause()} />
+                    <Button title={player.loop ? 'Disable Loop' : 'Enable Loop'} size="square-md" color="secondary" class="rounded-full h-[64px] w-[64px] {player.loop ? '!text-amber-500' : ''}" icon={ArrowPathRoundedSquare} iconSize={36} on:click={() => player.loop = !player.loop} />
+                    <Button title="Download" size="square-md" color="secondary" class="rounded-full h-[64px] w-[64px]" href={url} download={url} icon={CloudArrowDown} iconSize={36} />
+                    
+                    <!---Playback Speed Slider--->
+                    <div class="flex flex-col gap-1 w-[96px] h-[64px]">
+                        <Slider bind:value={player.playbackRate} min={0.25} max={3} step={0.25} />
+                        <Button size="sm" color="secondary"title="Reset Playback Speed" class="h-[42px] w-full mt-auto mx-auto" icon={Clock} iconSize={24} on:click={()=> player.playbackRate = 1}>
+                            {player.playbackRate}x
+                        </Button>
+                    </div>
+
+
+                    <span class="ml-auto"/>
+                    <!---Volume Slider/Mute--->                        
+                    <div class="flex flex-col gap-1">
+                        <Slider bind:value={player.volume} min={0} max={1} step={0.1} vertical class="!h-[64px] mx-auto"/>
+                        <Button size="square-sm" color="secondary" class="h-[32px] w-[32px] mx-auto" icon={player.muted ? SpeakerXMark: SpeakerWave} iconSize={24} on:click={()=> player.muted = !player.muted} />
                     </div>
                 </div>
+                    
             </div>
         {/if}
 
