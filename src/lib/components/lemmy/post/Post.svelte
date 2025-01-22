@@ -32,13 +32,14 @@
 
     import Card from '$lib/components/ui/Card.svelte'
 
-    import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
-    import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
+    //import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
+    //import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     
     
     // New Post Renderers
     import BandcampPost     from '$lib/components/lemmy/post/renderers/BandcampPost.svelte'
+    import DailyMotionPost  from '$lib/components/lemmy/post/renderers/DailyMotionPost.svelte';
     import ImagePost        from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
     import LinkPost         from '$lib/components/lemmy/post/renderers/LinkPost.svelte'
     import LoopsPost        from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
@@ -57,20 +58,17 @@
 
     export let post: PostView                                           // The Post to display
     export let actions: boolean             = true                      // Set to false to disable action buttons (except expand)
-    export let autoplay:boolean             = false                     // Whether the media should override the auto play setting
     export let displayType: PostDisplayType = "feed"                    // Whether to render the post for the 'feed' or 'post'
     export let forceCompact:boolean         = false                     // Force the post to render in compact view
     export let disablePostLinks:boolean     = false                     // Force the post to be read only by adding 'pointer-events-none'                        
-    export let collapseBadges:boolean       = false                     // Largely deprecated, hide badge text and use only icons (only applicable now for NSFW)
     export let expandCompact: boolean       = computeExpandCompact()    // Not sure if needs exported now? Controls expanding/collapsing a compact post to/from card view
-
+    export let previewing: boolean          = false                     // Used to control margins if previewing
     export let scrollTo:number              = -1                        // The feed can pass a post id (e.g. last seen post) and if the current post's ID matches, it will scroll itself into view
     export let inCommunity: boolean         = false                     // If true, the community avatar and name will be hidden and only show the poster's info/avatar
     export let inProfile: boolean           = false                     // If true, the poster's info/avatar will be hidden and only show that of the community
     export let inModal: boolean             = false
 
     let inViewport = false                                              // No longer need to export?
-    let expandPreviewText:boolean
     let postContainer: HTMLDivElement | null
     let postType = getPostType(post)
     let lastClickedPost = -1
@@ -102,7 +100,7 @@
     }
 
     function markPostAsRead() {
-        if (!post || !inViewport || !$profile?.jwt || post.read) return
+        if (!post || !inViewport || !$profile?.jwt || post.read || post.post.id < 0) return
         
         if ( (displayType == 'feed' && $userSettings.markReadOnScroll) || displayType == 'post' ) {
             post.read = true
@@ -246,10 +244,6 @@
         },
     }
 
-
-
-
-
     async function scrollIntoView(smooth:boolean = false) {
         if (scrollTo == post?.post.id && post?.post.id > 0 && postContainer?.scrollIntoView) {
             if ($userSettings.debugInfo) console.log(moduleName, ": Scrolling post " , post.post.id, "into view via param")
@@ -263,8 +257,11 @@
 
     /** Determines whether a compact post should be shown expanded to a card if "hybrid" view set. Returns 'true' if post should render as card, 'false' if compact */
     function computeExpandCompact() {
+        if (forceCompact) return false
+        
         // If view is not set to 'hybrid' return based on 'show compact posts' value
         if ($userSettings.uiState.view != 'hybrid') return !($userSettings.showCompactPosts)
+
 
         let result = 
             $userSettings.uiState.hybridViewAsCardTypes.includes(getPostType(post)) && 
@@ -280,15 +277,10 @@
         lastClickedPost = post.post.id
         dispatchWindowEvent('lastClickedPost', {post_id: post.post.id})
     }
-
-    
-
     
 
     onMount(async () =>  {
         await scrollIntoView() 
-
-    
     })
     
     onDestroy(() => {
@@ -299,23 +291,23 @@
 
 
 <svelte:window 
-    on:banUser              ={handlers.BanUserEvent}
-    on:banCommunity         ={handlers.BanCommunityEvent}
-    on:blockUser            ={handlers.BlockUserEvent} 
-    on:blockCommunity       ={handlers.BlockCommunityEvent} 
-    on:blockInstance        ={handlers.BlockInstanceEvent}
-    on:changeCompactView    ={handlers.CompactViewChange}
-    on:editPost             ={handlers.EditPostEvent}
-    on:featurePost          ={handlers.FeaturePostEvent}
-    on:hideCommunity        ={handlers.HideCommunityEvent}
-    on:lockPost             ={handlers.LockPostEvent}
-    on:subscribe            ={handlers.SubscribeEvent}
-    on:refreshFeed          ={handlers.RefreshFeed}
-    on:removeCommunity      ={handlers.RemoveCommunityEvent}
-    on:removePost           ={handlers.RemovePostEvent}
-    on:purgePost            ={handlers.PurgePostEvent}
-    on:lastClickedPost      ={handlers.LastClickedPostEvent}
-    on:scrollPostIntoView   ={handlers.ScrollPostIntoView}
+    on:banUser              = {handlers.BanUserEvent}
+    on:banCommunity         = {handlers.BanCommunityEvent}
+    on:blockUser            = {handlers.BlockUserEvent} 
+    on:blockCommunity       = {handlers.BlockCommunityEvent} 
+    on:blockInstance        = {handlers.BlockInstanceEvent}
+    on:changeCompactView    = {handlers.CompactViewChange}
+    on:editPost             = {handlers.EditPostEvent}
+    on:featurePost          = {handlers.FeaturePostEvent}
+    on:hideCommunity        = {handlers.HideCommunityEvent}
+    on:lockPost             = {handlers.LockPostEvent}
+    on:subscribe            = {handlers.SubscribeEvent}
+    on:refreshFeed          = {handlers.RefreshFeed}
+    on:removeCommunity      = {handlers.RemoveCommunityEvent}
+    on:removePost           = {handlers.RemovePostEvent}
+    on:purgePost            = {handlers.PurgePostEvent}
+    on:lastClickedPost      = {handlers.LastClickedPostEvent}
+    on:scrollPostIntoView   = {handlers.ScrollPostIntoView}
 />
 
 
@@ -337,75 +329,60 @@
         }}
     />
 
-    {#if ['audio', 'bandcamp', 'image', 'link', 'loops', 'peertube', 'soundcloud', 'spotify', 'text', 'thumbLink', 'video', 'vimeo', 'youtube'].includes(postType)}
+
     <Card class="flex flex-col p-2 gap-2 mx-auto
             {disablePostLinks ? 'pointer-events-none list-none' : ''}
-            {$userSettings.uiState.feedMargins && !inModal && displayType=='feed'  ? 'max-w-3xl' : 'w-full' }
+            {($userSettings.uiState.feedMargins && displayType=='feed' && !inModal) || (displayType=='post' && !inModal && previewing) ? 'max-w-3xl' : 'w-full' }
         " 
     >    
         {#if postType ==  'audio'}
-            <AudioPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <AudioPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'bandcamp'}
-            <BandcampPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <BandcampPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
+        {:else if postType == 'dailymotion'}
+            <DailyMotionPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply/>
+
         {:else if postType == 'image'}    
-            <ImagePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <ImagePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if ['link', 'thumbLink'].includes(postType)}
-            <LinkPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <LinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'loops'}
-            <LoopsPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <LoopsPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'peertube'}
-            <PeerTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <PeerTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'soundcloud'}    
-            <SoundCloudPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <SoundCloudPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'spotify'}
-            <SpotifyPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <SpotifyPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
 
         {:else if postType == 'text'}
-            <TextPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'video'}
-            <VideoPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <VideoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'vimeo'}
-            <VimeoPost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <VimeoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'youtube'}
-            <YouTubePost bind:post {actions} {displayType} {postType} {collapseBadges} {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <YouTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+        
+        {:else}
+            <LinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         {/if}
+
+
     
     </Card>
 
-
-    <!---Legacy Renderers (fallback if not in list above)--->
-
-    <!--- Compact Posts --->
-    {:else if  (forceCompact || !expandCompact) }
-        <PostCompactStyle {actions} {displayType} {disablePostLinks} {collapseBadges} {postType} {inCommunity} {inProfile}
-            bind:post 
-            bind:expandCompact 
-            bind:expandPreviewText  
-            on:reply
-        />
-
-
-    <!--- Card Posts --->
-    {:else}
-        <PostCardStyle {actions} {displayType}  {autoplay} loop={$userSettings.embeddedMedia.loop} {collapseBadges} {inCommunity} {inProfile}
-            bind:post 
-            bind:expandCompact 
-            bind:expandPreviewText  
-            bind:inViewport
-            on:reply
-        />
-    {/if}
 </div>
 
 
