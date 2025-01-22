@@ -1,21 +1,29 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings'
 
-    import ImageContainer from '$lib/components/lemmy/post/components/ImageContainer.svelte'
-    import { ArrowPathRoundedSquare, ChevronDoubleDown, ChevronDoubleUp, Clock, CloudArrowDown, Pause, Play, SpeakerWave, SpeakerXMark } from 'svelte-hero-icons';
-    import Button from '../input/Button.svelte';
-    import ZoomableImage from '../ui/ZoomableImage.svelte';
-    import Slider from '../input/Slider.svelte';
+    import Button           from '$lib/components/input/Button.svelte'
+    import ImageContainer   from '$lib/components/lemmy/post/components/ImageContainer.svelte'
+    import Slider           from '$lib/components/input/Slider.svelte'
+    import ZoomableImage    from '$lib/components/ui/ZoomableImage.svelte'
 
-
-    let placeholderIcon                 = '/img/audio-wave-static.webp'
-    let audio: HTMLAudioElement
+    import { 
+        ArrowPathRoundedSquare, 
+        Clock, 
+        CloudArrowDown, 
+        Pause, 
+        Play, 
+        SpeakerWave, 
+        SpeakerXMark 
+    } from 'svelte-hero-icons';
 
     export let url: string
     export let thumbnail_url: string | undefined
     export let autoplay: boolean        = false
     export let inViewport: boolean      = false
     export let alt_text: string         = ''
+
+    let placeholderIcon                 = '/img/audio-wave-static.webp'
+    let audio: HTMLAudioElement
 
     $:  if (!inViewport && audio) audio.pause()
     
