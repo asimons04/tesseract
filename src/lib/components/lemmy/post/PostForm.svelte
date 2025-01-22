@@ -9,20 +9,35 @@
         nsfw: boolean
         loading: boolean
         thumbnail_url?: string,
+        custom_thumbnail?: string
         embed_description?: string,
         embed_video_url?: string,
         embed_title?: string
     }
 
+    interface PostImages {
+        post: {
+            uploading: boolean
+            uploadResponse: UploadImageResponse | undefined
+            image: FileList | null
+            delete?: () => Promise<void>
+        }
+        custom_thumbnail: {
+            uploading: boolean
+            uploadResponse: UploadImageResponse | undefined
+            image: FileList | null
+            delete?: () => Promise<void>
+        }
+        body: UploadImageResponse[]
+    }
+
     import type { Community, PostView, UploadImageResponse} from 'lemmy-js-client'
 
-    import { ENABLE_MEDIA_PROXY } from '$lib/settings'
     import { createEventDispatcher } from 'svelte'
     import { blobToFileList, deleteImageUpload, readImageFromClipboard } from '$lib/components/uploads/helpers'
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { getClient, minAPIVersion } from '$lib/lemmy.js'
-    import { imageProxyURL } from '$lib/image-proxy'
-    import { isImage, isVideo } from './helpers'
+    import { createFakePostView, isImage, isVideo } from './helpers'
     import { objectCopy } from '$lib/util'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
@@ -31,20 +46,19 @@
 
     
 
-    import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte';
-    import CommunityAutocomplete from '../CommunityAutocomplete.svelte';
-    import CommunityLink from '../community/CommunityLink.svelte'
-    import CrosspostItem from './CrosspostItem.svelte';
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
-    import ImageUploadDeleteButton from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
-    import ImageUploadModal from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import PostPreview from './Post.svelte'
-    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
-    import SettingToggleContainer from '$lib/components/ui/settings/SettingToggleContainer.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte';
-    import TextInput from '$lib/components/input/TextInput.svelte'
+    import Button                   from '$lib/components/input/Button.svelte'
+    import Card                     from '$lib/components/ui/Card.svelte'
+    import CommunityAutocomplete    from '$lib/components/lemmy/CommunityAutocomplete.svelte'
+    import CommunityLink            from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import CrosspostItem            from '$lib/components/lemmy/post/components/CrosspostItem.svelte'
+    import ImageUploadDeleteButton  from '$lib/components/uploads/ImageUploadDeleteButton.svelte'
+    import ImageUploadModal         from '$lib/components/lemmy/modal/ImageUploadModal.svelte'
+    import MarkdownEditor           from '$lib/components/markdown/MarkdownEditor.svelte'
+    import PostPreview              from './Post.svelte'
+    import SettingToggle            from '$lib/components/ui/settings/SettingToggle.svelte'
+    import SettingToggleContainer   from '$lib/components/ui/settings/SettingToggleContainer.svelte'
+    import Spinner                  from '$lib/components/ui/loader/Spinner.svelte';
+    import TextInput                from '$lib/components/input/TextInput.svelte'
     
     import { 
         ArrowUturnDown,
@@ -69,19 +83,20 @@
     export let editingPost: PostView | undefined = undefined
 
     // The community passed from sessionStorage via /create/post
-    export let community: Community | undefined = undefined
-    export let crosspostData: PostData | undefined = undefined
-    export let hideCommunityInput = false
-    export let textEditorRows:number = 10
-    export let inModal = false
-    export let editing: boolean = false
+    export let community: Community | undefined     = undefined
+    export let crosspostData: PostData | undefined  = undefined
+    export let hideCommunityInput                   = false
+    export let textEditorRows: number               = 10
+    export let inModal                              = false
+    export let editing: boolean                     = false
     
 
-    let postContainer: HTMLDivElement
-
+    
+    // Read in the crosspost data, the post object provided when editing, or create the empty form data for a new post
     let default_data: PostData = crosspostData ?? {
         community: editingPost?.community ?? community,
         image: undefined,
+        custom_thumbnail: editingPost?.post.thumbnail_url ?? undefined,
         name: editingPost?.post.name ?? '',
         body: editingPost?.post.body,
         url: editingPost?.post.url,
@@ -95,31 +110,33 @@
 
     // 
     let data = objectCopy(default_data)
-    
-    // Holds the data from the upload response for use in the form
-    let uploadResponse: UploadImageResponse | undefined
-    
-    // Bound from the markdown editor so that they can be referenced by the reset script in order to delete them
-    let bodyImages:UploadImageResponse[]
-    
-    // Bound to the upload modal. Used when pasting an image into the URL field to pre-populate the preview and supply the upload data
-    let postImage: FileList | null
-    
-    // Bound from the delete image button so its inner delete function can be called
-    let deletePostImage: () => Promise<void>
-
-    let pastingImage     = false
-    let uploadingImage   = false
-    
-    let fetchingMetadata = false
+   
+    let pastingImage            = false
+    let fetchingMetadata        = false
     let previewPost: PostView | undefined
-    let resetting        = false
-    
+    let resetting               = false
     let previewing:boolean      = false
-    let searching        = false
-    let showSearch       = false
-    let URLSearchResults = [] as PostView[]
+    let searching               = false
+    let showSearch              = false
+    let URLSearchResults        = [] as PostView[]
     let oldCommunity:Community
+
+    // Container for the post image and custom thumbnail uploads and supporting state variables
+    const images: PostImages = {
+        post: {
+            uploading: false,
+            uploadResponse: undefined,
+            image: null,
+        },
+
+        custom_thumbnail: {
+            uploading: false,
+            uploadResponse: undefined,
+            image: null,
+        },
+
+        body: [] as UploadImageResponse[]
+    }
 
     const dispatcher = createEventDispatcher<{ 
         submit?: PostView
@@ -129,9 +146,6 @@
     // If community is provided, set the data object's community key to that
     $: if (community) data.community = community
     
-    // Automatically convert the uploaded image's URL to a proxy URL if the option is selected
-    $: if ($userSettings.proxyMedia.useForImageUploads && uploadResponse?.url)     data.url = imageProxyURL(uploadResponse.url)
-    $: if (!$userSettings.proxyMedia.useForImageUploads && uploadResponse?.url)    data.url = uploadResponse.url
 
     // Reset URL search results when the community changes
     $:  data.community, rerunSearch()
@@ -167,11 +181,12 @@
             if (editingPost) {
                 const post = await getClient().editPost({
                     name: data.name,
-                    body: data.body,
+                    body: data.body || undefined,
                     url: data.url || undefined,
                     post_id: editingPost.post.id,
                     nsfw: data.nsfw,
-                    alt_text: data.alt_text
+                    alt_text: data.alt_text || undefined,
+                    custom_thumbnail: data.custom_thumbnail || undefined
                 })
 
                 if (!post) throw new Error('Failed to edit post')
@@ -182,10 +197,11 @@
                 const post = await getClient().createPost({
                     community_id: data.community!.id,
                     name: data.name,
-                    body: data.body,
+                    body: data.body || undefined,
                     url: data.url || undefined,
                     nsfw: data.nsfw,
-                    alt_text: data.alt_text
+                    alt_text: data.alt_text || undefined,
+                    custom_thumbnail: data.custom_thumbnail || undefined
                 })
 
                 if (!post) throw new Error('Failed to create post')
@@ -285,53 +301,35 @@
             newPost.post.alt_text = data.alt_text
             
             // Unset these for the prevew generation step (if present from the original post)
-            newPost.post.embed_description = undefined
-            newPost.post.embed_title = undefined
-            newPost.post.embed_video_url = data.embed_video_url ?? undefined
-            newPost.post.thumbnail_url = data.thumbnail_url ?? undefined
+            newPost.post.embed_description = data.embed_description || undefined
+            newPost.post.embed_title = data.embed_title || undefined
+            newPost.post.embed_video_url = data.embed_video_url || undefined
+            newPost.post.thumbnail_url = data.custom_thumbnail || data.thumbnail_url || undefined
 
             return newPost
         }
         
         // If creating a post, add some dummy values so the Post component can handle it for preview rending
         else {
-            let newPost:PostView = {
-                post: { 
-                    ...data,
-                    id: -1,
-                    creator_id: $profile.user?.local_user_view.person.id,
-                    community_id: data.community!.id,
-                    thumbnail_url: data.thumbnail_url,
-                    nsfw: data.nsfw,
-                    removed: false,
-                    locked: false,
-                    deleted: false,
-                    ap_id: 'none',
-                    local: false,
-                    featured_local: false,
-                    featured_community: false,
-                    language_id: -1,
-                    published: new Date().toISOString(),
-                    alt_text: data.alt_text
-                },
-                creator: objectCopy($profile.user?.local_user_view.person),
-
-                community:  {...data.community},
-                // @ts-ignore
-                counts: {
-                    upvotes: 1,
-                    downvotes: 0
-                },
-                saved: false,
-                featured: false,
-                deleted: false,
-                read: false,
-                locked: false,
-                removed: false
+            let newPost: PostView = createFakePostView()
+            newPost.post = {
+                ...newPost.post, 
+                name: data.name,
+                body: data.body,
+                url: data.url,
+                nsfw: data.nsfw,
+                alt_text: data.alt_text,
+                embed_description: data.embed_description,
+                embed_title: data.embed_title,
+                embed_video_url: data.embed_video_url,
+                creator_id: $profile.user?.local_user_view.person.id,
+                thumbnail_url: data.custom_thumbnail || data.thumbnail_url || (isImage(data.url) ? data.url : undefined),
+                community_id: data.community.id,
             }
+            newPost.creator = objectCopy($profile.user?.local_user_view.person)
+            newPost.community = {...data.community}
             
             return newPost
-            
         } 
     }
 
@@ -341,11 +339,13 @@
         // Reset the crosspost search
         resetSearch()
         
-        if (uploadResponse) deletePostImage()
-        for (let i=0; i < bodyImages.length; i++) {
-            await deleteImageUpload(bodyImages[i])
+        if (images.post.delete) images.post.delete()
+        if (images.custom_thumbnail.delete) images.custom_thumbnail.delete()
+        
+        for (let i=0; i < images.body.length; i++) {
+            await deleteImageUpload(images.body[i])
         }
-        bodyImages = bodyImages = []
+        images.body = images.body = []
         
         data = objectCopy(default_data)
         data = data
@@ -408,16 +408,26 @@
 
     }
 
+    
+    
 
    
 </script>
 
-
-<ImageUploadModal bind:open={uploadingImage} bind:image={postImage} useAltText={false} on:upload={(e) => {
-        uploadResponse = e.detail
-        if (uploadResponse?.url) data.url = uploadResponse.url
-        uploadingImage = false
+<!---Post Image Upload--->
+<ImageUploadModal bind:open={images.post.uploading} bind:image={images.post.image} useAltText={false} on:upload={(e) => {
+        images.post.uploadResponse = e.detail
+        if (images.post.uploadResponse?.url) data.url = images.post.uploadResponse.url
+        images.post.uploading = false
     }}
+/>
+
+<!---Custom Thumbnail Upload--->
+<ImageUploadModal bind:open={images.custom_thumbnail.uploading} bind:image={images.custom_thumbnail.image} useAltText={false} on:upload={(e) => {
+    images.custom_thumbnail.uploadResponse = e.detail
+    if (images.custom_thumbnail.uploadResponse?.url) data.custom_thumbnail = images.custom_thumbnail.uploadResponse.url
+    images.custom_thumbnail.uploading = false
+}}
 />
 
 <Card class="p-2">
@@ -487,7 +497,8 @@
             
             <!--- Post URL and URl-related buttons--->
             <div class="flex flex-row gap-2 w-full items-end">
-                <TextInput label="URL" bind:value={data.url} class="w-full" readonly={(uploadResponse) ? true : false} 
+                <TextInput label="URL" bind:value={data.url} class="w-full"
+                    placeholder="Upload/paste image or enter URL to share"
                     on:change={() => {
                         if (!editing) searchForPostByURL(true)
                     }}
@@ -495,8 +506,8 @@
                         pastingImage = true
                         const imageBlob = await readImageFromClipboard(e.detail) 
                         if (imageBlob) {
-                            postImage = blobToFileList(imageBlob)
-                            uploadingImage = true
+                            images.post.image = blobToFileList(imageBlob)
+                            images.post.uploading = true
                         }
                         pastingImage = false
                     }}
@@ -506,14 +517,14 @@
                     <!---Fetch metadata from URL to populate title and append description to body--->
                     <Button color="tertiary-border" size="square-form" 
                         icon={CloudArrowDown} iconSize={18}
-                        loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || uploadResponse} title="Fetch title and description"
+                        loading={fetchingMetadata} disabled={!data.url || fetchingMetadata || images.post.uploadResponse} title="Fetch title and description"
                         on:click={() => (getWebsiteMetadata())}
                     />
 
                     <!---Search for any crossposts to that URL--->
                     <Button color="tertiary-border" size="square-form" 
                         icon={MagnifyingGlass} iconSize={18}
-                        loading={searching} disabled={!data.url || searching || fetchingMetadata || uploadResponse} title="Search for Existing Posts"
+                        loading={searching} disabled={!data.url || searching || fetchingMetadata || images.post.uploadResponse} title="Search for Existing Posts"
                         on:click={() => (searchForPostByURL())}
                         hidden={editing}
                     />
@@ -521,21 +532,54 @@
 
                     <!---Upload an Image--->
                     <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
-                        loading={uploadingImage||pastingImage} disabled={uploadingImage|| data.url || pastingImage} title="Upload an image"
-                        on:click={() => (uploadingImage = !uploadingImage)}
+                        loading={images.post.uploading||pastingImage} disabled={images.post.uploading|| data.url || pastingImage} title="Upload an image"
+                        on:click={() => (images.post.uploading = !images.post.uploading)}
                     />
 
                     <!---Image Upload Delete Button--->
-                    <ImageUploadDeleteButton bind:uploadResponse bind:deleteImage={deletePostImage} iconSize={18} on:delete={(e) => {
-                            if (e.detail) data.url = '' 
+                    <ImageUploadDeleteButton bind:uploadResponse={images.post.uploadResponse} bind:deleteImage={images.post.delete} iconSize={18} on:delete={(e) => {
+                            if (e.detail) data.url = default_data.url ?? '' 
                         }}
                     />
                 </div>
             </div>
 
-            {#if minAPIVersion("0.19.5") && (isImage(data.url) || isVideo(data.url))}
-                <TextInput label="Alt Text" bind:value={data.alt_text} />
+            <!---Alt Text--->
+            {#if minAPIVersion("0.19.4") && (isImage(data.url) || isVideo(data.url) || isImage(data.custom_thumbnail))}
+                <TextInput label="Alt Text for Post Image" placeholder="Describe the post image" bind:value={data.alt_text} />
             {/if}
+
+            <!---Custom Thumbnail URL/Upload--->
+            {#if minAPIVersion("0.19.4") && data.url && !isImage(data.url)}
+                <div class="flex flex-row gap-2 w-full items-end">
+                    <TextInput label="Custom Thumbnail Image" bind:value={data.custom_thumbnail} class="w-full" 
+                        placeholder="Upload, paste, or enter image URL"
+                        on:paste={async (e) => { 
+                            pastingImage = true
+                            const imageBlob = await readImageFromClipboard(e.detail) 
+                            if (imageBlob) {
+                                images.custom_thumbnail.image = blobToFileList(imageBlob)
+                                images.custom_thumbnail.uploading = true
+                            }
+                            pastingImage = false
+                        }}
+                    />
+
+                    <!---Upload an Image--->
+                    <Button color="tertiary-border" size="square-form" icon={Photo} iconSize={18}
+                        loading={images.custom_thumbnail.uploading||pastingImage} disabled={images.custom_thumbnail.uploading|| data.custom_thumbnail || pastingImage} title="Upload an custom thumbnail"
+                        on:click={() => (images.custom_thumbnail.uploading = !images.custom_thumbnail.uploading)}
+                    />
+
+                    <!---Custom Thumbnail Upload Delete Button--->
+                    <ImageUploadDeleteButton bind:uploadResponse={images.custom_thumbnail.uploadResponse} bind:deleteImage={images.custom_thumbnail.delete} iconSize={18} on:delete={(e) => {
+                            if (e.detail) data.custom_thumbnail = default_data.custom_thumbnail ?? '' 
+                        }}
+                    />
+                </div>
+            {/if}
+
+            
 
             <!---Results for Existing Posts by that URL--->
             {#if showSearch}
@@ -574,23 +618,12 @@
             {/if}
 
             <!--- Post Body --->
-            <!---<MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} bind:previewing={previewing} bind:imageUploads={bodyImages}/>--->
-            <MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} previewButton bind:imageUploads={bodyImages}/>
+            <MarkdownEditor rows={textEditorRows} label="Body" resizeable={false} bind:value={data.body} previewButton bind:imageUploads={images.body}/>
             
             <!---Options--->
             <SettingToggleContainer>
                 <SettingToggle bind:value={data.nsfw} icon={ExclamationCircle} title="NSFW" description="Flag post as not-safe-for-work" />
-                
-                {#if ENABLE_MEDIA_PROXY && $userSettings.proxyMedia.enabled}
-                    <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" 
-                        description="Use the Tesseract image proxy URL for the post URL. Will reduce load on your home server." 
-                    />
-                {/if}
             </SettingToggleContainer>
-
-
-            
-
         
         {/if}
         
@@ -599,18 +632,7 @@
 
 <!---Previewing Post--->
 {#if previewPost && previewing}
-    
-    {#if inModal}
-        <div bind:this={postContainer} class="mt-4 pb-3">
-            <PostPreview  post={previewPost}  actions={false}  displayType="post"  autoplay={false}  />
-        </div>
-    {:else}
-    
-        <FeedContainer>
-            <div bind:this={postContainer} class="mt-4 pb-3">
-                <PostPreview  post={previewPost}  actions={false}  displayType="post"   autoplay={false}  />
-            </div>
-        </FeedContainer>
-    {/if}
-    
+    <div class="mt-4 pb-3 w-full">
+        <PostPreview  post={previewPost}  actions={false}  displayType="post" previewing autoplay={false}  {inModal}/>
+    </div>
 {/if}
