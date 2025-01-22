@@ -71,6 +71,7 @@
                         url={post.post.url}
                         showThumbnail={($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
                         thumbnail_urls={[post.post.thumbnail_url, post.post.url, post.post.embed_video_url, placeholderIcon]}
+                        nsfw={post.post.nsfw}
                     > 
                         <ArchiveLinkSelector url={post.post?.url} {postType} />    
                         <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
