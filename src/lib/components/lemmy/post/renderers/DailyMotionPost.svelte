@@ -22,12 +22,12 @@
     export let inCommunity                  = false
     export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
-    export let postType: PostType           = 'vimeo'
+    export let postType: PostType           = 'dailymotion'
     export let inViewport                   = true
     export let compact: boolean             = true
 
     let clickToPlayClicked = false
-    let placeholderImage = '/img/vimeo.webp'
+    let placeholderImage = '/img/dailymotion.png'
 
     $:  if (!inViewport || compact) clickToPlayClicked = false
     
