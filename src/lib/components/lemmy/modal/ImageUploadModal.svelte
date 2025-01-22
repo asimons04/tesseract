@@ -6,7 +6,7 @@
     import { blobToFileList, imageBlobToWebp } from '$lib/components/uploads/helpers'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { userSettings } from '$lib/settings'
+    import { ENABLE_MEDIA_PROXY, userSettings } from '$lib/settings'
 
     import Button from '$lib/components/input/Button.svelte'
     import FileInput from '$lib/components/input/FileInput.svelte'
@@ -16,7 +16,7 @@
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
     import TextInput from '$lib/components/input/TextInput.svelte'
 
-    import { CloudArrowUp, EyeDropper, Photo, XCircle } from 'svelte-hero-icons'
+    import { Cloud, CloudArrowUp, EyeDropper, Photo, XCircle } from 'svelte-hero-icons'
 
     export let open: boolean
     export let image: FileList | null = null
@@ -100,6 +100,12 @@
                 condition={$userSettings.convertUploadsToWebp}
                 description="What quality level to use when converting the image to webP. Lower gives a smaller file, higher gives better quality."
             />
+
+            {#if ENABLE_MEDIA_PROXY && $userSettings.proxyMedia.enabled}
+                <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" 
+                    description="Use the Tesseract image proxy URL for the image URL."
+                />
+            {/if}
         </SettingToggleContainer>
         {/if}
     </form>
