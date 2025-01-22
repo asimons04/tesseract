@@ -345,7 +345,7 @@
 
         <!--- Toggle Margins on/off (hide until medium width since the margins disappear at the 'sm' breakpoint anyway) --->
         {#if toggleMargins}
-            <span class="hidden md:flex">
+            <span class="hidden lg:flex">
                 <Button title="{$userSettings.uiState.feedMargins ? 'Disable margins' : 'Enable margins'}."
                     size="sm" color="tertiary" 
                     on:click={async () => {
