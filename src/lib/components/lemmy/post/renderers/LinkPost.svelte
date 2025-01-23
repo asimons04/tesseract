@@ -21,8 +21,9 @@
     export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
     export let postType: PostType           = 'thumbLink'
-    export let inViewport                   = true
     export let compact: boolean             = true
+
+    let expandPreviewText: boolean
 </script>
 
 <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
@@ -66,6 +67,6 @@
 
 
 
-<PostBody bind:post {displayType}  />
+<PostBody bind:post bind:expandPreviewText {displayType}  />
 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
 <PostActions bind:post {displayType} on:reply class="mt-2" />

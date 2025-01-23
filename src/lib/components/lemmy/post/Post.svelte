@@ -332,7 +332,7 @@
     />
 
 
-    <Card class="flex flex-col p-2 gap-2 mx-auto
+    <Card class="flex flex-col px-2 py-1 gap-2 mx-auto
             {disablePostLinks ? 'pointer-events-none list-none' : ''}
             {($userSettings.uiState.feedMargins && displayType=='feed' && !inModal) || (displayType=='post' && !inModal && previewing) ? 'max-w-3xl' : 'w-full' }
         " 
@@ -347,10 +347,10 @@
             <DailyMotionPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply/>
 
         {:else if postType == 'image'}    
-            <ImagePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <ImagePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
 
         {:else if ['link', 'thumbLink'].includes(postType)}
-            <LinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <LinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
         
         {:else if postType == 'loops'}
             <LoopsPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
@@ -372,7 +372,7 @@
         
 
         {:else if postType == 'text'}
-            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
 
         {:else if postType == 'video'}
             <VideoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />

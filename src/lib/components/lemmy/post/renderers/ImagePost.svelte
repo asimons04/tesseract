@@ -24,14 +24,13 @@
     export let inProfile                    = false
     export let displayType: PostDisplayType = 'feed'
     export let postType: PostType           = 'image'
-    export let inViewport                   = true
     export let compact: boolean             = true
 
     //Component-specific
     export let zoomable:boolean = true
     
     let thumbnail_url:string
-
+    let expandPreviewText: boolean 
 
     // Finesse the url and thumbnail URL to accommodate GIFs (and not thumbnail webms ugh) or when the thumbnanil is a static image but the embed URL is a GIF (Imgur)
     $:  post.post.url, post.post.embed_video_url, post.post.thumbnail_url, thumbnail_url = getOptimalThumbnailURL({post:post}) ?? '/img/placeholder.png'
@@ -72,9 +71,9 @@
                         </PostEmbedDescription>
                     {/if}
                     
-                    <PostBody {post} {displayType}  />
-                    <Crossposts {post} size="xs" class="mb-1 !pl-0"/>
-                    <PostActions {post} {displayType} on:reply class="mt-2" />
+                    <PostBody bind:post bind:expandPreviewText {displayType}  />
+                    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                    <PostActions bind:post {displayType} on:reply class="mt-2" />
                 </div>
                 
                 <!---If the Embed Description is Shown, the thumbnail will go there--->
@@ -94,17 +93,17 @@
             <div class="flex flex-col w-full gap-1">
                 <PostTitle bind:post {postType} />
 
-                <PostBody {post} {displayType} class="my-1" >
+                <PostBody bind:post bind:expandPreviewText {displayType} class="my-1" >
                     <CompactPostThumbnail {post} {displayType} float slot="thumbnail" 
                         showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true}
                         on:toggleCompact={() => compact = !compact}
                     />
                 </PostBody>
 
-                <Crossposts {post} size="xs" class="mb-1 !pl-0"/>
+                <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                 
                 <div class="mt-2" />
-                <PostActions  {post} {displayType} on:reply />
+                <PostActions bind:post {displayType} on:reply />
             </div>
         </div>
     {/if}
@@ -120,9 +119,9 @@
 
     <Image url={thumbnail_url} {displayType} nsfw={post.post.nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
 
-    <PostBody {post} {displayType}  />
-    <Crossposts {post} size="xs" class="mb-1 !pl-0"/>
-    <PostActions {post} {displayType} on:reply class="mt-2"/>
+    <PostBody bind:post bind:expandPreviewText {displayType}  />
+    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+    <PostActions bind:post {displayType} on:reply class="mt-2"/>
 
 {/if}
 

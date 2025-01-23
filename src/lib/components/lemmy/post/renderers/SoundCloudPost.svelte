@@ -27,6 +27,7 @@
 
     let clickToPlayClicked = false
     let placeholderImage = '/img/soundcloud.webp'
+    let expandPreviewText: boolean
 
     // Unset click to play when out of viewport (revert to thumbnail)
     $:  if (!inViewport || compact) clickToPlayClicked = false
@@ -63,7 +64,7 @@
 
 
 <!---Common Footer--->
-<PostBody bind:post {displayType}  />
+<PostBody bind:post bind:expandPreviewText {displayType}  />
 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
 <PostActions bind:post {displayType} on:reply class="mt-2" />
 

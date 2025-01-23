@@ -32,7 +32,7 @@
     let source: string = post.post.embed_video_url ?? post.post.url!
     let clickToPlayClicked = false
     let placeholderIcon = '/img/audio-wave.webp'
-
+    let expandPreviewText: boolean
 
     // Return to thumbnail if collapsed into compact view
     $:  if (compact) clickToPlayClicked = false
@@ -75,7 +75,7 @@
                     </PostEmbedDescription>
                     
 
-                    <PostBody bind:post {displayType}  />
+                    <PostBody bind:post bind:expandPreviewText {displayType}  />
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                     <PostActions  bind:post {displayType} on:reply class="mt-2" />
                 </div>
@@ -89,7 +89,7 @@
             <div class="flex flex-col w-full gap-1">
                 <PostTitle {postType} bind:post />
 
-                <PostBody bind:post {displayType} class="my-1" >
+                <PostBody bind:post bind:expandPreviewText {displayType} class="my-1" >
                     <CompactPostThumbnail bind:post url={placeholderIcon} {displayType} float slot="thumbnail" 
                         showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true}
                         on:toggleCompact={() => compact = !compact}
@@ -125,7 +125,7 @@
         />
     {/if}
 
-    <PostBody bind:post {displayType}  />
+    <PostBody bind:post bind:expandPreviewText {displayType}  />
     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
     <PostActions  bind:post {displayType} on:reply class="mt-2"/>
 
