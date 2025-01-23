@@ -1,12 +1,9 @@
 <script lang="ts">
-    import type { PostView } from 'lemmy-js-client'
-
     import { lookup } from '$lib/MBFC/client'
     import { hrColors } from '$lib/ui/colors';
     import { linkPreviewModal } from "$lib/components/lemmy/moderation/moderation";
-    import { isAudio, isImage, isVideo, removeURLParams } from "../helpers"
-    import { page } from '$app/stores'
-    import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
+    import { removeURLParams } from "../helpers"
+    import { toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings'
 
     import Button from "$lib/components/input/Button.svelte";
@@ -17,7 +14,6 @@
         CheckBadge,
         ChevronDown, 
         ChevronUp, 
-        CloudArrowDown, 
         Eye, 
         Icon, 
         Link as LinkIcon,
@@ -29,7 +25,6 @@
 
     export let url:string | undefined
     export let postType:string = 'link'
-    export let embed_video_url: string | undefined = undefined
 
 
     function updateYTHostname(original_url:string, new_hostname:string) {
