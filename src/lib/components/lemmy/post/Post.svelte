@@ -383,8 +383,9 @@
         {:else if postType == 'youtube'}
             <YouTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
+        <!---If all else fails, render it as a text post--->
         {:else}
-            <LinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
         {/if}
 
 
