@@ -13,18 +13,18 @@
     import { theme } from '$lib/ui/colors'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-    import Button from '$lib/components/input/Button.svelte'
+    import Button                       from '$lib/components/input/Button.svelte'
     import EditHybridViewPostTypesModal from './EditHybridViewPostTypesModal.svelte'
-    import Logo from '$lib/components/ui/Logo.svelte';
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
-    import SettingButton from '$lib/components/ui/settings/SettingButton.svelte'
-    import SettingEditArray from '$lib/components/ui/settings/SettingEditArray.svelte'
-    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte'
-    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte'
-    import SettingsCollapseSection from '$lib/components/ui/settings/SettingsCollapseSection.svelte'
-    import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import Logo                         from '$lib/components/ui/Logo.svelte';
+    import MainContentArea              from '$lib/components/ui/containers/MainContentArea.svelte';
+    import MarkdownEditor               from '$lib/components/markdown/MarkdownEditor.svelte'
+    import SettingButton                from '$lib/components/ui/settings/SettingButton.svelte'
+    import SettingEditArray             from '$lib/components/ui/settings/SettingEditArray.svelte'
+    import SettingMultiSelect           from '$lib/components/ui/settings/SettingMultiSelect.svelte'
+    import SettingToggle                from '$lib/components/ui/settings/SettingToggle.svelte'
+    import SettingsCollapseSection      from '$lib/components/ui/settings/SettingsCollapseSection.svelte'
+    import SiteCard                     from '$lib/components/lemmy/SiteCard.svelte'
+    import SubNavbar                    from '$lib/components/ui/subnavbar/SubNavbar.svelte';
     
     import {
         ArrowDown,
@@ -82,6 +82,7 @@
         Inbox,
         ClipboardDocumentList,
         FaceSmile,
+        ArrowsUpDown,
     } from 'svelte-hero-icons'
     
     
@@ -594,7 +595,13 @@
             condition={$userSettings.uiState.infiniteScroll}
         />
         
-        <!---Fade Title of Read Posts--->
+        <!---Scroll Post Bodies in Feed--->
+        <SettingToggle icon={ArrowsUpDown} title="Scroll Post Body in Feed" bind:value={$userSettings.uiState.scrollPostBodyInFeed} small={true} 
+            description="When expanding a post's body text in the feed, restrict the height of the text container and, if needed, scroll 
+                the long body text insde that. Disable to expand the body in full."
+        />
+        
+        <!---Mark Posts Read on Scroll--->
         <SettingToggle title="Mark Posts Read on Scroll" icon={EnvelopeOpen} bind:value={$userSettings.markReadOnScroll}
             description="Automatically mark posts 'read' as you scroll through them in the feed."
         />
