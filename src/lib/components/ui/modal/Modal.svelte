@@ -39,7 +39,8 @@
         }
         else {
             width = "w-[95vw]"
-            height = 'h-[95vh]'
+            height = 'h-auto max-h-[95vh]'
+            //height = 'h-[95vh]'
             maximized = true
         }
     }
