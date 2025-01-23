@@ -5,6 +5,7 @@
     import { hrColors } from '$lib/ui/colors';
     import { linkPreviewModal } from "$lib/components/lemmy/moderation/moderation";
     import { isAudio, isImage, isVideo, removeURLParams } from "../helpers"
+    import { page } from '$app/stores'
     import { removeToast, toast } from '$lib/components/ui/toasts/toasts'
     import { userSettings } from '$lib/settings'
 
@@ -28,55 +29,7 @@
 
     export let url:string | undefined
     export let postType:string = 'link'
-    export let post: PostView | undefined = undefined
-    
-    async function download(url:string) {
-        let toastID: number
-        try {
-            toastID = toast({
-                title: 'Downloading',
-                type: 'success',
-                content: `Downloading ${url}`,
-                duration: 999999
-            })
-
-            let filename = url.split('/').pop()?.split('?')[0] ?? 'download'
-            let response = await fetch(url, {
-                headers: new Headers({
-                    'Origin': location.origin
-                }),
-                mode: 'cors'
-            })
-            let blob = await response.blob()
-            let blobURL = URL.createObjectURL(blob)
-            
-            let a = document.createElement('a');
-            a.download = filename;
-            a.href = blobURL;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-
-            removeToast(toastID)
-            toast({
-                title: 'Download Complete',
-                type: 'success',
-                content: `The download has completed.`
-            })
-            
-        }
-        catch {
-            toast({
-                title: 'Download Failed',
-                type: 'error',
-                content: `${url} failed to download.`
-            })
-        }
-        
-
-    
-
-    }
+    export let embed_video_url: string | undefined = undefined
 
 
     function updateYTHostname(original_url:string, new_hostname:string) {
@@ -89,6 +42,8 @@
             return original_url
         }
     }
+
+
 
     let MBFCResults = url ? lookup(url) : undefined
 </script>
@@ -206,31 +161,6 @@
             <Icon src={Eye} width={16} mini />
             Preview
         </MenuButton>
-
-        <!---Download Image--->
-        {#if isImage(url) || isVideo(url) || isAudio(url)}
-            <MenuButton title="Preview" color="info"
-                on:click={async (e) => {
-                    await download(url)
-                }}
-            >
-                <Icon src={CloudArrowDown} width={16} mini />
-                Download Media
-            </MenuButton>
-        {/if}
-
-        {#if isVideo(post?.post?.embed_video_url) || isAudio(post?.post?.embed_video_url) || isImage(post?.post?.embed_video_url) }
-            <MenuButton title="Preview" color="info"
-                on:click={async (e) => {
-                    await download(url)
-                }}
-            >
-                <Icon src={CloudArrowDown} width={16} mini />
-                Download Media
-        </MenuButton>
-        {/if}
-        
-        
 
     </Menu>
 {/if}

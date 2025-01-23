@@ -43,6 +43,7 @@
     import ImagePost        from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
     import LinkPost         from '$lib/components/lemmy/post/renderers/LinkPost.svelte'
     import LoopsPost        from '$lib/components/lemmy/post/renderers/LoopsPost.svelte'
+    import OdyseePost       from '$lib/components/lemmy/post/renderers/OdyseePost.svelte'
     import PeerTubePost     from '$lib/components/lemmy/post/renderers/PeerTubePost.svelte'
     import SongLinkPost     from '$lib/components/lemmy/post/renderers/SongLinkPost.svelte'
     import SoundCloudPost   from '$lib/components/lemmy/post/renderers/SoundCloudPost.svelte'
@@ -354,12 +355,15 @@
         {:else if postType == 'loops'}
             <LoopsPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
+        {:else if postType == 'odysee'}
+            <OdyseePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+
         {:else if postType == 'peertube'}
             <PeerTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'songlink'}
             <SongLinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
-            
+
         {:else if postType == 'soundcloud'}    
             <SoundCloudPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
