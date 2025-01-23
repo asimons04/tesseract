@@ -385,7 +385,7 @@
         
         <!---If all else fails, render it as a text post--->
         {:else}
-            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
         {/if}
 
 
