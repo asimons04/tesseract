@@ -33,6 +33,7 @@
         BugAnt,
         ChevronDoubleDown,
         FaceSmile,
+        ArrowsUpDown,
     } from "svelte-hero-icons"
     import { dispatchWindowEvent } from '$lib/ui/events';
 
@@ -105,6 +106,10 @@
                 
                 <!---Open in New Tab--->
                 <SettingToggle icon={ArrowTopRightOnSquare} title="Open Posts in New Tab" bind:value={$userSettings.openInNewTab.posts} small={true} />
+
+                <!---Scroll Post Bodies in Feed--->
+                <SettingToggle icon={ArrowsUpDown} title="Scroll Post Body in Feed" bind:value={$userSettings.uiState.scrollPostBodyInFeed} small={true} />
+
 
                 
                 <!---Use Link Preview Modals--->
