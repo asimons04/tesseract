@@ -13,5 +13,5 @@
 </script>
 
 {#if embedURL}
-    <IFrame {embedURL} {title} containerClass="{embedURL.pathname.includes('/tracks/') ? 'h-[200px]' : ''}"/>
+    <IFrame {embedURL} {title} containerClass="{embedURL.pathname.includes('/tracks/') ? 'h-[200px]' : 'min-h-[400px]'}"/>
 {/if}
