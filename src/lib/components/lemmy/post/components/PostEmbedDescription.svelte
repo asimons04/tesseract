@@ -21,14 +21,15 @@
     export let showThumbnail: boolean = true
     export let nsfw = false
     export let compact: boolean = false
-
+    export let expandDetails = $userSettings.uiState.view == 'ultra-compact' ? false : compact
+    
     const dispatcher = createEventDispatcher()
     const cardClass =  "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50"
 
     
 
     let expandPreviewText = false
-    let expandDetails = $userSettings.uiState.view == 'ultra-compact' ? false : compact
+    
 
     $:  thumbnail_available = (showThumbnail && (thumbnail_url || getOptimalThumbnailURL({urls:thumbnail_urls})) && expandDetails)
     $:  title, description, hideCFBullshit()
