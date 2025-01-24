@@ -45,6 +45,7 @@ Will be added once Sublinks is released.
 
 
 ### Full Media Support in Feed and Posts 
+  - Tidal Tracks/Albums/Playlists (new in 1.4.30)
   - Loops (new in 1.4.21)
   - Peertube
   - Spotify
@@ -261,6 +262,15 @@ In the docs folder is an example `docker-compose.yml` deployment file.  The only
 Use this example config to get you started if you want to run Tesseract alongside Lemmy-UI (e.g. under a subdomain).  Adjust the `server_name`, SSL cert paths, and `proxy_pass` upstreams with values applicable to your deployment.
 
 ```nginx
+
+# Nginx proxy for Tesseract's Proxy Cache
+# Adjust max_size from 200m as needed
+
+proxy_cache_path	/etc/nginx/conf.d/proxy_cache levels=1:2 keys_zone=imgcache:10m max_size=200m inactive=720h;
+proxy_temp_path		/etc/nginx/conf.d/proxy_cache/tmp;
+proxy_cache_key 	"$scheme$request_method$host$request_uri";
+
+
 server {
   listen 80;
   server_name tesseract.example.com;
@@ -295,6 +305,40 @@ server {
 
     # Update this to match the IP/port you are mapping from Docker.
     proxy_pass http://127.0.0.1:8080;
+  }
+
+
+  # Note: You only need this location if you are utilizing the Tesseract image proxy and cache.  Even then, you don't 
+  # strictly need this additional proxy layer, but it will improve performance significantly since Nginx is multi-threaded
+  # while NodeJS is not.
+  
+  location /image_proxy {
+    ## You would probably want to put these proxy options and default headers into an
+    ## include file since they're mostly redundant on the two locations. Shown here in 
+    ## both for clarity.
+
+    proxy_http_version              1.1;
+    send_timeout                    5m;
+    proxy_read_timeout              360;
+    proxy_send_timeout              360;
+    proxy_connect_timeout           360;
+    proxy_max_temp_file_size        0;
+
+    # Set headers to send to backend server
+    proxy_set_header  Host                  $host;
+    proxy_set_header  X-Forwarded-Host      $host;
+    proxy_set_header  X-Forwarded-For       $remote_addr;
+    proxy_set_header  X-Forwarded-Proto     $scheme;
+    proxy_set_header  X-Forwarded-Uri       $request_uri;
+    proxy_set_header  X-Forwarded-Ssl       on;
+
+
+    proxy_pass http://127.0.0.1:8080/image_proxy;
+ 
+    proxy_cache imgcache;   
+    ## Adjust proxy validity time from 720 hours accordingly
+    proxy_cache_valid any 720h;
+    add_header      X-Proxy-Cache                   $upstream_cache_status;
   }
 
 }
