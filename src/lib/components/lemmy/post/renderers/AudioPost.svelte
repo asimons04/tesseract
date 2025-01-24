@@ -29,9 +29,9 @@
     export let inViewport                   = true
     export let compact: boolean             = true
 
-    let source: string = post.post.embed_video_url ?? post.post.url!
-    let clickToPlayClicked = false
-    let placeholderIcon = '/img/audio-wave.webp'
+    let source: string | undefined          = post.post.embed_video_url ?? post.post.url!
+    let clickToPlayClicked                  = false
+    let placeholderIcon                     = '/img/audio-wave.webp'
     let expandPreviewText: boolean
 
     // Return to thumbnail if collapsed into compact view
@@ -41,8 +41,8 @@
     $:  post.post.id, post.post.url, post.post.embed_video_url, post.post.thumbnail_url, setup()
 
     function setup() {
-        if (isAudio(post.post.url))             source = imageProxyURL(post.post.url)!
-        if (isAudio(post.post.embed_video_url)) source = imageProxyURL(post.post.embed_video_url)!
+        if (post.post.url && isAudio(post.post.url))                         source = imageProxyURL(post.post.url)
+        if (post.post.embed_video_url && isAudio(post.post.embed_video_url)) source = imageProxyURL(post.post.embed_video_url)
     }
 
     onMount(() => setup())
@@ -115,8 +115,8 @@
     
 
     <!---Render as Video if Click to Play Has Been Clicked--->
-    {#if clickToPlayClicked}
-        <AudioPlayer url={source} thumbnail_url={post.post.thumbnail_url} {inViewport} autoplay/>
+    {#if clickToPlayClicked && source}
+        <AudioPlayer url={source} thumbnail_url={post.post.thumbnail_url} alt_text={post.post.alt_text ?? post.post.name} {inViewport} autoplay/>
 
     <!---Render as a Click-to-Play Thumbnail--->
     {:else}

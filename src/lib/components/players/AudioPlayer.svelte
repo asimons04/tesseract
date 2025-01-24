@@ -140,7 +140,12 @@
                 <div class="flex flex-row gap-2 items-center px-2">
                     <ZoomableImage url={thumbnail_url ?? placeholderIcon} class="w-[96px] h-[96px] rounded-lg" alt={alt_text} />
                 
-                    <div class="flex flex-col gap-2 w-[calc(100%-100px)]">
+                    <div class="flex flex-col gap-2 w-[calc(100%-100px)] h-[90px]">
+                        {#if alt_text}
+                        <span class="text-sm font-bold w-full truncate">
+                            {alt_text}
+                        </span>
+                        {/if}
                         <!---Position Slider--->
                         <Slider bind:value={player.currentTime} min={0} max={player.duration} step={1} on:change={player.adjustPosition} />
 

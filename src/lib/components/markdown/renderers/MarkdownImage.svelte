@@ -59,7 +59,7 @@
                 
             <!--- Audio--->
             {#if token.href && isAudio(token.href) }
-                <AudioPlayer url={imageProxyURL(token.href)}/>    
+                <AudioPlayer url={imageProxyURL(token.href)} alt_text={token.text}/>    
             
             <!---Direct Video--->
             {:else if token.href && isVideo(token.href)}
@@ -75,7 +75,7 @@
             {/if}
 
             <!---Show Alt Text as Caption--->
-            {#if !isEmoji && token.text && $userSettings.uiState.showAltText}
+            {#if !isEmoji && (isImage(token.href) || isVideo(token.href)) && token.text && $userSettings.uiState.showAltText}
                 <p class="background-blur-3xl bg-white/50 dark:bg-black/50 rounded-xl p-2 mt-2 text-xs text-center">{fixLemmyEncodings(token.text)}</p>
             {/if}
         </div>
