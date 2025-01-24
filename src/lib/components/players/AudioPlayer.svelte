@@ -17,9 +17,9 @@
     } from 'svelte-hero-icons';
 
     export let url: string
-    export let thumbnail_url: string | undefined
+    export let thumbnail_url: string | undefined = undefined
     export let autoplay: boolean        = false
-    export let inViewport: boolean      = false
+    export let inViewport: boolean      = true
     export let alt_text: string         = ''
 
     let placeholderIcon                 = '/img/audio-wave-static.webp'
