@@ -5,16 +5,18 @@
     import Image    from '$lib/components/lemmy/post/components/Image.svelte'
 
     export let url: string
-    export let thumbnail_url: string        = '/img/loops.png'
-    export let nsfw: boolean                = false
-    export let displayType:PostDisplayType  = 'feed'
-    export let inViewport: boolean          = true
-    export let alt_text: string             = ''
-    export let compact: boolean             = false
+    export let thumbnail_url: string |undefined = undefined
+    export let nsfw: boolean                    = false
+    export let displayType:PostDisplayType      = 'feed'
+    export let inViewport: boolean              = true
+    export let alt_text: string                 = ''
+    export let compact: boolean                 = false
 
     let embedURL: URL | undefined
     let clickToPlayClicked = false
     
+    let placeholderImage = '/img/dailymotion.png'
+
     // Parse URLs to pick out video IDs to create embed URLs
     let videoURL = new URL(url)
     
@@ -36,6 +38,6 @@
 {#if embedURL && clickToPlayClicked}
     <IFrame {embedURL} title={alt_text} />
 {:else}
-    <Image url={thumbnail_url} clickToPlay {displayType} {nsfw} zoomable={false} class="min-h-[300px]"  on:click={(e)=> clickToPlayClicked = true } />
+    <Image url={thumbnail_url || placeholderImage} clickToPlay {displayType} {nsfw} zoomable={false} class="min-h-[300px]"  on:click={(e)=> clickToPlayClicked = true } />
 {/if}
 
