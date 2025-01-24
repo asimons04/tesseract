@@ -54,7 +54,7 @@ export type PostDisplayType = 'post' | 'feed'
 
 export type PostType = 
     'audio' | 'image' | 'video' | 'loops' | 'dailymotion' | 'youtube' | 'spotify' | 'bandcamp' | 'vimeo' | 'odysee' | 'peertube' |
-    'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'text';
+    'songlink' | 'soundcloud' | 'link' |  'thumbLink' | 'tidal' |  'text';
 
 // Check whether current user can make changes to posts/comments
 // Note:  These appear to be no longer referenced anywhere.  Marking as deprecated.
@@ -289,6 +289,19 @@ export const isDailymotion = (url?:string): boolean => {
 }
 
 
+export const isTidal = (url?:string): boolean => {
+    if (!url) return false
+    try {
+        let testURL = new URL(url)
+        if ( ['tidal.com', 'listen.tidal.com', 'embed.tidal.com'].includes(testURL.hostname) && buildTidalEmbedURL(url) ) return true
+        return false
+    }
+    catch {
+        return false
+    }
+
+}
+
 // Build a Youtube-like embed link from the post URL
 export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed' = 'post', autoplay:boolean|undefined=undefined): URL|undefined => {
     if (!postURL) return
@@ -408,6 +421,28 @@ export const buildSonglinkEmbedLink = (postURL:string, displayType: 'post'|'feed
     return embedURL
 }
 
+export const buildTidalEmbedURL = (input:string): URL | undefined => {
+    let embedURL: URL | undefined
+    try {
+        let tidalPathRegex = /(\/browse)?\/(playlist|album)\//i
+        let tidalURL = new URL(input)
+
+        embedURL = new URL('https://embed.tidal.com')
+        
+
+        if (tidalURL.pathname.match(tidalPathRegex)) {
+            let itemID = tidalURL.pathname.replace(tidalPathRegex, '')
+            if (tidalURL.pathname.match(/\/playlist\//i))   embedURL.pathname = '/playlists/' + itemID
+            if (tidalURL.pathname.match(/\/album\//i))      embedURL.pathname = '/albums/' + itemID
+            return embedURL
+        }
+        return undefined
+    }
+    catch {
+        return undefined
+    }
+}
+
 
 // Returns a string representing the detected post type
 // image | video | youtube | spotify | soundcloud | link | thumbLink | text
@@ -460,6 +495,8 @@ export const postType = (post: PostView | undefined | null): PostType => {
     // DailyMotion
     if (isDailymotion(post.post.url)) return 'dailymotion'
     
+    // Tidal
+    if (isTidal(post.post.url)) return 'tidal'
 
     // These need to be last since they're basically fallbacks
     

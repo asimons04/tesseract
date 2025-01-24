@@ -47,6 +47,7 @@
     import SoundCloudPlayer     from '$lib/components/players/SoundCloudPlayer.svelte'
     import Spinner              from "$lib/components/ui/loader/Spinner.svelte"
     import SpotifyPlayer        from '$lib/components/players/SpotifyPlayer.svelte'
+    import TidalPlayer          from "$lib/components/players/TidalPlayer.svelte"
     import VideoPlayer          from '$lib/components/players/VideoPlayer.svelte'
     import VimeoPlayer          from '$lib/components/players/VimeoPlayer.svelte'
     import YouTubePlayer        from "$lib/components/players/YouTubePlayer.svelte"
@@ -61,6 +62,7 @@
         Window,
         XCircle,
     } from "svelte-hero-icons";
+    
     
     
     
@@ -276,6 +278,9 @@
                 <SpotifyPlayer url={post.post.url}  />
             {/if}
             
+            {#if post.post.url && postType=='tidal'}
+                <TidalPlayer url={post.post.url} />
+            {/if}
             
             <!---Video--->
             {#if post.post.url && postType=='video'}

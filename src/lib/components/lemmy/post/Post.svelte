@@ -27,17 +27,16 @@
 
     import { fade } from 'svelte/transition'
     import { getClient } from '$lib/lemmy'
+    import { onDestroy, onMount } from 'svelte'
     import { profile } from '$lib/auth.js'
     import { userSettings } from '$lib/settings.js'
 
     import Card from '$lib/components/ui/Card.svelte'
-
-    //import PostCardStyle from '$lib/components/lemmy/post/PostCardStyle.svelte'
-    //import PostCompactStyle from '$lib/components/lemmy/post/PostCompactStyle.svelte';
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     
     
     // New Post Renderers
+    import AudioPost from '$lib/components/lemmy/post/renderers/AudioPost.svelte'
     import BandcampPost     from '$lib/components/lemmy/post/renderers/BandcampPost.svelte'
     import DailyMotionPost  from '$lib/components/lemmy/post/renderers/DailyMotionPost.svelte'
     import ImagePost        from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
@@ -49,14 +48,11 @@
     import SoundCloudPost   from '$lib/components/lemmy/post/renderers/SoundCloudPost.svelte'
     import SpotifyPost      from '$lib/components/lemmy/post/renderers/SpotifyPost.svelte'
     import TextPost         from '$lib/components/lemmy/post/renderers/TextPost.svelte'
+    import TidalPost        from '$lib/components/lemmy/post//renderers/TidalPost.svelte'
     import VideoPost        from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
     import YouTubePost      from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
     import VimeoPost        from '$lib/components/lemmy/post/renderers/VimeoPost.svelte'
 
-
-    import { onDestroy, onMount } from 'svelte';
-    import AudioPost from './renderers/AudioPost.svelte';
-    
 
     export let post: PostView                                           // The Post to display
     export let actions: boolean             = true                      // Set to false to disable action buttons (except expand)
@@ -373,6 +369,9 @@
 
         {:else if postType == 'text'}
             <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
+
+        {:else if postType == 'tidal'}
+            <TidalPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
 
         {:else if postType == 'video'}
             <VideoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
