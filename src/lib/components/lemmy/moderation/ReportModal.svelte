@@ -13,5 +13,5 @@
 </script>
 
 <Modal bind:open title="Report Submission" icon={Flag} width="max-w-2xl">
-    <ReportItemForm {item} {reason} />
+    <ReportItemForm {item} {reason} on:reported={() => open = false} />
 </Modal>

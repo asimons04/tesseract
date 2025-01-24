@@ -25,5 +25,5 @@
 </script>
 
 <Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}  width="max-w-2xl">
-    <RemoveItemForm {item} {removed} {purge} {reason} />
+    <RemoveItemForm {item} {removed} {purge} {reason} on:finish={()=> open = false}/>
 </Modal>
