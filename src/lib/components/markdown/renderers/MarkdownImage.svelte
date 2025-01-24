@@ -15,6 +15,8 @@
     import Link from '$lib/components/input/Link.svelte';
     import PostIsInViewport from '$lib/components/lemmy/post/utils/PostIsInViewport.svelte'
     import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
+    import AudioPlayer from '$lib/components/players/AudioPlayer.svelte';
+    import VideoPlayer from '$lib/components/players/VideoPlayer.svelte';
 
     export let token: Tokens.Image
     export let options: CustomMarkdownOptions
@@ -56,17 +58,12 @@
            
                 
             <!--- Audio--->
-            {#if isAudio(token.href) }
-                <audio bind:this={media} controls preload="auto">
-                    <source src={imageProxyURL(token.href)} type="{getMimeType(token.href)}" />
-                </audio>
+            {#if token.href && isAudio(token.href) }
+                <AudioPlayer url={imageProxyURL(token.href)}/>    
             
             <!---Direct Video--->
-            {:else if isVideo(token.href)}
-                <!-- svelte-ignore a11y-media-has-caption -->
-                <video bind:this={media} class="rounded-xl max-w-full max-h-[65vh] max-w-[88vw] mx-auto" controls playsinline {loop}>
-                    <source src="{imageProxyURL(token.href)}" type="{getMimeType(token.href)}" />
-                </video>    
+            {:else if token.href && isVideo(token.href)}
+                <VideoPlayer source={imageProxyURL(token.href)} displayType="post"/>    
             
             <!---Image--->
             {:else}
