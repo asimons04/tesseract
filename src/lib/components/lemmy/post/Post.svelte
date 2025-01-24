@@ -371,7 +371,7 @@
             <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
 
         {:else if postType == 'tidal'}
-            <TidalPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
+            <TidalPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'video'}
             <VideoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
