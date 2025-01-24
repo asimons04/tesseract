@@ -11,12 +11,12 @@ import {
 } from '$lib/settings.js'
 
 // Accepts an image URL as input and determines whether to convert it into a proxied image URL or keep the original
-export function imageProxyURL(url?:string, size?:number, format?:string): string|undefined {
+export function imageProxyURL(url:string, size?:number, format?:string): string {
     const $page = get(page)
     const $userSettings = get(userSettings)
     const origin = new URL($page.url.href).origin
 
-    if (!url) return
+    if (!url) return url
 
     const applySizeFormat = function (image_url:string, size?:number, format?: string): string {
         
