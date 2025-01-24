@@ -6,7 +6,7 @@
     import { imageProxyURL } from "$lib/image-proxy"
     import { userSettings } from "$lib/settings"
     
-    import { ArrowsPointingOut, Icon } from "svelte-hero-icons";
+    import { ArrowsPointingIn, ArrowsPointingOut, Icon } from "svelte-hero-icons";
 
     export let post: PostView | undefined = undefined
     export let url: string | undefined = undefined
@@ -93,7 +93,7 @@
             {/if}
             
             <span class="flex w-fit p-1 rounded-lg relative left-[5px] bottom-[30px] text-black dark:text-white bg-slate-100/50 dark:bg-zinc-900/60">
-                <Icon src={ArrowsPointingOut} width={16} mini />
+                <Icon src={expandCompact ? ArrowsPointingIn : ArrowsPointingOut} width={16} mini />
             </span>
         </button>
     </div>
