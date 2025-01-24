@@ -49,8 +49,109 @@ removeAdmin {username}
 
 # 1.4.30
 
+# To do:
+- Add "view source" button to post/comments to show the raw markdown
+
+
+- Add icon to badge buttons:
+    - User for user
+    - UserGroup for community
+    - Window or Photo for Post (when implementing universal links)
+    - ChatBubbleLeftRight for Comment (when implementing universal links)
+
+
+
+- Add comment menu option to share a local link to a comment (e.g. via the Tesseract URL -> tess.domain.xyz/comment/{id}
+
+- Remove userSettings.media.autoplay and associated controls
+
+- Add additional feed options
+    - [ ] Enable "rubber-banding" when expanding post bodies
+    - [ ] Enable "rubber-banding" when collapsing post bodies
+    - [X] Put long post bodies in feed into scrollable areas
+    
+
 ## Bugs to Fix
-- Trim function in pre-processor breaks nested list items
+- To do:  Trim post title before processing for flairs
+- Comment button on post in feed does not respect "open post in new tab" setting
+
+
+## Bugfixes
+- Works better with Lemmy's stupid federated image proxy URLs; updated image/video/audio detection functions to account for that stupidity
+- Tesseract's (less stupidly implemented) image proxy can now handle more weird CDN formats if it has to un-proxy a thumbnail URL from Lemmy's stupid federated proxy URL
+- Custom emoji's weren't respecting aspect ratio
+- Nested list items were broken; added a regex to detect those and not trim those lines during pre-processing
+- If no spoiler title was provided, the default fallback "Spoiler" wasn't being applied
+- Re-ordered post type detection scripts so posts with `embed_video_url` aren't erroneously rendered as image posts (e.g. Imgur...somtimes)
+- Field for alt text shows up in post form if API is 0.19.4 or higher (was previously set for 0.19.5 as the minimum)
+- Don't attempt to mark dummy/preview post as read
+
+
+## Minor Changes
+
+
+### Posts
+- On 0.19.4 or higher, you can now upload a custom thumbnail on posts
+
+- Post embed descriptions tweaked a bit
+    - Link metdata title is truncated unless the description is expanded
+    - Description text area is now a scrollable div when expanded (max 20vh) rather than expanding in full
+    - Simplifed logic that truncates the non-expanded text
+    - The whole embed description is collapsible
+- Badges that are clickable now have visual indicators on hover
+
+### Audio / Video Player
+- Post images, audio, and videos now have a background with a blur effect
+- Volume setting is now saved and re-used on subsequent videos and audio posts
+
+
+### Feed
+- Feed snapshot validity is now configurable (between 5 minutes and 4 hours)
+- When expanding a post body in the feed, it only expands to a maximum of 50% of the viewport height and scrolls. Prevents opening a huge wall of text which requires a lot of scrolling in the feed to collapse again.
+- Scrollable area in the feed now includes the margins
+- Got rid of the feed margin container and just limit the width of the posts directly; width is toggleable with the same "Expand Margins" button and emulates the old behavior. Posts are *slightly* narrower now, but they're more consistent when resizing the window and less likely to need to expand the margins in odd, small width displays.
+
+
+### All Media is Now Click to Play 
+It's much more memory/network-efficient, most people don't seem to have embeds always enabled anyway, it doesn't work with Invidious/Piped, and some media *has* to be click-to-play (Loops, Dailymotion) for various reasons/limitations.
+
+Making all media click-to-play has also greatly simplified the render logic.
+
+The non click-to-play logic has been removed as well as the settings for handling those options.
+
+
+## New Features
+
+### Support for Some Tidal Embeds
+Links to Tidal albums, tracks, and playlists should now embed as interactive playlists.  As with other embeddable media, you don't need to use any kind of special share link; just the link from the browser tab.
+
+When clicking a Tidal link in the comments (or choosing 'Preview' from the post action menu on a Tidal post), the link preview modal will also show the album or playlist as an embed.
+
+
+### Limited Server Side Rendering (SSR) to Support Metadata Fetching
+A bug was submitted that when posting a link that resolves to a Tesseract resource (e.g. `https://tesseract.dubvee.org/post/lemmy.world/123456`), the metadata would be the generic Tesseract info rather than the metadata for the content.  I had been content to leave it at that (Photon and Alexandrite both behave the same way), but I figured I'd give it one more go.
+
+Tesseract is fully client-side rendered, and I'm not a huge fan of SSR in general.  That said, sometimes SSR is useful (like for providing metadata to non-browsers), but every "correct" way I've tried to implement partial SSR has met with failure.
+
+What ended up working, and working quite well, is less SSR and more heavy use of server-side hooks to redirect non-browser user agents to an internal API route that returns a bit-banged, minimal HTML document with the meta tags populated for post, comment, user, community, and site details.  
+
+Which is fun because it, like Tesseract's other internal API endpoints, runs on top of my home made Express-like router framework that runs inside the SvelteKit server hooks.
+
+It's not pretty (though it is elegant), but it works.   At some point, I'm going to be basically re-writing the whole application in either Svelte 5 or React (haven't decided yet), and I may explore a more SSR-oriented design at that phase (or not).
+
+**Metadata is Generated for the Following:**
+I have metadata generating for:
+
+- `/post/[instance]/[post_id]`
+- `/post/[post_id]`
+- `/comment/[comment_id]`
+- `/u/[username]`
+- `/u/[username@instance]`
+- `/c/[community_name]`
+- `/c/[community_name@instance]`
+- `/`  (Metadata for the default instance)
+
+
 
 ---
 
