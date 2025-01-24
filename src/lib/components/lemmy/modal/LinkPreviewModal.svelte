@@ -1,15 +1,8 @@
 <script lang="ts">
     /*
         Issues:
-
         1.  Clicking a hashtag throws an unhandled exception
-
-        2.  Bandcamp component seems to be in some kind of race condition and does not render the embed (thumbnail only)
-            - Solved: Needed to run post type detection _after_ fetching embed URL
-        3.  Preview images are too large
-            - Changed modal max width to 3xl
-        
-            4.  Clicking links inside the preview's embed description do not worok
+        4.  Clicking links inside the preview's embed description do not worok
         
     */
     
@@ -35,14 +28,28 @@
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
-    import Button from "$lib/components/input/Button.svelte"
-    import IFrame from "../post/utils/IFrame.svelte"
-    import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import Placeholder from "$lib/components/ui/Placeholder.svelte";
-    import PostLink from "$lib/components/lemmy/post/PostLink.svelte"
-    import PostMediaRenderers from "$lib/components/lemmy/post/PostMediaRenderers.svelte"
-    import Spinner from "$lib/components/ui/loader/Spinner.svelte"
-    
+    import ArchiveLinkSelector  from "$lib/components/lemmy/post/utils/ArchiveLinkSelector.svelte"
+    import AudioPlayer          from "$lib/components/players/AudioPlayer.svelte"
+    import BandcampPlayer       from "$lib/components/players/BandcampPlayer.svelte"
+    import Button               from "$lib/components/input/Button.svelte"
+    import DailyMotionPlayer    from '$lib/components/players/DailyMotionPlayer.svelte'
+    import IFrame               from "$lib/components/lemmy/post/utils/IFrame.svelte"
+    import Image                from "$lib/components/lemmy/post/components/Image.svelte"
+    import Link                 from "$lib/components/input/Link.svelte"
+    import LoopsPlayer          from "$lib/components/players/LoopsPlayer.svelte"
+    import MBFC                 from "$lib/MBFC/MBFC.svelte"
+    import Modal                from "$lib/components/ui/modal/Modal.svelte"
+    import OdyseePlayer         from "$lib/components/players/OdyseePlayer.svelte"
+    import PeerTubePlayer       from '$lib/components/players/PeerTubePlayer.svelte'
+    import Placeholder          from "$lib/components/ui/Placeholder.svelte"
+    import PostEmbedDescription from "$lib/components/lemmy/post/components/PostEmbedDescription.svelte"
+    import SongLinkPlayer       from '$lib/components/players/SongLinkPlayer.svelte'
+    import SoundCloudPlayer     from '$lib/components/players/SoundCloudPlayer.svelte'
+    import Spinner              from "$lib/components/ui/loader/Spinner.svelte"
+    import SpotifyPlayer        from '$lib/components/players/SpotifyPlayer.svelte'
+    import VideoPlayer          from '$lib/components/players/VideoPlayer.svelte'
+    import VimeoPlayer          from '$lib/components/players/VimeoPlayer.svelte'
+    import YouTubePlayer        from "$lib/components/players/YouTubePlayer.svelte"
 
     import { 
         ArrowLeftCircle,
@@ -54,6 +61,11 @@
         Window,
         XCircle,
     } from "svelte-hero-icons";
+    
+    
+    
+    
+    
     
     
     
@@ -71,6 +83,8 @@
     
     let iframeView: boolean = false
     let iframeURL: URL | undefined = undefined
+    let compact = true
+
 
     function addToHistory(item:string) {
         if (!previewHistory.includes(item)) {
@@ -95,9 +109,7 @@
             iframeURL = undefined
         }
     }
-    
-    $: loop = $userSettings.embeddedMedia.loop ?? false
-    $: autoplay = $userSettings.embeddedMedia.autoplay ?? false
+
     $: url, loadData()
     $: url, setIframeURL()
 
@@ -160,7 +172,7 @@
     }
 </script>
 
-<Modal bind:open icon={LinkIcon} height="max-h-full" width="max-w-3xl" title={'Preview'} allowMaximize>
+<Modal bind:open preventCloseOnClickOut icon={LinkIcon} height="max-h-full" width="max-w-3xl" title={'Preview'} allowMaximize>
 
     <!---Show link/mbfc while loading.  If Metadata fails to fetch, sill show the URL and MBFC (if available)--->
     {#if !iframeView && (loading || fetchError)}
@@ -168,7 +180,11 @@
 
             
             {#if post}
-                <PostLink bind:post {displayType} />
+                <PostEmbedDescription url={post.post.url} compact>
+                    <ArchiveLinkSelector url={post.post?.url} {postType}/>
+                    <Link class="text-xs" href={post.post?.url} newtab={true} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                    <MBFC bind:post rightJustify={true}/>
+                </PostEmbedDescription>
             {/if}
 
             {#if loading && !iframeView}
@@ -185,17 +201,97 @@
         </div>
     {/if}
 
+    <!---Render the Link Preview--->
     {#if post && !loading && !fetchError && !iframeView}
 
-        <div class="flex flex-col gap-2 w-full" transition:slide>    
+        <div class="flex flex-col gap-2 w-full max-h-full {['link', 'thumbLink'].includes(postType) ? 'min-h-[450px]' : ''}" transition:slide>    
+            <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail={() => compact = !compact}
+                description={post.post.embed_description} 
+                url={post.post.url}
+                showThumbnail
+                thumbnail_url={post.post.thumbnail_url}
+                {compact}
+                expandDetails={['link', 'thumbLink'].includes(postType)}
+            >
+                
+                <ArchiveLinkSelector url={post.post?.url} {postType}/>
+                <Link class="text-xs" href={post.post?.url} newtab={true} title={post.post?.url} domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap/>
+                <MBFC bind:post rightJustify={true}/>
+                
+    
+            </PostEmbedDescription>
+            
+            <!---Audio File--->
+            {#if post.post.url && postType == 'audio'}
+                <AudioPlayer url={post.post.url} />
+            {/if}
+            
+            <!---Bandcamp--->
+            {#if post.post.embed_video_url && postType == 'bandcamp'}
+                <BandcampPlayer embed_url={post.post.embed_video_url} thumbnail_url={post.post.thumbnail_url} alt_text={post.post.name} {displayType}  />
+            {/if}
 
-            <!--- Title --->
-            <div class="flex flex-row justify-between w-full">
-                {#if data?.metadata?.title}
-                    <h1 class="!text-base !font-bold">{data.metadata.title}</h1>
-                {/if}
-            </div>
-            <PostMediaRenderers bind:post bind:inViewport={open} bind:displayType bind:postType bind:autoplay bind:loop />
+            <!---DailyMotion--->
+            {#if post.post.url && postType == 'dailymotion'}
+                <DailyMotionPlayer {displayType}  url={post.post.url}  thumbnail_url={post.post.thumbnail_url} />
+            {/if}
+
+            <!---Image--->
+            {#if post.post.url && postType == 'image'}
+                <Image url={post.post.url} zoomable {displayType} />
+            {/if}
+
+            <!---Link with Thumbnail--->
+            {#if !compact && postType=='thumbLink' && post.post.thumbnail_url}
+                <Image url={post.post.thumbnail_url} zoomable {displayType} />
+            {/if}
+
+            <!---Loops--->
+            {#if post.post.url && postType=='loops'}
+                <LoopsPlayer url={post.post.url} thumbnail_url={post.post.thumbnail_url} {displayType} />
+            {/if}
+
+            <!----Odysee--->
+            {#if post.post.url && postType=='odysee'}
+                <OdyseePlayer url={post.post.url}  />
+            {/if}
+
+            <!---Peertube--->
+            {#if post.post.embed_video_url && postType=='peertube'}
+                <PeerTubePlayer url={post.post.embed_video_url}  />
+            {/if}
+
+            <!---SongLink--->
+            {#if post.post.url && postType=='songlink'}
+                <SongLinkPlayer url={post.post.url} {displayType} />
+            {/if}
+
+            <!---Soundcloud--->
+            {#if post.post.url && postType=='soundcloud'}
+                <SoundCloudPlayer url={post.post.url} embed_video_url={post.post.embed_video_url}  />
+            {/if}
+
+            <!---Spotify--->
+            {#if post.post.url && postType=='spotify'}
+                <SpotifyPlayer url={post.post.url}  />
+            {/if}
+            
+            
+            <!---Video--->
+            {#if post.post.url && postType=='video'}
+                <VideoPlayer source={post.post.embed_video_url ?? post.post.url} thumbnail={post.post.thumbnail_url} {displayType}/>
+            {/if}
+
+            <!---Vimeo--->
+            {#if post.post.url && postType=='vimeo'}
+                <VimeoPlayer url={post.post.url} {displayType}  />
+            {/if}
+
+            <!---YouTube--->
+            {#if post.post.url && postType == 'youtube'}
+                <YouTubePlayer url={post.post.url}/>
+            {/if}
+            
         </div>
     {/if}
 
@@ -212,7 +308,7 @@
         </Button>
         
         <span class="flex flex-row gap-2">
-            <!---Go  Back to previos preview--->
+            <!---Go  Back to previous preview--->
             <Button color="tertiary-border" icon={ArrowLeftCircle} iconSize={20} size="lg" title="Back" on:click={() => goBack() } disabled={previewHistory.length < 2}>
                 <span class="hidden md:flex">Back</span>
             </Button>
