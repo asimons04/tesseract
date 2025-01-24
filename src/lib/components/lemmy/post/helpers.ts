@@ -424,7 +424,7 @@ export const buildSonglinkEmbedLink = (postURL:string, displayType: 'post'|'feed
 export const buildTidalEmbedURL = (input:string): URL | undefined => {
     let embedURL: URL | undefined
     try {
-        let tidalPathRegex = /(\/browse)?\/(playlist|album)\//i
+        let tidalPathRegex = /(\/browse)?\/(playlist|track|album)\//i
         let tidalURL = new URL(input)
 
         embedURL = new URL('https://embed.tidal.com')
@@ -432,8 +432,10 @@ export const buildTidalEmbedURL = (input:string): URL | undefined => {
 
         if (tidalURL.pathname.match(tidalPathRegex)) {
             let itemID = tidalURL.pathname.replace(tidalPathRegex, '')
-            if (tidalURL.pathname.match(/\/playlist\//i))   embedURL.pathname = '/playlists/' + itemID
-            if (tidalURL.pathname.match(/\/album\//i))      embedURL.pathname = '/albums/' + itemID
+            if (tidalURL.pathname.match(/\/playlist\//i))       embedURL.pathname = '/playlists/' + itemID
+            if (tidalURL.pathname.match(/\/album\//i))          embedURL.pathname = '/albums/' + itemID
+            if (tidalURL.pathname.match(/\/track\//i))          embedURL.pathname = '/tracks/' + itemID
+
             return embedURL
         }
         return undefined
