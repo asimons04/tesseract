@@ -69,6 +69,7 @@
     onDestroy(() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Component destroyed; saving data")
         controller.takeSnapshot()
+        controller.reset()
     })
 
     $:  person_id,      controller.person_id = person_id
@@ -197,12 +198,19 @@
 
         reset: function(clearSnapshot?:boolean) {
             if (clearSnapshot) this.clearSnapshot()
-            last_item = -1
+            for (let i=0; i < submissions.length; i++) {
+                //@ts-ignore
+                submissions[i] = null
+            }
             submissions = submissions = []
+            last_item = -1
             loadError = false
             page = 1
             user = undefined
             this.loadedFromSnapshot = false
+            
+
+
         },
 
         scrollBottom: function() {
