@@ -169,11 +169,14 @@
                         posts: [...posts.posts, ...batch.posts]
                     }
                     
+                    
                     if (posts.posts.length > $userSettings.uiState.maxScrollPosts) {
-                        const oldPosts = posts.posts.splice(0, (posts.posts.length - $userSettings.uiState.maxScrollPosts))
-                        truncatedPosts = [...truncatedPosts, ...oldPosts]
+                        posts.posts.splice(0, (posts.posts.length - $userSettings.uiState.maxScrollPosts))
+                        //const oldPosts = posts.posts.splice(0, (posts.posts.length - $userSettings.uiState.maxScrollPosts))
+                        //truncatedPosts = [...truncatedPosts, ...oldPosts]
                         this.truncated = true
                     }
+                    
                     
                 }
                 else {
@@ -181,9 +184,10 @@
                     posts = {...batch}
                 }
                 
-                posts.posts = [...findCrossposts(posts.posts)]
+                //posts.posts = [...findCrossposts(posts.posts)]
                 posts = posts
                 
+                // Reset the clock on the last refresh time to keep the snapshot alive
                 this.last_refreshed = Math.round(new Date().getTime() /1000)
                 
                 // Store the data after each fetch?
