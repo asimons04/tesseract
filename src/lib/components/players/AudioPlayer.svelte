@@ -163,7 +163,7 @@
                 <div class="flex flex-row gap-2 w-full items-center">
                     <Button title={player.paused ? 'Play' : 'Pause'} size="square-md" color="secondary" class="rounded-full h-[64px] w-[64px]" icon={player.paused ? Play: Pause} iconSize={36} on:click={() => player.paused ? player.play() : player.pause()} />
                     <Button title={player.loop ? 'Disable Loop' : 'Enable Loop'} size="square-md" color="secondary" class="rounded-full h-[64px] w-[64px] {player.loop ? '!text-amber-500' : ''}" icon={ArrowPathRoundedSquare} iconSize={36} on:click={() => player.loop = !player.loop} />
-                    <!---<Button title="Download" size="square-md" color="secondary" class="rounded-full h-[64px] w-[64px]" href={url} download={url} newtab={true} icon={CloudArrowDown} iconSize={36} />--->
+                    <Button title="Download" size="square-md" color="secondary" class="rounded-full h-[64px] w-[64px]" href={url} download={url} newtab={true} icon={CloudArrowDown} iconSize={36} />
                     
                     <!---Playback Speed Slider--->
                     <div class="flex flex-col gap-1 w-[96px] h-[64px]">
