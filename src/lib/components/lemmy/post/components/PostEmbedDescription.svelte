@@ -106,7 +106,7 @@
                         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
                         on:click={() => { expandPreviewText = !expandPreviewText }}
                     >
-                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} width={24} mini 
+                        <Icon src={expandPreviewText ? ChevronUp : ChevronDown} width={20} mini 
                             class="{showThumbnail && thumbnail_url ? 'mr-[68px] sm:mr-[100px] md:mr-[132px]' : ''}"
                         />
                     </Button>
