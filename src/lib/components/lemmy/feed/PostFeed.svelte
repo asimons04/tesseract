@@ -70,7 +70,7 @@
         next_page: undefined,
         posts: [] as PostView[]
     }
-    let truncatedPosts: PostView[] = []
+    let truncatedPostCount = 0
 
     // Controller that can be expored and used outside the component. Includes getters/setters for parameters.
     export const controller = {
@@ -171,9 +171,10 @@
                     
                     
                     if (posts.posts.length > $userSettings.uiState.maxScrollPosts) {
-                        posts.posts.splice(0, (posts.posts.length - $userSettings.uiState.maxScrollPosts))
-                        //const oldPosts = posts.posts.splice(0, (posts.posts.length - $userSettings.uiState.maxScrollPosts))
-                        //truncatedPosts = [...truncatedPosts, ...oldPosts]
+                        let truncateCount = posts.posts.length - $userSettings.uiState.maxScrollPosts
+
+                        posts.posts.splice(0, truncateCount)
+                        truncatedPostCount += truncateCount
                         this.truncated = true
                     }
                     
@@ -222,13 +223,9 @@
                 posts.posts[i] = null
             }
 
-            for (let i=0; i < truncatedPosts.length; i++) {
-                //@ts-ignore
-                truncatedPosts[i] = null    
-            }
             
             posts.posts = [] as PostView[]
-            truncatedPosts = truncatedPosts = []
+            truncatedPostCount = 0
             this.truncated = false
             posts = posts
 
@@ -299,7 +296,7 @@
                 if ('show_nsfw' in pageSnapshot)         show_nsfw = pageSnapshot.show_nsfw
 
                 if ('truncated' in pageSnapshot)         this.truncated = pageSnapshot.truncated
-                if ('truncatedPosts' in pageSnapshot)    truncatedPosts = [...pageSnapshot.truncatedPosts]
+                if ('truncatedPostCount' in pageSnapshot)    truncatedPostCount = pageSnapshot.truncatedPostCount
                 if ('page' in pageSnapshot)              this.page = pageSnapshot.page
                 if ('last_clicked_post' in pageSnapshot) this.last_clicked_post = pageSnapshot.last_clicked_post
                 
@@ -357,7 +354,7 @@
                 last_refreshed: this.last_refreshed,
                 page: this.page,
                 posts: {...posts},
-                truncatedPosts: [...truncatedPosts],
+                truncatedPostCount: truncatedPostCount,
                 truncated: this.truncated,
                 last_clicked_post: this.last_clicked_post,
                 page_cursors: [...this.page_cursors]
@@ -718,9 +715,9 @@
                     <span>
                         Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
                     </span>
-                    {#if controller.truncated && truncatedPosts.length > 0}
+                    {#if controller.truncated && truncatedPostCount > 0}
                         <span>
-                            {truncatedPosts.length} older posts have been hidden. Refresh to see them.
+                            {truncatedPostCount} older posts have been hidden. Refresh to see them.
                         </span>
                     {/if}
 
