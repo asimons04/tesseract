@@ -81,31 +81,32 @@
     let postType: PostType
     let displayType='post' as PostDisplayType    
     let fetchError = false
-    let previewHistory = [] as string[]
     
     let iframeView: boolean = false
     let iframeURL: URL | undefined = undefined
     let compact = true
-
-
-    function addToHistory(item:string) {
-        if (!previewHistory.includes(item)) {
-            previewHistory.push(item)
-            previewHistory = previewHistory
-        }
-    }
-
-    function goBack() {
-        previewHistory.pop()
-        url = previewHistory[previewHistory.length-1]
-        previewHistory = previewHistory
-    }
+    let title = "Preview"
+    let iframeElement: HTMLIFrameElement | undefined = undefined
+    let noPreview = false
 
     async function setIframeURL() {
         try {
+            //Test that the URL is valid
             iframeURL = new URL(url)
-            if (iframe || url.endsWith('.pdf')) iframeView = true
-            if (iframeURL.hostname.includes('wikipedia.org')) iframeView = true
+            
+            // PDF Links
+            if (iframe || url.endsWith('.pdf')) {
+                title = "Document Viewer"
+                iframeView = true
+                noPreview = true
+            }
+
+            // Wikipedia
+            if (iframeURL.hostname.includes('wikipedia.org')) {
+                title = "Wikipedia"
+                iframeView = true
+                noPreview = true
+            }
         }
         catch {
             iframeURL = undefined
@@ -113,16 +114,17 @@
     }
 
     $: url, loadData()
-    $: url, setIframeURL()
-
     
 
     async function loadData() {
+        // Some links should always be an iframe (PDF, Wikipedia so far).  If the link is iframe-able, stop processing
+        setIframeURL()
+        if (iframeView) return
+        
+
         loading = true
         post = undefined
         
-        addToHistory(url)
-
         if (!url) {
             open = false
             toast({
@@ -174,7 +176,7 @@
     }
 </script>
 
-<Modal bind:open preventCloseOnClickOut icon={LinkIcon} height="max-h-full" width="max-w-3xl" title={'Preview'} allowMaximize>
+<Modal bind:open preventCloseOnClickOut icon={LinkIcon} height="max-h-full" width="max-w-3xl" {title} allowMaximize>
 
     <!---Show link/mbfc while loading.  If Metadata fails to fetch, sill show the URL and MBFC (if available)--->
     {#if !iframeView && (loading || fetchError)}
@@ -302,7 +304,7 @@
 
     {#if iframeView}
         <div class="flex flex-col gap-2 w-full min-h-[250px]" transition:slide>
-            <IFrame embedURL={new URL(url)} />
+            <IFrame bind:iframe={iframeElement} embedURL={new URL(url)} maximized={true} />
         </div>
     {/if}
     
@@ -313,11 +315,6 @@
         </Button>
         
         <span class="flex flex-row gap-2">
-            <!---Go  Back to previous preview--->
-            <Button color="tertiary-border" icon={ArrowLeftCircle} iconSize={20} size="lg" title="Back" on:click={() => goBack() } disabled={previewHistory.length < 2}>
-                <span class="hidden md:flex">Back</span>
-            </Button>
-
             <!---Copy Link to Clipboard--->
             <Button color="tertiary-border" icon={Share} iconSize={20} size="lg" title="Copy Link" 
                 on:click={() => {
@@ -333,7 +330,7 @@
             </Button>
 
             <!---Try to View Link in iFrame--->
-            <span class="hidden md:flex">
+            {#if !noPreview}
                 <Button color="tertiary-border" size="lg" iconSize={20} icon={iframeView ? Eye : Window}
                     disabled={!iframeURL}
                     on:click={() => iframeView = !iframeView}
@@ -342,7 +339,7 @@
                         {iframeView ? 'Preview' : 'IFrame'}
                     </span>
                 </Button>
-            </span>
+            {/if}
         </span>
         
         
