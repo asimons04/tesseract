@@ -27,7 +27,7 @@
     let loop = $userSettings.embeddedMedia.loop
 
     // In Lemmy-land, the markdown "title" attribute is used to denote a custom emoji and is typically the short code for it.
-    let isEmoji = token.title ? true : false
+    let isEmoji = isImage(token.href) && (token.title ? true : false)
 
     $: inViewport, pauseMedia()
 
@@ -35,15 +35,14 @@
         if (media && !inViewport) media.pause()
     }
 
-    function getMimeType(url:string) {
-        if (new URL(url).pathname.endsWith('mp4') || new URL(url).pathname.endsWith('m4v') || new URL(url).pathname.endsWith('mov')) return 'video/mp4'
-        if (new URL(url).pathname.endsWith('webm')) return 'video/webm'
-        if (new URL(url).pathname.endsWith('mp3')) return 'audio/mpeg'
-        if (new URL(url).pathname.endsWith('aac')) return 'audio/aac'
-        if (new URL(url).pathname.endsWith('oga')) return 'audio/ogg'
-        if (new URL(url).pathname.endsWith('opus')) return 'audio/opus'
-
-        return undefined
+    function isImageURL(url:string|undefined|null): boolean {
+        if (!url) return false
+        try {
+            // If this fails, catch will return false
+            let testURL = new URL(url)
+            return isImage(url)
+        }
+        catch { return false }
     }
     
 </script>
@@ -59,11 +58,11 @@
                 
             <!--- Audio--->
             {#if token.href && isAudio(token.href) }
-                <AudioPlayer url={imageProxyURL(token.href)} alt_text={token.text}/>    
+                <AudioPlayer url={imageProxyURL(token.href)} alt_text={token.text} thumbnail_url={isImageURL(token.title) ? token.title?.toString() : undefined} />    
             
             <!---Direct Video--->
             {:else if token.href && isVideo(token.href)}
-                <VideoPlayer source={imageProxyURL(token.href)} displayType="post"/>    
+                <VideoPlayer source={imageProxyURL(token.href)} alt_text={token.text} displayType="post"/>    
             
             <!---Image--->
             {:else}
