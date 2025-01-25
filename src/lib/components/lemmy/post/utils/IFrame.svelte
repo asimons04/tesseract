@@ -31,6 +31,7 @@
                 loading="lazy"
                 allowfullscreen 
                 title="Embedded Content: {title}"
+                target="_top"
             >
             </iframe>
         </div>
