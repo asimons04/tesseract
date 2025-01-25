@@ -10,7 +10,10 @@
 
     import { 
         ChevronDown,
-        ChevronUp
+        ChevronUp,
+
+        Icon
+
     } from 'svelte-hero-icons'
     
   
@@ -84,11 +87,11 @@
 
 <!---Expand/Collapse Button--->
 {#if !hideExpandButton }
-    <Button color="tertiary" size="square-sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
+    <Button color="tertiary" size="sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
         iconClass="{offsetExpandButton ? 'ml-[128px]' : ''}"
         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
-        icon={expandPreviewText ? ChevronUp : ChevronDown}
-        iconSize={24}
+        icon={expandPreviewText ? undefined : ChevronDown}
+        iconSize={20}
         on:click={() => {
             expandPreviewText = !expandPreviewText
 
@@ -96,7 +99,15 @@
             //if (!expandPreviewText) dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
             dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
         }}
-    />
+    >
+        {#if expandPreviewText}
+        <span class="flex flex-row gap -1 text-xs mx-auto opacity-80">
+            <Icon src={ChevronUp} width={20} mini />
+            Collapse
+            <Icon src={ChevronUp} width={20} mini />
+        </span>
+        {/if}
+    </Button>
         
 
 {/if}
