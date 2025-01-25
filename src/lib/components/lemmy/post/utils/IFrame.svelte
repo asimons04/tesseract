@@ -2,6 +2,7 @@
     export let embedURL:URL
     export let title:string             = ''
     export let containerClass: string   = ''
+    export let maximized: boolean       = false
 </script>
 
 <style>
@@ -23,7 +24,7 @@
 
 <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full {containerClass}">
     <div class="ml-auto mr-auto max-w-full">
-        <div class="flexiframe-container rounded-2xl max-w-screen max-h-[480px] mx-auto">
+        <div class="flexiframe-container rounded-2xl max-w-screen {maximized ? 'h-[80vh]' : 'max-h-[480px]'} mx-auto">
             <iframe 
                 class="flexiframe p-1 rounded-2xl"
                 src="{embedURL.href}" 
