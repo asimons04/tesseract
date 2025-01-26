@@ -79,14 +79,13 @@
     let data: GetSiteMetadataResponse|undefined = undefined
     let post: PostView | undefined  = undefined
     let postType: PostType
-    let displayType='post' as PostDisplayType    
+    let displayType='feed' as PostDisplayType    
     let fetchError = false
     
     let iframeView: boolean = false
     let iframeURL: URL | undefined = undefined
     let compact = true
     let title = "Preview"
-    let iframeElement: HTMLIFrameElement | undefined = undefined
     let noPreview = false
 
     async function setIframeURL() {
@@ -304,7 +303,7 @@
 
     {#if iframeView}
         <div class="flex flex-col gap-2 w-full min-h-[250px]" transition:slide>
-            <IFrame bind:iframe={iframeElement} embedURL={new URL(url)} maximized={true} />
+            <IFrame embedURL={iframeURL ?? new URL(url)} maximized={true} />
         </div>
     {/if}
     
