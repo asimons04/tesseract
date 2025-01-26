@@ -1,5 +1,6 @@
 <script lang="ts">
     import { isAdmin } from '$lib/components/lemmy/moderation/moderation'
+    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { site } from '$lib/lemmy'
 
@@ -13,10 +14,13 @@
         PencilSquare,
         Plus
     } from 'svelte-hero-icons'
+    
 
     export let size:number = 28
 
     let selectedClass = '!text-sky-700 dark:!text-sky-500 font-bold'
+
+    $: inCommunity = $page.url.pathname.includes('/c/') && $page.params.community_name
 </script>
 
 {#if $profile?.jwt}
@@ -50,14 +54,20 @@
         Post
     </MenuButton>
 
+    {#if inCommunity}
+        <MenuButton link
+            href="/c/{$page.params.community_name}/create_post" 
+            disabled={!$profile?.jwt}
+        >
+            <Icon src={PencilSquare} mini width={16} />
+            Post in c/{$page.params.community_name.split('@')[0]}
+        </MenuButton>
+    {/if}
+
     <MenuButton
         link
         href="/create/community"
-        disabled={
-            !$profile?.jwt ||
-            !$profile?.user ||
-            ($site?.site_view.local_site.community_creation_admin_only && !isAdmin($profile.user))
-        }
+        disabled={ !$profile?.jwt || ($site?.site_view.local_site.community_creation_admin_only && !isAdmin($profile.user)) }
     >
         <Icon src={Newspaper} mini width={16} />
         Community
