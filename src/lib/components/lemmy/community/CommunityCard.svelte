@@ -10,13 +10,14 @@
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
-    import Button from '$lib/components/input/Button.svelte'
-    import CollapseButton from '$lib/components/ui/CollapseButton.svelte'
-    import CommunityCardSmall from './CommunityCardSmall.svelte';
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte'
-    import StickyCard from '$lib/components/ui/StickyCard.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    import Button                   from '$lib/components/input/Button.svelte'
+    import CollapseButton           from '$lib/components/ui/CollapseButton.svelte'
+    import CommunityCardSmall       from './CommunityCardSmall.svelte';
+    import CommunitySubscribeButton from './CommunitySubscribeButton.svelte'
+    import Markdown                 from '$lib/components/markdown/Markdown.svelte'
+    import SidebarFooter            from '$lib/components/ui/SidebarFooter.svelte'
+    import StickyCard               from '$lib/components/ui/StickyCard.svelte'
+    import UserLink                 from '$lib/components/lemmy/user/UserLink.svelte'
     
 
     import {
@@ -29,36 +30,11 @@
         PencilSquare,
         Rss,
     } from 'svelte-hero-icons'
+    import CommunityCreatePostButton from './CommunityCreatePostButton.svelte';
+    
 
     export let community_view: CommunityView 
     export let moderators: Array<CommunityModeratorView> = []
-    
-   
-    let loading = {
-        subscribing: false,
-    }
-
-
-    async function subscribe() {
-        if (!$profile?.jwt) return
-        loading.subscribing = true
-        const subscribed = community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending'
-        try {
-            await getClient().followCommunity({
-                community_id: community_view.community.id,
-                follow: !subscribed,
-            })
-        } catch (error) {
-            toast({ content: error as any, type: 'error' })
-        }
-
-        community_view.subscribed = subscribed ? 'NotSubscribed' : 'Subscribed'
-        addSubscription(community_view.community, !subscribed)
-
-        loading.subscribing = false
-    }
-
-
 
 </script>
 
@@ -73,34 +49,12 @@
         <div class="w-full mt-2 flex flex-row gap-2 hidden xl:flex">
 
             <!---Create Post--->
-            <Button color="tertiary-border" class="w-[45%]" size="lg"
-                on:click={() => createPost(community_view.community)}
-                icon={PencilSquare}
-                disabled={
-                    (community_view.community.posting_restricted_to_mods && !amMod($profile?.user, community_view.community)) || 
-                    community_view.community.removed ||
-                    (!$profile?.jwt)
-                }
-            >
-                Create Post
-            </Button>
+            <CommunityCreatePostButton {community_view} class="w-[45%]" />
 
             <!---Subscrube/UnSubscribe--->
-            <Button color="tertiary-border" class="w-[45%]" size="lg" loading={loading.subscribing}
-                disabled={loading.subscribing || community_view.community.removed || !$profile?.jwt} 
-                icon={community_view.subscribed == 'Subscribed' ? Minus : Rss}
-                on:click={ (e) => {
-                    e.stopPropagation();
-                    subscribe();
-                }}
-            >
-                {
-                    (community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending')
-                        ? 'Unsubscribe'
-                        : 'Subscribe'
-                }
-            </Button>
+            <CommunitySubscribeButton {community_view} class="w-[45%]" />
 
+            <!---Bring Up Community Modal--->
             <Button color="tertiary-border" class="w-[10%]" size="square-lg" icon={EllipsisVertical} iconSize={20}  title="Community Actions"
                 on:click={() => {
                     communityProfileModal(community_view.community)
