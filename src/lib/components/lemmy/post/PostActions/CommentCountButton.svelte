@@ -19,6 +19,8 @@
 
 
 <Button
+    href={`/post/${getInstance()}/${post.post.id}`}
+    newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
     size="sm"
     class="!text-inherit {$$props.class}"
     title="{post.counts.comments} Comments {post.unread_comments > 0 ? `(${post.unread_comments} new)` : ''}"
@@ -26,10 +28,9 @@
     icon={ChatBubbleLeftRight}
     iconSize={20}
     on:click={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if ($userSettings.openInNewTab.posts && displayType=='feed') window.open(`/post/${getInstance()}/${post.post.id}`)
-        else {
+        if (!($userSettings.openInNewTab.posts && displayType=='feed')) {
+            e.preventDefault()
+            e.stopPropagation()
             dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
             goto(`/post/${getInstance()}/${post.post.id}`)
         }
