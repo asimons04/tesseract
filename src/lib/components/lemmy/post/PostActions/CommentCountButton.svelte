@@ -20,8 +20,6 @@
 
 <Button
     size="sm"
-    href={`/post/${getInstance()}/${post.post.id}`}
-    newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
     class="!text-inherit {$$props.class}"
     title="{post.counts.comments} Comments {post.unread_comments > 0 ? `(${post.unread_comments} new)` : ''}"
     color="tertiary-border"
@@ -30,8 +28,11 @@
     on:click={(e) => {
         e.preventDefault()
         e.stopPropagation()
-        dispatchWindowEvent('clickIntoPost', {post_id: post.post.id}) 
-        goto(`/post/${getInstance()}/${post.post.id}`)
+        if ($userSettings.openInNewTab.posts && displayType=='feed') window.open(`/post/${getInstance()}/${post.post.id}`)
+        else {
+            dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
+            goto(`/post/${getInstance()}/${post.post.id}`)
+        }
     }}
 >
     <span class="text-xs opacity-80">    
