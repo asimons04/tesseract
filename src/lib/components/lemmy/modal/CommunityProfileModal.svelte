@@ -11,36 +11,31 @@
         subscribe 
     } from '$lib/components/lemmy/community/helpers'
     
-    import { StorageController } from '$lib/storage-controller'
+    import { StorageCache} from '$lib/storage-controller'
 
     import { addCommunityToGroup, amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events'
-    import { expoIn } from "svelte/easing"
     import { fullCommunityName } from "$lib/util"
     import { getClient } from "$lib/lemmy"
     import { goto } from "$app/navigation"
-    import { instance } from "$lib/instance"
     import { onMount } from "svelte";
     import { profile } from '$lib/auth'
-    import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
 
-    import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
-    import Button from "$lib/components/input/Button.svelte"
-    import CommunityCardSmall from "$lib/components/lemmy/community/CommunityCardSmall.svelte"
-    import PostFeed from "../feed/PostFeed.svelte"
-    import EmbeddableModlog from "./components/EmbeddableModlog.svelte"
-    import Markdown from "$lib/components/markdown/Markdown.svelte"
-    import MarkdownEditor from "$lib/components/markdown/MarkdownEditor.svelte"
-    
-    import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import ModalPanel from './components/ModalPanel.svelte'
-    import ModalPanelHeading from './components/ModalPanelHeading.svelte'
-    import ModalScrollArea from "./components/ModalScrollArea.svelte"
-
-    import PostForm from "../post/PostForm.svelte"
-    import Spinner from "$lib/components/ui/loader/Spinner.svelte"
-    import UserLink from "../user/UserLink.svelte"
+    import BanUnbanCommunityForm    from "./components/BanUnbanCommunityForm.svelte"
+    import Button                   from "$lib/components/input/Button.svelte"
+    import CommunityCardSmall       from "$lib/components/lemmy/community/CommunityCardSmall.svelte"
+    import PostFeed                 from "$lib/components/lemmy/feed/PostFeed.svelte"
+    import EmbeddableModlog         from "$lib/components/lemmy/modal/components/EmbeddableModlog.svelte"
+    import Markdown                 from "$lib/components/markdown/Markdown.svelte"
+    import MarkdownEditor           from "$lib/components/markdown/MarkdownEditor.svelte"
+    import Modal                    from "$lib/components/ui/modal/Modal.svelte"
+    import ModalPanel               from '$lib/components/lemmy/modal/components/ModalPanel.svelte'
+    import ModalPanelHeading        from '$lib/components/lemmy/modal/components/ModalPanelHeading.svelte'
+    import ModalScrollArea          from "$lib/components/lemmy/modal/components/ModalScrollArea.svelte"
+    import PostForm                 from "$lib/components/lemmy/post/PostForm.svelte"
+    import Spinner                  from "$lib/components/ui/loader/Spinner.svelte"
+    import UserLink                 from "$lib/components/lemmy/user/UserLink.svelte"
     
     import { 
         ArrowLeft,
@@ -70,7 +65,7 @@
     export let community: Community | undefined
     export let open: boolean = false
     
-    const storage = new StorageController({
+    const storage = new StorageCache({
         type: 'session',
         ttl: 15,
         useCompression: true   
@@ -131,18 +126,21 @@
         loading = true
         
         communityLookupName = `${community.name}@${new URL(community.actor_id).hostname}`
-        storageKey = `getCommunity_${$instance}:${communityLookupName}`
         
         try {
-            communityDetails = await storage.get(storageKey)
-            if (!communityDetails) {    
+            let cachedCommunityResponse = await storage.getCommunityResponse(communityLookupName)
+            
+            if (!cachedCommunityResponse) {    
                 
                 communityDetails = await getClient().getCommunity({
                     name: communityLookupName
                 })
 
-                await storage.put(storageKey, communityDetails)
+                await storage.putCommunityResponse(communityDetails)
             }
+            else {
+                communityDetails = cachedCommunityResponse
+            }   
         }
         catch {
             try {
@@ -156,6 +154,8 @@
                     communityDetails = await getClient().getCommunity({
                         name: `${community.name}@${new URL(community.actor_id).hostname}`
                     })
+
+                    if (communityDetails) storage.putCommunityResponse(communityDetails)
                 }
                 else {
                     toast({

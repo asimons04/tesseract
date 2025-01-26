@@ -1,34 +1,28 @@
-import { StorageController } from '$lib/storage-controller'
+import { StorageCache } from '$lib/storage-controller'
 
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
-import { instance } from '$lib/instance'
 import { profile } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
-import type { GetCommunityResponse } from 'lemmy-js-client'
 
 
-const storage = new StorageController({
+const storage = new StorageCache({
     type: 'session',
     ttl: 15,
     useCompression: true   
 })
 
-const $instance = get(instance)
-
 export async function load(req: any) {
-    const storageKey = `getCommunity_${$instance}:${req.params.community_name}`
-
     try {
-       let getCommunityResponse: GetCommunityResponse | undefined = await storage.get(storageKey)
+       let getCommunityResponse = await storage.getCommunityResponse(req.params.community_name)
         
        if (!getCommunityResponse) {
             getCommunityResponse = await getClient().getCommunity({
                 name: req.params.community_name,
             })
 
-            storage.put(storageKey, getCommunityResponse)
+            storage.putCommunityResponse(getCommunityResponse)
         }
 
         return {
