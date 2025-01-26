@@ -40,7 +40,7 @@
             title = ''
             description = ''
         }
-        if (!thumbnail_available) expandDetails = false
+        if (!thumbnail_available && !title && !description) expandDetails = false
     }
 
 
