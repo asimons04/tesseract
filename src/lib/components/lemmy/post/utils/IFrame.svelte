@@ -31,7 +31,7 @@
                 allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                 loading="lazy"
                 allowfullscreen 
-                title="Embedded Content: {title}"
+                title=""
                 target="_top"
             >
             </iframe>
