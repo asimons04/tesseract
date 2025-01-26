@@ -229,7 +229,7 @@ export class StringCompression {
 }
 
 
-
+/* A higher-level cache that works on specific-objects */
 
 export class StorageCache {
     storage: StorageController
@@ -259,23 +259,32 @@ export class StorageCache {
         }
     }
 
-    async getCommunityResponse(community_name:string) {
+    async get(key:string) {
+        return await this.storage.get(key)
+    }
+
+    async put(key:string, value:any) {
+        return await this.storage.put(key, value)
+    }
+
+
+    async getCommunityResponse(community_name:string): Promise<GetCommunityResponse |  undefined> {
         const storageKey = `getCommunity_${get(instance)}:${community_name}`
         return await this.storage.get(storageKey)
     }
 
-    async putCommunityResponse(community:GetCommunityResponse) {
+    async putCommunityResponse(community:GetCommunityResponse): Promise<void> {
         const storageKey = `getCommunity_${get(instance)}:${community.community_view.community.name}@${new URL(community.community_view.community.actor_id).hostname}`
         await this.storage.put(storageKey, community)
     }
 
 
-    async getSiteResponse(domain:string) {
+    async getSiteResponse(domain:string): Promise<GetSiteResponse | undefined> {
         const storageKey = `getSite:${domain}`
         return await this.storage.get(storageKey)
     }
     
-    async putSiteResponse(site:GetSiteResponse) {
+    async putSiteResponse(site:GetSiteResponse): Promise<void> {
         const storageKey = `getSite:${new URL(site.site_view.site.actor_id).hostname}`
         await this.storage.put(storageKey, site)
     }
