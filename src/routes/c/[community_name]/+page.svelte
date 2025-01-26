@@ -5,13 +5,17 @@
     import { page } from '$app/stores';
     import { userSettings } from '$lib/settings'
 
-    import CommunityCard from '$lib/components/lemmy/community/CommunityCard.svelte'
-    import CommunityCardSmall from '$lib/components/lemmy/community/CommunityCardSmall.svelte';
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import PostFeed from '$lib/components/lemmy/feed/PostFeed.svelte';
-    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte';
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
+    import CommunityCard                from '$lib/components/lemmy/community/CommunityCard.svelte'
+    import CommunityCardSmall           from '$lib/components/lemmy/community/CommunityCardSmall.svelte'
+    import CommunityCreatePostButton    from '$lib/components/lemmy/community/CommunityCreatePostButton.svelte'
+    import CommunitySubscribeButton     from '$lib/components/lemmy/community/CommunitySubscribeButton.svelte'
+    import MainContentArea              from '$lib/components/ui/containers/MainContentArea.svelte'
+    import PostFeed                     from '$lib/components/lemmy/feed/PostFeed.svelte'
+    import SiteSearch                   from '$lib/components/ui/subnavbar/SiteSearch.svelte'
+    import SubNavbar                    from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import { communityProfileModal } from '$lib/components/lemmy/moderation/moderation';
+    import { EllipsisVertical } from 'svelte-hero-icons';
+    import Button from '$lib/components/input/Button.svelte';
         
     export let data
 
@@ -61,6 +65,23 @@
                 <!---Add the Site Banner to the top of the feed below 'xl' width--->
                 <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px]" slot="banner">    
                     <CommunityCardSmall community_view={data.community.community_view}/>
+                    
+                    <!--- Convenience buttons --->
+                    <div class="w-full mt-2 flex flex-row gap-2">
+
+                        <!---Create Post--->
+                        <CommunityCreatePostButton community_view={data.community.community_view} class="w-[45%]" />
+
+                        <!---Subscrube/UnSubscribe--->
+                        <CommunitySubscribeButton community_view={data.community.community_view} class="w-[45%]" />
+
+                        <!---Bring Up Community Modal--->
+                        <Button color="tertiary-border" class="w-[10%]" size="square-lg" icon={EllipsisVertical} iconSize={20}  title="Community Actions"
+                            on:click={() => {
+                                communityProfileModal(data.community.community_view.community)
+                            }}
+                        />
+                    </div>
                 </div>
             </PostFeed>
             
