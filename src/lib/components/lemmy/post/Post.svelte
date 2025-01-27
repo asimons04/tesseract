@@ -25,18 +25,18 @@
     import type { PostView } from 'lemmy-js-client'
     import { type PostType, type PostDisplayType, postType as getPostType, sleep } from './helpers.js'
 
-    import { fade } from 'svelte/transition'
-    import { getClient } from '$lib/lemmy'
-    import { onDestroy, onMount } from 'svelte'
-    import { profile } from '$lib/auth.js'
-    import { userSettings } from '$lib/settings.js'
+    import { fade }                 from 'svelte/transition'
+    import { getClient }            from '$lib/lemmy'
+    import { onDestroy, onMount }   from 'svelte'
+    import { profile }              from '$lib/auth.js'
+    import { userSettings }         from '$lib/settings.js'
 
-    import Card from '$lib/components/ui/Card.svelte'
+    import Card             from '$lib/components/ui/Card.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     
     
     // New Post Renderers
-    import AudioPost from '$lib/components/lemmy/post/renderers/AudioPost.svelte'
+    import AudioPost        from '$lib/components/lemmy/post/renderers/AudioPost.svelte'
     import BandcampPost     from '$lib/components/lemmy/post/renderers/BandcampPost.svelte'
     import DailyMotionPost  from '$lib/components/lemmy/post/renderers/DailyMotionPost.svelte'
     import ImagePost        from '$lib/components/lemmy/post/renderers/ImagePost.svelte'
@@ -66,9 +66,9 @@
     export let inProfile: boolean           = false                     // If true, the poster's info/avatar will be hidden and only show that of the community
     export let inModal: boolean             = false
 
-    let inViewport = false                                              // No longer need to export?
     let postContainer: HTMLDivElement | null
-    let postType = getPostType(post)
+    let inViewport      = false
+    let postType        = getPostType(post)
     let lastClickedPost = -1
 
     $:  post.post.id, onPostChange()
@@ -80,10 +80,8 @@
 
     function applyDummyThumbnail() {
         if (!post || post?.post?.thumbnail_url) return
-        
-        let pType = getPostType(post)
-        
-        switch (pType) {
+
+        switch (postType) {
             case 'dailymotion':
                 post.post.thumbnail_url = '/img/dailymotion.png'
                 break
