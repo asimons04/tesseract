@@ -191,8 +191,8 @@
             {#if compactSwitch}
                 <SelectMenu
                     alignment="bottom-center"
-                    options={['card', 'hybrid', 'compact', 'compacter', 'wide-compact', 'more-compact', 'ultra-compact', 'reader']}
-                    optionNames={['Card', 'Hybrid', 'Compact', "Compacter", 'Wide Compact', 'More Compact', 'Ultra Compact', 'Reader']}
+                    options={['card', 'wide-card', 'hybrid', 'compact', 'more-compact', 'wide-compact', 'ultra-compact', 'reader']}
+                    optionNames={['Card', 'Wide Card', 'Hybrid', 'Compact', "More-Compact", 'Wide Compact', 'Ultra Compact', 'Reader']}
                     selected={$userSettings.uiState.view}
                     title="Post View Type"
                     icon={Window}
