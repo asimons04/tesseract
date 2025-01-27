@@ -190,7 +190,7 @@
             <!---Post View Mode (eventually need to change the legacy `compactSwitch` variable)--->
             {#if compactSwitch}
                 <SelectMenu
-                    alignment="bottom-center"
+                    alignment="bottom-left"
                     options={['card', 'wide-card', 'hybrid', 'compact', 'more-compact', 'wide-compact', 'ultra-compact', 'reader']}
                     optionNames={['Card', 'Wide Card', 'Hybrid', 'Compact', "More-Compact", 'Wide Compact', 'Ultra Compact', 'Reader']}
                     selected={$userSettings.uiState.view}
