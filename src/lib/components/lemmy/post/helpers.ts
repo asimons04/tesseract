@@ -1105,6 +1105,12 @@ export const selectViewType= async (e: CustomEvent) => {
             $userSettings.uiState.postBodyPreviewLength = 120
             $userSettings.uiState.feedMargins = true
             break
+
+        case 'wide-card':
+                $userSettings.showCompactPosts = false
+                $userSettings.uiState.postBodyPreviewLength = 120
+                $userSettings.uiState.feedMargins = false
+                break
         
         case 'compact':
             $userSettings.showCompactPosts = true
@@ -1120,7 +1126,7 @@ export const selectViewType= async (e: CustomEvent) => {
             $userSettings.uiState.hideCompactThumbnails = false
             break
 
-        case 'compacter':
+        case 'more-compact':
             $userSettings.showCompactPosts = true
             $userSettings.uiState.postBodyPreviewLength = 0
             $userSettings.uiState.feedMargins = true
@@ -1134,13 +1140,7 @@ export const selectViewType= async (e: CustomEvent) => {
             $userSettings.uiState.hideCompactThumbnails = false
             break
 
-        case 'more-compact':
-            $userSettings.showCompactPosts = true
-            $userSettings.uiState.postBodyPreviewLength = 0
-            $userSettings.uiState.feedMargins = false
-            $userSettings.uiState.hideCompactThumbnails = false
-            break
-        
+       
         case 'ultra-compact':
             $userSettings.showCompactPosts = true
             $userSettings.uiState.postBodyPreviewLength = -1
