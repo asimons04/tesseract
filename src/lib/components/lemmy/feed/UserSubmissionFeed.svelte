@@ -28,6 +28,7 @@
     import TextInput from "$lib/components/input/TextInput.svelte"
 
     import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, ExclamationTriangle, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons"
+    import Card from "$lib/components/ui/Card.svelte";
     
     
     
@@ -393,20 +394,12 @@
                     </span>
                 </div>
 
-                <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
-                    loading={loading} disabled={loading}
-                    on:click={() => {
-                        if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
-                        controller.refresh(true) 
-                    }}
-                >
-                    Refresh
-                </Button>
+                
             </div>
         {/if}
         
         <!---Sort, Type, and User Search Bars--->
-        <div class="flex flex-row w-full items-center justify-between" transition:fade>
+        <Card class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
             <!---Sort--->
             <SelectMenu 
                 title="Sort"
@@ -428,6 +421,16 @@
                 }}
             />
 
+            <Button color="tertiary-border" title="Refresh" side="lg" class="h-[40px] mt-auto" icon={ArrowPath} iconSize={16} 
+                loading={loading} disabled={loading}
+                on:click={() => {
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
+                    controller.refresh(true) 
+                }}
+            >
+                Refresh
+            </Button>
+
             <!---Item Type--->
             <SelectMenu
                 title="Submission Type"
@@ -447,7 +450,7 @@
 
                 }}
             />
-        </div>
+        </Card>
 
         <!---Search Form--->
         {#if user}

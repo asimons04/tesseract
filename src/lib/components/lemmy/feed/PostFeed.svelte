@@ -725,30 +725,61 @@
 <div bind:this={controller.scrollContainer}  class="flex flex-col w-full gap-4 md:pr-2 overflow-x-hidden  h-full {$$props.class}" style={$$props.style}>
     <slot name="banner" />
 
+    <!---Type and Sort Selectors--->
+    <Card class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
+    
+        <!---Listing Type--->
+        {#if !inCommunity}
+            <span class="flex flex-col gap-1">
+            
+                <span class="font-bold opacity-80">Listing Type</span>
+                <SelectMenu alwaysShowSelectedLabel
+                    alignment="bottom-left"
+                    options={listingTypeOptions}
+                    optionNames={listingTypeOptionNames}
+                    bind:selected={controller.type}
+                    title="Listing Type"
+                    icon={Bars3}
+                    iconSize={18}
+                />
+            </span>
+        {/if}
+        
+        <!---Refresh Feed--->
+        <span class="flex flex-col h-full gap-1">
+            <Button color="tertiary-border" title="Refresh" size="lg" class="h-[40px] mt-auto" icon={ArrowPath} iconSize={16} 
+                loading={controller.busy} disabled={controller.busy}
+                on:click={() => {
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
+                    controller.refreshing = true
+                    controller.refresh(true) 
+                }}
+            >
+                <span class="hidden lg:flex">Refresh</span>
+            </Button>
+        </span>
+        
+        <!---Sort Direction--->
+        <span class="flex flex-col gap-1">
+            <span class="font-bold opacity-80">Sort Direction</span>
+            <SelectMenu alwaysShowSelectedLabel
+                rightJustify
+                alignment="bottom-right"
+                options={sortOptions}
+                optionNames={sortOptionNames}
+                bind:selected={controller.sort}
+                title="Sort Direction"
+                icon={BarsArrowDown}
+                iconSize={18}
+            />
+        </span>
 
+    </Card>
 
     <!---Note the last refresh time if using infinite scroll--->
     {#if $userSettings.uiState.infiniteScroll || (!$userSettings.uiState.infiniteScroll && controller.page == 1)}
         
         <div class="flex flex-col w-full items-start border-b dark:border-zinc-700 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
-            <div class="flex flex-row w-full items-end justify-between">
-                
-                <div class="flex flex-col gap-1 text-xs opacity-80">
-                    <span>
-                        Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
-                    </span>
-                    {#if controller.truncated && truncatedPostCount > 0}
-                        <span>
-                            {truncatedPostCount} older posts have been hidden. Refresh to see them.
-                        </span>
-                    {/if}
-
-                    
-                </div>
-
-                
-            </div>
-
             {#if $profile?.user}
                 <CollapseButton icon={Funnel} title="Feed Filters" bottomBorder={false} class="w-full">
                     <SettingToggleContainer>
@@ -795,57 +826,30 @@
                     </SettingToggleContainer>
                 </CollapseButton>
             {/if}
+
+
+            <div class="flex flex-row w-full items-end justify-between">
+                
+                <div class="flex flex-col gap-1 text-xs opacity-80">
+                    <span>
+                        Last refreshed <RelativeDate date={(controller.last_refreshed * 1000)} class="lowercase"/>
+                    </span>
+                    {#if controller.truncated && truncatedPostCount > 0}
+                        <span>
+                            {truncatedPostCount} older posts have been hidden. Refresh to see them.
+                        </span>
+                    {/if}
+
+                    
+                </div>
+
+                
+            </div>
         </div>
        
     {/if}
 
-    <!---Type and Sort Selectors--->
-    <Card class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
-    
-        <!---Listing Type--->
-        {#if !inCommunity}
-            <span class="flex flex-col gap-1">
-                <span class="font-bold opacity-80">Listing Type</span>
-                <SelectMenu alwaysShowSelectedLabel
-                    alignment="bottom-left"
-                    options={listingTypeOptions}
-                    optionNames={listingTypeOptionNames}
-                    bind:selected={controller.type}
-                    title="Listing Type"
-                    icon={Bars3}
-                    iconSize={18}
-                />
-            </span>
-        {/if}
 
-        <span class="flex flex-col h-full gap-1">
-            <Button color="tertiary-border" title="Refresh" size="lg" class="h-[40px] mt-auto" icon={ArrowPath} iconSize={16} 
-                loading={controller.busy} disabled={controller.busy}
-                on:click={() => {
-                    if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
-                    controller.refreshing = true
-                    controller.refresh(true) 
-                }}
-            >
-                <span class="hidden lg:flex">Refresh</span>
-            </Button>
-        </span>
-        
-        <span class="flex flex-col gap-1">
-            <span class="font-bold opacity-80">Sort Direction</span>
-            <SelectMenu alwaysShowSelectedLabel
-                rightJustify={!inCommunity}
-                alignment="bottom-right"
-                options={sortOptions}
-                optionNames={sortOptionNames}
-                bind:selected={controller.sort}
-                title="Sort Direction"
-                icon={BarsArrowDown}
-                iconSize={18}
-            />
-        </span>
-
-    </Card>
 
 
     <!---Only use this loading spinner if infinite scroll is disabled--->
