@@ -31,7 +31,7 @@
 
     let source: string | undefined          = post.post.embed_video_url ?? post.post.url!
     let clickToPlayClicked                  = false
-    let placeholderIcon                     = '/img/audio-wave.webp'
+    let placeholderIcon                     = '/img/audio-wave-static.webp'
     let expandPreviewText: boolean
 
     // Return to thumbnail if collapsed into compact view
