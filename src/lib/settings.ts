@@ -44,7 +44,7 @@ const isBrowser = () => {
 
 
 export type YouTubeFrontend = "YouTube" | "Custom"
-export type PostViewType = 'card' | 'compact' | 'compacter' | 'wide-compact' | 'more-compact' | 'ultra-compact' | 'reader' | 'hybrid'
+export type PostViewType = 'card' | 'compact' | 'more-compact' | 'wide-card' | 'wide-compact' | 'ultra-compact' | 'reader' | 'hybrid'
 
 interface Settings {
     version: number
