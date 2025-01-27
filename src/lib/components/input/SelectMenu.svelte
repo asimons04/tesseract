@@ -25,7 +25,8 @@
     export let iconSize:number = 16
     export let fullWidth:boolean = false
     export let showSelectedLabel: boolean = true
-    
+    export let alwaysShowSelectedLabel: boolean = false
+    export let rightJustify: boolean = false
     
 
     if (!selected && selectedFunc) {
@@ -36,7 +37,7 @@
 </script>
 
 
-<Menu {alignment} {fullWidth} containerClass="!z-[20]" >
+<Menu {alignment} {fullWidth} class="{rightJustify ? 'ml-auto' : ''}" containerClass="!z-[20]" >
     <button slot="button" let:toggleOpen on:click={toggleOpen} class="{fullWidth ? 'w-full' : 'w-max'} relative" title="{title}">
         
         <span class="flex flex-row items-center gap-1 md:gap-2 font-bold text-sm cursor-pointer p-2
@@ -56,7 +57,7 @@
             <slot>
                 {#if showSelectedLabel}
                     <!--Hide selected text in mobile view or until width is at least 'large'--->
-                    <span class="{fullWidth ? 'flex' : 'hidden'} lg:flex">
+                    <span class="{fullWidth || alwaysShowSelectedLabel ? 'flex' : 'hidden'} lg:flex">
                         {optionNames[options.findIndex((o) => selected == o)] || selected}
                     </span>
                 {/if}
