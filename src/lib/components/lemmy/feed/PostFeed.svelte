@@ -24,13 +24,17 @@
     import type { GetPostsResponse, ListingType, PostView, SortType } from "lemmy-js-client"
     
     import { addMBFCResults, filterKeywords, findCrossposts, isNewAccount } from "../post/helpers"
-    import { amMod } from '../moderation/moderation'
+    import { amMod, amModOfAny } from '../moderation/moderation'
     import { getClient, minAPIVersion } from "$lib/lemmy"
     import {  goto } from '$app/navigation'
     import { instance } from '$lib/instance'
     import { onDestroy, onMount } from "svelte"
     import { page as pageStore } from '$app/stores'
     import { profile } from '$lib/auth'
+    import { 
+        sortOptions, 
+        sortOptionNames
+    } from '$lib/lemmy'
     import { StorageController } from "$lib/storage-controller"
     import { userIsInstanceBlocked } from '$lib/lemmy/user'
     import { userSettings } from "$lib/settings"
@@ -46,7 +50,9 @@
     import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte"
     import Spinner from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArchiveBox, ArrowPath, Bookmark, ExclamationCircle, Eye, EyeSlash, Funnel, HandThumbDown, HandThumbUp } from "svelte-hero-icons"
+    import { ArchiveBox, ArrowPath, Bars3, BarsArrowDown, Bookmark, ExclamationCircle, Eye, EyeSlash, Funnel, HandThumbDown, HandThumbUp } from "svelte-hero-icons"
+    import SelectMenu from "$lib/components/input/SelectMenu.svelte";
+    import Card from "$lib/components/ui/Card.svelte";
     
     export let community_id: number | undefined     = undefined
     export let community_name: string | undefined   = undefined
@@ -71,6 +77,9 @@
         posts: [] as PostView[]
     }
     let truncatedPostCount = 0
+    
+    let listingTypeOptions:string[] = ['Subscribed', 'Local', 'All'] as ListingType[]
+    let listingTypeOptionNames      = [...listingTypeOptions]
 
     // Controller that can be expored and used outside the component. Includes getters/setters for parameters.
     export const controller = {
@@ -499,6 +508,7 @@
     // React if the community changes
     $:  $pageStore.params.community_name, community_name, changeCommunity($pageStore.params.community_name ?? community_name)
 
+    $:  inCommunity = (community_name || community_id) ? true : false
 
     // React to community changing in the URL route (/c/community -> /c/community2)
     function changeCommunity(name:string) {
@@ -669,6 +679,16 @@
             controller.scrollContainer?.remove()
         })
     })
+
+    // Conditionally add/remove "Moderator View" to the listing types if the user is a mod or admin
+    $:  if ($profile?.user && amModOfAny($profile.user)) {
+            if (!listingTypeOptions.includes('ModeratorView'))      listingTypeOptions.push('ModeratorView')
+            if (!listingTypeOptionNames.includes('Moderator View')) listingTypeOptionNames.push("Mod View")
+        }
+        else {
+            if (listingTypeOptions.includes('ModeratorView'))       listingTypeOptions.splice(listingTypeOptions.indexOf('ModeratorView'), 1)
+            if (listingTypeOptionNames.includes('ModeratorView'))   listingTypeOptionNames.splice(listingTypeOptionNames.indexOf('Mod View'), 1)
+        }
 </script>
 
 
@@ -705,6 +725,8 @@
 <div bind:this={controller.scrollContainer}  class="flex flex-col w-full gap-4 md:pr-2 overflow-x-hidden  h-full {$$props.class}" style={$$props.style}>
     <slot name="banner" />
 
+
+
     <!---Note the last refresh time if using infinite scroll--->
     {#if $userSettings.uiState.infiniteScroll || (!$userSettings.uiState.infiniteScroll && controller.page == 1)}
         
@@ -724,16 +746,7 @@
                     
                 </div>
 
-                <Button color="tertiary-border" title="Refresh" side="md" icon={ArrowPath} iconSize={16} 
-                    loading={controller.busy} disabled={controller.busy}
-                    on:click={() => {
-                        if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
-                        controller.refreshing = true
-                        controller.refresh(true) 
-                    }}
-                >
-                    Refresh
-                </Button>
+                
             </div>
 
             {#if $profile?.user}
@@ -786,7 +799,53 @@
        
     {/if}
 
+    <!---Type and Sort Selectors--->
+    <Card class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
     
+        <!---Listing Type--->
+        {#if !inCommunity}
+            <span class="flex flex-col gap-1">
+                <span class="font-bold opacity-80">Listing Type</span>
+                <SelectMenu alwaysShowSelectedLabel
+                    alignment="bottom-left"
+                    options={listingTypeOptions}
+                    optionNames={listingTypeOptionNames}
+                    bind:selected={controller.type}
+                    title="Listing Type"
+                    icon={Bars3}
+                    iconSize={18}
+                />
+            </span>
+        {/if}
+
+        <span class="flex flex-col h-full gap-1">
+            <Button color="tertiary-border" title="Refresh" size="lg" class="h-[40px] mt-auto" icon={ArrowPath} iconSize={16} 
+                loading={controller.busy} disabled={controller.busy}
+                on:click={() => {
+                    if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")
+                    controller.refreshing = true
+                    controller.refresh(true) 
+                }}
+            >
+                <span class="hidden lg:flex">Refresh</span>
+            </Button>
+        </span>
+        
+        <span class="flex flex-col gap-1">
+            <span class="font-bold opacity-80">Sort Direction</span>
+            <SelectMenu alwaysShowSelectedLabel
+                rightJustify={!inCommunity}
+                alignment="bottom-right"
+                options={sortOptions}
+                optionNames={sortOptionNames}
+                bind:selected={controller.sort}
+                title="Sort Direction"
+                icon={BarsArrowDown}
+                iconSize={18}
+            />
+        </span>
+
+    </Card>
 
 
     <!---Only use this loading spinner if infinite scroll is disabled--->

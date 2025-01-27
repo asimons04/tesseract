@@ -21,23 +21,29 @@
     export let data
     
     let feedController: FeedController = {} as FeedController
+    let sort = parseSortType($page.params.sort)
+    let type = parseListingType($page.url.searchParams.get('type'))
 
     $: debugMode = $userSettings.debugInfo
 
-    $:  sort = parseSortType($page.params.sort)
-    $:  sort, applySortOption()
+    //$:  sort = parseSortType($page.params.sort)
+    //$:  sort, applySortOption()
    
-    $:  type = parseListingType($page.url.searchParams.get('type'))
-    $:  type, applyTypeOption()
+    $:  $page.params.sort, applySortOption()
+
+    //$:  type = parseListingType($page.url.searchParams.get('type'))
+    //$:  type, applyTypeOption()
 
         
     function applyTypeOption() {
         if (!feedController.bound || feedController.type == type) return
+        type = parseListingType($page.url.searchParams.get('type'))
         feedController.type = type
     }
 
     function applySortOption() {
-        if (!feedController.bound || feedController.sort == sort) return
+        if (!feedController.bound || feedController.sort == $page.params.sort) return
+        sort = parseSortType($page.params.sort)
         feedController.sort = sort
     }
 
@@ -49,28 +55,6 @@
 
 
 <SubNavbar quickSettings toggleMargins toggleCommunitySidebar compactSwitch
-
-    listingType moderatorViewItem
-    bind:selectedListingType={type}
-    on:navChangeListingType={(e) => {
-        if (e?.detail) {
-            type = e.detail
-            $page.url.searchParams.set('type', e.detail)
-            goto($page.url)
-        }
-        
-    }}
-
-    sortMenu sortPreventDefault 
-    bind:selectedSortOption={sort} 
-    on:navChangeSort={() => {
-        const url = new URL($page.url)
-        url.pathname = `/home/${sort.toLowerCase()}`
-        goto(url)
-    }}
-    
-    
-
     scrollButtons scrollPreventDefault 
     on:navScrollBottom={() => feedController.scrollBottom() } 
     on:navScrollTop={() => feedController.scrollTop() }
