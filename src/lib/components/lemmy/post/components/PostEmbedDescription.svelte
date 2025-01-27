@@ -21,7 +21,7 @@
     export let showThumbnail: boolean = true
     export let nsfw = false
     export let compact: boolean = false
-    export let expandDetails = $userSettings.uiState.view == 'ultra-compact' ? false : compact
+    export let expandDetails = ['more-compact', 'ultra-compact'].includes($userSettings.uiState.view) ? false : compact
     
     const dispatcher = createEventDispatcher()
     const cardClass =  "border border-slate-300 dark:border-zinc-700 rounded-lg shadow-sm bg-slate-200/50 dark:bg-zinc-800/50"
@@ -46,7 +46,7 @@
 
     const handlers = {
         ChangeViewEvent: function (e:ChangeViewEvent) {
-            if (e.detail.view == 'ultra-compact') {
+            if (['more-compact', 'ultra-compact'].includes(e.detail.view)) {
                 expandDetails = false
             }
             else {
