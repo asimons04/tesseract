@@ -61,7 +61,7 @@
                 s.native
                     ? emojiValue = s.native
                     : s.src
-                        ? emojiValue = `![${s.name}](${s.src} "${s.shortcodes.replaceAll(':', '')}")`
+                        ? emojiValue = `![${s.name}](${s.src} "emoji ${s.shortcodes.replaceAll(':', '')}")`
                         : undefined
 
                 value = textArea.value = replaceTextAtIndices(textArea.value, textArea.selectionStart, textArea.selectionEnd, emojiValue)
