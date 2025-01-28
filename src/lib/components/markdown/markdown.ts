@@ -71,7 +71,7 @@ export function findLemmyverseLinks(source:string) {
     const lvCommunityRE = /https:\/\/lemmyverse.link\/c\/((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/i
     let community = source.match(lvCommunityRE)
     if (community?.groups?.instance && community?.groups?.community) {
-        let replacementText = `https://${community.groups.instance}/u/${community.groups.community}`
+        let replacementText = `https://${community.groups.instance}/c/${community.groups.community}`
         let find = RegExp(community[0] + '(?!.*`|.*\])', "gi")
         source = source.replace(find, replacementText)
     }
