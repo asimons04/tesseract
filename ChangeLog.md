@@ -53,9 +53,20 @@ removeAdmin {username}
 - Add "view source" button to post/comments to show the raw markdown
 
 
+- Allow selecting multiple comments to remove
+    - If mod, add "checkbox" button to comment action bar
+    - Add bulk action button to top of comment section
+        - Currently "remove" is the only action which can be applied in bulk
+
+    - If selected/checked:
+        - Add 'info' class to comment to indicate it is selected
+        - Add the comment ID to an array
+        - 
+    
+
 - Add icon to badge buttons:
-    - User for user
-    - UserGroup for community
+    - [X] User for user
+    - [X] UserGroup for community
     - Window or Photo for Post (when implementing universal links)
     - ChatBubbleLeftRight for Comment (when implementing universal links)
 
@@ -72,19 +83,36 @@ removeAdmin {username}
     
 
 ## Bugs to Fix
-- To do:  Trim post title before processing for flairs
-- Comment button on post in feed does not respect "open post in new tab" setting
 
 
 ## Bugfixes
+- "Moderator View" listing type was broken
+
+- The comment button on posts in the feed did not respect the "Open posts in new tab" setting.
+
+- Flairs should now detect if there are spaces before or after them in the post title.  e.g. `Check this out [Video] ` wouldn't have rendered `[Video]` as a flair since there was a space after.
+
 - Works better with Lemmy's stupid federated image proxy URLs; updated image/video/audio detection functions to account for that stupidity
+
 - Tesseract's (less stupidly implemented) image proxy can now handle more weird CDN formats if it has to un-proxy a thumbnail URL from Lemmy's stupid federated proxy URL
+
 - Custom emoji's weren't respecting aspect ratio
+
 - Nested list items were broken; added a regex to detect those and not trim those lines during pre-processing
+
 - If no spoiler title was provided, the default fallback "Spoiler" wasn't being applied
+
 - Re-ordered post type detection scripts so posts with `embed_video_url` aren't erroneously rendered as image posts (e.g. Imgur...somtimes)
+
 - Field for alt text shows up in post form if API is 0.19.4 or higher (was previously set for 0.19.5 as the minimum)
+
 - Don't attempt to mark dummy/preview post as read
+
+- Previewing content in modals is now properly contained when maximized (videos, embeds, etc)
+
+- Iframe link previews (previewing a link that allows access via iFrame) are now screen height (well, 80% to account for the modal wrapper/button bar).
+    - Since Wikipedia doesn't provide useful metadata, those always open as iframe, even on mobile where the iframe button is removed. These now render much better since they're nearly full height instead of relative to the screen width.
+
 
 
 ## Minor Changes
@@ -106,10 +134,17 @@ removeAdmin {username}
 
 
 ### Feed
+- Moved listing type and sort selectors out of sub-navbar and into feed component
+    - Similar to where they are in user profiles
+    - Makes state management in the main feed much less clunky since it's not having to watch and sync 3 potential ways to set those
+
+
 - Feed snapshot validity is now configurable (between 5 minutes and 4 hours)
+
 - When expanding a post body in the feed, it only expands to a maximum of 50% of the viewport height and scrolls. Prevents opening a huge wall of text which requires a lot of scrolling in the feed to collapse again.
 - Scrollable area in the feed now includes the margins
 - Got rid of the feed margin container and just limit the width of the posts directly; width is toggleable with the same "Expand Margins" button and emulates the old behavior. Posts are *slightly* narrower now, but they're more consistent when resizing the window and less likely to need to expand the margins in odd, small width displays.
+- New view option:  Wide Card (Card View + No Margins)
 
 
 ### All Media is Now Click to Play 
@@ -150,6 +185,15 @@ I have metadata generating for:
 - `/c/[community_name]`
 - `/c/[community_name@instance]`
 - `/`  (Metadata for the default instance)
+
+### Support for Instance-Agnostic Links
+Added support "universal" links as well as badge-ifying links to posts and comments.
+    - `@<user>@instance.xyz`:  Has been implemented since at least 1.4.0 (forget when)
+    - `!<community>@instance.xyz`: Has been implemented since at least 1.4.0 (forget when)
+    - `#<post_id>@instance.xyz` 
+    - `~<comment_id>@instance.xyz`
+Currently, the user and community badge buttons bring up their respective modals with action items for each.  The plan for post and comment badge buttons is similar, but initially, they're just going to be fancy links.  The only real change, aside from badge-ifying those, is that `#post_id@intance.xyz` and `~comment_id@instance.xyz` formats are recognized and turned into appropriate links.
+
 
 
 
