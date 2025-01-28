@@ -12,6 +12,7 @@
     
     import {
         filterAnnoyingCCLicenseOnComments,
+        findLemmyverseLinks,
         findUniversalCommentLinks,
         findUniversalPostLinks,
         findUserCommunityLinks,
@@ -112,6 +113,9 @@
                 line = line.replace(/^-\s*/, '- ')
                 line = line.replace(/^[0-9]+\)\s*/, '1) ')
 
+                // Clean up some ugly LemmyUI-ness
+                line = line.replace(/^cross-posted from:/, 'Cross-posted from:')
+
                 // Split the line into words and process each word individually
                 let words = line.split(' ')
                 for (let j=0; j < words.length; j++) {
@@ -141,6 +145,8 @@
                         word = fixLemmyEncodings(word)
                         if (!noUserCommunityLink) word = findUserCommunityLinks(word)
                         if (!noHashtags) word = hashtagsToMDLinks(word)
+                        
+                        word = findLemmyverseLinks(word)
                         word = findUniversalPostLinks(word)
                         word = findUniversalCommentLinks(word)
 

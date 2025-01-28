@@ -33,6 +33,52 @@ export function hashtagsToMDLinks(source:string) {
     return source
 }
 
+
+export function findLemmyverseLinks(source:string) {
+    // Convert Lemmyverse links to local links
+    
+    // Lemmyverse Post Links
+    const lvPostRE = /https:\/\/lemmyverse.link\/(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\/post\/(?<post_id>[0-9]+)/i
+    let post = source.match(lvPostRE)
+    if (post?.groups?.instance && post?.groups?.post_id) {
+        let replacementText = `https://${post.groups.instance}/post/${post.groups.post_id}`
+        let find = new RegExp(post[0] + '(?!.*`|.*\])', "gi")
+        source = source.replace(find, replacementText)
+        return source
+    }
+    
+    // Lemmyverse Comment Links
+    const lvCommentRE = /https:\/\/lemmyverse.link\/(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\/comment\/(?<comment_id>[0-9]+)/i
+    let comment = source.match(lvCommentRE)
+    if (comment?.groups?.instance && comment?.groups?.comment_id) {
+        let replacementText = `https://${comment.groups.instance}/comment/${comment.groups.comment_id}`
+        let find = new RegExp(comment[0] + '(?!.*`|.*\])', "gi")
+        source = source.replace(find, replacementText)
+        return source
+    }
+
+    // Lemmyverse User Links
+    const lvUserRE = /https:\/\/lemmyverse.link\/u\/((?<username>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/i
+    let user = source.match(lvUserRE)
+    if (user?.groups?.instance && user?.groups?.username) {
+        let replacementText = `https://${user.groups.instance}/u/${user.groups.username}`
+        let find = RegExp(user[0] + '(?!.*`|.*\])', "gi")
+        source = source.replace(find, replacementText)
+        return source
+    }
+
+    // Lemmyverse Community Links
+    const lvCommunityRE = /https:\/\/lemmyverse.link\/c\/((?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/i
+    let community = source.match(lvCommunityRE)
+    if (community?.groups?.instance && community?.groups?.community) {
+        let replacementText = `https://${community.groups.instance}/u/${community.groups.community}`
+        let find = RegExp(community[0] + '(?!.*`|.*\])', "gi")
+        source = source.replace(find, replacementText)
+    }
+
+    return source
+}
+
 export function findUniversalPostLinks(source:string) {
     // Pre-process the #12345@instance.xyz universal post links into markdown links
     // The "photonify" processor in the Linkx renderer will handle other formats and process those
