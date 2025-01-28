@@ -400,27 +400,30 @@
         
         <!---Sort, Type, and User Search Bars--->
         <Card class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
-            <!---Sort--->
-            <SelectMenu 
-                title="Sort"
-                icon={BarsArrowDown}
-                options={['New', 'TopAll', 'Old']} 
-                optionNames={['New', 'Top', 'Old']}
-                selected={sort}
-                alignment="bottom-left"
-                on:select={(e) => {
-                    if (loading) return
-                    if ($userSettings.debugInfo) console.log(moduleName, ": Sort selected.", e.detail)
-                    submissions = submissions = []
-                    last_item = -1
-                    //@ts-ignore
-                    sort = e.detail
-                    page = 1
-                    if (panel == 'submissions') controller.load({loadSnapshot: false})
-                    if (panel == 'search') controller.search({loadSnapshot: false})
-                }}
-            />
+            <!---Listing Type--->
+            <span class="flex flex-col gap-1">
+                <span class="font-bold text-sm opacity-80">Listing Type</span>
+                <SelectMenu
+                    title="Submission Type"
+                    icon={Bars3}
+                    options={['all', 'posts', 'comments']}
+                    optionNames={['All', 'Posts', 'Comments']}
+                    selected={type}
+                    alignment="bottom-left"
+                    on:select={(e) => {
+                        if (loading) return
+                        if ($userSettings.debugInfo) console.log(moduleName, ": Type selected.", e.detail)
 
+                        last_item = -1
+                        //@ts-ignore
+                        type = e.detail
+                        if (panel == 'search') controller.search({loadSnapshot: false})
+
+                    }}
+                />
+            </span>
+
+            <!---Refresh--->
             <Button color="tertiary-border" title="Refresh" side="lg" class="h-[40px] mt-auto" icon={ArrowPath} iconSize={16} 
                 loading={loading} disabled={loading}
                 on:click={() => {
@@ -430,26 +433,34 @@
             >
                 Refresh
             </Button>
+            
+            <!---Sort--->
+            <span class="flex flex-col gap-1">
+                <span class="font-bold text-sm opacity-80">Sort Direction</span>
+                <SelectMenu 
+                    title="Sort"
+                    icon={BarsArrowDown}
+                    options={['New', 'TopAll', 'Old']} 
+                    optionNames={['New', 'Top', 'Old']}
+                    selected={sort}
+                    alignment="bottom-right"
+                    on:select={(e) => {
+                        if (loading) return
+                        if ($userSettings.debugInfo) console.log(moduleName, ": Sort selected.", e.detail)
+                        submissions = submissions = []
+                        last_item = -1
+                        //@ts-ignore
+                        sort = e.detail
+                        page = 1
+                        if (panel == 'submissions') controller.load({loadSnapshot: false})
+                        if (panel == 'search') controller.search({loadSnapshot: false})
+                    }}
+                />
+            </span>
 
-            <!---Item Type--->
-            <SelectMenu
-                title="Submission Type"
-                icon={Bars3}
-                options={['all', 'posts', 'comments']}
-                optionNames={['All', 'Posts', 'Comments']}
-                selected={type}
-                alignment="bottom-right"
-                on:select={(e) => {
-                    if (loading) return
-                    if ($userSettings.debugInfo) console.log(moduleName, ": Type selected.", e.detail)
+            
 
-                    last_item = -1
-                    //@ts-ignore
-                    type = e.detail
-                    if (panel == 'search') controller.search({loadSnapshot: false})
-
-                }}
-            />
+            
         </Card>
 
         <!---Search Form--->
