@@ -38,12 +38,6 @@
 
 {#if data?.community}
     <SubNavbar home back quickSettings toggleMargins toggleCommunitySidebar compactSwitch
-        sortMenu sortPreventDefault bind:selectedSortOption={selectedSort} 
-        on:navChangeSort={(e) => {
-            if (e?.detail && feedController.sort != e.detail) {
-                feedController.sort = e.detail
-            }
-        }}
         scrollButtons scrollPreventDefault on:navScrollBottom={() => feedController.scrollBottom() } on:navScrollTop={() => feedController.scrollTop() }
         refreshButton refreshPreventDefault on:navRefresh={()=> feedController.refresh(true) } 
     >

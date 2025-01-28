@@ -1,6 +1,7 @@
 import { Buffer } from 'buffer'
 import { get } from 'svelte/store'
 import { instance } from '$lib/instance'
+import { userSettings } from '$lib/settings'
 
 import type { GetCommunityResponse, GetSiteResponse } from 'lemmy-js-client'
 
@@ -75,6 +76,20 @@ export class StorageController {
         catch { return undefined }
     }
 
+    async housekeep() {
+        const debug = get(userSettings).debugInfo
+        
+        if (debug) console.log("storage-controller: Housekeeping...")
+        this.keys.forEach(async (key) => {
+            let keyData = await this.get(key, true)
+            if (this.expired(keyData.timestamp)) {
+                if (debug)  console.log("storage-controller: Housekeeping expired key:", key)
+                this.remove(key)
+            }
+            
+        })
+    }
+
     remove (key:string): void {
         // Prevent removing critical data from local storage; these keys are not managed by the storage controller.
         if (this._type == 'local' && ['theme', 'profileData', 'settings', 'seenUntil'].includes(key)) {
@@ -97,8 +112,8 @@ export class StorageController {
     }
 
     // Alias for retrieve
-    async get (key:string): Promise<any> {
-        return await this.retrieve(key)
+    async get (key:string, raw:boolean=false): Promise<any> {
+        return await this.retrieve(key, raw)
     }
 
     // Alias for store
@@ -106,7 +121,7 @@ export class StorageController {
         return await this.store(key, data, ttl)
     }
 
-    async retrieve (key:string): Promise<any> {
+    async retrieve (key:string, raw:boolean=false): Promise<any> {
         try { 
             const value = (this._type == 'session')
                 ? sessionStorage.getItem(key)
@@ -115,6 +130,8 @@ export class StorageController {
             if (!value) return undefined
 
             const data = JSON.parse(value)
+            
+            if (raw) return data
 
             if ( !('payload' in data)) return undefined
             
@@ -265,6 +282,17 @@ export class StorageCache {
 
     async put(key:string, value:any) {
         return await this.storage.put(key, value)
+    }
+
+    async housekeep() {
+        this.storage.keys.forEach(async (key) => {
+            let keyData = await this.storage.get(key, true)
+            if (this.storage.expired(keyData.timestamp)) {
+                console.log("storage-controller: Housekeeping expired key ", key)
+                //this.storage.remove(key)
+            }
+            
+        })
     }
 
 

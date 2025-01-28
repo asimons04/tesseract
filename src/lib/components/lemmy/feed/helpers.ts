@@ -119,10 +119,11 @@ export const parseListingType = (lType?:string|null): ListingType  => {
     if (!lType)             return get(userSettings)?.defaultSort.feed ?? 'All'
     
     switch(lType?.toLowerCase()) {
-        case 'all':         return 'All'
-        case 'local':       return 'Local'
-        case 'subscribed':  return 'Subscribed'
+        case 'all':             return 'All'
+        case 'local':           return 'Local'
+        case 'subscribed':      return 'Subscribed'
+        case 'moderatorview':   return 'ModeratorView'
         
-        default:            return get(userSettings)?.defaultSort.feed ?? 'All'
+        default:                return get(userSettings)?.defaultSort.feed ?? 'All'
     }
 }

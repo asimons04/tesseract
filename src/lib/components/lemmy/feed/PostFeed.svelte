@@ -16,14 +16,17 @@
         LastClickedPostEvent, 
         RemoveCommunityEvent, 
         RemovePostEvent, 
-        SetSortTypeEvent
+        SetSortTypeEvent,
+
+        SystemTimerEvent
+
 
     } from "$lib/ui/events"
     
     import type { FeedController, FeedControllerLoadOptions } from './helpers'
     import type { GetPostsResponse, ListingType, PostView, SortType } from "lemmy-js-client"
     
-    import { addMBFCResults, filterKeywords, findCrossposts, isNewAccount } from "../post/helpers"
+    import { addMBFCResults, filterKeywords, findCrossposts, isNewAccount, sleep } from "../post/helpers"
     import { amMod, amModOfAny } from '../moderation/moderation'
     import { getClient, minAPIVersion } from "$lib/lemmy"
     import {  goto } from '$app/navigation'
@@ -39,20 +42,22 @@
     import { userIsInstanceBlocked } from '$lib/lemmy/user'
     import { userSettings } from "$lib/settings"
     
-    import Button from '$lib/components/input/Button.svelte'
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
-    import InfiniteScrollDiv from "$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte"
-    import Pageination from "$lib/components/ui/Pageination.svelte"
-    import Placeholder from "$lib/components/ui/Placeholder.svelte"
-    import Post from "../post/Post.svelte";
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import SettingToggle from "$lib/components/ui/settings/SettingToggle.svelte"
-    import SettingToggleContainer from "$lib/components/ui/settings/SettingToggleContainer.svelte"
-    import Spinner from "$lib/components/ui/loader/Spinner.svelte"
+    import Button                   from '$lib/components/input/Button.svelte'
+    import Card                     from "$lib/components/ui/Card.svelte"
+    import CollapseButton           from "$lib/components/ui/CollapseButton.svelte"
+    import InfiniteScrollDiv        from "$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte"
+    import Pageination              from "$lib/components/ui/Pageination.svelte"
+    import Placeholder              from "$lib/components/ui/Placeholder.svelte"
+    import Post                     from "../post/Post.svelte"
+    import RelativeDate             from '$lib/components/util/RelativeDate.svelte'
+    import SelectMenu               from "$lib/components/input/SelectMenu.svelte"
+    import SettingToggle            from "$lib/components/ui/settings/SettingToggle.svelte"
+    import SettingToggleContainer   from "$lib/components/ui/settings/SettingToggleContainer.svelte"
+    import Spinner                  from "$lib/components/ui/loader/Spinner.svelte"
     
     import { ArchiveBox, ArrowPath, Bars3, BarsArrowDown, Bookmark, ExclamationCircle, Eye, EyeSlash, Funnel, HandThumbDown, HandThumbUp } from "svelte-hero-icons"
-    import SelectMenu from "$lib/components/input/SelectMenu.svelte";
-    import Card from "$lib/components/ui/Card.svelte";
+    
+    
     
     export let community_id: number | undefined     = undefined
     export let community_name: string | undefined   = undefined
@@ -77,7 +82,7 @@
         posts: [] as PostView[]
     }
     let truncatedPostCount = 0
-    
+    let lastTick: number = 0
     let listingTypeOptions:string[] = ['Subscribed', 'Local', 'All'] as ListingType[]
     let listingTypeOptionNames      = [...listingTypeOptions]
 
@@ -85,6 +90,7 @@
     export const controller = {
         bound: true,
         storage: new StorageController({
+            type: 'local',
             ttl: snapshotValidity,
             useCompression: true
         }),
@@ -340,7 +346,7 @@
 
         // Getter to get the storage key based on the params
         get storageKey() {
-           return `snapshot_feed_${feedName}_${this.instance}_` + (JSON.stringify({
+           return `snapshot_feed_${feedName}_${this.instance}_${this.type}_${this.sort}` + (JSON.stringify({
                 community_id,
                 community_name,
                 profileID: $profile?.id
@@ -481,6 +487,7 @@
         set sort(sortType:SortType) {
             if ($userSettings.debugInfo) console.log(moduleName, ": Setting sort type:", sort, " to ", sortType)
             sort = sortType
+            
             this.refreshing = true
             
             this.reset(true)
@@ -503,8 +510,6 @@
         }
     } as FeedController
 
-    
- 
     // React if the community changes
     $:  $pageStore.params.community_name, community_name, changeCommunity($pageStore.params.community_name ?? community_name)
 
@@ -641,20 +646,38 @@
         SetSortTypeEvent(e:SetSortTypeEvent) {
             console.log(moduleName, ": Received sort type event:", e.detail.sort)
             if (e.detail.sort != controller.sort) controller.sort = e.detail.sort;
+        },
+
+        
+        SystemTimerEvent(e:SystemTimerEvent) {
+            // Every minute, run housekeeping on the controller's storage
+            if ( (e.detail.timestamp - lastTick) > 60) {
+                lastTick = e.detail.timestamp
+                controller.storage.housekeep()
+            }
         }
     }
     
 
     async function mount() {
         if ($userSettings.debugInfo) console.log(moduleName, ": Mounting component and calling loader.")
+        
+        controller.storage.housekeep()
+
         controller.mounting = true
         
         const invalidate = $pageStore.url.searchParams.has('invalidate')
         
         if (invalidate) {
             if ($userSettings.debugInfo) console.log(moduleName, ": Detected invalidate parameter. Clearing state...")
-            $pageStore.url.searchParams.delete('invalidate')
-            goto($pageStore.url).then(() => controller.invalidate())
+            
+            controller.invalidate()
+            sleep(25).then(() => {
+                $pageStore.url.searchParams.delete('invalidate')
+                goto($pageStore.url)
+            })
+            
+            //goto($pageStore.url).then(() => controller.invalidate())
         }
         else {
             await controller.load({loadSnapshot: true, append: false})
@@ -712,7 +735,7 @@
     }}
 
     on:setSortType      = {handlers.SetSortTypeEvent}
-
+    on:systemTimer      = {handlers.SystemTimerEvent}
     on:beforeunload     = {() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()
@@ -732,15 +755,25 @@
         {#if !inCommunity}
             <span class="flex flex-col gap-1">
             
-                <span class="font-bold opacity-80">Listing Type</span>
+                <span class="font-bold text-sm opacity-80">Listing Type</span>
                 <SelectMenu alwaysShowSelectedLabel
                     alignment="bottom-left"
                     options={listingTypeOptions}
                     optionNames={listingTypeOptionNames}
-                    bind:selected={controller.type}
+                    selected={type}
                     title="Listing Type"
                     icon={Bars3}
                     iconSize={18}
+                    on:select={(e) => {
+                        if (!inModal && $pageStore.url.pathname.includes('/home/')) {
+                            goto(`/home/${e.detail.toLowerCase()}/${sort.toLowerCase()}`)
+                        }
+                        else {
+                            //@ts-ignore
+                            controller.type = e.detail
+                        }
+                    }}
+
                 />
             </span>
         {/if}
@@ -761,16 +794,25 @@
         
         <!---Sort Direction--->
         <span class="flex flex-col gap-1">
-            <span class="font-bold opacity-80">Sort Direction</span>
+            <span class="font-bold text-sm opacity-80">Sort Direction</span>
             <SelectMenu alwaysShowSelectedLabel
                 rightJustify
                 alignment="bottom-right"
                 options={sortOptions}
                 optionNames={sortOptionNames}
-                bind:selected={controller.sort}
+                selected={sort}
                 title="Sort Direction"
                 icon={BarsArrowDown}
                 iconSize={18}
+                on:select={(e) => {
+                    if (!inModal && $pageStore.url.pathname.includes('/home/')) {
+                        goto(`/home/${type.toLowerCase()}/${e.detail.toLowerCase()}`)
+                    }
+                    else {
+                        //@ts-ignore
+                        controller.sort = e.detail
+                    }
+                }}
             />
         </span>
 

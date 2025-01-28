@@ -5,46 +5,36 @@
 <script lang="ts">
     import type { FeedController } from '$lib/components/lemmy/feed/helpers'
     
-    import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     import { parseListingType, parseSortType } from '$lib/components/lemmy/feed/helpers'
     import { userSettings } from '$lib/settings'
     
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
-    import SiteCard from '$lib/components/lemmy/SiteCard.svelte'
-    import SiteSearch from '$lib/components/ui/subnavbar/SiteSearch.svelte'
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte'
-    import PostFeed from '$lib/components/lemmy/feed/PostFeed.svelte'
-    import SiteCardSmall from '$lib/components/lemmy/SiteCardSmall.svelte'
-    import TaglinesCard from '$lib/components/lemmy/TaglinesCard.svelte'
+    import MainContentArea  from '$lib/components/ui/containers/MainContentArea.svelte'
+    import SiteCard         from '$lib/components/lemmy/SiteCard.svelte'
+    import SiteSearch       from '$lib/components/ui/subnavbar/SiteSearch.svelte'
+    import SubNavbar        from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import PostFeed         from '$lib/components/lemmy/feed/PostFeed.svelte'
+    import SiteCardSmall    from '$lib/components/lemmy/SiteCardSmall.svelte'
+    import TaglinesCard     from '$lib/components/lemmy/TaglinesCard.svelte'
 
     export let data
     
     let feedController: FeedController = {} as FeedController
     let sort = parseSortType($page.params.sort)
-    let type = parseListingType($page.url.searchParams.get('type'))
+    let type = parseListingType($page.params.listing_type)
 
-    $: debugMode = $userSettings.debugInfo
+    $:  $page.params.sort, $page.params.listing_type, applySortAndType()
 
-    //$:  sort = parseSortType($page.params.sort)
-    //$:  sort, applySortOption()
-   
-    $:  $page.params.sort, applySortOption()
-
-    //$:  type = parseListingType($page.url.searchParams.get('type'))
-    //$:  type, applyTypeOption()
-
+    function applySortAndType() {
+        if (!feedController.bound) return
         
-    function applyTypeOption() {
-        if (!feedController.bound || feedController.type == type) return
-        type = parseListingType($page.url.searchParams.get('type'))
-        feedController.type = type
-    }
-
-    function applySortOption() {
-        if (!feedController.bound || feedController.sort == $page.params.sort) return
         sort = parseSortType($page.params.sort)
-        feedController.sort = sort
+        type = parseListingType($page.params.listing_type)
+
+        feedController.refreshing = true
+        feedController.reset(false)
+            .then(() => feedController.load({loadSnapshot: true, append: false}))
+            .then(() => feedController.refreshing = false)
     }
 
 </script>
@@ -61,7 +51,7 @@
     
     refreshButton refreshPreventDefault refreshButtonLoading={feedController.busy} 
     on:navRefresh={()=> {
-        if (debugMode) console.log(moduleName, "Calling NAV REFRESH")
+        if ($userSettings.debugInfo) console.log(moduleName, "Calling NAV REFRESH")
         feedController.refreshing = true
         feedController.refresh(true) 
     }} 
@@ -78,7 +68,7 @@
 <MainContentArea>
 
     <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
-        <PostFeed actions bind:controller={feedController} bind:sort bind:type >
+        <PostFeed actions bind:controller={feedController} {sort} {type}>
 
             <!---Add the Site Banner to the top of the feed below 'xl' width--->
             <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px]" slot="banner">    
