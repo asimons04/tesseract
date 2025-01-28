@@ -1,7 +1,8 @@
 <script lang="ts">
     // Marked.js Docs: https://marked.js.org/using_pro
     // Tokenizer Code:  https://github.com/markedjs/marked/blob/master/src/Tokenizer.ts#L559
-    
+    // Defeault renderer code:  https://github.com/magidoc-org/magidoc/tree/main/packages/plugins/svelte-marked/src/lib/markdown/components
+
     
     import Markdown, {
         extensions,
@@ -19,12 +20,16 @@
     import { marked } from 'marked';
     import { userSettings } from '$lib/settings'
     
-    import MarkdownCode from './renderers/MarkdownCode.svelte'
-    import MarkdownCodeSpan from './renderers/MarkdownCodeSpan.svelte'
-    import MarkdownImage from './renderers/MarkdownImage.svelte'
-    import MarkdownLink from './renderers/MarkdownLink.svelte'
-    import MarkdownSpoiler from './renderers/MarkdownSpoiler.svelte'
-    import MarkdownTable from './renderers/MarkdownTable.svelte'
+    import MarkdownCode         from './renderers/MarkdownCode.svelte'
+    import MarkdownCodeSpan     from './renderers/MarkdownCodeSpan.svelte'
+    import MarkdownImage        from './renderers/MarkdownImage.svelte'
+    import MarkdownLink         from './renderers/MarkdownLink.svelte'
+    import MarkdownList         from './renderers/MarkdownList.svelte'
+    import MarkdownListItem     from './renderers/MarkdownListItem.svelte'
+    import MarkdownSpoiler      from './renderers/MarkdownSpoiler.svelte'
+    import MarkdownTable        from './renderers/MarkdownTable.svelte'
+    
+    
     
     export let source: string = ''
     export let inline: boolean = false
@@ -100,6 +105,10 @@
                 // But trim any other since marked.js will treat two spaces before text as a code span which we do not want.
                 if (!line.match(/^\s+[-|\*|0-9\)].*/i)) line = line.trim()
 
+
+                // Trim list items so they don't turn into code spans
+                line = line.replace(/^-\s*/, '- ')
+                line = line.replace(/^[0-9]+\)\s*/, '1) ')
 
                 // Split the line into words and process each word individually
                 let words = line.split(' ')
@@ -183,6 +192,8 @@
                     codespan: MarkdownCodeSpan,
                     image: MarkdownImage,
                     link: MarkdownLink,
+                    list: MarkdownList,
+                    list_item: MarkdownListItem,
                     spoiler: MarkdownSpoiler,
                     table: MarkdownTable,
                 
