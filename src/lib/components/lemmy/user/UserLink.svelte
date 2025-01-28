@@ -141,8 +141,7 @@
                 {/if}
 
                 {#if badges && user.published && isNewAccount(user.published)}
-                    <Badge label="New Account: {user.published}"  color="gray" class="mr-1">
-                        <Icon src={Cake} mini size="{inline ? '16' : '12'}"/>
+                    <Badge label="New Account: {user.published}"  color="gray" class="mr-1" icon={Cake} iconSize={inline ? 16 : 12}>
                         {#if inline}
                             <RelativeDate date={user.published} class="hidden md:flex"/>
                         {/if}
