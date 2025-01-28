@@ -33,6 +33,42 @@ export function hashtagsToMDLinks(source:string) {
     return source
 }
 
+export function findUniversalPostLinks(source:string) {
+    // Pre-process the #12345@instance.xyz universal post links into markdown links
+    // The "photonify" processor in the Linkx renderer will handle other formats and process those
+
+    const postRE = /^#(?<postID>[0-9]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi
+    let posts = source.matchAll(postRE)
+
+    for (let post of posts) {
+        if (post.groups?.postID && post.groups?.instance) {
+            let replacementText = `[${post.groups.postID}@${post.groups.instance}](/post/${post.groups.instance}/${post.groups.postID})`
+            let find = new RegExp(post[0] + '(?!.*`|.*\])', "gi")
+            source = source.replaceAll(find, replacementText)
+        }
+    }
+
+    return source
+}
+
+export function findUniversalCommentLinks(source:string) {
+    // Pre-process the #12345@instance.xyz universal post links into markdown links
+    // The "photonify" processor in the Linkx renderer will handle other formats and process those
+
+    const postRE = /^~(?<commentID>[0-9]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi
+    let comments = source.matchAll(postRE)
+
+    for (let comment of comments) {
+        if (comment.groups?.commentID && comment.groups?.instance) {
+            let replacementText = `[${comment.groups.commentID}@${comment.groups.instance}](/comment/${comment.groups.instance}/${comment.groups.commentID})`
+            let find = new RegExp(comment[0] + '(?!.*`|.*\])', "gi")
+            source = source.replaceAll(find, replacementText)
+        }
+    }
+
+    return source
+}
+
 export function findUserCommunityLinks(source: string) {
     // Pre-process the ! and @ community and person (respective) links to markdown links
     // The 'photonify' processor in the Links renderer will handle other formats and further process these

@@ -12,6 +12,8 @@
     
     import {
         filterAnnoyingCCLicenseOnComments,
+        findUniversalCommentLinks,
+        findUniversalPostLinks,
         findUserCommunityLinks,
         hashtagsToMDLinks
     } from './markdown'
@@ -139,6 +141,8 @@
                         word = fixLemmyEncodings(word)
                         if (!noUserCommunityLink) word = findUserCommunityLinks(word)
                         if (!noHashtags) word = hashtagsToMDLinks(word)
+                        word = findUniversalPostLinks(word)
+                        word = findUniversalCommentLinks(word)
 
                         words[j] = word
                     }

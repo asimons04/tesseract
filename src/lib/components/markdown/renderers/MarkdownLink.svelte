@@ -13,6 +13,8 @@
         type CustomMarkdownOptions,
         photonify 
     } from '../markdown';
+    import { ChatBubbleLeftEllipsis, User, UserGroup, Window } from 'svelte-hero-icons';
+    import { goto } from '$app/navigation';
     
    
     export let token: Tokens.Link
@@ -94,36 +96,51 @@
 
 <!--- Turn user links into badges that load a user profile modal--->
 {#if person}
-    <Badge color="blue" rightJustify={false} inline={true} on:click={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if (person) userProfileModal(person)
-    }}>
-        @{person.name}@{new URL(person.actor_id).hostname}
+    <Badge color="blue" rightJustify={false} inline={true} icon ={User} iconSize={14} label="@{person.name}@{new URL(person.actor_id).hostname}"
+        on:click={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            if (person) userProfileModal(person)
+        }}
+    >
+    @{person.name}@{new URL(person.actor_id).hostname}
     </Badge>
 
 <!--- Turn community links into badges that load a community profile modal--->
 {:else if community}
-    <Badge color="gray" rightJustify={false} inline={true} on:click={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if (community) communityProfileModal(community)
-    }}>
+    <Badge color="gray" rightJustify={false} inline={true} icon={UserGroup} iconSize={14} label="!{community.name}@{new URL(community.actor_id).hostname}"
+        on:click={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            if (community) communityProfileModal(community)
+        }}
+    >
         !{community.name}@{new URL(community.actor_id).hostname}
     </Badge>
 
+<!---Universal Format Post Link--->
+{:else if token.href.startsWith('/post/')}
+    <Link href={token.href} newtab={$userSettings.openInNewTab.posts} >
+        <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} label="Post: {token.text}">
+            {token.text}
+        </Badge>
+    </Link>
+
+    <!---Universal Format Comment Link--->
+{:else if token.href.startsWith('/comment/')}
+<Link href={token.href} newtab={$userSettings.openInNewTab.posts} >
+    <Badge color="teal" rightJustify={false} inline={true} icon={ChatBubbleLeftEllipsis} iconSize={14} label="Comment: {token.text}">
+        {token.text}
+    </Badge>
+</Link>
 
 <!--Turn hashtags into badges but keep the original link--->
 {:else if $userSettings.linkifyHashtags && hashtagRE.test(token.text)}
-    <Badge color="yellow" rightJustify={false} inline={true} on:click={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        true
-            ? window.open(token.href)
-            : window.location.href=token.href
-    }}>
-        {token.text}
-    </Badge>
+    <Link href={token.href} newtab={$userSettings.openInNewTab.posts} >
+        <Badge color="yellow" rightJustify={false} inline={true} label="Search Hashtag: {token.text}">
+            {token.text}
+        </Badge>
+    </Link>
 
 <!---Display a regular link--->
 {:else}
