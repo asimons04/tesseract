@@ -28,7 +28,7 @@
     let postName: string = post.post.name
     let postFlairs:string[] = []
     $:  {
-            let {name, flairs} = extractFlairsFromTitle(post.post.name)
+            let {name, flairs} = extractFlairsFromTitle(post.post.name.trim())
             postName = postName = name
             postFlairs = postFlairs = flairs
         }
