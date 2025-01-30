@@ -447,8 +447,8 @@
                 <!---Community and User Indicators/Links--->
                 <Card class="p-2 w-full">
                     <div class="flex flex-row gap-2 justify-between w-full items-center text-xs sm:text-sm overflow-hidden">
-                        <span class="w-1/2">
-                            <CommunityLink community={item.community} avatar inline={false} avatarSize={48} />
+                        <span class="w-1/2 truncate">
+                            <CommunityLink community={item.community} avatar inline={false} avatarSize={48} class="!w-fit"/>
                         </span>
 
                         <span class="ml-auto">
