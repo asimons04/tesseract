@@ -67,27 +67,54 @@
         <!---Archive Link Providers for 'link' Post Types--->
         {#if ['link', 'thumbLink'].includes(postType)}
             
+            <!---Archive Today--->
+            <div class="flex flex-row items-center gap-1 w-full">
+                <MenuButton color="info" link href="https://archive.ph/{removeURLParams(url)}" newtab={true} title="Archive Today" containerClass="w-[calc(100%-48px)]">
+                    Archive Today
+                </MenuButton>
 
-            <MenuButton color="info" link href="https://archive.ph/{removeURLParams(url)}" newtab={true} title="Archive Today">
-                Archive Today
-            </MenuButton>
+                <MenuButton icon={Eye} iconSize={14} size="square-sm" color="info" title="Load in IFrame" on:click={() => {
+                    let previewURL = `https://archive.ph/${removeURLParams(url)}`
+                    linkPreviewModal(previewURL, true)
+                }}/>
+            </div>
 
-            <MenuButton color="info" link href="https://ghostarchive.org/search?term={removeURLParams(url)}" newtab={true} title="Ghost Archive">
-                Ghost Archive
-            </MenuButton>
+            <!---Ghost Archive--->
+            <div class="flex flex-row items-center gap-1 w-full">
+                <MenuButton color="info" link href="https://ghostarchive.org/search?term={removeURLParams(url)}" newtab={true} title="Ghost Archive" containerClass="w-[calc(100%-48px)]">
+                    Ghost Archive
+                </MenuButton>
 
+                <MenuButton icon={Eye} iconSize={14} size="square-sm" color="info" title="Load in IFrame" on:click={() => {
+                    let previewURL = `https://ghostarchive.org/search?term=${removeURLParams(url)}`
+                    linkPreviewModal(previewURL, true)
+                }}/>
+
+            </div>
+
+            <!---12ft.io--->
             <MenuButton color="info" link href="https://12ft.io/proxy?q={removeURLParams(url)}" newtab={true} title="12ft IO">
                 12ft.io
             </MenuButton>
 
-            <MenuButton color="info" link href="https://www.removepaywall.com/search?url={removeURLParams(url)}" newtab={true} title="Remove Paywalls">
-                RemovePaywall.com
-            </MenuButton>
+            <!---RemovePaywall.com--->
+            <div class="flex flex-row items-center gap-1 w-full">
+                <MenuButton color="info" link href="https://www.removepaywall.com/search?url={removeURLParams(url)}" newtab={true} title="Remove Paywalls" containerClass="w-[calc(100%-48px)]">
+                    RemovePaywall.com
+                </MenuButton>
 
+                <MenuButton icon={Eye} iconSize={14} size="square-sm" color="info" title="Load in IFrame" on:click={() => {
+                    let previewURL = `https://www.removepaywall.com/search?url=${removeURLParams(url)}`
+                    linkPreviewModal(previewURL, true)
+                }}/>
+            </div>
+
+            <!---Ground News--->
             <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={true} title="Ground News">
                 Ground News
             </MenuButton>
             
+            <!---Fact Check Section--->
             <div class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 mt-4 mb-1 py-1 min-w-[175px]">
                 Fact Check
                 <span class="ml-auto"/>
@@ -95,15 +122,30 @@
             </div>
             <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />           
             
+            <!---MBFC--->
             {#if MBFCResults?.url}
-                <MenuButton color="info" link href={MBFCResults.url} newtab={true} title="Media Bias Fact Check">
-                    Media Bias Fact Check
-                </MenuButton>
+                <div class="flex flex-row items-center gap-1 w-full">
+                    <MenuButton color="info" link href={MBFCResults.url} newtab={true} title="Media Bias Fact Check" containerClass="w-[calc(100%-48px)]">
+                        Media Bias Fact Check
+                    </MenuButton>
+
+                    <MenuButton icon={Eye} iconSize={14} size="square-sm" color="info" title="Load in IFrame" on:click={() => {
+                        linkPreviewModal(MBFCResults.url, true)
+                    }}/>
+                </div>
             {/if}
             
-            <MenuButton color="info" link href="https://spinscore.io/?url={removeURLParams(url)}" newtab={true} title="SpinScore.io">
-                SpinScore.io
-            </MenuButton>
+            <!---SpinScore.io--->
+            <div class="flex flex-row items-center gap-1 w-full">
+                <MenuButton color="info" link href="https://spinscore.io/?url={removeURLParams(url)}" newtab={true} title="SpinScore.io" containerClass="w-[calc(100%-48px)]">
+                    SpinScore.io
+                </MenuButton>
+
+                <MenuButton icon={Eye} iconSize={14} size="square-sm" color="info" on:click={() => {
+                    let previewURL = `https://spinscore.io/?url=${removeURLParams(url)}`
+                    linkPreviewModal(previewURL, true)
+                }}/>
+            </div>
         {/if}
 
         <!---Piped/Invidious Providers for 'youtube' Post Types--->
@@ -130,6 +172,7 @@
             <hr class="{hrColors}} my-2 mx-auto" />
         {/if}
         
+        <!---Copy Link--->
         <MenuButton title="Share" color="success"
             on:click={() => {
                 navigator.share?.({
@@ -148,14 +191,19 @@
         </MenuButton>
         
         <!---Preview--->
-        <MenuButton title="Preview" color="info"
-            on:click={(e) => {
-                linkPreviewModal(url)
-            }}
-        >
-            <Icon src={Eye} width={16} mini />
-            Preview
-        </MenuButton>
+        <div class="flex flex-row items-center gap-1 w-full">
+            <MenuButton title="Preview" color="info" containerClass="w-[calc(100%-48px)]"
+                on:click={(e) => {
+                    linkPreviewModal(url)
+                }}
+            >
+                <Icon src={Eye} width={16} mini />
+                Preview
+            </MenuButton>
 
+            <MenuButton icon={Eye} iconSize={14} color="info" title="Load Link in IFrame" on:click={() => {
+                linkPreviewModal(url, true)
+            }}/>
+        </div>
     </Menu>
 {/if}
