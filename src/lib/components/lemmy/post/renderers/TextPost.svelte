@@ -15,11 +15,12 @@
     export let displayType: PostDisplayType = 'feed'
     export let postType: PostType           = 'text'
     export let compact: boolean             = true
-
+    export let inModal: boolean             = false
+    
     let expandPreviewText:boolean
 </script>
 
-<PostMeta bind:post showTitle={true} {actions} {postType} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+<PostMeta bind:post showTitle={true} {actions} {postType} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />
 <PostBody bind:post bind:expandPreviewText {displayType}  />
 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-<PostActions bind:post {displayType} on:reply class="mt-2" />
+<PostActions bind:post {inModal} {displayType} on:reply class="mt-2" />

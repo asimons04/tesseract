@@ -31,6 +31,7 @@
     export let postType: PostType           = 'video'
     export let inViewport                   = true
     export let compact: boolean             = true
+    export let inModal: boolean             = false
 
     let source: string = post.post.embed_video_url ?? post.post.url!
     let clickToPlayClicked = false
@@ -43,8 +44,8 @@
     $:  post.post.id, post.post.url, post.post.embed_video_url, post.post.thumbnail_url, setup()
 
     function setup() {
-        if (isVideo(post.post.url))             source = imageProxyURL(post.post.url)!
-        if (isVideo(post.post.embed_video_url)) source = imageProxyURL(post.post.embed_video_url)!
+        if (post.post.url && isVideo(post.post.url))                            source = imageProxyURL(post.post.url)!
+        if (post.post.embed_video_url && isVideo(post.post.embed_video_url))    source = imageProxyURL(post.post.embed_video_url)!
     }
 
     onMount(() => setup())
@@ -58,7 +59,7 @@
     <!---If there is no or a very short body text with the image, display it more compactly since the text won't have to flow around it--->
     {#if !post?.post.body || post.post.body.length < 250}
 
-        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                 <div class="flex flex-col gap-1 w-full">
@@ -78,13 +79,13 @@
 
                     <PostBody bind:post bind:expandPreviewText {displayType}  />
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-                    <PostActions  bind:post {displayType} on:reply class="mt-2" />
+                    <PostActions  bind:post {inModal} {displayType} on:reply class="mt-2" />
                 </div>
             </div>
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
     {:else}
-        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />    
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
@@ -100,14 +101,14 @@
                 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                 
                 <div class="mt-2" />
-                <PostActions  bind:post {displayType} on:reply />
+                <PostActions  bind:post {inModal} {displayType} on:reply />
             </div>
         </div>
     {/if}
 
 <!---Card View--->
 {:else}
-    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />
 
     <PostEmbedDescription {compact} title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
@@ -128,7 +129,7 @@
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-    <PostActions  bind:post {displayType} on:reply class="mt-2"/>
+    <PostActions  bind:post {inModal} {displayType} on:reply class="mt-2"/>
 
 {/if}
 

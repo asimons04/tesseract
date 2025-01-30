@@ -24,6 +24,7 @@
     export let postType: PostType           = 'image'
     export let inViewport                   = true
     export let compact: boolean             = true
+    export let inModal: boolean             = false
 
     let expandPreviewText: boolean
     $:  thumbnail_url = (post.post.thumbnail_url && isImage(post.post.thumbnail_url)) 
@@ -33,7 +34,7 @@
 </script>
 
 <!---Common for Compact and Card Views.  Compact view is only this, so no special if block for it--->
-<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />
 
 {#key compact}
     <PostEmbedDescription  on:clickThumbnail={() => compact = false}
@@ -60,5 +61,5 @@
 
 <PostBody bind:post bind:expandPreviewText {displayType}  />
 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-<PostActions bind:post {displayType} on:reply class="mt-2" />
+<PostActions bind:post {inModal} {displayType} on:reply class="mt-2" />
 

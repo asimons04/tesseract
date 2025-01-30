@@ -25,7 +25,8 @@
     export let postType: PostType           = 'dailymotion'
     export let inViewport                   = true
     export let compact: boolean             = true
-
+    export let inModal: boolean             = false
+    
     let clickToPlayClicked = false
     let placeholderImage = '/img/dailymotion.png'
     let expandPreviewText: boolean
@@ -40,7 +41,7 @@
 </script>
 
 <!---Compact View and Common Header--->
-<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />    
 
 {#key compact}
     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
@@ -68,4 +69,4 @@
 <!---Common Footer--->
 <PostBody bind:post bind:expandPreviewText {displayType}  />
 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-<PostActions bind:post {displayType} on:reply class="mt-2" />
+<PostActions bind:post {inModal} {displayType} on:reply class="mt-2" />
