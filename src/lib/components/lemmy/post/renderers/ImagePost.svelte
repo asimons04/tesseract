@@ -49,51 +49,51 @@
     <!---If there is no or a very short body text with the image, display it more compactly since the text won't have to flow around it--->
     {#if !post?.post.body || post.post.body.length < 250}
 
-        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />    
 
-            <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
-                <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'} ">
-                    
-                    <PostTitle bind:post {postType} />
-                    
-                    <!---Mostly used if Posting a Link to Another Lemmy Post--->
-                    {#if showEmbedDescription}
-                        
-                        <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail={() => compact = false}
-                            description={post.post.embed_description} 
-                            url={post.post.url}
-                            showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                            thumbnail_urls={[post.post.thumbnail_url, post.post.embed_video_url, post.post.url]}
-                            nsfw={post.post.nsfw}
-                            {compact}
-                        > 
-                            <ArchiveLinkSelector url={post.post?.url} {postType} />    
-                            <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
-
-                        </PostEmbedDescription>
-                    {/if}
-                    
-                    <PostBody bind:post bind:expandPreviewText {displayType}  />
-                    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-                    <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
-                </div>
+        <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
+            <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'} ">
                 
-                <!---If the Embed Description is Shown, the thumbnail will go there--->
-                {#if !showEmbedDescription}
-                    <CompactPostThumbnail {post} {displayType}
+                <PostTitle bind:post {postType} {onHomeInstance}/>
+                
+                <!---Mostly used if Posting a Link to Another Lemmy Post--->
+                {#if showEmbedDescription}
+                    
+                    <PostEmbedDescription title={post.post.embed_title} on:clickThumbnail={() => compact = false}
+                        description={post.post.embed_description} 
+                        url={post.post.url}
                         showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
-                        on:toggleCompact={() => compact = !compact}
-                    />
+                        thumbnail_urls={[post.post.thumbnail_url, post.post.embed_video_url, post.post.url]}
+                        nsfw={post.post.nsfw}
+                        {compact}
+                    > 
+                        <ArchiveLinkSelector url={post.post?.url} {postType} />    
+                        <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
+
+                    </PostEmbedDescription>
                 {/if}
+                
+                <PostBody bind:post bind:expandPreviewText {displayType}  />
+                <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
             </div>
+            
+            <!---If the Embed Description is Shown, the thumbnail will go there--->
+            {#if !showEmbedDescription}
+                <CompactPostThumbnail {post} {displayType}
+                    showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
+                    on:toggleCompact={() => compact = !compact}
+                />
+            {/if}
+        </div>
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
     {:else}
-        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />    
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
-                <PostTitle bind:post {postType} />
+                <PostTitle bind:post {postType} {onHomeInstance}/>
 
                 <PostBody bind:post bind:expandPreviewText {displayType} class="my-1" >
                     <CompactPostThumbnail {post} {displayType} float slot="thumbnail" 
@@ -112,7 +112,7 @@
 
 <!---Card View--->
 {:else}
-    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />
+    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />
 
     <PostEmbedDescription title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} {compact} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    

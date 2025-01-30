@@ -28,7 +28,7 @@
     let expandPreviewText: boolean
 </script>
 
-<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />
 
 {#if compact && post.post.url}
     

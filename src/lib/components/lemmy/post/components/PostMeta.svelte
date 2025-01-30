@@ -54,6 +54,8 @@
     export let compact:boolean                  = true
     export let postType: PostType
     export let inModal: boolean                 = false
+    export let onHomeInstance: boolean          = false
+
 
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
@@ -64,7 +66,6 @@
     $: post
     $: post, userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
     $: post, subscribed       = post.subscribed == 'Subscribed' || post.subscribed == 'Pending'
-    $: onHomeInstance         = ($page.params.instance ?? $instance)  == $instance
     
 </script>
 
@@ -216,6 +217,6 @@
 
 
     {#if showTitle}
-        <PostTitle {post} {postType} {inModal}/>
+        <PostTitle {post} {postType} {inModal} {onHomeInstance}/>
     {/if}
 </div>

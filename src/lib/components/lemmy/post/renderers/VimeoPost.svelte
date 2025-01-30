@@ -48,7 +48,7 @@
 
 
 <!---Compact View and Common Header--->
-<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />    
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />    
 
 {#key compact}
     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}

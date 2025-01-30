@@ -58,7 +58,7 @@
     <!---If there is no or a very short body text with the image, display it more compactly since the text won't have to flow around it--->
     {#if !post?.post.body || post.post.body.length < 250}
 
-        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />    
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                 <div class="flex flex-col gap-1 w-full">
@@ -85,7 +85,7 @@
     
     <!---Separate out the components and let the post body flow around the thumbnail image--->
     {:else}
-        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inModal} {inProfile} {compact} on:toggleCompact={() => compact = !compact} />    
+        <PostMeta bind:post showTitle={false} {postType} {actions} {inCommunity} {inModal} {inProfile} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />    
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
@@ -108,7 +108,7 @@
 
 <!---Card View--->
 {:else}
-    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />
+    <PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />
 
     <PostEmbedDescription {compact} title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    

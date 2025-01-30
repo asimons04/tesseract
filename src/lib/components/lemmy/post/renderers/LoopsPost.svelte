@@ -35,7 +35,7 @@
 </script>
 
 <!---Common for Compact and Card Views.  Compact view is only this, so no special if block for it--->
-<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {compact} on:toggleCompact={() => compact = !compact} />
+<PostMeta bind:post showTitle={true} {postType} {actions} {inCommunity} {inProfile} {inModal} {onHomeInstance} {compact} on:toggleCompact={() => compact = !compact} />
 
 {#key compact}
     <PostEmbedDescription  on:clickThumbnail={() => compact = false}
