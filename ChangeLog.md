@@ -73,6 +73,8 @@ removeAdmin {username}
 ## Bugfixes
 - "Moderator View" listing type was broken
 
+- Better truncation of modal titles
+
 - The comment button on posts in the feed did not respect the "Open posts in new tab" setting.
 
 - Flairs should now detect if there are spaces before or after them in the post title.  e.g. `Check this out [Video] ` wouldn't have rendered `[Video]` as a flair since there was a space after.
@@ -112,6 +114,8 @@ removeAdmin {username}
     - Simplifed logic that truncates the non-expanded text
     - The whole embed description is collapsible
 - Badges that are clickable now have visual indicators on hover
+- "Old" and "Controversial" comment sort options now available
+
 
 ### Audio / Video Player
 - Post images, audio, and videos now have a background with a blur effect
