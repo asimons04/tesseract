@@ -3,7 +3,7 @@
     import type { Tokens } from 'marked'
     
     import { createFakePerson, createFakeCommunity } from '$lib/components/lemmy/post/helpers'
-    import { userProfileModal, communityProfileModal } from '$lib/components/lemmy/moderation/moderation'
+    import { userProfileModal, communityProfileModal, postViewerModal } from '$lib/components/lemmy/moderation/moderation'
     import { userSettings } from '$lib/settings';
 
     import Badge from '$lib/components/ui/Badge.svelte';
@@ -120,8 +120,23 @@
 
 <!---Universal Format Post Link--->
 {:else if token.href.startsWith('/post/')}
-    <Link href={token.href} newtab={$userSettings.openInNewTab.posts} >
-        <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} label="Post: {token.text}">
+    
+    <Link href={token.href} newtab={$userSettings.openInNewTab.posts} preventDefault on:click={(e) => {
+        let relLink = token.href.split('/')
+        let postID = relLink.pop()
+        let instance = relLink.pop()
+        console.log(instance, postID)
+        if (instance && postID) {
+            e.preventDefault()
+            e.stopPropagation()
+            postViewerModal(instance, Number(postID))
+        }
+        
+    }}
+    
+    >
+    
+        <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} label="Post: {token.text}" >
             {token.text}
         </Badge>
     </Link>
