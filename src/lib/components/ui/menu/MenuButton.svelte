@@ -2,6 +2,9 @@
     import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import { Color } from '$lib/ui/colors'
     import { createEventDispatcher } from 'svelte'
+    import { Icon, type IconSource } from 'svelte-hero-icons'
+
+
 
     type ButtonColor = keyof typeof buttonColors
 
@@ -29,6 +32,8 @@
     export let title:string = '';
     export let newtab:boolean = false;
     export let preventDefault = false
+    export let icon: IconSource | undefined = undefined
+    export let iconSize:number = 16
 
     const click = createEventDispatcher()
 </script>
@@ -51,7 +56,11 @@
             "
 
         >
+            
             <slot name="icon" />
+            {#if icon}
+                <Icon src={icon} width={iconSize} mini />
+            {/if}
             <slot/>
         </a>
     {:else}
@@ -80,6 +89,9 @@
                 <Spinner width={16} />
             {:else}
                 <slot name="icon" />
+                {#if icon}
+                    <Icon src={icon} width={iconSize} mini />
+                {/if}
             {/if}
 
             <slot/>
