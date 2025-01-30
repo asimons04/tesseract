@@ -28,9 +28,6 @@
     import TextInput from "$lib/components/input/TextInput.svelte"
 
     import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, ExclamationTriangle, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons"
-    import Card from "$lib/components/ui/Card.svelte";
-    
-    
     
     export let person_id: number | undefined        = undefined
     export let person_name: string | undefined      = undefined
@@ -520,10 +517,10 @@
                 {#each submissions as item, idx (isCommentView(item) ? item.comment.id : item.post.id) }
                     
                     {#if (type == 'all' || type == 'comments') && isCommentView(item) }
-                        <CommentItem comment={item} {actions} {inModal} {inProfile} scrollTo={last_item} />
+                        <CommentItem comment={item} {actions} {inModal} {inProfile} scrollTo={last_item} onHomeInstance={true} />
                     
                     {:else if (type == 'all' || type == 'posts') && isPostView(item)}
-                        <Post post={item} {actions} {inProfile} {inModal} scrollTo={last_item} />
+                        <Post post={item} {actions} {inProfile} {inModal} scrollTo={last_item} onHomeInstance={true} />
                     {/if}
 
                 {/each}
