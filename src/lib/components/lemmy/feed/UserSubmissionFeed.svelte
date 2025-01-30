@@ -385,21 +385,9 @@
     
     <!---Last Refreshed Indicator, Refresh Button, type and sort selectors, and search controls--->
     <div class="flex flex-col w-full items-start gap-2 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
-        <!---Last Refreshed Indicator and Refresh Button--->
-        {#if page == 1 && panel == 'submissions'}
-            <div class="flex flex-row w-full items-end justify-between mb-1" transition:fade>
-                <div class="flex flex-col gap-1 text-xs opacity-80">
-                    <span>
-                        Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
-                    </span>
-                </div>
-
-                
-            </div>
-        {/if}
         
         <!---Sort, Type, and User Search Bars--->
-        <Card class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
+        <div class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
             <!---Listing Type--->
             <span class="flex flex-col gap-1">
                 <span class="font-bold text-sm opacity-80">Listing Type</span>
@@ -461,7 +449,7 @@
             
 
             
-        </Card>
+        </div>
 
         <!---Search Form--->
         {#if user}
@@ -486,6 +474,19 @@
                     }}/>
                 {/if}
             </form>
+        {/if}
+
+        <!---Last Refreshed Indicator and Refresh Button--->
+        {#if page == 1 && panel == 'submissions'}
+            <div class="flex flex-row w-full items-end justify-between mb-1" transition:fade>
+                <div class="flex flex-col gap-1 text-xs opacity-80">
+                    <span>
+                        Last refreshed <RelativeDate date={(last_refreshed * 1000)} class="lowercase"/>. 
+                    </span>
+                </div>
+
+                
+            </div>
         {/if}
     </div>
     

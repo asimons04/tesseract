@@ -749,7 +749,7 @@
     <slot name="banner" />
 
     <!---Type and Sort Selectors--->
-    <Card class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
+    <div class="flex flex-row p-2 w-full mx-auto items-center justify-between {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
     
         <!---Listing Type--->
         {#if !inCommunity}
@@ -816,7 +816,7 @@
             />
         </span>
 
-    </Card>
+    </div>
 
     <!---Note the last refresh time if using infinite scroll--->
     {#if $userSettings.uiState.infiniteScroll || (!$userSettings.uiState.infiniteScroll && controller.page == 1)}
