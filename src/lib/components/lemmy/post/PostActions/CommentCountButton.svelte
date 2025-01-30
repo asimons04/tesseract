@@ -17,13 +17,32 @@
 
     export let displayType:PostDisplayType
     export let post:PostView
-    export let inModal: boolean = false
+    export let inModal: boolean         = false
+    export let onHomeInstance: boolean  = false
+    
+    let postInstance: string
+    let postID: number
+    let postURL: string
+    
+    $:  onHomeInstance, generatePostInstanceAndID()
+    
 
+    function generatePostInstanceAndID() {
+        postInstance = onHomeInstance
+            ? $instance
+            : new URL(post.post.ap_id).hostname
+
+        postID = onHomeInstance 
+            ? post.post.id
+            : Number(new URL(post.post.ap_id).pathname.replace('/post/',''))
+        
+        postURL = `/post/${postInstance}/${postID}`
+    }
 </script>
 
 
 <Button
-    href={`/post/${getInstance()}/${post.post.id}`}
+    href={postURL}
     newtab={$userSettings.openInNewTab.posts && displayType=='feed'}
     size="sm"
     class="!text-inherit {$$props.class}"
@@ -36,15 +55,15 @@
         if (!inModal && $userSettings.openInNewTab.postsInModal) {
                 e.preventDefault()
                 e.stopPropagation()
-                postViewerModal($instance, post.post.id)
+                postViewerModal(postInstance, postID)
                 return
         }
         
         if (!($userSettings.openInNewTab.posts && displayType=='feed')) {
             e.preventDefault()
             e.stopPropagation()
-            dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
-            goto(`/post/${getInstance()}/${post.post.id}`)
+            dispatchWindowEvent('clickIntoPost', {post_id: postID})
+            goto(postURL)
         }
     }}
 >
