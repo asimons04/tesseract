@@ -34,6 +34,7 @@
         ChevronDoubleDown,
         FaceSmile,
         ArrowsUpDown,
+        Window,
     } from "svelte-hero-icons"
     import { dispatchWindowEvent } from '$lib/ui/events';
 
@@ -105,7 +106,15 @@
                 />
                 
                 <!---Open in New Tab--->
-                <SettingToggle icon={ArrowTopRightOnSquare} title="Open Posts in New Tab" bind:value={$userSettings.openInNewTab.posts} small={true} />
+                <SettingToggle icon={ArrowTopRightOnSquare} title="Open Posts in New Tab" bind:value={$userSettings.openInNewTab.posts} small={true} on:change={(e) => {
+                    if (e.detail)   $userSettings.openInNewTab.postsInModal = false
+                    
+                }}/>
+
+                <!---Open Posts in Modal--->
+                <SettingToggle icon={Window} title="Open Posts in Modals" bind:value={$userSettings.openInNewTab.postsInModal} small={true} on:change={(e) => {
+                    if (e.detail)   $userSettings.openInNewTab.posts = false
+                }}/>
 
                 <!---Scroll Post Bodies in Feed--->
                 <SettingToggle icon={ArrowsUpDown} title="Scroll Post Body in Feed" bind:value={$userSettings.uiState.scrollPostBodyInFeed} small={true} />
@@ -126,15 +135,15 @@
                 
                 <!---Show full URLs--->
                 <SettingToggle icon={LinkIcon} title="Show Full URLs" bind:value={$userSettings.uiState.showFullURL} small={true} />
-                
+
                 <!---Hide Posts from Users of Blocked Instances--->
                 <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} small={true}/>
-
-                <!--Show Debug Button--->
-                <SettingToggle title="Enable Debug Mode" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
+                
             </div>
 
             <div class="flex flex-col gap-2 items-center divide-y {dividerColors} w-full lg:w-1/2">
+                
+                
                 <!---Reverse Action Bar--->
                 <SettingToggle title="Reverse Action Bar" icon={ArrowsRightLeft} bind:value={$userSettings.uiState.reverseActionBar} small={true}/>
                 
@@ -165,6 +174,8 @@
                 <!---Enable Flairs--->
                 <SettingToggle title="Enable Flairs" icon={Tag} bind:value={$userSettings.extractFlairsFromTitle} small={true} />
 
+                <!--Show Debug Button--->
+                <SettingToggle title="Enable Debug Mode" icon={BugAnt} bind:value={$userSettings.debugInfo} small={true} />
                 
             </div>
         </div>
