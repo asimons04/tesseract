@@ -120,22 +120,18 @@
 
 <!---Universal Format Post Link--->
 {:else if token.href.startsWith('/post/')}
-    
     <Link href={token.href} newtab={$userSettings.openInNewTab.posts} preventDefault on:click={(e) => {
         let relLink = token.href.split('/')
         let postID = relLink.pop()
         let instance = relLink.pop()
-        console.log(instance, postID)
         if (instance && postID) {
             e.preventDefault()
             e.stopPropagation()
             postViewerModal(instance, Number(postID))
         }
-        
     }}
     
     >
-    
         <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} label="Post: {token.text}" >
             {token.text}
         </Badge>
@@ -143,7 +139,16 @@
 
     <!---Universal Format Comment Link--->
 {:else if token.href.startsWith('/comment/')}
-<Link href={token.href} newtab={$userSettings.openInNewTab.posts} >
+<Link href={token.href} newtab={$userSettings.openInNewTab.posts} preventDefault on:click={(e) => {
+        let relLink = token.href.split('/')
+        let commentID = relLink.pop()
+        let instance = relLink.pop()
+        if (instance && commentID) {
+            e.preventDefault()
+            e.stopPropagation()
+            postViewerModal(instance, undefined, Number(commentID))
+        }
+    }}>
     <Badge color="teal" rightJustify={false} inline={true} icon={ChatBubbleLeftEllipsis} iconSize={14} label="Comment: {token.text}">
         {token.text}
     </Badge>
