@@ -157,9 +157,6 @@
                         commentForm?.focus()
                     }, 250);
                 }}
-                
-                
-            
             />      
 
             <CommentSection data={data} bind:showCommentForm bind:imageUploads {onHomeInstance} {jumpTo}/>
