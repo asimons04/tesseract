@@ -10,19 +10,22 @@
 
     } from '$lib/components/lemmy/post/helpers'
     
+    import { debugModal, postViewerModal } from '$lib/components/lemmy/moderation/moderation'
     import { getInstance } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
+    import { instance } from '$lib/instance'
     import { userSettings } from '$lib/settings.js'
     
     import Badge from '$lib/components/ui/Badge.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     
     import { BugAnt, ExclamationCircle, Tag } from 'svelte-hero-icons'
-    import { debugModal } from '../../moderation/moderation';
+    
 
     export let post:PostView | CommentReplyView | PersonMentionView
-    export let flairs: boolean = true
     export let postType: PostType
+    export let flairs: boolean      = true
+    export let inModal: boolean     = false
 
     // Extract any [flairs] from the post title and update the title to remove them.
     let postName: string = post.post.name
@@ -45,6 +48,12 @@
             //@ts-ignore
             e
         ) => {
+            if (!inModal && $userSettings.openInNewTab.postsInModal) {
+                e.preventDefault()
+                e.stopPropagation()
+                postViewerModal($instance, post.post.id)
+                return
+            }
             // Use goto instead of href to avoid occasionally reloading the whole app on page transition
             if (!$userSettings.openInNewTab.posts) { 
                 e.preventDefault()

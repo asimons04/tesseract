@@ -5,15 +5,19 @@
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { getInstance } from '$lib/lemmy'
     import { goto } from '$app/navigation'
+    import { instance } from '$lib/instance'
+    import { postViewerModal } from '$lib/components/lemmy/moderation/moderation'
     import { userSettings } from '$lib/settings'
     
-    import Button from '$lib/components/input/Button.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
+    import Button           from '$lib/components/input/Button.svelte'
+    import FormattedNumber  from '$lib/components/util/FormattedNumber.svelte'
     
     import { ChatBubbleLeftRight } from 'svelte-hero-icons'
+    
 
     export let displayType:PostDisplayType
     export let post:PostView
+    export let inModal: boolean = false
 
 </script>
 
@@ -28,6 +32,14 @@
     icon={ChatBubbleLeftRight}
     iconSize={20}
     on:click={(e) => {
+
+        if (!inModal && $userSettings.openInNewTab.postsInModal) {
+                e.preventDefault()
+                e.stopPropagation()
+                postViewerModal($instance, post.post.id)
+                return
+        }
+        
         if (!($userSettings.openInNewTab.posts && displayType=='feed')) {
             e.preventDefault()
             e.stopPropagation()

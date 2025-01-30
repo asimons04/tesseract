@@ -65,7 +65,8 @@
     export let inCommunity: boolean         = false                     // If true, the community avatar and name will be hidden and only show the poster's info/avatar
     export let inProfile: boolean           = false                     // If true, the poster's info/avatar will be hidden and only show that of the community
     export let inModal: boolean             = false
-
+    export let onHomeInstance: boolean      = true
+    
     let postContainer: HTMLDivElement | null
     let inViewport      = false
     let postType        = getPostType(post)
@@ -96,7 +97,7 @@
     }
 
     function markPostAsRead() {
-        if (!post || !inViewport || !$profile?.jwt || post.read || post.post.id < 0) return
+        if (!post || !inViewport || !onHomeInstance || !$profile?.jwt || post.read || post.post.id < 0) return
         
         if ( (displayType == 'feed' && $userSettings.markReadOnScroll) || displayType == 'post' ) {
             post.read = true
@@ -332,57 +333,57 @@
         " 
     >    
         {#if postType ==  'audio'}
-            <AudioPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <AudioPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'bandcamp'}
-            <BandcampPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <BandcampPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'dailymotion'}
-            <DailyMotionPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply/>
+            <DailyMotionPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply/>
 
         {:else if postType == 'image'}    
-            <ImagePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
+            <ImagePost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} compact={!expandCompact} on:reply />
 
         {:else if ['link', 'thumbLink'].includes(postType)}
-            <LinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
+            <LinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} compact={!expandCompact} on:reply />
         
         {:else if postType == 'loops'}
-            <LoopsPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <LoopsPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'odysee'}
-            <OdyseePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <OdyseePost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'peertube'}
-            <PeerTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <PeerTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'songlink'}
-            <SongLinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <SongLinkPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'soundcloud'}    
-            <SoundCloudPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <SoundCloudPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'spotify'}
-            <SpotifyPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <SpotifyPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
 
         {:else if postType == 'text'}
-            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
+            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} compact={!expandCompact} on:reply />
 
         {:else if postType == 'tidal'}
-            <TidalPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <TidalPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
 
         {:else if postType == 'video'}
-            <VideoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <VideoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'vimeo'}
-            <VimeoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <VimeoPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         {:else if postType == 'youtube'}
-            <YouTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} {inViewport} compact={!expandCompact} on:reply />
+            <YouTubePost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} {inViewport} compact={!expandCompact} on:reply />
         
         <!---If all else fails, render it as a text post--->
         {:else}
-            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inProfile} compact={!expandCompact} on:reply />
+            <TextPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {inProfile} compact={!expandCompact} on:reply />
         {/if}
 
 

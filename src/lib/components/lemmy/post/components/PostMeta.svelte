@@ -53,6 +53,7 @@
     export let inProfile:boolean                = false
     export let compact:boolean                  = true
     export let postType: PostType
+    export let inModal: boolean                 = false
 
     let userIsModerator:boolean = false 
     let subscribing:boolean     = false
@@ -215,6 +216,6 @@
 
 
     {#if showTitle}
-        <PostTitle {post} {postType} />
+        <PostTitle {post} {postType} {inModal}/>
     {/if}
 </div>
