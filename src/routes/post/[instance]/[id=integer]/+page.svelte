@@ -36,6 +36,9 @@
     let imageUploads = [] as UploadImageResponse[]
     
     let expandCompact: boolean = false
+    
+    $:  onHomeInstance = $page.params.instance.toLowerCase() == $instance.toLowerCase()
+    $:  jumpTo = Number($page.url.searchParams.get('thread')?.split('.').pop() ??  "-1")
 
     //@ts-ignore (Add cross posts to post_view object for sanity)
     $: if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
@@ -105,7 +108,7 @@
     <MainContentArea>                   
             
         <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
-        {#if $profile?.jwt && $page.params.instance.toLowerCase() != $instance.toLowerCase() }
+        {#if $profile?.jwt && !onHomeInstance}
             
 
             <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2 my-2">
@@ -143,7 +146,7 @@
                 displayType="post" 
                 actions={true} 
                 {expandCompact}
-                autoplay={$userSettings.embeddedMedia.autoplay}
+                {onHomeInstance}
                 on:reply={() => {
                     showCommentForm = !showCommentForm
                     
@@ -159,7 +162,7 @@
             
             />      
 
-            <CommentSection data={data} bind:showCommentForm bind:imageUploads/>
+            <CommentSection data={data} bind:showCommentForm bind:imageUploads {onHomeInstance} {jumpTo}/>
         </div>
 
         <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden 2xl:flex"/>
