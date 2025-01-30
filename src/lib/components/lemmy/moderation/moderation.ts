@@ -83,7 +83,7 @@ interface Modals {
     }
     postViewer: {
         open: boolean
-        instance?: string
+        instance?: string | undefined
         comment_id?: number
         post_id?: number
     }

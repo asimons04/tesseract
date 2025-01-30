@@ -25,7 +25,11 @@
 
 <!---Post Viewer Modal--->
 {#if $modals.postViewer.open && ($modals.postViewer.comment_id || $modals.postViewer.post_id)}
-    <PostViewModal bind:open={$modals.postViewer.open} comment_id={$modals.postViewer.comment_id} post_id={$modals.postViewer.post_id} instance={$modals.postViewer.instance}/>
+    <PostViewModal bind:open={$modals.postViewer.open} 
+        bind:comment_id={$modals.postViewer.comment_id} 
+        bind:post_id={$modals.postViewer.post_id} 
+        bind:instance={$modals.postViewer.instance}
+    />
 {/if}
 
 <!---Report Item--->
