@@ -7,11 +7,9 @@
         fixLemmyEncodings, 
         isPostView, 
         type PostType
-
     } from '$lib/components/lemmy/post/helpers'
     
     import { debugModal, postViewerModal } from '$lib/components/lemmy/moderation/moderation'
-    import { getInstance } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance'
     import { userSettings } from '$lib/settings.js'
@@ -24,56 +22,70 @@
 
     export let post:PostView | CommentReplyView | PersonMentionView
     export let postType: PostType
-    export let flairs: boolean      = true
-    export let inModal: boolean     = false
-
+    export let flairs: boolean          = true
+    export let inModal: boolean         = false
+    export let onHomeInstance: boolean  = false
+    
+    
     // Extract any [flairs] from the post title and update the title to remove them.
-    let postName: string = post.post.name
+    let postName: string    = post.post.name
     let postFlairs:string[] = []
-    $:  {
-            let {name, flairs} = extractFlairsFromTitle(post.post.name.trim())
-            postName = postName = name
-            postFlairs = postFlairs = flairs
-        }
+    let postInstance: string
+    let postID: number
+    let postURL: string
+    
+    $:  onHomeInstance, generatePostInstanceAndID()
+    $:  post.post.name, processPostTitle()
 
+    function generatePostInstanceAndID() {
+        postInstance = onHomeInstance
+            ? $instance
+            : new URL(post.post.ap_id).hostname
+
+        postID = onHomeInstance 
+            ? post.post.id
+            : Number(new URL(post.post.ap_id).pathname.replace('/post/',''))
+        
+        postURL = `/post/${postInstance}/${postID}`
+    }
+    
+
+    function processPostTitle() {
+        let {name, flairs} = extractFlairsFromTitle(post.post.name.trim())
+        postName = postName = name
+        postFlairs = postFlairs = flairs
+    }
 </script>
 
-
-
-<a
-    href="/post/{getInstance()}/{post.post.id}"
-    target="_blank"
-    on:click={ 
-        (
-            //@ts-ignore
-            e
-        ) => {
+<!---Regular link that opens in new tab by default.  Other options and states change that default behavior and prevent the default behavior if triggered--->
+<a href={postURL} target="_blank" title="{fixLemmyEncodings(post.post.name)}" style="word-break: break-word;"
+    class="flex flex-row flex-wrap items-start gap-2 font-medium max-w-full w-full break-words text-left"
+    on:click={ (
+        //@ts-ignore
+        e ) => {
+            // If not already in modal and the setting to open posts in modals is enabled, open the modal viewer.
             if (!inModal && $userSettings.openInNewTab.postsInModal) {
                 e.preventDefault()
                 e.stopPropagation()
-                postViewerModal($instance, post.post.id)
+                postViewerModal(postInstance, postID)
                 return
             }
             // Use goto instead of href to avoid occasionally reloading the whole app on page transition
             if (!$userSettings.openInNewTab.posts) { 
                 e.preventDefault()
                 e.stopPropagation()
-                goto(`/post/${getInstance()}/${post.post.id}`) 
-                dispatchWindowEvent('clickIntoPost', {post_id: post.post.id})
+                goto(postURL)
+                dispatchWindowEvent('clickIntoPost', {post_id: postID})
             }
         }
     }
-    class="flex flex-row flex-wrap items-start gap-2 font-medium max-w-full w-full break-words text-left"
-    style="word-break: break-word;"
-    title="{fixLemmyEncodings(post.post.name)}"
 >
-
     <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1 font-bold {(isPostView(post) && post.read && $userSettings.markReadPosts) ? 'opacity-90' : ''}">
         <Markdown source={postName} noUserCommunityLink  noHashtags noLink/>
         
-        
         <span class="mr-2" />
         
+        <!---Debug Flair with the Post Type--->
         {#if $userSettings.debugInfo}
             <Badge label={postType} color="gray" class="mb-1 mr-2" icon={BugAnt} click={true} 
                 on:click={(e) => {
@@ -86,12 +98,14 @@
             </Badge>
         {/if}
         
+        <!---NSFW Flair--->
         {#if post.post.nsfw}
             <Badge label="NSFW" color="red" class="mb-1 mr-2" icon={ExclamationCircle} click={false}>
                 <span class="text-xs">NSFW</span>
             </Badge>
         {/if}
 
+        <!---User-Defined Flairs--->
         {#if flairs}
             {#each postFlairs as flair, idx}
                 <Badge randomColor  class="capitalize mb-1 mr-2" icon={Tag} rightJustify={false}
