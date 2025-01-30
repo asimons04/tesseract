@@ -499,11 +499,11 @@
     <!---Inbox and Notifications Settings--->
     
     <SettingsCollapseSection bind:expanded={open.inbox} icon={Inbox} title="Inbox and Notifications" condition={$profile?.user ? true : false}>
-        <SettingMultiSelect icon={Clock} title="Notification Poll Frequency" description="How often, in seconds, to poll for new notifications"
+        <SettingMultiSelect icon={Clock} title="Notification Poll Frequency" description="How often to poll for new notifications."
             bind:selected={$userSettings.notifications.pollRate}
             options={[30, 60, 90, 120, 150, 180, 300]}
+            optionNames={['30 Sec', '1 Min', '1.5 Min', '2 Min', '2.5 Min', '3 Min', '5 Min']}
         />
-
 
         <!---Inbox Default to Unread--->
         <SettingToggle icon={EnvelopeOpen} title="Inbox Defaults to Unread"  condition={$profile?.user ? true : false} bind:value={$userSettings.uiState.inboxDefaultUnread}
@@ -517,7 +517,7 @@
 
         <!---Inbox Items Per Page--->
         <SettingMultiSelect icon={Inbox} title="Inbox Items Per Page" bind:selected={$userSettings.notifications.inboxItemsPerPage}
-            description="How many inbox items should be retrieved per page"
+            description="How many inbox items should be retrieved per page."
             options={[10, 20, 30, 40, 50]}
         />
     </SettingsCollapseSection>
@@ -649,7 +649,7 @@
     <SettingsCollapseSection bind:expanded={open.posts} icon={Window} title="Posts and Comments">
         <!---Comment Sort Order--->
         <SettingMultiSelect title="Comment Sort Direction" icon={ChartBar} description="Choose the default sorting method for comments."
-            options={['Hot', 'Top', 'New']}
+            options={['Hot', 'Top', 'New', 'Old', 'Controversial']}
             bind:selected={$userSettings.defaultSort.comments}
         />
                
