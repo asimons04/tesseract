@@ -6,7 +6,8 @@
     export let backgroundImage:string = ''
     export let elevation: -1 | 0 | 1 | 2 = 1
     export { clazz as class }
-
+    export let div: HTMLDivElement | undefined = undefined
+    
     const getColor = (color: CardColor) => {
         switch (color) {
             case 'default':
@@ -46,12 +47,12 @@
             background-repeat: no-repeat;
     ">
 
-        <div class="w-full break-words border dark:border-zinc-800 bg-white/50 dark:bg-black/50 rounded-2xl {clazz}" {...$$restProps}>
+        <div bind:this={div} class="w-full break-words border dark:border-zinc-800 bg-white/50 dark:bg-black/50 rounded-2xl {clazz}" {...$$restProps}>
             <slot />
         </div>
     </div>
 {:else}
-    <div class="break-words {colorClass} {clazz}" {...$$restProps}>
+    <div bind:this={div} class="break-words {colorClass} {clazz}" {...$$restProps}>
         <slot />
     </div>
 {/if}
