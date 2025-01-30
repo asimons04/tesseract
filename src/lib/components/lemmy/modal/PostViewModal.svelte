@@ -33,19 +33,10 @@
     let imageUploads            = [] as UploadImageResponse[]
     let expandCompact: boolean  = false
     let onHomeInstance: boolean = false
-    let scrollArea: HTMLDivElement
     let loadError: boolean      = false
+    let scrollArea: HTMLDivElement
 
-    let currentParams = {
-        instance: instance,
-        post_id: post_id,
-        comment_id: comment_id
-    } as {[key:string]: undefined | string | number }
-    
-    $:  if (instance && (post_id && currentParams.post_id != post_id) || (comment_id && currentParams.comment_id != comment_id)) {
-        currentParams = { instance, post_id, comment_id}
-        mount()
-    }
+   $:   instance, post_id, comment_id, mount()
 
 
     async function mount() {
@@ -80,14 +71,15 @@
                 throw new Error("Failed to retrieve post/comment")
             }
 
-            expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
+            // (Add cross posts to post_view object for sanity)    
+            if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
 
-            currentParams = {instance, post_id, comment_id}
+            expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
             onHomeInstance = (instance == $defaultInstance)
         } 
+        
         catch (err) {
             console.log(err)
-            //open = false
             loadError = true
         }
 
@@ -107,7 +99,6 @@
                 instance = instance = $defaultInstance
                 post_id = res.post.post.id
                 comment_id = undefined
-                currentParams = {instance, post_id, comment_id}
                 await mount()
             }
         } catch (err) {
@@ -124,7 +115,7 @@
         }
     }
 
-
+    
     onMount(async () => await mount())
 
 </script>
@@ -155,7 +146,7 @@
         </div>
     </div>
 
-    <ModalScrollArea bind:div={scrollArea} card={false}>    
+    <ModalScrollArea bind:div={scrollArea} card={false} class="pr-2">    
         {#if loading}
             <div class="flex w-full h-full">
                 <Spinner width={64} class="mx-auto my-auto"/>
