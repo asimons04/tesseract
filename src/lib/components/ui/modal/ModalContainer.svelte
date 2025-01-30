@@ -16,12 +16,17 @@
     import ReportModal from '$lib/components/lemmy/moderation/ReportModal.svelte'
     import UserProfileModal from '$lib/components/lemmy/modal/UserProfileModal.svelte'
     import ZoomImageModal from '$lib/components/lemmy/modal/ZoomImageModal.svelte'
+    import PostViewModal from '$lib/components/lemmy/modal/PostViewModal.svelte';
     
   
 </script>
 
 <!--These weird await hacks are for lazy loading, better network performance-->
 
+<!---Post Viewer Modal--->
+{#if $modals.postViewer.open && ($modals.postViewer.comment_id || $modals.postViewer.post_id)}
+    <PostViewModal bind:open={$modals.postViewer.open} comment_id={$modals.postViewer.comment_id} post_id={$modals.postViewer.post_id} instance={$modals.postViewer.instance}/>
+{/if}
 
 <!---Report Item--->
 {#if $modals.reporting.open && $modals.reporting.item}
@@ -56,6 +61,10 @@
 {#if $modals.quickSettings.open}
     <QuickSettingsModal bind:open={$modals.quickSettings.open} />
 {/if}
+
+
+
+
 
 <!---Post Moderation Modal--->
 {#if $modals.postModeration.open && $modals.postModeration.item}

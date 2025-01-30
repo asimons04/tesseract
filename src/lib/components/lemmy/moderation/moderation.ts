@@ -81,6 +81,12 @@ interface Modals {
         panel: PostModerationModalPanels
 
     }
+    postViewer: {
+        open: boolean
+        instance?: string
+        comment_id?: number
+        post_id?: number
+    }
     quickSettings: {
         open: boolean
         options: {
@@ -169,6 +175,9 @@ export let modals = writable<Modals>({
         open: false,
         item: undefined,
         panel: 'none'
+    },
+    postViewer: {
+        open: false,
     },
     quickSettings: {
         open: false,
@@ -378,6 +387,20 @@ export function quickSettingsModal(options:any) {
             options: options
         }
     }))
+}
+
+
+export function postViewerModal(instance?: string, post_id?:number, comment_id?:number) {
+    modals.update((m) => ({
+        ...m,
+        postViewer: {
+            open: true,
+            instance: instance,
+            post_id: post_id,
+            comment_id: comment_id
+        }
+    }))
+
 }
 
 export function amMod(me: MyUserInfo|undefined, community: Community):boolean {

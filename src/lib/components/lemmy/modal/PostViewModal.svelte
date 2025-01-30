@@ -1,0 +1,206 @@
+<script lang="ts">
+    import type { ClickIntoPostEvent } from "$lib/ui/events"
+    import type { UploadImageResponse } from "lemmy-js-client"
+    
+
+    import { getClient } from '$lib/lemmy'
+    import { instance as defaultInstance } from "$lib/instance"
+    import { load as PostLoader } from '$routes/post/[instance]/[id=integer]/+page.js'
+    import { onMount } from "svelte"
+    import { postType as getPostType} from '$lib/components/lemmy/post/helpers'
+    import { profile } from "$lib/auth"
+
+    import Button           from "$lib/components/input/Button.svelte"
+    import Card             from "$lib/components/ui/Card.svelte"
+    import CommentSection   from "$lib/components/lemmy/post/CommentSection.svelte"
+    import Modal            from "$lib/components/ui/modal/Modal.svelte"
+    import Post             from "$lib/components/lemmy/post/Post.svelte"
+    import Spinner          from "$lib/components/ui/loader/Spinner.svelte"
+
+    import { ArrowPath, ArrowTopRightOnSquare, ChevronDoubleDown, ChevronDoubleUp, ExclamationTriangle, Home, Icon, Window } from "svelte-hero-icons"
+    import ModalScrollArea from "./components/ModalScrollArea.svelte";
+    
+    export let open: boolean                    = false
+    export let instance: string
+    export let post_id: number | undefined      = undefined
+    export let comment_id: number |undefined    = undefined
+
+    let data:any                = undefined
+    let dataURL                 = new URL(`https://locahost`)
+    let loading: boolean        = false
+    let showCommentForm:boolean = false
+    let imageUploads            = [] as UploadImageResponse[]
+    let expandCompact: boolean  = false
+    let onHomeInstance: boolean = false
+    let scrollArea: HTMLDivElement
+
+    let currentParams = {
+        instance: instance,
+        post_id: post_id,
+        comment_id: comment_id
+    } as {[key:string]: undefined | string | number }
+    
+    $:  if (instance && (post_id && currentParams.post_id != post_id) || (comment_id && currentParams.comment_id != comment_id)) {
+        currentParams = { instance, post_id, comment_id}
+        mount()
+    }
+
+
+    async function mount() {
+        if (!instance) return
+        
+        data                        = undefined
+        const client                = getClient(instance)    
+        let comment_path: string    = ''
+        let dataParams              = {} as {[key:string]: string}
+        loading                     = true
+        
+        try {
+
+            // Passing a comment ID takes precedence of a post ID
+            if (comment_id) {
+                let commentResponse = await client.getComment({id: comment_id})
+                
+                post_id         = commentResponse.comment_view.post.id
+                comment_path    = commentResponse.comment_view.comment.path
+            }
+
+            if (!post_id) throw new Error('Failed to resolve post ID from comment ID')
+            if (comment_path) dataURL.searchParams.set('thread', comment_path)
+            
+            dataParams.instance = instance
+            dataParams.id       = post_id?.toString()
+
+            data = await PostLoader({params: dataParams, url: dataURL})
+
+            expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
+
+            currentParams = {instance, post_id, comment_id}
+            onHomeInstance = (instance == $defaultInstance)
+        } 
+        catch (err) {
+            console.log(err)
+            open = false
+        }
+
+        loading = false
+    }
+
+    const fetchOnHome = async () => {
+        if (!$profile?.jwt || !data.post) return
+
+        try {
+            loading = true
+            const res = await getClient().resolveObject({
+                q: data.post.post_view.post.ap_id,
+            })
+
+            if (res.post) {
+                instance = instance = $defaultInstance
+                post_id = res.post.post.id
+                comment_id = undefined
+                await mount()
+            }
+        } catch (err) {
+
+            loading = false
+        }
+        loading = false
+    }
+
+    const handlers = {
+        ClickIntoPostEvent: function (e:ClickIntoPostEvent) {
+            open = false
+            data = null
+        }
+    }
+
+
+    onMount(async () => await mount())
+
+</script>
+
+<svelte:window on:clickIntoPost={handlers.ClickIntoPostEvent} />
+
+<Modal bind:open icon={Window} title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize preventCloseOnClickOut width="max-w-5xl" >
+    
+    <!---Modal Title Bar Buttons--->
+    <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
+        <span class="ml-auto" />    
+        
+        <div class="flex flex-row w-full items-center gap-2">
+            <Button color="tertiary" icon={ArrowPath} iconSize={20} {loading} size="square-lg" 
+                title="Refresh"
+                on:click={() => mount() }
+            />
+            
+            <Button color="tertiary" icon={ChevronDoubleDown} iconSize={20} size="square-lg" 
+                title="Scroll Bottom"
+                on:click={() => scrollArea.scrollTo(0, scrollArea.scrollHeight) }
+            />
+
+            <Button color="tertiary" icon={ChevronDoubleUp} iconSize={20} size="square-lg" 
+                title="Scroll Top"
+                on:click={() => scrollArea.scrollTo(0,0) }
+            />
+        </div>
+    </div>
+    
+    {#if loading}
+        <div class="flex w-full h-full">
+            <Spinner width={64} class="mx-auto my-auto"/>
+        </div>
+    {/if}
+
+    <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
+    {#if !loading && data && instance != $defaultInstance}
+    <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2 my-2">
+        
+        <div class="flex flex-row gap-2 items-center w-full">
+            <span class="items-center">
+                <Icon src={ExclamationTriangle} mini width={22}/>
+            </span>
+            <p class="text-sm">
+                You are viewing this post on a remote instance.  In order to reply or vote,
+                you will need to fetch this post on your home instance.
+            </p>
+        </div>
+
+        <div class="flex flex-row flex-wrap gap-2 items-center mx-auto">
+            
+            <Button color="info" size="sm" icon={Home} iconSize={16} on:click={async () => { await fetchOnHome() }}>
+                <span class="text-xs">Fetch on {$defaultInstance}</span>
+            </Button>
+
+            <Button color="info" size="sm" icon={ArrowTopRightOnSquare} iconSize={16} on:click={() => { 
+                    window.open(data.post.post_view.post.ap_id)
+                }}
+            >
+                <span class="text-xs">View on {new URL(data.post.post_view.post.ap_id).hostname}</span>
+            </Button>
+        </div>
+    </Card>
+    {/if}
+
+    
+    {#if !loading && data}
+        <!---<div class="flex flex-col gap-2 mx-auto w-full h-full">--->
+        <ModalScrollArea bind:div={scrollArea} card={false}>
+            <Post post={data.post.post_view}  displayType="post"  actions={true}  inModal={true} {expandCompact} {onHomeInstance}
+                on:reply={() => {
+                    showCommentForm = !showCommentForm
+                    
+                    if (!showCommentForm) return
+                    // Focus the comment form
+                    setTimeout(() => {
+                        let commentForm = document.getElementById(`commentForm-${data.post.post_view.post.id}`);
+                        commentForm?.focus()
+                    }, 250);
+                }}
+            />      
+
+            <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} jumpTo={comment_id}/>
+        <!---</div>--->
+        </ModalScrollArea>
+    {/if}
+</Modal>
