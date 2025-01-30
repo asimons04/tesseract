@@ -1,32 +1,26 @@
 <script lang="ts">
-    import type { GetPostResponse, CommentSortType, UploadImageResponse } from 'lemmy-js-client'
-
+    import type { CommentSortType, UploadImageResponse } from 'lemmy-js-client'
 
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import { getClient } from '$lib/lemmy.js'
-    import { goto } from '$app/navigation';
-    import { instance } from '$lib/instance.js'
-    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
-    import { removeURLParams} from '$lib/components/lemmy/post/helpers'
 
-    import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
-    import Comments from '$lib/components/lemmy/comment/Comments.svelte'
-    import CommentForm from '$lib/components/lemmy/comment/CommentForm.svelte'
-    import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
-    import MultiSelect from '$lib/components/input/MultiSelect.svelte'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte';
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
+
+    import Button           from '$lib/components/input/Button.svelte'
+    import Card             from '$lib/components/ui/Card.svelte'
+    import Comments         from '$lib/components/lemmy/comment/Comments.svelte'
+    import CommentForm      from '$lib/components/lemmy/comment/CommentForm.svelte'
+    import FormattedNumber  from '$lib/components/util/FormattedNumber.svelte'
+    import Placeholder      from '$lib/components/ui/Placeholder.svelte';
+    import SelectMenu       from '$lib/components/input/SelectMenu.svelte'
+    import Spinner          from '$lib/components/ui/loader/Spinner.svelte'
 
     import { 
-        ArrowPath,
+        BarsArrowDown,
         ChatBubbleLeftRight,
         ExclamationTriangle,
-        Icon 
     } from 'svelte-hero-icons'
     
-
     export let data:any
     export let showCommentForm:boolean  = true;
     export let imageUploads             = [] as UploadImageResponse[]
@@ -55,23 +49,27 @@
 
     <div class="flex flex-row justify-between items-center px-2">
         
-        <div class="font-bold text-lg">
+        <div class="font-bold text-lg h-[40px] mt-auto">
             Comments 
             <span class="text-sm font-normal ml-2 opacity-80">
                 <FormattedNumber number={data.post.post_view.counts.comments} />
             </span>
         </div>
 
-        <MultiSelect options={['Hot', 'Top', 'New']} bind:selected={commentSort} on:select={reloadComments} headless={true} />
-
-        <Button class="font-normal" title="{inThread ? 'Reload comment thread' : 'Reload comments'}" color="tertiary-border"
-            on:click={() => {
-                reloadComments();
-            }}
-        >
-            <Icon src={ArrowPath} mini size="16" slot="icon" />
-            <span class="hidden md:inline">{inThread ? 'Reload comment thread' : 'Reload comments'}</span>
-        </Button>
+        
+        <span class="flex flex-col gap-1">
+            <span class="font-bold text-sm opacity-80">Sort Direction</span>
+            <SelectMenu
+                title="Sort Direction"
+                alwaysShowSelectedLabel
+                icon={BarsArrowDown}
+                alignment="bottom-right"
+                options={['Hot', 'Top', 'New', 'Old', 'Controversial']} 
+                bind:selected={commentSort} 
+                on:select={reloadComments} items={5} headless={true} 
+            />
+        </span>
+        
     </div>
 
     {#if data.singleThread}

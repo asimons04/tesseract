@@ -5,36 +5,33 @@
 <script lang="ts">
     import type { CommentView } from 'lemmy-js-client'
 
-    import Badge from '$lib/components/ui/Badge.svelte'
-    import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
-    import Comment from '$lib/components/lemmy/comment/Comment.svelte'
-    import CommentMeta from '$lib/components/lemmy/comment/CommentMeta.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    
-    import { dispatchWindowEvent } from '$lib/ui/events';
+    import Badge        from '$lib/components/ui/Badge.svelte'
+    import Button       from '$lib/components/input/Button.svelte'
+    import Card         from '$lib/components/ui/Card.svelte'
+    import Comment      from '$lib/components/lemmy/comment/Comment.svelte'
+    import CommentMeta  from '$lib/components/lemmy/comment/CommentMeta.svelte'
+    import Markdown     from '$lib/components/markdown/Markdown.svelte'
+    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
+
+    import { dispatchWindowEvent } from '$lib/ui/events'
     import { fade } from 'svelte/transition'
-    import { getPostTitleWithoutFlairs, sleep, type PostDisplayType } from '$lib/components/lemmy/post/helpers'
+    import { getPostTitleWithoutFlairs, isNewAccount, sleep } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance'
-    import { onMount } from 'svelte';
+    import { onMount } from 'svelte'
+    import { postViewerModal } from '../moderation/moderation'
     import { userSettings } from '$lib/settings'
      
     import {
-        Icon,
         ArrowTopRightOnSquare,
+        Bookmark,
+        Cake,
         LockClosed,
         NoSymbol,
         Trash,
-
-        Window
-
+        Window,
     } from 'svelte-hero-icons'
-    import { postViewerModal } from '../moderation/moderation';
-    
-    
-    
 
     export let comment: CommentView
     export let actions:boolean          = true
@@ -50,13 +47,9 @@
     // A concat of the post and comment id used for scroll into view
     const elementID = Number(comment.post.id + '.' + comment.comment.id)
 
-    $:  debugMode = $userSettings.debugInfo
-
-    onMount(async () => await scrollIntoView() )
-
     async function scrollIntoView(smooth:boolean = false) {
         if (scrollTo == elementID) {
-            if (debugMode) console.log(moduleName, ": Scrolling comment " , elementID, "into view via param")
+            if ($userSettings.debugInfo) console.log(moduleName, ": Scrolling comment " , elementID, "into view via param")
             await sleep(50)
             commentContainer.scrollIntoView({
                 behavior: smooth ? 'smooth' : 'instant',
@@ -70,6 +63,8 @@
         lastClickedPost = elementID
         dispatchWindowEvent('lastClickedPost', {post_id: elementID})
     }
+
+    onMount(async () => await scrollIntoView() )
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -84,25 +79,65 @@
         <div class="flex flex-row justify-between gap-1 items-center">
             <CommentMeta bind:comment bind:inProfile noClick={!actions} />
             
-            
-            <div class="flex flex-row gap-1 items-center">
-                <Button icon={Window} iconSize={16} color="tertiary-border" size="sm" title="Open Comment Thread in Modal" on:click={() => {
-                    postViewerModal($instance, undefined, comment.comment.id)
-                }}/>
+            <!---Row with badges and jump to comment buttons--->
+            <div class="flex flex-col gap-1">
+                <!---Badges--->
+                <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
+                
+                    <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
+                    {#if comment?.creator?.published && isNewAccount(comment.creator.published)}
+                        <Badge label="New Account" color="gray" icon={Cake} iconSize={12} click={false}>
+                            <RelativeDate date={comment.creator.published} />
+                        </Badge>
+                    {/if}
+                    
+                    {#if comment.post.locked}
+                        <Badge label="Locked" color="yellow" click={false} icon={LockClosed} iconSize={14}/>
+                    {/if}
+    
+                    {#if comment.saved}
+                        <Badge label="Saved" color="yellow" icon={Bookmark} iconSize={14} click={false}/>
+                    {/if}
+                    
+                    
+                    {#if comment.comment.removed}
+                        <Badge label="Removed" color="red" icon={NoSymbol} iconSize={14} click={false}/>
+                    {/if}
+                    
+                    {#if comment.comment.deleted}
+                        <Badge label="Deleted" color="red" icon={Trash} iconSize={14} click={false}/>
+                    {/if}
+                    
+                </div>
 
-                <Button
-                    color="tertiary-border"
-                    href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}"
-                    size="sm"
-                    class="self-start"
-                    title="Jump to Comment"
-                    on:click={() => dispatchWindowEvent('clickIntoPost') }
-                >
-                    <Icon src={ArrowTopRightOnSquare} width={16}/>
-                </Button>
+                <!---Jump to Comment Buttons--->
+                <div class="flex flex-row gap-1 items-center">
+                    <Button 
+                        color="tertiary-border" 
+                        size="md"
+                        icon={Window} 
+                        iconSize={18}
+                        hidden={inModal}
+                        title="Open Comment Thread in Modal" 
+                        on:click={() => {
+                            postViewerModal($instance, undefined, comment.comment.id)
+                        }}
+                    />
+
+                    <Button
+                        color="tertiary-border"
+                        href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}"
+                        size="md"
+                        icon={ArrowTopRightOnSquare}
+                        iconSize={18}
+                        title="Jump to Comment"
+                        on:click={() => dispatchWindowEvent('clickIntoPost') }
+                    />
+                </div>
             </div>
         </div>
         
+        <!---Post Title--->
         <div class="flex flex-row justify-between gap-1 items-center">
             <a 
                 href="/post/{getInstance()}/{comment.post.id}"
@@ -124,29 +159,7 @@
             >
                 <Markdown source={getPostTitleWithoutFlairs(comment.post.name)} noUserCommunityLink  noHashtags noLink />
             </a> 
-            
-            <div class="flex flex-row gap-1 items-center">
-                <!---Indicator Badges--->
-                {#if comment.post.removed}
-                    <Badge label="Removed" color="red" click={false}>
-                        <Icon src={NoSymbol} mini size="14" />
-                    </Badge>
-                {/if}
 
-                {#if comment.post.locked}
-                    <Badge label="Locked" color="yellow" click={false}>
-                        <Icon src={LockClosed} mini size="14" />
-                    </Badge>
-                {/if}
-
-                {#if comment.post.deleted}
-                    <Badge label="Deleted" color="red" click={false}>
-                        <Icon src={Trash} mini size="14" />
-                    </Badge>
-                {/if}
-            </div>
-
-            
         </div>
        
         <div class="list-none">

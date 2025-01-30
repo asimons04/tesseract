@@ -27,15 +27,12 @@
 
     export let comment: CommentView                 
     export let avatarSize = 42;
-    export let hideBadges = false
     export let noClick = false
     export let content: boolean = false     // Show the comment content (only used for moderation UI purposes)
     export let inProfile: boolean = false
     
     let subscribing:boolean = false
-
-    //$: inCommunity = ($page.url.pathname.startsWith("/c/"))
-    //$: inProfile = ($page.url.pathname.startsWith("/u/") || $page.url.pathname.startsWith('/profile/user'))
+    
     $: subscribed = comment.subscribed == 'Subscribed' || comment.subscribed == 'Pending'
 
 </script>
@@ -105,43 +102,7 @@
                 </div>
             </div>
 
-            <!--- Badges --->
-            {#if !hideBadges}
-            <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
-                
-                <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
-                {#if comment?.creator?.published && isNewAccount(comment.creator.published)}
-                    <Badge label="New Account" color="gray">
-                        <Icon src={Cake} mini size="14"/>
-                        <RelativeDate date={comment.creator.published} />
-                    </Badge>
-                {/if}
-
-
-                {#if comment.saved}
-                    <Badge label="Saved" color="yellow">
-                        <Icon src={Bookmark} mini size="14" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Saved</span>-->
-                    </Badge>
-                {/if}
-                
-                
-                {#if comment.comment.removed}
-                    <Badge label="Removed" color="red">
-                        <Icon src={NoSymbol} mini size="14" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Removed</span>-->
-                    </Badge>
-                {/if}
-                
-                {#if comment.comment.deleted}
-                    <Badge label="Deleted" color="red">
-                        <Icon src={Trash} mini size="14" />
-                        <!--<span class="hidden {collapseBadges ? 'hidden' : 'md:block'}">Deleted</span>-->
-                    </Badge>
-                {/if}
-                
-            </div>
-            {/if}
+            
         </span>
 
         {#if content}

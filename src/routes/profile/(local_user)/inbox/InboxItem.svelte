@@ -246,22 +246,28 @@
                                 
                                 <!---"Jump to" Buttons--->
                                 <div class="flex flex-row gap-1 items-center">
-                                    <Button icon={WindowIcon} iconSize={16} color="tertiary-border" size="sm" title="Open Comment Thread in Modal" on:click={() => {
-                                        if (isPostReply(item) || isCommentReply(item) || isPersonMention(item)) {
-                                            postViewerModal($instance, undefined, item.comment.id)
-                                        }
-                                    }}/>
+                                    <Button 
+                                        color="tertiary-border" 
+                                        size="md"
+                                        icon={WindowIcon} 
+                                        iconSize={18}  
+                                        title="Open Comment Thread in Modal" 
+                                        on:click={() => {
+                                            if (isPostReply(item) || isCommentReply(item) || isPersonMention(item)) {
+                                                postViewerModal($instance, undefined, item.comment.id)
+                                            }
+                                        }}
+                                    />
                     
                                     <Button
                                         color="tertiary-border"
                                         href="/post/{$instance}/{item.post.id}?thread={item.comment.path}"
-                                        size="sm"
-                                        class="self-start"
+                                        size="md"
+                                        icon={ArrowTopRightOnSquare}
+                                        iconSize={18}
                                         title="Jump to Comment"
                                         on:click={() => dispatchWindowEvent('clickIntoPost') }
-                                    >
-                                        <Icon src={ArrowTopRightOnSquare} width={16}/>
-                                    </Button>
+                                    />
                                 </div>
                             </div>
                             
