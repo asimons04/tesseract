@@ -17,8 +17,9 @@
     import Post             from "$lib/components/lemmy/post/Post.svelte"
     import Spinner          from "$lib/components/ui/loader/Spinner.svelte"
 
-    import { ArrowPath, ArrowTopRightOnSquare, ChevronDoubleDown, ChevronDoubleUp, ExclamationTriangle, Home, Icon, Window } from "svelte-hero-icons"
+    import { ArrowPath, ArrowTopRightOnSquare, ChevronDoubleDown, ChevronDoubleUp, ExclamationCircle, ExclamationTriangle, Home, Icon, Window } from "svelte-hero-icons"
     import ModalScrollArea from "./components/ModalScrollArea.svelte";
+    import Placeholder from "$lib/components/ui/Placeholder.svelte";
     
     export let open: boolean                    = false
     export let instance: string
@@ -33,6 +34,7 @@
     let expandCompact: boolean  = false
     let onHomeInstance: boolean = false
     let scrollArea: HTMLDivElement
+    let loadError: boolean      = false
 
     let currentParams = {
         instance: instance,
@@ -54,7 +56,8 @@
         let comment_path: string    = ''
         let dataParams              = {} as {[key:string]: string}
         loading                     = true
-        
+        loadError                   = false
+
         try {
 
             // Passing a comment ID takes precedence of a post ID
@@ -72,6 +75,10 @@
             dataParams.id       = post_id?.toString()
 
             data = await PostLoader({params: dataParams, url: dataURL})
+            if (!data) {
+                loadError = true
+                throw new Error("Failed to retrieve post/comment")
+            }
 
             expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
 
@@ -80,7 +87,8 @@
         } 
         catch (err) {
             console.log(err)
-            open = false
+            //open = false
+            loadError = true
         }
 
         loading = false
@@ -150,6 +158,12 @@
         <div class="flex w-full h-full">
             <Spinner width={64} class="mx-auto my-auto"/>
         </div>
+    {/if}
+
+    {#if loadError}
+        <Placeholder title="Unable to Fetch Post" icon={ExclamationCircle}  iconSize={64}
+            description="Failed to fetch the post details"
+        />
     {/if}
 
     <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
