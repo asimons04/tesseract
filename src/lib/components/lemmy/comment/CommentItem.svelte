@@ -37,11 +37,12 @@
     
 
     export let comment: CommentView
-    export let actions:boolean = true
-    export let collapseBadges:boolean = false;
-    export let scrollTo:number = -1
-    export let inProfile:boolean = false
-    export let inModal: boolean = false
+    export let actions:boolean          = true
+    export let collapseBadges:boolean   = false;
+    export let scrollTo:number          = -1
+    export let inProfile:boolean        = false
+    export let inModal: boolean         = false
+    export let onHomeInstance: boolean  = true
 
     let commentContainer:HTMLDivElement
     let lastClickedPost = -1
@@ -149,7 +150,7 @@
         </div>
        
         <div class="list-none">
-            <Comment elevation={-1} postId={comment.post.id} replying={false} {actions} {collapseBadges} node={{ children: [], comment_view: comment, depth: 1 }} />
+            <Comment elevation={-1} postId={comment.post.id} replying={false} {actions} {collapseBadges} {onHomeInstance} node={{ children: [], comment_view: comment, depth: 1 }} />
         </div>
     </Card>
 </div>
