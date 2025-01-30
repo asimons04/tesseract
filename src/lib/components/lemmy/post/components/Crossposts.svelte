@@ -14,6 +14,7 @@
 
     export let post:PostView
     export let size:string = "xs"
+    export let onHomeInstance: boolean= false
     
     let textSize:string
     let iconSize:number
@@ -48,7 +49,7 @@
 >
     <div class="divide-y gap-2 divide-slate-300 dark:divide-zinc-700 flex flex-col max-h-[10rem] overflow-y-scroll">
         {#each post.cross_posts as crosspost}
-            <CrosspostItem {crosspost} {textSize} {iconSize} />
+            <CrosspostItem {crosspost} {textSize} {iconSize} {onHomeInstance}/>
         {/each}
     </div>
 </CollapseButton>

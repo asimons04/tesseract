@@ -74,7 +74,7 @@
                 {/if}
                 
                 <PostBody bind:post bind:expandPreviewText {displayType}  />
-                <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                <Crossposts bind:post size="xs" {onHomeInstance} class="mb-1 !pl-0"/>
                 <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
             </div>
             
@@ -102,7 +102,7 @@
                     />
                 </PostBody>
 
-                <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+                <Crossposts bind:post size="xs" {onHomeInstance} class="mb-1 !pl-0"/>
                 
                 <div class="mt-2" />
                 <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply />
@@ -122,7 +122,7 @@
     <Image url={thumbnail_url} {displayType} nsfw={post.post.nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
-    <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
+    <Crossposts bind:post size="xs" {onHomeInstance} class="mb-1 !pl-0"/>
     <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2"/>
 
 {/if}

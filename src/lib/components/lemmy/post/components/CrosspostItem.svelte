@@ -39,9 +39,10 @@
     export let instance:string = getInstance()          // Allows passing an instance if the post ID is remote (defaults to current)
     export let noClick:boolean = false                  // Disables pointer events if list is for display only
     export let voteButtons: boolean = true              // Whether to show the vote buttons
+    export let onHomeInstance: boolean = false
+
 
     const getTextSize = () => `text-xs md:${textSize}`
-    $: onHomeInstance   = ($page.params.instance ?? $homeInstance)  == $homeInstance
 
     const handlers= {
         EditPostEvent: function (e:EditPostEvent) {
@@ -93,7 +94,7 @@
             <!---Vote Buttons for the XPost Item--->
             {#if voteButtons}
                 <button on:click|preventDefault|stopPropagation>
-                    <PostVote bind:post={crosspost} small/>
+                    <PostVote bind:post={crosspost} small {onHomeInstance}/>
                 </button>
             {/if}
             
@@ -105,7 +106,7 @@
             {/if}
         
             <!---Comment Counts--->
-            <CommentCountButton bind:post={crosspost} displayType="feed" />
+            <CommentCountButton bind:post={crosspost} {onHomeInstance} displayType="feed" />
 
              <!---Moderation--->
              {#if !noClick && onHomeInstance && (amMod($profile?.user, crosspost.community) || isAdmin($profile?.user))}
