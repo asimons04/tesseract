@@ -630,7 +630,18 @@
         
         <!---Open Posts in New Tab--->
         <SettingToggle title="Open Posts in New Tab" icon={ArrowTopRightOnSquare} bind:value={$userSettings.openInNewTab.posts}
-            description="Posts in the feed will open in a new tab. If you have Tesseract installed as a PWA, you will likely want to make sure this is disabled."
+            description="Posts in the feed will open in a new tab. Mutually exclusive with 'Open Posts in Modal'"
+            on:change={(e) => {
+                if (e.detail)   $userSettings.openInNewTab.postsInModal = false
+            }}
+        />
+
+        <!---Open Posts in Modal--->
+        <SettingToggle icon={Window} title="Open Posts in Modal" bind:value={$userSettings.openInNewTab.postsInModal} small={true} 
+            description="Open posts in a modal without leaving the feed. Mutually exclusive with 'Open Posts in New Tab'"
+            on:change={(e) => {
+                if (e.detail)   $userSettings.openInNewTab.posts = false
+            }}
         />
     </SettingsCollapseSection>
 
