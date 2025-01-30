@@ -13,11 +13,9 @@
 
     export let post:PostView
     export let displayType:PostDisplayType
+    export let onHomeInstance: boolean = false
 
     let dispatcher = createEventDispatcher()
-
-    let onHomeInstance: boolean = true
-    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 </script>
 
 {#if displayType == 'post'}

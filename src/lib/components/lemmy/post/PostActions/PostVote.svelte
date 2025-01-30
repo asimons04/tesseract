@@ -27,10 +27,7 @@
 
     export let post:    PostView
     export let small: boolean = false
-
-
-    let onHomeInstance: boolean = true
-    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
+    export let onHomeInstance: boolean = false
 
     const voteColor = (vote: number) => {
         if (vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'

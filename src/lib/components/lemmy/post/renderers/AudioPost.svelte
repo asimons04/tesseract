@@ -29,6 +29,7 @@
     export let inViewport                   = true
     export let compact: boolean             = true
     export let inModal: boolean             = false
+    export let onHomeInstance: boolean      = false
 
     let source: string | undefined          = post.post.embed_video_url ?? post.post.url!
     let clickToPlayClicked                  = false
@@ -78,7 +79,7 @@
 
                     <PostBody bind:post bind:expandPreviewText {displayType}  />
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-                    <PostActions  bind:post {inModal} {displayType} on:reply class="mt-2" />
+                    <PostActions  bind:post {inModal} {displayType}  {onHomeInstance} on:reply class="mt-2" />
                 </div>
             </div>
     
@@ -100,7 +101,7 @@
                 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                 
                 <div class="mt-2" />
-                <PostActions  bind:post {inModal} {displayType} on:reply />
+                <PostActions  bind:post {inModal} {displayType}  {onHomeInstance} on:reply />
             </div>
         </div>
     {/if}
@@ -128,7 +129,7 @@
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-    <PostActions  bind:post {inModal} {displayType} on:reply class="mt-2" />
+    <PostActions  bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
 
 {/if}
 

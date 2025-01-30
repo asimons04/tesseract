@@ -25,7 +25,8 @@
     export let inViewport                   = true
     export let compact: boolean             = true
     export let inModal: boolean             = false
-
+    export let onHomeInstance: boolean      = false
+    
     let expandPreviewText: boolean
     $:  thumbnail_url = (post.post.thumbnail_url && isImage(post.post.thumbnail_url)) 
             ? post.post.thumbnail_url 
@@ -61,5 +62,5 @@
 
 <PostBody bind:post bind:expandPreviewText {displayType}  />
 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-<PostActions bind:post {inModal} {displayType} on:reply class="mt-2" />
+<PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
 

@@ -28,7 +28,7 @@
     export let isParent: boolean = true
     export let post: Post
     export let moderators: Array<CommunityModeratorView>
-
+    export let jumpTo: number = -1
 
     if (isParent) {
         setContext('comments:tree', nodes)
@@ -93,14 +93,6 @@
             })
         }
     }
-
-    /**
-    {
-        isParent
-            ? 'divide-y dark:divide-zinc-800 divide-slate-200'
-            : 'pl-2 border-l-2 border-slate-200 dark:border-zinc-800 my-1'
-    }
-    */
      
 </script>
 
@@ -118,9 +110,9 @@
                     && !amMod($profile?.user, node.comment_view.community)
                 )
         }
-            <Comment postId={post.id} bind:node >
+            <Comment postId={post.id} bind:node {jumpTo}>
                 {#if node.children?.length > 0}
-                    <svelte:self {post} bind:nodes={node.children} moderators={moderators} isParent={false} />
+                    <svelte:self {post} bind:nodes={node.children} moderators={moderators} isParent={false} {jumpTo}/>
                 {/if}
 
                 {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}

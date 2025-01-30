@@ -26,6 +26,7 @@
     export let postType: PostType           = 'image'
     export let compact: boolean             = true
     export let inModal: boolean             = false
+    export let onHomeInstance: boolean      = false
 
     //Component-specific
     export let zoomable:boolean = true
@@ -74,7 +75,7 @@
                     
                     <PostBody bind:post bind:expandPreviewText {displayType}  />
                     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-                    <PostActions bind:post {inModal} {displayType} on:reply class="mt-2" />
+                    <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
                 </div>
                 
                 <!---If the Embed Description is Shown, the thumbnail will go there--->
@@ -104,7 +105,7 @@
                 <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
                 
                 <div class="mt-2" />
-                <PostActions bind:post {inModal} {displayType} on:reply />
+                <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply />
             </div>
         </div>
     {/if}
@@ -122,7 +123,7 @@
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
     <Crossposts bind:post size="xs" class="mb-1 !pl-0"/>
-    <PostActions bind:post {inModal} {displayType} on:reply class="mt-2"/>
+    <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2"/>
 
 {/if}
 

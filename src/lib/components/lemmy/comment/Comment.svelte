@@ -27,7 +27,7 @@
 
     import { amModOfAny } from '../moderation/moderation'
     import { getClient } from '$lib/lemmy.js'
-    import { isThreadComment, scrollToTop } from '../post/helpers'
+    import { isThreadComment, scrollToTop, sleep } from '../post/helpers'
     import { onMount } from 'svelte'
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
@@ -39,25 +39,27 @@
     
     export let node: CommentNodeI
     export let postId: number
-    export let actions: boolean = true
-    export let open = true
-    export let replying = false
-    export let elevation: -1|0|1|2 = getCardElevation(node)
-    
-    let imageUploads              = [] as UploadImageResponse[]
-    let editing                   = false
-    let newComment                = node.comment_view.comment.content
-    let jumpToComment             = false
+    export let actions: boolean     = true
+    export let open                 = true
+    export let replying             = false
+    export let elevation: -1|0|1|2  = getCardElevation(node)
+    export let jumpTo:number        = -1
+
+    let imageUploads                = [] as UploadImageResponse[]
+    let editing                     = false
+    let newComment                  = node.comment_view.comment.content
+    let jumpToComment               = false
     let commentContainer: HTMLDivElement
-    
-    let op = node.comment_view.post.creator_id == node.comment_view.creator.id
+    let op                          = (node.comment_view.post.creator_id == node.comment_view.creator.id)
 
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
-        if (isThreadComment(node.comment_view.comment.id)) {
+        if (jumpTo > 0 && jumpTo == node.comment_view.comment.id ) { 
             jumpToComment = true
             color = 'warning'
-            await scrollToTop(commentContainer)
+            sleep(175).then(() => {
+                commentContainer.scrollIntoView({behavior: 'smooth'})
+            })
         }
                     
     })
