@@ -17,6 +17,7 @@
     import { getPostTitleWithoutFlairs, sleep, type PostDisplayType } from '$lib/components/lemmy/post/helpers'
     import { getInstance } from '$lib/lemmy'
     import { goto } from '$app/navigation'
+    import { instance } from '$lib/instance'
     import { onMount } from 'svelte';
     import { userSettings } from '$lib/settings'
      
@@ -25,8 +26,12 @@
         ArrowTopRightOnSquare,
         LockClosed,
         NoSymbol,
-        Trash
+        Trash,
+
+        Window
+
     } from 'svelte-hero-icons'
+    import { postViewerModal } from '../moderation/moderation';
     
     
     
@@ -41,6 +46,7 @@
     let commentContainer:HTMLDivElement
     let lastClickedPost = -1
 
+    // A concat of the post and comment id used for scroll into view
     const elementID = Number(comment.post.id + '.' + comment.comment.id)
 
     $:  debugMode = $userSettings.debugInfo
@@ -77,16 +83,23 @@
         <div class="flex flex-row justify-between gap-1 items-center">
             <CommentMeta bind:comment bind:inProfile noClick={!actions} />
             
-            <Button
-                color="tertiary-border"
-                href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}"
-                size="sm"
-                class="self-start"
-                title="Jump to Comment"
-                on:click={() => dispatchWindowEvent('clickIntoPost') }
-            >
-                <Icon src={ArrowTopRightOnSquare} width={16}/>
-            </Button>
+            
+            <div class="flex flex-row gap-1 items-center">
+                <Button icon={Window} iconSize={16} color="tertiary-border" size="sm" title="Open Comment Thread in Modal" on:click={() => {
+                    postViewerModal($instance, undefined, comment.comment.id)
+                }}/>
+
+                <Button
+                    color="tertiary-border"
+                    href="/post/{getInstance()}/{comment.post.id}?thread={comment.comment.path}"
+                    size="sm"
+                    class="self-start"
+                    title="Jump to Comment"
+                    on:click={() => dispatchWindowEvent('clickIntoPost') }
+                >
+                    <Icon src={ArrowTopRightOnSquare} width={16}/>
+                </Button>
+            </div>
         </div>
         
         <div class="flex flex-row justify-between gap-1 items-center">

@@ -28,13 +28,19 @@
     
 
     export let data:any
-    export let showCommentForm:boolean = true;
-    export let imageUploads = [] as UploadImageResponse[]
-    
-    let commentSort: CommentSortType = data.commentSort;
+    export let showCommentForm:boolean  = true;
+    export let imageUploads             = [] as UploadImageResponse[]
+    export let onHomeInstance: boolean  = true
+    export let inThread:boolean         = false
+    export let jumpTo:number            = -1 
+
+    let commentSort: CommentSortType    = data.commentSort;
+    let commentSectionContainer: HTMLDivElement
 
     async function reloadComments() {
         data.singleThread = false
+        jumpTo = -1
+        commentSectionContainer.scrollTop = 0
         data.streamed.comments = getClient().getComments({
             type_: 'All',
             post_id: data.post.post_view.post.id,
@@ -44,10 +50,10 @@
     }
 </script>
 
-<div id="comments" class="mt-4 flex flex-col gap-2 w-full h-full">
+<div bind:this={commentSectionContainer} id="comments" class="mt-4 flex flex-col gap-2 w-full h-full">
     
 
-    <div class="flex flex-row justify-between items-center">
+    <div class="flex flex-row justify-between items-center px-2">
         
         <div class="font-bold text-lg">
             Comments 
@@ -58,20 +64,20 @@
 
         <MultiSelect options={['Hot', 'Top', 'New']} bind:selected={commentSort} on:select={reloadComments} headless={true} />
 
-        <Button class="font-normal" title="{$page.url.searchParams.get('thread') ? 'Reload comment thread' : 'Reload comments'}" color="tertiary-border"
+        <Button class="font-normal" title="{inThread ? 'Reload comment thread' : 'Reload comments'}" color="tertiary-border"
             on:click={() => {
                 reloadComments();
             }}
         >
             <Icon src={ArrowPath} mini size="16" slot="icon" />
-            <span class="hidden md:inline">{$page.url.searchParams.get('thread') ? 'Reload comment thread' : 'Reload comments'}</span>
+            <span class="hidden md:inline">{inThread ? 'Reload comment thread' : 'Reload comments'}</span>
         </Button>
     </div>
 
     {#if data.singleThread}
         <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap justify-between">
             <p>You're viewing a single thread.</p>
-            <Button on:click={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }>View full thread</Button>
+            <Button on:click={() => reloadComments() }>View full thread</Button>
         </Card>
     {/if}
 
@@ -83,7 +89,7 @@
         
         {#if $profile?.user && showCommentForm}
             <CommentForm postId={data.post.post_view.post.id} bind:imageUploads
-                locked={data.post.post_view.post.locked || $page.params.instance.toLowerCase() != $instance.toLowerCase()}
+                locked={data.post.post_view.post.locked || !onHomeInstance}
                 on:comment={ (comment) =>
                     {
                         comments.comments = [comment.detail.comment_view, ...comments.comments,];
@@ -99,7 +105,7 @@
             </div>
             {:then comments}
                 {#if comments.length > 0}
-                    <Comments post={data.post.post_view.post} moderators={data.post.moderators} nodes={comments} isParent={true} />
+                    <Comments post={data.post.post_view.post} moderators={data.post.moderators} nodes={comments} isParent={true} {onHomeInstance} {jumpTo}/>
                 {:else}
                     <!---Hide placeholder if you have the comment form open--->
                     {#if !showCommentForm}

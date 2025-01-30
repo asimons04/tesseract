@@ -52,9 +52,7 @@
     export let comment: CommentView
     export let replying: boolean = false
     export let actions: boolean = true
-
-    let onHomeInstance: boolean = true
-    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
+    export let onHomeInstance = false
 
     const dispatcher = createEventDispatcher<{ edit: CommentView }>()
 
@@ -63,7 +61,7 @@
       
 <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2 items-center mt-1 h-8 w-full">
     <!---Comment Vote Buttons--->
-    <CommentVote bind:comment />
+    <CommentVote bind:comment {onHomeInstance}/>
     
     <!---Comment Reply Button--->
     {#if actions}

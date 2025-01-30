@@ -1,16 +1,12 @@
 <script lang="ts">
     import type { CommentAggregates, CommentView } from 'lemmy-js-client'
     import {
-        ArrowUp,
-        ArrowDown,
         Icon,
         Heart,
     } from 'svelte-hero-icons'
     
     
     import { getClient } from '$lib/lemmy'
-    import { instance } from '$lib/instance'
-    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { site } from '$lib/lemmy'
@@ -21,9 +17,9 @@
     import UpvoteIcon from '$lib/components/ui/icons/UpvoteIcon.svelte'
 
     export let comment: CommentView
+    export let onHomeInstance: boolean = false
 
-    let onHomeInstance: boolean = true
-    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
+    
 
     const voteColor = () => {
         if (comment.my_vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'

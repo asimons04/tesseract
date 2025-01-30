@@ -44,6 +44,8 @@
     export let replying             = false
     export let elevation: -1|0|1|2  = getCardElevation(node)
     export let jumpTo:number        = -1
+    export let onHomeInstance       = false
+
 
     let imageUploads                = [] as UploadImageResponse[]
     let editing                     = false
@@ -260,6 +262,7 @@
                 <div class="flex flex-row gap-2 items-center">
                     <CommentActions
                         {actions}
+                        {onHomeInstance}
                         bind:comment={node.comment_view}
                         bind:replying
                         on:edit={() => (editing = true)}
@@ -271,6 +274,7 @@
                 <div class="max-w-full my-2">
                     <h1 class="font-bold text-sm mb-2">Reply</h1>
                     <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
+                        locked={node.comment_view.post.locked || !onHomeInstance}
                         on:comment={(e) => {
                             node.children = [
                                 {
