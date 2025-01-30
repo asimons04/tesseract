@@ -40,12 +40,6 @@ removeAdmin {username}
 
 ```
 
-1) Support "universal" links.  The post and comment ones will basically work like the user/community where it resolves them and then links to them.  If unauthenticated, go to the remote one (at least for posts; not sure if comments will work that way without auth).
-    - `@<user>@instance.xyz` (already implemented)
-    - `!<community>@instance.xyz` (already implemented)
-    - `#<post_id>@instance.xyz` (need to update hashtag regex to ignore numeric tags)
-    - `~<comment_id>@instance.xyz`
-
 
 # 1.4.30
 
@@ -62,15 +56,6 @@ removeAdmin {username}
         - Add 'info' class to comment to indicate it is selected
         - Add the comment ID to an array
         - 
-    
-
-- Add icon to badge buttons:
-    - [X] User for user
-    - [X] UserGroup for community
-    - Window or Photo for Post (when implementing universal links)
-    - ChatBubbleLeftRight for Comment (when implementing universal links)
-
-
 
 - Add comment menu option to share a local link to a comment (e.g. via the Tesseract URL -> tess.domain.xyz/comment/{id}
 
@@ -162,6 +147,16 @@ Links to Tidal albums, tracks, and playlists should now embed as interactive pla
 
 When clicking a Tidal link in the comments (or choosing 'Preview' from the post action menu on a Tidal post), the link preview modal will also show the album or playlist as an embed.
 
+### Posts Can Now Load in Modals
+By default, posts open to the post page.  In addition to optionally opening them in a new tab, you can now load them in a modal without leaving the feed.
+
+The setting is in Quick Settings -> Open Posts in Modal or Settings -> Feed -> Open Posts in Modals
+
+Additionally, on comments in the inbox and profiles, there is a button to jump to the comment thread in a modal. Very useful for getting context without leaving your current spot.
+
+Report items also have this ability in order to easily get context before making a mod decision on an item.
+
+
 
 ### Limited Server Side Rendering (SSR) to Support Metadata Fetching
 A bug was submitted that when posting a link that resolves to a Tesseract resource (e.g. `https://tesseract.dubvee.org/post/lemmy.world/123456`), the metadata would be the generic Tesseract info rather than the metadata for the content.  I had been content to leave it at that (Photon and Alexandrite both behave the same way), but I figured I'd give it one more go.
@@ -192,10 +187,16 @@ Added support "universal" links as well as badge-ifying links to posts and comme
     - `!<community>@instance.xyz`: Has been implemented since at least 1.4.0 (forget when)
     - `#<post_id>@instance.xyz` 
     - `~<comment_id>@instance.xyz`
-Currently, the user and community badge buttons bring up their respective modals with action items for each.  The plan for post and comment badge buttons is similar, but initially, they're just going to be fancy links.  The only real change, aside from badge-ifying those, is that `#post_id@intance.xyz` and `~comment_id@instance.xyz` formats are recognized and turned into appropriate links.
 
+### Lemmyverse Link Support
+LemmyVerse links will now be localized without having to hairpin to/from Lemmyverse.
 
+### Post and Comment Links are Now Badge-ified
+Links to posts and comments (e.g. `cross-posted from https://instance.xyz/post/12345`) are detected, localized, and badgeified the same way 
 
+Additionally, like users and communities, posts and comment badge links will now open in a modal for quick reference without leaving your current spot in the feed or another post. 
+
+Clicking the post title will take you to the /post page for the item.
 
 ---
 
