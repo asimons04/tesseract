@@ -114,11 +114,13 @@
                     "
                 >
                     <!---Modal Dialog Title Bar--->
-                    <div class="flex flex-row max-w-full">
-                        <h1 class="flex flex-row items-center font-bold text-lg gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
-                            {#if icon} 
+                    <div class="flex flex-row gap-2 items-center max-w-full">
+                        {#if icon} 
+                            <span class="w-[32px]">
                                 <Icon src={icon} mini width={28}/>
-                            {/if}
+                            </span>
+                        {/if}
+                        <h1 class="font-bold text-lg gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
                             {title}
                         </h1>
                         
