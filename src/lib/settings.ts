@@ -92,6 +92,7 @@ interface Settings {
     openInNewTab: {
         links: boolean,                                                 // Enable to open external links in a new tab
         posts: boolean,                                                 // Enable to load posts in a new tab
+        postsInModal: boolean,                                          // Open posts in modals 
     },
     debugInfo: boolean                                                  // Enable to show a 'debug' button on post/comments and other objects for development purposes
     embeddedMedia: {
@@ -247,6 +248,7 @@ export const defaultSettings: Settings = {
     openInNewTab: {
         links:      toBool(env.PUBLIC_OPEN_LINKS_NEW_TAB)               ??  false,
         posts:      toBool(env.PUBLIC_OPEN_POSTS_NEW_TAB)               ??  false,
+        postsInModal:                                                   false,
     },
     experimentalFeatures:                                               false,
     
