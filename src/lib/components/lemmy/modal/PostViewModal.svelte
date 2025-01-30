@@ -22,7 +22,7 @@
     import Placeholder from "$lib/components/ui/Placeholder.svelte";
     
     export let open: boolean                    = false
-    export let instance: string
+    export let instance: string | undefined     = undefined
     export let post_id: number | undefined      = undefined
     export let comment_id: number |undefined    = undefined
 
@@ -107,6 +107,7 @@
                 instance = instance = $defaultInstance
                 post_id = res.post.post.id
                 comment_id = undefined
+                currentParams = {instance, post_id, comment_id}
                 await mount()
             }
         } catch (err) {
@@ -144,62 +145,61 @@
             
             <Button color="tertiary" icon={ChevronDoubleDown} iconSize={20} size="square-lg" 
                 title="Scroll Bottom"
-                on:click={() => scrollArea.scrollTo(0, scrollArea.scrollHeight) }
+                on:click={() => scrollArea?.scrollTo(0, scrollArea.scrollHeight) }
             />
 
             <Button color="tertiary" icon={ChevronDoubleUp} iconSize={20} size="square-lg" 
                 title="Scroll Top"
-                on:click={() => scrollArea.scrollTo(0,0) }
+                on:click={() => scrollArea?.scrollTo(0,0) }
             />
         </div>
     </div>
-    
-    {#if loading}
-        <div class="flex w-full h-full">
-            <Spinner width={64} class="mx-auto my-auto"/>
-        </div>
-    {/if}
 
-    {#if loadError}
-        <Placeholder title="Unable to Fetch Post" icon={ExclamationCircle}  iconSize={64}
-            description="Failed to fetch the post details"
-        />
-    {/if}
+    <ModalScrollArea bind:div={scrollArea} card={false}>    
+        {#if loading}
+            <div class="flex w-full h-full">
+                <Spinner width={64} class="mx-auto my-auto"/>
+            </div>
+        {/if}
 
-    <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
-    {#if !loading && data && instance != $defaultInstance}
-    <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2 my-2">
-        
-        <div class="flex flex-row gap-2 items-center w-full">
-            <span class="items-center">
-                <Icon src={ExclamationTriangle} mini width={22}/>
-            </span>
-            <p class="text-sm">
-                You are viewing this post on a remote instance.  In order to reply or vote,
-                you will need to fetch this post on your home instance.
-            </p>
-        </div>
+        {#if loadError}
+            <Placeholder title="Unable to Fetch Post" icon={ExclamationCircle}  iconSize={64}
+                description="Failed to fetch the post details"
+            />
+        {/if}
 
-        <div class="flex flex-row flex-wrap gap-2 items-center mx-auto">
+        <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
+        {#if !loading && data && instance != $defaultInstance}
+        <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2 my-2">
             
-            <Button color="info" size="sm" icon={Home} iconSize={16} on:click={async () => { await fetchOnHome() }}>
-                <span class="text-xs">Fetch on {$defaultInstance}</span>
-            </Button>
+            <div class="flex flex-row gap-2 items-center w-full">
+                <span class="items-center">
+                    <Icon src={ExclamationTriangle} mini width={22}/>
+                </span>
+                <p class="text-sm">
+                    You are viewing this post on a remote instance.  In order to reply or vote,
+                    you will need to fetch this post on your home instance.
+                </p>
+            </div>
 
-            <Button color="info" size="sm" icon={ArrowTopRightOnSquare} iconSize={16} on:click={() => { 
-                    window.open(data.post.post_view.post.ap_id)
-                }}
-            >
-                <span class="text-xs">View on {new URL(data.post.post_view.post.ap_id).hostname}</span>
-            </Button>
-        </div>
-    </Card>
-    {/if}
+            <div class="flex flex-row flex-wrap gap-2 items-center mx-auto">
+                
+                <Button color="info" size="sm" icon={Home} iconSize={16} on:click={async () => { await fetchOnHome() }}>
+                    <span class="text-xs">Fetch on {$defaultInstance}</span>
+                </Button>
+
+                <Button color="info" size="sm" icon={ArrowTopRightOnSquare} iconSize={16} on:click={() => { 
+                        window.open(data.post.post_view.post.ap_id)
+                    }}
+                >
+                    <span class="text-xs">View on {new URL(data.post.post_view.post.ap_id).hostname}</span>
+                </Button>
+            </div>
+        </Card>
+        {/if}
 
     
-    {#if !loading && data}
-        <!---<div class="flex flex-col gap-2 mx-auto w-full h-full">--->
-        <ModalScrollArea bind:div={scrollArea} card={false}>
+        {#if !loading && data}
             <Post post={data.post.post_view}  displayType="post"  actions={true}  inModal={true} {expandCompact} {onHomeInstance}
                 on:reply={() => {
                     showCommentForm = !showCommentForm
@@ -214,7 +214,6 @@
             />      
 
             <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} jumpTo={comment_id}/>
-        <!---</div>--->
-        </ModalScrollArea>
-    {/if}
+        {/if}
+    </ModalScrollArea>
 </Modal>
