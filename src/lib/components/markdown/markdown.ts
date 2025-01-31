@@ -152,6 +152,7 @@ export function findUserCommunityLinks(source: string) {
 const regexes = {
     post: /^https:\/\/([a-zA-Z0-9\.\-]+)\/post\/(\d+)$/,
     comment: /^https:\/\/([a-zA-Z0-9\.\-]+)\/comment\/(\d+)$/,
+    comment2: /^https:\/\/([a-zA-Z0-9\.\-]+)\/post\/\d+\/(\d+)$/,
     //user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/(?!@)(.*)$/,
     //community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/(.*)$/
     user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/([^@]+)$/,
@@ -171,6 +172,12 @@ export const photonify = (link: string) => {
   
     if (regexes.comment.test(link)) {
         const match = link.match(regexes.comment)
+        if (!match) return
+        return `/comment/${match?.[1]}/${match?.[2]}`
+    }
+
+    if (regexes.comment2.test(link)) {
+        const match = link.match(regexes.comment2)
         if (!match) return
         return `/comment/${match?.[1]}/${match?.[2]}`
     }
