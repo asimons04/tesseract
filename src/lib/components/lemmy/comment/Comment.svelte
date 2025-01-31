@@ -16,25 +16,26 @@
     } from 'svelte-hero-icons'
     
     
-    import Button from '$lib/components/input/Button.svelte'
-    import CommentActions from '$lib/components/lemmy/comment/CommentActions.svelte'
-    import CommentForm from './CommentForm.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte';
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    import Button           from '$lib/components/input/Button.svelte'
+    import Card             from '$lib/components/ui/Card.svelte'
+    import CommentActions   from '$lib/components/lemmy/comment/CommentActions.svelte'
+    import CommentForm      from './CommentForm.svelte'
+    import Markdown         from '$lib/components/markdown/Markdown.svelte'
+    import MarkdownEditor   from '$lib/components/markdown/MarkdownEditor.svelte';
+    import Modal            from '$lib/components/ui/modal/Modal.svelte'
+    import RelativeDate     from '$lib/components/util/RelativeDate.svelte'
+    import UserLink         from '$lib/components/lemmy/user/UserLink.svelte'
 
-    import { amModOfAny } from '../moderation/moderation'
-    import { getClient } from '$lib/lemmy.js'
-    import { isThreadComment, scrollToTop, sleep } from '../post/helpers'
-    import { onMount } from 'svelte'
-    import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
-    import { slide } from 'svelte/transition'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
+    import { amModOfAny }   from '../moderation/moderation'
+    import { getClient }    from '$lib/lemmy.js'
+    import { onMount }      from 'svelte'
+    import { page }         from '$app/stores'
+    import { profile }      from '$lib/auth.js'
+    import { sleep }        from '../post/helpers'
+    import { slide }        from 'svelte/transition'
+    import { toast }        from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
-    import Card from '$lib/components/ui/Card.svelte';
+    
     
     
     export let node: CommentNodeI
