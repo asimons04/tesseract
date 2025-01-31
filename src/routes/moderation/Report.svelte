@@ -6,22 +6,23 @@
     import { fade } from "svelte/transition"
     import { goto } from "$app/navigation"
     import { hrColors } from "$lib/ui/colors"
+    import { instance } from "$lib/instance";
     import { getClient } from '$lib/lemmy'
     import { page } from "$app/stores"
-    import { postModerationModal, userProfileModal } from "$lib/components/lemmy/moderation/moderation"
+    import { postModerationModal, postViewerModal, userProfileModal } from "$lib/components/lemmy/moderation/moderation"
     import { profile } from '$lib/auth'
     import { userSettings } from '$lib/settings'
 
-    import Button from "$lib/components/input/Button.svelte"
-    import Card from '$lib/components/ui/Card.svelte'
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
-    import CommentItem from "$lib/components/lemmy/comment/CommentItem.svelte"
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import Markdown from "$lib/components/markdown/Markdown.svelte";
-    import Post from "$lib/components/lemmy/post/Post.svelte"
-    import PrivateMessageItem from '$lib/components/lemmy/private_message/PrivateMessageItem.svelte'
-    import RelativeDate from "$lib/components/util/RelativeDate.svelte"
-    import UserLink from "$lib/components/lemmy/user/UserLink.svelte"
+    import Button               from "$lib/components/input/Button.svelte"
+    import Card                 from '$lib/components/ui/Card.svelte'
+    import CollapseButton       from "$lib/components/ui/CollapseButton.svelte"
+    import CommentItem          from "$lib/components/lemmy/comment/CommentItem.svelte"
+    import CommunityLink        from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import Markdown             from "$lib/components/markdown/Markdown.svelte"
+    import Post                 from "$lib/components/lemmy/post/Post.svelte"
+    import PrivateMessageItem   from '$lib/components/lemmy/private_message/PrivateMessageItem.svelte'
+    import RelativeDate         from "$lib/components/util/RelativeDate.svelte"
+    import UserLink             from "$lib/components/lemmy/user/UserLink.svelte"
 
     import { 
         Check, 
@@ -33,7 +34,9 @@
         Window as WindowIcon,
         Envelope,
         User,
+        Eye,
     } from "svelte-hero-icons"
+    
     
     
 
@@ -98,7 +101,7 @@
         </Button>
     </span>
     
-    <CollapseButton bind:expanded icon={report.icon} bold={!report.resolved} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px] lg:ml-0" >
+    <CollapseButton bind:expanded icon={report.icon} bold={!report.resolved} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px]" >
         
         <!---Title Component of Collapse Button--->
         <div class="flex flex-row gap-2 items-start" slot="title" title="{report.title}">
@@ -207,6 +210,17 @@
                         }}
                         >
                             All Mod Actions...
+                        </Button>
+                    {/if}
+
+                    <!---Preview Reported Item in Modal--->
+                    {#if (report.type == 'post' && report.post_view) || (report.type == 'comment' && report.comment_view)}
+                        <Button color="tertiary-border" icon={Eye} alignment="left" class="w-full" on:click={() => {
+                            if (report.type == 'post' && report.post_view)          postViewerModal($instance, report.post_view.post.id)
+                            if (report.type == 'comment' && report.comment_view)    postViewerModal($instance, undefined, report.comment_view.comment.id)
+                        }}
+                        >
+                            View {report.type == 'post' ? 'Post' : 'Comment Thread'} in Modal...
                         </Button>
                     {/if}
 
