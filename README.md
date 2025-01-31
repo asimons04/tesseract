@@ -311,7 +311,7 @@ server {
   # Note: You only need this location if you are utilizing the Tesseract image proxy and cache.  Even then, you don't 
   # strictly need this additional proxy layer, but it will improve performance significantly since Nginx is multi-threaded
   # while NodeJS is not.
-  
+
   location /image_proxy {
     ## You would probably want to put these proxy options and default headers into an
     ## include file since they're mostly redundant on the two locations. Shown here in 
@@ -337,7 +337,7 @@ server {
  
     proxy_cache imgcache;   
     ## Adjust proxy validity time from 720 hours accordingly
-    proxy_cache_valid any 720h;
+    proxy_cache_valid 200 720h;
     add_header      X-Proxy-Cache                   $upstream_cache_status;
   }
 
