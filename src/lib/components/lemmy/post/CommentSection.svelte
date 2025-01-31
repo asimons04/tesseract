@@ -3,6 +3,7 @@
 
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import { getClient } from '$lib/lemmy.js'
+    import { instance } from '$lib/instance'
     import { profile } from '$lib/auth.js'
 
 
@@ -30,12 +31,17 @@
 
     let commentSort: CommentSortType    = data.commentSort;
     let commentSectionContainer: HTMLDivElement
+    
+    // Determine what instance to fetch the comments from (local home or that of the post's home instance)
+    let postInstance = onHomeInstance
+        ? $instance
+        : new URL(data.post.post_view.post.ap_id).hostname
 
     async function reloadComments() {
         data.singleThread = false
         jumpTo = -1
         commentSectionContainer.scrollTop = 0
-        data.streamed.comments = getClient().getComments({
+        data.streamed.comments = getClient(postInstance).getComments({
             type_: 'All',
             post_id: data.post.post_view.post.id,
             sort: commentSort,
