@@ -54,7 +54,7 @@
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col gap-1 {showEmbedDescription ? 'w-full' : 'w-[calc(100%-68px)] sm:w-[calc(100%-100px)]  md:w-[calc(100%-132px)]'} ">
                 
-                <PostTitle bind:post {postType} {onHomeInstance}/>
+                <PostTitle bind:post {postType} {inModal} {onHomeInstance}/>
                 
                 <!---Mostly used if Posting a Link to Another Lemmy Post--->
                 {#if showEmbedDescription}
@@ -93,7 +93,7 @@
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
-                <PostTitle bind:post {postType} {onHomeInstance}/>
+                <PostTitle bind:post {postType} {inModal} {onHomeInstance}/>
 
                 <PostBody bind:post bind:expandPreviewText {displayType} class="my-1" >
                     <CompactPostThumbnail {post} {displayType} float slot="thumbnail" 
