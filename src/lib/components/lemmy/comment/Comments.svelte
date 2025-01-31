@@ -1,48 +1,49 @@
 <script lang="ts">
-    import type { 
-        CommentView, 
-        CommunityView, 
-        CommunityModeratorView, 
-        Post 
-    } from 'lemmy-js-client'
+    import type { CommunityModeratorView, Post } from 'lemmy-js-client'
 
-    import Button from '$lib/components/input/Button.svelte'
-    import Comment from './Comment.svelte'
+    import Button   from '$lib/components/input/Button.svelte'
+    import Comment  from './Comment.svelte'
     
     import { amMod } from '../moderation/moderation'
     import { buildCommentsTree, type CommentNodeI } from './comments'
-    import { fly } from 'svelte/transition'
-    import { getClient } from '$lib/lemmy.js'
-    import { isNewAccount } from '../post/helpers'
-    import { onMount, setContext } from 'svelte'
-    import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
-    import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { userSettings } from '$lib/settings'
-    import { userIsInstanceBlocked } from '$lib/lemmy/user';
+    import { fly }                  from 'svelte/transition'
+    import { getClient }            from '$lib/lemmy.js'
+    import {instance }              from '$lib/instance'
+    import { isNewAccount }         from '../post/helpers'
+    import { setContext }  from 'svelte'
+    import { profile }              from '$lib/auth.js'
+    import { toast }                from '$lib/components/ui/toasts/toasts.js'
+    import { userSettings }         from '$lib/settings'
+    import { userIsInstanceBlocked } from '$lib/lemmy/user'
 
-    import { ChevronDown, Icon } from 'svelte-hero-icons'
+    import { ChevronDown } from 'svelte-hero-icons'
     
 
     export let nodes: CommentNodeI[]
-    export let isParent: boolean = true
+    export let isParent: boolean        = true
     export let post: Post
     export let moderators: Array<CommunityModeratorView>
-    export let jumpTo: number = -1
-    export let onHomeInstance: boolean = false
+    export let jumpTo: number           = -1
+    export let onHomeInstance: boolean  = false
 
     if (isParent) {
         setContext('comments:tree', nodes)
     }
     
     let loadingChildren = false
+    
 
     async function fetchChildren(parent: CommentNodeI) {
         if ( !(parent.comment_view.counts.child_count > 0 && parent.children.length == 0) ) return
 
+        // Determine what instance to fetch the comments from (local home or that of the post's home instance)
+        let postInstance = onHomeInstance
+            ? $instance
+            : new URL(parent.comment_view.post.ap_id).hostname
+
         try {
             parent.loading = true
-            const newComments = await getClient($page.params.instance).getComments({
+            const newComments = await getClient(postInstance).getComments({
                 max_depth: 5,
                 parent_id: parent.comment_view.comment.id,
                 type_: 'All',
