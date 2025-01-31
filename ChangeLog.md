@@ -40,9 +40,6 @@ removeAdmin {username}
 
 ```
 
-
-# 1.4.30
-
 # To do:
 - Add "view source" button to post/comments to show the raw markdown
 
@@ -65,9 +62,18 @@ removeAdmin {username}
     - [ ] Enable "rubber-banding" when expanding post bodies
     - [ ] Enable "rubber-banding" when collapsing post bodies
     - [X] Put long post bodies in feed into scrollable areas
-    
 
+
+---
+
+
+
+# 1.4.30
 ## Bugs to Fix
+- Pody body expansion doesn't work with Reader view if body is longer than 10,000 chars (limit of reader setting)
+
+- When on a remote post and changing the comment sort options, it uses the default instance rather than the post's
+
 
 
 ## Bugfixes
@@ -113,9 +119,12 @@ removeAdmin {username}
     - Description text area is now a scrollable div when expanded (max 20vh) rather than expanding in full
     - Simplifed logic that truncates the non-expanded text
     - The whole embed description is collapsible
+
 - Badges that are clickable now have visual indicators on hover
+
 - "Old" and "Controversial" comment sort options now available
 
+- Too many minor tweaks to name individually (consequence of re-writing the post renderers)
 
 ### Audio / Video Player
 - Post images, audio, and videos now have a background with a blur effect
@@ -130,10 +139,16 @@ removeAdmin {username}
 
 - Feed snapshot validity is now configurable (between 5 minutes and 4 hours)
 
+
 - When expanding a post body in the feed, it only expands to a maximum of 50% of the viewport height and scrolls. Prevents opening a huge wall of text which requires a lot of scrolling in the feed to collapse again.
+
 - Scrollable area in the feed now includes the margins
+
 - Got rid of the feed margin container and just limit the width of the posts directly; width is toggleable with the same "Expand Margins" button and emulates the old behavior. Posts are *slightly* narrower now, but they're more consistent when resizing the window and less likely to need to expand the margins in odd, small width displays.
+
 - New view option:  Wide Card (Card View + No Margins)
+
+- Moved the listing type and sort direction dropdown menus out of the sub-navbar and into the feed.  
 
 
 ### All Media is Now Click to Play 
@@ -152,13 +167,30 @@ Links to Tidal albums, tracks, and playlists should now embed as interactive pla
 When clicking a Tidal link in the comments (or choosing 'Preview' from the post action menu on a Tidal post), the link preview modal will also show the album or playlist as an embed.
 
 ### Posts Can Now Load in Modals
-By default, posts open to the post page.  In addition to optionally opening them in a new tab, you can now load them in a modal without leaving the feed.
+By default, posts open to the post page same as they always have.  In addition to optionally opening them in a new tab, you can now load them in a modal.
 
-The setting is in Quick Settings -> Open Posts in Modal or Settings -> Feed -> Open Posts in Modals
+The setting is in `Quick Settings -> Open Posts in Modal` or `Settings -> Feed -> Open Posts in Modals`
 
-Additionally, on comments in the inbox and profiles, there is a button to jump to the comment thread in a modal. Very useful for getting context without leaving your current spot.
+This is nice if you want to open posts and read/respond in the comments without leaving the feed.
 
-Report items also have this ability in order to easily get context before making a mod decision on an item.
+Additionally, on comment items in the inbox and user profiles, there is a button to jump to the comment thread in a modal. Very useful for getting context without leaving your current spot.
+
+Report items also have this ability in order to easily get context before making a mod decision on an item. It will even bring up the whole comment thread in the modal if the reported item is a comment.
+
+#### Behavior Overview
+- When viewing a post in a modal, clicking the title will take you to its `/post/` page (even if it's a remote post)
+
+- The modal *does not* automatically resolve foreign post/comment links to your home instance. It first loads it remotely, and there is a button to load it on your home instance. This *could* be automatic, however:
+  - It may be an item your instance doesn't know about
+  - The referenced item's creator may be banned on your instance
+  - The referenced item may be on an instance yours doesn't federate with
+  - You may want to see the full context from the post's home instance
+  - If someone links to a comment, it avoids having to double-resolve the post and that particular comment.  It also provides context by having the whole comment chain rather than just the comment in isolation (e.g. if your instance doesn't have record of it yet).
+
+- If you click into another post from within the modal (e.g. cilcking a crosspost item or another linked post), it will keep a history and back/forward arrows will appear in the top-right of the modal title bar.  Use these like you would a browser's back/forward buttons to return to previous entries.
+- Even with the "Open posts in modals" option disabled, cilcking the badge-ified post/comment links will open those in a modal. Useful for referencing what was linked without leaving your current position.
+- The post/comment badge buttons are also regular links.  Right-clicking and choosing "Copy Link" or "Open in New Tab" work as you would expect. Middle-clicking also will open them in a new tab.
+
 
 
 
@@ -186,14 +218,19 @@ I have metadata generating for:
 - `/`  (Metadata for the default instance)
 
 ### Support for Instance-Agnostic Links
+
+TL;DR:  I've implement [this](https://github.com/LemmyNet/lemmy/issues/2987) client-side.
+
 Added support "universal" links as well as badge-ifying links to posts and comments.
-    - `@<user>@instance.xyz`:  Has been implemented since at least 1.4.0 (forget when)
-    - `!<community>@instance.xyz`: Has been implemented since at least 1.4.0 (forget when)
-    - `#<post_id>@instance.xyz` 
-    - `~<comment_id>@instance.xyz`
+- `@<user>@instance.xyz`:  Has been implemented since at least 1.4.0 (forget when)
+- `!<community>@instance.xyz`: Has been implemented since at least 1.4.0 (forget when)
+- `#<post_id>@instance.xyz` 
+- `~<comment_id>@instance.xyz`
 
 ### Lemmyverse Link Support
-LemmyVerse links will now be localized without having to hairpin to/from Lemmyverse.
+LemmyVerse links will now be localized without having to hairpin to/from Lemmyverse. After being localized, they will be processed as if they were a regular-style link.  
+
+e.g.  A LemmyVerse link will automatically/transparently turn into a user, community, post, or comment badge button and have the same abilities as first-party links.
 
 ### Post and Comment Links are Now Badge-ified
 Links to posts and comments (e.g. `cross-posted from https://instance.xyz/post/12345`) are detected, localized, and badgeified the same way 
@@ -201,6 +238,8 @@ Links to posts and comments (e.g. `cross-posted from https://instance.xyz/post/1
 Additionally, like users and communities, posts and comment badge links will now open in a modal for quick reference without leaving your current spot in the feed or another post. 
 
 Clicking the post title will take you to the /post page for the item.
+
+The post/comment badge buttons are also regular links.  Right-clicking and choosing "Copy Link" or "Open in New Tab" work as you would expect. Middle-clicking also will open them in a new tab.
 
 ---
 

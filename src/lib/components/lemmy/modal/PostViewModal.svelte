@@ -65,8 +65,8 @@
     }
 
     // When any of the values change, call history.init() to process the changes.
-    $:   instance, post_id, comment_id, history.init()
-
+    $:  instance, post_id, comment_id, history.init()
+    $:  historyPosition, onHomeInstance = (viewHistory[historyPosition].instance == $defaultInstance)
     
    const history = {
         get length() {
@@ -82,13 +82,13 @@
         },
 
         back: async function() {
-            //if (history.onFirstPage) return
+            if (this.onFirstPage) return
             historyPosition--
             await load()
         },
 
         forward: async function() {
-            //if (history.onLastPage) return
+            if (this.onLastPage) return
             historyPosition++
             await load()
         },
@@ -108,8 +108,6 @@
                 historyPosition++
                 viewHistory = viewHistory
             }
-            
-            console.log(viewHistory, historyPosition)
 
             await load()
         },
@@ -117,23 +115,26 @@
 
 
     async function load() {
-        const options = viewHistory[historyPosition]
+        const options               = viewHistory[historyPosition]
+        
         if (!options.instance) return
         
         const client                = getClient(options.instance)    
-        let dataURL                 = new URL(`https://locahost`)
+        const dataURL               = new URL(`https://localhost`)
         let comment_path: string    = ''
-        let dataParams              = {} as {[key:string]: string}
+        const dataParams            = {} as {[key:string]: string}
 
         data                        = undefined
         loading                     = true
         loadError                   = false
+        //onHomeInstance              = (options.instance == $defaultInstance)
+        //onHomeInstance              = onHomeInstance
 
         try {
 
-            // Passing a comment ID takes precedence of a post ID
+            // Passing a comment ID takes precedence over a post ID
             if (options.comment_id) {
-                let commentResponse = await client.getComment({id: options.comment_id})
+                const commentResponse = await client.getComment({id: options.comment_id})
                 
                 options.post_id     = commentResponse.comment_view.post.id
                 comment_path        = commentResponse.comment_view.comment.path
@@ -155,8 +156,7 @@
             if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
 
             expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
-            onHomeInstance = (options.instance == $defaultInstance)
-            onHomeInstance = onHomeInstance
+            
         } 
         
         catch (err) {
@@ -169,22 +169,20 @@
 
     async function fetchOnHome () {
         if (!$profile?.jwt || !data.post) return
-
+        
+        loading = true
         try {
-            loading = true
             const res = await getClient().resolveObject({
                 q: data.post.post_view.post.ap_id,
             })
 
             if (res.post) {
-                instance = instance = $defaultInstance
-                post_id = res.post.post.id
-                comment_id = undefined
-                //await mount()
+                instance    = $defaultInstance
+                post_id     = res.post.post.id
+                comment_id  = undefined
             }
         } catch (err) {
-
-            loading = false
+            loadError   = true
         }
         loading = false
     }
@@ -248,14 +246,10 @@
             </div>
         {/if}
 
-        {#if loadError}
-            <Placeholder title="Unable to Fetch Post" icon={ExclamationCircle}  iconSize={64}
-                description="Failed to fetch the post details"
-            />
-        {/if}
+        
 
         <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
-        {#if !loading && data && viewHistory[historyPosition].instance != $defaultInstance}
+        {#if !loading && data && !onHomeInstance}
         <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2 my-2">
             
             <div class="flex flex-row gap-2 items-center w-full">
@@ -284,22 +278,30 @@
         </Card>
         {/if}
 
+        {#if loadError}
+            <Placeholder title="Unable to Fetch Post" icon={ExclamationCircle}  iconSize={64}
+                description="Failed to fetch the post details"
+            />
+        {/if}
+
     
         {#if !loading && data}
-            <Post post={data.post.post_view}  displayType="post"  actions={true}  inModal={true} {expandCompact} {onHomeInstance}
-                on:reply={() => {
-                    showCommentForm = !showCommentForm
-                    
-                    if (!showCommentForm) return
-                    // Focus the comment form
-                    setTimeout(() => {
-                        let commentForm = document.getElementById(`commentForm-${data.post.post_view.post.id}`);
-                        commentForm?.focus()
-                    }, 250);
-                }}
-            />      
+            {#key onHomeInstance}
+                <Post post={data.post.post_view} displayType="post" actions={true} inModal={true} {expandCompact} {onHomeInstance}
+                    on:reply={() => {
+                        showCommentForm = !showCommentForm
+                        
+                        if (!showCommentForm) return
+                        // Focus the comment form
+                        setTimeout(() => {
+                            let commentForm = document.getElementById(`commentForm-${data.post.post_view.post.id}`);
+                            commentForm?.focus()
+                        }, 250);
+                    }}
+                />      
 
-            <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} jumpTo={viewHistory[historyPosition].comment_id}/>
+                <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} jumpTo={viewHistory[historyPosition].comment_id}/>
+            {/key}
         {/if}
     </ModalScrollArea>
 </Modal>
