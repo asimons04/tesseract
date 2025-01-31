@@ -101,11 +101,13 @@
                 description="What quality level to use when converting the image to webP. Lower gives a smaller file, higher gives better quality."
             />
 
+            <!---
             {#if ENABLE_MEDIA_PROXY && $userSettings.proxyMedia.enabled}
                 <SettingToggle bind:value={$userSettings.proxyMedia.useForImageUploads} icon={Cloud} title="Use Image Proxy" 
                     description="Use the Tesseract image proxy URL for the image URL."
                 />
             {/if}
+            --->
         </SettingToggleContainer>
         {/if}
     </form>
