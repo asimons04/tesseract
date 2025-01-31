@@ -46,7 +46,7 @@
     export let comment_id: number |undefined    = undefined
 
     let data:any                        = undefined
-    let dataURL                         = new URL(`https://locahost`)
+    
     let loading: boolean                = false
     let showCommentForm:boolean         = false
     let imageUploads                    = [] as UploadImageResponse[]
@@ -81,16 +81,16 @@
             return historyPosition == viewHistory.length -1
         },
 
-        back: function() {
-            if (history.onFirstPage) return
+        back: async function() {
+            //if (history.onFirstPage) return
             historyPosition--
-            load()
+            await load()
         },
 
-        forward: function() {
-            if (history.onLastPage) return
+        forward: async function() {
+            //if (history.onLastPage) return
             historyPosition++
-            load()
+            await load()
         },
     
         init: async function () {
@@ -108,6 +108,8 @@
                 historyPosition++
                 viewHistory = viewHistory
             }
+            
+            console.log(viewHistory, historyPosition)
 
             await load()
         },
@@ -116,13 +118,14 @@
 
     async function load() {
         const options = viewHistory[historyPosition]
-
         if (!options.instance) return
         
-        data                        = undefined
         const client                = getClient(options.instance)    
+        let dataURL                 = new URL(`https://locahost`)
         let comment_path: string    = ''
         let dataParams              = {} as {[key:string]: string}
+
+        data                        = undefined
         loading                     = true
         loadError                   = false
 
@@ -209,7 +212,7 @@
                 disabled={historyPosition == 0}    
                 hidden={viewHistory.length == 1}
                 title="Back"
-                on:click={() => history.back() }
+                on:click={async () => await history.back() }
             />
             
             <!---Forward to Next Item--->
@@ -217,7 +220,7 @@
                 disabled={historyPosition == viewHistory.length -1}
                 hidden={viewHistory.length == 1} 
                 title="Forward"
-                on:click={() => history.forward() }
+                on:click={async () => await history.forward() }
             />
 
             
