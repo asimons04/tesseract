@@ -26,7 +26,6 @@
     export let showCommentForm:boolean  = true;
     export let imageUploads             = [] as UploadImageResponse[]
     export let onHomeInstance: boolean  = true
-    export let inThread:boolean         = false
     export let jumpTo:number            = -1 
 
     let commentSort: CommentSortType    = data.commentSort;
