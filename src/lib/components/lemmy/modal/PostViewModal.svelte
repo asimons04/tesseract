@@ -1,4 +1,10 @@
 <script lang="ts">
+    interface ItemHistoryEntry {
+        instance?: string,
+        post_id?: number,
+        comment_id?: number
+    }
+    
     import type { ClickIntoPostEvent } from "$lib/ui/events"
     import type { UploadImageResponse } from "lemmy-js-client"
     
@@ -6,7 +12,6 @@
     import { getClient } from '$lib/lemmy'
     import { instance as defaultInstance } from "$lib/instance"
     import { load as PostLoader } from '$routes/post/[instance]/[id=integer]/+page.js'
-    import { onMount } from "svelte"
     import { postType as getPostType} from '$lib/components/lemmy/post/helpers'
     import { profile } from "$lib/auth"
 
@@ -14,36 +19,108 @@
     import Card             from "$lib/components/ui/Card.svelte"
     import CommentSection   from "$lib/components/lemmy/post/CommentSection.svelte"
     import Modal            from "$lib/components/ui/modal/Modal.svelte"
+    import ModalScrollArea  from "$lib/components/lemmy/modal/components/ModalScrollArea.svelte"
+    import Placeholder      from "$lib/components/ui/Placeholder.svelte"
     import Post             from "$lib/components/lemmy/post/Post.svelte"
     import Spinner          from "$lib/components/ui/loader/Spinner.svelte"
 
-    import { ArrowPath, ArrowTopRightOnSquare, ChevronDoubleDown, ChevronDoubleUp, ExclamationCircle, ExclamationTriangle, Home, Icon, Window } from "svelte-hero-icons"
-    import ModalScrollArea from "./components/ModalScrollArea.svelte";
-    import Placeholder from "$lib/components/ui/Placeholder.svelte";
+    import { 
+        ArrowLeft, 
+        ArrowPath, 
+        ArrowRight, 
+        ArrowTopRightOnSquare, 
+        ChevronDoubleDown, 
+        ChevronDoubleUp, 
+        ExclamationCircle, 
+        ExclamationTriangle, 
+        Home, 
+        Icon, 
+        Window 
+    } from "svelte-hero-icons"
+    
+    
     
     export let open: boolean                    = false
     export let instance: string | undefined     = undefined
     export let post_id: number | undefined      = undefined
     export let comment_id: number |undefined    = undefined
 
-    let data:any                = undefined
-    let dataURL                 = new URL(`https://locahost`)
-    let loading: boolean        = false
-    let showCommentForm:boolean = false
-    let imageUploads            = [] as UploadImageResponse[]
-    let expandCompact: boolean  = false
-    let onHomeInstance: boolean = false
-    let loadError: boolean      = false
+    let data:any                        = undefined
+    let dataURL                         = new URL(`https://locahost`)
+    let loading: boolean                = false
+    let showCommentForm:boolean         = false
+    let imageUploads                    = [] as UploadImageResponse[]
+    let expandCompact: boolean          = false
+    let onHomeInstance: boolean         = false
+    let loadError: boolean              = false
     let scrollArea: HTMLDivElement
+    let viewHistory: ItemHistoryEntry[] = []
+    let historyPosition: number         = 0
+    
+    // Set initial history element to current values at load
+    viewHistory[0] = {
+        instance,
+        post_id,
+        comment_id
+    }
 
-   $:   instance, post_id, comment_id, mount()
+    // When any of the values change, call history.init() to process the changes.
+    $:   instance, post_id, comment_id, history.init()
+
+    
+   const history = {
+        get length() {
+            return viewHistory.length
+        },
+    
+        get onFirstPage() {
+            return historyPosition == 0
+        },
+
+        get onLastPage() {
+            return historyPosition == viewHistory.length -1
+        },
+
+        back: function() {
+            if (history.onFirstPage) return
+            historyPosition--
+            load()
+        },
+
+        forward: function() {
+            if (history.onLastPage) return
+            historyPosition++
+            load()
+        },
+    
+        init: async function () {
+            let find = viewHistory.findIndex((i) =>  i.instance == instance &&  i.post_id == post_id && i.comment_id == comment_id)
+
+            if (find >= 0) {
+                historyPosition = find
+            }
+            else {
+                viewHistory.push({
+                    instance,
+                    post_id,
+                    comment_id
+                })
+                historyPosition++
+                viewHistory = viewHistory
+            }
+
+            await load()
+        },
+    }
 
 
-    async function mount() {
-        if (!instance) return
+    async function load() {
+        const options = viewHistory[historyPosition]
+
+        if (!options.instance) return
         
         data                        = undefined
-        const client                = getClient(instance)    
+        const client                = getClient(options.instance)    
         let comment_path: string    = ''
         let dataParams              = {} as {[key:string]: string}
         loading                     = true
@@ -52,18 +129,18 @@
         try {
 
             // Passing a comment ID takes precedence of a post ID
-            if (comment_id) {
-                let commentResponse = await client.getComment({id: comment_id})
+            if (options.comment_id) {
+                let commentResponse = await client.getComment({id: options.comment_id})
                 
-                post_id         = commentResponse.comment_view.post.id
-                comment_path    = commentResponse.comment_view.comment.path
+                options.post_id     = commentResponse.comment_view.post.id
+                comment_path        = commentResponse.comment_view.comment.path
             }
 
-            if (!post_id) throw new Error('Failed to resolve post ID from comment ID')
+            if (!options.post_id) throw new Error('Failed to resolve post ID from comment ID')
             if (comment_path) dataURL.searchParams.set('thread', comment_path)
             
-            dataParams.instance = instance
-            dataParams.id       = post_id?.toString()
+            dataParams.instance = options.instance
+            dataParams.id       = options.post_id?.toString()
 
             data = await PostLoader({params: dataParams, url: dataURL})
             if (!data) {
@@ -75,7 +152,8 @@
             if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
 
             expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
-            onHomeInstance = (instance == $defaultInstance)
+            onHomeInstance = (options.instance == $defaultInstance)
+            onHomeInstance = onHomeInstance
         } 
         
         catch (err) {
@@ -86,7 +164,7 @@
         loading = false
     }
 
-    const fetchOnHome = async () => {
+    async function fetchOnHome () {
         if (!$profile?.jwt || !data.post) return
 
         try {
@@ -99,7 +177,7 @@
                 instance = instance = $defaultInstance
                 post_id = res.post.post.id
                 comment_id = undefined
-                await mount()
+                //await mount()
             }
         } catch (err) {
 
@@ -115,9 +193,6 @@
         }
     }
 
-    
-    onMount(async () => await mount())
-
 </script>
 
 <svelte:window on:clickIntoPost={handlers.ClickIntoPostEvent} />
@@ -128,10 +203,27 @@
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
         <span class="ml-auto" />    
         
+        <!---Back to Previous Item--->
         <div class="flex flex-row w-full items-center gap-2">
+            <Button color="tertiary" icon={ArrowLeft} iconSize={20}  size="square-lg"
+                disabled={historyPosition == 0}    
+                hidden={viewHistory.length == 1}
+                title="Back"
+                on:click={() => history.back() }
+            />
+            
+            <!---Forward to Next Item--->
+            <Button color="tertiary" icon={ArrowRight} iconSize={20} size="square-lg"
+                disabled={historyPosition == viewHistory.length -1}
+                hidden={viewHistory.length == 1} 
+                title="Forward"
+                on:click={() => history.forward() }
+            />
+
+            
             <Button color="tertiary" icon={ArrowPath} iconSize={20} {loading} size="square-lg" 
                 title="Refresh"
-                on:click={() => mount() }
+                on:click={() => load() }
             />
             
             <Button color="tertiary" icon={ChevronDoubleDown} iconSize={20} size="square-lg" 
@@ -160,7 +252,7 @@
         {/if}
 
         <!--- Show a warning that this post is not on the home instance and provide button to fetch on home --->
-        {#if !loading && data && instance != $defaultInstance}
+        {#if !loading && data && viewHistory[historyPosition].instance != $defaultInstance}
         <Card  class="py-2 px-4 text-sm flex flex-col flex-wrap gap-2 my-2">
             
             <div class="flex flex-row gap-2 items-center w-full">
@@ -204,7 +296,7 @@
                 }}
             />      
 
-            <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} jumpTo={comment_id}/>
+            <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} jumpTo={viewHistory[historyPosition].comment_id}/>
         {/if}
     </ModalScrollArea>
 </Modal>
