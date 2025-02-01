@@ -26,10 +26,14 @@
     $:  $page.params.sort, $page.params.listing_type, applySortAndType()
 
     function applySortAndType() {
-        if (!feedController.bound) return
-        
-        sort = parseSortType($page.params.sort)
-        type = parseListingType($page.params.listing_type)
+        const newSort = parseSortType($page.params.sort)
+        const newType = parseListingType($page.params.listing_type)
+
+        // If feedController not yet bound or if the sort/type are the same as already applied, don't process the change
+        if ( !feedController.bound || (sort == newSort && type == newType) ) return
+
+        sort = newSort
+        type = newType
 
         feedController.refreshing = true
         feedController.reset(false)
