@@ -44,7 +44,7 @@
         <Icon src={icon} mini width={iconSize} />
     {/if}
     
-    <span class="max-w-full truncate" style="{icon ? `width: calc(100% - ${iconSize}px)` : ''}">
+    <span class="max-w-full truncate" style="{icon && $$slots.default ? `width: calc(100% - ${iconSize}px)` : ''}">
         <slot />
     </span>
 </button>
