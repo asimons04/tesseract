@@ -142,9 +142,9 @@
 
                 {#if badges && user.published && isNewAccount(user.published)}
                     <Badge label="New Account: {user.published}"  color="gray" class="mr-1" icon={Cake} iconSize={inline ? 16 : 12}>
-                        {#if inline}
+                        <!--{#if inline}-->
                             <RelativeDate date={user.published} class="hidden md:flex"/>
-                        {/if}
+                        <!--{/if}-->
                     </Badge>
                 {/if}
             </span>
