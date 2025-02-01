@@ -51,6 +51,10 @@
 
         url(src:string): undefined {
             return undefined
+        },
+
+        list(src:string): undefined {
+            return undefined
         }
     }
 
@@ -252,7 +256,7 @@
     }
 
     .markdown :global(ol) {
-        @apply list-decimal pl-4 leading-3 whitespace-normal pb-2;
+        @apply list-decimal pl-[1.6rem] leading-3 whitespace-normal pb-2;
     }
 
     .markdown :global(ul > *) {
