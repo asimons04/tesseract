@@ -26,6 +26,12 @@ declare global {
                 RemoveModal?:               boolean
                 UserProfileModal?:          boolean
                 ZoomImageModal?:            boolean
+                
+                // Special, in-place modals
+                MBFCModal?: {
+                    open?:                  boolean
+                    id?:                    number
+                }
             }
         }
 
