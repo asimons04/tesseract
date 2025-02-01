@@ -49,7 +49,7 @@
     }
 </script>
 
-<div bind:this={commentSectionContainer} id="comments" class="mt-4 flex flex-col gap-2 w-full h-full">
+<div bind:this={commentSectionContainer} id="comments" class="mt-4 flex flex-col gap-2 w-full h-full min-h-[300px]">
     
 
     <div class="flex flex-row justify-between items-center px-2">
