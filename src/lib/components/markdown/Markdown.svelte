@@ -252,7 +252,7 @@
     }
 
     .markdown :global(ul) {
-        @apply list-disc pl-4 leading-3 whitespace-normal pb-2;
+        @apply list-disc pl-[1.6rem] leading-3 whitespace-normal pb-2;
     }
 
     .markdown :global(ol) {
