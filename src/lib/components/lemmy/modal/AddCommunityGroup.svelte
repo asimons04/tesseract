@@ -57,7 +57,7 @@
 
 </script>
 
-<Modal bind:open={open} icon={Folder} title="Add Community to Group" height="max-h-full" width="max-w-4xl">
+<Modal bind:open={open} icon={Folder} title="Add Community to Group" height="max-h-full" width="max-w-4xl" on:close={() => { history.back() }}>
     <div class="flex flex-col gap-2">
         {#if community}
             <CommunityLink avatar avatarSize={42} community={community} />

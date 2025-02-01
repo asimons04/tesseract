@@ -151,6 +151,7 @@
 
 <Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth}
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
+    on:close={() => { history.back() }}
 >
 
     <!---Title Bar Buttons--->

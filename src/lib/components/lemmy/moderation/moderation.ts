@@ -14,8 +14,10 @@ import {
     sortOptionNames as defaultSortOptionNames
 } from '$lib/lemmy'
 
+import { get } from 'svelte/store'
+import { page } from '$app/stores'
+import { pushState } from '$app/navigation'
 import { writable } from 'svelte/store'
-
 
 export type PostModerationModalPanels = 
     'none' | 
@@ -112,11 +114,6 @@ interface Modals {
         open: boolean,
         community: Community | undefined
     },
-    votes: {
-        open: boolean,
-        type: 'post' | 'comment',
-        submission_id: number
-    }
     zooming: {
         open: boolean
         url: string
@@ -204,11 +201,6 @@ export let modals = writable<Modals>({
         open: false,
         community: undefined
     },
-    votes: {
-        open: false,
-        type: 'post',
-        submission_id: 0
-    },
     zooming:{
         open: false,
         url: '',
@@ -224,8 +216,50 @@ export function addCommunityToGroup(community: Community) {
             open: true,
             community: community
         }
-
     }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            AddCommunityGroupModal: true
+        }
+    })
+}
+
+// Ban Person Modal (Deprecated since PostModerationModal??)
+export function ban(banned: boolean, item: Person, community?: Community) {
+    modals.update((m) => ({
+        ...m,
+        banning: {
+            open: true,
+            user: item,
+            banned: banned,
+            community,
+        },
+    }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            BanModal: true
+        }
+    })
+}
+
+
+// Community Profile Modal
+export function communityProfileModal(community:Community) {
+    modals.update((m) => ({
+        ...m,
+        community: {
+            community: community,
+            open: true
+        },
+    }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            CommunityProfileModal: true
+        }
+    })
 }
 
 // Launches the modal to edit the provided community group
@@ -237,9 +271,15 @@ export function editCommunityGroup(group: CommunityGroup) {
             group: group
         }
     }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            EditCommunityGroupModal: true
+        }
+    })
 }
 
-// Launches the debug object viewer modal for the provided object
+// Debug Object Modal
 export function debugModal(object: any) {
     modals.update((m) => ({
         ...m,
@@ -247,77 +287,17 @@ export function debugModal(object: any) {
             open: true,
             object: object
         }
-
     }))
-}
-
-export function report(item: SubmissionView, reason:string='') {
-  modals.update((m) => ({
-    ...m,
-    reporting: {
-      open: true,
-      item: item,
-      reason: reason
-    },
-  }))
-}
-
-export function remove(item: SubmissionView, purge: boolean = false, reason:string='') {
-  modals.update((m) => ({
-    ...m,
-    removing: {
-      open: true,
-      item: item,
-      purge: purge,
-      reason: reason,
-    },
-  }))
-}
-
-export function ban(banned: boolean, item: Person, community?: Community) {
-    modals.update((m) => ({
-        ...m,
-        banning: {
-            open: true,
-            user: item,
-            banned: banned,
-            community,
-        },
-    }))
-}
-
-export function userProfileModal(user:Person, mod:boolean=false) {
-    modals.update((m) => ({
-        ...m,
-        user: {
-            open: true,
-            user: user,
-            mod: mod,
-        },
-
-    }))
-}
-
-export function communityProfileModal(community:Community) {
-    modals.update((m) => ({
-        ...m,
-        community: {
-            community: community,
-            open: true
-        },
-    }))
-}
-
-export function fediseerModal(instance:string) {
-    modals.update((m) => ({
-        ...m,
-        fediseer: {
-            open: true,
-            instance: instance
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            DebugModal: true
         }
-    }))
+    })
 }
 
+
+// Federation State Modal
 export function federationStateModal(domain:string) {
     modals.update((m) => ({
         ...m,
@@ -326,36 +306,33 @@ export function federationStateModal(domain:string) {
             domain: domain
         }
     }))
+    pushState('', { 
+        modals: { 
+            ...get(page).state.modals,
+            FederationStateModal: true 
+        } 
+    })
 }
 
-export function zoomImageModal(url:string, altText?:string) {
+// Fediseer Modal
+export function fediseerModal(instance:string) {
     modals.update((m) => ({
         ...m,
-        zooming: {
+        fediseer: {
             open: true,
-            url: url,
-            altText: altText
+            instance: instance
         }
     }))
-}
-
-/** Launches the vote viewer modal
- * @param type 'post' or 'comment'
- * @param submission_id Post ID or comment ID of the submission to look up
-*/
-export function voteViewerModal(type:'post'|'comment', submission_id:number) {
-    modals.update((m) => ({
-        ...m,
-        votes: {
-            open: true,
-            type: type,
-            submission_id: submission_id
-        }
-    }))
+    pushState('', { 
+        modals: { 
+            ...get(page).state.modals,
+            FediseerModal: true 
+        } 
+    })
 }
 
 
-/** Launches the link preview modal */
+// Link Preview Modal
 export function linkPreviewModal(url: string, iframe=false) {
     modals.update((m) => ({
         ...m,
@@ -365,6 +342,12 @@ export function linkPreviewModal(url: string, iframe=false) {
             iframe: iframe
         }
     }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            LinkPreviewModal: true
+        }
+    })
 }
 
 export function postModerationModal(item: PostView|CommentView, panel:PostModerationModalPanels = 'none') {
@@ -376,20 +359,16 @@ export function postModerationModal(item: PostView|CommentView, panel:PostModera
             panel: panel
         }
     }))
+    pushState('', { 
+        modals: { 
+            ...get(page).state.modals,
+            PostModerationModal: true 
+        } 
+    })
 
 }
 
-export function quickSettingsModal(options:any) {
-    modals.update((m) => ({
-        ...m,
-        quickSettings: {
-            open: true,
-            options: options
-        }
-    }))
-}
-
-
+// Post Viewer Modal
 export function postViewerModal(instance?: string, post_id?:number, comment_id?:number) {
     modals.update((m) => ({
         ...m,
@@ -400,8 +379,108 @@ export function postViewerModal(instance?: string, post_id?:number, comment_id?:
             comment_id: comment_id
         }
     }))
+    pushState('', { 
+        modals: { 
+            ...get(page).state.modals, 
+            PostViewModal: true 
+        } 
+    })
 
 }
+
+// Quick Settings Modal
+export function quickSettingsModal(options:any) {
+    modals.update((m) => ({
+        ...m,
+        quickSettings: {
+            open: true,
+            options: options
+        }
+    }))
+    pushState('', { 
+        modals: { 
+            ...get(page).state.modals,
+            QuickSettingsModal: true 
+        } 
+    })
+}
+
+// Remove Item Modal
+export function remove(item: SubmissionView, purge: boolean = false, reason:string='') {
+    modals.update((m) => ({
+        ...m,
+        removing: {
+            open: true,
+            item: item,
+            purge: purge,
+            reason: reason,
+        },
+    }))
+    pushState('', { 
+        modals: { 
+            ...get(page).state.modals,
+            RemoveModal: true 
+        } 
+    })
+}
+
+// Report Item Modal
+export function report(item: SubmissionView, reason:string='') {
+    modals.update((m) => ({
+        ...m,
+        reporting: {
+            open: true,
+            item: item,
+            reason: reason
+        },
+    }))
+    pushState('', { 
+        modals: { 
+            ...get(page).state.modals,
+            ReportModal: true 
+        } 
+    })
+}
+
+// User Profile Modal
+export function userProfileModal(user:Person, mod:boolean=false) {
+    modals.update((m) => ({
+        ...m,
+        user: {
+            open: true,
+            user: user,
+            mod: mod,
+        }
+    }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            UserProfileModal: true
+        }
+    })
+}
+
+// Zoomable Image Modal
+export function zoomImageModal(url:string, altText?:string) {
+    modals.update((m) => ({
+        ...m,
+        zooming: {
+            open: true,
+            url: url,
+            altText: altText
+        }
+    }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            ZoomImageModal: true
+        }
+    })
+}
+
+
+
+
 
 export function amMod(me: MyUserInfo|undefined, community: Community):boolean {
     if (!me) return false

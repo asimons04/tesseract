@@ -77,7 +77,7 @@
 </script>
 
 
-<Modal bind:open={open} icon={Eye} title="Fediseer" width="max-w-4xl">
+<Modal bind:open={open} icon={Eye} title="Fediseer" width="max-w-4xl" on:close={() => { history.back() }}>
     {#if fediseer.ready && fediseer.data}
         <div class="flex flex-col gap-2 w-full">
             <!---Site logo, name, and instance domain--->

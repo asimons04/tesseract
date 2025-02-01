@@ -311,6 +311,7 @@
         communityDetails?.community_view?.community?.name ?? 
         'Community Details'
     }
+    on:close={() => { history.back() }}
 >
 
     <!---Quick Actions (These are placed into the modal title bar)--->

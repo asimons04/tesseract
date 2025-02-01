@@ -100,6 +100,7 @@
     function close() {
         resetZoom()
         open = false
+        history.back()
     }
     
     // Quick zooms to double scale and back to normal on double-tap
@@ -227,14 +228,18 @@
         flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm box-border p-4 whitespace-normal cursor-zoom-out"
         role="button" tabindex="0"
         transition:fade={{ duration: 200 }}
-        on:keydown={(e) => {
+        on:keydown={(
+            //@ts-ignore
+            e) => {
             if (e.key == 'Escape') {
                 e.preventDefault()
                 e.stopPropagation();
                 close()
             }
         }}
-        on:click={(e) => {
+        on:click={(
+            //@ts-ignore
+            e) => {
 			e.preventDefault();
             e.stopPropagation();
             if (!imageElement.contains(e.target) && !toolbarElement.contains(e.target)) { 
@@ -279,9 +284,9 @@
         <!---Image Container--->
         <div class="flex top-16 p-4 w-full h-full cursor-zoom-out" role="button" tabindex="0"
             bind:this={imageContainerElement}
-            on:wheel        = { (e) => scrollZoom(e) }
-            on:pointerdown  = { (e) => panStart(e) }
-            on:pointermove  = { (e) => panMove(e) }
+            on:wheel        = {scrollZoom }
+            on:pointerdown  = {panStart}
+            on:pointermove  = {panMove}
             on:pointerup    = { () => panEnd() }
             on:dblclick     = { () => doubleClickZoom() }
             use:pinch={{touchAction: 'pinch-zoom'}} 

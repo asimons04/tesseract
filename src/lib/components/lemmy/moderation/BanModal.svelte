@@ -31,6 +31,6 @@
  
 </script>
 
-<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User From {community ? 'Community' : 'Instance'}" icon={banned ? Check : NoSymbol}  width="max-w-2xl">
+<Modal bind:open title="{banned ? 'Unbanning' : 'Banning'} User From {community ? 'Community' : 'Instance'}" icon={banned ? Check : NoSymbol}  width="max-w-2xl"  on:close={() => { history.back() }}>
     <BanUserForm person={user} {community} creator_banned_from_community={community && banned}/>
 </Modal>

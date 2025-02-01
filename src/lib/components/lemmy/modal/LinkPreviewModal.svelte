@@ -175,7 +175,7 @@
     }
 </script>
 
-<Modal bind:open preventCloseOnClickOut icon={LinkIcon} height="max-h-full" width="max-w-3xl" {title} allowMaximize>
+<Modal bind:open preventCloseOnClickOut icon={LinkIcon} height="max-h-full" width="max-w-3xl" {title} allowMaximize  on:close={() => { history.back() }}>
 
     <!---Show link/mbfc while loading.  If Metadata fails to fetch, sill show the URL and MBFC (if available)--->
     {#if !iframeView && (loading || fetchError)}

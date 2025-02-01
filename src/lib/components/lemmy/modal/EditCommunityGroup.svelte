@@ -126,7 +126,7 @@
 </script>
 
 {#if formData && open}
-    <Modal bind:open={open} icon={Folder} preventCloseOnClickOut title="Edit Group: {group.name}"  height="min-h-[60vh] max-h-full" width="max-w-4xl">
+    <Modal bind:open={open} icon={Folder} preventCloseOnClickOut title="Edit Group: {group.name}"  height="min-h-[60vh] max-h-full" width="max-w-4xl" on:close={() => { history.back() }}>
         <div class="flex flex-col min-h-[60vh] max-h-full gap-2 pr-2">
             
             <TextInput bind:value={formData.name} readonly={group.name == 'Favorites'} label="Group Name" class="{group.name == 'Favorites' ? 'hidden' : ''}"/>

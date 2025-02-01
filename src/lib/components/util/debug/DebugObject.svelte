@@ -8,6 +8,6 @@
   export let open: boolean = false
 </script>
 
-<Modal bind:open title="Debug Data Explorer" icon={BugAnt} width="max-w-4xl">
+<Modal bind:open title="Debug Data Explorer" icon={BugAnt} width="max-w-4xl" on:close={() => { history.back() }}>
   <DebugTree {object} isParent={true} />
 </Modal>

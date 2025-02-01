@@ -9,6 +9,31 @@ declare global {
         }
         // interface PageData {}
         // interface Platform {}
+        interface PageState {
+            modals: {
+                AddCommunityGroupModal?:    boolean
+                BanModal?:                  boolean
+                CommunityProfileModal?:     boolean
+                DebugModal?:                boolean
+                EditCommunityGroupModal?:   boolean
+                FederationStateModal?:      boolean
+                FediseerModal?:             boolean
+                LinkPreviewModal?:          boolean
+                PostModerationModal?:       boolean
+                PostViewModal?:             boolean
+                QuickSettingsModal?:        boolean
+                ReportModal?:               boolean
+                RemoveModal?:               boolean
+                UserProfileModal?:          boolean
+                ZoomImageModal?:            boolean
+            }
+        }
+
+        declare const PageState = {
+            modals: {
+                postViewer: false
+            }
+        }
     }
     
     // Custom HTML prop extensions for our custom events so VSCode won't bitch and throw type errors

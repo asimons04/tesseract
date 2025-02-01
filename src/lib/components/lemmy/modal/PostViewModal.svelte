@@ -12,8 +12,10 @@
     import { getClient } from '$lib/lemmy'
     import { instance as defaultInstance } from "$lib/instance"
     import { load as PostLoader } from '$routes/post/[instance]/[id=integer]/+page.js'
+    import { page } from '$app/stores'
     import { postType as getPostType} from '$lib/components/lemmy/post/helpers'
     import { profile } from "$lib/auth"
+    import { replaceState } from "$app/navigation"
 
     import Button           from "$lib/components/input/Button.svelte"
     import Card             from "$lib/components/ui/Card.svelte"
@@ -37,6 +39,7 @@
         Icon, 
         Window 
     } from "svelte-hero-icons"
+    
     
     
     
@@ -64,11 +67,11 @@
         comment_id
     }
 
-    // When any of the values change, call history.init() to process the changes.
-    $:  instance, post_id, comment_id, history.init()
+    // When any of the values change, call postHistory.init() to process the changes.
+    $:  instance, post_id, comment_id, postHistory.init()
     $:  historyPosition, onHomeInstance = (viewHistory[historyPosition].instance == $defaultInstance)
     
-   const history = {
+   const postHistory = {
         get length() {
             return viewHistory.length
         },
@@ -188,9 +191,15 @@
     }
 
     const handlers = {
-        ClickIntoPostEvent: function (e:ClickIntoPostEvent) {
+        ClickIntoPostEvent: function (e?:ClickIntoPostEvent) {
             open = false
             data = null
+            replaceState('', { 
+                modals: { 
+                    ...$page.state.modals,
+                    PostViewModal: false 
+                } 
+            })
         }
     }
 
@@ -198,7 +207,7 @@
 
 <svelte:window on:clickIntoPost={handlers.ClickIntoPostEvent} />
 
-<Modal bind:open icon={Window} title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize preventCloseOnClickOut width="max-w-5xl" >
+<Modal bind:open icon={Window} title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize preventCloseOnClickOut width="max-w-5xl" on:close={() => { history.back() }} >
     
     <!---Modal Title Bar Buttons--->
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
@@ -210,7 +219,7 @@
                 disabled={historyPosition == 0}    
                 hidden={viewHistory.length == 1}
                 title="Back"
-                on:click={async () => await history.back() }
+                on:click={async () => await postHistory.back() }
             />
             
             <!---Forward to Next Item--->
@@ -218,7 +227,7 @@
                 disabled={historyPosition == viewHistory.length -1}
                 hidden={viewHistory.length == 1} 
                 title="Forward"
-                on:click={async () => await history.forward() }
+                on:click={async () => await postHistory.forward() }
             />
 
             

@@ -131,7 +131,7 @@
 </script>
 
 
-<Modal bind:open icon={ServerStack} title="Federation State for {domain}" width="max-w-4xl">
+<Modal bind:open icon={ServerStack} title="Federation State for {domain}" width="max-w-4xl" on:close={() => { history.back() }}>
     
     {#if state.loading}
         <div class="flex flex-col gap-4 mx-auto my-auto">

@@ -46,7 +46,7 @@
 
 
 <!-- svelte-ignore missing-declaration -->
-<Modal bind:open icon={Cog6Tooth} card  width="max-w-4xl" title="Quick Settings" >
+<Modal bind:open icon={Cog6Tooth} card  width="max-w-4xl" title="Quick Settings" on:close={() => { history.back() }} >
     
     <EditHybridViewPostTypesModal bind:open={hybridViewEditorOpen} />
 

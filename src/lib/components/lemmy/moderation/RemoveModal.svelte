@@ -24,6 +24,6 @@
    
 </script>
 
-<Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}  width="max-w-2xl">
-    <RemoveItemForm {item} {removed} {purge} {reason} on:finish={()=> open = false}/>
+<Modal bind:open title="{purge ? 'Purging' : removed ? 'Restoring' : 'Removing'} Submission" icon={purge ? Fire : removed ? HandThumbUp : Trash}  width="max-w-2xl" on:close={() => { history.back() }}>
+    <RemoveItemForm {item} {removed} {purge} {reason} on:finish={()=> history.back()}/>
 </Modal>
