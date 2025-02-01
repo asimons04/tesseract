@@ -2,7 +2,7 @@
     import { type SvelteGestureSwipeEvent } from '$lib/util'
     import { type IconSource, Icon, XMark, ArrowsPointingIn, ArrowsPointingOut } from 'svelte-hero-icons'
 
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, onMount } from 'svelte'
     import { expoOut } from 'svelte/easing'
     import { fade, scale } from 'svelte/transition'
     import { swipe } from 'svelte-gestures'
@@ -28,6 +28,7 @@
     let originalHeight = height
 
     let modalBackground:HTMLDivElement
+    const dispatcher = createEventDispatcher()
 
     function maximize() {
         if (maximized) {
@@ -40,7 +41,6 @@
         else {
             width = "w-[95vw]"
             height = 'h-auto max-h-[95vh]'
-            //height = 'h-[95vh]'
             maximized = true
         }
     }
@@ -48,8 +48,6 @@
     function isSelecting() {
         return window.getSelection && window.getSelection()?.type === 'Range'
     }
-
-    const dispatcher = createEventDispatcher()
 
     function onSwipe(e:SvelteGestureSwipeEvent) {
         if  (
@@ -62,7 +60,13 @@
             open = false
         }
     }
+
+    onMount(() => {
+        modalBackground?.focus()
+    })
+    
 </script>
+
 
 {#if open}
     <!---Div to blur background. --->  
@@ -127,6 +131,7 @@
                         <span class="flex flex-row gap-2 items-center ml-auto">
                             <slot name="title-bar-buttons"/>
                             
+                            <!---Maximize Button--->
                             {#if allowMaximize}
                                 <span class="hidden lg:flex">
                                     <Button title="{maximized ? 'Un-maximize' : 'Maximize'}" size="md" rounded="lg" color="tertiary" 
@@ -137,6 +142,7 @@
                                 </span>
                             {/if}
                             
+                            <!---Close Button--->
                             <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation();
