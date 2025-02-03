@@ -56,6 +56,7 @@
                 e.preventDefault()
                 e.stopPropagation()
                 postViewerModal(postInstance, postID)
+                dispatchWindowEvent('requestSnapshot')
                 return
         }
         

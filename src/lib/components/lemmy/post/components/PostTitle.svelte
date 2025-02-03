@@ -68,6 +68,7 @@
                 e.preventDefault()
                 e.stopPropagation()
                 postViewerModal(postInstance, postID)
+                dispatchWindowEvent('requestSnapshot')
                 return
             }
             // Use goto instead of href to avoid occasionally reloading the whole app on page transition
