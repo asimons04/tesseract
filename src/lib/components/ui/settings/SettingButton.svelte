@@ -41,7 +41,7 @@ const dispatcher = createEventDispatcher()
         
         <div class="mx-auto"/>
         
-        <Button {color} {disabled} {loading} size="lg" title={title} icon={icon} iconSize={20} on:click={ (e) => dispatcher('click', e) }>
+        <Button {color} {disabled} {loading} size="lg" title={title} icon={icon} iconSize={20} on:click={ (e) => dispatcher('click', e) } class="h-10">
             {buttonText ?? title}
         </Button>
     </div>
