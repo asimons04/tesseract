@@ -27,22 +27,24 @@
     let source: string = ''
     let hideExpandButton = false
     let fadeText = false
-
+    
     function generateSource() {
         let body = post.post.body ?? ''
         
         const bodyLength = body.length
+        let truncateBody = $userSettings.uiState.postBodyPreviewLength < 10000
 
         hideExpandButton = (
             $userSettings.uiState.postBodyPreviewLength == -1 || 
             bodyLength < 1 ||
             bodyLength < $userSettings.uiState.postBodyPreviewLength ||
+            !truncateBody ||
             displayType == 'post'
         )
         
-        fadeText = !expandPreviewText && bodyLength > $userSettings.uiState.postBodyPreviewLength
+        fadeText = !expandPreviewText && truncateBody && bodyLength > $userSettings.uiState.postBodyPreviewLength
         
-        if (displayType == 'feed' && !expandPreviewText && bodyLength > 0 && bodyLength > $userSettings.uiState.postBodyPreviewLength) {
+        if (displayType == 'feed' && !expandPreviewText && bodyLength > 0 && bodyLength > $userSettings.uiState.postBodyPreviewLength && truncateBody) {
             body = body.slice(0, $userSettings.uiState.postBodyPreviewLength)
         }
 
