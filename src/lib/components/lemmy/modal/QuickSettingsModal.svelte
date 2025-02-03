@@ -38,6 +38,7 @@
     } from "svelte-hero-icons"
     import { dispatchWindowEvent } from '$lib/ui/events';
     import { page } from '$app/stores'
+    import { StorageCache } from '$lib/storage-controller';
 
 
     export let open: boolean = false
@@ -102,7 +103,9 @@
                 <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll} small
                     on:change={(e) => {
                         $userSettings.uiState.infiniteScroll = e.detail
-                        location.reload()
+                        const storage = new StorageCache({ type: 'local'})
+                        storage.flush()
+                        dispatchWindowEvent('refreshFeed')
                     }}
                 />
                 
