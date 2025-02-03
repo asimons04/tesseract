@@ -32,6 +32,7 @@
         ArrowPath, 
         ArrowRight, 
         ArrowTopRightOnSquare, 
+        ChatBubbleLeftRight, 
         ChevronDoubleDown, 
         ChevronDoubleUp, 
         ExclamationCircle, 
@@ -222,7 +223,10 @@
 
 <svelte:window on:clickIntoPost={handlers.ClickIntoPostEvent} />
 
-<Modal bind:open icon={Window} title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize width="max-w-5xl" on:close={() => { history.back() }} >
+<Modal bind:open width="max-w-5xl"  icon={comment_id ? ChatBubbleLeftRight : Window}  iconImage={data?.post?.post_view?.community.icon} 
+    title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize 
+    on:close={() => { history.back() }} 
+>
     
     <!---Modal Title Bar Buttons--->
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
