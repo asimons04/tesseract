@@ -42,7 +42,7 @@
 
 
 <!---Post Viewer Modal--->
-{#if open.PostViewModal && ($modals.postViewer.comment_id || $modals.postViewer.post_id)}
+{#if open.PostViewModal}
     <PostViewModal 
         open={open.PostViewModal} 
         bind:comment_id={$modals.postViewer.comment_id} 
