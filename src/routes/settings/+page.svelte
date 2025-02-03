@@ -10,6 +10,7 @@
     import { saveProfile } from '$lib/favorites'
     import { site } from '$lib/lemmy.js'
     import { sortOptions, sortOptionNames } from '$lib/lemmy'
+    import { StorageCache } from '$lib/storage-controller'
     import { theme } from '$lib/ui/colors'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
@@ -83,7 +84,9 @@
         ClipboardDocumentList,
         FaceSmile,
         ArrowsUpDown,
+        Cog8Tooth,
     } from 'svelte-hero-icons'
+    
     
     
 
@@ -327,6 +330,7 @@
 
     let open = {
         profile: false,
+        advanced: false,
         general: false,
         inbox: false,
         feed: false,
@@ -457,42 +461,13 @@
 
         
 
-        <!---Enable Debug Buttons--->
-        <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
-            description="Show debug buttons in the UI to see post/comment and other raw data. Also enables debug messages in the browser console."
-        />
-
-        <!---Enable Experimental Features--->
-        <SettingToggle icon={Beaker} title="Experimental Features" bind:value={$userSettings.experimentalFeatures}
-            description="Enable experimental features. Note that these may be buggy."
-        />
+        
 
         
 
-        <!---Reset to Default Settings--->
-        <div class="flex flex-row w-full gap-2 py-2">
-            <div class="flex flex-col">
-                <p class="text-sm font-bold flex flex-row gap-2">
-                    <Icon src={ArrowPath} mini width={16}/>
-                    Reset to Default
-                </p>
-                <p class="text-xs font-normal">Reset all of your settings to the default values.</p>
-            </div>
-            <div class="mx-auto"/>
+        
 
-            <Button
-                on:click={() => {
-                    toast({
-                        content: 'Are you sure you want to reset your settings to the default?',
-                        action: () => ($userSettings = defaultSettings),
-                    })
-                }}
-                class="font-normal"
-            >
-                <Icon src={ArrowPath} mini size="16" slot="icon" />
-                    Reset
-            </Button>
-        </div>
+        
     </SettingsCollapseSection>
 
 
@@ -585,18 +560,16 @@
         <!---Infinite Scroll--->
         <SettingToggle title="Infinite Scroll" icon={ChevronDoubleDown} bind:value={$userSettings.uiState.infiniteScroll}
             description="Use infinite scrolling instead of manual pagination."
+            on:change={() => {
+                const storage = new StorageCache({ type: 'local'})
+                storage.flush()
+            }}
         />
 
-        <!---Infinite Scroll Size--->
-        <SettingMultiSelect title="Infinite Scroll Size" icon={TableCells}
-            description="How many posts should be rendered before the oldest in the feed are removed (off-screen). Increasing this will increase memory consumption and may also reduce performance depending on your device."
-            options={[50, 75, 100, 125, 150]}
-            bind:selected={$userSettings.uiState.maxScrollPosts}
-            condition={$userSettings.uiState.infiniteScroll}
-        />
+        
         
         <!---Scroll Post Bodies in Feed--->
-        <SettingToggle icon={ArrowsUpDown} title="Scroll Post Body in Feed" bind:value={$userSettings.uiState.scrollPostBodyInFeed} small={true} 
+        <SettingToggle icon={ArrowsUpDown} title="Scroll Post Body in Feed" bind:value={$userSettings.uiState.scrollPostBodyInFeed}
             description="When expanding a post's body text in the feed, restrict the height of the text container and, if needed, scroll 
                 the long body text insde that. Disable to expand the body in full."
         />
@@ -637,7 +610,7 @@
         />
 
         <!---Open Posts in Modal--->
-        <SettingToggle icon={Window} title="Open Posts in Modal" bind:value={$userSettings.openInNewTab.postsInModal} small={true} 
+        <SettingToggle icon={Window} title="Open Posts in Modal" bind:value={$userSettings.openInNewTab.postsInModal}
             description="Open posts in a modal without leaving the feed. Mutually exclusive with 'Open Posts in New Tab'"
             on:change={(e) => {
                 if (e.detail)   $userSettings.openInNewTab.posts = false
@@ -1018,6 +991,53 @@
                 </Button>
             </div>
         </div>
+    </SettingsCollapseSection>
+
+    <SettingsCollapseSection bind:expanded={open.advanced} icon={Cog8Tooth} title="Advanced">
+        <!---Enable Debug Buttons--->
+        <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
+            description="Show debug buttons in the UI to see post/comment and other raw data. Also enables debug messages in the browser console."
+        />
+        
+        <!---Infinite Scroll Size--->
+        <SettingMultiSelect title="Infinite Scroll Size" icon={TableCells}
+            description="How many posts should be rendered before the oldest in the feed are removed (off-screen). Increasing this will increase memory consumption and may also reduce performance depending on your device."
+            options={[50, 75, 100, 125, 150]}
+            bind:selected={$userSettings.uiState.maxScrollPosts}
+            condition={$userSettings.uiState.infiniteScroll}
+        />
+        
+        <!---Enable Experimental Features--->
+        <SettingToggle icon={Beaker} title="Experimental Features" bind:value={$userSettings.experimentalFeatures}
+            description="Enable experimental features. Note that these may be buggy."
+        />
+        
+        <!---Flush Local Storage--->
+        <SettingButton title="Flush Local Storage" buttonText="Flush" icon={Trash} 
+            description="Flush all items cached to local and session storage with the exception of settings and your profile(s)."
+            on:click={() => {
+                const localCache = new StorageCache({
+                    type: 'local'
+                })
+                const sessionCache = new StorageCache({
+                    type: 'session'
+                })
+                localCache.flush('all')
+                sessionCache.flush('all')
+            }}
+        />
+
+        <SettingButton title="Reset to Default Settings" buttonText="Reset" icon={ArrowPath} 
+            description="Reset Tesseract settings to the defaults."
+            on:click={()=> { 
+                $userSettings = defaultSettings
+                toast({
+                    type: 'success',
+                    title: 'Complete',    
+                    content: 'App settings have been restored to default.',
+                })
+            }}
+        />
     </SettingsCollapseSection>
     
 

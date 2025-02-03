@@ -1,9 +1,12 @@
 <script lang="ts">
    
+    import { dispatchWindowEvent } from '$lib/ui/events' 
     import { dividerColors } from '$lib/ui/colors' 
     import { goto, replaceState } from '$app/navigation';
+    import { page } from '$app/stores'
     import { postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy';
+    import { StorageCache } from '$lib/storage-controller'
     import { userSettings} from '$lib/settings'
     
     import Button from '$lib/components/input/Button.svelte';
@@ -36,14 +39,10 @@
         ArrowsUpDown,
         Window,
     } from "svelte-hero-icons"
-    import { dispatchWindowEvent } from '$lib/ui/events';
-    import { page } from '$app/stores'
-    import { StorageCache } from '$lib/storage-controller';
-
 
     export let open: boolean = false
+
     let hybridViewEditorOpen = false
-    
 </script>
 
 
