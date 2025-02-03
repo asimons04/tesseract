@@ -16,7 +16,7 @@ import {
 
 import { get } from 'svelte/store'
 import { page } from '$app/stores'
-import { pushState } from '$app/navigation'
+import { pushState, replaceState } from '$app/navigation'
 import { writable } from 'svelte/store'
 
 export type PostModerationModalPanels = 
@@ -379,12 +379,16 @@ export function postViewerModal(instance?: string, post_id?:number, comment_id?:
             comment_id: comment_id
         }
     }))
-    pushState('', { 
-        modals: { 
-            ...get(page).state.modals, 
-            PostViewModal: true 
-        } 
-    })
+    
+    // Only push state if not already open; prevents multiple history events if clicking nested post/comment links in a modal
+    if (!get(page).state?.modals?.PostViewModal) {
+        pushState('', { 
+            modals: { 
+                ...get(page).state.modals, 
+                PostViewModal: true 
+            } 
+        })
+    }
 
 }
 
