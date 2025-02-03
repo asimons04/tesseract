@@ -153,8 +153,8 @@ const regexes = {
     post: /^https:\/\/([a-zA-Z0-9\.\-]+)\/post\/(\d+)$/,
     comment: /^https:\/\/([a-zA-Z0-9\.\-]+)\/comment\/(\d+)$/,
     comment2: /^https:\/\/([a-zA-Z0-9\.\-]+)\/post\/\d+\/(\d+)$/,
-    user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/([^@]+)$/,
-    community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/([^@]+)$/
+    user: /^https:\/\/([a-zA-Z0-9\.\-]+)\/u\/([^@/]+)$/,
+    community: /^https:\/\/([a-zA-Z0-9\.\-]+)\/c\/([^@/]+)$/
 }
 
 /**
