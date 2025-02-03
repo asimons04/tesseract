@@ -1,7 +1,7 @@
 <script lang="ts">
    
     import { dividerColors } from '$lib/ui/colors' 
-    import { goto } from '$app/navigation';
+    import { goto, replaceState } from '$app/navigation';
     import { postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
     import { site } from '$lib/lemmy';
     import { userSettings} from '$lib/settings'
@@ -37,6 +37,7 @@
         Window,
     } from "svelte-hero-icons"
     import { dispatchWindowEvent } from '$lib/ui/events';
+    import { page } from '$app/stores'
 
 
     export let open: boolean = false
@@ -182,14 +183,20 @@
     </div>
 
     <div class="flex flex-row w-full justify-between" slot="buttons">
-        <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> open = false}>
+        <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> history.back()}>
             <span class="hidden md:flex">Close</span>
         </Button>
 
         <Button title="Open Settings" size="lg" color="primary" icon={Cog6Tooth} iconSize={20} 
             on:click={()=> {
+                replaceState('', {
+                    modals: {
+                        ...$page.state.modals,
+                        QuickSettingsModal: false
+                    }
+                })
                 goto('/settings')
-                open = false
+                
             }}
         >
             <span class="hidden md:flex">All Settings</span>
