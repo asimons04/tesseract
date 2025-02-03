@@ -64,7 +64,7 @@
     <SystemTimer />
     <Navbar />
     <ToastContainer />
-    <ModalContainer />
+    
     
     <div class="flex flex-row h-full w-full max-w-full flex-1">
         <Sidebar />
@@ -72,4 +72,6 @@
             <slot />
         </main>
     </div>
+
+    <ModalContainer />
 </div>
