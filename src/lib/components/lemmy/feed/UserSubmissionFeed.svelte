@@ -4,7 +4,7 @@
 
 <script lang="ts">
     import type { CommentView, GetPersonDetailsResponse, PostView } from "lemmy-js-client"
-    import type { ChangeProfileEvent, LastClickedPostEvent } from "$lib/ui/events"
+    import type { ChangeProfileEvent, ClickIntoPostEvent, LastClickedPostEvent } from "$lib/ui/events"
     import type { UserSubmissionFeedController, UserSubmissionFeedControllerLoadOptions } from '$lib/components/lemmy/feed/helpers'
 
     import { fade } from "svelte/transition"
@@ -361,7 +361,11 @@
         LastClickedPostEvent(e:LastClickedPostEvent) {
             if ($userSettings.debugInfo) console.log(moduleName, ": Setting 'last_item' to ", e.detail.post_id)
             last_item = e.detail.post_id
-        }
+        },
+
+        RequestSnapshotEvent(e:ClickIntoPostEvent) {
+            controller.takeSnapshot()
+        },
     }
 
 </script>
@@ -369,6 +373,7 @@
 <svelte:window 
     on:lastClickedPost={handlers.LastClickedPostEvent}
     on:changeProfile={handlers.ChangeProfileEvent}
+    on:requestSnapshot  = {handlers.RequestSnapshotEvent}
     on:beforeunload={() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()
@@ -409,7 +414,7 @@
             </span>
 
             <!---Refresh--->
-            <Button color="tertiary-border" title="Refresh" side="lg" class="h-[40px] mt-auto" icon={ArrowPath} iconSize={16} 
+            <Button color="tertiary-border" title="Refresh" side="lg" class="h-[40px] mt-auto font-bold" icon={ArrowPath} iconSize={16} 
                 loading={loading} disabled={loading}
                 on:click={() => {
                     if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")

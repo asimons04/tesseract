@@ -3,6 +3,7 @@
         instance?: string,
         post_id?: number,
         comment_id?: number
+        data?: any
     }
     
     import type { ClickIntoPostEvent } from "$lib/ui/events"
@@ -39,6 +40,7 @@
         Icon, 
         Window 
     } from "svelte-hero-icons"
+    import { comment } from "postcss";
     
     
     
@@ -97,6 +99,7 @@
         },
     
         init: async function () {
+            if (!instance || (!comment_id && !post_id) ) return
             let find = viewHistory.findIndex((i) =>  i.instance == instance &&  i.post_id == post_id && i.comment_id == comment_id)
 
             if (find >= 0) {
@@ -111,16 +114,30 @@
                 historyPosition++
                 viewHistory = viewHistory
             }
-
+            // Reset the outer params after they've been found or added to the local history
+            comment_id  = viewHistory[0].comment_id
+            post_id     = viewHistory[0].post_id
+            instance    = viewHistory[0].instance
+            
             await load()
         },
     }
 
 
-    async function load() {
+    async function load(refresh:boolean=false) {
         const options               = viewHistory[historyPosition]
         
-        if (!options.instance) return
+        if (!options.instance || loading || (!options.comment_id && !options.post_id) ) return
+
+        // Use cached data from history if present and refresh not requested
+        if (!refresh && options.data) {
+            data = options.data
+            // (Add cross posts to post_view object for sanity)    
+            if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
+
+            expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
+            return
+        }
         
         const client                = getClient(options.instance)    
         const dataURL               = new URL(`https://localhost`)
@@ -130,8 +147,6 @@
         data                        = undefined
         loading                     = true
         loadError                   = false
-        //onHomeInstance              = (options.instance == $defaultInstance)
-        //onHomeInstance              = onHomeInstance
 
         try {
 
@@ -159,7 +174,7 @@
             if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
 
             expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
-            
+            options.data = data            
         } 
         
         catch (err) {
@@ -207,7 +222,7 @@
 
 <svelte:window on:clickIntoPost={handlers.ClickIntoPostEvent} />
 
-<Modal bind:open icon={Window} title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize preventCloseOnClickOut width="max-w-5xl" on:close={() => { history.back() }} >
+<Modal bind:open icon={Window} title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize width="max-w-5xl" on:close={() => { history.back() }} >
     
     <!---Modal Title Bar Buttons--->
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
@@ -233,7 +248,7 @@
             
             <Button color="tertiary" icon={ArrowPath} iconSize={20} {loading} size="square-lg" 
                 title="Refresh"
-                on:click={() => load() }
+                on:click={() => load(true) }
             />
             
             <Button color="tertiary" icon={ChevronDoubleDown} iconSize={20} size="square-lg" 
