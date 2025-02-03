@@ -128,7 +128,7 @@
         post = undefined
         
         if (!url) {
-            open = false
+            close()
             toast({
                 title: 'Error',
                 type: 'error',
@@ -356,7 +356,7 @@
         
 
         <Button color="primary" size="lg" icon={ArrowTopRightOnSquare} iconSize={20} href={url} newtab={true}
-            on:click={() => open = false }
+            on:click={() => close() }
         >
             Go
         </Button>
