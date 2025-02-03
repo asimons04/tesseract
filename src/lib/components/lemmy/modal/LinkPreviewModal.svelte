@@ -25,6 +25,7 @@
 
     import { getClient } from "$lib/lemmy"
     import { fade, slide } from "svelte/transition"
+    import { page } from "$app/stores"
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
@@ -62,6 +63,8 @@
         Window,
         XCircle,
     } from "svelte-hero-icons";
+    import { replaceState } from "$app/navigation";
+    
     
     
     
@@ -173,9 +176,18 @@
             loading = false
         }
     }
+
+    function close() {
+        replaceState('', {
+            modals: {
+                ...$page.state.modals,
+                LinkPreviewModal: false
+            }
+        })
+    }
 </script>
 
-<Modal bind:open preventCloseOnClickOut icon={LinkIcon} height="max-h-full" width="max-w-3xl" {title} allowMaximize  on:close={() => { history.back() }}>
+<Modal bind:open icon={LinkIcon} height="max-h-full" width="max-w-3xl" {title} allowMaximize  on:close={() => { history.back() }}>
 
     <!---Show link/mbfc while loading.  If Metadata fails to fetch, sill show the URL and MBFC (if available)--->
     {#if !iframeView && (loading || fetchError)}
@@ -309,7 +321,7 @@
     
 
     <div class="flex flex-row w-full justify-between" slot="buttons">
-        <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> open = false}>
+        <Button color="danger" size="lg" icon={XCircle} iconSize={20} on:click={()=> close()}>
             <span class="hidden md:flex">Close</span>
         </Button>
         
