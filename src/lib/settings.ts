@@ -195,7 +195,7 @@ export const defaultSettings: Settings = {
         showInstances:                                                  true,
         showInstancesSidebarCommunityList:                              true,
         showFullURL:                                                    false,
-        expandCrossPosts:                                               true,
+        expandCrossPosts:                                               false,
         matchCrossPostOnTitle: toBool(env.PUBLIC_MATCH_XPOST_TITLE)     ?? true,
         showBannersInCards:                                             true,
         stretchCardBanner: toBool(env.PUBLIC_STRETCH_CARD_BANNERS)      ?? true,
