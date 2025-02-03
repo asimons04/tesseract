@@ -9,19 +9,17 @@
     import { setUser } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
-
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import TextArea from '$lib/components/input/TextArea.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
+    import Button           from '$lib/components/input/Button.svelte'
+    import Card             from '$lib/components/ui/Card.svelte'
+    import MainContentArea  from '$lib/components/ui/containers/MainContentArea.svelte'
+    import Markdown         from '$lib/components/markdown/Markdown.svelte'
+    import Placeholder      from '$lib/components/ui/Placeholder.svelte'
+    import SiteCard         from '$lib/components/lemmy/SiteCard.svelte'
+    import SiteCardSmall    from '$lib/components/lemmy/SiteCardSmall.svelte'
+    import Spinner          from '$lib/components/ui/loader/Spinner.svelte'
+    import SubNavbar        from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import TextArea         from '$lib/components/input/TextArea.svelte'
+    import TextInput        from '$lib/components/input/TextInput.svelte'
     
     import {
         ArrowPath,
@@ -32,11 +30,6 @@
         QuestionMarkCircle,
         XCircle,
     } from 'svelte-hero-icons'
-    
-    
-    
-    
-    
 
     export let data
 
@@ -125,22 +118,19 @@
 </svelte:head>
 
 
-<SubNavbar home back toggleMargins toggleCommunitySidebar />
+<SubNavbar home back toggleCommunitySidebar />
 
 <MainContentArea>
-    <FeedContainer>
-        <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>
-            <!---
-            <span class="flex gap-4 items-center font-bold text-xl text-center mx-auto">
-                {#if data.site_view.site.icon}
-                    <Avatar circle={false} width={48} url={data.site_view.site.icon} />
-                {/if}
-                {data.site_view.site.name}
-            </span>
-            --->
-        
-            {#if data.site_view.local_site.registration_mode != 'Closed'}
-                <h1 class="font-bold text-3xl">Create account</h1>
+    <!---Add the Site Banner to the top of the feed below 'xl' width--->
+    <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px] mb-4">    
+        <SiteCardSmall site={data.site_view} version={data.version}/>
+    </div>
+    
+    {#if data.site_view.local_site.registration_mode != 'Closed'}
+        <Card class="mx-auto w-full max-w-4xl p-2">
+            <form class="flex flex-col gap-4 w-full max-w-4xl mx-auto" on:submit|preventDefault={submit}>
+            
+                <h1 class="font-bold text-2xl">Create Account</h1>
                 <TextInput bind:value={username} focus={true} label="Username" required />
         
                 <TextInput bind:value={email} label="Email" required={data.site_view.local_site.require_email_verification} type="email" />
@@ -168,14 +158,20 @@
         
                 {#if captchaRequired}
                     <div>
-                        <div class="block my-1 font-bold text-sm">Captcha</div>
+                        <div class="flex flex-row items-center justify-between">
+                            <div class="block my-1 font-bold text-sm">Captcha</div>
+                            <Button title="Refresh Captcha" color="tertiary-border" on:click={() => getCaptcha()} size="square-md" icon={ArrowPath} iconSize={16} />
+                        </div>
+                        
                         <div class="flex flex-col gap-4">
                             {#await getCaptcha()}
                                 <Spinner width={32} />
                             {:then}
                                 {#if captcha?.ok}
-                                    <img src="data:image/png;base64,{captcha.ok.png}" alt="Captcha" class="w-max" />
-                                    <audio controls src={captchaAudio} />
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <img src="data:image/png;base64,{captcha.ok.png}" alt="Captcha" class="w-[250px]" />
+                                        <audio controls src={captchaAudio} class="w-[250px]" />
+                                    </div>
                                 {:else}
                                     <Card cardColor="warning" class="p-3 flex gap-2">
                                         <span class="flex flex-row gap-1">
@@ -193,11 +189,7 @@
                                 </Card>
                             {/await}
                             
-                            <Button on:click={() => getCaptcha()} size="square-md">
-                                <Icon src={ArrowPath} size="16" mini />
-                            </Button>
-                            
-                            <TextInput required bind:value={verifyCaptcha} />
+                            <TextInput required bind:value={verifyCaptcha} placeholder="CAPTCHA Answer" />
                         </div>
                     </div>
                 {/if}
@@ -206,17 +198,19 @@
                 <Button submit color="primary" size="lg" loading={submitting} disabled={submitting} class="mt-auto">
                     Submit
                 </Button>
-            {:else}
-                <div class="my-auto">
-                    <Placeholder icon={XCircle} title="Registrations Closed" description="New account creation has been disabled on this instance.">
-                        <Button icon={Plus} href="/signup">
-                            Choose Another Instance
-                        </Button>
-                    </Placeholder>
-                </div>
-            {/if}
-        </form>
-    </FeedContainer>
+            </form>
+        </Card>
+    {:else}
+        <div class="mx-auto my-auto">
+            <Placeholder icon={XCircle} title="Registrations Closed" description="New account creation has been disabled on this instance.">
+                <Button icon={Plus} href="/signup">
+                    Choose Another Instance
+                </Button>
+            </Placeholder>
+        </div>
+    {/if}
+        
+    
 
     <SiteCard site={data.site_view} taglines={data.taglines} admins={data.admins} version={data.version} slot="right-panel"/>
 </MainContentArea>

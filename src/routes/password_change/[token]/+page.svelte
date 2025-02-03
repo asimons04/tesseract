@@ -7,12 +7,14 @@
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { LINKED_INSTANCE_URL, instance as Instance } from "$lib/instance.js";
 
-    import Button from '$lib/components/input/Button.svelte'
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
-    import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import TextInput from '$lib/components/input/TextInput.svelte'
+    import Button           from '$lib/components/input/Button.svelte'
+    import Card             from '$lib/components/ui/Card.svelte'
+    import MainContentArea  from '$lib/components/ui/containers/MainContentArea.svelte';
+    import SiteCard         from '$lib/components/lemmy/SiteCard.svelte';
+    import SiteCardSmall    from '$lib/components/lemmy/SiteCardSmall.svelte'
+    import SubNavbar        from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import TextInput        from '$lib/components/input/TextInput.svelte'
+    
     
     export let data
 
@@ -66,13 +68,17 @@
     <title>Change Password</title>
 </svelte:head>
 
-<SubNavbar home back toggleMargins toggleCommunitySidebar/>
+<SubNavbar home back toggleCommunitySidebar/>
 
 <MainContentArea>
-    <FeedContainer>
-        
-        <form class="flex flex-col gap-4" on:submit|preventDefault={submit}>
-            <h1 class="font-bold text-3xl">Set New Password</h1>
+    <!---Add the Site Banner to the top of the feed below 'xl' width--->
+    <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px] mb-4">    
+        <SiteCardSmall site={data.site_view} version={data.version}/>
+    </div>
+
+    <Card class="mx-auto w-full max-w-4xl p-2"> 
+        <form class="flex flex-col gap-4 w-full max-w-4xl mx-auto" on:submit|preventDefault={submit}>
+            <h1 class="font-bold text-2xl">Set New Password</h1>
             <p class="text-sm">
                 New password must be at least 10 characters.
             </p>
@@ -85,9 +91,10 @@
                 Save
             </Button>
         </form>
+    </Card>
         
         
-    </FeedContainer>
+    
     
     <SiteCard site={data.site_view} taglines={data.taglines} admins={data.admins} version={data.version} slot="right-panel"/>
     

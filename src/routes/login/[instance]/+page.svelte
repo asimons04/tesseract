@@ -1,29 +1,24 @@
 <script lang="ts">
-    interface LoginErrorResponse {
-        error?: string,
-        message?: string
-    }
-    
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Button from '$lib/components/input/Button.svelte'
-    import FeedContainer from '$lib/components/ui/containers/FeedContainer.svelte';
-    import Link from '$lib/components/input/Link.svelte'
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import Modal from '$lib/components/ui/modal/Modal.svelte'
-    import SiteCard from '$lib/components/lemmy/SiteCard.svelte';
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    
-    import { DEFAULT_INSTANCE_URL, LINKED_INSTANCE_URL } from '$lib/instance.js'
+    import { LINKED_INSTANCE_URL } from '$lib/instance.js'
     import { getClient, parseAPIError } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
-    import { instance } from '$lib/instance.js';
+    import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
     import { setUser } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { InformationCircle, XCircle } from 'svelte-hero-icons';
-    import Markdown from '$lib/components/markdown/Markdown.svelte';
-    import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
+    import { InformationCircle, XCircle } from 'svelte-hero-icons'   
+    
+    import Button           from '$lib/components/input/Button.svelte'
+    import Card             from '$lib/components/ui/Card.svelte'
+    import Link             from '$lib/components/input/Link.svelte'
+    import MainContentArea  from '$lib/components/ui/containers/MainContentArea.svelte'
+    import Markdown         from '$lib/components/markdown/Markdown.svelte'
+    import Modal            from '$lib/components/ui/modal/Modal.svelte'
+    import SectionTitle     from '$lib/components/ui/SectionTitle.svelte'
+    import SiteCard         from '$lib/components/lemmy/SiteCard.svelte'
+    import SiteCardSmall    from '$lib/components/lemmy/SiteCardSmall.svelte'
+    import SubNavbar        from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import TextInput        from '$lib/components/input/TextInput.svelte'
     
     
     export let data;
@@ -201,12 +196,18 @@
 </Modal>
 
 
-<SubNavbar home back toggleMargins toggleCommunitySidebar/>
+<SubNavbar home back toggleCommunitySidebar/>
 
 <MainContentArea>
-    <FeedContainer>
-        <form on:submit|preventDefault={logIn} class="flex flex-col gap-6">
+    <!---Add the Site Banner to the top of the feed below 'xl' width--->
+    <div class="flex 2xl:hidden flex-col mx-auto w-full max-w-[820px] mb-4">    
+        <SiteCardSmall site={data.site_view} version={data.version}/>
+    </div>
+
+    <Card class="mx-auto w-full max-w-4xl p-2">
+        <form on:submit|preventDefault={logIn} class="flex flex-col gap-6 w-full max-w-4xl mx-auto">
             
+
             <h1 class="font-bold text-2xl">Log In</h1>
             <div class="flex flex-row w-full items-center gap-2">
                 <TextInput bind:value={formData.username} id="username" label="Username" class="flex-1" focus={true} required />
@@ -236,7 +237,7 @@
                 <Link href="/signup/{formData.instance}" highlight>Sign Up</Link> | <Link href="/forgot_password/{formData.instance}" highlight>Forgot Password</Link>
             </p>
         </form>
-    </FeedContainer>
+    </Card>
     
     <SiteCard site={data.site_view} taglines={data.taglines} admins={data.admins} version={data.version} slot="right-panel"/>
     
