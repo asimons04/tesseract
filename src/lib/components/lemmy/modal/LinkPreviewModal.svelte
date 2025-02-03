@@ -1,11 +1,4 @@
 <script lang="ts">
-    /*
-        Issues:
-        1.  Clicking a hashtag throws an unhandled exception
-        4.  Clicking links inside the preview's embed description do not worok
-        
-    */
-    
     import type { 
         GetSiteMetadataResponse,
         PostView
@@ -25,7 +18,6 @@
 
     import { getClient } from "$lib/lemmy"
     import { fade, slide } from "svelte/transition"
-    import { page } from "$app/stores"
     import { toast } from "$lib/components/ui/toasts/toasts"
     import { userSettings } from '$lib/settings'
     
@@ -54,7 +46,6 @@
     import YouTubePlayer        from "$lib/components/players/YouTubePlayer.svelte"
 
     import { 
-        ArrowLeftCircle,
         ArrowTopRightOnSquare,
         ExclamationTriangle,
         Eye,
@@ -63,7 +54,6 @@
         Window,
         XCircle,
     } from "svelte-hero-icons";
-    import { replaceState } from "$app/navigation";
     
     
     
@@ -178,12 +168,7 @@
     }
 
     function close() {
-        replaceState('', {
-            modals: {
-                ...$page.state.modals,
-                LinkPreviewModal: false
-            }
-        })
+        history.back()
     }
 </script>
 
