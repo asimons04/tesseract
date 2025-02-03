@@ -93,7 +93,7 @@ export class StorageController {
     remove (key:string): void {
         // Prevent removing critical data from local storage; these keys are not managed by the storage controller.
         if (this._type == 'local' && ['theme', 'profileData', 'settings', 'seenUntil'].includes(key)) {
-            console.log(`StorageController: Cannot remove key (${key}) from localStorage as it is required and not managed by this subsystem.`)
+            if (get(userSettings).debugInfo) console.log(`StorageController: Cannot remove key (${key}) from localStorage as it is required and not managed by this subsystem.`)
             return
         }
         
@@ -131,12 +131,13 @@ export class StorageController {
 
             const data = JSON.parse(value)
             
+            // If raw, don't process further (e.g. check expired) or decompress since we just want the metadata from it.
             if (raw) return data
 
             if ( !('payload' in data)) return undefined
             
             if (this.expired(data.timestamp)) {
-                console.log(`StorageController: Stored item (${key}) is expired. Discarding`)
+                if (get(userSettings).debugInfo) console.log(`StorageController: Stored item (${key}) is expired. Discarding`)
                 this.remove(key)
                 return undefined
             }
@@ -147,7 +148,7 @@ export class StorageController {
             return decompressed
         }
         catch (err) { 
-            console.log(`StorageController: Error retrieving key (${key}:`, err)
+            if (get(userSettings).debugInfo) console.log(`StorageController: Error retrieving key (${key}:`, err)
             this.remove(key)
             return undefined 
         }
@@ -179,7 +180,7 @@ export class StorageController {
 
         }
         catch (err) {
-            console.log(`StorageController: Failed to save to ${this._type} storage.`, err)
+            if (get(userSettings).debugInfo) console.log(`StorageController: Failed to save to ${this._type} storage.`, err)
             this.remove(key)
         }
     }
@@ -288,8 +289,8 @@ export class StorageCache {
         this.storage.keys.forEach(async (key) => {
             let keyData = await this.storage.get(key, true)
             if (this.storage.expired(keyData.timestamp)) {
-                console.log("storage-controller: Housekeeping expired key ", key)
-                //this.storage.remove(key)
+                if (get(userSettings).debugInfo) console.log("storage-controller: Housekeeping expired key ", key)
+                this.storage.remove(key)
             }
             
         })
