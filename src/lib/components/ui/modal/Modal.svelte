@@ -12,6 +12,7 @@
     export let open = false
     export let title:string = '';
     export let icon:IconSource = undefined;
+    export let iconImage: string = ''
 
     export let height:string = 'h-auto max-h-[95vh]'
     export let width:string = 'min-w-[50%]'
@@ -92,12 +93,16 @@
                 >
                     <!---Modal Dialog Title Bar--->
                     <div class="flex flex-row gap-2 items-center max-w-full">
-                        {#if icon} 
-                            <span class="w-[32px]">
+                        {#if iconImage}
+                            <span class="hidden md:block w-[32px]">    
+                                <img src={iconImage} class="rounded-full h-[28px] w-[28px]" alt="Community Icon" />
+                            </span>
+                        {:else if icon} 
+                            <span class="hidden md:block w-[32px]">
                                 <Icon src={icon} mini width={28}/>
                             </span>
                         {/if}
-                        <h1 class="font-bold text-lg gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
+                        <h1 class="font-bold text-base gap-2 w-fit truncate {capitalizeTitle ? 'capitalize' : ''}">
                             {title}
                         </h1>
                         
