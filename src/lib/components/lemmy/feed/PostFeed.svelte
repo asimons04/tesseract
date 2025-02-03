@@ -10,6 +10,7 @@
         BlockInstanceEvent, 
         BlockUserEvent, 
         ChangeProfileEvent, 
+        ClickIntoPostEvent, 
         EditPostEvent, 
         HideCommunityEvent, 
         HidePostEvent, 
@@ -643,6 +644,10 @@
             posts = posts
         },
 
+        RequestSnapshotEvent(e:ClickIntoPostEvent) {
+            controller.takeSnapshot()
+        },
+
         SetSortTypeEvent(e:SetSortTypeEvent) {
             console.log(moduleName, ": Received sort type event:", e.detail.sort)
             if (e.detail.sort != controller.sort) controller.sort = e.detail.sort;
@@ -722,6 +727,7 @@
     on:blockCommunity   = {handlers.BlockCommunityEvent} 
     on:blockInstance    = {handlers.BlockInstanceEvent}
     on:changeProfile    = {handlers.ChangeProfileEvent}
+    
     on:hideCommunity    = {handlers.HideCommunityEvent}
     on:hidePost         = {handlers.HidePostEvent}
     on:lastClickedPost  = {handlers.LastClickedPostEvent}
@@ -733,7 +739,7 @@
         controller.refreshing = true
         controller.refresh(true) 
     }}
-
+    on:requestSnapshot  = {handlers.RequestSnapshotEvent}
     on:setSortType      = {handlers.SetSortTypeEvent}
     on:systemTimer      = {handlers.SystemTimerEvent}
     on:beforeunload     = {() => {
@@ -780,7 +786,7 @@
         
         <!---Refresh Feed--->
         <span class="flex flex-col h-full gap-1">
-            <Button color="tertiary-border" title="Refresh" size="lg" class="h-[40px] mt-auto" icon={ArrowPath} iconSize={16} 
+            <Button color="tertiary-border" title="Refresh" size="lg" class="h-[40px] mt-auto font-bold" icon={ArrowPath} iconSize={16} 
                 loading={controller.busy} disabled={controller.busy}
                 on:click={() => {
                     if ($userSettings.debugInfo) console.log(moduleName, ": Refresh button clicked")

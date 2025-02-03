@@ -6,33 +6,34 @@ import type { PostViewType } from "$lib/settings"
 import type { PostView, SortType } from "lemmy-js-client"
 
 export type TesseractEvent = 
-    'banUser'           |
-    'banCommunity'      | 
-    'blockUser'         |
-    'blockCommunity'    |
-    'blockInstance'     |
-    'changeCompactView' |
-    'changeProfile'     |
-    'changeView'        |
-    'clickIntoPost'     |
-    'distinguishComment'|
-    'editComment'       |
-    'editPost'          |
-    'expandAll'         |
-    'featurePost'       |
-    'hideCommunity'     |
-    'hidePost'          |
-    'lastClickedPost'   |
-    'lockPost'          |
-    'purgeComment'      |
-    'purgePost'         |
-    'refreshFeed'       |
-    'removeComment'     |
-    'removeCommunity'   |
-    'removePost'        |
-    'scrollPostIntoView'|
-    'setSortType'       |
-    'subscribe'         |
+    'banUser'               |
+    'banCommunity'          | 
+    'blockUser'             |
+    'blockCommunity'        |
+    'blockInstance'         |
+    'changeCompactView'     |
+    'changeProfile'         |
+    'changeView'            |
+    'clickIntoPost'         |
+    'distinguishComment'    |
+    'editComment'           |
+    'editPost'              |
+    'expandAll'             |
+    'featurePost'           |
+    'hideCommunity'         |
+    'hidePost'              |
+    'lastClickedPost'       |
+    'lockPost'              |
+    'purgeComment'          |
+    'purgePost'             |
+    'refreshFeed'           |
+    'removeComment'         |
+    'removeCommunity'       |
+    'removePost'            |
+    'requestSnapshot'       |
+    'scrollPostIntoView'    |
+    'setSortType'           |
+    'subscribe'             |
     'systemTimer'
 
 
