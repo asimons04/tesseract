@@ -76,6 +76,7 @@
     export const controller: UserSubmissionFeedController = {
         loadedFromSnapshot: false,
         storage: new StorageController({
+            type: 'local',
             ttl: snapshotValidity,
             useCompression: true
         }),
