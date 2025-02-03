@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { type SvelteGestureSwipeEvent } from '$lib/util'
     import { type IconSource, Icon, XMark, ArrowsPointingIn, ArrowsPointingOut } from 'svelte-hero-icons'
 
     import { createEventDispatcher, onMount } from 'svelte'
     import { expoOut } from 'svelte/easing'
     import { fade, scale } from 'svelte/transition'
-    import { swipe } from 'svelte-gestures'
 
     import Button from '$lib/components/input/Button.svelte'
     import Card from '../Card.svelte'
@@ -19,7 +17,6 @@
     export let width:string = 'min-w-[50%]'
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
-    export let preventCloseOnClickOut:boolean = false
     export let card:boolean = true
     export let capitalizeTitle: boolean = false
 
@@ -45,22 +42,6 @@
         }
     }
 
-    function isSelecting() {
-        return window.getSelection && window.getSelection()?.type === 'Range'
-    }
-
-    function onSwipe(e:SvelteGestureSwipeEvent) {
-        if  (
-                e.detail.direction && ['left', 'right'].includes(e.detail.direction) &&
-                //@ts-ignore
-                e.detail.target.type! != 'textarea' && 
-                !isSelecting()
-            ) {
-            dispatcher('close')
-            open = false
-        }
-    }
-
     onMount(() => {
         modalBackground?.focus()
     })
@@ -80,21 +61,13 @@
         on:keydown={(
             //@ts-ignore
             e) => {
-            if (e.key == 'Escape' || e.key == 'GoBack' || e.key == 'BrowserBack') {
+            if (e.key == 'Escape') {
                 e.preventDefault()
                 e.stopPropagation();
                 dispatcher('close')
                 open = false
             }
         }}
-        on:click={(
-            //@ts-ignore
-            e) => {
-            if (!modalElement.contains(e.target) && !preventCloseOnClickOut) {
-                dispatcher('close')
-                open = false
-            }
-		}}
         on:wheel={(
             //@ts-ignore
             e) => {
@@ -135,32 +108,28 @@
                             {#if allowMaximize}
                                 <span class="hidden lg:flex">
                                     <Button title="{maximized ? 'Un-maximize' : 'Maximize'}" size="md" rounded="lg" color="tertiary" 
+                                        icon={maximized ? ArrowsPointingIn : ArrowsPointingOut}
+                                        iconSize={16}
                                         on:click={() => (maximize())}
-                                    >
-                                        <Icon src={maximized ? ArrowsPointingIn : ArrowsPointingOut} mini size="16" />
-                                    </Button>
+                                    />
                                 </span>
                             {/if}
                             
                             <!---Close Button--->
-                            <Button title="Close" size="md" rounded="lg" color="tertiary" on:click={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation();
-                                open = false
-                                dispatcher('close')
-                            }}
-                            >
-                                <Icon src={XMark} mini size="16" />
-                            </Button>
+                            <Button title="Close" size="md" rounded="lg" color="tertiary" 
+                                icon={XMark}
+                                iconSize={16}
+                                on:click={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation();
+                                    open = false
+                                    dispatcher('close')
+                                }}
+                            />
                         </span>
                     </div>
                     
-                    <div class="flex flex-col overflow-hidden w-full h-full"
-                        use:swipe={{
-                            touchAction: 'pan-y',
-                            minSwipeDistance: 120
-                        }}  on:swipe={onSwipe}
-                    >
+                    <div class="flex flex-col overflow-hidden w-full h-full">
                         <!---Slot to hold the modal's content--->
                         <Card elevation={card ? 1 : -1} class="flex flex-col overflow-y-auto {card ? 'p-2' : ''} {height}">
                             <slot />
