@@ -83,7 +83,6 @@
         posts: [] as PostView[]
     }
     let truncatedPostCount = 0
-    let lastTick: number = 0
     let listingTypeOptions:string[] = ['Subscribed', 'Local', 'All'] as ListingType[]
     let listingTypeOptionNames      = [...listingTypeOptions]
 
@@ -652,15 +651,6 @@
             console.log(moduleName, ": Received sort type event:", e.detail.sort)
             if (e.detail.sort != controller.sort) controller.sort = e.detail.sort;
         },
-
-        
-        SystemTimerEvent(e:SystemTimerEvent) {
-            // Every minute, run housekeeping on the controller's storage
-            if ( (e.detail.timestamp - lastTick) > 60) {
-                lastTick = e.detail.timestamp
-                controller.storage.housekeep()
-            }
-        }
     }
     
 
@@ -741,7 +731,6 @@
     }}
     on:requestSnapshot  = {handlers.RequestSnapshotEvent}
     on:setSortType      = {handlers.SetSortTypeEvent}
-    on:systemTimer      = {handlers.SystemTimerEvent}
     on:beforeunload     = {() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Page refresh requested; flushing snapshot")
         controller.clearSnapshot()
