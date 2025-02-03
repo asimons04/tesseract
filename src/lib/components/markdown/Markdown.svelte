@@ -19,7 +19,6 @@
         hashtagsToMDLinks
     } from './markdown'
 
-    import { fixLemmyEncodings } from '$lib/components/lemmy/post/helpers'
     import { marked } from 'marked';
     import { userSettings } from '$lib/settings'
     
@@ -139,14 +138,14 @@
 
                     // If word starts with escape slash, don't process it as markdown (just spruce up the encodings and remove the slash for display)
                     if (word.startsWith('\\')) {
-                        word = fixLemmyEncodings(word)
+                        //word = fixLemmyEncodings(word)
                         word = word.substring(1, word.length)
                         words[j] = word
                     }
 
                     // If word isn't escaped, not inside a code span, image, process each word
                     else if (!inCodeSpan && !inImage) {
-                        word = fixLemmyEncodings(word)
+                        //word = fixLemmyEncodings(word)
                         if (!noUserCommunityLink) word = findUserCommunityLinks(word)
                         if (!noHashtags) word = hashtagsToMDLinks(word)
                         
