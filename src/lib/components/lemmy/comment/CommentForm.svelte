@@ -8,6 +8,7 @@
     
     import Button from '$lib/components/input/Button.svelte'
     import MarkdownEditor from '$lib/components/markdown/MarkdownEditor.svelte'
+    import { beforeNavigate } from '$app/navigation'
 
     export let postId: number
     export let parentId: number | undefined = undefined
@@ -21,9 +22,9 @@
     export let actions = true
     
     
-    let loading = false
-    let previewing = false
-
+    let loading     = false
+    let previewing  = false
+    
     async function submit() {
         if (!$profile?.user || !$profile?.jwt || value == '') return
         
@@ -52,6 +53,13 @@
         }
         loading = false
     }
+
+    beforeNavigate((e) => {
+        if (value && !confirm('You have a comment in progress. Are you sure you want to lose it?')) {
+                e.cancel()
+            }
+    })
+
 </script>
 
 <div class="flex flex-col gap-2 relative">
