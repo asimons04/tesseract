@@ -77,6 +77,7 @@
                 e.stopPropagation()
                 goto(postURL)
                 dispatchWindowEvent('clickIntoPost', {post_id: postID})
+                return
             }
         }
     }
