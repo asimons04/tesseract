@@ -284,21 +284,22 @@
         <!---Image Container--->
         <div class="flex top-16 p-4 w-full h-full cursor-zoom-out" role="button" tabindex="0"
             bind:this={imageContainerElement}
-            on:wheel        = {scrollZoom }
-            on:pointerdown  = {panStart}
-            on:pointermove  = {panMove}
-            on:pointerup    = { () => panEnd() }
-            on:dblclick     = { () => doubleClickZoom() }
-            use:pinch={{touchAction: 'pinch-zoom'}} 
-            on:pinch={pinchZoom}
-            use:swipe
-            on:swipe={onSwipe}
+            
         >
             
             <img bind:this={imageElement}
                 src="{imageProxyURL(url)}"
                 class="flex mx-auto my-auto pt-8 !max-h-[100%] {zoom.panning ? 'cursor-grabbing' : 'cursor-default'}"
                 alt={altText}
+                on:wheel        = {scrollZoom }
+                on:pointerdown  = {panStart}
+                on:pointermove  = {panMove}
+                on:pointerup    = { () => panEnd() }
+                on:dblclick     = { () => doubleClickZoom() }
+                use:pinch={{touchAction: 'pinch-zoom'}} 
+                on:pinch={pinchZoom}
+                use:swipe
+                on:swipe={onSwipe}
             />
         </div>
     </div> 
