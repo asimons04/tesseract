@@ -153,7 +153,21 @@
 
 
 {#if editing}
-    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} width="max-w-4xl" preventCloseOnClickOut>
+    <Modal bind:open={editing} title="Editing comment" icon={ChatBubbleLeftEllipsis} width="max-w-4xl" 
+        on:close={() => {
+            if (newComment != node.comment_view.comment.content) {
+                if (confirm('You have an edit in progress. Are you sure you want to lose those changes?')) {
+                    newComment = node.comment_view.comment.content
+                    editing = false
+                    return
+                }
+                else {
+                    return
+                }
+            }
+            editing = false
+        }}
+    >
         <MarkdownEditor rows={7} bind:value={newComment} bind:imageUploads previewButton={true}>
             
             <Button color="primary" slot="actions" on:click={async () => {
