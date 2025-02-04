@@ -16,6 +16,8 @@ const FAKE_NEWS = [
     'tass.com',
     'www.infoterkiniviral.com',
     'www.kaggle.com',
+    'www.libsoftiktok.com',
+    'libsoftiktok.com',
     'tiblur.com',
     'www.tiblur.com',
     'todaycnn.com',
