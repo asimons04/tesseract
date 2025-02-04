@@ -55,15 +55,6 @@
         XCircle,
     } from "svelte-hero-icons";
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
     export let url: string
     export let open: boolean = false
     export let iframe: boolean = false
