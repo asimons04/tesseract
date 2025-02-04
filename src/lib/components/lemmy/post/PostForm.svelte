@@ -75,6 +75,7 @@
         Window,
         XCircle
     } from 'svelte-hero-icons'
+    import { beforeNavigate } from '$app/navigation';
     
     
     
@@ -120,6 +121,9 @@
     let showSearch              = false
     let URLSearchResults        = [] as PostView[]
     let oldCommunity:Community
+    let submitted: boolean      = false
+
+    export let postInProgress = (data.name || data.body || data.url || data.alt_text) ? true : false
 
     // Container for the post image and custom thumbnail uploads and supporting state variables
     const images: PostImages = {
@@ -138,10 +142,7 @@
         body: [] as UploadImageResponse[]
     }
 
-    const dispatcher = createEventDispatcher<{ 
-        submit?: PostView
-        state?: { workInProgress?: boolean}
-    }>()
+    const dispatcher = createEventDispatcher<{submit: PostView}>()
 
     // If community is provided, set the data object's community key to that
     $: if (community) data.community = community
@@ -151,11 +152,8 @@
     $:  data.community, rerunSearch()
 
     // Set a flag a parent component can bind to to determine if there is a work-in-progress post
-    $: data.name, data.body, data.url, data.alt_text, setInProgressFlag()
-    function setInProgressFlag() {
-        if (data.name || data.body || data.url || data.alt_text) dispatcher('state', {workInProgress: true})
-        else dispatcher('state', {workInProgress: false})
-    }
+    $:  postInProgress = (data.name || data.body || data.url || data.alt_text) ? true : false
+    
 
     async function submit() {
         if (!data.name || !$profile?.jwt) return
@@ -205,6 +203,7 @@
                 })
 
                 if (!post) throw new Error('Failed to create post')
+                submitted = true
                 dispatchWindowEvent('editPost', { post: post.post_view})
                 dispatcher('submit', post.post_view)
             }
@@ -409,7 +408,16 @@
     }
 
     
-    
+    beforeNavigate((e) => {
+        if (postInProgress && !submitted) {
+            if (confirm('You have a post in progress. Are you sure you want to lose it?')) {
+                resetForm()
+            }
+            else {
+                e.cancel()
+            }
+        }
+    })
 
    
 </script>

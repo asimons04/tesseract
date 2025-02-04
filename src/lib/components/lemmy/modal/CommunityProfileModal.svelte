@@ -17,8 +17,9 @@
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { fullCommunityName } from "$lib/util"
     import { getClient } from "$lib/lemmy"
-    import { goto } from "$app/navigation"
+    import { goto, replaceState } from "$app/navigation"
     import { onMount } from "svelte";
+    import { page } from "$app/stores"
     import { profile } from '$lib/auth'
     import { toast } from "$lib/components/ui/toasts/toasts"
 
@@ -59,6 +60,7 @@
         UserGroup,
         Window as WindowIcon
     } from "svelte-hero-icons";
+    
     
     
     
@@ -304,14 +306,30 @@
 
 <svelte:window on:clickIntoPost={() => open = false } />
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserGroup} card={false} width={modalWidth}
+<Modal bind:open 
+    icon={UserGroup} 
+    iconImage={communityDetails?.community_view?.community?.icon}  
+    card={false} 
+    width={modalWidth} 
     capitalizeTitle={true}
     title={
         shortenCommunityName(communityDetails?.community_view?.community?.title, 35) ?? 
         communityDetails?.community_view?.community?.name ?? 
         'Community Details'
     }
-    on:close={() => { history.back() }}
+    on:close={() => { 
+        if (postInProgress) {
+            let confirmation = confirm('You have work in progress.  Are you sure you want to leave?')
+            if (confirmation) {
+                resetPostForm().then(() => history.back())
+                return
+            }
+            return
+        }
+        else {
+            history.back() 
+        }
+    }}
 >
 
     <!---Quick Actions (These are placed into the modal title bar)--->
@@ -530,13 +548,15 @@
                 <ModalScrollArea card={false}>
                     <PostForm bind:community={communityDetails.community_view.community} hideCommunityInput={true} inModal={true} editing={false} 
                         bind:resetForm={resetPostForm}
+                        bind:postInProgress
                         on:submit={(e) => {
-                            if (e?.detail?.post.id) goto(`/post/${e.detail.post.id}`)
-                            open = false
-                        }}
-
-                        on:state={(e) => {
-                            postInProgress = e?.detail?.workInProgress
+                            replaceState('', {
+                                modals: {
+                                    ...$page.state.modals,
+                                    CommunityProfileModal: false
+                                }
+                            })
+                            goto(`/post/${e.detail.post.id}`)
                         }}
                     />
                 </ModalScrollArea>

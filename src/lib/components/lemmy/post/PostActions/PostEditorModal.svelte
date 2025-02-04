@@ -10,21 +10,30 @@
 
     export let post:PostView
     export let open:boolean = false
-
-    const handlers = {
-        EditPostEvent: function (e:EditPostEvent) {
-            if (post.post.id == e.detail.post.post.id) open = false
-        }
-    }
-
+    
+    let postInProgress: boolean | undefined = undefined
+    let resetPostForm: () => Promise<void>
 </script>
 
-<svelte:window on:editPost={handlers.EditPostEvent} />
-
-
-
-
-<Modal bind:open preventCloseOnClickOut icon={PencilSquare} card={false} title="Editing Post" width="max-w-5xl" height="max-h-[95vh]">
-    <PostForm editingPost={post} textEditorRows={10} inModal={true} editing />
+<Modal bind:open icon={PencilSquare} card={false} title="Editing Post" width="max-w-5xl" height="max-h-[95vh]"
+    on:close={() => { 
+        if (postInProgress) {
+            if (confirm('You have work in progress.  Are you sure you want to leave?')) {
+                resetPostForm().then(() => open = false)
+                return
+            }
+            return
+        }
+        else {
+            open = false
+        }
+    }}
+>
+    
+    <PostForm editingPost={post} textEditorRows={10} inModal={true} editing 
+        bind:resetForm={resetPostForm}
+        bind:postInProgress
+        on:submit={() => open = false}
+    />
 </Modal>
 
