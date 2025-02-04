@@ -605,7 +605,7 @@ Spoiler Content
                     }}
 
                     on:keydown={(e) => {
-                        if (disabled) return
+                        if (disabled || $userSettings.uiState.disableMarkdownEditorKeyboardShortcuts) return
                         
                         // Handle shortcut keys
                         if (e.ctrlKey || e.metaKey) {

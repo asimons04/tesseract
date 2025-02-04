@@ -16,8 +16,8 @@
 
     import Button                       from '$lib/components/input/Button.svelte'
     import EditHybridViewPostTypesModal from './EditHybridViewPostTypesModal.svelte'
-    import Logo                         from '$lib/components/ui/Logo.svelte';
-    import MainContentArea              from '$lib/components/ui/containers/MainContentArea.svelte';
+    import Logo                         from '$lib/components/ui/Logo.svelte'
+    import MainContentArea              from '$lib/components/ui/containers/MainContentArea.svelte'
     import MarkdownEditor               from '$lib/components/markdown/MarkdownEditor.svelte'
     import SettingButton                from '$lib/components/ui/settings/SettingButton.svelte'
     import SettingEditArray             from '$lib/components/ui/settings/SettingEditArray.svelte'
@@ -25,7 +25,7 @@
     import SettingToggle                from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingsCollapseSection      from '$lib/components/ui/settings/SettingsCollapseSection.svelte'
     import SiteCard                     from '$lib/components/lemmy/SiteCard.svelte'
-    import SubNavbar                    from '$lib/components/ui/subnavbar/SubNavbar.svelte';
+    import SubNavbar                    from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     
     import {
         ArrowDown,
@@ -35,8 +35,8 @@
         ArrowPathRoundedSquare,
         ArrowsPointingOut,
         ArrowsRightLeft,
+        ArrowsUpDown,
         ArrowUturnDown,
-        Icon,
         BarsArrowDown,
         Beaker,
         BugAnt,
@@ -47,20 +47,26 @@
         ChatBubbleBottomCenterText,
         CheckBadge,
         ChevronDoubleDown,
+        ClipboardDocumentList,
+        Clock,
         CloudArrowDown,
         CloudArrowUp,
         CodeBracketSquare,
+        Cog8Tooth,
         EnvelopeOpen,
         ExclamationTriangle,
         EyeSlash,
         FaceFrown,
+        FaceSmile,
         Film,
         Funnel,
         Gif,
         GlobeAlt,
         HandRaised,
         Hashtag,
+        Icon,
         Identification,
+        Inbox,
         InformationCircle,
         Language,
         Link as LinkIcon,
@@ -69,22 +75,16 @@
         Play,
         QueueList,
         Server,
+        ShieldCheck,
         Sun,
         TableCells,
         Trash,
         Trophy,
         Tv,
-        UserCircle,
         Window,
         Tag,
-        Clock,
         UserGroup,
-        ShieldCheck,
-        Inbox,
-        ClipboardDocumentList,
-        FaceSmile,
-        ArrowsUpDown,
-        Cog8Tooth,
+        WrenchScrewdriver,
     } from 'svelte-hero-icons'
     
     
@@ -993,7 +993,14 @@
         </div>
     </SettingsCollapseSection>
 
+    <!---Advanced Options--->
     <SettingsCollapseSection bind:expanded={open.advanced} icon={Cog8Tooth} title="Advanced">
+        
+        <!---Disable Markdown Editor Keyboard Shortcuts--->
+        <SettingToggle icon={WrenchScrewdriver} title="Disable Markdown Editor Keyboard Shortcuts" bind:value={$userSettings.uiState.disableMarkdownEditorKeyboardShortcuts}
+            description="Disable the keyboard shortcuts in the markdown editor. This may be required if you are using a non-standard keyboard layout."
+        />
+
         <!---Enable Debug Buttons--->
         <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
             description="Show debug buttons in the UI to see post/comment and other raw data. Also enables debug messages in the browser console."

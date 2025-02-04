@@ -138,6 +138,7 @@ interface Settings {
         hybridViewAsCardTypes: PostType[]                               // The post types which should display by default as cards when using "Hybrid" view mode
         hybridViewKeepReadCollapsed: boolean                            // Enable to keep read posts collapsed in compact view rather than auto expanding to cards
         scrollPostBodyInFeed: boolean                                   // When expanding a long post body in the feed, limit the div's height and scroll within it. Disable to expand in full
+        disableMarkdownEditorKeyboardShortcuts: boolean                 // Disable the keyboard shortcuts in the markdown editor
     }
     highlightCode: boolean                                              // Enable to use highlight.js code highlighting on code blocks
     highlightInlineCode: boolean                                        // Enable to use highlight.js code hightlighting on inline code
@@ -211,6 +212,7 @@ export const defaultSettings: Settings = {
         hybridViewAsCardTypes:                                          ['image'],
         hybridViewKeepReadCollapsed:                                    true,
         scrollPostBodyInFeed:                                           true,
+        disableMarkdownEditorKeyboardShortcuts:                         false,
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
