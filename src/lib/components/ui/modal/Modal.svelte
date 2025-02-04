@@ -46,6 +46,10 @@
     onMount(() => {
         modalBackground?.focus()
     })
+
+    function close() {
+        dispatcher('close')
+    }
     
 </script>
 
@@ -65,8 +69,7 @@
             if (e.key == 'Escape') {
                 e.preventDefault()
                 e.stopPropagation();
-                dispatcher('close')
-                open = false
+                close()
             }
         }}
         on:wheel={(
@@ -121,16 +124,7 @@
                             {/if}
                             
                             <!---Close Button--->
-                            <Button title="Close" size="md" rounded="lg" color="tertiary" 
-                                icon={XMark}
-                                iconSize={16}
-                                on:click={(e) => {
-                                    e.preventDefault()
-                                    e.stopPropagation();
-                                    open = false
-                                    dispatcher('close')
-                                }}
-                            />
+                            <Button title="Close" size="md" rounded="lg" color="tertiary"  icon={XMark} iconSize={16} on:click={(e) => { close() }} />
                         </span>
                     </div>
                     
