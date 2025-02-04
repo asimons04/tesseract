@@ -149,7 +149,7 @@
 
 <svelte:window on:banUser={handleBanUser} on:clickIntoPost={()=> open = false} />
 
-<Modal bind:open preventCloseOnClickOut={true} icon={UserCircle} card={false} width={modalWidth}
+<Modal bind:open icon={UserCircle} iconImage={personDetails?.person_view?.person.avatar}  card={false} width={modalWidth}
     title={personDetails?.person_view?.person.display_name ?? personDetails?.person_view?.person.name ?? "Profile"}
     on:close={() => { history.back() }}
 >
