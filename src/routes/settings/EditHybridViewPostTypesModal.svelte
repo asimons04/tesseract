@@ -52,13 +52,14 @@
         }
         userSettings.set($userSettings)
     }
+
+    function close() {
+        open = false
+    }
     
 </script>
 
-<Modal bind:open preventCloseOnClickOut={true} icon={WindowIcon} card width="max-w-2xl"
-    capitalizeTitle={true}
-    title="Configure Hybrid View"
->
+<Modal bind:open icon={WindowIcon} card width="max-w-2xl" capitalizeTitle={true} title="Configure Hybrid View" on:close={() => close()}>
     <div class="p-2 font-normal text-sm my-2">
         In Hybrid view, posts default to compact mode unless configured to show as cards.  Select the post types you want to show as cards
         when using the hybrid view.

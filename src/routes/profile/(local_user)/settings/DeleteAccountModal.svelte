@@ -19,6 +19,12 @@
     let password = ''
     let delete_content = false
 
+    function close() {
+        password = ''
+        delete_content = false
+        open = false
+    } 
+
     async function deleteAccount() {
         if (!$profile?.jwt) return
 
@@ -77,7 +83,7 @@
 
 
 
-<Modal bind:open title="Delete Account" icon={Trash} width="max-w-2xl" >
+<Modal bind:open title="Delete Account" icon={Trash} width="max-w-2xl" on:close={() => close()}>
     <div class="flex flex-col gap-4">
         <Card cardColor="warning">
             <div class="flex flex-row gap-2 items-center p-2">
