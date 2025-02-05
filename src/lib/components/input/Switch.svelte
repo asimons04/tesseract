@@ -22,7 +22,7 @@
         <slot/>
         
         <input type="checkbox" bind:checked={enabled} class="hidden"
-            on:input={(e) => {
+            on:input={() => {
                 dispatcher('change', !enabled)
             }}
         />
