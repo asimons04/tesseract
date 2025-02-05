@@ -616,7 +616,7 @@
                 {:else if URLSearchResults.length > 0}
                     <div class="divide-y divide-slate-300 dark:divide-zinc-700 flex w-full flex-col max-h-[13rem] overflow-y-scroll">
                         {#each URLSearchResults as crosspost}
-                            <CrosspostItem {crosspost} showTitle showUser noClick voteButtons={false}/>
+                            <CrosspostItem {crosspost} noClick voteButtons={false}/>
                         {/each}
                     </div>
                 {:else}
