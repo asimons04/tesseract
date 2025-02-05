@@ -40,7 +40,7 @@
 
 {#if post?.cross_posts && post.cross_posts.length > 0}
 <CollapseButton 
-    expanded={$userSettings.uiState.expandCrossPosts && post.cross_posts?.length <= 3} 
+    expanded={$userSettings.uiState.expandCrossPosts} 
     icon={ArrowsRightLeft} 
     iconSize={16}
     title="{post.cross_posts.length} {post.cross_posts.length == 1 ? 'Crosspost' : 'Crossposts'}"
@@ -49,7 +49,7 @@
 >
     <div class="divide-y gap-2 divide-slate-300 dark:divide-zinc-700 flex flex-col max-h-[10rem] overflow-y-scroll">
         {#each post.cross_posts as crosspost}
-            <CrosspostItem {crosspost} {textSize} {iconSize} {onHomeInstance}/>
+            <CrosspostItem bind:crosspost {textSize} {iconSize} {onHomeInstance}/>
         {/each}
     </div>
 </CollapseButton>
