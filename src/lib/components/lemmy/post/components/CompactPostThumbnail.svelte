@@ -55,6 +55,7 @@
                     class:blur-lg={(nsfw && $userSettings.nsfwBlur)}
                     on:error={() => {
                         // If the image errors, try the proxy URL without format, then without resolution, and finally fallback to either original URL or use a placeholder.
+                        if (!thumbnail_url) return '/img/placeholder.png'
                         switch (retryCount) {
                             case 1:
                                 img.src = (imageProxyURL(thumbnail_url, resolution, undefined) ?? ($userSettings.proxyMedia.fallback ? thumbnail_url ?? placeholder : '/img/placeholder.png'))
@@ -90,6 +91,15 @@
                 >
                     <source src="{thumbnail_url}" type="{getMIMEType(thumbnail_url)}" />
                 </video>
+            {:else}
+                <img bind:this={img} 
+                    src="/img/placeholder.png"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                    alt={alt_text}
+                    class="object-cover bg-slate-100 rounded-md {heightWidthClass}  border border-slate-200 dark:border-zinc-700 mx-auto shadow-lg"
+                    class:blur-lg={(nsfw && $userSettings.nsfwBlur)}
+                />
             {/if}
             
             <span class="flex w-fit p-1 rounded-lg relative left-[5px] bottom-[30px] text-black dark:text-white bg-slate-100/50 dark:bg-zinc-900/60">
