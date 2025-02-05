@@ -24,7 +24,7 @@
     let postID: number
     let postURL: string
     
-    $:  onHomeInstance, generatePostInstanceAndID()
+    $:  post.post.id, onHomeInstance, generatePostInstanceAndID()
     
 
     function generatePostInstanceAndID() {
