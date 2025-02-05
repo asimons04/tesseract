@@ -472,7 +472,6 @@
 
 
     <!---Inbox and Notifications Settings--->
-    
     <SettingsCollapseSection bind:expanded={open.inbox} icon={Inbox} title="Inbox and Notifications" condition={$profile?.user ? true : false}>
         <SettingMultiSelect icon={Clock} title="Notification Poll Frequency" description="How often to poll for new notifications."
             bind:selected={$userSettings.notifications.pollRate}
@@ -496,9 +495,6 @@
             options={[10, 20, 30, 40, 50]}
         />
     </SettingsCollapseSection>
-
-
-
 
     <!---Feed Options--->
     <SettingsCollapseSection bind:expanded={open.feed} icon={QueueList} title="Feed">
@@ -546,14 +542,7 @@
             bind:selected={$userSettings.uiState.postBodyPreviewLength}
         />
 
-        <!---Feed Snapshot Validity--->
-        <SettingMultiSelect title="Feed Snapshot Validity" icon={Clock} description="How long the feed snapshot should be considered valid since
-            its last refresh. Longer durations are useful if you're scrolling through/into a lot of posts and want to get back to the same spot if you
-            scroll for longer than the default 15 minutes."
-            optionNames={['5 Min', '10 Min', '15 Min', '20 Min', '25 Min', '30 Min', '45 Min', '1 Hour', '2 Hours', '3 Hours', '4 Hours']}
-            options={    [5, 10, 15, 20, 25, 30, 45, 60, 120, 180, 240]}
-            bind:selected={$userSettings.feedSnapshotValidity}
-        />
+        
 
 
 
@@ -995,15 +984,21 @@
 
     <!---Advanced Options--->
     <SettingsCollapseSection bind:expanded={open.advanced} icon={Cog8Tooth} title="Advanced">
-        
+        <!---Enable Debug Buttons--->
+        <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
+            description="Show debug buttons in the UI to see post/comment and other raw data. Also enables debug messages in the browser console."
+        />
+
         <!---Disable Markdown Editor Keyboard Shortcuts--->
         <SettingToggle icon={WrenchScrewdriver} title="Disable Markdown Editor Keyboard Shortcuts" bind:value={$userSettings.uiState.disableMarkdownEditorKeyboardShortcuts}
             description="Disable the keyboard shortcuts in the markdown editor. This may be required if you are using a non-standard keyboard layout."
         />
 
-        <!---Enable Debug Buttons--->
-        <SettingToggle icon={BugAnt} title="Debug Mode" bind:value={$userSettings.debugInfo}
-            description="Show debug buttons in the UI to see post/comment and other raw data. Also enables debug messages in the browser console."
+        <!---Cache Duration--->
+        <SettingMultiSelect title="Cache Duration" icon={Clock} description="How long cached items are considered valid."
+            optionNames={['5 Min', '10 Min', '15 Min', '20 Min', '25 Min', '30 Min', '45 Min', '1 Hour']}
+            options={    [5, 10, 15, 20, 25, 30, 45, 60]}
+            bind:selected={$userSettings.feedSnapshotValidity}
         />
         
         <!---Infinite Scroll Size--->
