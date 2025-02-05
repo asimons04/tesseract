@@ -45,7 +45,7 @@
     let communityFiltervalue:string = ''
     let showEmptyGroups:boolean = false
     let onlyShowModerating:boolean = false
-
+    let communityScrollArea: HTMLDivElement
     let debounceTimer: ReturnType<typeof setTimeout>;
     function debounce(value:string,  timeout=300) {
         clearTimeout(debounceTimer);
@@ -198,15 +198,15 @@
 
                         <Button size="square-md" color="tertiary" title="Reset Search Filter" class="ml-auto" icon={XCircle} iconSize={22}
                             on:click={async () => {
-                                debounce('');
-                                communityFiltervalue = '';
+                                debounce('')
+                                communityFiltervalue = ''
                             }}
                         >
                         </Button>
                     </form>
                 {/if}
 
-                <div class="flex flex-col gap-1 h-full overflow-y-auto">
+                <div bind:this={communityScrollArea} class="flex flex-col gap-1 h-full overflow-y-auto">
                     {#if $profile.user.follows.length > 0}
                         
                         <CommunityList
@@ -238,7 +238,7 @@
                                 <span class="font-normal">Show only communities I moderate</span>
                             </span>
                             <span class="ml-auto"/>
-                            <Switch bind:enabled={onlyShowModerating}/>
+                            <Switch bind:enabled={onlyShowModerating} on:change={() => communityScrollArea.scrollTo(0,0) }/>
                         </div>
                     </div>
                 {/if}
