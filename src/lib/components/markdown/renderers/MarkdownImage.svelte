@@ -67,9 +67,9 @@
             <!---Image--->
             {:else}
                 {#if isEmoji}
-                    <ZoomableImage url={token.href} altText={token.text} class="inline-flex {$userSettings.uiState.largeEmojis ? 'h-[48px]' : 'h-[24px]'} mx-1 mt-1"/>
+                    <ZoomableImage url={token.href} format={undefined} altText={token.text} class="inline-flex {$userSettings.uiState.largeEmojis ? 'h-[48px]' : 'h-[24px]'} mx-1 mt-1"/>
                 {:else}
-                    <ZoomableImage url={token.href} altText={token.text} class="mx-auto rounded-xl"/>
+                    <ZoomableImage url={token.href} format={undefined} altText={token.text} class="mx-auto rounded-xl"/>
                 {/if}
             {/if}
 
