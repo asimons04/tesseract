@@ -41,6 +41,7 @@
     export let zoomable:boolean = true
     export let lazyload:boolean = false
     export let fadeIn:boolean = true
+    export let format: string | undefined = undefined
 
     let dispatcher = createEventDispatcher()
     let loaded = false
@@ -169,7 +170,7 @@
 {#if url}   
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <img bind:this={img} src={imageProxyURL(url, resolution, 'webp')}
+    <img bind:this={img} src={imageProxyURL(url, resolution, format)}
         class="{$$props.class} 
             {fadeIn ? 'opacity-0 transition-opacity duration-150' : ''}  {loaded ? 'opacity-100' : ''}
             {zoomable ? 'cursor-zoom-in' : ''}
