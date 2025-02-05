@@ -41,10 +41,6 @@
         Icon, 
         Window 
     } from "svelte-hero-icons"
-    import { comment } from "postcss";
-    
-    
-    
     
     export let open: boolean                    = false
     export let instance: string | undefined     = undefined
@@ -71,8 +67,10 @@
     }
 
     // When any of the values change, call postHistory.init() to process the changes.
-    $:  instance, post_id, comment_id, postHistory.init()
+    $:  instance, post_id, comment_id,  postHistory.init()
     $:  historyPosition, onHomeInstance = (viewHistory[historyPosition].instance == $defaultInstance)
+
+    
     
    const postHistory = {
         get length() {
@@ -101,6 +99,7 @@
     
         init: async function () {
             if (!instance || (!comment_id && !post_id) ) return
+
             let find = viewHistory.findIndex((i) =>  i.instance == instance &&  i.post_id == post_id && i.comment_id == comment_id)
 
             if (find >= 0) {
@@ -116,14 +115,17 @@
                 viewHistory = viewHistory
             }
             // Reset the outer params after they've been found or added to the local history
-            comment_id  = viewHistory[0].comment_id
-            post_id     = viewHistory[0].post_id
-            instance    = viewHistory[0].instance
+            comment_id  = viewHistory[historyPosition].comment_id
+            post_id     = viewHistory[historyPosition].post_id
+            instance    = viewHistory[historyPosition].instance
             
             await load()
         },
     }
 
+    function close() {
+        history.back()
+    }
 
     async function load(refresh:boolean=false) {
         const options               = viewHistory[historyPosition]
@@ -132,6 +134,7 @@
 
         // Use cached data from history if present and refresh not requested
         if (!refresh && options.data) {
+            loadError = false
             data = options.data
             // (Add cross posts to post_view object for sanity)    
             if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
@@ -172,7 +175,7 @@
             }
 
             // (Add cross posts to post_view object for sanity)    
-            if (data?.post) data.post.post_view.cross_posts = data.post.cross_posts ?? []
+            if (data?.post) data.post.post_view.cross_posts = [...data.post.cross_posts] ?? []
 
             expandCompact = !(['link', 'thumbLink'].includes(getPostType(data?.post?.post_view))) ?? false
             options.data = data            
@@ -225,7 +228,7 @@
 
 <Modal bind:open width="max-w-5xl"  icon={comment_id ? ChatBubbleLeftRight : Window}  iconImage={data?.post?.post_view?.community.icon} 
     title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize 
-    on:close={() => { history.back() }} 
+    on:close={() => { close() }} 
 >
     
     <!---Modal Title Bar Buttons--->
