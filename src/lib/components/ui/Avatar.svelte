@@ -26,7 +26,7 @@
 <div style="width: {width+2}px;">
     <div class="{circle ? 'rounded-full' : ''} {rounded ? 'rounded-xl' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
         {#if url}
-            <ZoomableImage url={url} title={title} altText={alt} {lazyload} {fadeIn}
+            <ZoomableImage url={url} format='webp' title={title} altText={alt} {lazyload} {fadeIn}
                 resolution={fullRes ? undefined : findClosestNumber(sizes, width) } 
                 zoomable={zoomable && fullRes}
                 class="aspect-square object-cover overflow-hidden !w-full
@@ -82,10 +82,3 @@
         {/if}
     </div>
 </div>
-<!---
-    {@html createAvatar(initials, {
-        seed: alt,
-        }).toString()
-    }
-
---->
