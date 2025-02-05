@@ -1,11 +1,10 @@
 <script lang="ts">
+    import type { EditPostEvent } from '$lib/ui/events'
     import type { PostView } from 'lemmy-js-client';
 
     import { amMod, isAdmin, postModerationModal } from '$lib/components/lemmy/moderation/moderation'
     import { fade } from 'svelte/transition'
     import { getInstance } from '$lib/lemmy.js'
-    import { instance as homeInstance } from '$lib/instance'
-    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { userSettings } from '$lib/settings'
     
@@ -15,7 +14,6 @@
     import FormattedNumber from '$lib/components/util/FormattedNumber.svelte'
     import PostVote from '$lib/components/lemmy/post/PostActions/PostVote.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
         Icon,
@@ -24,23 +22,15 @@
         Pencil,
         ShieldCheck
     } from 'svelte-hero-icons'
-    import type { EditPostEvent } from '$lib/ui/events';
-    
-    
-    
-    
 
     export let crosspost:PostView;                      // PostView object to render
     export let textSize:string = "text-xs"              // Taildwind text size class to apply
     export let iconSize:number = 18                     // Size of the icons to use for avatars
-    export let showUser:boolean = false                 // Show the creator of the crosspost
-    export let showTitle:boolean = false                // Show the title of the crosspost
     export let newTab:boolean = false                   // Open the crosspost in a new tab
     export let instance:string = getInstance()          // Allows passing an instance if the post ID is remote (defaults to current)
     export let noClick:boolean = false                  // Disables pointer events if list is for display only
     export let voteButtons: boolean = true              // Whether to show the vote buttons
     export let onHomeInstance: boolean = false
-
 
     const getTextSize = () => `text-xs md:${textSize}`
 
@@ -49,10 +39,6 @@
             if (crosspost?.post.id == e.detail.post.post.id) {
                 crosspost = {
                     ...e.detail.post,
-                    //@ts-ignore
-                    cross_posts: [...crosspost.cross_posts],
-                    //@ts-ignore
-                    mbfc: {...crosspost.mbfc}
                 }
             }
         },
@@ -63,7 +49,7 @@
 <svelte:window on:editPost={handlers.EditPostEvent} />
 
 {#if !crosspost.post.removed}
-    <a class="flex flex-col gap-2 items-start w-full rounded-lg
+    <a class="flex flex-col lg:flex-row gap-2 items-start w-full rounded-lg
             hover:dark:bg-zinc-800 hover:bg-slate-200
             py-1 px-1 sm:px-2
             {getTextSize()}
@@ -74,28 +60,25 @@
         target={newTab ? '_blank' : undefined}
         transition:fade
     >
-        
-        <div class="flex flex-col w-full gap-1">
-            <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} showInstance={true}/>
-            
-            {#if showTitle}
-                <span class="font-bold truncate">{crosspost.post.name}</span>
-            {/if}
+        <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} showInstance={true} noClick/>
 
-            {#if showUser}
-                <span class="flex flex-row opacity-80">
-                    by <UserLink user={crosspost.creator} avatar={false} />
-                </span>
-            {/if}
-        </div>
-
-        <div class="flex flex-row gap-4 items-center w-full">
+        <div class="flex flex-row gap-4 lg:ml-auto items-center w-full">
             
             <!---Vote Buttons for the XPost Item--->
             {#if voteButtons}
                 <button on:click|preventDefault|stopPropagation>
                     <PostVote bind:post={crosspost} small {onHomeInstance}/>
                 </button>
+            {/if}
+
+            <!---Moderation--->
+            {#if !noClick && onHomeInstance && (amMod($profile?.user, crosspost.community) || isAdmin($profile?.user))}
+                <Button color="tertiary-border" size="sm" title="Moderation" icon={ShieldCheck} {iconSize} on:click={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        postModerationModal(crosspost) 
+                    }}
+                />
             {/if}
             
             {#if $userSettings.uiState.showScores && !voteButtons}
@@ -108,15 +91,7 @@
             <!---Comment Counts--->
             <CommentCountButton bind:post={crosspost} {onHomeInstance} displayType="feed" />
 
-             <!---Moderation--->
-             {#if !noClick && onHomeInstance && (amMod($profile?.user, crosspost.community) || isAdmin($profile?.user))}
-                <Button color="tertiary-border" size="sm" title="Moderation" icon={ShieldCheck} iconSize={20} on:click={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        postModerationModal(crosspost) 
-                    }}
-                />
-            {/if}
+             
             
             <!---Published and Edited Date--->
             <span class="flex flex-row gap-1 ml-auto items-center text-slate-600 dark:text-zinc-400">
