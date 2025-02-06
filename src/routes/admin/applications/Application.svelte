@@ -254,7 +254,7 @@
 
 
                 <!---Right Column: Deny Reason--->
-                {#if !application.creator_local_user.accepted_application}
+                {#if application.admin && !application.creator_local_user.accepted_application}
                     <span class="flex flex-col w-full lg:w-2/3 gap-2">
                         <hr class="lg:hidden {hrColors}" />
                         <!---Deny Reason--->
