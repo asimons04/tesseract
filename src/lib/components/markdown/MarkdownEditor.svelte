@@ -105,6 +105,25 @@
         }
     }
 
+    /** Splits a selection on the newline character and applies a prefix and suffix to each line.
+    *   @param prefix The prefix for each line.
+    *   @param suffix Suffix for each line.  Default:  '\n'
+    */
+    function wrapMultiLineSelection(prefix:string, suffix:string='\n') {
+        const startPos = textArea.selectionStart
+        const endPos = textArea.selectionEnd
+
+        let selectedText = value.substring(startPos, endPos)
+        let lines = selectedText.split('\n')
+        let replacementText = ''
+        
+        lines.forEach((line) => {
+            replacementText += prefix + line.trim() + suffix
+        })
+
+        value = replaceTextAtIndices(value, startPos, endPos, replacementText)
+    }
+
     // Creates a code block with the specified language and sets the cursor inside the block
     function createCodeBlock(language:string) {
         const cursorPos = textArea.selectionStart
@@ -140,153 +159,6 @@
     />
 {/if}
 
-
-<!--Formatting Help Modal-->
-{#if formattingHelpModal}
-    <Modal bind:open={formattingHelpModal} icon={QuestionMarkCircle} title="Formatting Help" width="max-w-3xl xl:max-w-full">
-        <div class="flex flex-col gap-0 xl:gap-2 xl:flex-row w-full">
-            <!---Column 1--->
-            <div class="w-full xl:w-1/2">
-        
-                <table class="w-full overflow-x-auto">
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Bold:</td>
-                        <td>
-                            <pre class="w-full">**text**</pre>
-                        </td>
-                    </tr>
-                
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Italic:</td>
-                        <td><pre class="w-full">*text*</pre></td>
-                    </tr>
-                    
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Link:</td>
-                        <td><pre class="w-full">[Link Text](Link URL)</pre></td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Image</td>
-                        <td>
-                            <pre class="w-full">![Alt Text](Source URL)</pre>
-                            Note:  Also works for direct video and audio (e.g. <code>.mp3</code> / <code>.mp4</code>)
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Headings:</td>
-                        <td>
-                            <pre class="w-full">
-# Heading 1
-## Heading 2
-### Heading 3
-#### Heading 4
-                            </pre>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Strikethrough:</td>
-                        <td><pre class="w-full">~~Text~~</pre></td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Block Quote:</td>
-                        <td><pre class="w-full">> Text</pre></td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Bullet List:</td>
-                        <td>
-                            <pre class="w-full">
-- Item 1
-- Item 2
-- Item 3
-                            </pre>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Numbered List:</td>
-                        <td>
-                            <pre class="w-full">
-1) Item 1
-1) Item 2
-1) Item 3
-                            </pre>
-                        </td>
-                    </tr>
-
-                    
-                    
-                </table>
-            </div>
-
-            <!---Column 2--->
-            <div class="w-full xl:w-1/2">
-                <table class="w-full overflow-x-auto">
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Code Span:</td>
-                        <td><pre class="w-full">`Text`</pre></td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Code Block:</td>
-                        <td>
-                            <pre class="w-full">
-```language
-#include &lt;stdio.h&gt;
-int main() &lbrace;
-  return 1
-&rbrace;
-```
-                            </pre>
-                            Note:  The <code>language</code> value is optional and is only used for syntax highlighting.
-                            Can be either omitted or any one of Github's supported language codes. Must be in lowercase.
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Table:</td>
-                        <td>
-                            <pre class="w-full">
-| Heading | Heading |
-| --- | --- |
-| Column | Column |
-                            </pre>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Spoiler:</td>
-                        <td>
-                            <pre class="w-full">
-::: spoiler Title
-Spoiler Content
-:::
-                            </pre>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">User Links:</td>
-                        <td>
-                            <pre class="w-full">@username@instance.xyz</pre>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="flex items-start font-bold whitespace-nowrap mt-3">Community Links:</td>
-                        <td>
-                            <pre class="w-full">!community@instance.xyz</pre>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </Modal>
-{/if}
 
 <!---Markdown Editor--->
 <div class="flex flex-col w-full">
@@ -399,7 +271,9 @@ Spoiler Content
 
                         <!--- Quote --->
                         <Button title="Quote" size="square-md"
-                            on:click={() => wrapSelection('\n> ', '')}
+                            on:click={() => {
+                                wrapMultiLineSelection('> ')
+                            }}
                         >
                             <span class="font-bold font-serif">"</span>
                         </Button>
@@ -407,8 +281,7 @@ Spoiler Content
                         <!---Bullet List--->
                         <Button title="List" size="square-md" icon={ListBullet} iconSize={16}
                             on:click={() => {
-                                const cursorPos = textArea.selectionStart
-                                wrapSelection('\n- \n- \n- ', '', cursorPos+3)
+                                wrapMultiLineSelection('- ')
                             }}
                             
                         />
@@ -416,8 +289,7 @@ Spoiler Content
                         <!---Numbered List--->
                         <Button title="Numbered List" size="square-md" icon={NumberedList} iconSize={16}
                             on:click={() => {
-                                const cursorPos = textArea.selectionStart
-                                wrapSelection('\n1) \n1) \n1) ', '', cursorPos+4)
+                                wrapMultiLineSelection('1) ')
                             }}
                             
                         />
@@ -492,13 +364,7 @@ Spoiler Content
                                 wrapSelection('\n::: spoiler Title\n', '\n:::', cursorPos+19)
                             }}
                         />
-
-                        <!---Help--->
-                        <Button title="Formatting Help" size="square-md" icon={QuestionMarkCircle} iconSize={16}
-                            on:click={() => {
-                                formattingHelpModal = true
-                            }}
-                        />
+                        
                     </span>
 
                     <!---Markdown editor resize slider--->
