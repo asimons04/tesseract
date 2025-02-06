@@ -30,6 +30,7 @@
     let placeholderImage = '/img/spotify.webp'
     let clickToPlayClicked = false
     let expandPreviewText: boolean
+    let nsfw = post.post.nsfw
 
     // Unset click to play when out of viewport or collapsed (revert to thumbnail)
     $:  if (!inViewport || compact) clickToPlayClicked = false
@@ -56,7 +57,7 @@
         url={post.post.url}
         thumbnail_url={thumbnail_url}
         showThumbnail={compact}
-        nsfw={post.post.nsfw}
+        nsfw={nsfw}
     > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
         <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
@@ -70,7 +71,7 @@
     {#if clickToPlayClicked && inViewport && post.post.url}
         <SpotifyPlayer url={post.post.url} title={post.post.name} />
     {:else}
-        <Image url={thumbnail_url} clickToPlay {displayType} nsfw={post.post.nsfw} zoomable={false} class="min-h-[300px]" on:click={clickToPlay} />
+        <Image url={thumbnail_url} clickToPlay {displayType} nsfw={nsfw} zoomable={false} class="min-h-[300px]" on:click={clickToPlay} />
     {/if}
 {/if}
 

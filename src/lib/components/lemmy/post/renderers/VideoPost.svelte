@@ -37,7 +37,8 @@
     let source: string = post.post.embed_video_url ?? post.post.url!
     let clickToPlayClicked = false
     let expandPreviewText: boolean
-    
+    let nsfw = post.post.nsfw
+
     // Return to thumbnail if collapsed into compact view
     $:  if (compact) clickToPlayClicked = false
 
@@ -71,6 +72,7 @@
                         url={post.post.url}
                         showThumbnail={($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
                         thumbnail_urls={[post.post.thumbnail_url, post.post.url, post.post.embed_video_url]}
+                        nsfw={nsfw}
                     > 
                         <ArchiveLinkSelector url={post.post?.url} {postType} />    
                         <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
@@ -123,7 +125,7 @@
 
     <!---Render as a Click-to-Play Thumbnail--->
     {:else}
-        <Image url={post.post.thumbnail_url ?? source ?? '/img/loops.png'} clickToPlay {displayType} nsfw={post.post.nsfw} zoomable={false} class="min-h-[300px]" 
+        <Image url={post.post.thumbnail_url ?? source ?? '/img/loops.png'} clickToPlay {displayType} nsfw={nsfw} zoomable={false} class="min-h-[300px]" 
             on:click={(e)=> clickToPlayClicked = true }
         />
     {/if}

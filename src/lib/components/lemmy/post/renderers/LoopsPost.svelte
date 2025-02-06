@@ -28,6 +28,8 @@
     export let onHomeInstance: boolean      = false
     
     let expandPreviewText: boolean
+    let nsfw = post.post.nsfw
+
     $:  thumbnail_url = (post.post.thumbnail_url && isImage(post.post.thumbnail_url)) 
             ? post.post.thumbnail_url 
             : undefined
@@ -44,7 +46,7 @@
         url={post.post.url}
         thumbnail_url={thumbnail_url}
         showThumbnail={compact}
-        nsfw={post.post.nsfw}
+        nsfw={nsfw}
         compact={compact}
     > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
@@ -55,7 +57,7 @@
 <!---Card View--->
 {#if !compact && post.post.url}
     <LoopsPlayer {displayType}  {inViewport}    {compact}
-        url={post.post.url}     thumbnail_url={thumbnail_url}   nsfw={post.post.nsfw} 
+        url={post.post.url}     thumbnail_url={thumbnail_url}   nsfw={nsfw} 
         alt_text={post.post.alt_text ?? post.post.name}    
      />
 {/if}

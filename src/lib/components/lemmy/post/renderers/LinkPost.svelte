@@ -24,7 +24,8 @@
     export let compact: boolean             = true
     export let inModal: boolean             = false
     export let onHomeInstance: boolean      = false
-
+    
+    let nsfw = post.post.nsfw
     let expandPreviewText: boolean
 </script>
 
@@ -39,7 +40,7 @@
             url={post.post.url}
             thumbnail_url={post.post.thumbnail_url}
             showThumbnail={!$userSettings.uiState.hideCompactThumbnails || displayType=='post'}
-            nsfw={post.post.nsfw}
+            nsfw={nsfw}
             {compact}
         >
             <div class="flex flex-row w-full items-center mb-1 gap-2">
@@ -64,7 +65,7 @@
 {/if}
 
 {#if !compact && post.post.thumbnail_url}
-    <Image url={post.post.thumbnail_url} nsfw={post.post.nsfw} alt_text={post.post.alt_text ?? post.post.name} {displayType} zoomable />
+    <Image url={post.post.thumbnail_url} nsfw={nsfw} alt_text={post.post.alt_text ?? post.post.name} {displayType} zoomable />
 {/if}
 
 

@@ -31,6 +31,7 @@
     let clickToPlayClicked = false
     let placeholderImage = '/img/dailymotion.png'
     let expandPreviewText: boolean
+    let nsfw = post.post.nsfw
 
     $:  if (!inViewport || compact) clickToPlayClicked = false
     
@@ -50,7 +51,7 @@
         url={post.post.url}
         thumbnail_url={thumbnail_url}
         showThumbnail={compact}
-        nsfw={post.post.nsfw}
+        nsfw={nsfw}
     > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
         <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
@@ -61,7 +62,7 @@
 {#if !compact && post.post.url}
    <DailyMotionPlayer {displayType} {compact} {inViewport}
         url={post.post.url} 
-        nsfw={post.post.nsfw} 
+        nsfw={nsfw} 
         thumbnail_url={post.post.thumbnail_url}
         alt_text={post.post.alt_text ?? post.post.name}  
     />

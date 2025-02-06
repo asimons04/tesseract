@@ -33,6 +33,7 @@
     
     let thumbnail_url:string
     let expandPreviewText: boolean 
+    let nsfw = post.post.nsfw
 
     // Finesse the url and thumbnail URL to accommodate GIFs (and not thumbnail webms ugh) or when the thumbnanil is a static image but the embed URL is a GIF (Imgur)
     $:  post.post.url, post.post.embed_video_url, post.post.thumbnail_url, thumbnail_url = getOptimalThumbnailURL({post:post}) ?? '/img/placeholder.png'
@@ -64,7 +65,7 @@
                         url={post.post.url}
                         showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true} 
                         thumbnail_urls={[post.post.thumbnail_url, post.post.embed_video_url, post.post.url]}
-                        nsfw={post.post.nsfw}
+                        nsfw={nsfw}
                         {compact}
                     > 
                         <ArchiveLinkSelector url={post.post?.url} {postType} />    
@@ -119,7 +120,7 @@
         <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
     </PostEmbedDescription>
 
-    <Image url={thumbnail_url} {displayType} nsfw={post.post.nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
+    <Image url={thumbnail_url} {displayType} nsfw={nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
     <Crossposts bind:post size="xs" {onHomeInstance} class="mb-1 !pl-0"/>
