@@ -7,12 +7,12 @@
     
     import Button           from '$lib/components/input/Button.svelte'
     import Card             from '$lib/components/ui/Card.svelte'
+    import Logo             from '$lib/components/ui/Logo.svelte'
     import MainContentArea  from '$lib/components/ui/containers/MainContentArea.svelte'
     import SiteCard         from '$lib/components/lemmy/SiteCard.svelte'
     import SiteCardSmall    from '$lib/components/lemmy/SiteCardSmall.svelte'
     import SubNavbar        from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     import TextInput        from '$lib/components/input/TextInput.svelte'
-    
 
     export let data
 
@@ -70,9 +70,11 @@
         
     <Card class="mx-auto w-full max-w-4xl p-2">
         <form class="flex flex-col gap-4 w-full max-w-4xl mx-auto" on:submit|preventDefault={submit}>
+            <h1 class="flex flex-row font-bold text-2xl justify-between">
+                Forgot Password
+                <Logo width={40} />
+            </h1>
             
-            
-            <h1 class="font-bold text-2xl">Recover Account Password</h1>
             <p class="text-sm">
                 Enter your registerd email address to begin the password recovery process.  You will not be able to reset your 
                 password if you did not register an email when your account was created.

@@ -11,6 +11,7 @@
     
     import Button           from '$lib/components/input/Button.svelte'
     import Card             from '$lib/components/ui/Card.svelte'
+    import Logo             from '$lib/components/ui/Logo.svelte'
     import MainContentArea  from '$lib/components/ui/containers/MainContentArea.svelte'
     import Markdown         from '$lib/components/markdown/Markdown.svelte'
     import Placeholder      from '$lib/components/ui/Placeholder.svelte'
@@ -30,6 +31,7 @@
         QuestionMarkCircle,
         XCircle,
     } from 'svelte-hero-icons'
+    
 
     export let data
 
@@ -130,7 +132,10 @@
         <Card class="mx-auto w-full max-w-4xl p-2">
             <form class="flex flex-col gap-4 w-full max-w-4xl mx-auto" on:submit|preventDefault={submit}>
             
-                <h1 class="font-bold text-2xl">Create Account</h1>
+                <h1 class="flex flex-row font-bold text-2xl justify-between">
+                    Create Account
+                    <Logo width={40} />
+                </h1>
                 <TextInput bind:value={username} focus={true} label="Username" required />
         
                 <TextInput bind:value={email} label="Email" required={data.site_view.local_site.require_email_verification} type="email" />
