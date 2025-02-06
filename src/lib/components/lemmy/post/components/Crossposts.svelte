@@ -13,29 +13,11 @@
     import { ArrowsRightLeft } from 'svelte-hero-icons'
 
     export let post:PostView
-    export let size:string = "xs"
     export let onHomeInstance: boolean= false
     
     let textSize:string
-    let iconSize:number
+    let iconSize:number = 20
 
-    switch(size) {
-        case 'xs':
-            textSize = "text-xs";
-            iconSize = 24;
-            break;
-        case 'sm':
-            textSize = "text-sm";
-            iconSize = 24;
-            break;
-        case 'base':
-            textSize = "text-base";
-            iconSize = 24
-            break;
-        default:
-            textSize = "text-xs";
-            iconSize = 24;
-    }
 </script>
 
 {#if post?.cross_posts && post.cross_posts.length > 0}

@@ -81,7 +81,7 @@
 
 
                     <PostBody bind:post bind:expandPreviewText {displayType}  />
-                    <Crossposts bind:post size="xs" {onHomeInstance} class="mb-1 !pl-0"/>
+                    <Crossposts bind:post {onHomeInstance} class="mb-1 !pl-0"/>
                     <PostActions  bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
                 </div>
             </div>
@@ -101,7 +101,7 @@
                     />
                 </PostBody>
 
-                <Crossposts bind:post size="xs" {onHomeInstance} class="mb-1 !pl-0"/>
+                <Crossposts bind:post {onHomeInstance} class="mb-1 !pl-0"/>
                 
                 <div class="mt-2" />
                 <PostActions  bind:post {inModal} {displayType} {onHomeInstance} on:reply />
@@ -131,7 +131,7 @@
     {/if}
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
-    <Crossposts bind:post size="xs" {onHomeInstance} class="mb-1 !pl-0"/>
+    <Crossposts bind:post {onHomeInstance} class="mb-1 !pl-0"/>
     <PostActions  bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2"/>
 
 {/if}

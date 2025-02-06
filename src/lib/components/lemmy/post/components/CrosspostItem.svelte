@@ -26,7 +26,7 @@
 
     export let crosspost:PostView;                      // PostView object to render
     export let textSize:string = "text-xs"              // Taildwind text size class to apply
-    export let iconSize:number = 18                     // Size of the icons to use for avatars
+    export let iconSize:number = 20                     // Size of the icons to use for avatars
     export let instance:string = getInstance()          // Allows passing an instance if the post ID is remote (defaults to current)
     export let noClick:boolean = false                  // Disables pointer events if list is for display only
     export let voteButtons: boolean = true              // Whether to show the vote buttons
@@ -129,7 +129,7 @@
 
             <!---Moderation--->
             {#if !noClick && onHomeInstance && (amMod($profile?.user, crosspost.community) || isAdmin($profile?.user))}
-                <Button color="tertiary-border" size="sm" title="Moderation" icon={ShieldCheck} {iconSize} on:click={(e) => {
+                <Button color="tertiary-border" size="sm" title="Moderation" icon={ShieldCheck} iconSize={iconSize} on:click={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
                         postModerationModal(crosspost) 
