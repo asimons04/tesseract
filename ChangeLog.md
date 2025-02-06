@@ -39,10 +39,7 @@ removeAdmin {username}
 
 
 ```
-
-# To do:
 - Add "view source" button to post/comments to show the raw markdown
-
 
 - Allow selecting multiple comments to remove
     - If mod, add "checkbox" button to comment action bar
@@ -69,17 +66,13 @@ removeAdmin {username}
 
 
 # 1.4.30
-## Bugs to Fix
-- Pody body expansion doesn't work with Reader view if body is longer than 10,000 chars (limit of reader setting)
-
-- When on a remote post and changing the comment sort options, it uses the default instance rather than the post's
-
-
 
 ## Bugfixes
 - "Moderator View" listing type was broken
 
 - Better truncation of modal titles
+
+- Tightened regex pattern to filter out links that are similar to user/community links.
 
 - The comment button on posts in the feed did not respect the "Open posts in new tab" setting.
 
@@ -110,7 +103,6 @@ removeAdmin {username}
 
 ## Minor Changes
 
-
 ### Posts
 - On 0.19.4 or higher, you can now upload a custom thumbnail on posts
 
@@ -126,6 +118,8 @@ removeAdmin {username}
 
 - Too many minor tweaks to name individually (consequence of re-writing the post renderers)
 
+- You will now be prompted before navigating away if you have post or post edit in progress.
+
 ### Audio / Video Player
 - Post images, audio, and videos now have a background with a blur effect
 - Volume setting is now saved and re-used on subsequent videos and audio posts
@@ -136,11 +130,7 @@ removeAdmin {username}
     - Similar to where they are in user profiles
     - Makes state management in the main feed much less clunky since it's not having to watch and sync 3 potential ways to set those
 
-
-- Feed snapshot validity is now configurable (between 5 minutes and 4 hours)
-
-
-- When expanding a post body in the feed, it only expands to a maximum of 50% of the viewport height and scrolls. Prevents opening a huge wall of text which requires a lot of scrolling in the feed to collapse again.
+- When expanding a post body in the feed, it only expands to a maximum of 50% of the viewport height and scrolls. Prevents opening a huge wall of text which requires a lot of scrolling in the feed to collapse again.  This can be disabled in `Quick Settings -> Scroll Post Body in Feed" or `Settings -> Feed -> Scroll Post Body in Feed`
 
 - Scrollable area in the feed now includes the margins
 
@@ -158,8 +148,22 @@ Making all media click-to-play has also greatly simplified the render logic.
 
 The non click-to-play logic has been removed as well as the settings for handling those options.
 
+### Settings
+- Removed 'enable embeds in feed' and 'enable embeds in post' options since all media is now click to play
+- Move some options into "Advanced" section
+- Toggling infinite scroll will now clear any snapshots in the cache and reload the feed from the API (needed to sync the page cursors back up)
+- New option to show custom emojis as large (like Lemmy UI) or emoji-sized.  Default is disabled / regular emoji sized
+
+
 
 ## New Features
+
+### Modals Can Now Close When Pressing 'Back'
+This has been something I've wanted for a long time now, and it's finally here.  
+
+When a modal is active, you can now close it by navigating back: clicking the browser's back button, using the mobile OS 'back' button, gesture-swipe back, back key on mouse, etc.  Anything that tells the browser to "go back" will close the modal.  This also includes the zoomable images.
+
+
 
 ### Support for Some Tidal Embeds
 Links to Tidal albums, tracks, and playlists should now embed as interactive playlists.  As with other embeddable media, you don't need to use any kind of special share link; just the link from the browser tab.
@@ -187,7 +191,7 @@ Report items also have this ability in order to easily get context before making
   - You may want to see the full context from the post's home instance
   - If someone links to a comment, it avoids having to double-resolve the post and that particular comment.  It also provides context by having the whole comment chain rather than just the comment in isolation (e.g. if your instance doesn't have record of it yet).
 
-- If you click into another post from within the modal (e.g. cilcking a crosspost item or another linked post), it will keep a history and back/forward arrows will appear in the top-right of the modal title bar.  Use these like you would a browser's back/forward buttons to return to previous entries.
+- If you click into another post from within the modal (e.g. cilcking a crosspost item or another linked post), it will keep a history and back/forward arrows will appear in the top-right of the modal title bar.  Use these like you would a browser's back/forward buttons to return to previous entries. Note, though, that these are not bound to the browser's history, so hitting "back" in the browser will close the modal. 
 - Even with the "Open posts in modals" option disabled, cilcking the badge-ified post/comment links will open those in a modal. Useful for referencing what was linked without leaving your current position.
 - The post/comment badge buttons are also regular links.  Right-clicking and choosing "Copy Link" or "Open in New Tab" work as you would expect. Middle-clicking also will open them in a new tab.
 
@@ -233,11 +237,11 @@ LemmyVerse links will now be localized without having to hairpin to/from Lemmyve
 e.g.  A LemmyVerse link will automatically/transparently turn into a user, community, post, or comment badge button and have the same abilities as first-party links.
 
 ### Post and Comment Links are Now Badge-ified
-Links to posts and comments (e.g. `cross-posted from https://instance.xyz/post/12345`) are detected, localized, and badgeified the same way 
+Links to posts and comments (e.g. `cross-posted from https://instance.xyz/post/12345`) are detected, localized, and badgeified the same way.  
 
-Additionally, like users and communities, posts and comment badge links will now open in a modal for quick reference without leaving your current spot in the feed or another post. 
+Additionally, like users and communities, posts and comment badge links will now open in a modal for quick reference without leaving your current spot in the feed or another post.  This also includes `https://instance.xyz/post/{postID}/{commentID}` formats which seem to just be a Lemmy-UI thing.
 
-Clicking the post title will take you to the /post page for the item.
+Clicking the post title in the modal will take you to the /post page for the item and close the modal. 
 
 The post/comment badge buttons are also regular links.  Right-clicking and choosing "Copy Link" or "Open in New Tab" work as you would expect. Middle-clicking also will open them in a new tab.
 
