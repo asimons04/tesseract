@@ -200,6 +200,7 @@
                             on:click={async () => {
                                 debounce('')
                                 communityFiltervalue = ''
+                                communityScrollArea.scrollTo(0,0)
                             }}
                         >
                         </Button>

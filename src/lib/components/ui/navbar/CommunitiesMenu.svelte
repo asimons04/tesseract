@@ -28,6 +28,7 @@
     let onlyShowModerating = false
     let communityFilterTerm = ''
     let communityFiltervalue:string = ''
+    let communityScrollArea: HTMLDivElement
     
     let favoritesGroup: CommunityGroup 
     $: favoritesGroup = ($profile?.groups && $profile.groups.length > 0)
@@ -119,7 +120,7 @@
                 
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-                <form class="p-2 flex flex-row w-full items-center gap-2" on:click|preventDefault|stopPropagation on:submit|preventDefault>
+                <form name="CommunityFilterInput" class="p-2 flex flex-row w-full items-center gap-2" on:click|preventDefault|stopPropagation on:submit|preventDefault>
                     <TextInput 
                         type="text" autocomplete="new-password"    
                         placeholder="Filter Communities"
@@ -140,6 +141,7 @@
                             e.stopPropagation()
                             debounce('');
                             communityFiltervalue = '';
+                            communityScrollArea?.scrollTo(0,0)
                         }}
                     >
                     </Button>
@@ -167,7 +169,7 @@
 
             <!---Subscribed List--->
             {#if selected == 'subscribed'}
-                <CommunityList expanded hidden={false}
+                <CommunityList bind:communityScrollArea expanded hidden={false}
                     items={
                         onlyShowModerating
                         ? $profile.user.moderates.map((i) => i.community)

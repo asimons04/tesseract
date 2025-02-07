@@ -12,6 +12,7 @@
     export let showFavoriteButton: boolean= true
     export let placeholderTitle = "No Subscriptions"
     export let placeholderDescription="You have no subscriptions"
+    export let communityScrollArea: HTMLDivElement | undefined = undefined
 
     let filteredItems = objectCopy(items) as Community[]
 
@@ -88,7 +89,7 @@
 </script>
 
 {#if filteredItems.length > 0 }
-    <div class="flex flex-col { expanded ? 'pl-1' : '' } {$$props.class}" class:hidden={hidden}>
+    <div bind:this={communityScrollArea} class="flex flex-col { expanded ? 'pl-1' : '' } {$$props.class}" class:hidden={hidden}>
         {#each filteredItems.sort( (a, b) => a.title.localeCompare(b.title) ) as community (community.id)}
             <CommunityListItem {community} {expanded} {showFavoriteButton}/>
         {/each}
