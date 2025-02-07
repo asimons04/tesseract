@@ -104,7 +104,7 @@
         <!---Published Date--->
         <span class="flex flex-row-reverse mr-auto w-full justify-between gap-2 items-center lg:flex-row lg:mr-0 lg:justify-start ">
             <RelativeDate date={crosspost.post.published} class="opacity-80"/>
-            <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} showInstance={true} noClick/>
+            <CommunityLink community={crosspost.community} avatar avatarSize={iconSize} showInstance={true} noClick class="!w-[calc(100%-75px)]" />
         </span>
 
         <div class="flex flex-row gap-2 mr-auto lg:ml-auto lg:mr-0 items-center">
