@@ -12,11 +12,11 @@
     import { userSettings } from '$lib/settings';
 
 
-    import Link from '$lib/components/input/Link.svelte';
-    import PostIsInViewport from '$lib/components/lemmy/post/utils/PostIsInViewport.svelte'
-    import ZoomableImage from '$lib/components/ui/ZoomableImage.svelte';
-    import AudioPlayer from '$lib/components/players/AudioPlayer.svelte';
-    import VideoPlayer from '$lib/components/players/VideoPlayer.svelte';
+    import Link                 from '$lib/components/input/Link.svelte'
+    import PostIsInViewport     from '$lib/components/lemmy/post/utils/PostIsInViewport.svelte'
+    import ZoomableImage        from '$lib/components/ui/ZoomableImage.svelte'
+    import AudioPlayer          from '$lib/components/players/AudioPlayer.svelte'
+    import VideoPlayer          from '$lib/components/players/VideoPlayer.svelte'
 
     export let token: Tokens.Image
     export let options: CustomMarkdownOptions
@@ -24,7 +24,6 @@
     let inViewport = false
     let container:HTMLDivElement
     let media: HTMLVideoElement | HTMLAudioElement
-    let loop = $userSettings.embeddedMedia.loop
 
     // In Lemmy-land, the markdown "title" attribute is used to denote a custom emoji and is typically the short code for it.
     let isEmoji = isImage(token.href) && (token.title ? true : false)
@@ -39,7 +38,7 @@
         if (!url) return false
         try {
             // If this fails, catch will return false
-            let testURL = new URL(url)
+            new URL(url)
             return isImage(url)
         }
         catch { return false }
