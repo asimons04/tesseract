@@ -24,6 +24,7 @@
     
     import MarkdownCode         from './renderers/MarkdownCode.svelte'
     import MarkdownCodeSpan     from './renderers/MarkdownCodeSpan.svelte'
+    import MarkdownHTML         from './renderers/MarkdownHTML.svelte'
     import MarkdownImage        from './renderers/MarkdownImage.svelte'
     import MarkdownLink         from './renderers/MarkdownLink.svelte'
     import MarkdownList         from './renderers/MarkdownList.svelte'
@@ -145,7 +146,6 @@
 
                     // If word isn't escaped, not inside a code span, image, process each word
                     else if (!inCodeSpan && !inImage) {
-                        //word = fixLemmyEncodings(word)
                         if (!noUserCommunityLink) word = findUserCommunityLinks(word)
                         if (!noHashtags) word = hashtagsToMDLinks(word)
                         
@@ -203,6 +203,7 @@
                 renderers={{
                     code: MarkdownCode,
                     codespan: MarkdownCodeSpan,
+                    html: MarkdownHTML,
                     image: MarkdownImage,
                     link: MarkdownLink,
                     list: MarkdownList,
