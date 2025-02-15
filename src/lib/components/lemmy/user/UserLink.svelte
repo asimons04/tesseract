@@ -58,6 +58,8 @@
             ? p.display_name?.split('@')[0]?.replaceAll(emojiRegex, '') ?? p.name
             : p.display_name?.split('@')[0] ?? p.name 
         
+        if (!displayName) displayName = p.name
+
         if (uPrefix) displayName = 'u/' + displayName
         
         return (useDisplayNames ?? $userSettings.displayNames) 
