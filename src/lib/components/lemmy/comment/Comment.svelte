@@ -15,13 +15,13 @@
         Trash,
     } from 'svelte-hero-icons'
     
-    
+    import Badge            from '$lib/components/ui/Badge.svelte'
     import Button           from '$lib/components/input/Button.svelte'
     import Card             from '$lib/components/ui/Card.svelte'
     import CommentActions   from '$lib/components/lemmy/comment/CommentActions.svelte'
     import CommentForm      from './CommentForm.svelte'
     import Markdown         from '$lib/components/markdown/Markdown.svelte'
-    import MarkdownEditor   from '$lib/components/markdown/MarkdownEditor.svelte';
+    import MarkdownEditor   from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal            from '$lib/components/ui/modal/Modal.svelte'
     import RelativeDate     from '$lib/components/util/RelativeDate.svelte'
     import UserLink         from '$lib/components/lemmy/user/UserLink.svelte'
@@ -35,8 +35,6 @@
     import { slide }        from 'svelte/transition'
     import { toast }        from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
-    
-    
     
     export let node: CommentNodeI
     export let postId: number
@@ -64,7 +62,6 @@
                 commentContainer.scrollIntoView({behavior: 'smooth'})
             })
         }
-                    
     })
 
     function handleBanUser(e: BanUserEvent) {
@@ -218,7 +215,7 @@
                         <span class="ml-auto" />
 
                         {#if op}
-                            <span class="text-sky-500">OP</span>
+                            <Badge color="blue" rightJustify={false} click={false} label="Original Poster">OP</Badge>    
                         {/if}
                         
                         {#if !open}
@@ -241,15 +238,15 @@
                         {/if}
 
                         {#if node.comment_view.comment.deleted} 
-                            <Icon src={Trash} solid size="12" title="Deleted" class="text-red-600 dark:text-red-500 mt-1"/>
+                            <Badge icon={Trash} color="red" rightJustify={false} label="Deleted"/>
                         {/if}
 
                         {#if node.comment_view.comment.removed}
-                            <Icon src={HandRaised} solid size="12" title="Removed" class="text-red-600 dark:text-red-500 mt-1"/>
+                            <Badge icon={HandRaised} color="red" rightJustify={false} click={false}  label="Removed by Mod"/>
                         {/if}
 
                         {#if node.comment_view.saved}
-                            <Icon src={Bookmark} solid size="12" title="Saved" class="text-yellow-600 dark:text-yellow-500 mt-1" />
+                            <Badge icon={Bookmark} color="yellow" rightJustify={false} click={false} label="Saved"/>
                         {/if}
 
                         {#if !open && node.children.length > 0}
