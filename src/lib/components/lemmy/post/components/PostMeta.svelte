@@ -208,7 +208,7 @@
                     <InstanceMenu {post} />
                     
                     <!---Post Actions--->
-                    <PostActionsMenu {post} />
+                    <PostActionsMenu {post} {onHomeInstance} />
                 {/if}
             </div>
             
