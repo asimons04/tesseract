@@ -1,23 +1,19 @@
 <script lang="ts">
     import type { PostView } from 'lemmy-js-client'
-
     
     import { amMod, debugModal, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
     import { deleteItem, hide, markAsRead, save } from '$lib/lemmy/contentview.js'
     import { goto } from '$app/navigation';
     import { instance } from '$lib/instance'
-    import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { minAPIVersion } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
-    import { userSettings } from '$lib/settings';
     
-    import Button from '$lib/components/input/Button.svelte'
-    import Menu from '$lib/components/ui/menu/Menu.svelte'
-    import MenuButton from '$lib/components/ui/menu/MenuButton.svelte'
-    import PostEditorModal from './PostEditorModal.svelte'
-    
+    import Button           from '$lib/components/input/Button.svelte'
+    import Menu             from '$lib/components/ui/menu/Menu.svelte'
+    import MenuButton       from '$lib/components/ui/menu/MenuButton.svelte'
+    import PostEditorModal  from './PostEditorModal.svelte'
 
     import {
         type IconSource,
@@ -25,7 +21,7 @@
         ArrowTopRightOnSquare,
         Bookmark,
         BookmarkSlash,
-        EllipsisHorizontal,
+        EllipsisVertical,
         Eye,
         EyeSlash,
         Flag,
@@ -34,7 +30,6 @@
         Share,
         Trash,
         User,
-        Window,
         ShieldCheck,
         BugAnt,
     } from 'svelte-hero-icons'
@@ -43,11 +38,11 @@
     
     export let post:PostView 
     export let menuIconSize:number  = 16
-    export let icon:IconSource = EllipsisHorizontal;
-    
+    export let icon:IconSource = EllipsisVertical;
+    export let onHomeInstance: boolean = false
+
     let editing = false;
 
-    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
 </script>
 
 {#if $profile?.user?.local_user_view.person.id == post.creator.id && editing}
