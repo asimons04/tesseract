@@ -52,14 +52,12 @@
     }
 
     function generateDisplayName(p: Person) {
-        const emojiRegex = /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g
+        const emojiRegex = /(\u200c|[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]})/g
 
         let displayName = noEmojis 
-            ? p.display_name?.split('@')[0]?.replaceAll(emojiRegex, '') ?? p.name
-            : p.display_name?.split('@')[0] ?? p.name 
-        
+            ? p.display_name?.split('@')[0]?.replaceAll(emojiRegex, '').trim() ?? p.name
+            : p.display_name?.split('@')[0].trim() ?? p.name 
         if (!displayName) displayName = p.name
-
         if (uPrefix) displayName = 'u/' + displayName
         
         return (useDisplayNames ?? $userSettings.displayNames) 
