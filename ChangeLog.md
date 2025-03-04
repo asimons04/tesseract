@@ -60,10 +60,23 @@ removeAdmin {username}
     - [ ] Enable "rubber-banding" when collapsing post bodies
     - [X] Put long post bodies in feed into scrollable areas
 
+1.0 Breaking changes:  https://join-lemmy.org/news/2025-02-03_-_Breaking_Changes_in_Lemmy_1.0
 
 ---
 
+# 1.4.31
 
+## Bugfixes
+- "Application Denial Reason" heading was showing on applications that were not yet processed.
+- Formatting help modal wasn't closing with new modal method.  Removed this since it was not particularly useful. May re-implement it in a different way.
+- Scroll subscribed community list in sidebar and community menu back to top when clearing results 
+- HTML-like syntax in markdown now rendered correctly as text
+- Compact video post titles were not correctly setting `onHomeInstance` state
+- Compact video post titles were not correctly detecting `inmodal` state
+
+
+
+---
 
 # 1.4.30
 
