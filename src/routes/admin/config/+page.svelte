@@ -1,10 +1,11 @@
 <script lang="ts">
-    import type { Instance, Tagline } from 'lemmy-js-client'
+    import type { Instance, LocalSiteUrlBlocklist, Tagline } from 'lemmy-js-client'
     import type { PageData } from './$types.js'
     
     
     import { addAdmin } from '$lib/lemmy/user.js'
-    import { getClient, site } from '$lib/lemmy.js'
+    import { dividerColors } from '$lib/ui/colors.js'
+    import { getClient, minAPIVersion, site } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance.js'
     import { profile } from '$lib/auth.js'
@@ -50,6 +51,7 @@
         Identification,
         InformationCircle,
         Key,
+        Link as LinkIcon,
         LockClosed,
         MagnifyingGlass,
         Megaphone,
@@ -69,7 +71,8 @@
         Window,
         PencilSquare,
     } from 'svelte-hero-icons'
-    import { dividerColors } from '$lib/ui/colors.js';
+    import SettingTextInput from '$lib/components/ui/settings/SettingTextInput.svelte';
+    
     
 
     export let data: PageData;
@@ -96,21 +99,30 @@
         rate_limit_search:              data.site.site_view.local_site_rate_limit.search,
         rate_limit_search_per_second:   data.site.site_view.local_site_rate_limit.search_per_second,
         
-        allowed_instances: data.federated_instances?.allowed.map(
+        allowed_instances:  data.federated_instances?.allowed.map(
             (i:Instance) => {
                 return i.domain;
             }
         ).sort() ?? [],
 
-        blocked_instances: data.federated_instances?.blocked.map(
+        blocked_instances:  data.federated_instances?.blocked.map(
             (i:Instance) => {
                 return i.domain;
             }
         ).sort() ?? [],
+
+
+        blocked_urls:       data.site.blocked_urls?.map(
+            (i:LocalSiteUrlBlocklist) => {
+                return i.url;
+            }
+        ).sort() as string[] ?? (minAPIVersion("0.19.8") ? [] as string[] : undefined),
 
         taglines: [...(data.site?.taglines.map((t:Tagline) => t.content) ?? [])],
         federation_debug: false,
     }
+
+    console.log(formData)
      
     
     let saving = false
@@ -368,12 +380,12 @@
                 
                 <Button
                     color="tertiary"
-                    title="Slur Filters"
+                    title="Filters"
                     alignment="left"
                     on:click={()=> { selected = 'slurs' }}
                 >
                     <Icon src={Funnel} mini width={16} slot="icon"/>
-                    <span class="hidden lg:block">Slur Filters</span>
+                    <span class="hidden lg:block">Filters</span>
                 </Button>
 
                 <Button
@@ -1077,19 +1089,36 @@
                     <Setting>
                         <span class="flex flex-row gap-2" slot="title">
                             <Icon src={Funnel} mini width={24} />
-                            Slur Filters
+                            Filters
+                        </span>
+
+                        <span slot="description" class="text-xs font-normal">
+                            Configure the slur and URL blacklist filters.
                         </span>
                         
-                        <span slot="description" class="text-xs font-normal">
-                            A regex containing the slurs you want to prohibit in content. Be careful since a malformed regex will prevent the site from working,
-                            and you will have to clear the value from the database directly to resolve.
-                        </span>
-            
-                        <TextInput
-                            bind:value={formData.slur_filter_regex}
-                            label="Slur Filter Regex"
-                            placeholder="(word1|word2)"
-                        />
+                        <div class="flex flex-col divide-y {dividerColors} gap-4 w-full">
+                           
+                            <SettingTextInput
+                                title="Regex Slur Filter"
+                                description="A regex containing the slurs you want to prohibit in content. Be careful since a malformed regex will prevent the site from working,
+                                and you will have to clear the value from the database directly to resolve."
+                                bind:value={formData.slur_filter_regex} 
+                                maxlength={1000} 
+                                fullwidth={true}
+                                placeholder="(word1|word2)"
+                            
+                            />
+                            
+                            <!---Blocked URLs--->
+                            {#if formData.blocked_urls}
+                                <SettingEditArray 
+                                    list={formData.blocked_urls}
+                                    title="Blocked URLs"
+                                    description="Enter a domain to block in posts/comments. You can also use wildcard subdomains like *.lemmy.ml"
+                                    icon={LinkIcon}
+                                />
+                            {/if}
+                        </div>
                     </Setting>
 
                 </div>
