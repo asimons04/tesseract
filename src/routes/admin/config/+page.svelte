@@ -122,9 +122,6 @@
         federation_debug: false,
     }
 
-    console.log(formData)
-     
-    
     let saving = false
     let selected: 'general' | 'logo' | 'limits' |  'registration' | 'federation' | 'admins' | 'taglines' | 'sidebar' | 'legal' | 'slurs' = 'general';
 
