@@ -116,7 +116,7 @@
             (i:LocalSiteUrlBlocklist) => {
                 return i.url;
             }
-        ).sort() as string[] ?? (minAPIVersion("0.19.8") ? [] as string[] : undefined),
+        ).sort() as string[] ?? (minAPIVersion("0.19.6") ? [] as string[] : undefined),
 
         taglines: [...(data.site?.taglines.map((t:Tagline) => t.content) ?? [])],
         federation_debug: false,
@@ -1113,6 +1113,7 @@
                                     title="Blocked URLs"
                                     description="Enter a domain to block in posts/comments. You can also use wildcard subdomains like *.lemmy.ml"
                                     icon={LinkIcon}
+                                    filterable={true}
                                 />
                             {/if}
                         </div>
