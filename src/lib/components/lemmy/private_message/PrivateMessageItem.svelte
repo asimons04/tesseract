@@ -38,16 +38,18 @@
             {new Date(item.private_message.published).toLocaleString()}
         </span>
     </div>
+</div>
 
-    {#if item.private_message.content.includes('![')}
+{#if item.private_message.content.includes('![')}
+<div class="flex flex-row w-full gap-4 items-center">
     <SettingToggle 
         title="Show Images"
         description="Inline images in DMs are disabled by default for privacy. To load images, use the toggle to enable them for this message only."
         icon={Photo}
         bind:value={showImages}
     />
-    {/if}
 </div>
+{/if}
 
 <hr class="{hrColors}" />
 
