@@ -64,6 +64,23 @@ removeAdmin {username}
 
 ---
 
+# 1.4.32
+This is purely a hotfix release to add some security/privacy in the face of the "Nicole" spam wave; attempting to address de-anonymization concerns related to inline media in private messages.
+
+Instance admins on 0.19.6 and above can now manage the blocked URL list in the admin panel.
+
+## Changes
+### Bugfixes
+- Disable reply button in Inbox if creator is banned
+
+### Admin Panel
+- Renamed "Slur Filters" section to "Filters"
+- [0.19.6+] Can now edit blocked URLs in the Admin->Filters section.
+
+### Private Messages
+Inline images are now disabled by default in private messages.  If an embed media item (image, video, or audio) is detected in the DM content, a toggle action will appear above the message where you can opt to load the inline media if you trust the source of the DM (similar to how Thunderbird and other email clients treat inline images if you have them disabled).
+
+
 # 1.4.31
 
 ## Bugfixes
