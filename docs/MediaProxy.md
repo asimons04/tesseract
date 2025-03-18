@@ -69,6 +69,74 @@ tesseract:
     - ./data/tesseract-cache:/app/cache
 ```
 
+## Using Nginx as a High Performance Cache Layer (in front of Tesseract)
+One flaw in Tesseract's image proxy is that it runs inside the server hooks of SvelteKit's NodeJS adapter.  This makes it inherently single-threaded and can reduce performance when a large number of users are utilizing the cache.
+
+To remedy this, you can use Nginx (or another reverse proxy; adapt the Nginx example as necessary) as a cache layer.
+
+For items not in either Nginx or Tesseract's cache:
+
+User -> Nginx Cache (MISS) -> Tesseract Cache (MISS) -> Fetch (Remote URL) -> Cache in Tess -> Return to Nginx -> Cache in Nginx -> User
+
+For items in Nginx's Cache:
+
+User -> Nginx Cache (HIT) -> User
+
+For items not in Nginx's cache (expired or cache flushed) but in Tesseract's Cache:
+
+User -> Nginx Cache (MISS) -> Tesseract Cache (HIT) -> Cache in Nginx -> User
+
+**Cache Definition Somewhere in your nginx.conf's `http` Section**:
+
+Adjust the size and validity as desired.
+
+```nginx
+proxy_cache_path	/etc/nginx/conf.d/proxy_cache levels=1:2 keys_zone=imgcache:10m max_size=200m inactive=720h;
+proxy_temp_path		/etc/nginx/conf.d/proxy_cache/tmp;
+proxy_cache_key 	"$scheme$request_method$host$request_uri";
+```
+
+**Location Block for /image_proxy**:
+
+Adapt the cache validity as necessary.
+
+
+```nginx
+# Note: You only need this location if you are utilizing the Tesseract image proxy and cache.  Even then, you don't 
+  # strictly need this additional proxy layer, but it will improve performance significantly since Nginx is multi-threaded
+  # while NodeJS is not.
+
+  location /image_proxy {
+    ## You would probably want to put these proxy options and default headers into an
+    ## include file since they're mostly redundant on the two locations. Shown here in 
+    ## both for clarity.
+
+    proxy_http_version              1.1;
+    send_timeout                    5m;
+    proxy_read_timeout              360;
+    proxy_send_timeout              360;
+    proxy_connect_timeout           360;
+    proxy_max_temp_file_size        0;
+
+    # Set headers to send to backend server
+    proxy_set_header  Host                  $host;
+    proxy_set_header  X-Forwarded-Host      $host;
+    proxy_set_header  X-Forwarded-For       $remote_addr;
+    proxy_set_header  X-Forwarded-Proto     $scheme;
+    proxy_set_header  X-Forwarded-Uri       $request_uri;
+    proxy_set_header  X-Forwarded-Ssl       on;
+
+
+    proxy_pass http://127.0.0.1:8080/image_proxy;
+ 
+    proxy_cache imgcache;   
+    ## Adjust proxy validity time from 720 hours accordingly
+    proxy_cache_valid 200 720h;
+    add_header      X-Proxy-Cache                   $upstream_cache_status;
+  }
+  ```
+
+
 ## Environment Variables
 Other than the user options to enable/disable proxying images through Tesseract, all configuration is done server side via environment variables.
 
