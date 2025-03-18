@@ -280,7 +280,7 @@
                             
                             {#if item.recipient.id == $profile?.user?.local_user_view.person.id}
                                 <div class="flex flex-row gap-2 justify-between">
-                                    <Button color="tertiary-border" on:click={() => (replying = !replying)}>
+                                    <Button color="tertiary-border" disabled={item.creator.banned || item.creator.deleted} on:click={() => (replying = !replying)}>
                                         <Icon mini src={ChatBubbleOvalLeft} width={16} />
                                         Reply
                                     </Button>
