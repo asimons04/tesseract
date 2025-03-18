@@ -70,6 +70,9 @@ This is purely a hotfix release to add some security/privacy in the face of the 
 Instance admins on 0.19.6 and above can now manage the blocked URL list in the admin panel.
 
 ## Changes
+- Updated JS client to 0.19.9 version to add support for newer API features.
+
+
 ### Bugfixes
 - Disable reply button in Inbox if creator is banned
 
