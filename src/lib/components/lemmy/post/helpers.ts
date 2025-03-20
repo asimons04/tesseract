@@ -187,8 +187,11 @@ export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
 export const isPeertube = (embed_video_url?:string): boolean => {
     if (!embed_video_url) return false
 
-    const regex = `\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
-    const found = embed_video_url.match(regex)
+    const regexes: RegExp[] = [
+        /\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/,
+        /\/videos\/embed\/[0-9a-zA-z]{22}/
+    ]
+    const found = regexes.some(regex => regex.test(embed_video_url));
     return found ? true : false
 }
 
