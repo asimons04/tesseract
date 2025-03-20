@@ -311,8 +311,21 @@
 
         {#if loadError}
             <Placeholder title="Unable to Fetch Post" icon={ExclamationCircle}  iconSize={64}
-                description="Failed to fetch the post details"
-            />
+                description="Failed to fetch the post details."
+            >
+                {#if !onHomeInstance}
+                    <Button color="info" size="lg" icon={Home} iconSize={22} class="mt-4"
+                        on:click={() => {
+                            comment_id
+                                ? window.open(`https://${instance}/comment/${comment_id}`)
+                                : window.open(`https://${instance}/post/${post_id}`)
+                            close()
+                        }}
+                    >
+                        Go to Post at {instance}
+                    </Button>
+                {/if}
+            </Placeholder>
         {/if}
 
     
