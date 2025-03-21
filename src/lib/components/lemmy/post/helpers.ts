@@ -191,8 +191,7 @@ export const isPeertube = (embed_video_url?:string): boolean => {
         /\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/,
         /\/videos\/embed\/[0-9a-zA-z]{22}/
     ]
-    const found = regexes.some(regex => regex.test(embed_video_url));
-    return found ? true : false
+    return regexes.some(regex => regex.test(embed_video_url));
 }
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped
