@@ -75,6 +75,9 @@ export const isImage = (url: string | undefined) => {
         const testURL = new URL(unproxyImage(url))
         if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)$/i.test(testURL.href)) return true
         if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)\??/i.test(testURL.href)) return true
+        
+        // Spotify thumbnails have no extensions. Ugh.
+        if (url.startsWith('https://i.scdn.co/image/')) return true
         return false
     }
     catch {
