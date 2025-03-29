@@ -1,8 +1,9 @@
 <script lang="ts">
     import type { Tokens } from 'marked'
-    import type { CustomMarkdownOptions } from '../markdown';
+    import type { CustomMarkdownOptions } from '../markdown'
 
-    import { imageProxyURL } from '$lib/image-proxy';
+    import { imageProxyURL } from '$lib/image-proxy'
+    import { instance } from '$lib/instance'
     import {
         fixLemmyEncodings,
         isAudio,
@@ -26,7 +27,8 @@
     let media: HTMLVideoElement | HTMLAudioElement
 
     // In Lemmy-land, the markdown "title" attribute is used to denote a custom emoji and is typically the short code for it.
-    let isEmoji = isImage(token.href) && (token.title ? true : false)
+    let isEmoji = isImage(token.href) && token.title?.startsWith('emoji')
+    let isLocalEmoji = isEmoji && new URL(token.href).hostname == $instance
 
     $: inViewport, pauseMedia()
 
@@ -48,12 +50,11 @@
 
 <PostIsInViewport bind:postContainer={container} bind:inViewport />
 
-{#if !options.custom.noImages && $userSettings.inlineImages}
+<!---Only show media if inline images are enabled and the noImages flag is false --OR-- if the image is a local custom emoji--->
+{#if (!options.custom.noImages && $userSettings.inlineImages) || isLocalEmoji}
 
     <div bind:this={container} class="overflow-hidden {isEmoji ? 'inline-flex' : 'relative bg-slate-300 dark:bg-zinc-800 m-1 rounded-2xl w-full lg:w-[60%] p-1'}">
         <div class="ml-auto mr-auto max-w-full">
-            
-           
                 
             <!--- Audio--->
             {#if token.href && isAudio(token.href) }
@@ -80,7 +81,9 @@
     </div>
 
 {:else}
-    <Link highlight preview
+    <!---Show a link to the media that will load on-demand in a modal--->
+    <Link highlight 
+        preview={true}
         href={token.href} 
         title={token.text && token.text.trim() != '' ? token.text : token.href} 
         text={token.text && token.text.trim() != '' ? token.text : token.href}  
