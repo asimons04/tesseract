@@ -1,7 +1,8 @@
 <script lang="ts">
     import type { PrivateMessageView } from 'lemmy-js-client'
 
-    import { hrColors } from '$lib/ui/colors';
+    import { hrColors } from '$lib/ui/colors'
+    import { userSettings } from '$lib/settings'
 
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -39,7 +40,7 @@
         </span>
     </div>
 
-    {#if item.private_message.content.includes('![')}
+    {#if item.private_message.content.includes('![') && $userSettings.inlineImages}
     <SettingToggle 
         title="Show Images"
         description="Inline images in DMs are disabled by default for privacy. To load images, use the toggle to enable them for this message only."
