@@ -37,7 +37,9 @@
 </script>
 
 <StickyCard class="{$$props.class}">
-    <SiteCardSmall {site} {version} />
+    {#if !expanded.site && !expanded.legal}
+        <SiteCardSmall {site} {version} />
+    {/if}
     
     {#if !expanded.admins && !expanded.site && !expanded.legal}
         <TaglinesCard bind:taglines interval={taglineUpdateInterval}/>
