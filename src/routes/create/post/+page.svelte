@@ -30,7 +30,7 @@
     <title>{data.crosspost ? 'Cross Post' : 'Create Post'}</title>
 </svelte:head>
 
-<SubNavbar home back toggleMargins toggleCommunitySidebar />
+<SubNavbar home back toggleCommunitySidebar />
 
 <MainContentArea>
     
