@@ -59,7 +59,7 @@
 </script>
 
       
-<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2 items-center mt-1 h-8 w-full">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2 items-center mt-1 h-8 w-full mr-1">
     <!---Comment Vote Buttons--->
     <CommentVote bind:comment {onHomeInstance}/>
     
