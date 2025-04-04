@@ -129,9 +129,7 @@
             <!--- Share Comment / Copy URL to Clipboard--->
             <MenuButton color="success"
                 on:click={() => {
-                    navigator.share?.({
-                        url: comment.comment.ap_id,
-                    }) ?? navigator.clipboard.writeText(comment.comment.ap_id)
+                    navigator.clipboard.writeText(comment.comment.ap_id)
                     toast({
                         type: 'success',
                         title: "Success",

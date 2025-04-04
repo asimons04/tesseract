@@ -175,9 +175,7 @@
         <!---Copy Link--->
         <MenuButton title="Share" color="success"
             on:click={() => {
-                navigator.share?.({
-                    url: url
-                }) ?? navigator.clipboard.writeText(url)
+                navigator.clipboard.writeText(url)
                 toast({
                     type: 'success',
                     content: `Copied URL to clipboard!`,
