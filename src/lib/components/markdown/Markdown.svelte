@@ -222,17 +222,17 @@
 
 <style lang="postcss">
     .markdown :global(h1) {
-        @apply text-3xl font-bold mt-6;
+        @apply text-3xl font-bold mt-4 mb-2;
     }
     .markdown :global(h2) {
-        @apply text-2xl font-bold mt-6;
+        @apply text-2xl font-bold mt-4 mb-2;
     }
     .markdown :global(h3) {
-        @apply text-xl font-bold mt-6;
+        @apply text-xl font-bold mt-4 mb-2;
     }
 
     .markdown :global(h4) {
-        @apply text-lg font-bold mt-6;
+        @apply text-lg font-bold mt-4 mb-2;
     }
 
     .markdown :global(details > summary) {
