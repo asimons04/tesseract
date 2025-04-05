@@ -2,65 +2,24 @@
 All major/minor changes between releases will be documented here.  
 
 
-## Plans/Ideas to Implement Eventually:
-1) Re-write search and community browser to keep state in URL params instead of locally
-    - They currently both reset when you navigate away and back
-    - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
 
-1) Add language selector in profile settings
-    - Add language 
-
-1) Add filter option for domains
-    - Include presets (Reddit, Facebook, Twitter)
-    - User settings to add custom domains
-
-1) Look into making a grid view.
-    - May need to make this separate from the main feed as initial tests with just CSS have not panned out.
+# 1.4.33
+## Bugfixes
+- Piefed links are identical to Lemmy but not API compatible; fixed bug when loading a Piefed link in a modal. Now has button similar to `/post` to load the outside pos/comment link in a new tab/window.
+- PeerTube seems to have a new video ID format.  Added that to the detection regexes so those will embed.
+- Fix typo in "Check for Notifications" label
+- Fixed / accounted-for Spotify thumbanils (they don't have extensions and weren't being detected as images)
+- Home-instance custom emojis exempted from inline media disable setting
+- Fixed broken semver comparisons on 0.19.10+ (any features requiring greater than API 0.19.3 were being disabled).
+- Removed mobile OS "share" integration as it was more trouble than it was worth. Now all 'share' and 'copy link' buttons just write the item to the clipboard.
+- Add slight right margin to comment action bar so buttons aren't smooshed against the side (especially when "reverse action bars" is enabled)
 
 
-1) Power Mod Tools #2:  Command palette
-```
-{username} and {community} can be in any of the following formats:
-- /u/username[@instance] or /c/community[@instance]
-- @username[@instance] or !community[@instance]
-- https://lemmyverse.link/u/username@instance
-- https://lemmyverse.link/c/community@instance
+## Minor Changes
+- Site card hidden in sidebar when Site Info or Legal accordions are expanded (to make it easier to view those)
+- Increase top margin on heading elements in markdown to better space out sections
 
 
-ban {username} -> Load ban modal populated with username and `ban` set to false (so modal will treat it as ban)
-unban {username} -> Load ban modal populated with username and `ban` set to true (so modal will treat it as unban)
-banCommunity {username} {community} -> Load ban modal populated with community and username
-addMod {username} {community}
-removeMod {username} {community}
-addAdmin {username}
-removeAdmin {username}
-{username} -> /u/{username}
-{community} -> /u/{community}
-
-
-```
-- Add "view source" button to post/comments to show the raw markdown
-
-- Allow selecting multiple comments to remove
-    - If mod, add "checkbox" button to comment action bar
-    - Add bulk action button to top of comment section
-        - Currently "remove" is the only action which can be applied in bulk
-
-    - If selected/checked:
-        - Add 'info' class to comment to indicate it is selected
-        - Add the comment ID to an array
-        - 
-
-- Add comment menu option to share a local link to a comment (e.g. via the Tesseract URL -> tess.domain.xyz/comment/{id}
-
-- Remove userSettings.media.autoplay and associated controls
-
-- Add additional feed options
-    - [ ] Enable "rubber-banding" when expanding post bodies
-    - [ ] Enable "rubber-banding" when collapsing post bodies
-    - [X] Put long post bodies in feed into scrollable areas
-
-1.0 Breaking changes:  https://join-lemmy.org/news/2025-02-03_-_Breaking_Changes_in_Lemmy_1.0
 
 ---
 
@@ -1046,3 +1005,64 @@ Additionally, if a local post fails to load, there's now conditional verbiage to
 
 ---
 
+## Plans/Ideas to Implement Eventually:
+1) Re-write search and community browser to keep state in URL params instead of locally
+    - They currently both reset when you navigate away and back
+    - URL state would be less awkward than the snapshot/restore I do for the infinite scroll.
+
+1) Add language selector in profile settings
+    - Add language 
+
+1) Add filter option for domains
+    - Include presets (Reddit, Facebook, Twitter)
+    - User settings to add custom domains
+
+1) Look into making a grid view.
+    - May need to make this separate from the main feed as initial tests with just CSS have not panned out.
+
+
+1) Power Mod Tools #2:  Command palette
+```
+{username} and {community} can be in any of the following formats:
+- /u/username[@instance] or /c/community[@instance]
+- @username[@instance] or !community[@instance]
+- https://lemmyverse.link/u/username@instance
+- https://lemmyverse.link/c/community@instance
+
+
+ban {username} -> Load ban modal populated with username and `ban` set to false (so modal will treat it as ban)
+unban {username} -> Load ban modal populated with username and `ban` set to true (so modal will treat it as unban)
+banCommunity {username} {community} -> Load ban modal populated with community and username
+addMod {username} {community}
+removeMod {username} {community}
+addAdmin {username}
+removeAdmin {username}
+{username} -> /u/{username}
+{community} -> /u/{community}
+
+
+```
+- Add "view source" button to post/comments to show the raw markdown
+
+- Allow selecting multiple comments to remove
+    - If mod, add "checkbox" button to comment action bar
+    - Add bulk action button to top of comment section
+        - Currently "remove" is the only action which can be applied in bulk
+
+    - If selected/checked:
+        - Add 'info' class to comment to indicate it is selected
+        - Add the comment ID to an array
+        - 
+
+- Add comment menu option to share a local link to a comment (e.g. via the Tesseract URL -> tess.domain.xyz/comment/{id}
+
+- Remove userSettings.media.autoplay and associated controls
+
+- Add additional feed options
+    - [ ] Enable "rubber-banding" when expanding post bodies
+    - [ ] Enable "rubber-banding" when collapsing post bodies
+    - [X] Put long post bodies in feed into scrollable areas
+
+1.0 Breaking changes:  https://join-lemmy.org/news/2025-02-03_-_Breaking_Changes_in_Lemmy_1.0
+
+---
