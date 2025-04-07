@@ -46,7 +46,8 @@
                     lazyload={false}
                     fadeIn={false}
                     width={avatarWidth}  
-                    rounded ring={false} 
+                    rounded={false}
+                    ring={false} 
                     circle={false}  
                     url={site.site.icon} 
                     alt={site.site.name}  

@@ -5,7 +5,8 @@
     import CollapseButton from '../ui/CollapseButton.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import SidebarFooter from '$lib/components/ui/SidebarFooter.svelte';
-    import SiteCardSmall from './SiteCardSmall.svelte';
+    import SiteCardMini from './SiteCardMini.svelte'
+    import SiteCardSmall from './SiteCardSmall.svelte'
     import StickyCard from '$lib/components/ui/StickyCard.svelte'
     import TaglinesCard from './TaglinesCard.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
@@ -22,6 +23,7 @@
         ShieldCheck,
         UserGroup,
     } from 'svelte-hero-icons'
+    
 
     export let site: SiteView
     export let taglines: Tagline[] | undefined = undefined
@@ -37,8 +39,12 @@
 </script>
 
 <StickyCard class="{$$props.class}">
+    
+    
     {#if !expanded.site && !expanded.legal}
         <SiteCardSmall {site} {version} />
+    {:else}
+        <SiteCardMini {site} />
     {/if}
     
     {#if !expanded.admins && !expanded.site && !expanded.legal}
