@@ -417,10 +417,10 @@
             <!---Share Permalink to this Search--->
             <Button color="tertiary" size="sm" title="Copy Share Link" on:click={() => {
                 if (searchURL) {
-                    navigator.share?.( {url: searchURL.toString()} ) ?? navigator.clipboard.writeText(searchURL.toString())
+                    navigator.clipboard.writeText(searchURL.toString())
                 }
                 else {
-                    navigator.share?.({url: window.location.href}) ?? navigator.clipboard.writeText(window.location.href)
+                    navigator.clipboard.writeText(window.location.href)
                 }
                 toast({
                     type: 'success',
@@ -457,10 +457,10 @@
             <!---Share Permalink to this Search--->
             <Button color="tertiary" size="sm" title="Copy Share Link" on:click={() => {
                 if (searchURL) {
-                    navigator.share?.( {url: searchURL.toString()} ) ?? navigator.clipboard.writeText(searchURL.toString())
+                    navigator.clipboard.writeText(searchURL.toString())
                 }
                 else {
-                    navigator.share?.({url: window.location.href}) ?? navigator.clipboard.writeText(window.location.href)
+                    navigator.clipboard.writeText(window.location.href)
                 }
                 toast({
                     type: 'success',

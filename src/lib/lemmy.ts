@@ -125,7 +125,9 @@ export function minAPIVersion(ver:string): boolean {
     if (!ver) return false
     const $site = get(site)
     if (!$site?.version) return false
-    return $site.version.split('-')[0] >= ver
+    const serverAPI = $site.version.split('-')[0]
+    return (ver == serverAPI) || (serverAPI.localeCompare(ver, undefined, {numeric: true}) ===1)
+
 }
 
 

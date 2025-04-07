@@ -208,7 +208,7 @@
     <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
     <MenuButton color="secondary" aria-label="Check for Notifications" loading={polling} preventDefault on:click={async (e) => await pollNotifications() } >
         <Icon src={ArrowPath} mini size="16" slot="icon"/>
-        Check for Notificaitons
+        Check for Notifications
     </MenuButton>
 
 </Menu>

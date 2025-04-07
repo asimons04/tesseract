@@ -75,6 +75,9 @@ export const isImage = (url: string | undefined) => {
         const testURL = new URL(unproxyImage(url))
         if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)$/i.test(testURL.href)) return true
         if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)\??/i.test(testURL.href)) return true
+        
+        // Spotify thumbnails have no extensions. Ugh.
+        if (url.startsWith('https://i.scdn.co/image/')) return true
         return false
     }
     catch {
@@ -187,9 +190,11 @@ export const isYoutubeLikeVideo = (url: string | undefined):boolean => {
 export const isPeertube = (embed_video_url?:string): boolean => {
     if (!embed_video_url) return false
 
-    const regex = `\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
-    const found = embed_video_url.match(regex)
-    return found ? true : false
+    const regexes: RegExp[] = [
+        /\/videos\/embed\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/,
+        /\/videos\/embed\/[0-9a-zA-z]{22}/
+    ]
+    return regexes.some(regex => regex.test(embed_video_url));
 }
 
 // Check if URL is an embeddable Youtube from YT, Invidious, or Piped

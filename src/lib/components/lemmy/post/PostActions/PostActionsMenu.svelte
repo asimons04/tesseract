@@ -67,9 +67,7 @@
     <!--- Share/Copy Post Link to Clipboard --->
     <MenuButton title="Share" color="success"
         on:click={() => {
-            navigator.share?.({
-                url: post.post.ap_id,
-            }) ?? navigator.clipboard.writeText(post.post.ap_id)
+            navigator.clipboard.writeText(post.post.ap_id)
             toast({
                 type: 'success',
                 content: `Copied post URL to clipboard!`,
