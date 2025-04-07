@@ -48,8 +48,8 @@
         icon={Photo}
         bind:value={showImages}
     />
-</div>
-{/if}
+
+    {/if}
 
 <hr class="{hrColors}" />
 
