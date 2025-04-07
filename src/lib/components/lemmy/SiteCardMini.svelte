@@ -24,7 +24,7 @@
         class="mx-auto" 
     />
 
-    <span class="text-lg font-bold">
+    <span class="text-lg font-bold truncate">
         <a href="/site/{new URL(site.site.actor_id).hostname}" class="hover:underline" title="About {site.site.name}">
             {site.site.name}
         </a>
