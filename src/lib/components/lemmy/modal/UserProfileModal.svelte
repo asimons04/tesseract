@@ -15,43 +15,46 @@
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
     
-    import BanUnbanCommunityForm from "./components/BanUnbanCommunityForm.svelte"
-    import BanUserForm from "./components/BanUserForm.svelte"
-    import Button from "$lib/components/input/Button.svelte"
-    import CollapseButton from "$lib/components/ui/CollapseButton.svelte"
-    import CommunityLink from "../community/CommunityLink.svelte"
-    import EmbeddableModlog from "./components/EmbeddableModlog.svelte"
-    import Markdown from "$lib/components/markdown/Markdown.svelte"
-    
-    import Modal from "$lib/components/ui/modal/Modal.svelte"
-    import ModalPanel from './components/ModalPanel.svelte'
-    import ModalPanelHeading from './components/ModalPanelHeading.svelte'
-    import ModalScrollArea from './components/ModalScrollArea.svelte'
-
-    import SendDMForm from "./components/SendDMForm.svelte"
-    import Spinner from "$lib/components/ui/loader/Spinner.svelte"
-    import UserCardSmall from "../user/UserCardSmall.svelte"
-    import UserSubmissionFeed from '$lib/components/lemmy/feed/UserSubmissionFeed.svelte'
+    import BanUnbanCommunityForm    from "./components/BanUnbanCommunityForm.svelte"
+    import BanUserForm              from "./components/BanUserForm.svelte"
+    import Button                   from "$lib/components/input/Button.svelte"
+    import CollapseButton           from "$lib/components/ui/CollapseButton.svelte"
+    import CommunityLink            from "../community/CommunityLink.svelte"
+    import EmbeddableModlog         from "./components/EmbeddableModlog.svelte"
+    import Markdown                 from "$lib/components/markdown/Markdown.svelte"
+    import Menu                     from "$lib/components/ui/menu/Menu.svelte"
+    import MenuButton               from "$lib/components/ui/menu/MenuButton.svelte"
+    import Modal                    from "$lib/components/ui/modal/Modal.svelte"
+    import ModalPanel               from './components/ModalPanel.svelte'
+    import ModalPanelHeading        from './components/ModalPanelHeading.svelte'
+    import ModalScrollArea          from './components/ModalScrollArea.svelte'
+    import SendDMForm               from "./components/SendDMForm.svelte"
+    import Spinner                  from "$lib/components/ui/loader/Spinner.svelte"
+    import UserCardSmall            from "../user/UserCardSmall.svelte"
+    import UserSubmissionFeed       from '$lib/components/lemmy/feed/UserSubmissionFeed.svelte'
 
     import { 
+        ArrowPath,
         ArrowTopRightOnSquare,
+        ChevronDoubleDown,
+        ChevronDoubleUp,
         Envelope,
         Hashtag,
         Home,
+        Icon,
         InformationCircle,
         Link as LinkIcon,
         MagnifyingGlass,
         Newspaper,
         NoSymbol,
+        Scale,
         Share,
         User,
         UserCircle,
         Window as WindowIcon,
-        ChevronDoubleDown,
-        ChevronDoubleUp,
-        ArrowPath,
-        Scale,
     } from "svelte-hero-icons";
+    
+    
     
     export let user:Person | undefined
     export let open: boolean = false
@@ -159,31 +162,75 @@
         <span class="ml-auto" />
         
         {#if personDetails}
-            <!---Copy Lemmyverse Link--->
-            <Button color="tertiary" size="square-lg" icon={Share} iconSize={20} title="Copy Lemmyverse Link"
-                on:click={() => {
-                    if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
-                    toast({
-                        type: 'success',
-                        content: `Copied Lemmyverse link to clipboard`,
-                        title: 'Copied'
-                    })
-                    
-                }}
-            />
+            
+            <Menu  alignment="bottom-right" containerClass="!min-w-[0px]">
+                <Button
+                    slot="button"
+                    on:click={toggleOpen}
+                    aria-label="Share User Link"
+                    color="tertiary"
+                    size="square-lg"
+                    icon={Share}
+                    iconSize={20}
+                    let:toggleOpen
+                />
 
-            <!--- Copy Actor ID--->
-            <Button color="tertiary" size="square-lg" icon={LinkIcon} iconSize={20} title="Copy Actor ID"
-                on:click={() => {
-                    if (personDetails?.person_view.person) navigator.clipboard.writeText(personDetails.person_view.person.actor_id)
-                    toast({
-                        type: 'success',
-                        content: `Copied actor ID to clipboard`,
-                        title: 'Copied'
-                    })
-                    
-                }}
-            />
+                <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
+                    Share
+                    <span class="ml-auto" />
+                    <Icon src={Share} width={16} mini />
+                </li>
+                <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+                
+                <!--Lemmyverse--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Lemmyverse Link"
+                    on:click={() => {
+                        //https://lemmyverse.link/u/name@instance.xyz
+                        if (personDetails?.person_view.person) {
+                            navigator.clipboard.writeText(`https://lemmyverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                        }
+                        toast({
+                            type: 'success',
+                            content: `Copied Lemmyverse link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Lemmyverse</span>
+                </MenuButton>
+
+                <!--Lemshare--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Lemmyverse Link"
+                    on:click={() => {
+                        //https://lemsha.re/instance.xyz/u/name
+                        if (personDetails?.person_view.person) {
+                            navigator.clipboard.writeText(`https://lemsha.re/${new URL(personDetails.person_view.person.actor_id).host}/u/${personDetails.person_view.person.name}`)
+                        }
+                        toast({
+                            type: 'success',
+                            content: `Copied Lemshare link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Lemshare</span>
+                </MenuButton>
+
+                <!---Actor ID--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Actor ID"
+                    on:click={() => {
+                         if (personDetails?.person_view.person) navigator.clipboard.writeText(personDetails.person_view.person.actor_id)
+                        toast({
+                            type: 'success',
+                            content: `Copied actor ID to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Actor ID</span>
+                </MenuButton>
+            </Menu>
+
             
             <!---Go to Profile Page--->
             <Button color="tertiary" icon={ArrowTopRightOnSquare} iconSize={20} size="square-lg" title="Go to User's Profile"
