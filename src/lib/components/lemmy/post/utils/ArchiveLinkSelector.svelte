@@ -98,16 +98,10 @@
             </MenuButton>
 
             <!---RemovePaywall.com--->
-            <div class="flex flex-row items-center gap-1 w-full">
-                <MenuButton color="info" link href="https://www.removepaywall.com/search?url={removeURLParams(url)}" newtab={true} title="Remove Paywalls" containerClass="w-[calc(100%-48px)]">
-                    RemovePaywall.com
-                </MenuButton>
-
-                <MenuButton icon={Eye} iconSize={14} size="square-sm" color="info" title="Load in IFrame" on:click={() => {
-                    let previewURL = `https://www.removepaywall.com/search?url=${removeURLParams(url)}`
-                    linkPreviewModal(previewURL, true)
-                }}/>
-            </div>
+            <MenuButton color="info" link href="https://www.removepaywall.com/search?url={removeURLParams(url)}" newtab={true} title="Remove Paywalls" containerClass="w-[calc(100%-48px)]">
+                RemovePaywall.com
+            </MenuButton>
+            
 
             <!---Ground News--->
             <MenuButton color="info" link href=" https://ground.news/find?url={removeURLParams(url)}" newtab={true} title="Ground News">
