@@ -110,7 +110,7 @@
         <!---User-Defined Flairs--->
         {#if flairs}
             {#each postFlairs as flair, idx}
-                <Badge randomColor  class="capitalize mb-1 mr-2 !max-w-[20ch]" icon={Tag} rightJustify={false}
+                <Badge randomColor  class="capitalize mb-1 mr-2 !max-w-[25ch]" icon={Tag} rightJustify={false}
                     label="{flair}"
                     on:click={(e) => { 
                         e.preventDefault()
