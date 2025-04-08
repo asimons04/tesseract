@@ -1,27 +1,15 @@
 <script lang="ts">
     import type { CommentView } from 'lemmy-js-client'
-    import { isNewAccount } from '../post/helpers.js'
-    import { page } from '$app/stores'
-    import { profile } from '$lib/auth.js'
-    import { subscribe } from '../community/helpers.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Badge from '$lib/components/ui/Badge.svelte'
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import Spinner from '$lib/components/ui/loader/Spinner.svelte'
     import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
 
     import {
         Icon,
-        Bookmark,
-        Cake,
-        MinusCircle,
-        NoSymbol,
         Pencil,
-        PlusCircle,
-        Trash
     } from 'svelte-hero-icons'
     
 
@@ -30,10 +18,7 @@
     export let noClick = false
     export let content: boolean = false     // Show the comment content (only used for moderation UI purposes)
     export let inProfile: boolean = false
-    
-    let subscribing:boolean = false
-    
-    $: subscribed = comment.subscribed == 'Subscribed' || comment.subscribed == 'Pending'
+       
 
 </script>
 
@@ -46,31 +31,7 @@
                 
             <span class="flex flex-col items-end gap-1">    
                 <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} community={true}/>
-            
-                {#if $profile?.user}
-                    <!---Overlay small subscribe/unsubscribe button on avatar--->
-                    <button class="flex flex-row items-center -mt-[15px]" title={subscribed ? 'Unsubscribe' : 'Subscribe'}
-                        on:click={async () => {
-                            subscribing = true
-                            let result = await subscribe(comment.community, subscribed)
-                            
-                            if (result) comment.subscribed = 'Subscribed'
-                            else comment.subscribed = 'NotSubscribed'
-
-                            subscribing=false
-                    }}>
-                        
-                        {#if subscribing}
-                            <Spinner width={16} />
-                        {:else}
-                            <Icon src={subscribed ? MinusCircle : PlusCircle} mini size="16" />
-                        {/if}
-                    </button>
-                {/if}
             </span>
-            
-
-
 
             <div class="flex flex-col w-full text-xs">
                 
