@@ -240,7 +240,7 @@
     }
 
     .markdown :global(hr) {
-        @apply w-full mx-auto my-2 border-slate-300 dark:border-zinc-800;
+        @apply w-full mx-auto my-2 border-slate-300 dark:border-zinc-600;
     }
 
     .markdown :global(img) {
