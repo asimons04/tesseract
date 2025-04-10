@@ -23,9 +23,20 @@
         addingModerator: false,
     }
 
+    let modals = {
+        transfer: {
+            open: false,
+            personID: -1
+        },
+        removeMod: {
+            open: false,
+            personID: -1
+        }
+    }
+
     let isAdminOrTopMod = false
     $: isAdminOrTopMod = isAdmin($profile?.user) || isTopMod($profile?.user, data.community)
-    
+
     async function addModerator() {
         if (!$profile?.jwt) return
         
@@ -132,18 +143,6 @@
     }
 
     
-    
-
-    let modals = {
-        transfer: {
-            open: false,
-            personID: -1
-        },
-        removeMod: {
-            open: false,
-            personID: -1
-        }
-    }
 </script>
 
 <svelte:head>
@@ -263,7 +262,6 @@
                                 on:click={() => {
                                     modals.transfer.personID = moderator.moderator.id
                                     modals.transfer.open = true
-                                    //transferCommunity(moderator.moderator.id)
                                 }}
                             
                             />
