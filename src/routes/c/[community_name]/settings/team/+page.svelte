@@ -23,6 +23,9 @@
         addingModerator: false,
     }
 
+    let isAdminOrTopMod = false
+    $: isAdminOrTopMod = isAdmin($profile?.user) || isTopMod($profile?.user, data.community)
+    
     async function addModerator() {
         if (!$profile?.jwt) return
         
@@ -128,9 +131,8 @@
         }
     }
 
-    function isAdminOrTopMod() {
-        return isAdmin($profile?.user) || isTopMod($profile?.user, data.community)
-    }
+    
+    
 
     let modals = {
         transfer: {
@@ -180,15 +182,18 @@
 </Modal>
 
 <!---Transfer Community Confirmation Modal--->
-<Modal bind:open={modals.transfer.open} title="Confirm Remove Mod" width="max-w-md">
+<Modal bind:open={modals.transfer.open} title="Confirm Transfer Community" width="max-w-md">
     <p class="text-sm">
         Are you sure you want to transfer the community to this moderator?
-        {#if !isAdmin($profile?.user) }
+    </p>
+    {#if !isAdmin($profile?.user) }
+        <p class="text-sm mt-2">        
             Once you transfer the community, you will not be able to transfer it back
             without help from an admin or the new "top mod" transferring it back
             to you.
-        {/if}
-    </p>
+        </p>
+    {/if}
+    
 
     <div class="flex flex-row justify-between w-full" slot="buttons">
         <Button color="primary" size="lg" icon={XCircle} on:click={() => {
@@ -221,7 +226,7 @@
     
     <p class="font-normal text-sm">
         Add or remove members of the moderation team.  The "top mod" is indicated with a green shield and is considered the owner of the community.
-        {#if isAdminOrTopMod()}
+        {#if isAdminOrTopMod}
             To assign someone else as the top mod, use the transfer community button on their entry.
         {/if}
     </p>
@@ -253,7 +258,7 @@
             
                     <div class="flex flex-row gap-2">
                         <!---Transfer Community Button--->
-                        {#if isAdminOrTopMod()}
+                        {#if isAdminOrTopMod}
                             <Button size="square-md" title="Transfer Community" icon={ArrowsRightLeft} disabled={i == 0}
                                 on:click={() => {
                                     modals.transfer.personID = moderator.moderator.id
