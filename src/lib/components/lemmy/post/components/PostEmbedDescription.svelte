@@ -35,7 +35,7 @@
     $:  title, description, hideCFBullshit()
     
     function hideCFBullshit() {
-        const cfRegex = /^just a moment|px\-captcha|Are you a robot\?|attention.*cloudflare|^MSN|^reuters.com$/gi
+        const cfRegex = /^just a moment|px\-captcha|Are you a robot\?|attention.*cloudflare|^MSN|^reuters.com|^403 Forbidden$/gi
         if (title?.match(cfRegex) || description?.match(cfRegex)) {
             title = ''
             description = ''
