@@ -1,19 +1,20 @@
 <script lang="ts">
     import { flip } from 'svelte/animate'
-    import { isAdmin } from '$lib/components/lemmy/moderation/moderation.js'
+    import { isAdmin, isTopMod } from '$lib/components/lemmy/moderation/moderation.js'
     import { getClient } from '$lib/lemmy.js'
     import { profile } from '$lib/auth.js'
     import { refreshProfile } from '$lib/lemmy/user.js';
     import { toast } from '$lib/components/ui/toasts/toasts.js'
 
-    import Avatar from '$lib/components/ui/Avatar.svelte'
-    import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte'
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte'
-    import TextInput from '$lib/components/input/TextInput.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    import Avatar           from '$lib/components/ui/Avatar.svelte'
+    import Button           from '$lib/components/input/Button.svelte'
+    import Card             from '$lib/components/ui/Card.svelte'
+    import MainContentArea  from '$lib/components/ui/containers/MainContentArea.svelte'
+    import Modal            from '$lib/components/ui/modal/Modal.svelte';
+    import TextInput        from '$lib/components/input/TextInput.svelte'
+    import UserLink         from '$lib/components/lemmy/user/UserLink.svelte'
     
-    import { Icon, Plus, ShieldCheck, Trash } from 'svelte-hero-icons'
+    import { Icon, ArrowsRightLeft, Plus, ShieldCheck, Trash, XCircle } from 'svelte-hero-icons'
     
     export let data
 
@@ -97,11 +98,6 @@
             if ($profile.user?.local_user_view.person.id == id) {
                 await refreshProfile()
             }
-            toast({
-                content: 'Successfully updated community moderators.',
-                type: 'success',
-                title: 'Success'
-            })
         } 
         catch (err) {
             toast({
@@ -131,18 +127,101 @@
             })
         }
     }
+
+    function isAdminOrTopMod() {
+        return isAdmin($profile?.user) || isTopMod($profile?.user, data.community)
+    }
+
+    let modals = {
+        transfer: {
+            open: false,
+            personID: -1
+        },
+        removeMod: {
+            open: false,
+            personID: -1
+        }
+    }
 </script>
 
 <svelte:head>
     <title>Moderator Team</title>
 </svelte:head>
 
+<!---Remove Mod Confirmation Modal--->
+<Modal bind:open={modals.removeMod.open} title="Confirm Remove Mod" width="max-w-md">
+    <p class="text-sm">
+        Are you sure you want to remove this member from the mod team?
+    </p>
+
+    <div class="flex flex-row justify-between w-full" slot="buttons">
+        <Button color="primary" size="lg" icon={XCircle} on:click={() => {
+                modals.removeMod.open = false
+                modals.removeMod.personID = -1
+            }}
+        >
+            Cancel
+        </Button>
+
+        <Button color="danger" size="lg" icon={Trash} on:click={() => {
+                removeMod(modals.removeMod.personID)
+                modals.removeMod.personID = -1
+                modals.removeMod.open = false
+                toast({
+                    type: 'success',
+                    content: 'Successfully removed that member from the mod team.',
+                    title: 'Confirmation'
+                })
+            }}
+        >
+            Remove
+        </Button>
+    </div>
+</Modal>
+
+<!---Transfer Community Confirmation Modal--->
+<Modal bind:open={modals.transfer.open} title="Confirm Remove Mod" width="max-w-md">
+    <p class="text-sm">
+        Are you sure you want to transfer the community to this moderator?
+        {#if !isAdmin($profile?.user) }
+            Once you transfer the community, you will not be able to transfer it back
+            without help from an admin or the new "top mod" transferring it back
+            to you.
+        {/if}
+    </p>
+
+    <div class="flex flex-row justify-between w-full" slot="buttons">
+        <Button color="primary" size="lg" icon={XCircle} on:click={() => {
+                modals.transfer.open = false
+                modals.transfer.personID = -1
+            }}
+        >
+            Cancel
+        </Button>
+
+        <Button color="info" size="lg" icon={ArrowsRightLeft} on:click={() => {
+                transferCommunity(modals.transfer.personID)
+                modals.transfer.personID = -1
+                modals.transfer.open = false
+                toast({
+                    type: 'success',
+                    content: 'Successfully transferred the community to that user.',
+                    title: 'Confirmation'
+                })
+            }}
+        >
+            Transfer
+        </Button>
+    </div>
+</Modal>
+
+
 <MainContentArea class="gap-2">
     <h1 class="font-bold text-2xl">Moderator Team</h1>
     
     <p class="font-normal text-sm">
         Add or remove members of the moderation team.  The "top mod" is indicated with a green shield and is considered the owner of the community.
-        {#if isAdmin($profile?.user)}
+        {#if isAdminOrTopMod()}
             To assign someone else as the top mod, use the transfer community button on their entry.
         {/if}
     </p>
@@ -173,10 +252,24 @@
                     </div>
             
                     <div class="flex flex-row gap-2">
-                        {#if isAdmin($profile?.user)}
-                            <Button size="square-md" title="Transfer Community" on:click={() => transferCommunity(moderator.moderator.id)} icon={ShieldCheck} disabled={i == 0}/>
+                        <!---Transfer Community Button--->
+                        {#if isAdminOrTopMod()}
+                            <Button size="square-md" title="Transfer Community" icon={ArrowsRightLeft} disabled={i == 0}
+                                on:click={() => {
+                                    modals.transfer.personID = moderator.moderator.id
+                                    modals.transfer.open = true
+                                    //transferCommunity(moderator.moderator.id)
+                                }}
+                            
+                            />
                         {/if}
-                        <Button size="square-md" title="Remove as Moderator" on:click={() => removeMod(moderator.moderator.id)} icon={Trash} />
+                        
+                        <!---Remove Mod Button--->
+                        <Button size="square-md" title="Remove as Moderator" icon={Trash} on:click={() => {
+                                modals.removeMod.personID = moderator.moderator.id
+                                modals.removeMod.open = true
+                            }} 
+                        />
                     </div>
                 </div>
             {/each}
