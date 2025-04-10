@@ -296,11 +296,12 @@ interface LoadParams {
 }
 
 export async function load({ url }: LoadParams) {
-    const community   = Number(url.searchParams.get('community')) || undefined
-    const personId    = Number(url.searchParams.get('other_person_id')) || undefined
-    const modId       = Number(url.searchParams.get('mod_id')) || undefined
-    
-    const page      = Number(url.searchParams.get('page')) || 1
+    const community     = Number(url.searchParams.get('community')) || undefined
+    const personId      = Number(url.searchParams.get('other_person_id')) || undefined
+    const modId         = Number(url.searchParams.get('mod_id')) || undefined
+    const commentID     = Number(url.searchParams.get('comment_id')) || undefined
+    const postID        = Number(url.searchParams.get('post_id')) || undefined
+    const page          = Number(url.searchParams.get('page')) || 1
     
     let type: ModlogActionType = (url.searchParams.get('type') as ModlogActionType) || 'All'
 
@@ -311,6 +312,8 @@ export async function load({ url }: LoadParams) {
         page: page,
         mod_person_id: modId,
         other_person_id: personId,
+        comment_id: commentID,
+        post_id: postID
     })
 
     const moderation = [
