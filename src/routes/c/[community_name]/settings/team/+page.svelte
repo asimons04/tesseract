@@ -150,7 +150,7 @@
 </svelte:head>
 
 <!---Remove Mod Confirmation Modal--->
-<Modal bind:open={modals.removeMod.open} title="Confirm Remove Mod" width="max-w-md">
+<Modal bind:open={modals.removeMod.open} title="Confirm Remove Mod" width="max-w-md" on:close={() => modals.removeMod.open = false}>
     <p class="text-sm">
         Are you sure you want to remove this member from the mod team?
     </p>
@@ -181,7 +181,7 @@
 </Modal>
 
 <!---Transfer Community Confirmation Modal--->
-<Modal bind:open={modals.transfer.open} title="Confirm Transfer Community" width="max-w-md">
+<Modal bind:open={modals.transfer.open} title="Confirm Transfer Community" width="max-w-md" on:close={() => modals.transfer.open = false}>
     <p class="text-sm">
         Are you sure you want to transfer the community to this moderator?
     </p>
