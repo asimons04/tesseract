@@ -151,7 +151,7 @@
             <div class="flex flex-row w-full items-center gap-2 py-2 text-base">
                 
                 <span class="flex w-[calc(100%-24px-0.5rem)]">
-                    <UserLink bind:user={vote.creator} avatar avatarSize={24} ring />
+                    <UserLink bind:user={vote.creator} community_banned={vote.creator_banned_from_community ?? false} avatar avatarSize={24} ring />
                 </span>
                 
                 <span class="flex ml-auto {vote.score > 0 ? 'text-sky-500' : 'text-red-500'} font-bold">
