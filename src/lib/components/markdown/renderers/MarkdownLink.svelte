@@ -132,9 +132,11 @@
     }}
     
     >
-        <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} class="!max-w-[30ch]" label="Post: {token.text}" >
-            {token.text}
+        <!---<Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} class="!max-w-[30ch]" label="Post: {token.text}" >
+            Post
         </Badge>
+        --->        
+        {token.text}
     </Link>
 
     <!---Universal Format Comment Link--->
@@ -149,9 +151,12 @@
             postViewerModal(instance, undefined, Number(commentID))
         }
     }}>
+    <!---
     <Badge color="teal" rightJustify={false} inline={true} icon={ChatBubbleLeftEllipsis} iconSize={14} label="Comment: {token.text}">
         {token.text}
     </Badge>
+    --->
+    {token.text}
 </Link>
 
 <!--Turn hashtags into badges but keep the original link--->
