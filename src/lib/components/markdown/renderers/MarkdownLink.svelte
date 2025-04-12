@@ -132,7 +132,7 @@
     }}
     
     >
-        <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} label="Post: {token.text}" >
+        <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} class="!max-w-[30ch]" label="Post: {token.text}" >
             {token.text}
         </Badge>
     </Link>
