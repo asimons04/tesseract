@@ -66,7 +66,8 @@
     <!---Comment Reply Button--->
     {#if actions}
         <Button size="sm" color="tertiary-border"
-            disabled={comment.post.locked || comment.post.removed || comment.post.deleted || !$profile?.user || !onHomeInstance} hidden={comment.post.locked || !$profile?.user}
+            disabled={comment.post.locked || comment.post.removed || comment.post.deleted || !$profile?.user || !onHomeInstance || comment.banned_from_community} 
+            hidden={comment.post.locked || !$profile?.user}
             on:click={() => (replying = !replying)}
         >
             <Icon src={ArrowUturnLeft} width={14} height={14} mini />
@@ -80,7 +81,7 @@
 
         <!--- Comment Moderation Menu--->
         {#if onHomeInstance && $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
-            <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={14} on:click={() => postModerationModal(comment) } />    
+            <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={14} disabled={comment.banned_from_community} on:click={() => postModerationModal(comment) } />    
         {/if}
   
         <!---Comment Action Menu --->
@@ -106,13 +107,13 @@
             <!---Actions for Self-Owned Comments--->
             {#if onHomeInstance && comment.creator.id == $profile?.user?.local_user_view.person.id}
                 <!--- Edit Comment--->
-                <MenuButton color="info" on:click={() => dispatcher('edit', comment)}>
+                <MenuButton color="info" disabled={comment.banned_from_community} on:click={() => dispatcher('edit', comment)}>
                     <Icon src={PencilSquare} mini size="16" />
                     <span>Edit</span>
                 </MenuButton>
 
                 <!---Delete Comment--->
-                <MenuButton color="dangerSecondary"
+                <MenuButton color="dangerSecondary" disabled={comment.banned_from_community}
                     on:click={async () => {
                         if ($profile?.jwt)
                         comment.comment.deleted = await deleteItem(
@@ -179,7 +180,7 @@
                 
                 {#if $profile?.user?.local_user_view.person.id != comment.creator.id}
                     <!---Report Comment--->    
-                    <MenuButton on:click={() => report(comment)} color="dangerSecondary" disabled={comment.comment.removed}>
+                    <MenuButton on:click={() => report(comment)} color="dangerSecondary" disabled={comment.comment.removed || comment.banned_from_community}>
                         <Icon src={Flag} mini size="16" />
                         <span>Report</span>
                     </MenuButton>

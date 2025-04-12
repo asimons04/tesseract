@@ -167,7 +167,7 @@
                 {#if actions}
                     <!---Moderation--->
                     {#if actions && $userSettings.uiState.dedicatedModButton && onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-                        <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} on:click={() => postModerationModal(post) } />
+                        <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} disabled={post.banned_from_community} on:click={() => postModerationModal(post) } />
                     {/if}
                     
                     <!---Instances--->

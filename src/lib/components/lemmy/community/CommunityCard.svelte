@@ -68,6 +68,7 @@
             <div class="w-full flex flex-row gap-2 hidden xl:flex">
                 <Button link title="Edit Community" class="w-full" size="lg" color="tertiary-border"
                     href="/c/{fullCommunityName(community_view.community.name,community_view.community.actor_id)}/settings"
+                    disabled={community_view.banned_from_community}
                 >
                     <Icon src={Cog6Tooth} mini size="16" />
                     Community Settings
@@ -89,11 +90,6 @@
                     <Markdown source={community_view.community.description} />
                 </CollapseButton>
             {/if}
-        
-            <!-- Spacer block to give community action menu room to expand --->
-            <!--<div class="hidden xl:block h-[150px]" />-->
-
-            
         </div>
 
         <SidebarFooter />

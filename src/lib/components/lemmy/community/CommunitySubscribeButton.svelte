@@ -74,17 +74,18 @@
 </script>
 
 <!---Subscrube/UnSubscribe--->
-<Button color="tertiary-border" class="{$$props.class}" size="lg" loading={subscribing}
-    disabled={subscribing || community_view.community.removed || !$profile?.jwt} 
+<Button color="tertiary-border" class="{$$props.class}" size="lg" 
+    loading={subscribing}
+    disabled={subscribing || community_view.community.removed || !$profile?.jwt || community_view.banned_from_community} 
     icon={community_view.subscribed == 'Subscribed' ? Minus : Rss}
     on:click={ (e) => {
         e.stopPropagation();
         subscribe();
     }}
     >
-    {
-        (community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending')
-            ? 'Unsubscribe'
-            : 'Subscribe'
-    }
+        {
+            (community_view.subscribed == 'Subscribed' || community_view.subscribed == 'Pending')
+                ? 'Unsubscribe'
+                : 'Subscribe'
+        }
 </Button>

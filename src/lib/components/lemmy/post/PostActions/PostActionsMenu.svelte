@@ -56,7 +56,7 @@
 
     <!---Edit if owned by self--->
     {#if $profile?.user?.local_user_view.person.id == post.creator.id}
-        <MenuButton  title="Edit Post" color="info"
+        <MenuButton  title="Edit Post" color="info" disabled={post.banned_from_community}
             on:click={() => { editing = true }}
         >
             <Icon src={PencilSquare} width={16} mini />
@@ -167,7 +167,7 @@
 
 
             <!---Report Post--->
-            <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary" disabled={post.post.removed}>
+            <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary" disabled={post.post.removed || post.post.deleted || post.banned_from_community}>
                 <Icon src={Flag} width={16} mini />
                 Report Post...
             </MenuButton>
@@ -179,6 +179,7 @@
         <!---Delete Post--->
         {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}
             <MenuButton title="{post.post.deleted ? 'Restore' : 'Delete'} Post" color="{post.post.deleted ? 'success' : 'dangerSecondary'}"
+                disabled={post.banned_from_community}
                 on:click={async () => {
                     if ($profile?.jwt) {
                         post.post.deleted = await deleteItem(
@@ -195,7 +196,7 @@
         {/if}
 
         {#if onHomeInstance && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user))}
-            <MenuButton title="Moderation" color="dangerSecondary" on:click={() => postModerationModal(post) }>
+            <MenuButton title="Moderation" color="dangerSecondary" disabled={post.banned_from_community} on:click={() => postModerationModal(post) }>
                 <Icon src={ShieldCheck} width={16} mini />
                 Moderation...
             </MenuButton>

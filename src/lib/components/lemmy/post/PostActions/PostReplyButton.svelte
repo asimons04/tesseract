@@ -22,7 +22,7 @@
 <Button
     size="sm"
     color="tertiary-border"
-    disabled={post.post.locked || post.post.removed || post.post.deleted || !$profile?.user || !onHomeInstance}
+    disabled={post.post.locked || post.post.removed || post.post.deleted || !$profile?.user || !onHomeInstance || post.banned_from_community}
     hidden={post.post.locked || !$profile?.user}
     icon={ArrowUturnLeft}
     iconSize={18}

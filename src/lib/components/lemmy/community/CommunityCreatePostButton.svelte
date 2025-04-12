@@ -1,16 +1,13 @@
 <script lang="ts">
     import type { CommunityView } from "lemmy-js-client"
 
-    import { amMod } from "../moderation/moderation"
-    import { createPost } from "./helpers"
-    import { profile } from '$lib/auth'
+    import { amMod }        from "../moderation/moderation"
+    import { createPost }   from "./helpers"
+    import { profile }      from '$lib/auth'
 
-    import Button from "$lib/components/input/Button.svelte";
+    import Button           from "$lib/components/input/Button.svelte"
     
     import { PencilSquare } from "svelte-hero-icons"
-    
-    
-    
 
     export let community_view: CommunityView
 
@@ -22,6 +19,7 @@
     disabled={
         (community_view.community.posting_restricted_to_mods && !amMod($profile?.user, community_view.community)) || 
         community_view.community.removed ||
+        community_view.banned_from_community ||
         (!$profile?.jwt)
     }
 >

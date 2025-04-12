@@ -68,7 +68,7 @@
 
 <div class="flex flex-row border border-slate-300 dark:border-zinc-700 items-center text-sm gap-0 rounded-lg">
     <Button
-        disabled={!$profile?.user || !onHomeInstance}
+        disabled={!$profile?.user || !onHomeInstance || post.banned_from_community}
         aria-label="Upvote"
         class="{post.my_vote == 1 ? voteColor(post.my_vote) : ''}"
         
@@ -98,7 +98,7 @@
     <!---Hide downvote buttons if site config has globally disabled downvotes--->
     {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
         <Button
-            disabled={!$profile?.user || !onHomeInstance}
+            disabled={!$profile?.user || !onHomeInstance || post.banned_from_community}
             aria-label="Downvote"
             class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
             size="sm"
